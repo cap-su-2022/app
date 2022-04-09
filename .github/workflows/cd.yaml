@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    if: github.ref == 'refs/heads/master'
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+
+      - name: Install app dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Build production app
+        run: npm run build
+
+      - name: CD - Test applications
+        run: npm run test
+
+      - name: CD - NextJS Deployment
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: -avzrP --delete
+          path: ./dist/apps/app/
+          remote_path: /var/www/html/
+          remote_host: ${{ secrets.AWS_REMOTE_HOST }}
+          remote_user: ubuntu
+          remote_key: "${{ secrets.SSH_PRIVATE_KEY }}"
+
+      - name: CD - Fetch production dependencies
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: -avzrP
+          path: ./node_modules/
+          remote_path: /var/www/html/node_modules/
+          remote_host: ${{ secrets.AWS_REMOTE_HOST }}
+          remote_user: ubuntu
+          remote_key: "${{ secrets.SSH_PRIVATE_KEY }}"
+
+      - name: CD - Start NextJS Production
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_REMOTE_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: cd /var/www/html && pm2 start npm --name nextjs-prod -- start
+
+      - name: CD - NestJS Deployment
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: -avzrP
+          path: ./dist/apps/backend/
+          remote_path: /var/www/html/
+          remote_host: ${{ secrets.AWS_REMOTE_HOST }}
+          remote_user: ubuntu
+          remote_key: "${{ secrets.SSH_PRIVATE_KEY }}"
+
+      - name: CD - Start NestJS Dev
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_REMOTE_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: cd /var/www/html && pm2 -f start main.js --name nestjs-dev -- start
