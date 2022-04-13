@@ -2,7 +2,7 @@
   "version": 2,
   "projects": {
     "app": "apps/app",
-    "app-e2e": "apps/app-e2e",
-    "backend": "apps/backend"
+    "backend": "apps/backend",
+    "mobile": "apps/mobile"
   }
 }
