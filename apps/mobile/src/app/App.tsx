@@ -8,7 +8,7 @@ import {
   Text,
   StatusBar,
   TouchableOpacity,
-  Linking,
+  Linking, TextInput,
 } from 'react-native';
 
 import Checkmark from './icons/checkmark.svg';
@@ -42,20 +42,16 @@ export const App = () => {
           <View style={styles.section}>
             <Text style={styles.textLg}>Hello there,</Text>
             <Text style={[styles.textXL, styles.appTitleText]} testID="heading">
-              Welcome Mobile 👋
+              Welcome back!
             </Text>
           </View>
           <View style={styles.section}>
             <View style={styles.hero}>
               <View style={styles.heroTitle}>
-                <Checkmark
-                  width={32}
-                  height={32}
-                  stroke="hsla(162, 47%, 50%, 1)"
-                />
-                <Text style={[styles.textLg, styles.heroTitleText]}>
-                  You're up and running
-                </Text>
+                <TextInput style={styles.usernameInput} placeholder="Enter username"/>
+              </View>
+              <View style={styles.heroTitle2}>
+                <TextInput style={styles.usernameInput} placeholder="Enter password"/>
               </View>
               <TouchableOpacity
                 style={styles.whatsNextButton}
@@ -66,8 +62,8 @@ export const App = () => {
                   });
                 }}
               >
-                <Text style={[styles.textMd, styles.textCenter]}>
-                  What's next?
+                <Text style={[styles.textSm, styles.textCenter]}>
+                  Login
                 </Text>
               </TouchableOpacity>
             </View>
@@ -354,6 +350,14 @@ export const App = () => {
   );
 };
 const styles = StyleSheet.create({
+  usernameInput: {
+    width: 230,
+    height: 30,
+    borderColor: 'rgba(0, 0, 0, 1)',
+    borderWidth: 0,
+    backgroundColor: 'rgba(255, 255, 255, 255)',
+    borderRadius: 8
+  },
   scrollView: {
     backgroundColor: '#ffffff',
   },
@@ -444,14 +448,22 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   hero: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 12,
-    backgroundColor: '#143055',
+    backgroundColor: '#f06e28',
     padding: 36,
     marginBottom: 24,
   },
   heroTitle: {
     flex: 1,
     flexDirection: 'row',
+  },
+  heroTitle2: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 9
   },
   heroTitleText: {
     color: '#ffffff',
@@ -463,7 +475,7 @@ const styles = StyleSheet.create({
   },
   whatsNextButton: {
     backgroundColor: '#ffffff',
-    paddingVertical: 16,
+    paddingVertical: 12,
     borderRadius: 8,
     width: '50%',
     marginTop: 24,
