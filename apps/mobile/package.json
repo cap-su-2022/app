@@ -9,6 +9,18 @@
     "react-native": "*",
     "react-native-config": "*",
     "react-native-svg": "*",
-    "@react-native-async-storage/async-storage": "*"
+    "react-native-screens": "*",
+    "@react-native-async-storage/async-storage": "*",
+    "react-native-safe-area-context": "*",
+    "@react-navigation/native": "*",
+    "@react-navigation/bottom-tabs": "*",
+    "tabler-icons-react": "*",
+    "react-native-heroicons": "*",
+    "react-redux": "*",
+    "@reduxjs/toolkit": "*",
+    "@react-navigation/native-stack": "*",
+    "@react-native-firebase/app": "*",
+    "@react-native-google-signin/google-signin": "*",
+    "@react-native-firebase/auth": "*"
   }
 }

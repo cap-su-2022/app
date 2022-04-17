@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "362234920739",
+    "project_id": "fptu-library-room-booking",
+    "storage_bucket": "fptu-library-room-booking.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:362234920739:android:cd55f99dc86a6427c3d696",
+        "android_client_info": {
+          "package_name": "com.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "362234920739-g37ur56169n3sn6h0eetvg7vk9a7ob3p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mobile",
+            "certificate_hash": "cfbdd2b0713ba613dfd7b2f1a302aad9a0cead86"
+          }
+        },
+        {
+          "client_id": "362234920739-fbkr8qd7k9s50n47mdoib8l2q117d7nm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-eUel6VIxZGc97NsM8-5VRw-RS4zhb6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "362234920739-fbkr8qd7k9s50n47mdoib8l2q117d7nm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "362234920739-e7fsc53re8m43mhgkfaib50e51198l76.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bangmaple.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
