@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import {ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiSecurity} from "@nestjs/swagger";
 import {KEYCLOAK_PATH} from "../constants/controllers/keycloak/path.constant";
 import {AUTHORIZATION_LOWERCASE} from "../constants/network/headers.constant";
+import {AuthService} from "../services/auth.service";
 
 export class AuthenticationRequest {
   @ApiProperty({
@@ -17,7 +18,8 @@ export class AuthenticationRequest {
 @Controller(KEYCLOAK_PATH.requestPath)
 export class KeycloakController {
 
-  constructor(private readonly service: KeycloakService) {
+  constructor(private readonly service: KeycloakService,
+              private readonly authService: AuthService) {
   }
 
   @ApiOperation({
@@ -39,6 +41,11 @@ export class KeycloakController {
   })
   signIn(@Body() account: {username: string, password: string}) {
     return this.service.signInToKeycloak(account.username, account.password);
+  }
+
+  @Post('signin/google')
+  signInWithGoogle(@Body() request: {token: string}) {
+    return this.authService.handleGoogleSigninWithIdToken(request.token);
   }
 
   @Post(KEYCLOAK_PATH.refreshAccessToken)

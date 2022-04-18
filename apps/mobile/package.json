@@ -21,6 +21,8 @@
     "@react-navigation/native-stack": "*",
     "@react-native-firebase/app": "*",
     "@react-native-google-signin/google-signin": "*",
-    "@react-native-firebase/auth": "*"
+    "@react-native-firebase/auth": "*",
+    "swr": "*",
+    "formik": "*"
   }
 }

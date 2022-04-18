@@ -27,6 +27,14 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>fptu-library-booking</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
 				<string>1013204251190-74m7mtno9e3ge4fdie3422hotor5217c.apps.googleusercontent.com</string>
 			</array>
 		</dict>

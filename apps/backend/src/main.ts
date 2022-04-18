@@ -1,12 +1,12 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
-import { AppModule } from './app/app.module';
 import {SwaggerModule} from "@nestjs/swagger";
 import {APP_CONFIG} from "./app/constants/config/app.config";
 import {getSwaggerConfig, SWAGGER_CONFIG} from './app/constants/config/swagger.config';
 import * as path from "path";
 import * as fs from 'fs';
+import * as dotenv from 'dotenv';
 import * as compression from 'compression';
 import {ExpressAdapter} from '@nestjs/platform-express';
 import {Express} from 'express';
@@ -14,12 +14,15 @@ import * as express from 'express';
 import {server} from "spdy";
 import Server = server.Server;
 import * as spdy from 'spdy';
+import {AppModule} from "./app/modules/app.module";
+import {initializeFirebaseApp} from "./app/config/firebase.config";
+import * as net from 'net';
 
 async function bootstrap() {
   const port = process.env.BACKEND_PORT || APP_CONFIG.port;
   const host = process.env.BACKEND_HOST || APP_CONFIG.host;
   const contextPath = process.env.BACKEND_CONTEXT_PATH || APP_CONFIG.contextPath;
-
+  initializeFirebaseApp();
   const expressApp: Express = express();
 
   const options = {
@@ -40,18 +43,25 @@ async function bootstrap() {
 
   const app = await NestFactory.create(
     AppModule,
-    new ExpressAdapter(expressApp)
+   new ExpressAdapter(expressApp)
   );
   app.setGlobalPrefix(contextPath);
   app.use(compression({ filter: shouldCompress }));
   const document = SwaggerModule.createDocument(app, getSwaggerConfig());
   SwaggerModule.setup(SWAGGER_CONFIG.contextPath, app, document);
-  await app.init();
-  await server.listen(5000, '0.0.0.0');
+  await app.listen(5000, '0.0.0.0');
+  await server.listen(5001, '0.0.0.0');
 
-  Logger.log(
-    `🚀 Application is running on: http://${host}:${port}${contextPath}`
-  );
+  const client = net.connect({port: 80, host:"google.com"}, () => {
+    Logger.log(`💻 External IP Address: ${client.localAddress}`);
+    Logger.log(
+      `🚀 Application is running on: http://${client.localAddress}:${port}${contextPath}`
+    );
+    Logger.log(
+      `🚀 Application is running on: https://${client.localAddress}:${5001}${contextPath}`
+    );
+  });
+
 }
 
 void bootstrap();

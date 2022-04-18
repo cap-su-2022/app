@@ -78,6 +78,7 @@
     "firebase": "^9.6.10",
     "firebase-admin": "^10.0.2",
     "formik": "^2.2.9",
+    "google-auth-library": "^7.14.1",
     "helmet": "^5.0.2",
     "intl": "^1.2.5",
     "mysql2": "^2.3.3",

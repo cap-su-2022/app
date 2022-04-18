@@ -1,20 +1,20 @@
 {
   "project_info": {
-    "project_number": "362234920739",
-    "project_id": "fptu-library-room-booking",
-    "storage_bucket": "fptu-library-room-booking.appspot.com"
+    "project_number": "1013204251190",
+    "project_id": "fptu-library-booking",
+    "storage_bucket": "fptu-library-booking.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:362234920739:android:cd55f99dc86a6427c3d696",
+        "mobilesdk_app_id": "1:1013204251190:android:ee7e0ecfef6d207fe51e97",
         "android_client_info": {
           "package_name": "com.mobile"
         }
       },
       "oauth_client": [
         {
-          "client_id": "362234920739-g37ur56169n3sn6h0eetvg7vk9a7ob3p.apps.googleusercontent.com",
+          "client_id": "1013204251190-8pbdlan84nh0pbltqsv5h46v7jauup5o.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.mobile",
@@ -22,24 +22,24 @@
           }
         },
         {
-          "client_id": "362234920739-fbkr8qd7k9s50n47mdoib8l2q117d7nm.apps.googleusercontent.com",
+          "client_id": "1013204251190-nkd63gan2a17tj8lffmh83jl6scco9g6.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC-eUel6VIxZGc97NsM8-5VRw-RS4zhb6w"
+          "current_key": "AIzaSyB5yLYOGE_qjYS4StTuzkp8MNWGPtLXBcg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "362234920739-fbkr8qd7k9s50n47mdoib8l2q117d7nm.apps.googleusercontent.com",
+              "client_id": "1013204251190-nkd63gan2a17tj8lffmh83jl6scco9g6.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "362234920739-e7fsc53re8m43mhgkfaib50e51198l76.apps.googleusercontent.com",
+              "client_id": "1013204251190-4vsb2d8vt4df5ue51074qcsdsiihtj7g.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.bangmaple.app"

@@ -5,12 +5,16 @@ interface LoginRequest {
   password: string;
 }
 
+// @ts-ignore
 export const JSONFetcher = (...args) => fetch(...args).then(res => res.json());
+// @ts-ignore
 export const TextFetcher = (...args) => fetch(...args).then(res => res.text());
+// @ts-ignore
 export const BlobFetcher = (...args) => fetch(...args).then(res => res.blob());
 
 
 export const AUTH_API = {
+  loginWithGoogle: '/api/v1/signin/google',
   login: '/api/v1/signin',
   logout: '/api/v1/signout',
   refreshToken: '/api/v1/refreshToken'

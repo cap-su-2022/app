@@ -10,6 +10,8 @@ import {HealthCheckModule} from "./health-check.module";
 import {AuthGuard} from "../guards/auth.guard";
 import {KeycloakService} from "../services/keycloak.service";
 import {HttpModule} from "@nestjs/axios";
+import {Users} from "../models/users.entity";
+import {Roles} from "../models/roles.entity";
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -19,7 +21,7 @@ import {HttpModule} from "@nestjs/axios";
     username: 'root',
     password: 'Capstone@2022',
     database: 'flrbms',
-    entities: [Rooms],
+    entities: [Users, Roles, Rooms],
     synchronize: false,
     logging: "all"
   }),
