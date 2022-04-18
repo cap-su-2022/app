@@ -23,9 +23,9 @@ const EditProfile = () => {
             margin: 10
           }}>
             <InputTextView title="Fullname" value="Ngô Nguyên Bằng"/>
-            <Divider num={10}/>
+            <Divider num={45}/>
             <InputTextView title="Số điện thoại" value="0961618601"/>
-            <Divider num={10}/>
+            <Divider num={45}/>
             <InputTextView title="Mã số sinh viên" value="SE140937"/>
           </View>
         </View>
@@ -35,11 +35,11 @@ const EditProfile = () => {
             margin: 10
           }}>
             <InputTextView title="Ngày sinh" value="13/06/2000"/>
-            <Divider num={10}/>
+            <Divider num={45}/>
             <InputTextView title="Giới tính" value="Nam"/>
-            <Divider num={10}/>
+            <Divider num={45}/>
             <InputTextView title="Email" value="bangnnse140937@fpt.edu.vn"/>
-            <Divider num={10}/>
+            <Divider num={45}/>
             <InputTextView title="Chuyên ngành" value="Software Engineering"/>
           </View>
         </View>

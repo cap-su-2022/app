@@ -1,15 +1,27 @@
 import {createSlice} from "@reduxjs/toolkit";
 
+
+export interface UserProfileModel {
+  fullname: string;
+  phone: string;
+  studentCode: string;
+}
 export interface UserState {
     role: string;
     username: string;
     googleIdToken: string;
+    user: UserProfileModel;
 };
 
 const initialState: UserState = {
   role: '',
   username: '',
   googleIdToken: '',
+  user: {
+    fullname: '',
+    phone: '',
+    studentCode: '',
+  }
 };
 
 export const userSlice = createSlice({
@@ -24,9 +36,12 @@ export const userSlice = createSlice({
     },
     persistGoogleIdToken: (state, action) => {
       state.googleIdToken = action.payload
+    },
+    updateProfile: (state, action) => {
+      state.user = action.payload;
     }
   },
 });
 
-export const {login, logout, persistGoogleIdToken} = userSlice.actions;
+export const {login, logout, persistGoogleIdToken, updateProfile} = userSlice.actions;
 export default userSlice.reducer;

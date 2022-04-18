@@ -16,9 +16,7 @@
       }
     },
     "run-ios": {
-      "executor": "@nrwl/react-native:run-ios",
-      "options": {
-      }
+      "executor": "@nrwl/react-native:run-ios"
     },
     "bundle-ios": {
       "executor": "@nrwl/react-native:bundle",

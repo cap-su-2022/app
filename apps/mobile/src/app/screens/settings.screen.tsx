@@ -37,11 +37,7 @@ const SettingsScreen = () => {
             <Text style={[styles.userEmail]}>bangnnse140937@fpt.edu.vn</Text>
           </View>
 
-          <View style={[styles.headerBody]}>
-            <Icon.UserCircleIcon size={80} color="#f06e28"/>
-            <Text style={[styles.userAvatarname]}>Ngô Nguyên Bằng</Text>
-            <Text style={[styles.userEmail]}>bangnnse140937@fpt.edu.vn</Text>
-          </View>
+
         </View>
 
 

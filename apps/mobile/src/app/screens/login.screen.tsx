@@ -23,11 +23,8 @@ import {HomeRoute} from "../utils/screen.navigator.utils";
 import {Spinner} from "../components/spinners/spinner";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {handleGoogleSignin} from "../services/google.service";
-import {AUTH_API, JSONFetcher, useLoginRequest} from "../utils/api.util";
-import useSWR from 'swr';
 import CheckAlive from "../components/check-alive.component";
 import {Formik} from 'formik';
-import * as Icon from "react-native-heroicons/solid";
 import LoginErrorModal from "../components/modals/login-error.component";
 
 const LoginScreen = () => {
@@ -65,6 +62,7 @@ const LoginScreen = () => {
     }
 
     const handleSubmit = async (values) => {
+      setLoginLoading(true);
       const response = await fetch("http://192.168.15.247:5000/api/v1/auth/signin", {
         method: 'POST',
         headers: {
@@ -79,10 +77,15 @@ const LoginScreen = () => {
       const data = await response.json();
 
       if (data?.error_description) {
-        setLoginFailure(true);
-      } else {
         setTimeout(() => {
-          navigate.navigate(HomeRoute.Home);
+          setLoginLoading(false);
+          setLoginFailure(true);
+        }, 0)
+      } else {
+
+        setLoginLoading(false);
+        setTimeout(() => {
+          navigate.navigate("MAIN");
         }, 0);
       }
 

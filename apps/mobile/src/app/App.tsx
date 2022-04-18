@@ -14,6 +14,7 @@ import {HomeRoute, QRScanRoute, UserNavigatorRoute} from "./utils/screen.navigat
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "./redux/store";
 import LoginScreen from "./screens/login.screen";
+import MainNavigator from "./navigation/main.navigator";
 
 
 export const App = () => {
@@ -26,38 +27,19 @@ export const App = () => {
     <>
       <StatusBar barStyle="dark-content"/>
       <NavigationContainer>
-        {user.googleIdToken !== '' ? <TabNavigator initialRouteName={HomeRoute.Home}
-                                                   screenOptions={{
-                                                     headerShown: false
-                                                   }}>
-          <TabScreen name={HomeRoute.Home} component={HomeScreen} options={{
-            tabBarIcon: () => <HomeIcon color="black" size={30}/>,
-            tabBarLabel: () => null,
-          }}/>
-          <TabScreen name={QRScanRoute.QRScan} component={QRScan} options={{
-            tabBarLabel: () => null,
-            tabBarIcon: () => <QRScanButton/>
-          }}/>
-          <TabScreen name={UserNavigatorRoute} component={UserNavigator} options={{
-            tabBarLabel: () => null,
-            tabBarIcon: () => <UserIcon color="black" size={30}/>
-          }}/>
-        </TabNavigator> : <AuthenticationContainer/>}
+        <StackNavigator initialRouteName={"LOGIN_SCREEN"} screenOptions={{
+          headerShown: false
+        }}>
+          <StackScreen name={"LOGIN_SCREEN"} component={LoginScreen}/>
+          <StackScreen name={"MAIN"} component={MainNavigator}/>
+
+        </StackNavigator>
+
 
       </NavigationContainer>
     </>
   );
 };
 
-
-const AuthenticationContainer = () => {
-  return (
-    <StackNavigator initialRouteName={"LOGIN_SCREEN"} screenOptions={{
-      headerShown: false
-    }}>
-      <StackScreen name={"LOGIN_SCREEN"} component={LoginScreen}/>
-    </StackNavigator>
-  );
-}
 
 export default App;
