@@ -4,11 +4,12 @@ import * as IconOutline from "react-native-heroicons/outline";
 import * as Icon from "react-native-heroicons/solid";
 import {FPT_ORANGE_COLOR} from "../constants/fpt-color";
 import {useNavigation} from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 
 const SettingsScreen = () => {
   const scrollViewRef = useRef<null | ScrollView>(null);
-  const navigate = useNavigation();
+  const navigate = useNavigation<NativeStackNavigationProp<any>>();
   return (
     <SafeAreaView>
       <ScrollView
@@ -21,9 +22,7 @@ const SettingsScreen = () => {
         <View style={[styles.header]}>
           <View style={[styles.headerTitle]}>
             <TouchableOpacity onPress={() => {
-              navigate.navigate({
-                name: 'EditUserProfile',
-              });
+              navigate.navigate('EditUserProfile');
             }} style={[styles.editProfileNavigation]}>
               <Text style={{
                 color: '#fff'
@@ -32,6 +31,12 @@ const SettingsScreen = () => {
             </TouchableOpacity>
             <IconOutline.UserCircleIcon color="black" size={40}/>
           </View>
+          <View style={[styles.headerBody]}>
+            <Icon.UserCircleIcon size={80} color="#f06e28"/>
+            <Text style={[styles.userAvatarname]}>Ngô Nguyên Bằng</Text>
+            <Text style={[styles.userEmail]}>bangnnse140937@fpt.edu.vn</Text>
+          </View>
+
           <View style={[styles.headerBody]}>
             <Icon.UserCircleIcon size={80} color="#f06e28"/>
             <Text style={[styles.userAvatarname]}>Ngô Nguyên Bằng</Text>
@@ -55,7 +60,7 @@ export const styles = StyleSheet.create({
     display: 'flex',
     marginLeft: 5,
     marginRight: 5,
-    height: 200
+    height: 700
   },
   userInfoIcon: {
     color: '#000',

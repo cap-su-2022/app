@@ -14,9 +14,7 @@ export class RoomsService {
 
 
   constructor(
-    @InjectRepository(Rooms) private readonly repository: Repository<Rooms>,
-    private readonly profile: RoomsProfile,
-    ) {
+    @InjectRepository(Rooms) private readonly repository: Repository<Rooms>,) {
   }
 
 

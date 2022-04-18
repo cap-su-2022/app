@@ -7,7 +7,7 @@ import {APPLICATION_X_WWW_FORM_URLENCODED} from "../constants/network/mediatype.
 @Injectable()
 export class KeycloakService {
 
-  static URI = `${KEYCLOAK_CONFIG.host}:${KEYCLOAK_CONFIG.port}/auth/realms/${KEYCLOAK_CONFIG.client.realm}/protocol/openid-connect/token`
+  static URI = `${KEYCLOAK_CONFIG.host}:${KEYCLOAK_CONFIG.port}/auth/realms/${KEYCLOAK_CONFIG.client.realm}/protocol/openid-connect`
 
   constructor(private readonly httpService: HttpService) {
   }
@@ -32,7 +32,7 @@ export class KeycloakService {
 
   async signInToKeycloak(username: string, password: string) {
     try {
-      const response = await lastValueFrom(this.httpService.post(KeycloakService.URI, new URLSearchParams({
+      const response = await lastValueFrom(this.httpService.post(`${KeycloakService.URI}/token`, new URLSearchParams({
         client_id: KEYCLOAK_CONFIG.client.id,
         client_secret: KEYCLOAK_CONFIG.client.secret,
         grant_type: KEYCLOAK_CONFIG.grantType.password,
@@ -51,8 +51,9 @@ export class KeycloakService {
   }
 
   getUserById(authToken: string, id: string) {
-    const USER_BY_ID_URI = "http://localhost:9090/auth/admin/realms/authentication/users/" + id;
-    return this.httpService.get(USER_BY_ID_URI, {
+    const URL = `${KEYCLOAK_CONFIG.host}:${KEYCLOAK_CONFIG.port}/auth/admin/realms/${KEYCLOAK_CONFIG.client.realm}/users/${id}`;
+    console.log(URL);
+    return this.httpService.get(URL, {
       headers: {
         "Authorization": authToken,
       }
@@ -74,4 +75,19 @@ export class KeycloakService {
   refreshAccessToken(accessToken) {
 
   }
+
+
+  getUserInfo(accessToken: string): Promise<any> {
+    const URL = `${KeycloakService.URI}/userinfo`;
+    console.log(URL);
+    return lastValueFrom(this.httpService.get(URL, {
+        headers: {
+          "Authorization": accessToken,
+        }
+      }
+    ).pipe(map(e => e.data))).catch((e) => {
+      return e.response.data;
+    });
+  }
+
 }

@@ -2,7 +2,6 @@ import {Body, Controller, Get, HttpStatus, Param, Post, Put, Request} from "@nes
 import {KeycloakService} from "../services/keycloak.service";
 import {InjectRepository} from "@nestjs/typeorm";
 import { Repository } from 'typeorm';
-import {UserModel} from '../models/user.model';
 import {ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiSecurity} from "@nestjs/swagger";
 import {KEYCLOAK_PATH} from "../constants/controllers/keycloak/path.constant";
 import {AUTHORIZATION_LOWERCASE} from "../constants/network/headers.constant";

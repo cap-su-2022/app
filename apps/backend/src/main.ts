@@ -35,22 +35,22 @@ async function bootstrap() {
     return compression.filter(req, res)
   }
 
- // const server: Server = spdy.createServer(options, expressApp);
+ const server: Server = spdy.createServer(options, expressApp);
 
 
   const app = await NestFactory.create(
     AppModule,
-   // new ExpressAdapter(expressApp)
+    new ExpressAdapter(expressApp)
   );
   app.setGlobalPrefix(contextPath);
- // app.use(compression({ filter: shouldCompress }));
+  app.use(compression({ filter: shouldCompress }));
   const document = SwaggerModule.createDocument(app, getSwaggerConfig());
   SwaggerModule.setup(SWAGGER_CONFIG.contextPath, app, document);
-  await app.listen(5000, '0.0.0.0');
-  //await server.listen(port);
+  await app.init();
+  await server.listen(5000, '0.0.0.0');
 
   Logger.log(
-    `🚀 Application is running on: http://${host}:${port}/${contextPath}`
+    `🚀 Application is running on: http://${host}:${port}${contextPath}`
   );
 }
 
