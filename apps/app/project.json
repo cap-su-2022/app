@@ -19,8 +19,7 @@
       "executor": "@nrwl/next:server",
       "options": {
         "buildTarget": "app:build",
-        "dev": true,
-        "customServerPath": "_server.js"
+        "dev": true
       },
       "configurations": {
         "production": {

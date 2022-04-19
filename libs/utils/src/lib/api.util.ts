@@ -5,10 +5,13 @@ interface LoginRequest {
   password: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const JSONFetcher = (...args) => fetch(...args).then(res => res.json());
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const TextFetcher = (...args) => fetch(...args).then(res => res.text());
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const BlobFetcher = (...args) => fetch(...args).then(res => res.blob());
 

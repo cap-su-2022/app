@@ -6,4 +6,4 @@ export class RoomsDTO {
   isDeleted?: string;
   createdAt?: string;
   updatedAt?: string;
-}
+};

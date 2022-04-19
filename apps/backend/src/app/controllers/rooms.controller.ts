@@ -1,9 +1,8 @@
 import {Body, Controller, Delete, Get, HttpStatus, Param, Post, Put} from "@nestjs/common";
 import {RoomsService} from "../services/rooms.service";
-import {AddRoomRequest} from "../dto/request/add-room-request.dto";
-import {UpdateRoomRequest} from "../dto/request/update-room-request.dto";
 import {MapPipe} from "@automapper/nestjs";
 import {Rooms} from "../models/rooms.entity";
+import {AddRoomRequest, UpdateRoomRequest} from "@app/models";
 
 @Controller("/v1/rooms")
 export class RoomsController {

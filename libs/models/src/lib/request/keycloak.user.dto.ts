@@ -11,7 +11,7 @@ export class KeycloakUserSigninRequest {
     nullable: false,
     required: true,
   })
-  username: string;
+  username?: string;
 
   @ApiProperty({
     description: "The password of the signin request.",
@@ -23,5 +23,5 @@ export class KeycloakUserSigninRequest {
     nullable: false,
     required: true,
   })
-  password: string;
+  password?: string;
 }

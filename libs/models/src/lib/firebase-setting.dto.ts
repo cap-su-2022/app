@@ -1,4 +1,4 @@
-interface FirebaseSettingsModel {
+export interface FirebaseSettingsModel {
   type?: string;
   project_id?: string;
   private_key_id?: string;

@@ -2,9 +2,9 @@ import {Injectable} from "@nestjs/common";
 import {AutomapperProfile, InjectMapper} from "@automapper/nestjs";
 import {createMap, Mapper} from "@automapper/core";
 import {Rooms} from "../models/rooms.entity";
-import {RoomsDTO} from "../dto/room.dto";
-import {UpdateRoomRequest} from "../dto/request/update-room-request.dto";
-import {AddRoomRequest} from "../dto/request/add-room-request.dto";
+import {RoomsDTO} from "@app/models";
+import {UpdateRoomRequest} from "@app/models";
+import {AddRoomRequest} from "@app/models";
 
 @Injectable()
 export class RoomsProfile extends AutomapperProfile {

@@ -3,6 +3,9 @@
   "projects": {
     "app": "apps/app",
     "backend": "apps/backend",
-    "mobile": "apps/mobile"
+    "constants": "libs/constants",
+    "mobile": "apps/mobile",
+    "models": "libs/models",
+    "utils": "libs/utils"
   }
 }

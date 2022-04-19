@@ -1,7 +1,7 @@
 import SettingsScreen from "../screens/settings.screen";
 import EditProfile from "../screens/edit-profile.screen";
 import React, {useRef, useState} from "react";
-import {StackNavigator, StackScreen} from '../utils/utils';
+import {StackNavigator, StackScreen} from '@app/utils';
 import {StyleSheet, Text, TouchableOpacity} from "react-native";
 import {FPT_ORANGE_COLOR} from "../constants/fpt-color";
 import {useNavigation} from "@react-navigation/native";

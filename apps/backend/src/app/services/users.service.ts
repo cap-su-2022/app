@@ -2,7 +2,7 @@ import {Injectable} from "@nestjs/common";
 import {Repository} from "typeorm";
 import {Users} from "../models/users.entity";
 import {BaseService} from "./base.service";
-import {UsersDTO} from "../dto/request/users.dto";
+import {UsersDTO} from "@app/models";
 
 @Injectable()
 export class UsersService extends BaseService<UsersDTO, Users, string>{

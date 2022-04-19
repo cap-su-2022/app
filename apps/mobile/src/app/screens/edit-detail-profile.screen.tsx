@@ -5,7 +5,7 @@ import * as Icon from "react-native-heroicons/solid";
 import {FPT_ORANGE_COLOR} from "../constants/fpt-color";
 import Divider from "../components/text/divider";
 import Asterik from "../components/text/asterik";
-import {Formik, FormikValues} from 'formik';
+import {Formik, FormikProps, FormikValues} from 'formik';
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../redux/store";
 import {updateProfile} from "../redux/userSlice";
@@ -18,7 +18,7 @@ interface UserEditProfileProps {
 }
 
 interface EditDetailProfileProps {
-  formikRef: Ref<any>,
+  formikRef: Ref<FormikProps<any>>,
 }
 
 const EditDetailProfile = (props: EditDetailProfileProps) => {

@@ -1,4 +1,5 @@
 import * as admin from "firebase-admin";
+import {FirebaseSettingsModel} from "@app/models";
 
 const firebaseServiceAccountFile = './fptu-library-booking-firebase-adminsdk-gbxgk-75d2eb543f.json';
 
