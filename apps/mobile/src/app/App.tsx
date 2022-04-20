@@ -7,7 +7,7 @@ import {NavigationContainer} from "@react-navigation/native";
 import HomeScreen from "./screens/home.screen";
 import {HomeIcon, UserIcon} from "react-native-heroicons/solid";
 import QRScan from "./screens/qr-scan.screen";
-import {TabNavigator, TabScreen, StackNavigator, StackScreen} from './utils/utils';
+import {TabNavigator, TabScreen, StackNavigator, StackScreen} from '@app/utils';
 import UserNavigator from "./navigation/user.navigator";
 import QRScanButton from "./components/buttons/QRScanButton";
 import {HomeRoute, QRScanRoute, UserNavigatorRoute} from "./utils/screen.navigator.utils";

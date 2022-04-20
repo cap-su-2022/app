@@ -23,6 +23,8 @@
     "@react-native-google-signin/google-signin": "*",
     "@react-native-firebase/auth": "*",
     "swr": "*",
-    "formik": "*"
+    "formik": "*",
+    "react-native-permissions": "*",
+    "react-native-qrcode-scanner": "*"
   }
 }

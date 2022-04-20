@@ -417,6 +417,8 @@ PODS:
   - RNGoogleSignin (7.2.2):
     - GoogleSignIn (~> 6.1.0)
     - React-Core
+  - RNPermissions (3.3.1):
+    - React-Core
   - RNScreens (3.13.1):
     - React-Core
     - React-RCTImage
@@ -486,6 +488,7 @@ DEPENDENCIES:
   - "RNFBApp (from `../../../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../../../node_modules/@react-native-firebase/auth`)"
   - "RNGoogleSignin (from `../../../node_modules/@react-native-google-signin/google-signin`)"
+  - RNPermissions (from `../../../node_modules/react-native-permissions`)
   - RNScreens (from `../../../node_modules/react-native-screens`)
   - RNSVG (from `../../../node_modules/react-native-svg`)
   - Yoga (from `../../../node_modules/react-native/ReactCommon/yoga`)
@@ -590,6 +593,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/@react-native-firebase/auth"
   RNGoogleSignin:
     :path: "../../../node_modules/@react-native-google-signin/google-signin"
+  RNPermissions:
+    :path: "../../../node_modules/react-native-permissions"
   RNScreens:
     :path: "../../../node_modules/react-native-screens"
   RNSVG:
@@ -658,6 +663,7 @@ SPEC CHECKSUMS:
   RNFBApp: 097a31d372b3db15b41c7a1a5c429433b0609e12
   RNFBAuth: 85b7ad91e3783dfde011702b2b747b1fd7be7234
   RNGoogleSignin: 7580e6618798be9d090524bb31538378f92ce746
+  RNPermissions: 7ad8d93b004e6bc85c89e27a102afcde90e07efa
   RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd
