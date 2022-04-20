@@ -1,14 +1,15 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {BaseEntity} from "./base/base.entity";
 
-@Entity()
-export class Rooms {
+@Entity(Rooms.name.toLowerCase())
+export class Rooms extends BaseEntity{
 
   @PrimaryGeneratedColumn("uuid",
     {
       name: "id",
       comment: "ID for Room"
     })
-  id: string;
+  id?: string;
 
   @Column({
     name: "name",
@@ -16,43 +17,13 @@ export class Rooms {
     unique: true,
     length: 100,
   })
-  name: string;
+  name?: string;
 
   @Column({
     name: "description",
     nullable: true,
     length: 500
   })
-  description: string;
-
-  @Column({
-    name: "is_activated",
-    nullable: false
-  })
-  isActivated: boolean;
-
-  @Column({
-    name: "is_deleted",
-    nullable: false,
-    default: false
-  })
-  isDeleted: boolean;
-
-  @Column({
-    name: "created_at",
-    nullable: false,
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-
-  })
-  createdAt: Date;
-
-  @Column({
-    name: "updated_at",
-    nullable: false,
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  updatedAt: Date;
+  description?: string;
 
 }

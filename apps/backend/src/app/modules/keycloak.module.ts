@@ -7,11 +7,16 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {Rooms} from "../models/rooms.entity";
 import {Users} from "../models/users.entity";
 import {Roles} from "../models/roles.entity";
+import {ConfigService} from "@nestjs/config";
+import {UsersRepository} from "../repositories/users.repository";
 
 @Module({
-  imports: [HttpModule,     TypeOrmModule.forFeature([Users, Roles]),
+  imports: [HttpModule, TypeOrmModule.forFeature([Users, Roles]),
   ],
   controllers: [KeycloakController],
-  providers: [KeycloakService, AuthService, ],
+  providers: [KeycloakService, AuthService, ConfigService,
+    UsersRepository,
+  ],
 })
-export class KeycloakModule {}
+export class KeycloakModule {
+}

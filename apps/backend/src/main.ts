@@ -1,5 +1,5 @@
-import { Logger } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import {Logger} from '@nestjs/common';
+import {NestFactory} from '@nestjs/core';
 
 import {SwaggerModule} from "@nestjs/swagger";
 import {APP_CONFIG} from "./app/constants/config/app.config";
@@ -38,22 +38,25 @@ async function bootstrap() {
     return compression.filter(req, res)
   }
 
- const server: Server = spdy.createServer(options, expressApp);
+  const server: Server = spdy.createServer(options, expressApp);
 
 
   const app = await NestFactory.create(
     AppModule.forRoot(),
-   new ExpressAdapter(expressApp)
+    new ExpressAdapter(expressApp),
+    {bufferLogs: true,}
   );
   app.setGlobalPrefix(contextPath);
-  app.use(compression({ filter: shouldCompress }));
+  app.use(compression({filter: shouldCompress}));
   const document = SwaggerModule.createDocument(app, getSwaggerConfig());
   SwaggerModule.setup(SWAGGER_CONFIG.contextPath, app, document);
 
   await app.listen(5000, '0.0.0.0');
   await server.listen(5001, '0.0.0.0');
 
-  const client = net.connect({port: 80, host:"google.com"}, () => {
+
+
+  const client = net.connect({port: 80, host: "google.com"}, () => {
     Logger.log(`💻 External IP Address: ${client.localAddress}`);
     Logger.log(`⚙️ Loopback IP Address: localhost (127.0.0.1)`);
     Logger.log(`💎 Application is running on ports: 5000, 5001`);

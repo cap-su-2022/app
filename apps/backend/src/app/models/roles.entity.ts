@@ -1,8 +1,7 @@
 import {Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from "typeorm";
 import {BaseEntity} from "./base/base.entity";
-import {Users} from "./users.entity";
 
-@Entity('roles')
+@Entity(Roles.name.toLowerCase())
 export class Roles extends BaseEntity {
   @PrimaryGeneratedColumn("uuid",
     {
@@ -28,8 +27,5 @@ export class Roles extends BaseEntity {
     type: 'varchar',
   })
   description?: string;
-
-  @OneToOne(() => Users, user => user.role)
-  user: Users;
 
 }

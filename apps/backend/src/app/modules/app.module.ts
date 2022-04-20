@@ -10,6 +10,11 @@ import {KeycloakService} from "../services/keycloak.service";
 import {HttpModule} from "@nestjs/axios";
 import GlobalConfigModule from "./config.module";
 import GlobalTypeOrmModule from "./typeorm.module";
+import {ConfigService} from "@nestjs/config";
+import {UsersModule} from "./users.module";
+import {EquipmentsModule} from "./equipments.module";
+import {UsersWarningFlagModule} from "./users-warning-flag.module";
+import {RolesModule} from "./roles.module";
 
 @Global()
 export class AppModule {
@@ -23,6 +28,10 @@ export class AppModule {
         HealthCheckModule,
         KeycloakModule,
         RoomsModule,
+        UsersModule,
+        EquipmentsModule,
+        UsersWarningFlagModule,
+        RolesModule,
       ],
       controllers: [AppController],
       providers: [

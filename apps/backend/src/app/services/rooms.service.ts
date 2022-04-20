@@ -1,13 +1,10 @@
 import {Injectable} from "@nestjs/common";
 import {AddRoomRequest} from "@app/models";
-import {DeleteResult, Repository, UpdateResult} from "typeorm";
+import {Repository, UpdateResult} from "typeorm";
 import {InjectRepository} from "@nestjs/typeorm";
-import {Rooms} from "../models/rooms.entity";
 import {NoSuchElementFoundException} from "../exception/no-such-element-found.exception";
 import {UpdateRoomRequest} from "@app/models";
-import {InjectMapper} from "@automapper/nestjs";
-import {Mapper} from "@automapper/core";
-import {RoomsProfile} from "../profiles/rooms.profile";
+import {Rooms} from '../models/rooms.entity';
 
 @Injectable()
 export class RoomsService {

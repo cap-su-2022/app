@@ -1,13 +1,14 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {BaseEntity} from "./base/base.entity";
 
-@Entity("equipments")
+@Entity(Equipments.name.toLowerCase())
 export class Equipments extends BaseEntity {
+
   @PrimaryGeneratedColumn("uuid",
     {
       name: "id",
       comment: "ID for Equipments",
-    })
+    },)
   id?: string;
 
   @Column({
@@ -16,7 +17,7 @@ export class Equipments extends BaseEntity {
     unique: true,
     length: 250,
     type: 'varchar',
-    comment: 'Equipments name',
+    comment: `Equipment's name`,
   })
   name?: string;
 

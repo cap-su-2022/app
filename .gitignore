@@ -96,3 +96,4 @@ buck-out/
 node_modules/
 
 apps/mobile-e2e/artifacts
+apps/mobile/node_modules

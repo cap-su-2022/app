@@ -42,3 +42,8 @@ firebase:
   messagingSenderId: "1013204251190"
   appId: "1:1013204251190:web:52aeef762a7eb980e51e97"
   measurementId: "G-MQLQ866QXQ"
+  oauth:
+    clientId: "fptu-library-booking"
+    audience:
+      - "fptu-library-booking"
+      - "1013204251190-74m7mtno9e3ge4fdie3422hotor5217c.apps.googleusercontent.com"

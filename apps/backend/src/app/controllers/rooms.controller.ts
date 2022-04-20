@@ -1,7 +1,6 @@
 import {Body, Controller, Delete, Get, HttpStatus, Param, Post, Put} from "@nestjs/common";
 import {RoomsService} from "../services/rooms.service";
-import {MapPipe} from "@automapper/nestjs";
-import {Rooms} from "../models/rooms.entity";
+
 import {AddRoomRequest, UpdateRoomRequest} from "@app/models";
 
 @Controller("/v1/rooms")

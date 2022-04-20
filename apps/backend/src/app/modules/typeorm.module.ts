@@ -16,15 +16,13 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
     username: configService.get<string>(Environment.db.mysql.username),
     password: configService.get<string>(Environment.db.mysql.password),
     database: configService.get<string>(Environment.db.mysql.database),
-    entities: [
-      Users,
-      Rooms,
-     // UsersOTP,
-      //UsersWarningFlag,
-     //  UsersWarningFlagHistory,
-      Roles],
+    autoLoadEntities: true,
     synchronize: configService.get<boolean>(Environment.db.mysql.synchronize),
-    logging: ['query']
+    logging: ['query'],
+    cache: true,
+    extra: {
+
+    },
   }),
   inject: [ConfigService]
 });

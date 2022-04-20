@@ -1,15 +1,16 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {BaseEntity} from "./base/base.entity";
 
-@Entity("EquipmentsHistory")
+@Entity(EquipmentsHistory.name.toLowerCase())
 export class EquipmentsHistory extends BaseEntity {
+
   @PrimaryGeneratedColumn("increment",
     {
       name: "id",
       comment: "ID for Equipment History",
       type: 'bigint',
     })
-  equipmentsHistoryId?: string;
+  equipmentsHistoryId?: number;
 
   @Column({
     name: "name",
@@ -33,7 +34,7 @@ export class EquipmentsHistory extends BaseEntity {
 
   @Column({
     name: "description",
-    nullable: false,
+    nullable: true,
     unique: false,
     length: 500,
     type: 'varchar',
@@ -43,7 +44,7 @@ export class EquipmentsHistory extends BaseEntity {
 
   @Column({
     name: "effdate",
-    nullable: false,
+    nullable: true,
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })

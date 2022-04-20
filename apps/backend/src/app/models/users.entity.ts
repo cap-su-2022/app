@@ -2,8 +2,9 @@ import {Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, 
 import {BaseEntity} from "./base/base.entity";
 import {Roles} from "./roles.entity";
 
-@Entity('users')
+@Entity(Users.name.toLocaleLowerCase())
 export class Users extends BaseEntity {
+
   @PrimaryGeneratedColumn("uuid",
     {
       name: "id",
@@ -17,7 +18,7 @@ export class Users extends BaseEntity {
     unique: true,
     length: 36,
     type: 'varchar',
-
+    comment: 'The keycloak account id that associated with this user.'
   })
   keycloakId?: string;
 
@@ -27,7 +28,7 @@ export class Users extends BaseEntity {
     unique: true,
     length: 21,
     type: 'varchar',
-
+    comment: 'The google account id that associated with this user.'
   })
   googleId?: string;
 
@@ -47,7 +48,7 @@ export class Users extends BaseEntity {
     unique: true,
     length: 100,
     type: 'varchar',
-
+    comment: 'The email of the user'
   })
   email?: string;
 
@@ -57,7 +58,7 @@ export class Users extends BaseEntity {
     unique: true,
     length: 10,
     type: 'varchar',
-
+    comment: 'The phone number of the user'
   })
   phone?: string;
 
@@ -67,22 +68,34 @@ export class Users extends BaseEntity {
     unique: false,
     length: 500,
     type: 'varchar',
+    comment: 'Describe the user.'
 
   })
   description?: string;
-
-  @OneToOne(() => Roles, role => role.user)
-  @JoinColumn({
-    name: 'role_id',
-    referencedColumnName: 'id'
-  })
-  role: Roles;
 
   @Column({
     name: "effdate",
     nullable: false,
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
+    comment: 'The date that user is enabled.'
   })
   effdate?: Date;
+
+  @Column({
+    name: "inactive_date",
+    nullable: true,
+    type: 'timestamp',
+    comment: 'The date that user is disabled.'
+  })
+  inactiveDate?: Date;
+
+  @Column({
+    name: "role_id",
+    type: 'varchar',
+    length: '36',
+    nullable: false,
+    comment: 'Role ID of the associated user.'
+  })
+  roleId?: string;
 }

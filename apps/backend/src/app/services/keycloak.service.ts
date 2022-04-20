@@ -3,13 +3,23 @@ import {HttpService} from "@nestjs/axios";
 import {catchError, lastValueFrom, map, Observable} from "rxjs";
 import {KEYCLOAK_CONFIG} from "../constants/config/keycloak.config";
 import {APPLICATION_X_WWW_FORM_URLENCODED} from "../constants/network/mediatype.constant";
+import {LazyModuleLoader} from "@nestjs/core";
 
 @Injectable()
 export class KeycloakService {
 
   static URI = `${KEYCLOAK_CONFIG.host}:${KEYCLOAK_CONFIG.port}/auth/realms/${KEYCLOAK_CONFIG.client.realm}/protocol/openid-connect`
 
-  constructor(private readonly httpService: HttpService) {
+  private
+  constructor(private readonly lazyModuleLoader: LazyModuleLoader, private readonly httpService: HttpService) {
+
+
+  }
+
+  async initLazilyModule() {
+    const {KeycloakModule} = await import('../modules/keycloak.module');
+    const moduleRef = this.lazyModuleLoader.load(() => KeycloakModule);
+
   }
 
   countUsers(token: string): Observable<number> {
