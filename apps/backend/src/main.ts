@@ -42,23 +42,26 @@ async function bootstrap() {
 
 
   const app = await NestFactory.create(
-    AppModule,
+    AppModule.forRoot(),
    new ExpressAdapter(expressApp)
   );
   app.setGlobalPrefix(contextPath);
   app.use(compression({ filter: shouldCompress }));
   const document = SwaggerModule.createDocument(app, getSwaggerConfig());
   SwaggerModule.setup(SWAGGER_CONFIG.contextPath, app, document);
+
   await app.listen(5000, '0.0.0.0');
   await server.listen(5001, '0.0.0.0');
 
   const client = net.connect({port: 80, host:"google.com"}, () => {
     Logger.log(`💻 External IP Address: ${client.localAddress}`);
+    Logger.log(`⚙️ Loopback IP Address: localhost (127.0.0.1)`);
+    Logger.log(`💎 Application is running on ports: 5000, 5001`);
     Logger.log(
-      `🚀 Application is running on: http://${client.localAddress}:${port}${contextPath}`
+      `🚀 HTTP API Endpoint is running on: http://${client.localAddress}:${port}${contextPath}`
     );
     Logger.log(
-      `🚀 Application is running on: https://${client.localAddress}:${5001}${contextPath}`
+      `🧨 HTTPS API Endpoint is running on: https://${client.localAddress}:${5001}${contextPath}`
     );
   });
 

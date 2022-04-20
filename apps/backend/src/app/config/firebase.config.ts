@@ -1,5 +1,6 @@
 import * as admin from "firebase-admin";
 import {FirebaseSettingsModel} from "@app/models";
+import {Logger} from "@nestjs/common";
 
 const firebaseServiceAccountFile = './fptu-library-booking-firebase-adminsdk-gbxgk-75d2eb543f.json';
 
@@ -25,7 +26,7 @@ export const initializeFirebaseApp = () => {
       privateKey: firebaseSettings.private_key.replace(/\\n/g, '\n'),
     } as Partial<admin.ServiceAccount>)
   });
-  console.log(`🔥 Firebase initialized with project id: ${firebaseSettings.project_id}`);
+  Logger.log(`🔥 Firebase initialized with project id: ${firebaseSettings.project_id}`);
 
 };
 

@@ -21,10 +21,7 @@ export class AuthService {
         '1013204251190-74m7mtno9e3ge4fdie3422hotor5217c.apps.googleusercontent.com'
       ]
     })
-    const payload = decodedToken.getPayload();
     const userGoogleId = decodedToken.getUserId();
-    const test = await this.usersRepository.findOne('FEC07392-AD1D-4388-BDF9-588E158A8270');
-    console.warn(test.role);
     const user = await this.usersRepository.findOne({
       where: {
         'googleId': userGoogleId

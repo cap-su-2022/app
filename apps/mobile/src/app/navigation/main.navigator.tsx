@@ -1,6 +1,6 @@
 import React from "react";
 
-import {TabNavigator, TabScreen} from "../utils/utils";
+import {TabNavigator, TabScreen} from "@app/utils";
 import {HomeRoute, QRScanRoute, UserNavigatorRoute} from "../utils/screen.navigator.utils";
 import HomeScreen from "../screens/home.screen";
 import {HomeIcon, UserIcon} from "react-native-heroicons/solid";

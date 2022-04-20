@@ -1,19 +1,30 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {BaseEntity} from "./base/base.entity";
 
-@Entity("equipments")
-export class Equipments extends BaseEntity {
-  @PrimaryGeneratedColumn("uuid",
+@Entity("EquipmentsHistory")
+export class EquipmentsHistory extends BaseEntity {
+  @PrimaryGeneratedColumn("increment",
     {
       name: "id",
-      comment: "ID for Equipments",
+      comment: "ID for Equipment History",
+      type: 'bigint',
     })
+  equipmentsHistoryId?: string;
+
+  @Column({
+    name: "name",
+    nullable: false,
+    unique: false,
+    length: 36,
+    type: 'varchar',
+    comment: 'Old ID for Equipment',
+  })
   id?: string;
 
   @Column({
     name: "name",
     nullable: false,
-    unique: true,
+    unique: false,
     length: 250,
     type: 'varchar',
     comment: 'Equipments name',

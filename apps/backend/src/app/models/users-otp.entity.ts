@@ -1,7 +1,7 @@
 import {Entity} from "typeorm";
-import {BaseEntity} from "./base.entity";
+import {BaseEntity} from "./base/base.entity";
 
-@Entity()
+@Entity(UsersOTP.name)
 export class UsersOTP extends BaseEntity {
 
 }
