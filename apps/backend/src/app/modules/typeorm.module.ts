@@ -1,11 +1,6 @@
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {Users} from "../models/users.entity";
-import {Roles} from "../models/roles.entity";
-import {Rooms} from "../models/rooms.entity";
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {Environment} from "../constants/config/environment.constant";
-import {UsersWarningFlag} from "../models/users-warning-flag.entity";
-import {UsersOTP, UsersWarningFlagHistory} from "../models";
 
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
@@ -21,7 +16,7 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
     logging: ['query'],
     cache: true,
     extra: {
-
+      namedPlaceholders: true,
     },
   }),
   inject: [ConfigService]

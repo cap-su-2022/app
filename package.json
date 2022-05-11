@@ -58,10 +58,6 @@
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.1",
     "@reduxjs/toolkit": "^1.8.1",
-    "@types/cron": "^1.7.3",
-    "@types/passport-local": "^1.0.34",
-    "@types/react-redux": "^7.1.24",
-    "@types/yup": "^0.29.13",
     "axios": "^0.26.1",
     "cache-manager": "^3.6.1",
     "cache-manager-redis-store": "^2.0.0",
@@ -117,6 +113,10 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@types/cron": "^1.7.3",
+    "@types/passport-local": "^1.0.34",
+    "@types/react-redux": "^7.1.24",
+    "@types/yup": "^0.29.13",
     "@nestjs/schematics": "^8.0.8",
     "@nestjs/testing": "^8.4.2",
     "@nrwl/cli": "13.8.5",
