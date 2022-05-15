@@ -1,6 +1,6 @@
 import {Controller, Get} from "@nestjs/common";
-import {Users} from "../models";
 import {UsersService} from "../services/users.service";
+import {Users} from "../models/users.entity";
 
 @Controller("v1/users")
 export class UsersController {
@@ -9,7 +9,7 @@ export class UsersController {
   }
 
   @Get()
-  getAll(): Promise<Users> {
+  getAll(): Promise<Users[]> {
     return this.service.getAllByPagination();
   }
 }

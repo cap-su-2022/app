@@ -1,15 +1,22 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   createStyles,
   TextInput,
   PasswordInput,
-  Button,
+  Button, Modal, Text,
 } from '@mantine/core';
 import Image from 'next/image';
 import Divider from "./divider";
 import Asterisk from "./asterisk";
-import {Form, Formik, Field, useFormik} from 'formik';
+import {Form, Formik, Field, useFormik, FormikValues} from 'formik';
 import * as Yup from 'yup';
+import {BLACK, FPT_ORANGE_COLOR, WHITE} from "../constants/color";
+import {dFlexCenter} from "../constants/css";
+import axios, {AxiosResponse} from "axios";
+import {useAppDispatch} from "../redux/hooks";
+import {toggleSpinnerOff, toggleSpinnerOn} from "../redux/features/spinner";
+import {AlertCircle} from "tabler-icons-react";
+import {useRouter} from "next/router";
 
 const SigninSchema = Yup.object().shape({
   username: Yup.string()
@@ -22,8 +29,31 @@ const SigninSchema = Yup.object().shape({
     .required('Required!'),
 })
 
+interface LoginInitialState {
+  isLoginFailedModalShown: boolean,
+  isLoginFailed: boolean,
+  loginErrorMsg: string;
+}
+
+const initialState: LoginInitialState = {
+  isLoginFailedModalShown: false,
+  isLoginFailed: false,
+  loginErrorMsg: ''
+}
+
 export function LoginComponent() {
   const {classes} = useStyles();
+
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const [isLoginFailed, setLoginFailed] = useState<boolean>(initialState.isLoginFailed);
+  const [isLoginFailedModalShown, setLoginFailedModalShown] = useState<boolean>(initialState.isLoginFailedModalShown);
+  const [loginErrorMsg, setLoginErrorMsg] = useState<string>(initialState.loginErrorMsg);
+
+  useEffect(() => {
+    router.prefetch('http://localhost:4200/rooms');
+  }, []);
 
   const initialValues = {
     username: '',
@@ -34,7 +64,23 @@ export function LoginComponent() {
 
   }
 
-  const handleLoginSubmit = (values) => {
+  const handleLoginSubmit = async (values) => {
+    dispatch(toggleSpinnerOn());
+    axios.post('/api/auth/signin', {
+      username: values.username,
+      password: values.password,
+    }, {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      }
+    }).then((resp) => {
+      window.location.href = 'http://localhost:4200/rooms';
+    }).catch((e) => {
+      setLoginErrorMsg(e.response.data.message);
+      setLoginFailedModalShown(true);
+    }).finally(() => {
+      dispatch(toggleSpinnerOff());
+    });
 
   }
 
@@ -60,65 +106,101 @@ export function LoginComponent() {
       password: '',
     },
     validationSchema: SigninSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-    }
+    onSubmit: (values) => handleLoginSubmit(values)
   });
 
   return (
-    <div className={classes.header}>
-      <div className={classes.container}>
-        <div className={classes.wrapper}>
-          <form onSubmit={formik.handleSubmit} className={classes.form}>
-            <div className={classes.logoContainer}>
-              <Image src="/LogoFPTU.svg" height={150} width={200}/>
-            </div>
+    <>
+      <div className={classes.header}>
+        <div className={classes.container}>
+          <div className={classes.wrapper}>
+            <form onSubmit={formik.handleSubmit} className={classes.form}>
+              <div className={classes.logoContainer}>
+                <Image src="/LogoFPTU.svg" height={150} width={200}/>
+              </div>
 
-            <TextInput
-              onChange={formik.handleChange}
-              error={formik.touched.username && Boolean(formik.errors.username)}
-              value={formik.values.username}
-              label={<UsernameLabel/>}
-              placeholder="Your username"
-              name="username"
-              size="md"/>
-            {formik.touched.username && Boolean(formik.errors.username)
-              ? <div style={{color: 'red'}}>{formik.errors.username}</div>
-              : null}
+              <TextInput
+                onChange={formik.handleChange}
+                error={formik.touched.username && Boolean(formik.errors.username)}
+                value={formik.values.username}
+                label={<UsernameLabel/>}
+                placeholder="Your username"
+                name="username"
+                size="md"/>
+              {formik.touched.username && Boolean(formik.errors.username)
+                ? <div style={{color: 'red'}}>{formik.errors.username}</div>
+                : null}
 
-            <PasswordInput
-              onChange={formik.handleChange}
-              error={formik.touched.password && Boolean(formik.errors.password)}
-              value={formik.values.password}
-              label={<PasswordLabel/>}
-              placeholder="Your password"
-              mt="md"
-              name="password"
-              size="md"/>
-            {formik.touched.password && Boolean(formik.errors.password)
-              ? <div style={{color: 'red'}}>{formik.errors.password}</div>
-              : null}
+              <PasswordInput
+                onChange={formik.handleChange}
+                error={formik.touched.password && Boolean(formik.errors.password)}
+                value={formik.values.password}
+                label={<PasswordLabel/>}
+                placeholder="Your password"
+                mt="md"
+                name="password"
+                size="md"/>
+              {formik.touched.password && Boolean(formik.errors.password)
+                ? <div style={{color: 'red'}}>{formik.errors.password}</div>
+                : null}
 
-            <Button type="submit" className={classes.loginButton} fullWidth mt="xl" size="md">
-              Login
-            </Button>
-
-            <div className={classes.dFlexCenter}>
-              <Divider num={20}/>
-              <div className={classes.dividerText}>Or continue with</div>
-              <Divider num={20}/>
-            </div>
-
-            <div className={classes.googleLoginButtonContainer}>
-              <Button type="button" className={classes.googleLoginButton}>
-                <Image src="/google-icon.svg" height={24} width={24}/>
-                <div className={classes.googleLoginButtonText}>Google</div>
+              <Button type="submit" className={classes.loginButton} fullWidth mt="xl" size="md">
+                Login
               </Button>
-            </div>
-          </form>
+
+              <div className={classes.dFlexCenter}>
+                <Divider num={20}/>
+                <div className={classes.dividerText}>Or continue with</div>
+                <Divider num={20}/>
+              </div>
+
+              <div className={classes.googleLoginButtonContainer}>
+                <Button type="button" className={classes.googleLoginButton}>
+                  <Image alt="Google-icon" src="/google-icon.svg" height={24} width={24}/>
+                  <div className={classes.googleLoginButtonText}>Google</div>
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+      <Modal centered withCloseButton={false}
+             opened={isLoginFailedModalShown}
+             onClose={() => setLoginFailedModalShown(false)}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: 10
+        }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+
+          }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+            }}>
+              <AlertCircle size={50} color="red"/>
+            </div>
+            <Text size='xl' weight={600} align='center' color=''>
+              Unauthorized
+            </Text>
+            <Text size='xl' weight={600} align='center' color=''>
+              {loginErrorMsg}
+            </Text>
+
+          </div>
+        </div>
+        <Button type="submit"
+                onClick={() => setLoginFailedModalShown(false)}
+                className={classes.loginButton}
+                fullWidth mt="xl" size="md">
+          Close
+        </Button>
+      </Modal>
+    </>
   );
 };
 
@@ -153,24 +235,20 @@ const useStyles = createStyles((theme) => ({
     height: '100vh'
   },
   logoContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
+    ...dFlexCenter
   },
   container: {
     height: '100%',
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     backgroundImage: 'url(/background.svg)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...dFlexCenter
   },
   flex: {
     display: 'flex',
   },
   loginButton: {
-    backgroundColor: "#f06e28",
+    backgroundColor: FPT_ORANGE_COLOR,
     borderRadius: 50,
     height: 50,
     fontSize: 20
@@ -183,22 +261,18 @@ const useStyles = createStyles((theme) => ({
     marginRight: 6,
   },
   dFlexCenter: {
-    display: "flex",
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...dFlexCenter
   },
   googleIcon: {
     marginRight: 6,
     marginTop: 2
   },
   googleLoginButtonContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...dFlexCenter,
     marginTop: 6
   },
   googleLoginButton: {
-    backgroundColor: '#fff',
+    backgroundColor: WHITE,
     borderRadius: 50,
     width: 150,
     height: 50,
@@ -209,7 +283,7 @@ const useStyles = createStyles((theme) => ({
   },
   googleLoginButtonText: {
     marginLeft: 6,
-    color: '#000',
+    color: BLACK,
     fontSize: 18
   }
 }));

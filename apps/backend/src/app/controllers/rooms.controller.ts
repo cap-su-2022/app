@@ -1,6 +1,5 @@
-import {Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, UsePipes} from "@nestjs/common";
+import {Body, Controller, Delete,  Param, Post, Put, UsePipes} from "@nestjs/common";
 import {RoomsService} from "../services/rooms.service";
-import {Rooms} from '../models';
 
 import {AddRoomRequest, UpdateRoomRequest} from "@app/models";
 import {RoomsRequestPayload} from "../payload/request/rooms.payload";

@@ -1,6 +1,13 @@
 import {StyleSheet} from "react-native";
 
 export const styles = StyleSheet.create({
+  slide: {
+    width: 600,
+    height: 200
+  },
+  slideTitle: {
+    color: '#000'
+  },
   usernameInput: {
     width: 230,
     height: 30,

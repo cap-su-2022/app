@@ -2,16 +2,18 @@ import SettingsScreen from "../screens/settings.screen";
 import EditProfile from "../screens/edit-profile.screen";
 import React, {useRef, useState} from "react";
 import {StackNavigator, StackScreen} from '@app/utils';
-import {StyleSheet, Text, TouchableOpacity} from "react-native";
-import {FPT_ORANGE_COLOR} from "../constants/fpt-color";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import EditProfileScreen from "../screens/edit-profile.screen";
 import EditDetailProfile from "../screens/edit-detail-profile.screen";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../redux/store";
-import {updateProfile} from "../redux/userSlice";
 import {FormikProps} from "formik";
+import HistoryNavigation from "./history/history.navigation";
+import FeedbackHistoryNavigation from "./history/feedback/feedback.navigation";
+import {FilterIcon} from "react-native-heroicons/outline";
+import {BLACK} from "../constants/colors";
+import {FPT_ORANGE_COLOR} from "@app/constants";
 
 const UserNavigator = () => {
 
@@ -22,6 +24,7 @@ const UserNavigator = () => {
 
   const formikRef = useRef<FormikProps<any>>();
 
+
   const handleEditProfile = () => {
     navigation.navigate("EditProfile");
   };
@@ -31,7 +34,9 @@ const UserNavigator = () => {
   }
 
   return (
-    <StackNavigator initialRouteName="UserProfile">
+    <StackNavigator initialRouteName="UserProfile" screenOptions={{
+      headerShown: false
+    }}>
       <StackScreen name="UserProfile" component={SettingsScreen}/>
       <StackScreen name="EditUserProfile"
                    options={{
@@ -55,6 +60,10 @@ const UserNavigator = () => {
           <Text style={[styles.editButtonText]}>Lưu</Text>
         </TouchableOpacity>
       }} component={EditProfileScreenProps}/>
+      <StackScreen name={"History"} options={{
+        headerTitle: 'Feedback History',
+      }} component={HistoryNavigation}/>
+
     </StackNavigator>
   );
 };

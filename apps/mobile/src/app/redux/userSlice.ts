@@ -18,7 +18,7 @@ const initialState: UserState = {
   username: '',
   googleIdToken: '',
   user: {
-    fullname: '',
+    fullname: 'Ngô Nguyên Bằng',
     phone: '',
     studentCode: '',
   }

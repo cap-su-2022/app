@@ -1,6 +1,5 @@
 import {EntityRepository, Repository} from "typeorm";
-import {EquipmentsHistory, UsersWarningFlagHistory} from "../models";
-import {UsersWarningFlag} from "../models/users-warning-flag.entity";
+import {UsersWarningFlagHistory} from "../models/users-warning-flag.hist.entity";
 
 @EntityRepository(UsersWarningFlagHistory)
 export class UsersWarningFlagHistoryRepository extends Repository<UsersWarningFlagHistory> {

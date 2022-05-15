@@ -1,11 +1,13 @@
-import {Body, Controller, Get, HttpStatus, Param, Post, Put, Request} from "@nestjs/common";
+import {Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Request, Res} from "@nestjs/common";
 import {KeycloakService} from "../services/keycloak.service";
 import {InjectRepository} from "@nestjs/typeorm";
-import { Repository } from 'typeorm';
+import {Repository} from 'typeorm';
 import {ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiSecurity} from "@nestjs/swagger";
 import {KEYCLOAK_PATH} from "../constants/controllers/keycloak/path.constant";
 import {AUTHORIZATION_LOWERCASE} from "../constants/network/headers.constant";
 import {AuthService} from "../services/auth.service";
+import {Response} from "express";
+import {KeycloakSigninSuccessResponse} from "../dto/keycloak-signin-success.response.dto";
 
 export class AuthenticationRequest {
   @ApiProperty({
@@ -14,6 +16,7 @@ export class AuthenticationRequest {
   username?: string;
   password?: string;
 }
+
 @ApiBearerAuth()
 @Controller(KEYCLOAK_PATH.requestPath)
 export class KeycloakController {
@@ -22,9 +25,7 @@ export class KeycloakController {
               private readonly authService: AuthService) {
   }
 
-  @ApiOperation({
-
-  })
+  @ApiOperation({})
   @ApiBody({
     required: true,
     description: "Contains the username and password value.",
@@ -33,18 +34,22 @@ export class KeycloakController {
   @ApiResponse({
     status: HttpStatus.OK,
   })
+  @HttpCode(HttpStatus.OK)
   @Post(KEYCLOAK_PATH.signIn)
   @ApiBody({
     schema: {
       type: 'object',
     }
   })
-  signIn(@Body() account: {username: string, password: string}) {
-    return this.service.signInToKeycloak(account.username, account.password);
+  async signIn(@Res({passthrough: true}) httpResponse: Response,
+               @Body() account: { username: string, password: string }): Promise<KeycloakSigninSuccessResponse> {
+    const resp = await this.service.signInToKeycloak(account.username, account.password);
+    httpResponse.cookie('accessToken', resp.access_token)
+    return resp;
   }
 
   @Post('signin/google')
-  signInWithGoogle(@Body() request: {token: string}) {
+  signInWithGoogle(@Body() request: { token: string }) {
     return this.authService.handleGoogleSigninWithIdToken(request.token);
   }
 

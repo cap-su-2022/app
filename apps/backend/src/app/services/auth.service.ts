@@ -1,9 +1,5 @@
 import {HttpException, HttpStatus, Injectable} from "@nestjs/common";
-import admin from '../config/firebase.config';
 import {OAuth2Client} from 'google-auth-library';
-import {InjectRepository} from "@nestjs/typeorm";
-import {Users} from "../models/users.entity";
-import {Repository} from "typeorm";
 import Exception from "../constants/exception.constant";
 import {ConfigService} from "@nestjs/config";
 import {UsersRepository} from "../repositories/users.repository";

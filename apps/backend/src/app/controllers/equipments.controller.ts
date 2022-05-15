@@ -1,9 +1,7 @@
 import {Controller, Get} from "@nestjs/common";
-import {UsersWarningFlagHistoryService} from "../services/users-warning-flag-hist.service";
-import {UsersWarningFlag} from "../models/users-warning-flag.entity";
 import {EquipmentsService} from "../services/equipments.service";
-import {Equipments} from "../models";
 import {ApiOperation} from "@nestjs/swagger";
+import {Equipments} from "../models/equipments.entity";
 
 @Controller('v1/equipments')
 export class EquipmentsController {

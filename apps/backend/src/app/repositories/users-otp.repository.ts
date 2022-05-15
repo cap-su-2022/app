@@ -1,5 +1,5 @@
 import {EntityRepository, Repository} from "typeorm";
-import {EquipmentsHistory, UsersOTP} from "../models";
+import {UsersOTP} from "../models/users-otp.entity";
 
 @EntityRepository(UsersOTP)
 export class UsersOTPRepository extends Repository<UsersOTP> {

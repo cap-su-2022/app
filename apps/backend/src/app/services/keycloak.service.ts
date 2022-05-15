@@ -1,24 +1,24 @@
-import {Injectable} from "@nestjs/common";
+import {HttpException, HttpStatus, Injectable, Logger} from "@nestjs/common";
 import {HttpService} from "@nestjs/axios";
-import {catchError, lastValueFrom, map, Observable} from "rxjs";
+import {lastValueFrom, map, Observable} from "rxjs";
 import {KEYCLOAK_CONFIG} from "../constants/config/keycloak.config";
 import {APPLICATION_X_WWW_FORM_URLENCODED} from "../constants/network/mediatype.constant";
 import {LazyModuleLoader} from "@nestjs/core";
+import {KeycloakSigninResponse} from "../dto/keycloak-signin.response";
+import {KeycloakSigninSuccessResponse} from "../dto/keycloak-signin-success.response.dto";
+import {KeycloakSigninFailureResponse} from "../dto/keycloak-signin-failure.response.dto";
+
+
 
 @Injectable()
 export class KeycloakService {
 
+  private static logger = new Logger(KeycloakService.name);
+
   static URI = `${KEYCLOAK_CONFIG.host}:${KEYCLOAK_CONFIG.port}/auth/realms/${KEYCLOAK_CONFIG.client.realm}/protocol/openid-connect`
 
-  private
-  constructor(private readonly lazyModuleLoader: LazyModuleLoader, private readonly httpService: HttpService) {
+  constructor(private readonly httpService: HttpService) {
 
-
-  }
-
-  async initLazilyModule() {
-    const {KeycloakModule} = await import('../modules/keycloak.module');
-    const moduleRef = this.lazyModuleLoader.load(() => KeycloakModule);
 
   }
 
@@ -40,7 +40,7 @@ export class KeycloakService {
     }).pipe(map(e => e.data));
   }
 
-  async signInToKeycloak(username: string, password: string) {
+  async signInToKeycloak(username: string, password: string): Promise<KeycloakSigninSuccessResponse> {
     try {
       const response = await lastValueFrom(this.httpService.post(`${KeycloakService.URI}/token`, new URLSearchParams({
         client_id: KEYCLOAK_CONFIG.client.id,
@@ -53,10 +53,10 @@ export class KeycloakService {
           "Content-Type": APPLICATION_X_WWW_FORM_URLENCODED
         },
       }));
-      return response.data;
+      return response.data as KeycloakSigninSuccessResponse;
     } catch (e) {
-      console.log(e);
-      return e.response.data;
+      KeycloakService.logger.error(e);
+      throw new HttpException(e.response.data['error_description'], HttpStatus.UNAUTHORIZED);
     }
   }
 

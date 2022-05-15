@@ -1,4 +1,14 @@
-import {Linking, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {
+  Image,
+  Linking,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from "react-native";
 import Book from "../icons/book.svg";
 import ChevronRight from "../icons/chevron-right.svg";
 import Blog from "../icons/blog.svg";
@@ -12,15 +22,61 @@ import Terminal from "../icons/terminal.svg";
 import Heart from "../icons/heart.svg";
 import React, {useRef, useState} from "react";
 import {styles} from "./styles/home.style";
+import {useSelector} from "react-redux";
+import {RootState} from "../redux/store";
+import Carousel, {Pagination} from "react-native-snap-carousel";
 
-const HomeScreen = () => {
+const items = [
+  {
+    title:"Item 1",
+    text: "Text 1",
+  },
+  {
+    title:"Item 2",
+    text: "Text 2",
+  },
+  {
+    title:"Item 3",
+    text: "Text 3",
+  },
+  {
+    title:"Item 4",
+    text: "Text 4",
+  },
+  {
+    title:"Item 5",
+    text: "Text 5",
+  },
+];
+
+const HomeScreen: React.FC = () => {
+
+  const user = useSelector((state: RootState) => state.user.user);
+
 
   const [whatsNextYCoord, setWhatsNextYCoord] = useState<number>(0);
   const scrollViewRef = useRef<null | ScrollView>(null);
 
+  const [sliderWidth, setSliderWidth] = useState<number>(600);
+  const [itemWidth, setItemWidth] = useState<number>(400);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+
+  const carousel = useRef<Carousel<any>>();
+
+  const carouselItems = ({item, index}) => {
+    return (
+      <View style={{
+        backgroundColor:'floralwhite',
+        borderRadius: 5,
+        height: 250,
+        marginLeft: 25,
+        marginRight: 25, }}>
+        <Image source={require('../../../../../assets/library/tv3.jpeg')}/>
+      </View>
+    );
+  }
+
   return (
-
-
     <SafeAreaView>
       <ScrollView
         ref={(ref) => {
@@ -30,32 +86,35 @@ const HomeScreen = () => {
         style={styles.scrollView}
       >
         <View style={styles.section}>
-          <Text style={styles.textLg}>Hello there,</Text>
-          <Text style={[styles.textXL, styles.appTitleText]} testID="heading">
-            Welcome back!
-          </Text>
+          <Text style={styles.textLg}>Hello {user.fullname}</Text>
         </View>
         <View style={styles.section}>
           <View style={styles.hero}>
-            <View style={styles.heroTitle}>
-              <TextInput style={styles.usernameInput} placeholder="Enter username"/>
-            </View>
-            <View style={styles.heroTitle2}>
-              <TextInput style={styles.usernameInput} placeholder="Enter password"/>
-            </View>
-            <TouchableOpacity
-              style={styles.whatsNextButton}
-              onPress={() => {
-                scrollViewRef.current?.scrollTo({
-                  x: 0,
-                  y: whatsNextYCoord,
-                });
+              <Carousel
+                layout="stack"
+                ref={carousel}
+                data={items}
+                renderItem={carouselItems}
+                sliderWidth={sliderWidth}
+                itemWidth={itemWidth}
+              />
+            <Pagination
+              dotsLength={items.length}
+              activeDotIndex={activeIndex}
+              containerStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
+              dotStyle={{
+                width: 10,
+                height: 10,
+                borderRadius: 5,
+                marginHorizontal: 8,
+                backgroundColor: 'rgba(255, 255, 255, 0.92)'
               }}
-            >
-              <Text style={[styles.textSm, styles.textCenter]}>
-                Login
-              </Text>
-            </TouchableOpacity>
+              inactiveDotStyle={{
+                // Define styles for inactive dots here
+              }}
+              inactiveDotOpacity={0.4}
+              inactiveDotScale={0.6}
+            />
           </View>
         </View>
         <View style={styles.section}>

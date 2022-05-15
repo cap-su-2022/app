@@ -1,7 +1,6 @@
 import {BadRequestException, Injectable} from "@nestjs/common";
 import {AddRoomRequest} from "@app/models";
-import {Repository, UpdateResult} from "typeorm";
-import {InjectRepository} from "@nestjs/typeorm";
+import {UpdateResult} from "typeorm";
 import {NoSuchElementFoundException} from "../exception/no-such-element-found.exception";
 import {UpdateRoomRequest} from "@app/models";
 import {Rooms} from '../models/rooms.entity';

@@ -1,6 +1,7 @@
 import styles from './index.module.scss';
 import {NavbarSimpleColored} from "../components/NavBar";
 import {HeaderSearch} from "../components/Header";
+import {GetServerSideProps} from "next";
 
 export function Index() {
   /*
@@ -423,6 +424,15 @@ export function Index() {
     </div>
     </>
   );
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return {
+    redirect: {
+      destination: '/login',
+      permanent: true,
+    }
+  }
 }
 
 export default Index;

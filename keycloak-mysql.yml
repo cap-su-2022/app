@@ -7,7 +7,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: 12345678x@X
       MYSQL_DATABASE: db
     ports:
       - "3306:3306"
@@ -31,7 +31,7 @@ services:
       - "6380:6379"
     volumes:
       - $PWD/redis-data:/var/lib/redis
-      - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+      - $PWD/redis.nginx.conf:/usr/local/etc/redis/redis.nginx.conf
     environment:
       - REDIS_REPLICATION_MODE=master
   phpmyadmin:
@@ -51,21 +51,33 @@ services:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:16.1.0
     command: -b 0.0.0.0
+    restart: on-failure
     environment:
-      PROXY_ADDRESS_FORWARDING: true
+      PROXY_ADDRESS_FORWARDING: "true"
       DB_VENDOR: MYSQL
       DB_ADDR: mysql-keycloak
       DB_DATABASE: keycloak
       DB_USER: keycloak
       DB_PASSWORD: password
       KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_PASSWORD: 12345678x@X
+      REDIRECT_SOCKET: "proxy-https"
       # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the MySQL JDBC driver documentation in order to use it.
       #JDBC_PARAMS: "connectTimeout=30000"
     ports:
       - "9090:8080"
     depends_on:
       - mysql-keycloak
+  nginx:
+    image: nginx
+    container_name: nginx
+    restart: on-failure
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - /usr/local/certs:/etc/nginx/certs
+    ports:
+      - "80:80"
+      - "443:443"
 
 volumes:
   data01:

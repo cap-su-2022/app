@@ -5,11 +5,25 @@ import * as Icon from "react-native-heroicons/solid";
 import {FPT_ORANGE_COLOR} from "../constants/fpt-color";
 import {useNavigation} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import {DocumentSearchIcon, LogoutIcon} from "react-native-heroicons/outline";
+import {LocalStorageKeys, useStorage} from "../utils/local-storage";
+import {BLACK} from "../constants/colors";
 
 
 const SettingsScreen = () => {
+
+  const [authenticatedUser, setAuthenticatedUser] = useStorage(LocalStorageKeys.authenticatedUser);
+
   const scrollViewRef = useRef<null | ScrollView>(null);
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
+
+  const handleLogout = () => {
+    setTimeout(() => {
+      setAuthenticatedUser(null);
+      navigate.replace('LOGIN_SCREEN');
+    }, 0);
+  }
+
   return (
     <SafeAreaView>
       <ScrollView
@@ -17,7 +31,6 @@ const SettingsScreen = () => {
           scrollViewRef.current = ref;
         }}
         contentInsetAdjustmentBehavior="automatic"
-        style={styles.scrollView}
       >
         <View style={[styles.header]}>
           <View style={[styles.headerTitle]}>
@@ -36,11 +49,29 @@ const SettingsScreen = () => {
             <Text style={[styles.userAvatarname]}>Ngô Nguyên Bằng</Text>
             <Text style={[styles.userEmail]}>bangnnse140937@fpt.edu.vn</Text>
           </View>
-
-
         </View>
-
-
+        <View style={styles.logoutContainer}>
+          <TouchableOpacity style={styles.logoutButton}
+                            onPress={() => navigate.navigate("History")}>
+            <View style={styles.logoutIconContainer}>
+              <DocumentSearchIcon color={BLACK}/>
+            </View>
+            <Text style={styles.logoutText}>
+              History
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.logoutContainer}>
+          <TouchableOpacity style={styles.logoutButton}
+                            onPress={() => handleLogout()}>
+            <View style={styles.logoutIconContainer}>
+              <LogoutIcon color={BLACK}/>
+            </View>
+            <Text style={styles.logoutText}>
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -49,14 +80,35 @@ const SettingsScreen = () => {
 export default SettingsScreen;
 
 export const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: '#ffffff',
+  logoutText: {
+    fontSize: 20
+  },
+  logoutIconContainer: {
+    backgroundColor: '#f2f2f2',
+    padding: 8,
+    borderRadius: 10,
+    marginRight: 15,
+  },
+  logoutContainer: {
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 10,
+    borderRadius: 5,
+    height: 60,
+    backgroundColor: '#fff'
+  },
+  logoutButton: {
+    margin: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   header: {
+    backgroundColor: '#fff',
     display: 'flex',
     marginLeft: 5,
     marginRight: 5,
-    height: 700
+    height: 160,
   },
   userInfoIcon: {
     color: '#000',

@@ -25,6 +25,9 @@
     "swr": "*",
     "formik": "*",
     "react-native-permissions": "*",
-    "react-native-qrcode-scanner": "*"
+    "react-native-qrcode-scanner": "*",
+    "react-native-snap-carousel": "*",
+    "react-native-mmkv-storage": "*",
+    "react-native-date-picker": "*"
   }
 }

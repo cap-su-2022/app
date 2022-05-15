@@ -1,6 +1,6 @@
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {ConfigModule, ConfigService} from "@nestjs/config";
-import {Environment} from "../constants/config/environment.constant";
+import {Environment} from "../../constants/config/environment.constant";
 
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],

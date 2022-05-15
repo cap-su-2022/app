@@ -1,13 +1,11 @@
 import {Injectable} from "@nestjs/common";
 import {BaseService} from "./base.service";
-import {InjectRepository} from "@nestjs/typeorm";
-import {UsersOTP} from "../models";
-import {Repository} from "typeorm";
+import {UsersOTPRepository} from "../repositories/users-otp.repository";
 
 @Injectable()
 export class UsersOTPService implements BaseService<any, any, any> {
 
-  constructor(@InjectRepository(UsersOTP) private readonly repository: Repository<UsersOTP>) {
+  constructor(private readonly repository: UsersOTPRepository) {
   }
 
   add(model: any): Promise<any> {

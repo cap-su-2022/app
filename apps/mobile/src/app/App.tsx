@@ -1,33 +1,33 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StatusBar,
 } from 'react-native';
 
 import {NavigationContainer} from "@react-navigation/native";
-import HomeScreen from "./screens/home.screen";
-import {HomeIcon, UserIcon} from "react-native-heroicons/solid";
-import QRScan from "./screens/qr-scan.screen";
-import {TabNavigator, TabScreen, StackNavigator, StackScreen} from '@app/utils';
-import UserNavigator from "./navigation/user.navigator";
-import QRScanButton from "./components/buttons/QRScanButton";
-import {HomeRoute, QRScanRoute, UserNavigatorRoute} from "./utils/screen.navigator.utils";
+import {StackNavigator, StackScreen} from '@app/utils';
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "./redux/store";
+import {AppDispatch, RootState} from "./redux/store";
 import LoginScreen from "./screens/login.screen";
 import MainNavigator from "./navigation/main.navigator";
+import {Spinner} from "./components/spinners/spinner";
+import {LocalStorageKeys, useStorage} from "./utils/local-storage";
+import {toggleSpinnerOff, toggleSpinnerOn} from "./redux/features";
 
 
 export const App = () => {
 
   const user = useSelector((state: RootState) => state.user);
-  const dispatch = useDispatch();
+  const isSpinnerLoading = useSelector((state: RootState) => state.spinner.isLoading);
+  const dispatch: AppDispatch = useDispatch();
+
+  const [initialRoute, setInitialRoute] = useState<string>("LOGIN_SCREEN");
 
 
   return (
     <>
       <StatusBar barStyle="dark-content"/>
       <NavigationContainer>
-        <StackNavigator initialRouteName={"LOGIN_SCREEN"} screenOptions={{
+        <StackNavigator initialRouteName={initialRoute} screenOptions={{
           headerShown: false
         }}>
           <StackScreen name={"LOGIN_SCREEN"} component={LoginScreen}/>
@@ -35,7 +35,7 @@ export const App = () => {
 
         </StackNavigator>
 
-
+        {isSpinnerLoading ? <Spinner/> : null}
       </NavigationContainer>
     </>
   );

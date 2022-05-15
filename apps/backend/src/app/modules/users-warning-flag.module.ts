@@ -1,7 +1,5 @@
 import {Module} from "@nestjs/common";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {UsersWarningFlag} from "../models/users-warning-flag.entity";
-import {UsersWarningFlagHistory} from "../models";
 import {UsersWarningFlagController} from "../controllers/users-warning-flag.controller";
 import {UsersWarningFlagHistoryController} from "../controllers/users-warning-flag-history.controller";
 import {UsersWarningFlagService} from "../services/users-warning-flag.service";
@@ -12,8 +10,8 @@ import {UsersWarningFlagHistoryRepository} from "../repositories/users-warning-f
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      UsersWarningFlag,
-      UsersWarningFlagHistory
+      UsersWarningFlagRepository,
+      UsersWarningFlagHistoryRepository
     ]),
   ],
   controllers: [

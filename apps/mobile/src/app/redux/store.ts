@@ -1,9 +1,13 @@
 import {configureStore} from "@reduxjs/toolkit";
 import userReducer from "./userSlice";
+import {spinnerReducer} from "./features/spinner";
+import {feedbackSearchFilterReducer} from "./features/feedback-search-filter";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    spinner: spinnerReducer,
+    feedbackSearchFilter: feedbackSearchFilterReducer,
   }
 });
 

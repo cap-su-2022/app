@@ -10,6 +10,14 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+  async rewrites() {
+  return [
+    {
+      source: '/api/:path*',
+      destination: 'http://localhost:5000/api/v1/:path*'
+    }
+  ]
+}
 };
 
 module.exports = withNx(nextConfig);

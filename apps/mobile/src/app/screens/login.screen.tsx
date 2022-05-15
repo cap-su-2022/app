@@ -1,7 +1,6 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
-  Modal,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -16,42 +15,71 @@ import Asterik from "../components/text/asterik";
 import Divider from "../components/text/divider";
 import GoogleIcon from '../components/google-icon.svg';
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../redux/store";
+import {AppDispatch, RootState} from "../redux/store";
 import {persistGoogleIdToken} from "../redux/userSlice";
 import {useNavigation} from "@react-navigation/native";
 import {HomeRoute} from "../utils/screen.navigator.utils";
-import {Spinner} from "../components/spinners/spinner";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {handleGoogleSignin} from "../services/google.service";
 import CheckAlive from "../components/check-alive.component";
 import {Formik} from 'formik';
 import LoginErrorModal from "../components/modals/login-error.component";
+import {toggleSpinnerOff, toggleSpinnerOn} from "../redux/features/spinner";
+import {LocalStorageKeys, useStorage} from "../utils/local-storage";
+import {API_URL} from "../constants/constant";
 
 const LoginScreen = () => {
 
-    const user = useSelector((state: RootState) => state.user);
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigation<NativeStackNavigationProp<any>>();
 
-    const [isLoginLoading, setLoginLoading] = React.useState<boolean>(false);
     const [isError, setError] = React.useState<boolean>(false);
     const [isLoginFailure, setLoginFailure] = React.useState<boolean>(false);
+    const [loginErrMsg, setLoginErrMsg] = useState<string>();
+
+    const [authenticatedUser, setAuthenticatedUser] = useStorage(LocalStorageKeys.authenticatedUser);
 
     useEffect(() => {
-      return () => {
-        setLoginLoading(false);
+      console.log(authenticatedUser);
+      if (authenticatedUser !== undefined && authenticatedUser !== null) {
+        dispatch(toggleSpinnerOn());
+        validateUserAccessToken();
       }
-    });
+    }, [authenticatedUser]);
+
+    const validateUserAccessToken = async () => {
+      try {
+        const response = await fetch(`${API_URL}/health/auth"}`, {
+          method: 'GET',
+          headers: {
+            "Authorization": `Bearer ${authenticatedUser.accessToken}`,
+          }
+        });
+        if (response.status !== 200) {
+          setAuthenticatedUser(null);
+        } else {
+          setTimeout(() => {
+            dispatch(toggleSpinnerOff());
+            navigate.navigate("MAIN");
+          }, 0);
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        dispatch(toggleSpinnerOff());
+
+      }
+    }
 
     const handleLoginWithGoogle = async () => {
-      setLoginLoading(true);
+      dispatch(toggleSpinnerOn());
       const response = await handleGoogleSignin();
       const idToken = await response.user.getIdToken();
       if (idToken) {
         dispatch(persistGoogleIdToken(idToken));
-        setLoginLoading(false);
         setTimeout(() => {
-          navigate.navigate(HomeRoute.Home);
+          dispatch(toggleSpinnerOff());
+          navigate.navigate("MAIN");
         }, 0);
       }
     };
@@ -62,8 +90,13 @@ const LoginScreen = () => {
     }
 
     const handleSubmit = async (values) => {
-      setLoginLoading(true);
-      const response = await fetch("http://192.168.15.247:5000/api/v1/auth/signin", {
+      if (values.password.trim().length < 1 || values.username.trim().length < 1) {
+        setLoginErrMsg('Username or password cannot be blank!');
+        setLoginFailure(true);
+        return;
+      }
+      dispatch(toggleSpinnerOn());
+      const response = await fetch(`${API_URL}/auth/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -72,24 +105,33 @@ const LoginScreen = () => {
           "username": values.username,
           "password": values.password,
         }),
-      });
+      }).finally(() => dispatch(toggleSpinnerOff()));
 
       const data = await response.json();
 
-      if (data?.error_description) {
-        setTimeout(() => {
-          setLoginLoading(false);
-          setLoginFailure(true);
-        }, 0)
-      } else {
+      console.log(response.status);
+      if (response.status !== 200) {
+        setLoginErrMsg(data.message);
 
-        setLoginLoading(false);
         setTimeout(() => {
+          dispatch(toggleSpinnerOff());
+          setLoginFailure(true);
+        }, 0);
+        return;
+      } else {
+        setAuthenticatedUser({
+          ...authenticatedUser,
+          accessToken: data['access_token']
+        })
+        setTimeout(() => {
+          dispatch(toggleSpinnerOff());
+
           navigate.navigate("MAIN");
         }, 0);
       }
 
-    };
+
+    }
 
 
     return (
@@ -153,11 +195,11 @@ const LoginScreen = () => {
         </View>
         {isLoginFailure ? <LoginErrorModal
           isFailure={isLoginFailure}
-          title={"Invalid username or password."}
+          title={loginErrMsg}
           description={"Please try again later"}
           handleCancelModal={setLoginFailure}/> : null}
         {isError ? <CheckAlive/> : null}
-        {isLoginLoading ? <Spinner/> : null}
+
       </SafeAreaView>
     );
   }

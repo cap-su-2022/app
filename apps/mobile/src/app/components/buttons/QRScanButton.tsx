@@ -5,7 +5,7 @@ import React from "react";
 const QRScanButton = () => {
   return (
     <View style={[styles.container]}>
-      <QrcodeIcon color="black" size={50}/>
+      <QrcodeIcon color="#fff" size={50}/>
     </View>
 
   );
@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
     width: 65,
     height: 65,
     borderColor: 'rgba(209, 209, 209, 1)',
-    borderWidth: 1,
   }
 });
 

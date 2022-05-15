@@ -4,14 +4,15 @@ import {KeycloakController} from "../controllers/keycloak.controller";
 import {HttpModule} from "@nestjs/axios";
 import {AuthService} from "../services/auth.service";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {Rooms} from "../models/rooms.entity";
-import {Users} from "../models/users.entity";
-import {Roles} from "../models/roles.entity";
 import {ConfigService} from "@nestjs/config";
 import {UsersRepository} from "../repositories/users.repository";
+import {RolesRepository} from "../repositories/roles.repository";
 
 @Module({
-  imports: [HttpModule, TypeOrmModule.forFeature([Users, Roles]),
+  imports: [HttpModule, TypeOrmModule.forFeature([
+    UsersRepository,
+    RolesRepository
+  ]),
   ],
   controllers: [KeycloakController],
   providers: [KeycloakService, AuthService, ConfigService,

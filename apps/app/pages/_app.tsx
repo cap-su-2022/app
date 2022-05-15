@@ -1,8 +1,9 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import './styles.css';
-import {Button, MantineProvider} from '@mantine/core';
-import Link from 'next/link';
+import {Button, ColorSchemeProvider, MantineProvider} from '@mantine/core';
+import {wrapper} from "../redux/store";
+import Spinner from "../components/spinner";
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
@@ -21,11 +22,13 @@ function CustomApp({ Component, pageProps }: AppProps) {
             colorScheme: 'light',
           }}
         >
-          <Component {...pageProps} />
+
+              <Spinner/>
+              <Component {...pageProps} />
         </MantineProvider>
       </main>
     </>
   );
 }
 
-export default CustomApp;
+export default wrapper.withRedux(CustomApp);

@@ -19,7 +19,9 @@
       "executor": "@nrwl/next:server",
       "options": {
         "buildTarget": "app:build",
-        "dev": true
+        "port": 4200,
+        "dev": true,
+        "hostname": "localhost"
       },
       "configurations": {
         "production": {

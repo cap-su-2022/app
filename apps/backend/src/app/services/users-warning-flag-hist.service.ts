@@ -1,14 +1,11 @@
 import {Injectable} from "@nestjs/common";
 import {BaseService} from "./base.service";
-import {InjectRepository} from "@nestjs/typeorm";
-import {UsersWarningFlag} from "../models/users-warning-flag.entity";
-import {Repository} from "typeorm";
-import {UsersWarningFlagHistory} from "../models";
+import {UsersWarningFlagHistoryRepository} from "../repositories/users-warning-flag-history";
 
 @Injectable()
 export class UsersWarningFlagHistoryService implements BaseService<any, any, any> {
 
-  constructor(@InjectRepository(UsersWarningFlagHistory) private readonly repository: Repository<UsersWarningFlagHistory>) {
+  constructor(private readonly repository: UsersWarningFlagHistoryRepository) {
 
   }
 

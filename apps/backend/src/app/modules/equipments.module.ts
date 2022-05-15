@@ -6,11 +6,10 @@ import {EquipmentsHistoryService} from "../services/equipments-history.service";
 import {EquipmentsRepository} from "../repositories/equipments.repository";
 import {EquipmentsHistoryRepository} from "../repositories/equipments-history.repository";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {Equipments, EquipmentsHistory} from "../models";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Equipments, EquipmentsHistory]),
+    TypeOrmModule.forFeature([EquipmentsRepository, EquipmentsHistoryRepository]),
   ],
   controllers: [
     EquipmentsController,

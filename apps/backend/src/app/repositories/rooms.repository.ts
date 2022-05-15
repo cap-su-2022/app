@@ -1,8 +1,6 @@
-import {Logger} from "@nestjs/common";
 import {EntityRepository, Like, Repository} from "typeorm";
-import {Rooms} from "../models";
 import {RepositoryPaginationPayload} from "../models/search-pagination.payload";
-
+import {Rooms} from "../models/rooms.entity";
 
 
 @EntityRepository(Rooms)
@@ -14,10 +12,10 @@ export class RoomsRepository extends Repository<Rooms>{
   }
 
 
-  searchRoom(payload: RepositoryPaginationPayload): Promise<Rooms> {
+  searchRoom(payload: RepositoryPaginationPayload): Promise<Rooms[]> {
     return this.find({
       order: {
-        id: payload.direction,
+        id: payload.direction === 'ASC' ? 1 : -1,
       },
       where: [
         {
@@ -27,7 +25,7 @@ export class RoomsRepository extends Repository<Rooms>{
           description: Like(`%${payload.search}%`),
         }
       ],
-      skip: payload.offset,
+        skip: payload.offset,
       take: payload.limit
     });
   }
