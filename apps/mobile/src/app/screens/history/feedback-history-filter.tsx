@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {
-  DatePickerIOS,
+  DatePickerIOS, Platform,
   SafeAreaView,
-  ScrollView,
+  ScrollView, StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -44,6 +44,8 @@ const convertDateStringToMillis = (date: string) => {
   return new Date(Number(parsedDateArr[2]), Number(parsedDateArr[0]) - 1, Number(parsedDateArr[1]))
     .getMilliseconds();
 }
+
+const textDateResponsive = Platform.OS === 'android' ? {fontSize: 16} : {fontSize: 20};
 
 const FeedbackHistoryFilter: React.FC = () => {
 
@@ -164,35 +166,7 @@ const FeedbackHistoryFilter: React.FC = () => {
       justifyContent: 'space-between',
       flexGrow: 1
     }}>
-      <View style={{
-        height: 50,
-        backgroundColor: WHITE,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row'
-      }}>
-        <Text style={{
-          fontSize: 20,
-          fontWeight: '600'
-        }}>
-          Feedback History Filter
-        </Text>
-
-      </View>
-      <TouchableOpacity
-        onPress={() => navigate.pop()} style={{
-         position: 'absolute',
-        top: 60,
-        display: 'flex',
-        alignItems: 'center',
-        flexDirection: 'row',
-        marginLeft: 10,
-      }}>
-        <XIcon style={{
-          display: 'flex',
-        }} color='#808080'/>
-      </TouchableOpacity>
+      <StatusBar hidden={true}/>
       <ScrollView
         ref={(ref) => {
           scrollViewRef.current = ref;
@@ -216,7 +190,7 @@ const FeedbackHistoryFilter: React.FC = () => {
           <View style={styles.dateSelectionContainer}>
             <TouchableOpacity style={[styles.dateInputBoxContainer]}
                               onPress={() => setStartDatePickerShown(true)}>
-              <Text style={{fontSize: 20}}>{convertDateToNormalizedDateString(startDate)}</Text>
+              <Text style={textDateResponsive}>{convertDateToNormalizedDateString(startDate)}</Text>
             </TouchableOpacity>
             <DatePicker
               modal
@@ -229,7 +203,7 @@ const FeedbackHistoryFilter: React.FC = () => {
             <SwitchHorizontalIcon color='#808080' style={{marginTop: 15}}/>
             <TouchableOpacity style={[styles.dateInputBoxContainer]}
                               onPress={() => setEndDatePickerShown(true)}>
-              <Text style={{fontSize: 20}}>{convertDateToNormalizedDateString(endDate)}</Text>
+              <Text style={textDateResponsive}>{convertDateToNormalizedDateString(endDate)}</Text>
             </TouchableOpacity>
             <DatePicker
               modal

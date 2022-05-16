@@ -28,6 +28,8 @@
     "react-native-qrcode-scanner": "*",
     "react-native-snap-carousel": "*",
     "react-native-mmkv-storage": "*",
-    "react-native-date-picker": "*"
+    "react-native-date-picker": "*",
+    "@react-native-picker/picker": "*",
+    "react-native-calendars": "*"
   }
 }

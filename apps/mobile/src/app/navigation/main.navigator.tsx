@@ -7,14 +7,19 @@ import {HomeIcon, UserIcon} from "react-native-heroicons/solid";
 import QRScan from "../screens/qr-scan.screen";
 import QRScanButton from "../components/buttons/QRScanButton";
 import UserNavigator from "./user.navigator";
+import {Platform} from "react-native";
+import HomeNavigator from "./home.navigator";
 
 const MainNavigator = () => {
     return (
       <TabNavigator initialRouteName={HomeRoute.Home}
                     screenOptions={{
+                      tabBarStyle: {
+                        height: Platform.OS === "android" ? 80 : 70
+                      },
                       headerShown: false
                     }}>
-        <TabScreen name={HomeRoute.Home} component={HomeScreen} options={{
+        <TabScreen name={HomeRoute.Home} component={HomeNavigator} options={{
           tabBarIcon: () => <HomeIcon color="black" size={30}/>,
           tabBarLabel: () => null,
         }}/>

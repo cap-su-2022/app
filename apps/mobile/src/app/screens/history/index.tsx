@@ -53,7 +53,8 @@ const HistoryScreen: React.FC = (props) => {
           </View>
           <Text style={{
             marginLeft: 10,
-            fontSize: 20
+            fontSize: 20,
+            color: BLACK,
           }}>Booking Request History</Text>
         </View>
         <Divider num={50}/>
@@ -73,7 +74,8 @@ const HistoryScreen: React.FC = (props) => {
           </View>
           <Text style={{
             marginLeft: 10,
-            fontSize: 20
+            fontSize: 20,
+            color: BLACK
           }}>Feedback History</Text>
         </TouchableOpacity>
       </View>

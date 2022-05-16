@@ -18,7 +18,6 @@
     "run-ios": {
       "executor": "@nrwl/react-native:run-ios",
       "options": {
-        "device": "bangmaple iPhone"
       }
 
     },

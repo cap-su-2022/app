@@ -10,10 +10,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../redux/store";
 import {FormikProps} from "formik";
 import HistoryNavigation from "./history/history.navigation";
-import FeedbackHistoryNavigation from "./history/feedback/feedback.navigation";
-import {FilterIcon} from "react-native-heroicons/outline";
-import {BLACK} from "../constants/colors";
-import {FPT_ORANGE_COLOR} from "@app/constants";
 
 const UserNavigator = () => {
 

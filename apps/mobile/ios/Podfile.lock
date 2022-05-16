@@ -425,6 +425,8 @@ PODS:
     - React-perflogger (= 0.67.4)
   - RNCAsyncStorage (1.16.3):
     - React-Core
+  - RNCPicker (2.4.1):
+    - React-Core
   - RNFBApp (14.7.0):
     - Firebase/CoreOnly (= 8.14.0)
     - React-Core
@@ -510,6 +512,7 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../../../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../../../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../../../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCPicker (from `../../../node_modules/@react-native-picker/picker`)"
   - "RNFBApp (from `../../../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../../../node_modules/@react-native-firebase/auth`)"
   - "RNGoogleSignin (from `../../../node_modules/@react-native-google-signin/google-signin`)"
@@ -628,6 +631,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../../../node_modules/@react-native-async-storage/async-storage"
+  RNCPicker:
+    :path: "../../../node_modules/@react-native-picker/picker"
   RNFBApp:
     :path: "../../../node_modules/@react-native-firebase/app"
   RNFBAuth:
@@ -710,6 +715,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: a9d3c82ddf7ffdad9fbe6a81c6d6f8c06385464d
   ReactCommon: 07d0c460b9ba9af3eaf1b8f5abe7daaad28c9c4e
   RNCAsyncStorage: a9954b3d9fcc16112e984c559c96d27b9e9251a8
+  RNCPicker: abc646b53a3d28ccfa3232c927a0ca52e0cf024d
   RNFBApp: 097a31d372b3db15b41c7a1a5c429433b0609e12
   RNFBAuth: 85b7ad91e3783dfde011702b2b747b1fd7be7234
   RNGoogleSignin: 7580e6618798be9d090524bb31538378f92ce746

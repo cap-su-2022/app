@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity} from "react-native";
+import {StyleSheet, Text, TouchableOpacity} from "react-native";
 import {useDispatch} from "react-redux";
 import {StackNavigator, StackScreen} from '@app/utils';
 import HistoryScreen from "../../screens/history";
@@ -24,18 +24,24 @@ const HistoryNavigation: React.FC = () => {
         <ChevronLeftIcon color={BLACK} onPress={() => navigate.pop()}/>
       </TouchableOpacity>,
     }}>
-      <StackScreen name={"HistoryBrowse"} component={HistoryScreen}/>
-      <StackScreen name={"FeedbackHistory"} options={{
-        headerTitle: 'Feedback History',
-
-      }} component={FeedbackHistoryNavigation}/>
+      <StackScreen options={{
+        headerShown: true,
+        headerTitleAlign: 'center',
+        headerBackVisible: false,
+        headerTitle: () => <Text style={styles.headerTitle}>History</Text>
+      }} name={"HistoryBrowse"} component={HistoryScreen}/>
+      <StackScreen name={"FeedbackHistory"} component={FeedbackHistoryNavigation}/>
 
     </StackNavigator>
   );
 }
 
 export const styles = StyleSheet.create({
-
+  headerTitle: {
+    fontSize: 20,
+    color: BLACK,
+    fontWeight: '600'
+  }
 });
 
 export default HistoryNavigation;

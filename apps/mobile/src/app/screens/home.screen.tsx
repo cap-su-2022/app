@@ -1,6 +1,6 @@
 import {
   Image,
-  Linking,
+  Linking, Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -22,9 +22,20 @@ import Terminal from "../icons/terminal.svg";
 import Heart from "../icons/heart.svg";
 import React, {useRef, useState} from "react";
 import {styles} from "./styles/home.style";
-import {useSelector} from "react-redux";
-import {RootState} from "../redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../redux/store";
 import Carousel, {Pagination} from "react-native-snap-carousel";
+import {RED, WHITE, YELLOW} from "../constants/colors";
+import {
+  ClipboardCheckIcon,
+  ClipboardCopyIcon,
+  ExclamationCircleIcon,
+  ExclamationIcon
+} from "react-native-heroicons/outline";
+import {FPT_ORANGE_COLOR} from "@app/constants";
+import {deviceWidth} from "../utils/device";
+import {useNavigation} from "@react-navigation/native";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
 const items = [
   {
@@ -53,6 +64,9 @@ const HomeScreen: React.FC = () => {
 
   const user = useSelector((state: RootState) => state.user.user);
 
+  const dispatch: AppDispatch = useDispatch();
+
+  const navigate = useNavigation<NativeStackNavigationProp<any>>();
 
   const [whatsNextYCoord, setWhatsNextYCoord] = useState<number>(0);
   const scrollViewRef = useRef<null | ScrollView>(null);
@@ -83,7 +97,6 @@ const HomeScreen: React.FC = () => {
           scrollViewRef.current = ref;
         }}
         contentInsetAdjustmentBehavior="automatic"
-        style={styles.scrollView}
       >
         <View style={styles.section}>
           <Text style={styles.textLg}>Hello {user.fullname}</Text>
@@ -115,6 +128,65 @@ const HomeScreen: React.FC = () => {
               inactiveDotOpacity={0.4}
               inactiveDotScale={0.6}
             />
+          </View>
+          <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+          }}>
+            <TouchableOpacity style={{
+              height: 100,
+              width: deviceWidth / 2 - 25,
+              backgroundColor: FPT_ORANGE_COLOR,
+              margin: 5,
+              borderRadius: 8,
+            }} onPress={() => {
+              navigate.navigate("ROOM_BOOKING")
+            }}>
+              <View style={{
+                margin: 10,
+              }}>
+                <ClipboardCopyIcon size={30} color={WHITE}/>
+                <Text style={{
+                  marginTop: 10,
+                  fontSize: Platform.OS === 'android' ? 16 : 20,
+                  fontWeight: '600',
+                  color: WHITE,
+                }}>Request for room booking </Text>
+              </View>
+            </TouchableOpacity>
+            <View style={{
+              height: 100,
+              width: deviceWidth / 2 - 25,
+              backgroundColor: FPT_ORANGE_COLOR,
+              margin: 5,
+              borderRadius: 8,
+
+            }}>
+              <View style={{
+                margin: 10,
+              }}>
+                <ClipboardCheckIcon size={30} color={WHITE}/>
+                <Text style={{
+                  marginTop: 10,
+                  fontSize: Platform.OS === 'android' ? 16 : 20,
+                  fontWeight: '600',
+                  color: WHITE,
+                }}>Check-out booking room</Text>
+              </View>
+            </View>
+            {false ? <View style={{
+              display: 'flex',
+              position: 'absolute',
+              top: -10,
+              left: -10,
+              backgroundColor: YELLOW,
+              borderRadius: 50,
+              padding: 4,
+              borderWidth: 2,
+              borderColor: WHITE,
+            }}>
+              <ExclamationIcon color={WHITE}/>
+            </View> : null}
           </View>
         </View>
         <View style={styles.section}>
