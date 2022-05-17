@@ -2,4 +2,4 @@ import {Platform} from "react-native";
 
 export const API_URL = `http://${Platform.OS === 'android'
   ? '10.0.2.2'
-  : '192.168.100.74'}:5000/api/v1`;
+  : '172.16.3.230'}:5000/api/v1`;

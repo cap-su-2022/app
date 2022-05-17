@@ -96,6 +96,7 @@ export class KeycloakService {
         }
       }
     ).pipe(map(e => e.data))).catch((e) => {
+      console.log(e.response.data);
       return e.response.data;
     });
   }

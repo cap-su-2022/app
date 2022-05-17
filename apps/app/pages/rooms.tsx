@@ -1,24 +1,30 @@
-import {AppProps} from "next/app";
 import {GetServerSideProps} from "next";
 import AdminLayout from "../components/AdminLayout";
 import {
   Button,
-  createStyles, Modal,
+  createStyles, Input, InputWrapper, Modal,
   Pagination,
   ScrollArea, Select, Skeleton,
-  Table,
-  TextInput,
+  Table, Text,
+  TextInput, useMantineTheme,
 } from "@mantine/core";
-import {InfoCircle, Plus, Search, Wand} from "tabler-icons-react";
+import {Archive, At, ClipboardText, InfoCircle, Plus, Search, Wand, X} from "tabler-icons-react";
 import React, {useEffect, useState} from "react";
-import axios, {AxiosResponse} from "axios";
-import {useAppDispatch} from "../redux/hooks";
+import axios, {AxiosError, AxiosResponse} from "axios";
+import {useAppDispatch, useAppSelector} from "../redux/hooks";
 import {toggleSpinnerOff, toggleSpinnerOn} from "../redux/features/spinner";
 import Th from "../components/table/th.table.component";
 import {RowData} from "../models/table/row-data.model";
 import {ItemsPerPageData} from "../models/table/items-per-page.model";
 import {RoomsResponsePayload} from "../models/rooms-response-payload.model";
 import AddRoomModal from "../components/rooms/add-room-modal.component";
+import {AppDispatch} from "../redux/store";
+import {useRouter} from "next/router";
+import {FPT_ORANGE_COLOR} from "@app/constants";
+import Image from 'next/image';
+import {useDebouncedValue} from "@mantine/hooks";
+import RoomInfoModal from "../components/rooms/room-info-modal.component";
+import {getRoomById} from "../redux/features/room/thunk/get-room-by-id";
 
 interface RoomsRowData extends RowData {
   stt: number;
@@ -49,10 +55,22 @@ const initialState  = {
   isAddModalShown: false,
 };
 
+interface RoomsResponseModel {
+  id: string;
+  name: string;
+  description: string;
+  updatedAt: string;
+  createdAt: string;
+  isDeleted: string;
+  isDisabled: string
+}
+
+
 function RoomsManagement(props: any) {
   const {classes} = useStyles();
 
-  const dispatch = useAppDispatch();
+  const dispatch: AppDispatch = useAppDispatch();
+  const router = useRouter();
 
   const [data, setData] = useState<TableSortProps>(initialState.data);
 
@@ -62,32 +80,31 @@ function RoomsManagement(props: any) {
   const [direction, setDirection] = useState<string>(initialState.direction);
   const [isAddModalShown, setAddModalShown] = useState<boolean>(initialState.isAddModalShown);
 
+  const [isInfoModalShown, setInfoModalShown] = useState<boolean>(false);
+  const [isDisableModalShown, setDisableModalShown] = useState<boolean>(false);
+
+  const [roomData, setRoomData] = useState<RoomsResponseModel>();
+
+  const [debouncedSearchValue] = useDebouncedValue(search, 400);
+
+  const isSpinnerLoading = useAppSelector((state) => state.spinner.isEnabled);
 
   const [sortBy, setSortBy] = useState<keyof RoomsRowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
-  const [searchData, setSearchData] = useState({
-    search: search,
-    page: activePage,
-    size: itemPerPage,
-    sort: direction
-  });
-
 
   useEffect(() => {
-    initData();
-  }, []);
-
-  const handleReFetchDataTable = (e) => {
-    setPage(e);
-    initData();
-  }
-
-
-  const initData = async () => {
     dispatch(toggleSpinnerOn());
-    axios.post(`api/rooms`, searchData)
-    .then((resp: AxiosResponse<RoomsResponsePayload>) => resp.data)
+    axios.post(`api/rooms`, {
+      search: search,
+      page: activePage,
+      size: itemPerPage,
+      sort: direction
+    })
+      .then((resp: AxiosResponse<RoomsResponsePayload>) => {
+
+        return resp.data;
+      })
       .then((payload) => {
         return {
           ...payload,
@@ -99,11 +116,23 @@ function RoomsManagement(props: any) {
           }),
         };
       })
-    .then((data) => setData(data))
+      .then((data) => setData(data))
       .finally(() => {
-      dispatch(toggleSpinnerOff());
-    })
+        dispatch(toggleSpinnerOff());
+      }).catch((err: AxiosError) => {
+      console.log(err.response);
+      router.replace('/');
 
+    })
+  }, [debouncedSearchValue, itemPerPage, activePage]);
+
+  const handleReFetchDataTable = (e) => {
+    setPage(e);
+  }
+
+
+  const handleShowInfoModal = async (id: string) => {
+    dispatch(getRoomById(id));
   }
 
 
@@ -114,10 +143,13 @@ function RoomsManagement(props: any) {
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const {value} = event.currentTarget;
-    setSearch(value);
+    if (!isSpinnerLoading) {
+      const {value} = event.currentTarget;
+      setSearch(value);
+    }
 
   };
+
   const handleRenderRows = () => {
     console.log(data);
     return data.data?.map((row) => (
@@ -141,7 +173,11 @@ function RoomsManagement(props: any) {
           }}>
             <Button style={{
               marginRight: 5
-            }} leftIcon={<InfoCircle size={20}/>} variant="outline" color="orange" compact>
+            }} leftIcon={<InfoCircle size={20}/>}
+                    onClick={() => handleShowInfoModal(row.id)}
+                    variant="outline"
+                    color="orange"
+                    compact>
               Info
             </Button>
             <Button leftIcon={<Wand size={20}/>} variant="outline" color="blue" compact>
@@ -156,12 +192,12 @@ function RoomsManagement(props: any) {
   const handleItemPerPageChange = async (e ) => {
     const perPage = Number(e);
     setItemPerPage(perPage);
-    await initData();
   }
 
   const TableHeader: React.FC = () => {
     return (<div className={classes.tableSearchHeader}>
       <TextInput
+        autoFocus={true}
         style={{
           marginTop: 14,
           marginRight: 10,
@@ -193,13 +229,13 @@ function RoomsManagement(props: any) {
 
   return (
     <AdminLayout>
+      <TableHeader/>
 
-      {data ? <ScrollArea>
-        <TableHeader/>
+      {data.data.length > 0 ? <ScrollArea>
         <Table
           horizontalSpacing="md"
           verticalSpacing="xs"
-          sx={{tableLayout: 'fixed', minWidth: 1000}}
+          sx={{tableLayout: 'auto', minWidth: 1000}}
         >
           <thead>
           <tr>
@@ -249,15 +285,27 @@ function RoomsManagement(props: any) {
                       withEdges
                       color="orange"/>
         </div>
-      </ScrollArea> : <>
-        <Skeleton height={8} mt={6} radius="xl" />
-        <Skeleton height={8} mt={6} radius="xl" />
-        <Skeleton height={8} mt={6} radius="xl" />
-        <Skeleton height={8} mt={6} radius="xl" />
-        <Skeleton height={8} mt={6} radius="xl" />
-
-      </>}
+      </ScrollArea>
+        : <div style={{
+          margin: 20,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <Image src="/undraw/no-data.svg" layout="fixed" height={400} width={400}/>
+          <Text style={{
+            fontWeight: '600',
+            fontSize: 30,
+            marginTop: 20,
+            textAlign: 'center',
+          }}>
+            No data found!<br/>
+            Please come back later!
+          </Text>
+      </div>}
       <AddRoomModal isShown={isAddModalShown} handleShown={setAddModalShown}/>
+       <RoomInfoModal/>
     </AdminLayout>
   );
 

@@ -21,7 +21,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const isValidated = await validateToken(req.cookies['access_token']);
+  const isValidated = await validateToken(req.cookies['accessToken']);
   if (isValidated) {
     return NextResponse.next();
   } else {
