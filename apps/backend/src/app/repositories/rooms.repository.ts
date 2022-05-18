@@ -29,4 +29,10 @@ export class RoomsRepository extends Repository<Rooms>{
       take: payload.limit
     });
   }
+
+  async disableById(id: string) {
+    return this.manager.transaction((em) => {
+      return em.query(`UPDATE rooms r SET r.is_disabled = 1 WHERE r.id = CAST(? as CHAR)`, [id]);
+    });
+  }
 }

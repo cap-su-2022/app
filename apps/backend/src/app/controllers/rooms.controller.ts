@@ -48,6 +48,11 @@ export class RoomsController {
     return this.service.updateById(id, body);
   }
 
+  @Put('disable/:id')
+  disableRoomById(@Param() id: string) {
+    return this.service.disableById(id);
+  }
+
   @Delete(":id")
   deleteRoomById(@Param() id: string) {
     return this.service.deleteById(id);

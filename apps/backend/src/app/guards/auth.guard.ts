@@ -12,11 +12,10 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
-    AuthGuard.LOGGER.log(request.url);
-    AuthGuard.LOGGER.debug(request.body);
     let accessToken;
     if (request.url.endsWith('health/auth')) {
-      accessToken = request.headers['authorization'];
+      accessToken = request.headers['authorization'] ?? `Bearer ${request.headers['cookie'].split(';')
+        .map(k => k.trim()).find(k => k.startsWith('accessToken=')).split("=")[1]}`;
     } else {
       accessToken = `Bearer ${request.headers['cookie'].split(';')
         .map(k => k.trim()).find(k => k.startsWith('accessToken=')).split("=")[1]}`;

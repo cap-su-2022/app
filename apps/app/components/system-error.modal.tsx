@@ -5,32 +5,39 @@ import {resetLoginFailedStatus} from "../redux/features/user/auth.slice";
 import {useAppDispatch, useAppSelector} from "../redux/hooks";
 import {FPT_ORANGE_COLOR} from "../constants/color";
 
+interface SystemErrorModal {
+  opened: boolean;
+  handleClose(): void;
+}
 
-const LoginFailedModal: React.FC<any> = (props) => {
+const SystemErrorModal: React.FC<SystemErrorModal> = (props ) => {
 
   const {classes} = useStyles();
 
   const dispatch = useAppDispatch();
-  const isLoginFailed = useAppSelector((state) => state.auth.isLoginFailed);
-  const loginErrorMsg = useAppSelector((state) => state.auth.error);
+  const errorMessage = useAppSelector((state) => state.system.errorMessage);
 
   return (
     <Modal centered withCloseButton={false}
-           opened={isLoginFailed}
+           opened={props.opened}
+           closeOnClickOutside={false}
+           closeOnEscape={false}
+           closeButtonLabel={null}
+           trapFocus={true}
+           zIndex={9999999999999}
+
            onClose={() => dispatch(resetLoginFailedStatus())}>
       <div className={classes.container}>
 
         <AlertCircle size={50} color="red"/>
       </div>
-      <Text size='xl' weight={600} align='center' color=''>
-        Unauthorized
-      </Text>
+
       <Text size='xl' weight={500} align='center' color=''>
-        {loginErrorMsg}
+        {errorMessage}
       </Text>
 
       <Button type="submit"
-              onClick={() => dispatch(resetLoginFailedStatus())}
+              onClick={() => props.handleClose()}
               className={classes.button}
               fullWidth mt="xl" size="md">
         Close
@@ -55,4 +62,4 @@ const useStyles = createStyles({
   },
 });
 
-export default LoginFailedModal;
+export default SystemErrorModal;

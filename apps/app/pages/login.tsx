@@ -16,7 +16,7 @@ import {toggleSpinnerOff, toggleSpinnerOn} from "../redux/features/spinner";
 import {useRouter} from "next/router";
 import {GetServerSideProps} from "next";
 import Divider from "../components/divider";
-import {doLogin} from "../redux/features/user/auth.thunk";
+import {doLogin} from "../redux/features/user/login.thunk";
 import LoginFailedModal from "../components/login-fail.modal";
 
 const SigninSchema = Yup.object().shape({
@@ -30,28 +30,13 @@ const SigninSchema = Yup.object().shape({
     .required('Required!'),
 })
 
-interface LoginInitialState {
-  isLoginFailedModalShown: boolean,
-  isLoginFailed: boolean,
-  loginErrorMsg: string;
-}
-
 function Login() {
   const {classes} = useStyles();
 
   const router = useRouter();
 
   const dispatch = useAppDispatch();
-  const isLoginLoading = useAppSelector((state) => state.auth.isLoading);
   const userLoginSuccessResponse = useAppSelector((state) => state.auth.userLoginResponse);
-
-  useEffect(() => {
-    if (isLoginLoading) {
-      dispatch(toggleSpinnerOn());
-    } else {
-      dispatch(toggleSpinnerOff());
-    }
-  }, [isLoginLoading]);
 
   useEffect(() => {
     router.replace('rooms');

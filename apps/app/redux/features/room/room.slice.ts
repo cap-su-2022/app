@@ -1,6 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {Room} from "../../../models/room.model";
 import {getRoomById} from "./thunk/get-room-by-id";
+import {disableRoomById} from "./thunk/disable-room-by-id";
 
 
 interface RoomState {
@@ -38,6 +39,18 @@ export const roomSlice = createSlice({
       state.isRoomDetailModalShown = true;
     });
     builder.addCase(getRoomById.rejected, (state, {payload}) => {
+
+    });
+
+    builder.addCase(disableRoomById.pending, (state) => {
+
+    });
+
+    builder.addCase(disableRoomById.fulfilled, (state, {payload}) => {
+
+    });
+
+    builder.addCase(disableRoomById.rejected, (state, {payload}) => {
 
     });
   }

@@ -83,4 +83,8 @@ export class RoomsService {
     );
 
   }
+
+  async disableById(id: string): Promise<any> {
+    return await this.repository.disableById(id);
+  }
 }

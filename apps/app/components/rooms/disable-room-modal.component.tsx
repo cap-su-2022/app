@@ -4,12 +4,15 @@ import {Archive, X} from "tabler-icons-react";
 import {FPT_ORANGE_COLOR} from "@app/constants";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {toggleRoomDisableModalVisible} from "../../redux/features/room/room.slice";
+import {disableRoomById} from "../../redux/features/room/thunk/disable-room-by-id";
 
 const DisableRoomModal: React.FC = () => {
 
   const {classes} = useStyles();
 
   const isShown = useAppSelector((state) => state.room.isRoomDisableModalShown);
+  const selectedRoomId = useAppSelector((state) => state.room.selectedRoom.id);
+
   const dispatch = useAppDispatch();
 
   const ModalHeaderTitle: React.FC = () => {
@@ -22,7 +25,7 @@ const DisableRoomModal: React.FC = () => {
     <Modal
       closeOnClickOutside={false}
       centered
-      zIndex={99999999}
+      zIndex={200}
       title={<ModalHeaderTitle/>}
       opened={isShown}
       onClose={() => dispatch(toggleRoomDisableModalVisible())}>
@@ -36,7 +39,9 @@ const DisableRoomModal: React.FC = () => {
           <Button onClick={() => dispatch(toggleRoomDisableModalVisible())} leftIcon={<X/>} style={{
             backgroundColor: FPT_ORANGE_COLOR
           }}>Cancel</Button>
-          <Button color="red" leftIcon={<Archive/>}>Disable this room</Button>
+          <Button color="red" leftIcon={<Archive/>} onClick={() => dispatch(disableRoomById(selectedRoomId))}>
+            Disable this room
+          </Button>
         </div>
       </div>
     </Modal>
@@ -53,9 +58,6 @@ const useStyles = createStyles({
     margin: 10
   },
   modalBody: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
     margin: 10
   },
   modalFooter: {

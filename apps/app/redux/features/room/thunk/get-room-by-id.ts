@@ -12,7 +12,6 @@ export const getRoomById = createAsyncThunk('room/get-room-by-id',  async (id: s
 
 
   const data = await response.data;
-  console.log(data);
   thunkAPI.dispatch(toggleSpinnerOff());
 
   return data;

@@ -1,6 +1,6 @@
 import {UserLoginSuccessModel} from "../../../models/user/user-login-success-response.model";
 import {createSlice} from "@reduxjs/toolkit";
-import {doLogin} from "./auth.thunk";
+import {doLogin} from "./login.thunk";
 
 type AuthState = {
   isLoading: boolean;
