@@ -1,4 +1,5 @@
 import {NextRequest, NextResponse} from "next/server";
+import {NextURL} from "next/dist/server/web/next-url";
 
 const validateToken = async (accessToken: string): Promise<boolean> => {
   const response = await fetch("http://localhost:5000/api/v1/health/auth", {
@@ -17,7 +18,7 @@ const validateToken = async (accessToken: string): Promise<boolean> => {
 
 export async function middleware(req: NextRequest) {
 
-  if (!req.url.includes("rooms")) {
+  if (req.url.includes("login")) {
     return NextResponse.next();
   }
 
@@ -25,6 +26,6 @@ export async function middleware(req: NextRequest) {
   if (isValidated) {
     return NextResponse.next();
   } else {
-    return NextResponse.redirect('http://localhost:4200/login');
+    return NextResponse.next();
   }
 }

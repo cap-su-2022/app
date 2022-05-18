@@ -1,11 +1,8 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import axios, {AxiosResponse} from "axios";
-import {API_URL, axiosPost} from "../../../utils/api";
+import axios from "axios";
+import {API_URL} from "../../../utils/api";
 import {UserLoginSuccessModel} from "../../../models/user/user-login-success-response.model";
-import {RootState} from "../../store";
 import {toggleSpinnerOff, toggleSpinnerOn} from "../spinner";
-
-
 
 export const doLogin = createAsyncThunk<UserLoginSuccessModel, UserCredentials, {
   rejectValue: LoginErrorThunk,
@@ -17,9 +14,7 @@ export const doLogin = createAsyncThunk<UserLoginSuccessModel, UserCredentials, 
       username: credentials.username,
       password: credentials.password
     });
-    const data = await response.data;
-    console.log(data);
-    return data;
+    return await response.data;
   } catch (e) {
     return thunkApi.rejectWithValue({
       message: e.response.data?.message ?? 'Internal Server Error',

@@ -8,51 +8,34 @@ import {
 import Image from 'next/image';
 
 import {useFormik} from 'formik';
-import * as Yup from 'yup';
 import {BLACK, FPT_ORANGE_COLOR, WHITE} from "../constants/color";
 import {dFlexCenter} from "../constants/css";
 import {useAppDispatch, useAppSelector} from "../redux/hooks";
-import {toggleSpinnerOff, toggleSpinnerOn} from "../redux/features/spinner";
-import {useRouter} from "next/router";
 import {GetServerSideProps} from "next";
 import Divider from "../components/divider";
 import {doLogin} from "../redux/features/user/login.thunk";
-import LoginFailedModal from "../components/login-fail.modal";
+import dynamic from 'next/dynamic';
+import {SigninSchema} from "../validation/signin.schema";
 
-const SigninSchema = Yup.object().shape({
-  username: Yup.string()
-    .min(2, 'Too short!')
-    .max(100, 'Too long!')
-    .required('Required!'),
-  password: Yup.string()
-    .min(2, 'Too short!')
-    .max(100, 'Too long!')
-    .required('Required!'),
-})
+const LoginFailedModal = dynamic(() => import('../components/login-fail.modal'));
 
 function Login() {
   const {classes} = useStyles();
 
-  const router = useRouter();
-
   const dispatch = useAppDispatch();
-  const userLoginSuccessResponse = useAppSelector((state) => state.auth.userLoginResponse);
 
-  useEffect(() => {
-    router.replace('rooms');
-  }, [userLoginSuccessResponse.access_token]);
-
+  const handleLoginSubmit = async (values) => {
+    dispatch(doLogin({
+      username: values.username,
+      password: values.password,
+    }));
+  }
 
   const handleGoogleLoginSubmit = () => {
     return;
   }
 
-  const handleLoginSubmit = async (values) => {
-      dispatch(doLogin({
-        username: values.username,
-        password: values.password,
-      }));
-  }
+
 
   const initialFormValues = {
     username: '',
