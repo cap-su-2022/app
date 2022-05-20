@@ -21,7 +21,6 @@ import GitHub from "../icons/github.svg";
 import Terminal from "../icons/terminal.svg";
 import Heart from "../icons/heart.svg";
 import React, {useRef, useState} from "react";
-import {styles} from "./styles/home.style";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../redux/store";
 import Carousel, {Pagination} from "react-native-snap-carousel";
@@ -29,7 +28,6 @@ import {RED, WHITE, YELLOW} from "../constants/colors";
 import {
   ClipboardCheckIcon,
   ClipboardCopyIcon,
-  ExclamationCircleIcon,
   ExclamationIcon
 } from "react-native-heroicons/outline";
 import {FPT_ORANGE_COLOR} from "@app/constants";
@@ -129,50 +127,38 @@ const HomeScreen: React.FC = () => {
               inactiveDotScale={0.6}
             />
           </View>
-          <View style={{
-            display: 'flex',
-            flexDirection: 'row',
-          }}>
-            <TouchableOpacity style={{
-              height: 100,
-              width: deviceWidth / 2 - 25,
-              backgroundColor: FPT_ORANGE_COLOR,
-              margin: 5,
-              borderRadius: 8,
-            }} onPress={() => {
-              navigate.navigate("ROOM_BOOKING")
-            }}>
-              <View style={{
-                margin: 10,
-              }}>
-                <ClipboardCopyIcon size={30} color={WHITE}/>
-                <Text style={{
-                  marginTop: 10,
-                  fontSize: Platform.OS === 'android' ? 16 : 20,
-                  fontWeight: '600',
-                  color: WHITE,
-                }}>Request for room booking </Text>
-              </View>
-            </TouchableOpacity>
+          <View style={[styles.quickAccessContainer]}>
+            <Text style={[styles.quickAccessText]}>
+              Quick Access
+            </Text>
             <View style={{
-              height: 100,
-              width: deviceWidth / 2 - 25,
-              backgroundColor: FPT_ORANGE_COLOR,
-              margin: 5,
-              borderRadius: 8,
-
+              display: 'flex',
+              flexDirection: 'row',
             }}>
-              <View style={{
-                margin: 10,
+              <TouchableOpacity
+                style={[styles.quickAccessButton]}
+                onPress={() => {
+                navigate.navigate("ROOM_BOOKING")
               }}>
-                <ClipboardCheckIcon size={30} color={WHITE}/>
-                <Text style={{
-                  marginTop: 10,
-                  fontSize: Platform.OS === 'android' ? 16 : 20,
-                  fontWeight: '600',
-                  color: WHITE,
-                }}>Check-out booking room</Text>
-              </View>
+                <View style={{
+                  margin: 10,
+                }}>
+                  <ClipboardCopyIcon size={30} color={WHITE}/>
+                  <Text style={styles.quickAccessButtonText}>
+                    Request for room booking
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.quickAccessButton]}>
+                <View style={{
+                  margin: 10,
+                }}>
+                  <ClipboardCheckIcon size={30} color={WHITE}/>
+                  <Text style={styles.quickAccessButtonText}>
+                    Check-out booking room
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
             {false ? <View style={{
               display: 'flex',
@@ -469,5 +455,181 @@ const HomeScreen: React.FC = () => {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  quickAccessContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: WHITE,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingRight: 5,
+    paddingLeft: 5,
+    borderRadius: 8
+  },
+  quickAccessText: {
+    fontWeight: '600',
+    fontSize: 22,
+    marginTop: 10,
+    marginBottom: 10
+  },
+  quickAccessButton: {
+    height: 100,
+    width: deviceWidth / 2 - 30,
+    backgroundColor: FPT_ORANGE_COLOR,
+    margin: 5,
+    borderRadius: 8,
+  },
+  quickAccessButtonText: {
+    marginTop: 10,
+    fontSize: Platform.OS === 'android' ? 14 : 16,
+    fontWeight: '600',
+    color: WHITE,
+  },
+  slide: {
+    width: 600,
+    height: 200
+  },
+  slideTitle: {
+    color: '#000'
+  },
+  usernameInput: {
+    width: 230,
+    height: 30,
+    borderColor: 'rgba(0, 0, 0, 1)',
+    borderWidth: 0,
+    backgroundColor: 'rgba(255, 255, 255, 255)',
+    borderRadius: 8
+  },
+  scrollView: {
+    backgroundColor: '#ffffff',
+  },
+  codeBlock: {
+    backgroundColor: 'rgba(55, 65, 81, 1)',
+    marginVertical: 12,
+    padding: 12,
+    borderRadius: 4,
+  },
+  monospace: {
+    color: '#ffffff',
+    fontFamily: 'Courier New',
+    marginVertical: 4,
+  },
+  comment: {
+    color: '#cccccc',
+  },
+  marginBottomSm: {
+    marginBottom: 6,
+  },
+  marginBottomMd: {
+    marginBottom: 18,
+  },
+  marginBottomLg: {
+    marginBottom: 24,
+  },
+  textLight: {
+    fontWeight: '300',
+  },
+  textBold: {
+    fontWeight: '500',
+  },
+  textCenter: {
+    textAlign: 'center',
+  },
+  text2XS: {
+    fontSize: 12,
+  },
+  textXS: {
+    fontSize: 14,
+  },
+  textSm: {
+    fontSize: 16,
+  },
+  textMd: {
+    fontSize: 18,
+  },
+  textLg: {
+    fontSize: 24,
+  },
+  textXL: {
+    fontSize: 48,
+  },
+  textContainer: {
+    marginVertical: 12,
+  },
+  textSubtle: {
+    color: '#6b7280',
+  },
+  section: {
+    marginVertical: 24,
+    marginHorizontal: 12,
+  },
+  shadowBox: {
+    backgroundColor: 'white',
+    borderRadius: 24,
+    shadowColor: 'black',
+    shadowOpacity: 0.15,
+    shadowOffset: {
+      width: 1,
+      height: 4,
+    },
+    shadowRadius: 12,
+    padding: 24,
+    marginBottom: 24,
+  },
+  listItem: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  listItemTextContainer: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  appTitleText: {
+    paddingTop: 12,
+    fontWeight: '500',
+  },
+  hero: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
+    backgroundColor: '#f06e28',
+    padding: 36,
+    marginBottom: 24,
+  },
+  heroTitle: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  heroTitle2: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 9
+  },
+  heroTitleText: {
+    color: '#ffffff',
+    marginLeft: 12,
+  },
+  heroText: {
+    color: '#ffffff',
+    marginVertical: 12,
+  },
+  whatsNextButton: {
+    backgroundColor: '#ffffff',
+    paddingVertical: 12,
+    borderRadius: 8,
+    width: '50%',
+    marginTop: 24,
+  },
+  learning: {
+    marginVertical: 12,
+  },
+  love: {
+    marginTop: 12,
+    justifyContent: 'center',
+  },
+})
 
 export default HomeScreen;

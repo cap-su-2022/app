@@ -1,10 +1,10 @@
 import React from "react";
-import {Button, createStyles, InputWrapper, Modal, Text, TextInput, useMantineTheme} from "@mantine/core";
+import {Button, createStyles, InputWrapper, Modal, Text, Textarea, TextInput, useMantineTheme} from "@mantine/core";
 import {useWindowDimensions} from "../../hooks/use-window-dimensions";
-import {Archive, ClipboardText, X} from "tabler-icons-react";
+import {Archive, CalendarStats, ClipboardText, Clock, FileDescription, Id, X} from "tabler-icons-react";
 import {convertDateToLocalDateString} from "../../utils/date.util";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {hideRoomInfoModal, toggleRoomDisableModalVisible} from "../../redux/features/room/room.slice";
+import {toggleRoomDetailModalShown, toggleRoomDisableModalVisible} from "../../redux/features/room/room.slice";
 import DisableRoomModal from "./disable-room-modal.component";
 
 const RoomInfoModal: React.FC = () => {
@@ -31,9 +31,9 @@ const RoomInfoModal: React.FC = () => {
              size={dimension.width / 2}
              centered
              opened={isShown}
-             onClose={() => dispatch(hideRoomInfoModal())}>
+             onClose={() => dispatch(toggleRoomDetailModalShown())}>
         <div className={classes.modalBody}>
-          <TextInput icon={<ClipboardText/>}
+          <TextInput icon={<Id/>}
                      className={classes.textInput}
                      radius="md"
                      label="Room ID"
@@ -43,13 +43,13 @@ const RoomInfoModal: React.FC = () => {
                      radius="md"
                      label="Room name"
                      readOnly value={room.name}/>
-          <TextInput icon={<ClipboardText/>}
+          <Textarea icon={<FileDescription/>}
                      className={classes.textInput}
                      radius="md"
                      label="Room description"
                      readOnly value={room.description}/>
           <div className={classes.modalInputDate}>
-            <TextInput icon={<ClipboardText/>}
+            <TextInput icon={<Clock/>}
                        className={classes.textInput}
                        radius="md"
                        label="Created At"
@@ -59,7 +59,7 @@ const RoomInfoModal: React.FC = () => {
                           label="Updated At"
                           description="The date that the room information was updated">
               <TextInput id="room-updatedat"
-                         icon={<ClipboardText/>}
+                         icon={<CalendarStats/>}
                          className={classes.textInput}
                          radius="md"
                          readOnly
@@ -79,7 +79,7 @@ const RoomInfoModal: React.FC = () => {
             Disable this room
           </Button>
 
-          <Button onClick={() => dispatch(hideRoomInfoModal())}
+          <Button onClick={() => dispatch(toggleRoomDetailModalShown())}
                   leftIcon={<X/>}
           >
             Close

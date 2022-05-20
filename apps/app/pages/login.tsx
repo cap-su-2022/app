@@ -16,19 +16,39 @@ import Divider from "../components/divider";
 import {doLogin} from "../redux/features/user/login.thunk";
 import dynamic from 'next/dynamic';
 import {SigninSchema} from "../validation/signin.schema";
+import {useRouter} from "next/router";
+import {doValidateAccessToken} from "../redux/features/user/validate-token.thunk";
+import {invalidateAuthUser} from "../redux/features/user/auth.slice";
+import {toggleSpinnerOff} from "../redux/features/spinner";
 
 const LoginFailedModal = dynamic(() => import('../components/login-fail.modal'));
 
 function Login() {
   const {classes} = useStyles();
+  const router = useRouter();
 
   const dispatch = useAppDispatch();
+
+  const authUser = useAppSelector((state) => state.auth.userLoginResponse);
+
+  useEffect(() => {
+    console.log(authUser);
+    if (authUser !== undefined || authUser?.access_token) {
+      dispatch(doValidateAccessToken()).unwrap()
+        .then(() => router.replace('/rooms'))
+        .catch(() => {
+          dispatch(invalidateAuthUser());
+          dispatch(toggleSpinnerOff());
+        });
+    }
+  }, []);
 
   const handleLoginSubmit = async (values) => {
     dispatch(doLogin({
       username: values.username,
       password: values.password,
-    }));
+    }))
+      .then(() => router.replace('/rooms'));
   }
 
   const handleGoogleLoginSubmit = () => {

@@ -1,6 +1,7 @@
 import {UserLoginSuccessModel} from "../../../models/user/user-login-success-response.model";
 import {createSlice} from "@reduxjs/toolkit";
 import {doLogin} from "./login.thunk";
+import {doValidateAccessToken} from "./validate-token.thunk";
 
 type AuthState = {
   isLoading: boolean;
@@ -13,7 +14,7 @@ const initialState: AuthState = {
   isLoading: false,
   isLoginFailed: false,
   error: null,
-  userLoginResponse: {} as UserLoginSuccessModel,
+  userLoginResponse: undefined,
 }
 
 export const authSlice = createSlice({
@@ -22,6 +23,9 @@ export const authSlice = createSlice({
   reducers: {
     resetLoginFailedStatus(state) {
       state.isLoginFailed = false;
+    },
+    invalidateAuthUser(state) {
+      state.userLoginResponse = undefined;
     }
   },
   extraReducers: (builder) => {
@@ -33,14 +37,21 @@ export const authSlice = createSlice({
       state.userLoginResponse = thunk.payload;
       state.isLoading = false;
     })
-    builder.addCase(doLogin.rejected, (state, {payload}) => {
+    builder.addCase(doLogin.rejected, (state, thunk) => {
       state.isLoginFailed = true;
-      state.error = payload.message;
+      state.error = thunk.payload.message;
       state.isLoading = false;
+    });
+    builder.addCase(doValidateAccessToken.fulfilled, (state, {payload}) => {
+
+    });
+    builder.addCase(doValidateAccessToken.rejected, (state, {payload}) => {
+      state.userLoginResponse = undefined;
+
     });
   }
 });
 
 
 export const authReducer = authSlice.reducer;
-export const {resetLoginFailedStatus} = authSlice.actions;
+export const {resetLoginFailedStatus, invalidateAuthUser} = authSlice.actions;

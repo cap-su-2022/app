@@ -19,18 +19,43 @@ import {RoomsResponsePayload} from "../payload/response/rooms.payload";
 import {RoomsValidation} from "../pipes/validation/rooms.validation";
 import {AuthGuard} from "../guards/auth.guard";
 import {Rooms} from "../models/rooms.entity";
+import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 
 @Controller("/v1/rooms")
+@ApiBearerAuth()
+@ApiTags('Rooms')
+
 export class RoomsController {
+
   constructor(private readonly service: RoomsService) {
   }
 
-  //@Post()
+  @ApiOperation({
+    description: 'Create new library room with the provided payload'
+
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully created a new library room'
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request payload for libary room is not validated'
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated'
+  })
+  @ApiResponse({
+     status: HttpStatus.FORBIDDEN,
+    description: 'Invalid role'
+  })
+  @Post('add')
   addRoom(@Body() room: AddRoomRequest) {
     return this.service.add(room);
   }
 
-  @Get(":id")
+  @Get("find/:id")
   getRoomById(@Param() id: string): Promise<Rooms> {
     return this.service.findById(id);
   }
@@ -43,14 +68,19 @@ export class RoomsController {
     return this.service.getAll(request);
   }
 
-  @Put(":id")
+  @Get('disabled')
+  getDisableRooms() {
+    return this.service.getDisabledRooms();
+  }
+
+  @Put("update/:id")
   updateRoomById(@Param() id: string, @Body() body: UpdateRoomRequest) {
     return this.service.updateById(id, body);
   }
 
   @Put('disable/:id')
-  disableRoomById(@Param() id: string) {
-    return this.service.disableById(id);
+  disableRoomById(@Param() payload: { id: string }) {
+    return this.service.disableById(payload.id);
   }
 
   @Delete(":id")

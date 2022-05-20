@@ -6,7 +6,6 @@ import {APP_CONFIG} from "./app/constants/config/app.config";
 import {getSwaggerConfig, SWAGGER_CONFIG} from './app/constants/config/swagger.config';
 import * as path from "path";
 import * as fs from 'fs';
-import * as dotenv from 'dotenv';
 import * as compression from 'compression';
 import {ExpressAdapter} from '@nestjs/platform-express';
 import {Express} from 'express';
@@ -26,8 +25,8 @@ async function bootstrap() {
   const expressApp: Express = express();
 
   const options = {
-    key: fs.readFileSync(path.join(__dirname, '../../../privateKey.key')),
-    cert: fs.readFileSync(path.join(__dirname, '../../../certificate.crt'))
+    key: fs.readFileSync(path.join('', 'privateKey.key')),
+    cert: fs.readFileSync(path.join('', 'certificate.crt'))
   }
 
   const shouldCompress = (req, res) => {

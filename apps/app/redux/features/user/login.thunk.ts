@@ -6,7 +6,7 @@ import {toggleSpinnerOff, toggleSpinnerOn} from "../spinner";
 
 export const doLogin = createAsyncThunk<UserLoginSuccessModel, UserCredentials, {
   rejectValue: LoginErrorThunk,
-}>("user/login", async (credentials: UserCredentials, thunkApi) => {
+}>("user/login", async (credentials, thunkApi) => {
   const dispatch = thunkApi.dispatch;
   dispatch(toggleSpinnerOn());
   try {

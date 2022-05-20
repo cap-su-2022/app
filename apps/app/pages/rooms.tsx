@@ -6,9 +6,20 @@ import {
   Pagination,
   ScrollArea, Select, Skeleton,
   Table, Text,
-  TextInput, useMantineTheme,
+  TextInput, Tooltip, useMantineTheme,
 } from "@mantine/core";
-import {Archive, At, ClipboardText, InfoCircle, Plus, Search, Wand, X} from "tabler-icons-react";
+import {
+  Archive,
+  At,
+  ClipboardText,
+  InfoCircle, Pencil,
+  Plus,
+  Search,
+  SwitchHorizontal,
+  SwitchVertical, Trash,
+  Wand,
+  X
+} from "tabler-icons-react";
 import React, {useEffect, useState} from "react";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {useAppDispatch, useAppSelector} from "../redux/hooks";
@@ -25,6 +36,17 @@ import Image from 'next/image';
 import {useDebouncedValue} from "@mantine/hooks";
 import RoomInfoModal from "../components/rooms/room-info-modal.component";
 import {getRoomById} from "../redux/features/room/thunk/get-room-by-id";
+import {isDisabled} from "@mantine/dates/lib/components/Month/get-day-props/is-disabled/is-disabled";
+import TableHeader from "../components/rooms/table-header.component";
+import {fetchRooms} from "../redux/features/room/thunk/fetch-rooms";
+import NoDataFound from "../components/no-data-found";
+import {
+  changeRoomsTextSearch,
+  toggleRoomDetailModalShown,
+  toggleRoomUpdateModalVisible
+} from "../redux/features/room/room.slice";
+import TableFooter from "../components/rooms/table-footer.component";
+import RoomUpdateModal from "../components/rooms/room-update-modal.component";
 
 interface RoomsRowData extends RowData {
   stt: number;
@@ -41,7 +63,7 @@ interface TableSortProps {
   data: RoomsRowData[];
 }
 
-const initialState  = {
+const initialState = {
   data: {
     totalPage: 0,
     data: [],
@@ -69,102 +91,75 @@ interface RoomsResponseModel {
 function RoomsManagement(props: any) {
   const {classes} = useStyles();
 
-  const dispatch: AppDispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const [data, setData] = useState<TableSortProps>(initialState.data);
 
-  const [search, setSearch] = useState<string>(initialState.search);
-  const [activePage, setPage] = useState<number>(initialState.page);
-  const [itemPerPage, setItemPerPage] = useState<number>(initialState.itemPerPage);
-  const [direction, setDirection] = useState<string>(initialState.direction);
-  const [isAddModalShown, setAddModalShown] = useState<boolean>(initialState.isAddModalShown);
+  const rooms = useAppSelector((state) => state.room.rooms);
 
-  const [isInfoModalShown, setInfoModalShown] = useState<boolean>(false);
-  const [isDisableModalShown, setDisableModalShown] = useState<boolean>(false);
+  const itemsPerPage = useAppSelector((state) => state.room.size);
+  const activePage = useAppSelector((state) => state.room.currentPage);
+  const searchText = useAppSelector((state) => state.room.textSearch);
+  const currentPage = useAppSelector((state) => state.room.currentPage);
+  const direction = useAppSelector((state) => state.room.direction);
 
-  const [roomData, setRoomData] = useState<RoomsResponseModel>();
-
-  const [debouncedSearchValue] = useDebouncedValue(search, 400);
+  //modal
 
   const isSpinnerLoading = useAppSelector((state) => state.spinner.isEnabled);
+  const [debouncedSearchValue] = useDebouncedValue(searchText, 400);
 
   const [sortBy, setSortBy] = useState<keyof RoomsRowData>(null);
-  const [reverseSortDirection, setReverseSortDirection] = useState(false);
-
 
   useEffect(() => {
-    dispatch(toggleSpinnerOn());
-    axios.post(`api/rooms`, {
-      search: search,
-      page: activePage,
-      size: itemPerPage,
-      sort: direction
-    })
-      .then((resp: AxiosResponse<RoomsResponsePayload>) => {
+    dispatch(fetchRooms()).unwrap().catch(() => {
+      router.replace('/login');
+    });
 
-        return resp.data;
-      })
-      .then((payload) => {
-        return {
-          ...payload,
-          data: payload.data.map((room, index) => {
-            return {
-              stt: index + 1,
-              ...room,
-            }
-          }),
-        };
-      })
-      .then((data) => setData(data))
-      .finally(() => {
-        dispatch(toggleSpinnerOff());
-      }).catch((err: AxiosError) => {
-      console.log(err.response);
-      router.replace('/');
-
-    })
-  }, [debouncedSearchValue, itemPerPage, activePage]);
-
-  const handleReFetchDataTable = (e) => {
-    setPage(e);
-  }
+  }, [debouncedSearchValue, itemsPerPage, activePage, direction]);
 
 
   const handleShowInfoModal = async (id: string) => {
-    dispatch(getRoomById(id));
+    dispatch(getRoomById(id))
+      .then(() => dispatch(toggleRoomDetailModalShown()));
+  }
+
+  const handleShowUpdateModal = (id: string) => {
+    dispatch(getRoomById(id))
+      .then(() => dispatch(toggleRoomUpdateModalVisible()));
+
   }
 
 
   const setSorting = (field: keyof RoomsRowData) => {
-    const reversed = field === sortBy ? !reverseSortDirection : false;
-    setReverseSortDirection(reversed);
+ //   const reversed = field === sortBy ? !reverseSortDirection : false;
+  //  setReverseSortDirection(reversed);
 
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (search: string) => {
     if (!isSpinnerLoading) {
-      const {value} = event.currentTarget;
-      setSearch(value);
+      dispatch(changeRoomsTextSearch(search));
     }
 
   };
 
   const handleRenderRows = () => {
-    console.log(data);
-    return data.data?.map((row) => (
+    return rooms.map((row, index) => (
       <tr key={row.id}>
-        <td>{row.stt}</td>
+        <td>{(rooms.length * (currentPage - 1)) + (index+ currentPage)}</td>
         <td>{row.id}</td>
         <td>{row.name}</td>
         <td>{new Date(row.updatedAt).toDateString()}</td>
         <td>
           {row.isDisabled
             ? <Button compact color="red"
-              variant="light"
-              radius="xl"
-              size="md">Disabled</Button>
-            : <Button color="green" variant="outline" compact>Active</Button>
+                      variant="light"
+                      radius="xl"
+                      size="md">Disabled</Button>
+            : <Button compact color="green"
+                      variant="light"
+                      radius="xl"
+                      size="md">Active</Button>
           }
         </td>
         <td>
@@ -173,15 +168,14 @@ function RoomsManagement(props: any) {
           }}>
             <Button style={{
               marginRight: 5
-            }} leftIcon={<InfoCircle size={20}/>}
-                    onClick={() => handleShowInfoModal(row.id)}
+            }} onClick={() => handleShowInfoModal(row.id)}
                     variant="outline"
-                    color="orange"
-                    compact>
-              Info
+                    color="orange">
+              <InfoCircle size={20}/>
             </Button>
-            <Button leftIcon={<Wand size={20}/>} variant="outline" color="blue" compact>
-              Update
+            <Button variant="outline" color="blue"
+            onClick={() => handleShowUpdateModal(row.id)}>
+              <Pencil size={20}/>
             </Button>
           </div>
         </td>
@@ -189,123 +183,71 @@ function RoomsManagement(props: any) {
     ));
   }
 
-  const handleItemPerPageChange = async (e ) => {
-    const perPage = Number(e);
-    setItemPerPage(perPage);
-  }
-
-  const TableHeader: React.FC = () => {
-    return (<div className={classes.tableSearchHeader}>
-      <TextInput
-        autoFocus={true}
-        style={{
-          marginTop: 14,
-          marginRight: 10,
-        }}
-        label="Search"
-        placeholder="Search by any field"
-        mb="md"
-        icon={<Search size={14}/>}
-        value={search}
-        onChange={handleSearchChange}
-      />
-      <Select
-        style={{
-          marginRight: 10,
-        }}
-        label="Items per page"
-        placeholder="Pick one"
-        value={String(itemPerPage)}
-        onChange={(e) => handleItemPerPageChange(e)}
-        data={ItemsPerPageData}
-      />
-      <Button style={{
-        marginTop: 27,
-        marginRight: 10,
-      }} variant="outline" color="green" leftIcon={<Plus/>}
-      onClick={() => setAddModalShown(true)}>Add New</Button>
-    </div>);
-  }
-
   return (
     <AdminLayout>
-      <TableHeader/>
+      <TableHeader searchText={searchText}
+      handleChangeSearchText={(val) => handleSearchChange(val)}/>
 
-      {data.data.length > 0 ? <ScrollArea>
-        <Table
-          horizontalSpacing="md"
-          verticalSpacing="xs"
-          sx={{tableLayout: 'auto', minWidth: 1000}}
-        >
-          <thead>
-          <tr>
-            <Th
-              sorted={sortBy === 'stt'}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting('stt')}
+      {rooms?.length > 0 ? <>
+          <ScrollArea>
+            <Table style={{
+              marginLeft: 10,
+              marginRight: 10,
+              marginBottom: 10
+            }}
+                   horizontalSpacing="md"
+                   verticalSpacing="xs"
+                   sx={{tableLayout: 'auto', minWidth: 1000}}
             >
-              STT
-            </Th>
-            <Th
-              sorted={sortBy === 'id'}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting('id')}
-            >
-              ID
-            </Th>
-            <Th
-              sorted={sortBy === 'name'}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting('name')}
-            >
-              Name
-            </Th>
-            <Th
-              sorted={sortBy === 'updatedAt'}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting('updatedAt')}
-            >
-              Updated At
-            </Th>
-            <Th onSort={null}>
-              Status
-            </Th>
-            <Th onSort={null}>
-              Action
-            </Th>
-          </tr>
-          </thead>
-          <tbody>
-          {handleRenderRows()}
-          </tbody>
-        </Table>
-        <div className={classes.pagination}>
-          <Pagination total={data.totalPage} page={activePage}
-                      onChange={(e) => handleReFetchDataTable(e)}
-                      withEdges
-                      color="orange"/>
-        </div>
-      </ScrollArea>
-        : <div style={{
-          margin: 20,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-          <Image src="/undraw/no-data.svg" layout="fixed" height={400} width={400}/>
-          <Text style={{
-            fontWeight: '600',
-            fontSize: 30,
-            marginTop: 20,
-            textAlign: 'center',
-          }}>
-            No data found!<br/>
-            Please come back later!
-          </Text>
-      </div>}
-      <AddRoomModal isShown={isAddModalShown} handleShown={setAddModalShown}/>
-       <RoomInfoModal/>
+              <thead>
+              <tr>
+                <Th
+                  sorted={sortBy === 'stt'}
+                  reversed={null}
+                  onSort={() => setSorting('stt')}
+                >
+                  STT
+                </Th>
+                <Th
+                  sorted={sortBy === 'id'}
+                  reversed={null}
+                  onSort={() => setSorting('id')}
+                >
+                  ID
+                </Th>
+                <Th
+                  sorted={sortBy === 'name'}
+                  reversed={null}
+                  onSort={() => setSorting('name')}
+                >
+                  Name
+                </Th>
+                <Th
+                  sorted={sortBy === 'updatedAt'}
+                  reversed={null}
+                  onSort={() => setSorting('updatedAt')}
+                >
+                  Updated At
+                </Th>
+                <Th onSort={null}>
+                  Status
+                </Th>
+                <Th onSort={null}>
+                  Action
+                </Th>
+              </tr>
+              </thead>
+              <tbody>
+              {handleRenderRows()}
+              </tbody>
+            </Table>
+          </ScrollArea>
+          <TableFooter/>
+        </>
+
+        : <NoDataFound/>}
+      <RoomUpdateModal/>
+      <RoomInfoModal/>
     </AdminLayout>
   );
 
@@ -313,15 +255,7 @@ function RoomsManagement(props: any) {
 }
 
 const useStyles = createStyles({
-  tableSearchHeader: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  pagination: {
-    display: 'flex',
-    justifyContent: 'center'
-  }
+
 })
 /*
 * <tr>

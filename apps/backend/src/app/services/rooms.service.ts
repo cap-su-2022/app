@@ -43,7 +43,6 @@ export class RoomsService {
     const total = await this.repository.getSize().catch(() => {
       throw new BadRequestException("One or more parameters is invalid");
     });
-
     const totalPage = Math.ceil(total / request.size);
 
     return {
@@ -52,6 +51,10 @@ export class RoomsService {
       totalPage: totalPage,
       size: total
     };
+  }
+
+  async getDisabledRooms(): Promise<Rooms[]> {
+    return await this.repository.findDisabledRooms();
   }
 
   async deleteById(id: string): Promise<any> {
@@ -70,7 +73,6 @@ export class RoomsService {
     } catch (e) {
       throw new NoSuchElementFoundException();
     }
-    console.log(room);
 
 
     return this.repository.save(

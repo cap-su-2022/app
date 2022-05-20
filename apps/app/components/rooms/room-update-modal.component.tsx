@@ -11,21 +11,9 @@ import {
   useMantineTheme
 } from "@mantine/core";
 import {useWindowDimensions} from "../../hooks/use-window-dimensions";
-import {
-  Archive,
-  CalendarStats,
-  ClipboardText,
-  Clock,
-  FileDescription,
-  Id,
-  Pencil,
-  Plus,
-  Trash,
-  X
-} from "tabler-icons-react";
+import {Archive, CalendarStats, ClipboardText, Clock, FileDescription, Id, Pencil, Trash, X} from "tabler-icons-react";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {
-  toggleRoomAddModalVisible,
   toggleRoomDisableModalVisible,
   toggleRoomUpdateModalVisible
 } from "../../redux/features/room/room.slice";
@@ -34,16 +22,15 @@ import {Form, FormikProvider, useFormik} from "formik";
 import * as Yup from 'yup';
 import {updateRoomById} from "../../redux/features/room/thunk/update-room-by-id";
 import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
-import {addRoom} from "../../redux/features/room/thunk/add-room";
 
 const RoomUpdateSchema = Yup.object();
 
-const AddRoomModal: React.FC = () => {
+const RoomUpdateModal: React.FC = () => {
   const {classes} = useStyles();
   const theme = useMantineTheme();
 
   const room = useAppSelector((state) => state.room.selectedRoom);
-  const isShown = useAppSelector((state) => state.room.isRoomAddModalShown);
+  const isShown = useAppSelector((state) => state.room.isRoomUpdateModalShown);
 
   const [isUpdateDisabled, setUpdateDisabled] = useState<boolean>(false);
 
@@ -51,19 +38,19 @@ const AddRoomModal: React.FC = () => {
   const dimension = useWindowDimensions();
 
   const handleUpdateSubmit = async (values) => {
-    dispatch(addRoom(values))
-      .then(() => {
-        dispatch(toggleRoomAddModalVisible());
-        dispatch(fetchRooms());
-        });
+    dispatch(updateRoomById({
+      id: values.id,
+      payload: values,
+    })).then(() => dispatch(fetchRooms()));
   }
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      description: '',
-      disabled: false,
+      id: room.id,
+      name: room.name,
+      description: room.description,
     },
+    enableReinitialize: true,
     onSubmit: (values) => handleUpdateSubmit(values),
   });
 
@@ -82,7 +69,7 @@ const AddRoomModal: React.FC = () => {
 
   const ModalHeaderTitle: React.FC = () => {
     return (
-      <Text className={classes.modalHeaderTitle}>Add new room</Text>
+      <Text className={classes.modalHeaderTitle}>Update Room Information</Text>
     )
   };
 
@@ -92,10 +79,18 @@ const AddRoomModal: React.FC = () => {
              size={dimension.width / 2}
              centered
              opened={isShown}
-             onClose={() => dispatch(toggleRoomAddModalVisible())}>
+             onClose={() => dispatch(toggleRoomUpdateModalVisible())}>
         <FormikProvider value={formik}>
           <Form onSubmit={formik.handleSubmit}>
             <div className={classes.modalBody}>
+              <TextInput icon={<Id/>}
+                         disabled
+                         id="room-id"
+                         name="id"
+                         className={classes.textInput}
+                         radius="md"
+                         label="Room ID"
+                         readOnly value={formik.values.id}/>
               <TextInput icon={<ClipboardText/>}
                          id="room-name"
                          name="name"
@@ -112,16 +107,6 @@ const AddRoomModal: React.FC = () => {
                         radius="md"
                         label="Room description"
                         value={formik.values.description}/>
-              <Switch label="Make this room disabled"
-                      style={{
-                        marginTop: 20
-                      }}
-                      onChange={formik.handleChange}
-                      size="lg"
-                      checked={formik.values.disabled}
-                      name="disabled"
-                      id="room-disabled"
-              />
 
             </div>
 
@@ -130,15 +115,15 @@ const AddRoomModal: React.FC = () => {
                 onClick={() => dispatch(toggleRoomDisableModalVisible())}
                 variant="outline"
                 color={"red"}
-                leftIcon={<X/>}
+                leftIcon={<Trash/>}
               >
-                Cancel
+                Delete this room
               </Button>
 
               <Button color="green" disabled={isUpdateDisabled} onClick={() => formik.submitForm()}
-                      leftIcon={<Plus/>}
+                      leftIcon={<Pencil/>}
               >
-                Add
+                Update
               </Button>
             </div>
           </Form>
@@ -174,4 +159,4 @@ const useStyles = createStyles({
   }
 });
 
-export default AddRoomModal;
+export default RoomUpdateModal;
