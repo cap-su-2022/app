@@ -7,22 +7,26 @@ https:
   port: 5001
 
 db:
+  keycloak:
+    url: 'fu-lib-room.tk'
+    port: 3307
+    database: 'keycloak'
   mysql:
-    url: '54.92.169.139'
+    url: 'fu-lib-room.tk'
     port: 3306
-    database: 'flrbms'
+    database: 'db'
     username: 'root'
-    password: 'Capstone@2022'
+    password: '12345678x@X'
     synchronize: false
 
 
 keycloak:
-  host: '54.92.169.139'
-  port: 8080
+  host: 'fu-lib-room.tk'
+  port: 9090
   client:
     realm: 'authentication'
     id: 'authentication-api'
-    secret: 'JgU0qklRFggfxhPtNY5wBM4IXSUxAfoY'
+    secret: 'eAaFWFGhQbwR02U4g7M9xsd9BryRaeJ7'
 
 redis:
   host: '54.92.169.139'

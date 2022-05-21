@@ -1,9 +1,5 @@
 import React, {Ref, useRef, useState} from "react";
 import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
-import * as IconOutline from "react-native-heroicons/outline";
-import * as Icon from "react-native-heroicons/solid";
-import {FPT_ORANGE_COLOR} from "../constants/fpt-color";
-import Divider from "../components/text/divider";
 import Asterik from "../components/text/asterik";
 import {Formik, FormikProps, FormikValues} from 'formik';
 import {useDispatch, useSelector} from "react-redux";

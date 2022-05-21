@@ -1,25 +1,32 @@
-import {HttpException, HttpStatus, Injectable, Logger} from "@nestjs/common";
+import {HttpException, HttpStatus, Inject, Injectable, Logger, Scope} from "@nestjs/common";
 import {HttpService} from "@nestjs/axios";
 import {lastValueFrom, map, Observable} from "rxjs";
 import {KEYCLOAK_CONFIG} from "../constants/config/keycloak.config";
 import {APPLICATION_X_WWW_FORM_URLENCODED} from "../constants/network/mediatype.constant";
-import {LazyModuleLoader} from "@nestjs/core";
-import {KeycloakSigninResponse} from "../dto/keycloak-signin.response";
 import {KeycloakSigninSuccessResponse} from "../dto/keycloak-signin-success.response.dto";
-import {KeycloakSigninFailureResponse} from "../dto/keycloak-signin-failure.response.dto";
+import {KeycloakUser} from "@app/models";
+import {ConfigService} from "@nestjs/config";
+import {REQUEST} from "@nestjs/core";
+import {Request} from "express";
 
-
-
-@Injectable()
+@Injectable({
+  scope: Scope.REQUEST
+})
 export class KeycloakService {
 
   private static logger = new Logger(KeycloakService.name);
 
-  static URI = `${KEYCLOAK_CONFIG.host}:${KEYCLOAK_CONFIG.port}/auth/realms/${KEYCLOAK_CONFIG.client.realm}/protocol/openid-connect`
+  private readonly keycloakHost: string;
+  private readonly keycloakPort: number;
+  private readonly keycloakRealm: string;
 
-  constructor(private readonly httpService: HttpService) {
 
-
+  constructor(private readonly configService: ConfigService,
+              private readonly httpService: HttpService,
+              @Inject(REQUEST) private readonly httpRequest: Request) {
+    this.keycloakHost = this.configService.get<string>("keycloak.host");
+    this.keycloakPort = this.configService.get<number>("keycloak.port");
+    this.keycloakRealm = this.configService.get<string>("keycloak.client.realm");
   }
 
   countUsers(token: string): Observable<number> {
@@ -41,27 +48,42 @@ export class KeycloakService {
   }
 
   async signInToKeycloak(username: string, password: string): Promise<KeycloakSigninSuccessResponse> {
+    const url = `http://${this.keycloakHost}:${this.keycloakPort}/auth/realms/${this.keycloakRealm}/protocol/openid-connect/token`;
+    const signInPayload = new URLSearchParams({
+      client_id: KEYCLOAK_CONFIG.client.id,
+      client_secret: KEYCLOAK_CONFIG.client.secret,
+      grant_type: KEYCLOAK_CONFIG.grantType.password,
+      username: username,
+      password: password,
+    });
     try {
-      const response = await lastValueFrom(this.httpService.post(`${KeycloakService.URI}/token`, new URLSearchParams({
-        client_id: KEYCLOAK_CONFIG.client.id,
-        client_secret: KEYCLOAK_CONFIG.client.secret,
-        grant_type: KEYCLOAK_CONFIG.grantType.password,
-        username: username,
-        password: password,
-      }), {
+      const response = await lastValueFrom(this.httpService.post(url, signInPayload, {
         headers: {
           "Content-Type": APPLICATION_X_WWW_FORM_URLENCODED
         },
       }));
       return response.data as KeycloakSigninSuccessResponse;
     } catch (e) {
+      console.log(e.response);
       KeycloakService.logger.error(e);
-      throw new HttpException(e.response.data['error_description'], HttpStatus.UNAUTHORIZED);
+      throw new HttpException(e.response?.data['error_description'], HttpStatus.UNAUTHORIZED);
     }
   }
 
+  async getUserByUsername(username: string, accessToken?: string): Promise<KeycloakUser> {
+    const token = accessToken ?? this.httpRequest.headers['authorization'];
+    const url = `http://${this.keycloakHost}:${this.keycloakPort}/auth/admin/realms/${this.keycloakRealm}/users?username=${username}`;
+    const response = await lastValueFrom(this.httpService.get(url, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      }
+    }));
+    console.log(response);
+    return response.data[0];
+  }
+
   getUserById(authToken: string, id: string) {
-    const URL = `${KEYCLOAK_CONFIG.host}:${KEYCLOAK_CONFIG.port}/auth/admin/realms/${KEYCLOAK_CONFIG.client.realm}/users/${id}`;
+    const URL = `http://${KEYCLOAK_CONFIG.host}:${KEYCLOAK_CONFIG.port}/auth/admin/realms/${KEYCLOAK_CONFIG.client.realm}/users/${id}`;
     console.log(URL);
     return this.httpService.get(URL, {
       headers: {
@@ -74,7 +96,7 @@ export class KeycloakService {
 
   }
 
-  resetKeycloakUserById(req: Request, id, rawPasswword: any) {
+  resetKeycloakUserById(req, id, rawPasswword: any) {
 
   }
 
@@ -88,7 +110,7 @@ export class KeycloakService {
 
 
   getUserInfo(accessToken: string): Promise<any> {
-    const URL = `${KeycloakService.URI}/userinfo`;
+    const URL = `http://${this.keycloakHost}:${this.keycloakPort}/auth/realms/${this.keycloakRealm}/protocol/openid-connect/userinfo`;
     console.log(URL);
     return lastValueFrom(this.httpService.get(URL, {
         headers: {

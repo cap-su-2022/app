@@ -15,7 +15,6 @@ export class RoomsRepository extends Repository<Rooms> {
   }
 
   findDisabledRooms(): Promise<Rooms[]> {
-    console.log(';asssas');
     return this.createQueryBuilder(`rooms`)
       .where(`rooms.is_disabled = 1`)
       .andWhere(`rooms.is_deleted = 0`)

@@ -3,22 +3,17 @@ import {RoomsController} from "../controllers/rooms.controller";
 import {RoomsService} from "../services/rooms.service";
 import {RoomsRepository} from "../repositories/rooms.repository";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {AutomapperModule} from "@automapper/nestjs";
-import {classes} from "@automapper/classes";
-import {RoomsProfile} from "../profiles/rooms.profile";
-import {KeycloakModule} from "./keycloak.module";
 import {KeycloakService} from "../services/keycloak.service";
-import {HttpModule, HttpService} from "@nestjs/axios";
+import {HttpModule} from "@nestjs/axios";
+import ConfigModule from "./global/config.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([RoomsRepository]),
-    AutomapperModule.forRoot({
-      strategyInitializer: classes(),
-    }),
-    HttpModule
+    HttpModule,
+    ConfigModule
   ],
   controllers: [RoomsController],
-  providers: [RoomsService, RoomsProfile, KeycloakService],
+  providers: [RoomsService, KeycloakService],
 })
 export class RoomsModule {}

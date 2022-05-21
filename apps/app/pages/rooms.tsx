@@ -2,41 +2,21 @@ import {GetServerSideProps} from "next";
 import AdminLayout from "../components/AdminLayout";
 import {
   Button,
-  createStyles, Input, InputWrapper, Modal,
-  Pagination,
-  ScrollArea, Select, Skeleton,
-  Table, Text,
-  TextInput, Tooltip, useMantineTheme,
+  createStyles,
+  ScrollArea,
+  Table,
 } from "@mantine/core";
 import {
-  Archive,
-  At,
-  ClipboardText,
   InfoCircle, Pencil,
-  Plus,
-  Search,
-  SwitchHorizontal,
-  SwitchVertical, Trash,
-  Wand,
-  X
 } from "tabler-icons-react";
 import React, {useEffect, useState} from "react";
-import axios, {AxiosError, AxiosResponse} from "axios";
 import {useAppDispatch, useAppSelector} from "../redux/hooks";
-import {toggleSpinnerOff, toggleSpinnerOn} from "../redux/features/spinner";
 import Th from "../components/table/th.table.component";
 import {RowData} from "../models/table/row-data.model";
-import {ItemsPerPageData} from "../models/table/items-per-page.model";
-import {RoomsResponsePayload} from "../models/rooms-response-payload.model";
-import AddRoomModal from "../components/rooms/add-room-modal.component";
-import {AppDispatch} from "../redux/store";
 import {useRouter} from "next/router";
-import {FPT_ORANGE_COLOR} from "@app/constants";
-import Image from 'next/image';
 import {useDebouncedValue} from "@mantine/hooks";
 import RoomInfoModal from "../components/rooms/room-info-modal.component";
 import {getRoomById} from "../redux/features/room/thunk/get-room-by-id";
-import {isDisabled} from "@mantine/dates/lib/components/Month/get-day-props/is-disabled/is-disabled";
 import TableHeader from "../components/rooms/table-header.component";
 import {fetchRooms} from "../redux/features/room/thunk/fetch-rooms";
 import NoDataFound from "../components/no-data-found";
@@ -47,6 +27,7 @@ import {
 } from "../redux/features/room/room.slice";
 import TableFooter from "../components/rooms/table-footer.component";
 import RoomUpdateModal from "../components/rooms/room-update-modal.component";
+import RoomsHeader from "../components/rooms/header.component";
 
 interface RoomsRowData extends RowData {
   stt: number;
@@ -184,71 +165,77 @@ function RoomsManagement(props: any) {
   }
 
   return (
-    <AdminLayout>
-      <TableHeader searchText={searchText}
-      handleChangeSearchText={(val) => handleSearchChange(val)}/>
+    <>
+      <AdminLayout>
+        <RoomsHeader/>
 
-      {rooms?.length > 0 ? <>
-          <ScrollArea>
-            <Table style={{
-              marginLeft: 10,
-              marginRight: 10,
-              marginBottom: 10
-            }}
-                   horizontalSpacing="md"
-                   verticalSpacing="xs"
-                   sx={{tableLayout: 'auto', minWidth: 1000}}
-            >
-              <thead>
-              <tr>
-                <Th
-                  sorted={sortBy === 'stt'}
-                  reversed={null}
-                  onSort={() => setSorting('stt')}
-                >
-                  STT
-                </Th>
-                <Th
-                  sorted={sortBy === 'id'}
-                  reversed={null}
-                  onSort={() => setSorting('id')}
-                >
-                  ID
-                </Th>
-                <Th
-                  sorted={sortBy === 'name'}
-                  reversed={null}
-                  onSort={() => setSorting('name')}
-                >
-                  Name
-                </Th>
-                <Th
-                  sorted={sortBy === 'updatedAt'}
-                  reversed={null}
-                  onSort={() => setSorting('updatedAt')}
-                >
-                  Updated At
-                </Th>
-                <Th onSort={null}>
-                  Status
-                </Th>
-                <Th onSort={null}>
-                  Action
-                </Th>
-              </tr>
-              </thead>
-              <tbody>
-              {handleRenderRows()}
-              </tbody>
-            </Table>
-          </ScrollArea>
-          <TableFooter/>
-        </>
+        <TableHeader searchText={searchText}
+                     handleChangeSearchText={(val) => handleSearchChange(val)}/>
 
-        : <NoDataFound/>}
-      <RoomUpdateModal/>
-      <RoomInfoModal/>
-    </AdminLayout>
+        {rooms?.length > 0 ? <>
+            <div style={{
+              margin: 10
+            }}>
+              <Table style={{
+                marginLeft: 10,
+                marginRight: 10,
+                marginBottom: 10
+              }}
+                     horizontalSpacing="md"
+                     verticalSpacing="xs"
+                     sx={{tableLayout: 'auto', minWidth: 1000}}
+              >
+                <thead>
+                <tr>
+                  <Th
+                    sorted={sortBy === 'stt'}
+                    reversed={null}
+                    onSort={() => setSorting('stt')}
+                  >
+                    STT
+                  </Th>
+                  <Th
+                    sorted={sortBy === 'id'}
+                    reversed={null}
+                    onSort={() => setSorting('id')}
+                  >
+                    ID
+                  </Th>
+                  <Th
+                    sorted={sortBy === 'name'}
+                    reversed={null}
+                    onSort={() => setSorting('name')}
+                  >
+                    Name
+                  </Th>
+                  <Th
+                    sorted={sortBy === 'updatedAt'}
+                    reversed={null}
+                    onSort={() => setSorting('updatedAt')}
+                  >
+                    Updated At
+                  </Th>
+                  <Th onSort={null}>
+                    Status
+                  </Th>
+                  <Th onSort={null}>
+                    Action
+                  </Th>
+                </tr>
+                </thead>
+                <tbody>
+                {handleRenderRows()}
+                </tbody>
+              </Table>
+            </div>
+            <TableFooter/>
+          </>
+
+          : <NoDataFound/>}
+        <RoomUpdateModal/>
+        <RoomInfoModal/>
+      </AdminLayout>
+    </>
   );
 
 

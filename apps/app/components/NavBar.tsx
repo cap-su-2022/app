@@ -9,18 +9,19 @@ import {
   DatabaseImport,
   Receipt2,
   SwitchHorizontal,
-  Logout, User,
+  Logout, User, BuildingWarehouse, Users, Devices, Messages,
 } from 'tabler-icons-react';
 import {FPT_ORANGE_COLOR} from "@app/constants";
 import {BLACK, WHITE} from "../constants/color";
 import {useRouter} from "next/router";
 import LogoutModal from "./logout.modal";
+import PreferencesModal from "./preferences.modal.component";
 
 const data = [
-  { link: '', label: 'Notifications', icon: BellRinging },
-  { link: '', label: 'Billing', icon: Receipt2 },
-  { link: '', label: 'Security', icon: Fingerprint },
-  { link: '', label: 'SSH Keys', icon: Key },
+  { link: '/rooms', label: 'Rooms', icon: BuildingWarehouse },
+  { link: '/users', label: 'Users', icon: Users },
+  { link: '/devices', label: 'Devices', icon: Devices },
+  { link: '/feedbacks', label: 'Feedback', icon: Messages },
   { link: '', label: 'Databases', icon: DatabaseImport },
   { link: '', label: 'Authentication', icon: TwoFA },
   { link: '', label: 'Other Settings', icon: Settings },
@@ -33,6 +34,8 @@ export function NavbarSimpleColored() {
   const [isLogoutModalShown, setLogoutModalShown] = useState<boolean>(false);
   const [active, setActive] = useState('Billing');
 
+  const [isPreferencesShown, setPreferencesShown] = useState<boolean>(false);
+
 
   const router = useRouter();
 
@@ -41,18 +44,23 @@ export function NavbarSimpleColored() {
     setLogoutModalShown(!isLogoutModalShown);
   }
 
+  const isMenuSelect = (item) => {
+    return (item.label === active) || (router.route === item.link);
+  }
+
   const links = data.map((item) => (
     <a
-      className={cx(classes.link, { [classes.linkActive]: item.label === active })}
+      className={cx(classes.link, { [classes.linkActive]: isMenuSelect(item)})}
       href={item.link}
       key={item.label}
-      onClick={(event) => {
+      onClick={async (event) => {
         event.preventDefault();
         setActive(item.label);
+        await router.push(item.link);
       }}
     >
-      <item.icon className={cx(classes.linkIcon, { [classes.iconActive]: item.label === active})} />
-      <span className={cx({[classes.labelActive]: item.label === active})}>{item.label}</span>
+      <item.icon className={cx(classes.linkIcon, { [classes.iconActive]: isMenuSelect(item)})} />
+      <span className={cx({[classes.labelActive]: isMenuSelect(item)})}>{item.label}</span>
     </a>
   ));
 
@@ -69,10 +77,19 @@ export function NavbarSimpleColored() {
       </Navbar.Section>
 
       <Navbar.Section className={classes.footer}>
-        <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
+        <a href="#" className={classes.link} onClick={(event) =>
+        {
+          event.preventDefault();
+          setPreferencesShown(!isPreferencesShown);
+        }
+        }>
           <User className={classes.linkIcon} />
           <span>Profile</span>
         </a>
+        {isPreferencesShown ? <PreferencesModal
+          isShown={isPreferencesShown}
+          toggleShown={() => setPreferencesShown(!isPreferencesShown)}
+        /> : null}
 
         <>
           <a href="#" className={classes.link} onClick={(event) => handleLogoutSubmit(event)}>

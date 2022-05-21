@@ -1,13 +1,14 @@
 import {Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Request, Res} from "@nestjs/common";
 import {KeycloakService} from "../services/keycloak.service";
-import {InjectRepository} from "@nestjs/typeorm";
-import {Repository} from 'typeorm';
 import {ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiSecurity} from "@nestjs/swagger";
 import {KEYCLOAK_PATH} from "../constants/controllers/keycloak/path.constant";
 import {AUTHORIZATION_LOWERCASE} from "../constants/network/headers.constant";
 import {AuthService} from "../services/auth.service";
 import {Response} from "express";
 import {KeycloakSigninSuccessResponse} from "../dto/keycloak-signin-success.response.dto";
+import {AuthenticationService} from "../services/authentication.service";
+import {UsernamePasswordCredentials, UsernamePasswordLoginResponse} from "@app/models";
+import {Roles} from "../enum/roles.enum";
 
 export class AuthenticationRequest {
   @ApiProperty({
@@ -22,7 +23,8 @@ export class AuthenticationRequest {
 export class KeycloakController {
 
   constructor(private readonly service: KeycloakService,
-              private readonly authService: AuthService) {
+              private readonly authService: AuthService,
+              private readonly authenticationService: AuthenticationService) {
   }
 
   @ApiOperation({})
@@ -42,10 +44,22 @@ export class KeycloakController {
     }
   })
   async signIn(@Res({passthrough: true}) httpResponse: Response,
-               @Body() account: { username: string, password: string }): Promise<KeycloakSigninSuccessResponse> {
-    const resp = await this.service.signInToKeycloak(account.username, account.password);
-    httpResponse.cookie('accessToken', resp.access_token)
-    return resp;
+               @Body() account: { username: string, password: string }): Promise<Partial<UsernamePasswordLoginResponse>> {
+    const resp = await this.authenticationService.handleUsernamePasswordLogin(account);
+    httpResponse.setHeader('Authorization', resp.accessToken);
+    httpResponse.setHeader('AuthorizationRefreshToken', resp.refreshToken);
+    httpResponse.cookie('refreshToken', resp.refreshToken);
+    httpResponse.cookie('accessToken', resp.accessToken);
+    return {
+      email: resp.email,
+      id: resp.id,
+      googleId: resp.googleId,
+      phone: resp.phone,
+      username: resp.username,
+      keycloakId: resp.keycloakId,
+      role: Roles.APP_ADMIN,
+      fullname: resp.fullname
+    };
   }
 
   @Post('signin/google')

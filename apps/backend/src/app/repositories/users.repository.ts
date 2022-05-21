@@ -10,4 +10,11 @@ export class UsersRepository extends Repository<Users> {
       .getOne();
   }
 
+  findByKeycloakId(keycloakId: string): Promise<Users> {
+    return this.createQueryBuilder("users")
+      .select(['users.id', 'users.keycloak_id', 'users.google_id',
+        'users.username', 'users.email', 'users.fullname', 'users.phone'])
+      .where("users.keycloak_id = :keycloakId", {keycloakId: keycloakId})
+      .getOne();
+  }
 }

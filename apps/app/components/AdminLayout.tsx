@@ -2,6 +2,8 @@ import styles from './admin-layout.module.scss';
 import {NavbarSimpleColored} from "./NavBar";
 import {HeaderSearch} from "./Header";
 import React from "react";
+import {BuildingWarehouse} from "tabler-icons-react";
+import {Text} from "@mantine/core";
 
 const AdminLayout: React.FC<React.ReactNode> = (props) => {
   /*
