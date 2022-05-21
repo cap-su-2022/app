@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY ./dist/apps/backend .
 
-CMD ["npm", "install"]
+RUN npm i --production
 
 EXPOSE 5000
 
