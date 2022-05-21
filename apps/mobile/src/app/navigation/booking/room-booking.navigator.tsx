@@ -6,9 +6,9 @@ import {StackNavigator, StackScreen} from '@app/utils';
 import {StatusBar, Text, TouchableOpacity} from "react-native";
 import RoomBooking1 from "../../screens/booking/room-booking-1";
 import {XIcon} from "react-native-heroicons/outline";
-import {BLACK} from "../../constants/colors";
 import RoomBookingNow from "../../screens/booking/room-booking-now";
 import RoomBookingLater from "../../screens/booking/room-booking-later";
+import {BLACK} from "@app/constants";
 
 const RoomBookingNavigator: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();

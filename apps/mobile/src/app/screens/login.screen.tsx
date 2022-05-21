@@ -9,16 +9,14 @@ import {
   View
 } from "react-native";
 import Background from "../components/blob-scene-haikei.svg";
-import {FPT_ORANGE_COLOR} from "../constants/fpt-color";
 import FPTULogo from '../components/LogoFPTU.svg';
 import Asterik from "../components/text/asterik";
 import Divider from "../components/text/divider";
 import GoogleIcon from '../components/google-icon.svg';
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../redux/store";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../redux/store";
 import {persistGoogleIdToken} from "../redux/userSlice";
 import {useNavigation} from "@react-navigation/native";
-import {HomeRoute} from "../utils/screen.navigator.utils";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {handleGoogleSignin} from "../services/google.service";
 import CheckAlive from "../components/check-alive.component";
@@ -27,6 +25,7 @@ import LoginErrorModal from "../components/modals/login-error.component";
 import {toggleSpinnerOff, toggleSpinnerOn} from "../redux/features/spinner";
 import {LocalStorageKeys, useStorage} from "../utils/local-storage";
 import {API_URL} from "../constants/constant";
+import {BLACK, FPT_ORANGE_COLOR} from "@app/constants";
 
 const LoginScreen = () => {
 
@@ -284,7 +283,7 @@ const styles = StyleSheet.create({
   },
   loginGoogleBtnText: {
     fontSize: 14,
-    color: '#000'
+    color: BLACK
   },
   logoContainer: {},
   loginDividerContainer: {

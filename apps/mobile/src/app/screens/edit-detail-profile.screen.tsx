@@ -1,17 +1,10 @@
-import React, {Ref, useRef, useState} from "react";
-import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import React, {Ref, useRef} from "react";
+import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View} from "react-native";
 import Asterik from "../components/text/asterik";
-import {Formik, FormikProps, FormikValues} from 'formik';
+import {Formik, FormikProps,} from 'formik';
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../redux/store";
 import {updateProfile} from "../redux/userSlice";
-
-
-interface UserEditProfileProps {
-  fullname?: string;
-  phone?: string;
-  studentCode?: string;
-}
 
 interface EditDetailProfileProps {
   formikRef: Ref<FormikProps<any>>,

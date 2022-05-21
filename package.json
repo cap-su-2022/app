@@ -4,8 +4,10 @@
   "license": "MIT",
   "scripts": {
     "start": "nx run-many --target=serve --all --parallel=10",
-    "frontend": "nx serve app",
+    "frontend": "nx serve frontend",
     "backend": "nx serve backend",
+    "keycloak": "nx serve keycloak-api",
+    "build-keycloak": "nx build keycloak-api",
     "build-frontend": "nx build app",
     "build-backend": "nx build backend",
     "build-android": "nx build-android mobile",
@@ -13,7 +15,7 @@
     "android": "nx run-android mobile",
     "build": "nx run-many --target=build --all --parallel=10",
     "test": "nx run-many --target=test --all --parallel=10",
-    "test-frontend": "nx test app",
+    "test-frontend": "nx test frontend",
     "test-backend": "nx test backend",
     "test-mobile": "nx test mobile",
     "convert-apk": "java -jar bundletool.jar build-apks --bundle=apps/mobile/android/app/build/outputs/bundle/release/app-release.aab --output=app.apks --mode=universal"

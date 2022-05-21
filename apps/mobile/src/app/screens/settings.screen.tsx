@@ -1,13 +1,12 @@
-import React, {useRef, useState} from "react";
+import React, {useRef} from "react";
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import * as IconOutline from "react-native-heroicons/outline";
 import * as Icon from "react-native-heroicons/solid";
-import {FPT_ORANGE_COLOR} from "../constants/fpt-color";
 import {useNavigation} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {DocumentSearchIcon, LogoutIcon} from "react-native-heroicons/outline";
 import {LocalStorageKeys, useStorage} from "../utils/local-storage";
-import {BLACK} from "../constants/colors";
+import {BLACK, FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE} from "@app/constants";
 
 
 const SettingsScreen = () => {
@@ -84,7 +83,7 @@ export const styles = StyleSheet.create({
     fontSize: 20
   },
   logoutIconContainer: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: LIGHT_GRAY,
     padding: 8,
     borderRadius: 10,
     marginRight: 15,
@@ -95,7 +94,7 @@ export const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 5,
     height: 60,
-    backgroundColor: '#fff'
+    backgroundColor: WHITE
   },
   logoutButton: {
     margin: 10,
@@ -104,14 +103,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
-    backgroundColor: '#fff',
+    backgroundColor: WHITE,
     display: 'flex',
     marginLeft: 5,
     marginRight: 5,
     height: 160,
   },
   userInfoIcon: {
-    color: '#000',
+    color: BLACK,
     fontSize: 20
   },
   headerTitle: {

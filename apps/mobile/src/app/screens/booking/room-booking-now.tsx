@@ -2,9 +2,8 @@ import React from 'react';
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {BLACK, PINK, WHITE} from "../../constants/colors";
 import {HeartIcon, LibraryIcon, TicketIcon} from "react-native-heroicons/outline";
-import {FPT_ORANGE_COLOR} from "@app/constants";
+import {BLACK, FPT_ORANGE_COLOR, PINK, WHITE} from "@app/constants";
 
 const RoomBookingNow: React.FC = () => {
 

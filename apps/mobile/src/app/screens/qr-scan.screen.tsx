@@ -2,6 +2,7 @@ import React, {useRef, useState} from "react";
 import {SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
 import * as IconOutline from "react-native-heroicons/outline";
 import * as Icon from "react-native-heroicons/solid";
+import {BLACK, WHITE} from "@app/constants";
 
 
 const QRScan = () => {
@@ -38,7 +39,7 @@ export default QRScan;
 
 export const styles = StyleSheet.create({
   scrollView: {
-    backgroundColor: '#ffffff',
+    backgroundColor: WHITE,
   },
   header: {
     display: 'flex',
@@ -47,7 +48,7 @@ export const styles = StyleSheet.create({
     height: 200
   },
   userInfoIcon: {
-    color: '#000',
+    color: BLACK,
     fontSize: 20
   },
   headerTitle: {

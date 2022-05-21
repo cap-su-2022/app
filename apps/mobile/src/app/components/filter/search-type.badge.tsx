@@ -1,8 +1,7 @@
 import React from "react";
 import {StyleSheet, View} from "react-native";
-import {FPT_ORANGE_COLOR} from "@app/constants";
+import {FPT_ORANGE_COLOR, WHITE} from "@app/constants";
 import {CheckIcon} from "react-native-heroicons/outline";
-import {WHITE} from "../../constants/colors";
 
 interface SeachTypeCheckBadge {
   width: number;

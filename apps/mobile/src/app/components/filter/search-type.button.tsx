@@ -1,8 +1,7 @@
 import SearchTypeCheckBadge from "./search-type.badge";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import React, {Ref, useEffect, useRef, useState} from "react";
-import {FPT_ORANGE_COLOR} from "@app/constants";
-import {BLACK} from "../../constants/colors";
+import {BLACK, FPT_ORANGE_COLOR} from "@app/constants";
 import {AppDispatch, RootState} from "../../redux/store";
 import {useDispatch, useSelector} from "react-redux";
 import {addSearchType, removeSearchType} from "../../redux/features/feedback-search-filter";

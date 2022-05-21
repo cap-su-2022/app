@@ -1,7 +1,7 @@
 import React, {SetStateAction} from 'react';
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import * as Icon from "react-native-heroicons/solid";
-import {FPT_ORANGE_COLOR} from "../../constants/fpt-color";
+import {FPT_ORANGE_COLOR, WHITE} from "@app/constants";
+import {ExclamationCircleIcon} from "react-native-heroicons/solid";
 
 interface LoginErrorModalProps {
   isFailure: boolean;
@@ -15,7 +15,7 @@ const LoginErrorModal = (props: LoginErrorModalProps) => {
     <Modal animationType="fade" transparent={true} visible={props.isFailure} style={[styles.layout]}>
       <View style={[styles.layout]}>
         <View style={[styles.modalContainer, styles.shadowProp]}>
-          <Icon.ExclamationCircleIcon color={'red'} size={50}/>
+          <ExclamationCircleIcon color={'red'} size={50}/>
           <View>
             <Text style={[styles.errorText]}>
               {props.title}
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 350,
     height: 400,
-    backgroundColor: '#fff',
+    backgroundColor: WHITE,
     borderRadius: 8,
   },
   errorText: {
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     height: 40
   },
   errorButtonText: {
-    color: '#fff',
+    color: WHITE,
     fontSize: 16,
   },
   shadowProp: {

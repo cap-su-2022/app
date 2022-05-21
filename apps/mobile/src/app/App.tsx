@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   StatusBar,
 } from 'react-native';
@@ -10,8 +10,6 @@ import {AppDispatch, RootState} from "./redux/store";
 import LoginScreen from "./screens/login.screen";
 import MainNavigator from "./navigation/main.navigator";
 import {Spinner} from "./components/spinners/spinner";
-import {LocalStorageKeys, useStorage} from "./utils/local-storage";
-import {toggleSpinnerOff, toggleSpinnerOn} from "./redux/features";
 
 
 export const App = () => {

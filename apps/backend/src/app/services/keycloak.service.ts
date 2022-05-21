@@ -1,13 +1,12 @@
 import {HttpException, HttpStatus, Inject, Injectable, Logger, Scope} from "@nestjs/common";
 import {HttpService} from "@nestjs/axios";
 import {lastValueFrom, map, Observable} from "rxjs";
-import {KEYCLOAK_CONFIG} from "../constants/config/keycloak.config";
-import {APPLICATION_X_WWW_FORM_URLENCODED} from "../constants/network/mediatype.constant";
 import {KeycloakSigninSuccessResponse} from "../dto/keycloak-signin-success.response.dto";
 import {KeycloakUser} from "@app/models";
 import {ConfigService} from "@nestjs/config";
 import {REQUEST} from "@nestjs/core";
 import {Request} from "express";
+import {APPLICATION_X_WWW_FORM_URLENCODED, Environment} from "@app/constants";
 
 @Injectable({
   scope: Scope.REQUEST
@@ -50,9 +49,9 @@ export class KeycloakService {
   async signInToKeycloak(username: string, password: string): Promise<KeycloakSigninSuccessResponse> {
     const url = `http://${this.keycloakHost}:${this.keycloakPort}/auth/realms/${this.keycloakRealm}/protocol/openid-connect/token`;
     const signInPayload = new URLSearchParams({
-      client_id: KEYCLOAK_CONFIG.client.id,
-      client_secret: KEYCLOAK_CONFIG.client.secret,
-      grant_type: KEYCLOAK_CONFIG.grantType.password,
+      client_id: this.configService.get<string>(Environment.keycloak.client.id),
+      client_secret: this.configService.get<string>(Environment.keycloak.client.secret),
+      grant_type: this.configService.get<string>(Environment.keycloak.grant_type.password),
       username: username,
       password: password,
     });
@@ -83,7 +82,7 @@ export class KeycloakService {
   }
 
   getUserById(authToken: string, id: string) {
-    const URL = `http://${KEYCLOAK_CONFIG.host}:${KEYCLOAK_CONFIG.port}/auth/admin/realms/${KEYCLOAK_CONFIG.client.realm}/users/${id}`;
+    const URL = `http://${this.keycloakHost}:${this.keycloakPort}/auth/admin/realms/${this.keycloakRealm}/users/${id}`;
     console.log(URL);
     return this.httpService.get(URL, {
       headers: {

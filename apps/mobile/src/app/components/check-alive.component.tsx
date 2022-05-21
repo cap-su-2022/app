@@ -1,9 +1,9 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {FPT_ORANGE_COLOR} from "../constants/fpt-color";
-import * as Icon from "react-native-heroicons/solid";
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {ExclamationCircleIcon} from "react-native-heroicons/solid";
+import {FPT_ORANGE_COLOR, WHITE} from "@app/constants";
 const CheckAlive = () => {
 
   const errorIconProps = {
@@ -16,7 +16,7 @@ const CheckAlive = () => {
   return (
     <View style={[styles.modal]}>
       <View style={[styles.modalContainer]}>
-        <Icon.ExclamationCircleIcon {...errorIconProps}/>
+        <ExclamationCircleIcon {...errorIconProps}/>
         <View>
           <Text style={[styles.errorText]}>
             Server has occurred an error.
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     width: 350,
     height: 180,
-    backgroundColor: '#fff',
+    backgroundColor: WHITE,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     height: 40
   },
   errorButtonText: {
-    color: '#fff',
+    color: WHITE,
     fontSize: 16,
   }
 });

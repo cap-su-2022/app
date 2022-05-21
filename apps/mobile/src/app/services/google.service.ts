@@ -1,8 +1,4 @@
 import {GoogleSignin} from "@react-native-google-signin/google-signin";
-import auth from "@react-native-firebase/auth";
-import {AUTH_API} from "../utils/api.util";
-
-const HOST = 'https://172.16.4.119';
 
 GoogleSignin.configure({
   iosClientId: '1013204251190-74m7mtno9e3ge4fdie3422hotor5217c.apps.googleusercontent.com',

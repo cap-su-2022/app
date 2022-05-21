@@ -5,7 +5,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View
 } from "react-native";
@@ -24,13 +23,12 @@ import React, {useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../redux/store";
 import Carousel, {Pagination} from "react-native-snap-carousel";
-import {RED, WHITE, YELLOW} from "../constants/colors";
 import {
   ClipboardCheckIcon,
   ClipboardCopyIcon,
   ExclamationIcon
 } from "react-native-heroicons/outline";
-import {FPT_ORANGE_COLOR} from "@app/constants";
+import {FPT_ORANGE_COLOR, WHITE} from "@app/constants";
 import {deviceWidth} from "../utils/device";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
@@ -502,7 +500,7 @@ const styles = StyleSheet.create({
     borderRadius: 8
   },
   scrollView: {
-    backgroundColor: '#ffffff',
+    backgroundColor: WHITE,
   },
   codeBlock: {
     backgroundColor: 'rgba(55, 65, 81, 1)',
@@ -595,7 +593,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 12,
-    backgroundColor: '#f06e28',
+    backgroundColor: FPT_ORANGE_COLOR,
     padding: 36,
     marginBottom: 24,
   },
@@ -609,15 +607,15 @@ const styles = StyleSheet.create({
     marginTop: 9
   },
   heroTitleText: {
-    color: '#ffffff',
+    color: WHITE,
     marginLeft: 12,
   },
   heroText: {
-    color: '#ffffff',
+    color: WHITE,
     marginVertical: 12,
   },
   whatsNextButton: {
-    backgroundColor: '#ffffff',
+    backgroundColor: WHITE,
     paddingVertical: 12,
     borderRadius: 8,
     width: '50%',

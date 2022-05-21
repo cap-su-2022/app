@@ -2,9 +2,7 @@ import React, {useState} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
-import {BLACK, WHITE} from "../../constants/colors";
-import {FPT_ORANGE_COLOR} from '../../constants/fpt-color';
+import {Calendar} from 'react-native-calendars';
 import {
   ChevronDoubleRightIcon, ChevronLeftIcon, ChevronRightIcon,
   RefreshIcon,
@@ -12,8 +10,8 @@ import {
   SwitchVerticalIcon
 } from "react-native-heroicons/outline";
 import Asterik from "../../components/text/asterik";
-import Divider from "../../components/text/divider";
 import {deviceWidth} from "../../utils/device";
+import {BLACK, FPT_ORANGE_COLOR, GRAY, WHITE} from "@app/constants";
 
 
 const RoomBookingLater: React.FC = () => {
@@ -34,7 +32,7 @@ const RoomBookingLater: React.FC = () => {
         }}>
           <Text style={{
             margin: 10,
-            color: '#808080',
+            color: GRAY,
             fontSize: 20,
           }}>
             Select a date

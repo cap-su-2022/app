@@ -1,3 +1,11 @@
 export const INPUT_GRAY_COLOR = "rgb(206, 212, 218)";
 export const FORM_GRAY_COLOR = "rgb(248, 249, 250)";
 export const FPT_ORANGE_COLOR = "#f06e28";
+export const BLACK = "#000";
+export const WHITE = "#fff";
+export const GRAY = "#808080";
+export const LIGHT_GRAY = "#f2f2f2";
+export const YELLOW = '#f59f00';
+export const RED = 'rgb(250,82,82)';
+export const PINK = '#d6336c';
+export const GREEN = 'rgb(64,192,87)';

@@ -1,19 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {useRef} from "react";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {BLACK, WHITE} from "../../constants/colors";
 import {CheckIcon, FilterIcon, SearchIcon, SpeakerphoneIcon} from "react-native-heroicons/outline";
 import {ClockIcon} from "react-native-heroicons/solid";
 import * as SolidIcon from "react-native-heroicons/solid";
 
-import {FPT_ORANGE_COLOR} from "@app/constants";
-import SearchTypeCheckBadge from "../../components/filter/search-type.badge";
-import SearchTypeFilterButton from "../../components/filter/search-type.button";
+import {BLACK, FPT_ORANGE_COLOR, GRAY, GREEN, LIGHT_GRAY, RED, WHITE} from "@app/constants";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../redux/store";
-import {removeSearchTypeAll} from "../../redux/features/feedback-search-filter";
 
 
 const searchTypeStyles = {
@@ -128,7 +124,7 @@ const FeedbackHistory: React.FC = () => {
                   borderRadius: 50,
                   marginTop: -20,
                   marginLeft: 32,
-                  backgroundColor: 'rgb(64,192,87)',
+                  backgroundColor: GREEN,
                 }}>
                   <SolidIcon.CheckIcon color={WHITE}/>
                 </View>
@@ -162,7 +158,7 @@ const FeedbackHistory: React.FC = () => {
                   borderRadius: 50,
                   marginTop: -20,
                   marginLeft: 32,
-                  backgroundColor: 'rgb(250,82,82)',
+                  backgroundColor: RED,
                 }}>
                   <SolidIcon.XIcon color={WHITE}/>
                 </View>
@@ -205,7 +201,7 @@ export const styles = StyleSheet.create({
     backgroundColor: WHITE
   },
   searchInputContainer: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: LIGHT_GRAY,
     display: 'flex',
     flexDirection: 'row',
     marginTop: 10,
@@ -263,7 +259,7 @@ export const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 50,
     borderWidth: 1,
-    borderColor: '#808080',
+    borderColor: GRAY,
   },
   feedbackInProgressIconStatus: {
     backgroundColor: WHITE,
@@ -282,7 +278,7 @@ export const styles = StyleSheet.create({
   feedbackDetailTime: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#808080'
+    color: GRAY
   },
   feedbackDetailCode: {
     fontSize: 12,
@@ -296,13 +292,13 @@ export const styles = StyleSheet.create({
   },
   feedbackSuccessText: {
     fontWeight: '600',
-    color: 'rgb(64,192,87)',
+    color: GREEN,
     fontSize: 20,
     marginRight: 10
   },
   feedbackRejectText: {
     fontWeight: '600',
-    color: 'rgb(250,82,82)',
+    color: RED,
     fontSize: 20,
     marginRight: 10
   }

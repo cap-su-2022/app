@@ -1,12 +1,12 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import {StackNavigator, StackScreen} from '@app/utils';
 import FeedbackHistory from "../../../screens/history/feedback.history";
 import {ChevronLeftIcon, FilterIcon, XIcon} from "react-native-heroicons/outline";
 import FeedbackHistoryFilter from "../../../screens/history/feedback-history-filter";
-import {Animated, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {BLACK} from "../../../constants/colors";
+import { StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {BLACK} from "@app/constants";
 
 const FeedbackHistoryNavigation: React.FC = () => {
 

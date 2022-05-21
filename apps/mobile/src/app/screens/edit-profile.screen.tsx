@@ -1,13 +1,9 @@
 import React, {useRef, useState} from "react";
-import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import * as IconOutline from "react-native-heroicons/outline";
-import * as Icon from "react-native-heroicons/solid";
-import {FPT_ORANGE_COLOR} from "../constants/fpt-color";
+import {SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
 import Divider from "../components/text/divider";
 
 
 const EditProfile = () => {
-  const [whatsNextYCoord, setWhatsNextYCoord] = useState<number>(0);
   const scrollViewRef = useRef<null | ScrollView>(null);
   return (
     <SafeAreaView>

@@ -5,10 +5,10 @@ import {StackNavigator, StackScreen} from '@app/utils';
 import HistoryScreen from "../../screens/history";
 import {AppDispatch} from "../../redux/store";
 import FeedbackHistoryNavigation from "./feedback/feedback.navigation";
-import {ChevronLeftIcon, FilterIcon} from "react-native-heroicons/outline";
-import {BLACK} from "../../constants/colors";
+import {ChevronLeftIcon} from "react-native-heroicons/outline";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {BLACK} from "@app/constants";
 
 
 const HistoryNavigation: React.FC = () => {

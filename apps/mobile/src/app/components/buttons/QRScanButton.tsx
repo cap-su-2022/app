@@ -1,6 +1,7 @@
 import {StyleSheet, View} from "react-native";
 import {QrcodeIcon} from "react-native-heroicons/solid";
 import React from "react";
+import {FPT_ORANGE_COLOR} from "@app/constants";
 
 const QRScanButton = () => {
   return (
@@ -16,7 +17,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f06e28',
+    backgroundColor: FPT_ORANGE_COLOR,
     borderRadius: 50,
     width: 65,
     height: 65,

@@ -1,33 +1,25 @@
 import React, {useEffect, useState} from 'react';
-import {
-  DatePickerIOS, Platform,
+import {Platform,
   SafeAreaView,
   ScrollView, StatusBar,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View
 } from "react-native";
 import {useRef} from "react";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {BLACK, WHITE} from "../../constants/colors";
 import {
   CheckIcon,
-  ChevronLeftIcon,
-  SearchIcon,
-  SpeakerphoneIcon,
   StarIcon, SwitchHorizontalIcon,
   XIcon
 } from "react-native-heroicons/outline";
 import {ClockIcon} from "react-native-heroicons/solid";
-import * as SolidIcon from "react-native-heroicons/solid";
 
-import {FPT_ORANGE_COLOR} from "@app/constants";
+import {FPT_ORANGE_COLOR, GRAY, GREEN, RED, WHITE} from "@app/constants";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../redux/store";
-import SearchTypeFilterButton from "../../components/filter/search-type.button";
 import DatePicker from "react-native-date-picker";
 import LoginErrorModal from "../../components/modals/login-error.component";
 
@@ -489,7 +481,7 @@ export const styles = StyleSheet.create({
   },
   dateFilterText: {
     fontSize: 20,
-    color: '#808080'
+    color: GRAY
   },
   dateInputBoxContainer: {
     display: 'flex',
@@ -499,7 +491,7 @@ export const styles = StyleSheet.create({
     width: 150,
     height: 40,
     borderRadius: 5,
-    backgroundColor: '#f2f2f2'
+    backgroundColor: GRAY
   },
   dateFromToTextContainer: {
     marginTop: 15,
@@ -509,7 +501,7 @@ export const styles = StyleSheet.create({
     marginLeft: -10,
   },
   dateFromToText: {
-    color: '#808080',
+    color: GRAY,
     fontSize: 18,
     fontWeight: '600'
   },
@@ -522,7 +514,7 @@ export const styles = StyleSheet.create({
     width: 170,
     height: 50,
     borderWidth: 1,
-    borderColor: 'rgb(64,192,87)',
+    borderColor: GREEN,
     borderRadius: 5,
     display: 'flex',
     justifyContent: 'center',
@@ -532,7 +524,7 @@ export const styles = StyleSheet.create({
   feedbackStatusResolvedSelectedContainer: {
     width: 170,
     height: 50,
-    backgroundColor: 'rgb(64,192,87)',
+    backgroundColor: GREEN,
     borderRadius: 5,
     display: 'flex',
     justifyContent: 'center',
@@ -543,7 +535,7 @@ export const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 16,
     fontWeight: '600',
-    color: 'rgb(64,192,87)'
+    color: GREEN
   },
   feedbackStatusResolvedSelectedText: {
     marginLeft: 5,
@@ -552,7 +544,7 @@ export const styles = StyleSheet.create({
     color: WHITE
   },
   feedbackStatusResolvedNotSelectedIconContainer: {
-    backgroundColor: 'rgb(64,192,87)',
+    backgroundColor: GREEN,
     borderRadius: 50,
   },
   feedbackStatusResolvedSelectedIconContainer: {
@@ -594,7 +586,7 @@ export const styles = StyleSheet.create({
     width: 170,
     height: 50,
     borderWidth: 1,
-    borderColor: 'rgb(250,82,82)',
+    borderColor: RED,
     borderRadius: 5,
     display: 'flex',
     justifyContent: 'center',
@@ -603,7 +595,7 @@ export const styles = StyleSheet.create({
   feedbackStatusRejectSelectedContainer: {
     width: 170,
     height: 50,
-    backgroundColor: 'rgb(250,82,82)',
+    backgroundColor: RED,
     borderRadius: 5,
     display: 'flex',
     justifyContent: 'center',
@@ -613,10 +605,10 @@ export const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 16,
     fontWeight: '600',
-    color: 'rgb(250,82,82)'
+    color: RED
   },
   feedbackStatusRejectedNotSelectedIconContainer: {
-    backgroundColor: 'rgb(250,82,82)',
+    backgroundColor: RED,
     borderRadius: 50,
   },
   feedbackStatusRejectedSelectedIconContainer: {
@@ -636,7 +628,7 @@ export const styles = StyleSheet.create({
     width: 170,
     height: 50,
     borderWidth: 1,
-    borderColor: '#808080',
+    borderColor: GRAY,
     borderRadius: 5,
     justifyContent: 'center',
     marginRight: 5,
@@ -649,9 +641,9 @@ export const styles = StyleSheet.create({
     width: 170,
     height: 50,
     borderWidth: 1,
-    borderColor: '#808080',
+    borderColor: GRAY,
     borderRadius: 5,
-    backgroundColor: '#808080',
+    backgroundColor: GRAY,
     justifyContent: 'center',
     marginRight: 5,
     marginBottom: 5
@@ -660,7 +652,7 @@ export const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 16,
     fontWeight: '600',
-    color: '#808080'
+    color: GRAY
   },
   feedbackStatusAllSelectedText: {
     marginLeft: 5,
@@ -670,7 +662,7 @@ export const styles = StyleSheet.create({
   },
   feedbackStatusAllNotSelectedIconContainer: {
     borderRadius: 50,
-    backgroundColor: '#808080'
+    backgroundColor: GRAY
   },
   feedbackStatusAllSelectedIconContainer: {
     borderRadius: 50,

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {FPT_ORANGE_COLOR} from "../../constants/fpt-color";
 import {StyleSheet, View} from "react-native";
+import {FPT_ORANGE_COLOR} from "@app/constants";
 
 export const Spinner: React.FC = () => {
 

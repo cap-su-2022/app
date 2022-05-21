@@ -11,6 +11,9 @@ db:
     url: 'fu-lib-room.tk'
     port: 3307
     database: 'keycloak'
+    username: 'root'
+    password: 'root'
+    synchronize: false
   mysql:
     url: 'fu-lib-room.tk'
     port: 3306
@@ -27,15 +30,17 @@ keycloak:
     realm: 'authentication'
     id: 'authentication-api'
     secret: 'eAaFWFGhQbwR02U4g7M9xsd9BryRaeJ7'
+  grant_type:
+    password: 'password'
 
 redis:
-  host: '54.92.169.139'
+  host: 'fu-lib-room.tk'
   port: 6379
   username:
   password:
 
 elasticsearch:
-  host: '54.92.169.139'
+  host: 'fu-lib-room.tk'
   port: 9999
 
 firebase:

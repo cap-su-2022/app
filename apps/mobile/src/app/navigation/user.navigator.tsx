@@ -1,8 +1,8 @@
 import SettingsScreen from "../screens/settings.screen";
 import EditProfile from "../screens/edit-profile.screen";
-import React, {useRef, useState} from "react";
+import React, {useRef} from "react";
 import {StackNavigator, StackScreen} from '@app/utils';
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {StyleSheet, Text, TouchableOpacity} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import EditDetailProfile from "../screens/edit-detail-profile.screen";

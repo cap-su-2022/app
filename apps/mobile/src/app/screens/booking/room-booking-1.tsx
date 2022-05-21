@@ -4,8 +4,7 @@ import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import ReadingTime from '../../../../../../assets/undraw/reading-time.svg';
 import {deviceHeight, deviceWidth} from "../../utils/device";
-import {FPT_ORANGE_COLOR} from "@app/constants";
-import {WHITE} from "../../constants/colors";
+import {FPT_ORANGE_COLOR, WHITE} from "@app/constants";
 
 const RoomBooking1: React.FC = () => {
 

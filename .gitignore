@@ -97,3 +97,7 @@ node_modules/
 
 apps/mobile-e2e/artifacts
 apps/mobile/node_modules
+apps/frontend/build
+apps/frontend/node_modules
+apps/backend/build
+apps/backend/node_modules

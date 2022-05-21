@@ -1,11 +1,11 @@
 import React, {useRef} from "react";
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {BLACK, WHITE} from "../../constants/colors";
 import {ChatAlt2Icon, LibraryIcon} from "react-native-heroicons/outline";
 import {LocalStorageKeys, useStorage} from "../../utils/local-storage";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import Divider from "../../components/text/divider";
+import {BLACK, LIGHT_GRAY, WHITE} from "@app/constants";
 
 const HistoryScreen: React.FC = (props) => {
   const [authenticatedUser, setAuthenticatedUser] = useStorage(LocalStorageKeys.authenticatedUser);
@@ -44,7 +44,7 @@ const HistoryScreen: React.FC = (props) => {
           marginTop: 10,
         }}>
           <View style={{
-            backgroundColor: '#f2f2f2',
+            backgroundColor: LIGHT_GRAY,
             padding: 8,
             borderRadius: 10,
             marginRight: 15,
@@ -65,7 +65,7 @@ const HistoryScreen: React.FC = (props) => {
           margin: 10,
         }}>
           <View style={{
-            backgroundColor: '#f2f2f2',
+            backgroundColor: LIGHT_GRAY,
             padding: 8,
             borderRadius: 10,
             marginRight: 15,

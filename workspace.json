@@ -1,9 +1,10 @@
 {
   "version": 2,
   "projects": {
-    "app": "apps/app",
+    "frontend": "apps/frontend",
     "backend": "apps/backend",
     "constants": "libs/constants",
+    "keycloak-api": "apps/keycloak-api",
     "mobile": "apps/mobile",
     "models": "libs/models",
     "utils": "libs/utils"
