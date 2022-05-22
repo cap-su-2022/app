@@ -17,11 +17,28 @@ import {SigninSchema} from "../validation/signin.schema";
 import {useRouter} from "next/router";
 import {doValidateAccessToken} from "../redux/features/user/validate-token.thunk";
 import {invalidateAuthUser} from "../redux/features/user/auth.slice";
-import {toggleSpinnerOff} from "../redux/features/spinner";
+import {toggleSpinnerOff, toggleSpinnerOn} from "../redux/features/spinner";
 import Divider from "../components/generic/divider";
 import {BLACK, FPT_ORANGE_COLOR, WHITE} from "@app/constants";
-
+import { initializeApp } from "firebase/app"
+import {getAuth, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';
+import {doLoginWithGoogle} from "../redux/features/user/google-login.thunk";
 const LoginFailedModal = dynamic(() => import('../components/login-fail.modal'));
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBu0hVHThHGd5OQLxQWnNZLSgdLGiYsfZE",
+  authDomain: "fptu-library-booking.firebaseapp.com",
+  projectId: "fptu-library-booking",
+  storageBucket: "fptu-library-booking.appspot.com",
+  messagingSenderId: "1013204251190",
+  appId: "1:1013204251190:web:52aeef762a7eb980e51e97",
+  measurementId: "G-MQLQ866QXQ"
+};
+initializeApp(firebaseConfig);
+const provider = new GoogleAuthProvider();
+
+
+const auth = getAuth();
 
 function Login() {
   const {classes} = useStyles();
@@ -51,8 +68,32 @@ function Login() {
       .then(() => router.replace('/rooms'));
   }
 
-  const handleGoogleLoginSubmit = () => {
-    return;
+  const handleGoogleSignin = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        console.log(credential);
+        dispatch(doLoginWithGoogle({
+          token: credential.idToken,
+        }));
+        const token = credential.accessToken;
+        console.log(token);
+        // The signed-in user info.
+        const user = result.user;
+        console.log(user);
+        // ...
+      }).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      // ...
+    });
+
   }
 
 
@@ -120,7 +161,7 @@ function Login() {
               </div>
 
               <div className={classes.googleLoginButtonContainer}>
-                <Button type="button" className={classes.googleLoginButton}>
+                <Button onClick={() => handleGoogleSignin()} type="button" className={classes.googleLoginButton}>
                   <Image alt="Google-icon" src="/google-icon.svg" height={24} width={24}/>
                   <div className={classes.googleLoginButtonText}>Google</div>
                 </Button>

@@ -2,6 +2,7 @@ import {UserLoginSuccessModel} from "../../../models/user/user-login-success-res
 import {createSlice} from "@reduxjs/toolkit";
 import {doLogin} from "./login.thunk";
 import {doValidateAccessToken} from "./validate-token.thunk";
+import {doLoginWithGoogle} from "./google-login.thunk";
 
 type AuthState = {
   isLoading: boolean;
@@ -49,6 +50,9 @@ export const authSlice = createSlice({
       state.userLoginResponse = undefined;
 
     });
+    builder.addCase(doLoginWithGoogle.fulfilled, (state, {payload}) => {
+
+    })
   }
 });
 

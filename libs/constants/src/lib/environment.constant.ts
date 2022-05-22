@@ -35,7 +35,9 @@ export const Environment = {
     },
     grant_type: {
       password: 'keycloak.grant_type.password',
-    }
+    },
+    master_username: 'keycloak.master_username',
+    master_password: 'keycloak.master_password'
   },
   redis: {
     host: 'redis.host',

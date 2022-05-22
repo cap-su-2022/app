@@ -30,6 +30,8 @@ keycloak:
     realm: 'authentication'
     id: 'authentication-api'
     secret: 'eAaFWFGhQbwR02U4g7M9xsd9BryRaeJ7'
+  master_username: 'admin'
+  master_password: '12345678x@X'
   grant_type:
     password: 'password'
 
@@ -56,3 +58,5 @@ firebase:
     audience:
       - "fptu-library-booking"
       - "1013204251190-74m7mtno9e3ge4fdie3422hotor5217c.apps.googleusercontent.com"
+      - "fptu-library-booking.firebaseapp.com"
+      - "1013204251190-nkd63gan2a17tj8lffmh83jl6scco9g6.apps.googleusercontent.com"

@@ -3,8 +3,6 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-native": "*",
-    "@testing-library/react-native": "*",
     "react": "*",
     "react-native": "*",
     "react-native-config": "*",
@@ -25,12 +23,16 @@
     "formik": "*",
     "react-native-permissions": "*",
     "react-native-qrcode-scanner": "*",
-    "react-native-snap-carousel": "*",
     "react-native-mmkv-storage": "*",
     "react-native-date-picker": "*",
     "@react-native-picker/picker": "*",
     "react-native-calendars": "*",
     "rxjs": "*",
-    "@nestjs/microservices": "*"
+    "@nestjs/microservices": "*",
+    "react-native-camera": "*",
+    "react-native-signature-canvas": "*",
+    "react-native-snap-carousel": "*",
+    "react-native-tab-view": "*",
+    "react-native-webview": "*"
   }
 }

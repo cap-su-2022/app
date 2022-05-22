@@ -1,5 +1,4 @@
 import {CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, Logger} from "@nestjs/common";
-import {map, Observable} from "rxjs";
 import {KeycloakService} from "../services/keycloak.service";
 
 @Injectable()
@@ -15,10 +14,10 @@ export class AuthGuard implements CanActivate {
     let accessToken;
     if (request.url.endsWith('health/auth')) {
       accessToken = request.headers['authorization'] ?? `Bearer ${request.headers['cookie'].split(';')
-        .map(k => k.trim()).find(k => k.startsWith('accessToken=')).split("=")[1]}`;
+        .map(k => k.trim()).find(k => k.startsWith('accessToken='))?.split("=")[1]}`;
     } else {
       accessToken = `Bearer ${request.headers['cookie'].split(';')
-        .map(k => k.trim()).find(k => k.startsWith('accessToken=')).split("=")[1]}`;
+        .map(k => k.trim()).find(k => k.startsWith('accessToken='))?.split("=")[1]}`;
     }
     if (!accessToken) {
       return false;
@@ -29,7 +28,6 @@ export class AuthGuard implements CanActivate {
     }
 
     return !!resp;
-
   }
 
 

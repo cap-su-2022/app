@@ -1,13 +1,11 @@
 import {Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Request, Res} from "@nestjs/common";
 import {KeycloakService} from "../services/keycloak.service";
-import {ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiSecurity} from "@nestjs/swagger";
+import {ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse} from "@nestjs/swagger";
 import {KEYCLOAK_PATH} from "../constants/controllers/keycloak/path.constant";
 import {AUTHORIZATION_LOWERCASE} from "../constants/network/headers.constant";
-import {AuthService} from "../services/auth.service";
 import {Response} from "express";
-import {KeycloakSigninSuccessResponse} from "../dto/keycloak-signin-success.response.dto";
 import {AuthenticationService} from "../services/authentication.service";
-import {UsernamePasswordCredentials, UsernamePasswordLoginResponse} from "@app/models";
+import {UsernamePasswordLoginResponse} from "@app/models";
 import {Roles} from "../enum/roles.enum";
 
 export class AuthenticationRequest {
@@ -23,7 +21,6 @@ export class AuthenticationRequest {
 export class KeycloakController {
 
   constructor(private readonly service: KeycloakService,
-              private readonly authService: AuthService,
               private readonly authenticationService: AuthenticationService) {
   }
 
@@ -64,7 +61,7 @@ export class KeycloakController {
 
   @Post('signin/google')
   signInWithGoogle(@Body() request: { token: string }) {
-    return this.authService.handleGoogleSigninWithIdToken(request.token);
+    return this.authenticationService.handleGoogleSignin(request.token);
   }
 
   @Post(KEYCLOAK_PATH.refreshAccessToken)

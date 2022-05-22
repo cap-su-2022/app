@@ -50,7 +50,7 @@ services:
   keycloak:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:16.1.0
-    command: -b 0.0.0.0
+    command: -b 0.0.0.0 -Dkeycloak.profile=preview
     restart: on-failure
     environment:
       PROXY_ADDRESS_FORWARDING: "true"
