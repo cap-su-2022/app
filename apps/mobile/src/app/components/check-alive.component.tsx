@@ -1,9 +1,10 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ExclamationCircleIcon} from "react-native-heroicons/solid";
 import {FPT_ORANGE_COLOR, WHITE} from "@app/constants";
+
 const CheckAlive = () => {
 
   const errorIconProps = {

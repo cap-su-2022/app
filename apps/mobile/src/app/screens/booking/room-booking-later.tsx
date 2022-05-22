@@ -4,7 +4,9 @@ import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {Calendar} from 'react-native-calendars';
 import {
-  ChevronDoubleRightIcon, ChevronLeftIcon, ChevronRightIcon,
+  ChevronDoubleRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   RefreshIcon,
   SwitchHorizontalIcon,
   SwitchVerticalIcon

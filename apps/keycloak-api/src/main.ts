@@ -7,16 +7,19 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
+import {MicroserviceOptions} from "@nestjs/microservices";
+import {
+  GRPC_SERVICES_HOST,
+  KEYCLOAK_USERS_MANAGEMENT_GRPC_SERVICE,
+  USERS_MANAGEMENT_GRPC_SERVICE_PORT
+} from "./app/grpc-route.constant";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 6000;
-  await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  );
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule.forRoot(), KEYCLOAK_USERS_MANAGEMENT_GRPC_SERVICE);
+  await app.listen();
+
+  Logger.log(`Microservice ${KEYCLOAK_USERS_MANAGEMENT_GRPC_SERVICE} is listening on`);
+  Logger.log(`[ grpc://${GRPC_SERVICES_HOST}:${USERS_MANAGEMENT_GRPC_SERVICE_PORT} ]`);
 }
 
 bootstrap();

@@ -1,5 +1,4 @@
 import {LocalStorageKeys, useStorage} from "../app/utils/local-storage";
-import {useEffect} from "react";
 
 interface AuthenticatedUserModel {
   username: string;

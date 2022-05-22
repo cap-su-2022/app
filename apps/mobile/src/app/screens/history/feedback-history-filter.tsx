@@ -1,20 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {Platform,
-  SafeAreaView,
-  ScrollView, StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
-import {useRef} from "react";
+import React, {useEffect, useRef, useState} from 'react';
+import {Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {
-  CheckIcon,
-  StarIcon, SwitchHorizontalIcon,
-  XIcon
-} from "react-native-heroicons/outline";
+import {CheckIcon, StarIcon, SwitchHorizontalIcon, XIcon} from "react-native-heroicons/outline";
 import {ClockIcon} from "react-native-heroicons/solid";
 
 import {FPT_ORANGE_COLOR, GRAY, GREEN, RED, WHITE} from "@app/constants";

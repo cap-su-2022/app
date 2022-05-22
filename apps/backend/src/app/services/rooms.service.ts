@@ -23,7 +23,11 @@ export class RoomsService {
   }
 
   async findById(id: string): Promise<Rooms> {
-    return this.repository.findOneOrFail(id);
+    return this.repository.findOneOrFail({
+      where: {
+        id: id
+      }
+    });
   }
 
   async getAll(request: RoomsRequestPayload): Promise<RoomsResponsePayload> {
@@ -69,7 +73,11 @@ export class RoomsService {
     let room;
 
     try {
-      room = await this.repository.findOneOrFail(id);
+      room = await this.repository.findOneOrFail({
+        where: {
+          id: id
+        }
+      });
     } catch (e) {
       throw new NoSuchElementFoundException();
     }

@@ -22,7 +22,6 @@
     "@react-native-firebase/app": "*",
     "@react-native-google-signin/google-signin": "*",
     "@react-native-firebase/auth": "*",
-    "swr": "*",
     "formik": "*",
     "react-native-permissions": "*",
     "react-native-qrcode-scanner": "*",
@@ -30,6 +29,8 @@
     "react-native-mmkv-storage": "*",
     "react-native-date-picker": "*",
     "@react-native-picker/picker": "*",
-    "react-native-calendars": "*"
+    "react-native-calendars": "*",
+    "rxjs": "*",
+    "@nestjs/microservices": "*"
   }
 }

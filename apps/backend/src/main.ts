@@ -3,13 +3,9 @@ import {NestFactory} from '@nestjs/core';
 
 import {SwaggerModule} from "@nestjs/swagger";
 import {getSwaggerConfig, SWAGGER_CONFIG} from './app/constants/config/swagger.config';
-import * as path from "path";
-import * as fs from 'fs';
 import {ExpressAdapter} from '@nestjs/platform-express';
 import {Express} from 'express';
 import * as express from 'express';
-import {server} from "spdy";
-import Server = server.Server;
 import {AppModule} from "./app/modules/app.module";
 import {initializeFirebaseApp} from "./app/config/firebase.config";
 import * as net from 'net';
@@ -17,7 +13,7 @@ import * as net from 'net';
 async function bootstrap() {
   const port = process.env.BACKEND_PORT || 5000;
   const host = process.env.BACKEND_HOST || `0.0.0.0`;
-  const contextPath = process.env.BACKEND_CONTEXT_PATH || '/api/v1';
+  const contextPath = process.env.BACKEND_CONTEXT_PATH || '/api';
   initializeFirebaseApp();
   const expressApp: Express = express();
 

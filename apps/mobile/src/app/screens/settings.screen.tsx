@@ -1,10 +1,10 @@
 import React, {useRef} from "react";
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import * as IconOutline from "react-native-heroicons/outline";
+import {DocumentSearchIcon, LogoutIcon} from "react-native-heroicons/outline";
 import * as Icon from "react-native-heroicons/solid";
 import {useNavigation} from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import {DocumentSearchIcon, LogoutIcon} from "react-native-heroicons/outline";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {LocalStorageKeys, useStorage} from "../utils/local-storage";
 import {BLACK, FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE} from "@app/constants";
 

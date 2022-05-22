@@ -1,6 +1,7 @@
 import {
   Image,
-  Linking, Platform,
+  Linking,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -23,12 +24,8 @@ import React, {useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../redux/store";
 import Carousel, {Pagination} from "react-native-snap-carousel";
-import {
-  ClipboardCheckIcon,
-  ClipboardCopyIcon,
-  ExclamationIcon
-} from "react-native-heroicons/outline";
-import {FPT_ORANGE_COLOR, WHITE} from "@app/constants";
+import {ClipboardCheckIcon, ClipboardCopyIcon, ExclamationIcon} from "react-native-heroicons/outline";
+import {FPT_ORANGE_COLOR, WHITE, YELLOW} from "@app/constants";
 import {deviceWidth} from "../utils/device";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
@@ -158,7 +155,7 @@ const HomeScreen: React.FC = () => {
                 </View>
               </TouchableOpacity>
             </View>
-            {false ? <View style={{
+             <View style={{
               display: 'flex',
               position: 'absolute',
               top: -10,
@@ -170,7 +167,7 @@ const HomeScreen: React.FC = () => {
               borderColor: WHITE,
             }}>
               <ExclamationIcon color={WHITE}/>
-            </View> : null}
+            </View>
           </View>
         </View>
         <View style={styles.section}>

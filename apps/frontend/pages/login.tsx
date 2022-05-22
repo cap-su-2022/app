@@ -8,11 +8,9 @@ import {
 import Image from 'next/image';
 
 import {useFormik} from 'formik';
-import {BLACK, FPT_ORANGE_COLOR, WHITE} from "../constants/color";
 import {dFlexCenter} from "../constants/css";
 import {useAppDispatch, useAppSelector} from "../redux/hooks";
 import {GetServerSideProps} from "next";
-import Divider from "../components/divider";
 import {doLogin} from "../redux/features/user/login.thunk";
 import dynamic from 'next/dynamic';
 import {SigninSchema} from "../validation/signin.schema";
@@ -20,6 +18,8 @@ import {useRouter} from "next/router";
 import {doValidateAccessToken} from "../redux/features/user/validate-token.thunk";
 import {invalidateAuthUser} from "../redux/features/user/auth.slice";
 import {toggleSpinnerOff} from "../redux/features/spinner";
+import Divider from "../components/generic/divider";
+import {BLACK, FPT_ORANGE_COLOR, WHITE} from "@app/constants";
 
 const LoginFailedModal = dynamic(() => import('../components/login-fail.modal'));
 

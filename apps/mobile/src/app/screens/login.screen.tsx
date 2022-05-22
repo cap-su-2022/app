@@ -1,13 +1,6 @@
 import React, {useEffect, useState} from 'react';
 
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
-} from "react-native";
+import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import Background from "../components/blob-scene-haikei.svg";
 import FPTULogo from '../components/LogoFPTU.svg';
 import Asterik from "../components/text/asterik";

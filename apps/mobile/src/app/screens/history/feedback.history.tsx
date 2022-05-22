@@ -1,11 +1,10 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
-import {useRef} from "react";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {CheckIcon, FilterIcon, SearchIcon, SpeakerphoneIcon} from "react-native-heroicons/outline";
-import {ClockIcon} from "react-native-heroicons/solid";
+import {FilterIcon, SearchIcon, SpeakerphoneIcon} from "react-native-heroicons/outline";
 import * as SolidIcon from "react-native-heroicons/solid";
+import {ClockIcon} from "react-native-heroicons/solid";
 
 import {BLACK, FPT_ORANGE_COLOR, GRAY, GREEN, LIGHT_GRAY, RED, WHITE} from "@app/constants";
 import {useDispatch, useSelector} from "react-redux";

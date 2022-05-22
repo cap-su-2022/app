@@ -1,0 +1,52 @@
+{
+  "root": "apps/blockchain-api",
+  "sourceRoot": "apps/blockchain-api/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/blockchain-api",
+        "main": "apps/blockchain-api/src/main.ts",
+        "tsConfig": "apps/blockchain-api/tsconfig.app.json",
+        "assets": ["apps/blockchain-api/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/blockchain-api/src/environments/environment.ts",
+              "with": "apps/blockchain-api/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "blockchain-api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/blockchain-api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/blockchain-api"],
+      "options": {
+        "jestConfig": "apps/blockchain-api/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

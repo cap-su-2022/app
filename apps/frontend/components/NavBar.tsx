@@ -1,18 +1,13 @@
 import React, {useRef, useState} from 'react';
 import { createStyles, Navbar, Group, Code } from '@mantine/core';
 import {
-  BellRinging,
-  Fingerprint,
-  Key,
   Settings,
   TwoFA,
   DatabaseImport,
-  Receipt2,
-  SwitchHorizontal,
   Logout, User, BuildingWarehouse, Users, Devices, Messages,
 } from 'tabler-icons-react';
 import {FPT_ORANGE_COLOR} from "@app/constants";
-import {BLACK, WHITE} from "../constants/color";
+import {BLACK, WHITE} from "@app/constants";
 import {useRouter} from "next/router";
 import LogoutModal from "./logout.modal";
 import PreferencesModal from "./preferences.modal.component";
