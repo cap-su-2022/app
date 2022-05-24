@@ -13,10 +13,6 @@ import {
 import {useWindowDimensions} from "../../hooks/use-window-dimensions";
 import {Archive, CalendarStats, ClipboardText, Clock, FileDescription, Id, Pencil, Trash, X} from "tabler-icons-react";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {
-  toggleRoomDisableModalVisible,
-  toggleRoomUpdateModalVisible
-} from "../../redux/features/room/room.slice";
 import DisableRoomModal from "./disable-room-modal.component";
 import {Form, FormikProvider, useFormik} from "formik";
 import * as Yup from 'yup';
@@ -25,12 +21,17 @@ import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
 
 const RoomUpdateSchema = Yup.object();
 
-const RoomUpdateModal: React.FC = () => {
+interface RoomUpdateModalProps {
+  isShown: boolean;
+  toggleShown(): void;
+  toggleDeleteModalShown(): void;
+}
+
+const RoomUpdateModal: React.FC<RoomUpdateModalProps> = (props) => {
   const {classes} = useStyles();
   const theme = useMantineTheme();
 
   const room = useAppSelector((state) => state.room.selectedRoom);
-  const isShown = useAppSelector((state) => state.room.isRoomUpdateModalShown);
 
   const [isUpdateDisabled, setUpdateDisabled] = useState<boolean>(false);
 
@@ -41,7 +42,8 @@ const RoomUpdateModal: React.FC = () => {
     dispatch(updateRoomById({
       id: values.id,
       payload: values,
-    })).then(() => dispatch(fetchRooms()));
+    })).then(() => props.toggleShown())
+      .then(() => dispatch(fetchRooms()));
   }
 
   const formik = useFormik({
@@ -78,8 +80,8 @@ const RoomUpdateModal: React.FC = () => {
       <Modal title={<ModalHeaderTitle/>}
              size={dimension.width / 2}
              centered
-             opened={isShown}
-             onClose={() => dispatch(toggleRoomUpdateModalVisible())}>
+             opened={props.isShown}
+             onClose={() => props.toggleShown()}>
         <FormikProvider value={formik}>
           <Form onSubmit={formik.handleSubmit}>
             <div className={classes.modalBody}>
@@ -112,7 +114,7 @@ const RoomUpdateModal: React.FC = () => {
 
             <div className={classes.modalFooter}>
               <Button
-                onClick={() => dispatch(toggleRoomDisableModalVisible())}
+                onClick={() => props.toggleDeleteModalShown()}
                 variant="outline"
                 color={"red"}
                 leftIcon={<Trash/>}
@@ -129,14 +131,13 @@ const RoomUpdateModal: React.FC = () => {
           </Form>
         </FormikProvider>
       </Modal>
-      <DisableRoomModal/>
     </>
   )
 };
 
 const useStyles = createStyles({
   modalHeaderTitle: {
-    fontWeight: '600',
+    fontWeight: 600,
     fontSize: 22
   },
   modalBody: {

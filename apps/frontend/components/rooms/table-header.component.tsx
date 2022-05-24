@@ -5,30 +5,26 @@ import {
   Plus,
   RotateClockwise,
   Search,
-  SortAscending,
   SortAscendingLetters, SortDescendingLetters,
-  SwitchVertical,
   Trash
 } from "tabler-icons-react";
 import {ItemsPerPageData} from "../../models/table/items-per-page.model";
-import {useDebouncedValue} from "@mantine/hooks";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {
   changeRoomsSize,
   changeRoomsSortDirection,
-  resetRoomFilter, toggleRoomAddModalVisible, toggleRoomRestoreDisabledModalVisible,
+  resetRoomFilter, toggleRoomAddModalVisible,
   toggleRoomsDownloadModalVisible
 } from "../../redux/features/room/room.slice";
-import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
-import DownloadModal from "./download-modal.compnent";
-import AddRoomModal from "./add-room-modal.component";
 import {fetchDisabledRooms} from "../../redux/features/room/thunk/fetch-disabled-rooms";
-import RestoreDisabledRoomModal from "./restore-disabled-room.modal.component";
+import {fetchDeletedRooms} from "../../redux/features/room/thunk/fetch-deleted-rooms";
 
 
 interface TableHeaderProps {
   searchText: string;
   handleChangeSearchText(e: string): void;
+  toggleRestoreDisabledModalShown(): void;
+  toggleRestoreDeletedModalShown(): void;
 }
 
 const TableHeader: React.FC<TableHeaderProps> = (props) => {
@@ -121,9 +117,7 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
           <Button variant="outline" color="green"
                   onClick={() => {
                     setDisabledRoomTooltipShown(!isDisabledRoomTooltipShown);
-                    dispatch(fetchDisabledRooms()).then(() => {
-                      dispatch(toggleRoomRestoreDisabledModalVisible());
-                    });
+                    dispatch(fetchDisabledRooms()).then(() => props.toggleRestoreDisabledModalShown());
                   }}>
             <Archive/>
           </Button>
@@ -131,15 +125,12 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
 
         <Button variant="outline" color="red"
                 onClick={() => {
+                  dispatch(fetchDeletedRooms()).then(() => props.toggleRestoreDeletedModalShown())
                   setDisabledRoomTooltipShown(!isDisabledRoomTooltipShown);
                 }}>
           <Trash/>
         </Button>
       </div>
-      <AddRoomModal/>
-
-      <DownloadModal/>
-      <RestoreDisabledRoomModal/>
     </div>);
 };
 
@@ -170,7 +161,7 @@ const useStyles = createStyles({
     marginTop: 4
   },
   sortButtonContainerTitle: {
-    fontWeight: '500',
+    fontWeight: 500,
     fontSize: 15
   },
 

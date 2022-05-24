@@ -69,8 +69,28 @@ export class RoomsController {
   }
 
   @Get('disabled')
+  @UseGuards(AuthGuard)
   getDisableRooms() {
     return this.service.getDisabledRooms();
+  }
+
+  @Get('deleted')
+  @UseGuards(AuthGuard)
+  getDeletedRooms() {
+    return this.service.getDeletedRooms();
+  }
+
+  @Put('restore-deleted/:id')
+  @UseGuards(AuthGuard)
+  restoreDeletedRoomById(@Param() payload: { id: string }) {
+    return this.service.handleRestoreDeletedRoomById(payload.id);
+  }
+
+  @Put('restore-disabled/:id')
+  @UseGuards(AuthGuard)
+  restoreDisabledRoomById(@Param() payload: { id: string }) {
+
+    return this.service.handleRestoreDisabledRoomById(payload.id);
   }
 
   @Put("update/:id")
@@ -84,7 +104,7 @@ export class RoomsController {
   }
 
   @Delete(":id")
-  deleteRoomById(@Param() id: string) {
-    return this.service.deleteById(id);
+  deleteRoomById(@Param() payload: { id: string }) {
+    return this.service.deleteById(payload.id);
   }
 }

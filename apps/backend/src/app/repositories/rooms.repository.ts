@@ -24,6 +24,13 @@ export class RoomsRepository extends Repository<Rooms> {
       .getMany();
   }
 
+  findDeletedRooms(): Promise<Rooms[]> {
+    return this.createQueryBuilder(`rooms`)
+      .where(`rooms.is_disabled = 0`)
+      .andWhere(`rooms.is_deleted = 1`)
+      .getMany();
+  }
+
   searchRoom(payload: RepositoryPaginationPayload): Promise<Rooms[]> {
     const qb = this.createQueryBuilder(`rooms`);
    // qb.where(`rooms.name LIKE :name`, {name: `%${payload.search}%`});
@@ -39,9 +46,27 @@ export class RoomsRepository extends Repository<Rooms> {
     return qb.getMany();
   }
 
-  async disableById(id: string) {
-    return this.manager.transaction(async (em) => {
+  async disableById(id) {
+    return await this.manager.transaction(async (em) => {
        await em.queryRunner.query(`UPDATE rooms r SET r.is_disabled = 1 WHERE r.id = ?`, [id]);
+    });
+  }
+
+  async restoreDisabledRoomById(id) {
+    return await this.manager.transaction(async (em) => {
+      await em.queryRunner.query(`UPDATE rooms r SET r.is_disabled = 0 WHERE r.id = ?`, [id]);
+    });
+  }
+
+  async deleteById(id) {
+    return await this.manager.transaction(async (em) => {
+      await em.queryRunner.query(`UPDATE rooms r SET r.is_deleted = 1, r.is_disabled = 0 WHERE r.id = ?`, [id]);
+    });
+  }
+
+  async restoreDeletedRoomById(id) {
+    return await this.manager.transaction(async (em) => {
+      await em.queryRunner.query(`UPDATE rooms r SET r.is_deleted = 0 WHERE r.id = ?`, [id]);
     });
   }
 }

@@ -4,12 +4,11 @@ import {useWindowDimensions} from "../../hooks/use-window-dimensions";
 import {Archive, CalendarStats, ClipboardText, Clock, FileDescription, Id, X} from "tabler-icons-react";
 import {convertDateToLocalDateString} from "../../utils/date.util";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {toggleRoomDisableModalVisible} from "../../redux/features/room/room.slice";
-import DisableRoomModal from "./disable-room-modal.component";
 
 interface RoomInfoModalProps {
   isShown: boolean;
   toggleShown(): void;
+  toggleDisableRoomModalShown(): void;
 }
 
 const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
@@ -75,7 +74,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
 
         <div className={classes.modalFooter}>
           <Button
-            onClick={() => dispatch(toggleRoomDisableModalVisible())}
+            onClick={() => props.toggleDisableRoomModalShown()}
             variant="outline"
             color={"red"}
             leftIcon={<Archive/>}
@@ -90,14 +89,13 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
           </Button>
         </div>
       </Modal>
-      <DisableRoomModal/>
     </>
   )
 };
 
 const useStyles = createStyles({
   modalHeaderTitle: {
-    fontWeight: '600',
+    fontWeight: 600,
     fontSize: 22
   },
   modalBody: {

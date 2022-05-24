@@ -16,7 +16,7 @@ const RoomsHeader: React.FC = () => {
 const useStyles = createStyles({
   text: {
     marginLeft: 10,
-    fontWeight: '600',
+    fontWeight: 600,
     fontSize: 30
   },
   container: {

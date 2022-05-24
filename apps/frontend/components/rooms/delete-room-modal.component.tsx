@@ -9,13 +9,15 @@ import {
 } from "../../redux/features/room/room.slice";
 import {disableRoomById} from "../../redux/features/room/thunk/disable-room-by-id";
 import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
+import {deleteRoomById} from "../../redux/features/room/thunk/delete-room-by-id";
 
-interface DisableRoomModalProps {
+interface DeleteRoomModalProps {
   isShown: boolean;
   toggleShown(): void;
-  toggleDetailModalShown(): void;
+  toggleUpdateModalShown(): void;
 }
-const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
+
+const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
 
   const {classes} = useStyles();
 
@@ -24,10 +26,10 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const handleDisableSelectedRoom = () => {
-    dispatch(disableRoomById(selectedRoomId))
+    dispatch(deleteRoomById(selectedRoomId))
       .then(() => {
         props.toggleShown();
-        props.toggleDetailModalShown();
+        props.toggleUpdateModalShown();
         dispatch(toggleSuccessModal());
         dispatch(setSuccessModalMessage("Successfully disabled this room!"));
         dispatch(fetchRooms());
@@ -87,4 +89,4 @@ const useStyles = createStyles({
   }
 });
 
-export default DisableRoomModal;
+export default DeleteRoomModal;

@@ -13,10 +13,10 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     let accessToken;
     if (request.url.endsWith('health/auth')) {
-      accessToken = request.headers['authorization'] ?? `Bearer ${request.headers['cookie'].split(';')
+      accessToken = request.headers['authorization'] ?? `Bearer ${request.headers['cookie']?.split(';')
         .map(k => k.trim()).find(k => k.startsWith('accessToken='))?.split("=")[1]}`;
     } else {
-      accessToken = `Bearer ${request.headers['cookie'].split(';')
+      accessToken = `Bearer ${request.headers['cookie']?.split(';')
         .map(k => k.trim()).find(k => k.startsWith('accessToken='))?.split("=")[1]}`;
     }
     if (!accessToken) {

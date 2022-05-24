@@ -22,11 +22,15 @@ import {fetchRooms} from "../redux/features/room/thunk/fetch-rooms";
 import NoDataFound from "../components/no-data-found";
 import {
   changeRoomsTextSearch,
-  toggleRoomUpdateModalVisible
 } from "../redux/features/room/room.slice";
 import TableFooter from "../components/rooms/table-footer.component";
 import RoomUpdateModal from "../components/rooms/room-update-modal.component";
 import RoomsHeader from "../components/rooms/header.component";
+import DisableRoomModal from "../components/rooms/disable-room-modal.component";
+import DeleteRoomModal from "../components/rooms/delete-room-modal.component";
+import AddRoomModal from "../components/rooms/add-room-modal.component";
+import DownloadModal from "../components/rooms/download-modal.compnent";
+import RestoreDisabledRoomModal from "../components/rooms/restore-disabled-room.modal.component";
 
 interface RoomsRowData extends RowData {
   stt: number;
@@ -84,6 +88,11 @@ function RoomsManagement(props: any) {
   const direction = useAppSelector((state) => state.room.direction);
   //modal
   const [isDetailModalShown, setDetailModalShown] = useState<boolean>(false);
+  const [isUpdateModalShown, setUpdateModalShown] = useState<boolean>(false);
+  const [isDisableModalShown, setDisableModalShown] = useState<boolean>(false);
+  const [isDeleteRoomModalShown, setDeleteRoomModalShown] = useState<boolean>(false);
+  const [isRestoreDisabledModalShown, setRestoreDisabledModalShown] = useState<boolean>(false);
+  const [isRestoreDeletedModalShown, setRestoreDeletedModalShown] = useState<boolean>(false);
 
   const isSpinnerLoading = useAppSelector((state) => state.spinner.isEnabled);
   const [debouncedSearchValue] = useDebouncedValue(searchText, 400);
@@ -105,7 +114,7 @@ function RoomsManagement(props: any) {
 
   const handleShowUpdateModal = (id: string) => {
     dispatch(getRoomById(id))
-      .then(() => dispatch(toggleRoomUpdateModalVisible()));
+      .then(() => setUpdateModalShown(!isUpdateModalShown));
 
   }
 
@@ -168,6 +177,8 @@ function RoomsManagement(props: any) {
         <RoomsHeader/>
 
         <TableHeader searchText={searchText}
+                     toggleRestoreDeletedModalShown={() => setRestoreDeletedModalShown(!isRestoreDeletedModalShown)}
+                     toggleRestoreDisabledModalShown={() => setRestoreDisabledModalShown(!isRestoreDisabledModalShown)}
                      handleChangeSearchText={(val) => handleSearchChange(val)}/>
 
         {rooms?.length > 0 ? <>
@@ -223,8 +234,32 @@ function RoomsManagement(props: any) {
           </>
 
           : <NoDataFound/>}
-        <RoomUpdateModal/>
-        <RoomInfoModal isShown={isDetailModalShown} toggleShown={() => setDetailModalShown(!isDetailModalShown)}/>
+        <RoomUpdateModal
+          isShown={isUpdateModalShown}
+          toggleShown={() => setUpdateModalShown(!isUpdateModalShown)}
+          toggleDeleteModalShown={() => setDeleteRoomModalShown(!isDeleteRoomModalShown)}
+        />
+        <RoomInfoModal isShown={isDetailModalShown}
+                       toggleShown={() => setDetailModalShown(!isDetailModalShown)}
+                       toggleDisableRoomModalShown={() => setDisableModalShown(!isDisableModalShown)}
+        />
+        <DisableRoomModal isShown={isDisableModalShown}
+                          toggleShown={() => setDisableModalShown(!isDisableModalShown)}
+                          toggleDetailModalShown={() => setDetailModalShown(!isDetailModalShown)}/>
+        <DeleteRoomModal
+          isShown={isDeleteRoomModalShown}
+          toggleShown={() => setDeleteRoomModalShown(!isDeleteRoomModalShown)}
+          toggleUpdateModalShown={() => setUpdateModalShown(!isUpdateModalShown)}/>
+
+        <AddRoomModal/>
+
+        <DownloadModal/>
+        <RestoreDisabledRoomModal
+          isShown={isRestoreDisabledModalShown}
+          toggleShown={() => setRestoreDisabledModalShown(!isRestoreDisabledModalShown)} />
+        <RestoreDisabledRoomModal
+          isShown={isRestoreDeletedModalShown}
+          toggleShown={() => setRestoreDeletedModalShown(!isRestoreDeletedModalShown)} />
       </AdminLayout>
     </>
   );

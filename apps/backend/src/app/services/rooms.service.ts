@@ -53,16 +53,12 @@ export class RoomsService {
     };
   }
 
-  async getDisabledRooms(): Promise<Rooms[]> {
-    return await this.repository.findDisabledRooms();
+  async getDeletedRooms(): Promise<Rooms[]> {
+    return await this.repository.findDeletedRooms();
   }
 
-  async deleteById(id: string): Promise<any> {
-    return this.repository.delete(id).then((result) => {
-      if (result.affected < 1) {
-        throw new NoSuchElementFoundException();
-      }
-    });
+  async getDisabledRooms(): Promise<Rooms[]> {
+    return await this.repository.findDisabledRooms();
   }
 
   async updateById(id: string, body: UpdateRoomRequest): Promise<UpdateResult> {
@@ -88,5 +84,17 @@ export class RoomsService {
 
   async disableById(id: string): Promise<any> {
     return await this.repository.disableById(id);
+  }
+
+  handleRestoreDeletedRoomById(id: string) {
+    return this.repository.restoreDisabledRoomById(id);
+  }
+
+  async handleRestoreDisabledRoomById(id: string) {
+    return await this.repository.restoreDisabledRoomById(id);
+  }
+
+  async deleteById(id: string) {
+    return await this.repository.deleteById(id);
   }
 }

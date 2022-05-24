@@ -6,19 +6,21 @@ import {fetchRooms} from "./thunk/fetch-rooms";
 import {updateRoomById} from "./thunk/update-room-by-id";
 import {addRoom} from "./thunk/add-room";
 import {fetchDisabledRooms} from "./thunk/fetch-disabled-rooms";
+import {fetchDeletedRooms} from "./thunk/fetch-deleted-rooms";
+import {restoreDisabledRoom} from "./thunk/restore-disabled.thunk";
+import {restoreDeletedRoom} from "./thunk/restore-deleted.thunk";
+import {deleteRoomById} from "./thunk/delete-room-by-id";
 
 interface RoomState {
-  isRoomUpdateModalShown: boolean;
-  isRoomDisableModalShown: boolean;
   isDownloadModalShown: boolean;
   isRoomAddModalShown: boolean;
   isSuccessModalShown: boolean;
-  isRoomRestoreDisabledModalShown: boolean;
   successMessage: string;
 
   selectedRoom: Room;
   rooms: Room[];
   disabledRooms: Room[];
+  deletedRooms: Room[];
 
   totalPage: number;
   size: number;
@@ -28,17 +30,15 @@ interface RoomState {
 }
 
 const initialState: RoomState = {
-  isRoomUpdateModalShown: false,
-  isRoomDisableModalShown: false,
   isSuccessModalShown: false,
   isRoomAddModalShown: false,
   isDownloadModalShown: false,
-  isRoomRestoreDisabledModalShown: false,
 
   successMessage: '',
   selectedRoom: {} as Room,
   rooms: [],
   disabledRooms: [],
+  deletedRooms: [],
 
   currentPage: 1,
   size: 3,
@@ -51,9 +51,6 @@ export const roomSlice = createSlice({
   name: 'room',
   initialState: initialState,
   reducers: {
-    toggleRoomDisableModalVisible(state) {
-      state.isRoomDisableModalShown = !state.isRoomDisableModalShown;
-    },
     toggleSuccessModal(state) {
       state.isSuccessModalShown = !state.isSuccessModalShown;
     },
@@ -84,15 +81,9 @@ export const roomSlice = createSlice({
     toggleRoomsDownloadModalVisible(state) {
       state.isDownloadModalShown = !state.isDownloadModalShown;
     },
-    toggleRoomUpdateModalVisible(state) {
-      state.isRoomUpdateModalShown = !state.isRoomUpdateModalShown;
-    },
     toggleRoomAddModalVisible(state) {
       state.isRoomAddModalShown = !state.isRoomAddModalShown;
     },
-    toggleRoomRestoreDisabledModalVisible(state) {
-      state.isRoomRestoreDisabledModalShown = !state.isRoomRestoreDisabledModalShown;
-    }
   },
   extraReducers: (builder) => {
     builder.addCase(getRoomById.pending, (state) => {
@@ -127,7 +118,6 @@ export const roomSlice = createSlice({
     });
 
     builder.addCase(updateRoomById.fulfilled, (state, {payload}) => {
-      state.isRoomUpdateModalShown = false;
 
     });
 
@@ -140,8 +130,16 @@ export const roomSlice = createSlice({
     });
 
     builder.addCase(fetchDisabledRooms.fulfilled, (state, {payload}) => {
-      console.log(payload);
         state.disabledRooms = payload;
+    });
+    builder.addCase(fetchDeletedRooms.fulfilled, (state, {payload}) => {
+      state.disabledRooms = payload;
+    });
+    builder.addCase(restoreDisabledRoom.fulfilled, (state, {payload}) => {
+    });
+    builder.addCase(restoreDeletedRoom.fulfilled, (state, {payload}) => {
+    });
+    builder.addCase(deleteRoomById.fulfilled, (state, {payload}) => {
     });
   }
 
@@ -149,9 +147,7 @@ export const roomSlice = createSlice({
 
 export const roomReducer = roomSlice.reducer;
 export const {
-  toggleRoomDisableModalVisible,
   toggleSuccessModal, setSuccessModalMessage, changeRoomsCurrentPage, changeRoomsSize,
   changeRoomsTextSearch, changeRoomsTotalPage, changeRoomsSortDirection, resetRoomFilter,
-  toggleRoomsDownloadModalVisible, toggleRoomUpdateModalVisible, toggleRoomAddModalVisible,
-  toggleRoomRestoreDisabledModalVisible
+  toggleRoomsDownloadModalVisible, toggleRoomAddModalVisible,
 } = roomSlice.actions;
