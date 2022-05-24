@@ -4,15 +4,19 @@ import {useWindowDimensions} from "../../hooks/use-window-dimensions";
 import {Archive, CalendarStats, ClipboardText, Clock, FileDescription, Id, X} from "tabler-icons-react";
 import {convertDateToLocalDateString} from "../../utils/date.util";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {toggleRoomDetailModalShown, toggleRoomDisableModalVisible} from "../../redux/features/room/room.slice";
+import {toggleRoomDisableModalVisible} from "../../redux/features/room/room.slice";
 import DisableRoomModal from "./disable-room-modal.component";
 
-const RoomInfoModal: React.FC = () => {
+interface RoomInfoModalProps {
+  isShown: boolean;
+  toggleShown(): void;
+}
+
+const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
   const {classes} = useStyles();
   const theme = useMantineTheme();
 
   const room = useAppSelector((state) => state.room.selectedRoom);
-  const isShown = useAppSelector((state) => state.room.isRoomDetailModalShown);
 
   const dispatch = useAppDispatch();
 
@@ -30,8 +34,8 @@ const RoomInfoModal: React.FC = () => {
       <Modal title={<ModalHeaderTitle/>}
              size={dimension.width / 2}
              centered
-             opened={isShown}
-             onClose={() => dispatch(toggleRoomDetailModalShown())}>
+             opened={props.isShown}
+             onClose={() => props.toggleShown()}>
         <div className={classes.modalBody}>
           <TextInput icon={<Id/>}
                      className={classes.textInput}
@@ -79,7 +83,7 @@ const RoomInfoModal: React.FC = () => {
             Disable this room
           </Button>
 
-          <Button onClick={() => dispatch(toggleRoomDetailModalShown())}
+          <Button onClick={() => props.toggleShown()}
                   leftIcon={<X/>}
           >
             Close

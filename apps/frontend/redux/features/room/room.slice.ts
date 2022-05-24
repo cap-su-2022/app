@@ -8,7 +8,6 @@ import {addRoom} from "./thunk/add-room";
 import {fetchDisabledRooms} from "./thunk/fetch-disabled-rooms";
 
 interface RoomState {
-  isRoomDetailModalShown: boolean;
   isRoomUpdateModalShown: boolean;
   isRoomDisableModalShown: boolean;
   isDownloadModalShown: boolean;
@@ -29,7 +28,6 @@ interface RoomState {
 }
 
 const initialState: RoomState = {
-  isRoomDetailModalShown: false,
   isRoomUpdateModalShown: false,
   isRoomDisableModalShown: false,
   isSuccessModalShown: false,
@@ -45,7 +43,7 @@ const initialState: RoomState = {
   currentPage: 1,
   size: 3,
   textSearch: '',
-  totalPage: 0,
+  totalPage: 1,
   direction: "ASC",
 }
 
@@ -53,9 +51,6 @@ export const roomSlice = createSlice({
   name: 'room',
   initialState: initialState,
   reducers: {
-    toggleRoomDetailModalShown(state) {
-      state.isRoomDetailModalShown = !state.isRoomDetailModalShown;
-    },
     toggleRoomDisableModalVisible(state) {
       state.isRoomDisableModalShown = !state.isRoomDisableModalShown;
     },
@@ -154,7 +149,7 @@ export const roomSlice = createSlice({
 
 export const roomReducer = roomSlice.reducer;
 export const {
-  toggleRoomDetailModalShown, toggleRoomDisableModalVisible,
+  toggleRoomDisableModalVisible,
   toggleSuccessModal, setSuccessModalMessage, changeRoomsCurrentPage, changeRoomsSize,
   changeRoomsTextSearch, changeRoomsTotalPage, changeRoomsSortDirection, resetRoomFilter,
   toggleRoomsDownloadModalVisible, toggleRoomUpdateModalVisible, toggleRoomAddModalVisible,

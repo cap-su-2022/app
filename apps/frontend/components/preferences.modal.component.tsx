@@ -1,6 +1,7 @@
 import React from "react";
-import {createStyles, Modal} from "@mantine/core";
+import {Button, createStyles, Modal, Text} from "@mantine/core";
 import UserInfoPreference from "./preferences/user-info.component";
+import {Settings, SettingsOff} from "tabler-icons-react";
 
 interface PreferencesModalProps {
   isShown: boolean;
@@ -9,12 +10,36 @@ interface PreferencesModalProps {
 
 const PreferencesModal: React.FC<PreferencesModalProps> = (props) => {
 
+  const ModalHeader: React.FC = () => {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+      }}>
+        <Settings size={35}/>
+        <Text style={{
+          marginLeft: 10,
+          fontWeight: '600',
+          fontSize: 22
+        }}>Preferences</Text>
+      </div>
+    );
+  }
   return (
     <Modal
       size="85%"
+      title={<ModalHeader/>}
       opened={props.isShown}
       onClose={() => props.toggleShown()}>
       <UserInfoPreference/>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-end'
+      }}>
+        <Button color="green">
+          Save Changes
+        </Button>
+      </div>
     </Modal>
 
   );

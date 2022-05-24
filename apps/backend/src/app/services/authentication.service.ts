@@ -24,7 +24,7 @@ export class AuthenticationService {
     this.oAuthAudience = this.configService.get<string[]>("firebase.oauth.audience");
   }
 
-  async handleGoogleSignin(idToken: string): Promise<any> {
+  async handleGoogleSignin(idToken: string): Promise<UsernamePasswordLoginResponse> {
     const client = new OAuth2Client(this.oAuthClientId);
     console.log(idToken);
     try {
@@ -32,12 +32,37 @@ export class AuthenticationService {
         idToken: idToken,
         audience: this.oAuthAudience,
 
-      })
-      const userGoogleId = decodedToken.getUserId();
-      const user = await this.usersRepository.findByGoogleId(userGoogleId);
-      console.log(user);
+      });
 
-      return user;
+      const userGoogleId = decodedToken.getUserId();
+      const keycloakToken = await this.usersRepository.findKeycloakIdByGoogleId(userGoogleId);
+      let keycloakUser;
+      let user;
+
+      if (keycloakToken?.keycloak_id) {
+        keycloakUser = await this.keycloakService.getAuthenticationTokenByMasterAccount(keycloakToken.keycloak_id);
+        user = await this.usersRepository.findByGoogleId(userGoogleId);
+        const doesUserHaveAvatar = await this.usersRepository.checkIfUserAlreadyHasAvatar(user.id);
+        if (!doesUserHaveAvatar) {
+          await this.usersRepository.addAvatarURLById(decodedToken.getPayload().picture, user.id);
+        }
+      } else {
+         throw new HttpException('Invalid account. Please contract to administrator for more information', HttpStatus.UNAUTHORIZED);
+      }
+
+
+      return {
+        accessToken: keycloakUser.access_token,
+        refreshToken: keycloakUser.refresh_token,
+        id: user.id,
+        keycloakId: user.keycloakId,
+        username: user.username,
+        email: user.email,
+        phone: user.phone,
+        googleId: user.googleId,
+        role: Roles.APP_ADMIN,
+        fullname: user.fullname,
+      };
     } catch(e) {
       this.logger.error(e);
       this.handleGoogleSignInException(e);

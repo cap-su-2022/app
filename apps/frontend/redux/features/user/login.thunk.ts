@@ -14,7 +14,9 @@ export const doLogin = createAsyncThunk<UserLoginSuccessModel, UserCredentials, 
       username: credentials.username,
       password: credentials.password
     });
-    return await response.data;
+    const data =  await response.data;
+    window.localStorage.setItem('user', JSON.stringify(data));
+    return data;
   } catch (e) {
     return thunkApi.rejectWithValue({
       message: e.response.data?.message ?? 'Internal Server Error',

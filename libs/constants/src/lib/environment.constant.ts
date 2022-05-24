@@ -35,6 +35,8 @@ export const Environment = {
     },
     grant_type: {
       password: 'keycloak.grant_type.password',
+      token_exchange: 'keycloak.grant_type.token_exchange',
+      refresh_token: 'keycloak.grant_type.refresh_token',
     },
     master_username: 'keycloak.master_username',
     master_password: 'keycloak.master_password'

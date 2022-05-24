@@ -6,12 +6,15 @@ import {Rooms} from "../models/rooms.entity";
 @EntityRepository(Rooms)
 export class RoomsRepository extends Repository<Rooms> {
 
-  getSize(): Promise<number> {
-    return this.createQueryBuilder(`rooms`)
-      .select(`COUNT(id)`)
+  async getSize(): Promise<number> {
+    const result = await this.createQueryBuilder(`rooms`)
+      .select(`COUNT(id) as size`)
       .where(`rooms.is_disabled = 0`)
       .andWhere(`rooms.is_deleted = 0`)
-      .getRawOne<number>();
+      .getRawOne<{
+      size: number
+      }>();
+    return result.size;
   }
 
   findDisabledRooms(): Promise<Rooms[]> {

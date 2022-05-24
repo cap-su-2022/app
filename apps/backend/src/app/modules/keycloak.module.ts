@@ -5,7 +5,6 @@ import {HttpModule} from "@nestjs/axios";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {ConfigService} from "@nestjs/config";
 import {UsersRepository} from "../repositories/users.repository";
-import {RolesRepository} from "../repositories/roles.repository";
 import ConfigModule from "./global/config.module";
 import {AuthenticationService} from "../services/authentication.service";
 import {UsersService} from "../services/users.service";
@@ -14,7 +13,6 @@ import {UsersService} from "../services/users.service";
   imports: [HttpModule,
     TypeOrmModule.forFeature([
       UsersRepository,
-      RolesRepository,
     ]),
     ConfigModule,
 

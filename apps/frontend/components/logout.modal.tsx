@@ -13,6 +13,7 @@ const LogoutModal: React.FC<LogoutModalProps> = (props) => {
 
   const handleLogoutSession = () => {
     fetch('/api/v1/logout')
+      .then(() => window.localStorage.removeItem('user'))
       .then(() => props.handleRouterReload());
   };
   return (

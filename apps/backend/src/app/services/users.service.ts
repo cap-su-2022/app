@@ -4,6 +4,7 @@ import {BaseService} from "./base.service";
 import {UsersDTO} from "@app/models";
 import {UsersRepository} from "../repositories/users.repository";
 import {KeycloakService} from "./keycloak.service";
+import {UsersRequestPayload} from "../payload/request/users.payload";
 
 @Injectable()
 export class UsersService extends BaseService<UsersDTO, Users, string>{
@@ -34,7 +35,7 @@ export class UsersService extends BaseService<UsersDTO, Users, string>{
     return Promise.resolve(undefined);
   }
 
-  getAllByPagination(): Promise<Users[]> {
+  async getAllByPagination(payload: UsersRequestPayload): Promise<Users[]> {
     return this.repository.find();
   }
 

@@ -4,7 +4,7 @@ import {
   Settings,
   TwoFA,
   DatabaseImport,
-  Logout, User, BuildingWarehouse, Users, Devices, Messages,
+  Logout, User, BuildingWarehouse, Users, Devices, Messages, Dashboard,
 } from 'tabler-icons-react';
 import {FPT_ORANGE_COLOR} from "@app/constants";
 import {BLACK, WHITE} from "@app/constants";
@@ -13,6 +13,7 @@ import LogoutModal from "./logout.modal";
 import PreferencesModal from "./preferences.modal.component";
 
 const data = [
+  { link: '/dashboard', label: 'Dashboard', icon: Dashboard},
   { link: '/rooms', label: 'Rooms', icon: BuildingWarehouse },
   { link: '/users', label: 'Users', icon: Users },
   { link: '/devices', label: 'Devices', icon: Devices },

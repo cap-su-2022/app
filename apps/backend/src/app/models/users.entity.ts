@@ -1,6 +1,5 @@
-import {Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {BaseEntity} from "./base/base.entity";
-import {Roles} from "./roles.entity";
 
 @Entity(Users.name.toLocaleLowerCase())
 export class Users extends BaseEntity {
@@ -101,11 +100,21 @@ export class Users extends BaseEntity {
   inactiveDate?: Date;
 
   @Column({
-    name: "role_id",
+    name: "role",
     type: 'varchar',
-    length: '36',
+    length: '100',
     nullable: false,
-    comment: 'Role ID of the associated user.'
+    comment: 'Role of the associated user.'
   })
-  roleId?: string;
+  role?: string;
+
+  @Column({
+    name: "avatar",
+    nullable: false,
+    unique: true,
+    length: 256,
+    type: 'varchar',
+
+  })
+  avatar?: string;
 }

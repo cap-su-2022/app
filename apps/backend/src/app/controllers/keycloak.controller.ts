@@ -60,8 +60,24 @@ export class KeycloakController {
   }
 
   @Post('signin/google')
-  signInWithGoogle(@Body() request: { token: string }) {
-    return this.authenticationService.handleGoogleSignin(request.token);
+  @HttpCode(HttpStatus.OK)
+  async signInWithGoogle(@Res({passthrough: true}) httpResponse: Response,
+                   @Body() request: { token: string }) {
+    const resp = await this.authenticationService.handleGoogleSignin(request.token);
+    httpResponse.setHeader('Authorization', resp.accessToken);
+    httpResponse.setHeader('AuthorizationRefreshToken', resp.refreshToken);
+    httpResponse.cookie('refreshToken', resp.refreshToken);
+    httpResponse.cookie('accessToken', resp.accessToken);
+    return {
+      email: resp.email,
+      id: resp.id,
+      googleId: resp.googleId,
+      phone: resp.phone,
+      username: resp.username,
+      keycloakId: resp.keycloakId,
+      role: Roles.APP_ADMIN,
+      fullname: resp.fullname
+    };
   }
 
   @Post(KEYCLOAK_PATH.refreshAccessToken)

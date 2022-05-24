@@ -52,7 +52,11 @@ export const authSlice = createSlice({
     });
     builder.addCase(doLoginWithGoogle.fulfilled, (state, {payload}) => {
 
-    })
+    });
+    builder.addCase(doLoginWithGoogle.rejected, (state, {payload}) => {
+      state.isLoginFailed = true;
+      state.error = payload.message;
+    });
   }
 });
 

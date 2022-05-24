@@ -3,7 +3,7 @@ import {
   createStyles,
   TextInput,
   PasswordInput,
-  Button,
+  Button, Text,
 } from '@mantine/core';
 import Image from 'next/image';
 
@@ -23,6 +23,7 @@ import {BLACK, FPT_ORANGE_COLOR, WHITE} from "@app/constants";
 import { initializeApp } from "firebase/app"
 import {getAuth, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';
 import {doLoginWithGoogle} from "../redux/features/user/google-login.thunk";
+import Logo from "../components/logo";
 const LoginFailedModal = dynamic(() => import('../components/login-fail.modal'));
 
 const firebaseConfig = {
@@ -52,7 +53,7 @@ function Login() {
     console.log(authUser);
     if (authUser !== undefined || authUser?.access_token) {
       dispatch(doValidateAccessToken()).unwrap()
-        .then(() => router.replace('/rooms'))
+        .then(() => handleSuccessAuthentication())
         .catch(() => {
           dispatch(invalidateAuthUser());
           dispatch(toggleSpinnerOff());
@@ -60,23 +61,26 @@ function Login() {
     }
   }, []);
 
+  const handleSuccessAuthentication = async () => {
+    await router.replace('/rooms');
+  }
+
   const handleLoginSubmit = async (values) => {
     dispatch(doLogin({
       username: values.username,
       password: values.password,
-    }))
-      .then(() => router.replace('/rooms'));
+    })).then(() => handleSuccessAuthentication());
   }
 
   const handleGoogleSignin = () => {
+    dispatch(toggleSpinnerOn());
     signInWithPopup(auth, provider)
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        console.log(credential);
         dispatch(doLoginWithGoogle({
           token: credential.idToken,
-        }));
+        })).unwrap().then(() => handleSuccessAuthentication());
         const token = credential.accessToken;
         console.log(token);
         // The signed-in user info.
@@ -86,13 +90,20 @@ function Login() {
       }).catch((error) => {
       // Handle Errors here.
       const errorCode = error.code;
+      console.error(errorCode);
       const errorMessage = error.message;
+      console.error(errorMessage);
+
       // The email of the user's account used.
       const email = error.customData.email;
+      console.error(email);
+
       // The AuthCredential type that was used.
       const credential = GoogleAuthProvider.credentialFromError(error);
+      console.error(credential);
+
       // ...
-    });
+    }).finally(() => dispatch(toggleSpinnerOff()));
 
   }
 
@@ -119,6 +130,7 @@ function Login() {
                 <Image alt="FPTU Logo" src="/LogoFPTU.svg"
                        height={150}
                        width={200}/>
+                <Logo/>
               </div>
 
               <TextInput
@@ -206,7 +218,9 @@ const useStyles = createStyles((theme) => ({
     height: '100vh'
   },
   logoContainer: {
-    ...dFlexCenter
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
   },
   container: {
     height: '100%',

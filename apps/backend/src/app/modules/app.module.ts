@@ -8,7 +8,6 @@ import {HealthCheckModule} from "./health-check.module";
 import {UsersModule} from "./users.module";
 import {EquipmentsModule} from "./equipments.module";
 import {UsersWarningFlagModule} from "./users-warning-flag.module";
-import {RolesModule} from "./roles.module";
 import GlobalCacheModule from "./global/cache.module";
 import GlobalConfigModule from "./global/config.module";
 import GlobalTypeOrmModule from "./global/typeorm.module";
@@ -32,7 +31,6 @@ export class AppModule {
         UsersModule,
         EquipmentsModule,
         UsersWarningFlagModule,
-        RolesModule,
       ],
       controllers: [AppController],
       providers: [

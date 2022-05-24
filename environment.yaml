@@ -33,6 +33,8 @@ keycloak:
   master_username: 'admin'
   master_password: '12345678x@X'
   grant_type:
+    token_exchange: 'urn:ietf:params:oauth:grant-type:token-exchange'
+    refresh_token: 'urn:ietf:params:oauth:token-type:refresh_token'
     password: 'password'
 
 redis:

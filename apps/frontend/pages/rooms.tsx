@@ -22,7 +22,6 @@ import {fetchRooms} from "../redux/features/room/thunk/fetch-rooms";
 import NoDataFound from "../components/no-data-found";
 import {
   changeRoomsTextSearch,
-  toggleRoomDetailModalShown,
   toggleRoomUpdateModalVisible
 } from "../redux/features/room/room.slice";
 import TableFooter from "../components/rooms/table-footer.component";
@@ -83,8 +82,8 @@ function RoomsManagement(props: any) {
   const searchText = useAppSelector((state) => state.room.textSearch);
   const currentPage = useAppSelector((state) => state.room.currentPage);
   const direction = useAppSelector((state) => state.room.direction);
-
   //modal
+  const [isDetailModalShown, setDetailModalShown] = useState<boolean>(false);
 
   const isSpinnerLoading = useAppSelector((state) => state.spinner.isEnabled);
   const [debouncedSearchValue] = useDebouncedValue(searchText, 400);
@@ -101,7 +100,7 @@ function RoomsManagement(props: any) {
 
   const handleShowInfoModal = async (id: string) => {
     dispatch(getRoomById(id))
-      .then(() => dispatch(toggleRoomDetailModalShown()));
+      .then(() => setDetailModalShown(!isDetailModalShown));
   }
 
   const handleShowUpdateModal = (id: string) => {
@@ -128,7 +127,6 @@ function RoomsManagement(props: any) {
     return rooms.map((row, index) => (
       <tr key={row.id}>
         <td>{(rooms.length * (currentPage - 1)) + (index+ currentPage)}</td>
-        <td>{row.id}</td>
         <td>{row.name}</td>
         <td>{new Date(row.updatedAt).toDateString()}</td>
         <td>
@@ -195,13 +193,6 @@ function RoomsManagement(props: any) {
                     STT
                   </Th>
                   <Th
-                    sorted={sortBy === 'id'}
-                    reversed={null}
-                    onSort={() => setSorting('id')}
-                  >
-                    ID
-                  </Th>
-                  <Th
                     sorted={sortBy === 'name'}
                     reversed={null}
                     onSort={() => setSorting('name')}
@@ -233,7 +224,7 @@ function RoomsManagement(props: any) {
 
           : <NoDataFound/>}
         <RoomUpdateModal/>
-        <RoomInfoModal/>
+        <RoomInfoModal isShown={isDetailModalShown} toggleShown={() => setDetailModalShown(!isDetailModalShown)}/>
       </AdminLayout>
     </>
   );

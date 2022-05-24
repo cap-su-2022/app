@@ -1,7 +1,9 @@
+import {PaginationPayload} from "../payload/request/pagination.payload";
+
 export abstract class BaseService<M, E, ID> {
   abstract getAll(): Promise<E[]>;
 
-  abstract getAllByPagination(): Promise<E[]>;
+  abstract getAllByPagination(p: PaginationPayload<any>): Promise<E[]>;
 
   abstract addAll(models: M[]): Promise<E[]>;
 

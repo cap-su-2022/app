@@ -428,10 +428,7 @@ export function Index() {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
-    redirect: {
-      destination: '/login',
-      permanent: true,
-    }
+
   }
 }
 
