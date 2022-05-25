@@ -21,8 +21,6 @@ services:
       PGADMIN_DEFAULT_EMAIL: "bangnnse140937@fpt.edu.vn"
       PGADMIN_DEFAULT_PASSWORD: 12345678x@X
       PGADMIN_CONFIG_SERVER_MODE: 'False'
-    volumes:
-      - $PWD/pgadmin:/var/lib/pgadmin
     ports:
       - "5050:80"
     restart: unless-stopped
