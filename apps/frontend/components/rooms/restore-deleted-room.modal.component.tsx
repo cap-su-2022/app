@@ -5,6 +5,7 @@ import {RotateClockwise, Trash} from "tabler-icons-react";
 import {restoreDisabledRoom} from "../../redux/features/room/thunk/restore-disabled.thunk";
 import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
 import {fetchDeletedRooms} from "../../redux/features/room/thunk/fetch-deleted-rooms";
+import {restoreDeletedRoom} from "../../redux/features/room/thunk/restore-deleted.thunk";
 
 interface RestoreDeletedRoomModalProps {
   isShown: boolean;
@@ -21,7 +22,7 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (props) 
   const [scrolled, setScrolled] = useState(false);
 
   const handleRestoreDeletedRoom = (id: string) => {
-    dispatch(restoreDisabledRoom(id)).unwrap()
+    dispatch(restoreDeletedRoom(id)).unwrap()
       .then(() => dispatch(fetchDeletedRooms()))
       .then(() => dispatch(fetchRooms()));
   }

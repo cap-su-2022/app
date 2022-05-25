@@ -2,11 +2,11 @@ import {createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
 import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
 
-export const restoreDeletedRoom = createAsyncThunk<any, {id: string}, {
+export const restoreDeletedRoom = createAsyncThunk<any, any, {
   rejectValue: {
     message: string
   }
-}>('room/restore-deleted-room', async (id, thunkAPI) => {
+}>('room/restore-deleted-room', async (id: string, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
     const response = await axios.put(`/api/rooms/restore-deleted/${id}`);

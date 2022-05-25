@@ -1,16 +1,18 @@
 version: '3'
 
 services:
-  mysql:
+  db:
     container_name: database
-    image: mysql:5.7
-    volumes:
-      - mysql_data:/var/lib/mysql
+    image: postgres
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 12345678x@X
-      MYSQL_DATABASE: db
+      POSTGRES_PASSWORD: 12345678x@X
+
+  adminer:
+    image: adminer
+    restart: always
     ports:
-      - "3306:3306"
+      - "3306:8080"
   mysql-keycloak:
     container_name: keycloak-database
     image: mysql:5.7

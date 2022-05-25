@@ -31,6 +31,7 @@ import DeleteRoomModal from "../components/rooms/delete-room-modal.component";
 import AddRoomModal from "../components/rooms/add-room-modal.component";
 import DownloadModal from "../components/rooms/download-modal.compnent";
 import RestoreDisabledRoomModal from "../components/rooms/restore-disabled-room.modal.component";
+import RestoreDeletedRoomModal from "../components/rooms/restore-deleted-room.modal.component";
 
 interface RoomsRowData extends RowData {
   stt: number;
@@ -257,7 +258,7 @@ function RoomsManagement(props: any) {
         <RestoreDisabledRoomModal
           isShown={isRestoreDisabledModalShown}
           toggleShown={() => setRestoreDisabledModalShown(!isRestoreDisabledModalShown)} />
-        <RestoreDisabledRoomModal
+        <RestoreDeletedRoomModal
           isShown={isRestoreDeletedModalShown}
           toggleShown={() => setRestoreDeletedModalShown(!isRestoreDeletedModalShown)} />
       </AdminLayout>

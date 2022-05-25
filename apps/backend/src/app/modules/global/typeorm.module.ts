@@ -14,7 +14,7 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
     autoLoadEntities: true,
     synchronize: configService.get<boolean>(Environment.db.mysql.synchronize),
     logging: ['query'],
-    cache: true,
+    cache: false,
     extra: {
       namedPlaceholders: true,
     },

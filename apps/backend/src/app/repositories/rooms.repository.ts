@@ -17,11 +17,8 @@ export class RoomsRepository extends Repository<Rooms> {
     return result.size;
   }
 
-  findDisabledRooms(): Promise<Rooms[]> {
-    return this.createQueryBuilder(`rooms`)
-      .where(`rooms.is_disabled = 1`)
-      .andWhere(`rooms.is_deleted = 0`)
-      .getMany();
+  findDisabledRooms() {
+    return this.query("SELECT * FROM rooms");
   }
 
   findDeletedRooms(): Promise<Rooms[]> {

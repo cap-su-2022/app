@@ -12,7 +12,7 @@ import {RoomsResponsePayload} from "../payload/response/rooms.payload";
 export class RoomsService {
 
   constructor(
-    private readonly repository: RoomsRepository,) {
+    private readonly repository: RoomsRepository) {
   }
 
 
@@ -57,15 +57,18 @@ export class RoomsService {
     return await this.repository.findDeletedRooms();
   }
 
-  async getDisabledRooms(): Promise<Rooms[]> {
-    return await this.repository.findDisabledRooms();
+  async getDisabledRooms(){
+    const data =  await this.repository.findDisabledRooms();
+    return data;
   }
 
   async updateById(id: string, body: UpdateRoomRequest): Promise<UpdateResult> {
     let room;
 
     try {
-      room = await this.repository.findOneOrFail(id);
+      room = await this.repository.findOneOrFail({
+
+      });
     } catch (e) {
       throw new NoSuchElementFoundException();
     }
