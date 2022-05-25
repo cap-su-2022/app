@@ -9,6 +9,8 @@ services:
       POSTGRES_PASSWORD: 12345678x@X
     volumes:
       - $PWD/pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   adminer:
     image: adminer
