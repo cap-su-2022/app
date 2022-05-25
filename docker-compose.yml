@@ -7,6 +7,8 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: 12345678x@X
+    volumes:
+      - $PWD/pgdata:/var/lib/postgresql/data
 
   adminer:
     image: adminer
