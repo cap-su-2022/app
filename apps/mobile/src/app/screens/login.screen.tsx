@@ -1,203 +1,202 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
-import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
-import Background from "../components/blob-scene-haikei.svg";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Background from '../components/blob-scene-haikei.svg';
 import FPTULogo from '../components/LogoFPTU.svg';
-import Asterik from "../components/text/asterik";
-import Divider from "../components/text/divider";
+import Asterik from '../components/text/asterik';
+import Divider from '../components/text/divider';
 import GoogleIcon from '../components/google-icon.svg';
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "../redux/store";
-import {persistGoogleIdToken} from "../redux/userSlice";
-import {useNavigation} from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {handleGoogleSignin} from "../services/google.service";
-import CheckAlive from "../components/check-alive.component";
-import {Formik} from 'formik';
-import LoginErrorModal from "../components/modals/login-error.component";
-import {toggleSpinnerOff, toggleSpinnerOn} from "../redux/features/spinner";
-import {LocalStorageKeys, useStorage} from "../utils/local-storage";
-import {API_URL} from "../constants/constant";
-import {BLACK, FPT_ORANGE_COLOR} from "@app/constants";
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../redux/store';
+import { persistGoogleIdToken } from '../redux/userSlice';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { handleGoogleSignin } from '../services/google.service';
+import CheckAlive from '../components/check-alive.component';
+import { Formik } from 'formik';
+import LoginErrorModal from '../components/modals/login-error.component';
+import { toggleSpinnerOff, toggleSpinnerOn } from '../redux/features/spinner';
+import { API_URL } from '../constants/constant';
+import { BLACK, FPT_ORANGE_COLOR } from '@app/constants';
 
 const LoginScreen = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const navigate = useNavigation<NativeStackNavigationProp<any>>();
 
-    const dispatch: AppDispatch = useDispatch();
-    const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const [isError, setError] = React.useState<boolean>(false);
+  const [isLoginFailure, setLoginFailure] = React.useState<boolean>(false);
+  const [loginErrMsg, setLoginErrMsg] = useState<string>();
 
-    const [isError, setError] = React.useState<boolean>(false);
-    const [isLoginFailure, setLoginFailure] = React.useState<boolean>(false);
-    const [loginErrMsg, setLoginErrMsg] = useState<string>();
-
-    const [authenticatedUser, setAuthenticatedUser] = useStorage(LocalStorageKeys.authenticatedUser);
-
-    useEffect(() => {
-      console.log(authenticatedUser);
-      if (authenticatedUser !== undefined && authenticatedUser !== null) {
-        dispatch(toggleSpinnerOn());
-        validateUserAccessToken();
+  const validateUserAccessToken = async () => {
+    try {
+      const response = await fetch(`${API_URL}/health/auth"}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer }`,
+        },
+      });
+      if (response.status !== 200) {
+      } else {
+        setTimeout(() => {
+          dispatch(toggleSpinnerOff());
+          navigate.navigate('MAIN');
+        }, 0);
       }
-    }, [authenticatedUser]);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      dispatch(toggleSpinnerOff());
+    }
+  };
 
-    const validateUserAccessToken = async () => {
-      try {
-        const response = await fetch(`${API_URL}/health/auth"}`, {
-          method: 'GET',
-          headers: {
-            "Authorization": `Bearer ${authenticatedUser.accessToken}`,
-          }
-        });
-        if (response.status !== 200) {
-          setAuthenticatedUser(null);
-        } else {
-          setTimeout(() => {
-            dispatch(toggleSpinnerOff());
-            navigate.navigate("MAIN");
-          }, 0);
-        }
-      } catch (e) {
-        console.log(e);
-      } finally {
+  const handleLoginWithGoogle = async () => {
+    dispatch(toggleSpinnerOn());
+    const response = await handleGoogleSignin();
+    const idToken = await response.user.getIdToken();
+    if (idToken) {
+      dispatch(persistGoogleIdToken(idToken));
+      setTimeout(() => {
+        dispatch(toggleSpinnerOff());
+        navigate.navigate('MAIN');
+      }, 0);
+    }
+  };
+
+  const initialValues = {
+    username: '',
+    password: '',
+  };
+
+  const handleSubmit = async (values) => {
+    if (
+      values.password.trim().length < 1 ||
+      values.username.trim().length < 1
+    ) {
+      setLoginErrMsg('Username or password cannot be blank!');
+      setLoginFailure(true);
+      return;
+    }
+    dispatch(toggleSpinnerOn());
+    const response = await fetch(`${API_URL}/auth/signin`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: values.username,
+        password: values.password,
+      }),
+    }).finally(() => dispatch(toggleSpinnerOff()));
+
+    const data = await response.json();
+
+    console.log(response.status);
+    if (response.status !== 200) {
+      setLoginErrMsg(data.message);
+
+      setTimeout(() => {
+        dispatch(toggleSpinnerOff());
+        setLoginFailure(true);
+      }, 0);
+      return;
+    } else {
+      setTimeout(() => {
         dispatch(toggleSpinnerOff());
 
-      }
+        navigate.navigate('MAIN');
+      }, 0);
     }
+  };
 
-    const handleLoginWithGoogle = async () => {
-      dispatch(toggleSpinnerOn());
-      const response = await handleGoogleSignin();
-      const idToken = await response.user.getIdToken();
-      if (idToken) {
-        dispatch(persistGoogleIdToken(idToken));
-        setTimeout(() => {
-          dispatch(toggleSpinnerOff());
-          navigate.navigate("MAIN");
-        }, 0);
-      }
-    };
-
-    const initialValues = {
-      username: '',
-      password: ''
-    }
-
-    const handleSubmit = async (values) => {
-      if (values.password.trim().length < 1 || values.username.trim().length < 1) {
-        setLoginErrMsg('Username or password cannot be blank!');
-        setLoginFailure(true);
-        return;
-      }
-      dispatch(toggleSpinnerOn());
-      const response = await fetch(`${API_URL}/auth/signin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          "username": values.username,
-          "password": values.password,
-        }),
-      }).finally(() => dispatch(toggleSpinnerOff()));
-
-      const data = await response.json();
-
-      console.log(response.status);
-      if (response.status !== 200) {
-        setLoginErrMsg(data.message);
-
-        setTimeout(() => {
-          dispatch(toggleSpinnerOff());
-          setLoginFailure(true);
-        }, 0);
-        return;
-      } else {
-        setAuthenticatedUser({
-          ...authenticatedUser,
-          accessToken: data['access_token']
-        })
-        setTimeout(() => {
-          dispatch(toggleSpinnerOff());
-
-          navigate.navigate("MAIN");
-        }, 0);
-      }
-
-
-    }
-
-
-    return (
-      <SafeAreaView style={[styles.container]}>
-
-        <Background style={[styles.background]}/>
-        <View style={[styles.loginContainer, styles.shadowProp]}>
-          <View style={[styles.logoContainer]}>
-            <FPTULogo height={100} width={150}/>
-          </View>
-          <Formik initialValues={initialValues} onSubmit={(values) => handleSubmit(values)}>
-            {({handleChange, handleBlur, handleSubmit, values}) => (
-              <>
-                <View>
-                  <View style={[styles.inputFieldTitleContainer]}>
-                    <Text style={[styles.inputFieldTitle]}>Username </Text><Asterik/>
-                  </View>
-                  <TextInput
-                    onBlur={handleBlur('username')}
-                    onChangeText={handleChange('username')}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    value={values.username}
-                    placeholder="Username"
-                    style={[styles.inputField]}/>
-                </View>
-                <View>
-                  <View style={[styles.inputFieldTitleContainer]}>
-                    <Text style={[styles.inputFieldTitle]}>Password </Text><Asterik/>
-                  </View>
-                  <TextInput
-                    onBlur={handleBlur('password')}
-                    onChangeText={handleChange('password')}
-                    autoCapitalize="none"
-                    value={values.password}
-                    autoCorrect={false}
-                    secureTextEntry={true}
-                    placeholder="Password"
-                    style={[styles.inputField]}/>
-                </View>
-                <TouchableOpacity style={[styles.loginBtn]} onPress={() => handleSubmit()}>
-                  <Text style={[styles.loginBtnText]}>Login</Text>
-                </TouchableOpacity>
-              </>
-            )}
-
-          </Formik>
-
-          <View style={[styles.loginDividerContainer]}>
-            <Divider num={10}/>
-            <Text style={[styles.loginDividerText]}>Or continue with</Text>
-            <Divider num={10}/>
-          </View>
-
-          <TouchableOpacity style={[styles.loginGoogleBtn]} onPress={() => handleLoginWithGoogle()}>
-            <View style={[styles.loginGoogleBtnTextContainer]}>
-              <GoogleIcon style={[styles.googleIcon]}/>
-              <Text style={[styles.loginGoogleBtnText]}>Google</Text>
-            </View>
-          </TouchableOpacity>
+  return (
+    <SafeAreaView style={[styles.container]}>
+      <Background style={[styles.background]} />
+      <View style={[styles.loginContainer, styles.shadowProp]}>
+        <View style={[styles.logoContainer]}>
+          <FPTULogo height={100} width={150} />
         </View>
-        {isLoginFailure ? <LoginErrorModal
+        <Formik
+          initialValues={initialValues}
+          onSubmit={(values) => handleSubmit(values)}
+        >
+          {({ handleChange, handleBlur, handleSubmit, values }) => (
+            <>
+              <View>
+                <View style={[styles.inputFieldTitleContainer]}>
+                  <Text style={[styles.inputFieldTitle]}>Username </Text>
+                  <Asterik />
+                </View>
+                <TextInput
+                  onBlur={handleBlur('username')}
+                  onChangeText={handleChange('username')}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  value={values.username}
+                  placeholder="Username"
+                  style={[styles.inputField]}
+                />
+              </View>
+              <View>
+                <View style={[styles.inputFieldTitleContainer]}>
+                  <Text style={[styles.inputFieldTitle]}>Password </Text>
+                  <Asterik />
+                </View>
+                <TextInput
+                  onBlur={handleBlur('password')}
+                  onChangeText={handleChange('password')}
+                  autoCapitalize="none"
+                  value={values.password}
+                  autoCorrect={false}
+                  secureTextEntry={true}
+                  placeholder="Password"
+                  style={[styles.inputField]}
+                />
+              </View>
+              <TouchableOpacity
+                style={[styles.loginBtn]}
+                onPress={() => handleSubmit()}
+              >
+                <Text style={[styles.loginBtnText]}>Login</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </Formik>
+
+        <View style={[styles.loginDividerContainer]}>
+          <Divider num={10} />
+          <Text style={[styles.loginDividerText]}>Or continue with</Text>
+          <Divider num={10} />
+        </View>
+
+        <TouchableOpacity
+          style={[styles.loginGoogleBtn]}
+          onPress={() => handleLoginWithGoogle()}
+        >
+          <View style={[styles.loginGoogleBtnTextContainer]}>
+            <GoogleIcon style={[styles.googleIcon]} />
+            <Text style={[styles.loginGoogleBtnText]}>Google</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      {isLoginFailure ? (
+        <LoginErrorModal
           isFailure={isLoginFailure}
           title={loginErrMsg}
-          description={"Please try again later"}
-          handleCancelModal={setLoginFailure}/> : null}
-        {isError ? <CheckAlive/> : null}
-
-      </SafeAreaView>
-    );
-  }
-;
-
-
+          description={'Please try again later'}
+          handleCancelModal={setLoginFailure}
+        />
+      ) : null}
+      {isError ? <CheckAlive /> : null}
+    </SafeAreaView>
+  );
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -211,7 +210,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     backgroundColor: 'rgb(248, 249, 250)',
-    width: 350
+    width: 350,
   },
   background: {
     position: 'absolute',
@@ -223,7 +222,7 @@ const styles = StyleSheet.create({
   inputFieldTitleContainer: {
     display: 'flex',
     flexDirection: 'row',
-    marginLeft: 10
+    marginLeft: 10,
   },
   inputFieldTitle: {
     fontSize: 12,
@@ -247,12 +246,12 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: '#fff',
     borderRadius: 50,
-    borderWidth: 1
+    borderWidth: 1,
   },
   loginBtnText: {
     fontSize: 16,
     color: '#fff',
-    fontWeight: "500",
+    fontWeight: '500',
   },
   loginGoogleBtn: {
     margin: 10,
@@ -264,7 +263,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: 'rgb(206, 212, 218)',
     borderRadius: 50,
-    borderWidth: 1
+    borderWidth: 1,
   },
   loginGoogleBtnTextContainer: {
     display: 'flex',
@@ -272,11 +271,11 @@ const styles = StyleSheet.create({
   },
   googleIcon: {
     marginTop: 2,
-    marginRight: 6
+    marginRight: 6,
   },
   loginGoogleBtnText: {
     fontSize: 14,
-    color: BLACK
+    color: BLACK,
   },
   logoContainer: {},
   loginDividerContainer: {
@@ -292,7 +291,7 @@ const styles = StyleSheet.create({
   },
   shadowProp: {
     shadowColor: '#171717',
-    shadowOffset: {width: -2, height: 4},
+    shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
@@ -305,8 +304,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
     backgroundColor: 'rgb(206, 212, 218)',
     justifyContent: 'center',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });
 
 export default LoginScreen;

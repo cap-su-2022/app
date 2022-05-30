@@ -1,11 +1,11 @@
-import MMKVStorage, {useMMKVStorage} from "react-native-mmkv-storage";
+import { MMKV } from 'react-native-mmkv';
 
-export const storage = new MMKVStorage.Loader().initialize();
+export const storage = new MMKV();
 
 export const useStorage = (key: string, defaultValue = undefined) => {
-  return useMMKVStorage(key, storage, defaultValue);
+  return storage.getString(key);
 };
 
 export const LocalStorageKeys = {
   authenticatedUser: 'user',
-}
+};

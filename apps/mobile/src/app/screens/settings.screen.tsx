@@ -1,27 +1,29 @@
-import React, {useRef} from "react";
-import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import * as IconOutline from "react-native-heroicons/outline";
-import {DocumentSearchIcon, LogoutIcon} from "react-native-heroicons/outline";
-import * as Icon from "react-native-heroicons/solid";
-import {useNavigation} from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {LocalStorageKeys, useStorage} from "../utils/local-storage";
-import {BLACK, FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE} from "@app/constants";
-
+import React, { useRef } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import * as IconOutline from 'react-native-heroicons/outline';
+import { DocumentSearchIcon, LogoutIcon } from 'react-native-heroicons/outline';
+import * as Icon from 'react-native-heroicons/solid';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { LocalStorageKeys, useStorage } from '../utils/local-storage';
+import { BLACK, FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE } from '@app/constants';
 
 const SettingsScreen = () => {
-
-  const [authenticatedUser, setAuthenticatedUser] = useStorage(LocalStorageKeys.authenticatedUser);
-
   const scrollViewRef = useRef<null | ScrollView>(null);
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
 
   const handleLogout = () => {
     setTimeout(() => {
-      setAuthenticatedUser(null);
       navigate.replace('LOGIN_SCREEN');
     }, 0);
-  }
+  };
 
   return (
     <SafeAreaView>
@@ -33,54 +35,60 @@ const SettingsScreen = () => {
       >
         <View style={[styles.header]}>
           <View style={[styles.headerTitle]}>
-            <TouchableOpacity onPress={() => {
-              navigate.navigate('EditUserProfile');
-            }} style={[styles.editProfileNavigation]}>
-              <Text style={{
-                color: '#fff'
-              }}>Con Cac</Text>
-
+            <TouchableOpacity
+              onPress={() => {
+                navigate.navigate('EditUserProfile');
+              }}
+              style={[styles.editProfileNavigation]}
+            >
+              <Text
+                style={{
+                  color: '#fff',
+                }}
+              >
+                Con Cac
+              </Text>
             </TouchableOpacity>
-            <IconOutline.UserCircleIcon color="black" size={40}/>
+            <IconOutline.UserCircleIcon color="black" size={40} />
           </View>
           <View style={[styles.headerBody]}>
-            <Icon.UserCircleIcon size={80} color="#f06e28"/>
+            <Icon.UserCircleIcon size={80} color="#f06e28" />
             <Text style={[styles.userAvatarname]}>Ngô Nguyên Bằng</Text>
             <Text style={[styles.userEmail]}>bangnnse140937@fpt.edu.vn</Text>
           </View>
         </View>
         <View style={styles.logoutContainer}>
-          <TouchableOpacity style={styles.logoutButton}
-                            onPress={() => navigate.navigate("History")}>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={() => navigate.navigate('History')}
+          >
             <View style={styles.logoutIconContainer}>
-              <DocumentSearchIcon color={BLACK}/>
+              <DocumentSearchIcon color={BLACK} />
             </View>
-            <Text style={styles.logoutText}>
-              History
-            </Text>
+            <Text style={styles.logoutText}>History</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.logoutContainer}>
-          <TouchableOpacity style={styles.logoutButton}
-                            onPress={() => handleLogout()}>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={() => handleLogout()}
+          >
             <View style={styles.logoutIconContainer}>
-              <LogoutIcon color={BLACK}/>
+              <LogoutIcon color={BLACK} />
             </View>
-            <Text style={styles.logoutText}>
-              Logout
-            </Text>
+            <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
 export default SettingsScreen;
 
 export const styles = StyleSheet.create({
   logoutText: {
-    fontSize: 20
+    fontSize: 20,
   },
   logoutIconContainer: {
     backgroundColor: LIGHT_GRAY,
@@ -94,7 +102,7 @@ export const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 5,
     height: 60,
-    backgroundColor: WHITE
+    backgroundColor: WHITE,
   },
   logoutButton: {
     margin: 10,
@@ -111,7 +119,7 @@ export const styles = StyleSheet.create({
   },
   userInfoIcon: {
     color: BLACK,
-    fontSize: 20
+    fontSize: 20,
   },
   headerTitle: {
     display: 'flex',
@@ -128,7 +136,7 @@ export const styles = StyleSheet.create({
   },
   userEmail: {
     color: 'gray',
-    fontSize: 12
+    fontSize: 12,
   },
   editProfileNavigation: {
     display: 'flex',
@@ -136,6 +144,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: FPT_ORANGE_COLOR,
     borderRadius: 5,
-    height: 30
-  }
+    height: 30,
+  },
 });

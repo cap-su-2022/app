@@ -8,6 +8,19 @@ target 'Mobile' do
   config = use_native_modules!
   permissions_path = '../node_modules/react-native-permissions/ios'
   pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+  pod 'react-native-config', :path => '../node_modules/react-native-config'
+  pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
+  pod 'RNGoogleSignin', :path => '../node_modules/@react-native-google-signin/google-signin'
+  pod 'RNCPicker', :path => '../node_modules/@react-native-picker/picker'
+  pod 'react-native-mmkv', :path => '../node_modules/react-native-mmkv'
+  pod 'react-native-date-picker', :path => '../node_modules/react-native-date-picker'
+  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+  pod 'RNScreens', :path => '../node_modules/react-native-screens'
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
+  pod 'RNFBAuth', :path => '../node_modules/@react-native-firebase/auth'
+
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
   pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID"
   pod 'Permission-Notifications', :path => "#{permissions_path}/Notifications"
