@@ -1,12 +1,11 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {Device} from "../../../../models/device.model";
 import axios from "axios";
-import {Room} from "../../../../models/room.model";
 import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
 import {RootState} from "../../../store";
+import {User} from "../../../../models/user.model";
 
-interface FetchDevicesSuccessResponse {
-  data: Device[],
+interface FetchUsersSuccessResponse {
+  data: User[],
   currentPage: number;
   totalPage: number;
   size: number;
@@ -17,20 +16,20 @@ interface RejectPayload {
 }
 
 
-export const fetchDevices = createAsyncThunk<FetchDevicesSuccessResponse, void, {
+export const fetchUsers = createAsyncThunk<FetchUsersSuccessResponse, void, {
   rejectValue: RejectPayload
-}>('device/fetch-devices', async (payload, thunkAPI) => {
+}>('user/fetch-users', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   const state = thunkAPI.getState() as RootState;
   try {
-    const response = await axios.post(`api/devices`, {
-      search: state.device.textSearch,
-      page: state.device.currentPage,
-      size: state.device.size,
-      sort: state.device.direction
+    const response = await axios.post(`api/accounts`, {
+      search: state.user.textSearch,
+      page: state.user.currentPage,
+      size: state.user.size,
+      sort: state.user.direction
     });
 
-    return await response.data as FetchDevicesSuccessResponse;
+    return await response.data as FetchUsersSuccessResponse;
   } catch ({response}) {
     if (response.status === 401 || response.status === 403) {
       return thunkAPI.rejectWithValue({

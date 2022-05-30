@@ -6,6 +6,7 @@ import {authReducer} from "./features/user/auth.slice";
 import {roomReducer} from "./features/room/room.slice";
 import {systemReducer} from "./features/system/system.slice";
 import {devicesReducer} from "./features/devices/devices.slice";
+import {usersReducer} from "./features/user/user.slice";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -15,6 +16,7 @@ const combinedReducer = combineReducers({
   room: roomReducer,
   device: devicesReducer,
   system: systemReducer,
+  user: usersReducer,
 });
 
 const reducer = (state: ReturnType<typeof combinedReducer>, action: AnyAction) => {

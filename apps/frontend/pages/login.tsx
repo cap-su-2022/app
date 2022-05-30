@@ -286,23 +286,21 @@ export default Login;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const req = context.req;
   const accessToken = getCookie(req.headers.cookie, 'accessToken');
-  const resp = await axios.post('http://localhost:5000/api/v1/auth/info', {
-    token: accessToken
-  })
-  if (resp.status >= 400 && resp.status <= 500) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: true
+  try {
+    const resp = await axios.post('http://localhost:5000/api/v1/auth/info', {
+      token: accessToken
+    });
+    console.log(resp.status)
+      return {
+        redirect: {
+          destination: '/dashboard',
+          permanent: true
+        }
       }
-    }
-  } else {
-    return {
-      redirect: {
-        destination: '/dashboard',
-        permanent: true
+  } catch ({response}) {
+      return {
+        props: {}
       }
-    }
   }
 
 }

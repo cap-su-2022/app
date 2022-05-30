@@ -15,12 +15,9 @@ import PreferencesModal from "./preferences.modal.component";
 const data = [
   { link: '/dashboard', label: 'Dashboard', icon: Dashboard},
   { link: '/rooms', label: 'Rooms', icon: BuildingWarehouse },
-  { link: '/users', label: 'Users', icon: Users },
+  { link: '/accounts', label: 'Accounts', icon: Users },
   { link: '/devices', label: 'Devices', icon: Devices },
   { link: '/feedbacks', label: 'Feedback', icon: Messages },
-  { link: '', label: 'Databases', icon: DatabaseImport },
-  { link: '', label: 'Authentication', icon: TwoFA },
-  { link: '', label: 'Other Settings', icon: Settings },
 ];
 
 export function NavbarSimpleColored() {
