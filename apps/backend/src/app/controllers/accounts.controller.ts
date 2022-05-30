@@ -9,19 +9,19 @@ import {
   Post,
   Put,
   UseGuards,
-  UsePipes
-} from "@nestjs/common";
-import {AccountsService} from "../services/accounts.service";
-import {ApiBearerAuth, ApiOperation, ApiResponse} from "@nestjs/swagger";
-import {AuthGuard} from "../guards/auth.guard";
-import {UsersValidation} from "../pipes/validation/users.validation";
-import {UsersRequestPayload} from "../payload/request/users.payload";
-import {AccountsResponsePayload} from "../payload/response/accounts.payload";
-import {AddDeviceRequest, UpdateDeviceRequest} from "@app/models";
-@Controller("v1/accounts")
-@ApiBearerAuth()
-export class UsersController {
+  UsePipes,
+} from '@nestjs/common';
+import {AccountsService} from '../services/accounts.service';
+import {ApiBearerAuth, ApiOperation, ApiResponse} from '@nestjs/swagger';
+import {AuthGuard} from '../guards/auth.guard';
+import {UsersValidation} from '../pipes/validation/users.validation';
+import {UsersRequestPayload} from '../payload/request/users.payload';
+import {AccountsResponsePayload} from '../payload/response/accounts.payload';
+import {AddDeviceRequest, UpdateDeviceRequest} from '@app/models';
 
+@Controller('v1/accounts')
+@ApiBearerAuth()
+export class AccountsController {
   constructor(private readonly service: AccountsService) {
   }
 
@@ -29,12 +29,14 @@ export class UsersController {
   @UsePipes(new UsersValidation())
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  getAll(@Body() payload: UsersRequestPayload): Promise<AccountsResponsePayload> {
+  getAll(
+    @Body() payload: UsersRequestPayload
+  ): Promise<AccountsResponsePayload> {
     return this.service.getAllByPagination(payload);
   }
 
   @ApiOperation({
-    description: 'Sync users from Keycloak to current DB'
+    description: 'Sync users from Keycloak to current DB',
   })
   @Get('syncKeycloak')
   syncUsersFromKeycloak() {
@@ -42,27 +44,26 @@ export class UsersController {
   }
 
   @ApiOperation({
-    description: 'Get all users'
+    description: 'Get all users',
   })
   @ApiOperation({
-    description: 'Create new library room with the provided payload'
-
+    description: 'Create new library room with the provided payload',
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'Successfully created a new user'
+    description: 'Successfully created a new user',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request payload for user is not validated'
+    description: 'Request payload for user is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated'
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: 'Invalid role'
+    description: 'Invalid role',
   })
   @Post('add')
   @HttpCode(HttpStatus.OK)
@@ -70,7 +71,7 @@ export class UsersController {
     return this.service.add(room);
   }
 
-  @Get("find/:id")
+  @Get('find/:id')
   getDevicesById(@Param() id: string) {
     return this.service.getById(id);
   }
@@ -96,11 +97,10 @@ export class UsersController {
   @Put('restore-disabled/:id')
   @UseGuards(AuthGuard)
   restoreDisabledRoomById(@Param() payload: { id: string }) {
-
     return this.service.handleRestoreDisabledAccountById(payload.id);
   }
 
-  @Put("update/:id")
+  @Put('update/:id')
   updateRoomById(@Param() id: string, @Body() body: UpdateDeviceRequest) {
     return this.service.updateById(body, id);
   }
@@ -110,7 +110,7 @@ export class UsersController {
     return this.service.disableById(payload.id);
   }
 
-  @Delete(":id")
+  @Delete(':id')
   deleteRoomById(@Param() payload: { id: string }) {
     return this.service.deleteById(payload.id);
   }

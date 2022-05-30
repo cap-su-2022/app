@@ -9,53 +9,59 @@ import {
   Post,
   Put,
   UseGuards,
-  UsePipes
-} from "@nestjs/common";
-import {RoomsService} from "../services/rooms.service";
+  UsePipes,
+} from '@nestjs/common';
+import {RoomsService} from '../services/rooms.service';
 
-import {AddRoomRequest, UpdateRoomRequest} from "@app/models";
-import {RoomsRequestPayload} from "../payload/request/rooms.payload";
-import {RoomsResponsePayload} from "../payload/response/rooms.payload";
-import {RoomsValidation} from "../pipes/validation/rooms.validation";
-import {AuthGuard} from "../guards/auth.guard";
-import {Rooms} from "../models/rooms.entity";
-import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
+import {AddRoomRequest, UpdateRoomRequest} from '@app/models';
+import {RoomsRequestPayload} from '../payload/request/rooms.payload';
+import {RoomsResponsePayload} from '../payload/response/rooms.payload';
+import {RoomsValidation} from '../pipes/validation/rooms.validation';
+import {AuthGuard} from '../guards/auth.guard';
+import {Rooms} from '../models/rooms.entity';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
-@Controller("/v1/rooms")
+@Controller('/v1/rooms')
 @ApiBearerAuth()
 @ApiTags('Rooms')
-
 export class RoomsController {
-
   constructor(private readonly service: RoomsService) {
   }
 
   @ApiOperation({
-    description: 'Create new library room with the provided payload'
-
+    description: 'Create new library room with the provided payload',
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'Successfully created a new library room'
+    description: 'Successfully created a new library room',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request payload for libary room is not validated'
+    description: 'Request payload for libary room is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated'
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
-     status: HttpStatus.FORBIDDEN,
-    description: 'Invalid role'
+    status: HttpStatus.FORBIDDEN,
+    description: 'Invalid role',
   })
   @Post('add')
-  addRoom(@Body() room: AddRoomRequest) {
+  @ApiBody({
+    type: AddRoomRequest,
+  })
+  addRoom(@Body() room: AddRoomRequest): Promise<Rooms> {
     return this.service.add(room);
   }
 
-  @Get("find/:id")
+  @Get('find/:id')
   getRoomById(@Param() id: string): Promise<Rooms> {
     return this.service.findById(id);
   }
@@ -64,19 +70,69 @@ export class RoomsController {
   @UsePipes(new RoomsValidation())
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  getRooms(@Body() request: RoomsRequestPayload): Promise<RoomsResponsePayload> {
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Not enough privileges to access this endpoint',
+  })
+  getRooms(
+    @Body() request: RoomsRequestPayload
+  ): Promise<RoomsResponsePayload> {
     return this.service.getAll(request);
   }
 
   @Get('disabled')
   @UseGuards(AuthGuard)
-  getDisableRooms() {
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched disabled rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Not enough privileges to access this endpoint',
+  })
+  getDisableRooms(): Promise<Rooms[]> {
     return this.service.getDisabledRooms();
   }
 
   @Get('deleted')
   @UseGuards(AuthGuard)
-  getDeletedRooms() {
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched deleted rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Not enough privileges to access this endpoint',
+  })
+  getDeletedRooms(): Promise<Rooms[]> {
     return this.service.getDeletedRooms();
   }
 
@@ -89,11 +145,10 @@ export class RoomsController {
   @Put('restore-disabled/:id')
   @UseGuards(AuthGuard)
   restoreDisabledRoomById(@Param() payload: { id: string }) {
-
     return this.service.handleRestoreDisabledRoomById(payload.id);
   }
 
-  @Put("update/:id")
+  @Put('update/:id')
   updateRoomById(@Param() id: string, @Body() body: UpdateRoomRequest) {
     return this.service.updateById(id, body);
   }
@@ -103,7 +158,7 @@ export class RoomsController {
     return this.service.disableById(payload.id);
   }
 
-  @Delete(":id")
+  @Delete(':id')
   deleteRoomById(@Param() payload: { id: string }) {
     return this.service.deleteById(payload.id);
   }
