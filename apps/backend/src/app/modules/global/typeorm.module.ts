@@ -5,19 +5,16 @@ import {Environment} from "@app/constants";
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
   useFactory: (configService: ConfigService) => ({
-    type: 'mysql',
-    host: configService.get<string>(Environment.db.mysql.url),
-    port: configService.get<number>(Environment.db.mysql.port),
-    username: configService.get<string>(Environment.db.mysql.username),
-    password: configService.get<string>(Environment.db.mysql.password),
-    database: configService.get<string>(Environment.db.mysql.database),
+    type: 'postgres',
+    host: configService.get<string>(Environment.db.postgres.url),
+    port: configService.get<number>(Environment.db.postgres.port),
+    username: configService.get<string>(Environment.db.postgres.username),
+    password: configService.get<string>(Environment.db.postgres.password),
+    database: configService.get<string>(Environment.db.postgres.database),
     autoLoadEntities: true,
-    synchronize: configService.get<boolean>(Environment.db.mysql.synchronize),
+    synchronize: configService.get<boolean>(Environment.db.postgres.synchronize),
     logging: ['query'],
     cache: false,
-    extra: {
-      namedPlaceholders: true,
-    },
   }),
   inject: [ConfigService]
 });

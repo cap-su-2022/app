@@ -3,12 +3,9 @@ import {Button, createStyles, Modal, Text} from "@mantine/core";
 import {Archive, X} from "tabler-icons-react";
 import {FPT_ORANGE_COLOR} from "@app/constants";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {
-  setSuccessModalMessage,
-  toggleSuccessModal
-} from "../../redux/features/room/room.slice";
 import {disableRoomById} from "../../redux/features/room/thunk/disable-room-by-id";
 import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
+import {resetRoomFilter} from "../../redux/features/room/room.slice";
 
 interface DisableRoomModalProps {
   isShown: boolean;
@@ -18,18 +15,15 @@ interface DisableRoomModalProps {
 const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
 
   const {classes} = useStyles();
-
   const selectedRoomId = useAppSelector((state) => state.room.selectedRoom.id);
-
   const dispatch = useAppDispatch();
 
   const handleDisableSelectedRoom = () => {
     dispatch(disableRoomById(selectedRoomId))
       .then(() => {
+        dispatch(resetRoomFilter());
         props.toggleShown();
         props.toggleDetailModalShown();
-        dispatch(toggleSuccessModal());
-        dispatch(setSuccessModalMessage("Successfully disabled this room!"));
         dispatch(fetchRooms());
       })
   }

@@ -1,4 +1,4 @@
-import {HttpException, HttpStatus, Inject, Injectable, Logger, Scope} from "@nestjs/common";
+import {HttpException, HttpStatus, Inject, Injectable, Logger, Scope, UnauthorizedException} from "@nestjs/common";
 import {HttpService} from "@nestjs/axios";
 import {lastValueFrom, map, Observable} from "rxjs";
 import {KeycloakSigninSuccessResponse} from "../dto/keycloak-signin-success.response.dto";
@@ -110,14 +110,19 @@ export class KeycloakService {
 
   async getUserByUsername(username: string, accessToken?: string): Promise<KeycloakUser> {
     const token = accessToken ?? this.httpRequest.headers['authorization'];
+    console.log(token);
     const url = `http://${this.keycloakHost}:${this.keycloakPort}/auth/admin/realms/${this.keycloakRealm}/users?username=${username}`;
-    const response = await lastValueFrom(this.httpService.get(url, {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-      }
-    }));
-    console.log(response);
-    return response.data[0];
+    try {
+      const response = await lastValueFrom(this.httpService.get(url, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        }
+      }));
+      return response.data[0];
+    } catch (e) {
+      console.log(e.response);
+      throw new UnauthorizedException("Invalid credentials");
+    }
   }
 
   getUserById(authToken: string, id: string) {
@@ -147,17 +152,27 @@ export class KeycloakService {
   }
 
 
-  getUserInfo(accessToken: string): Promise<any> {
+  async getUserInfo(accessToken: string): Promise<{
+    sub: string;
+    email_verified: boolean;
+    name: string;
+    preferred_username: string;
+    given_name: string;
+    family_name: string;
+    email: string
+  }> {
+    if (!accessToken.includes("Bearer")) {
+      accessToken = `Bearer ${accessToken}`;
+    }
     const URL = `http://${this.keycloakHost}:${this.keycloakPort}/auth/realms/${this.keycloakRealm}/protocol/openid-connect/userinfo`;
-    console.log(URL);
-    return lastValueFrom(this.httpService.get(URL, {
+    return await lastValueFrom(this.httpService.get(URL, {
         headers: {
-          "Authorization": accessToken,
+          "Authorization": `${accessToken}`,
         }
       }
     ).pipe(map(e => e.data))).catch((e) => {
-      console.log(e.response.data);
-      return e.response.data;
+      KeycloakService.logger.error({e});
+      throw new UnauthorizedException();
     });
   }
 

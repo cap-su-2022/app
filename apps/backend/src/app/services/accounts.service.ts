@@ -1,33 +1,33 @@
 import {Injectable} from "@nestjs/common";
-import {Users} from "../models/users.entity";
+import {Accounts} from "../models/account.entity";
 import {BaseService} from "./base.service";
 import {UsersDTO} from "@app/models";
-import {UsersRepository} from "../repositories/users.repository";
+import {AccountRepository} from "../repositories/account.repository.";
 import {KeycloakService} from "./keycloak.service";
 import {UsersRequestPayload} from "../payload/request/users.payload";
 
 @Injectable()
-export class UsersService extends BaseService<UsersDTO, Users, string>{
+export class AccountsService extends BaseService<UsersDTO, Accounts, string>{
 
   constructor(
     private readonly keycloakService: KeycloakService,
-    private readonly repository: UsersRepository) {
+    private readonly repository: AccountRepository) {
     super();
   }
 
-  getAll(): Promise<Users[]> {
+  getAll(): Promise<Accounts[]> {
     return null;
   }
 
-  findByKeycloakId(keycloakId: string): Promise<Users> {
+  findByKeycloakId(keycloakId: string): Promise<Accounts> {
     return this.repository.findByKeycloakId(keycloakId);
   }
 
-  add(model: UsersDTO): Promise<Users> {
+  add(model: UsersDTO): Promise<Accounts> {
     return Promise.resolve(undefined);
   }
 
-  addAll(models: UsersDTO[]): Promise<Users[]> {
+  addAll(models: UsersDTO[]): Promise<Accounts[]> {
     return Promise.resolve([]);
   }
 
@@ -35,15 +35,15 @@ export class UsersService extends BaseService<UsersDTO, Users, string>{
     return Promise.resolve(undefined);
   }
 
-  async getAllByPagination(payload: UsersRequestPayload): Promise<Users[]> {
+  async getAllByPagination(payload: UsersRequestPayload): Promise<Accounts[]> {
     return this.repository.find();
   }
 
-  getById(id: string): Promise<Users> {
+  getById(id: string): Promise<Accounts> {
     return Promise.resolve(undefined);
   }
 
-  updateById(model: UsersDTO, id: string): Promise<Users> {
+  updateById(model: UsersDTO, id: string): Promise<Accounts> {
     return Promise.resolve(undefined);
   }
 

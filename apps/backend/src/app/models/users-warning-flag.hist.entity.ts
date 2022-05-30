@@ -34,7 +34,7 @@ export class UsersWarningFlagHistory {
     name: "warn_num",
     nullable: true,
     unique: false,
-    type: 'tinyint',
+    type: 'int',
     comment: 'The number of warnings that user is received.'
   })
   warnNum?: number;

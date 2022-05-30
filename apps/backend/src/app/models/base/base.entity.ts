@@ -1,4 +1,4 @@
-import {Column, Entity} from "typeorm";
+import {Column, CreateDateColumn, Entity, UpdateDateColumn} from "typeorm";
 
 @Entity()
 export abstract class BaseEntity {
@@ -17,20 +17,13 @@ export abstract class BaseEntity {
   })
   isDeleted: boolean;
 
-  @Column({
-    name: "created_at",
-    nullable: false,
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-
+  @CreateDateColumn({
+    name: 'created_at'
   })
   createdAt: Date;
 
-  @Column({
-    name: "updated_at",
-    nullable: false,
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+  @UpdateDateColumn({
+    name: "updated_at"
   })
   updatedAt: Date;
 

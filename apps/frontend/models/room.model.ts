@@ -1,4 +1,5 @@
 export interface Room {
+  stt: number;
   id: string;
   name: string;
   description: string;

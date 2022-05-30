@@ -1,58 +1,42 @@
 import React, { useState } from 'react';
 import {createStyles, Table, ScrollArea, Modal, Text, Button} from '@mantine/core';
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {RotateClockwise, Trash} from "tabler-icons-react";
-import {restoreDisabledRoom} from "../../redux/features/room/thunk/restore-disabled.thunk";
+import {RotateClockwise} from "tabler-icons-react";
 import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
-import {fetchDisabledRooms} from "../../redux/features/room/thunk/fetch-disabled-rooms";
-import {deleteRoomById} from "../../redux/features/room/thunk/delete-room-by-id";
+import {fetchDeletedRooms} from "../../redux/features/room/thunk/fetch-deleted-rooms";
+import {restoreDeletedRoom} from "../../redux/features/room/thunk/restore-deleted.thunk";
 
-interface RestoreDisabledRoomModalProps {
+interface RestoreDeletedModalProps {
   isShown: boolean;
   toggleShown(): void;
 }
 
-const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (props) => {
+const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
   const { classes, cx } = useStyles();
-
-  const disabledRooms = useAppSelector((state) => state.room.disabledRooms);
-
+  const deletedRooms = useAppSelector((state) => state.room.deletedRooms);
   const dispatch = useAppDispatch();
-
   const [scrolled, setScrolled] = useState(false);
 
-  const handleActiveRoom = (id: string) => {
-    dispatch(restoreDisabledRoom(id)).unwrap()
-      .then(() => dispatch(fetchDisabledRooms()))
+  const handleRestoreDeletedRoom = (id: string) => {
+    dispatch(restoreDeletedRoom(id)).unwrap()
+      .then(() => dispatch(fetchDeletedRooms()))
       .then(() => dispatch(fetchRooms()));
   }
-
-  const handleDeleteRoom = (id: string) => {
-    dispatch(deleteRoomById(id)).unwrap()
-      .then(() => fetchDisabledRooms())
-      .then(() => fetchRooms());
-  }
-
-  const rows = disabledRooms?.map((row, index) => (
+  const rows = deletedRooms?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
       <td>{row.id}</td>
       <td>{row.name}</td>
-      <td>{row.updatedAt}</td>
+      <td>{new Date(row.updatedAt).toLocaleDateString() + ' ' + new Date(row.updatedAt).toLocaleTimeString()}</td>
       <td style={{
         display: 'flex',
         flexDirection: 'column',
 
       }}>
-        <Button onClick={() => handleActiveRoom(row.id)} style={{
+        <Button onClick={() => handleRestoreDeletedRoom(row.id)} style={{
           margin: 5
         }} variant="outline" color="green" leftIcon={<RotateClockwise/>}>
-          Activate
-        </Button>
-        <Button onClick={() => handleDeleteRoom(row.id)} style={{
-          margin: 5
-        }} variant="outline" color="red" leftIcon={<Trash/>}>
-          Delete
+          Restore
         </Button>
       </td>
     </tr>
@@ -63,7 +47,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (props
       <Text style={{
         fontWeight: '600',
         fontSize: 22
-      }}>Restore Disabled Rooms</Text>
+      }}>Restore Deleted Rooms</Text>
     )
   };
 
@@ -117,4 +101,4 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default RestoreDisabledRoomModal;
+export default RestoreDeletedModal;

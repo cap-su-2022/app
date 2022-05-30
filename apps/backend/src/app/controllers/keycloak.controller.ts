@@ -1,11 +1,23 @@
-import {Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Request, Res} from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Request,
+  Res
+} from "@nestjs/common";
 import {KeycloakService} from "../services/keycloak.service";
 import {ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse} from "@nestjs/swagger";
 import {KEYCLOAK_PATH} from "../constants/controllers/keycloak/path.constant";
 import {AUTHORIZATION_LOWERCASE} from "../constants/network/headers.constant";
 import {Response} from "express";
 import {AuthenticationService} from "../services/authentication.service";
-import {UsernamePasswordLoginResponse} from "@app/models";
+import {KeycloakUser, UsernamePasswordLoginResponse} from "@app/models";
 import {Roles} from "../enum/roles.enum";
 
 export class AuthenticationRequest {
@@ -15,13 +27,21 @@ export class AuthenticationRequest {
   username?: string;
   password?: string;
 }
-
 @ApiBearerAuth()
 @Controller(KEYCLOAK_PATH.requestPath)
 export class KeycloakController {
 
   constructor(private readonly service: KeycloakService,
               private readonly authenticationService: AuthenticationService) {
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('info')
+  async validateTokenAndGetUserInfo(@Body() payload: {token: string}) {
+    if (Object.keys(payload).length < 1) {
+      throw new BadRequestException("Must provide access token");
+    }
+    return this.service.getUserInfo(payload.token);
   }
 
   @ApiOperation({})

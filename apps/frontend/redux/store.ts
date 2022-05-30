@@ -5,6 +5,7 @@ import spinnerSlice from "./features/spinner/slice";
 import {authReducer} from "./features/user/auth.slice";
 import {roomReducer} from "./features/room/room.slice";
 import {systemReducer} from "./features/system/system.slice";
+import {devicesReducer} from "./features/devices/devices.slice";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -12,6 +13,7 @@ const combinedReducer = combineReducers({
   spinner: spinnerSlice.reducer,
   auth: authReducer,
   room: roomReducer,
+  device: devicesReducer,
   system: systemReducer,
 });
 

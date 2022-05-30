@@ -2,10 +2,8 @@ import React from "react";
 import {createStyles, Pagination} from "@mantine/core";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {changeRoomsCurrentPage} from "../../redux/features/room/room.slice";
-import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
 
 const TableFooter: React.FC = () => {
-
   const {classes} = useStyles();
 
   const dispatch = useAppDispatch();

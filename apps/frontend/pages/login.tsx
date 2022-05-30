@@ -24,6 +24,8 @@ import { initializeApp } from "firebase/app"
 import {getAuth, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';
 import {doLoginWithGoogle} from "../redux/features/user/google-login.thunk";
 import Logo from "../components/logo";
+import {getCookie} from "../utils/cookie-extractor";
+import axios from "axios";
 const LoginFailedModal = dynamic(() => import('../components/login-fail.modal'));
 
 const firebaseConfig = {
@@ -62,7 +64,13 @@ function Login() {
   }, []);
 
   const handleSuccessAuthentication = async () => {
-    await router.replace('/rooms');
+    await router.replace('/dashboard');
+    router.prefetch('/rooms');
+    router.prefetch('/users');
+    router.prefetch('/devices');
+    router.prefetch('/feedback');
+
+
   }
 
   const handleLoginSubmit = async (values) => {
@@ -275,12 +283,26 @@ const useStyles = createStyles((theme) => ({
 
 export default Login;
 
-export const getServerSideProps: GetServerSideProps = async () => {
-
-  return {
-
-    props: {
-      users: null,
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const req = context.req;
+  const accessToken = getCookie(req.headers.cookie, 'accessToken');
+  const resp = await axios.post('http://localhost:5000/api/v1/auth/info', {
+    token: accessToken
+  })
+  if (resp.status >= 400 && resp.status <= 500) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: true
+      }
+    }
+  } else {
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: true
+      }
     }
   }
+
 }

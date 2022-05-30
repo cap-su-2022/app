@@ -13,19 +13,16 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     let accessToken;
     if (request.url.endsWith('health/auth')) {
-      accessToken = request.headers['authorization'] ?? `Bearer ${request.headers['cookie']?.split(';')
+      accessToken = request.headers['authorization'] ?? `${request.headers['cookie']?.split(';')
         .map(k => k.trim()).find(k => k.startsWith('accessToken='))?.split("=")[1]}`;
     } else {
-      accessToken = `Bearer ${request.headers['cookie']?.split(';')
+      accessToken = `${request.headers['cookie']?.split(';')
         .map(k => k.trim()).find(k => k.startsWith('accessToken='))?.split("=")[1]}`;
     }
     if (!accessToken) {
       return false;
     }
     const resp = await this.keycloakService.getUserInfo(accessToken);
-    if (resp?.error) {
-      throw new HttpException(resp['error_description'], HttpStatus.UNAUTHORIZED);
-    }
 
     return !!resp;
   }

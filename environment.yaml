@@ -21,7 +21,13 @@ db:
     username: 'root'
     password: '12345678x@X'
     synchronize: false
-
+  postgres:
+    url: 'fu-lib-room.tk'
+    port: 5432
+    database: 'postgres'
+    username: 'admin'
+    password: '12345678x@X'
+    synchronize: false
 
 keycloak:
   host: 'fu-lib-room.tk'

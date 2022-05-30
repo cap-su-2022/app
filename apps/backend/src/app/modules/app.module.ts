@@ -5,8 +5,8 @@ import { AppService } from '../services/app.service';
 import {KeycloakModule} from "./keycloak.module";
 import {RoomsModule} from "./rooms.module";
 import {HealthCheckModule} from "./health-check.module";
-import {UsersModule} from "./users.module";
-import {EquipmentsModule} from "./equipments.module";
+import {AccountsModule} from "./accounts.module";
+import {DevicesModule} from "./devices.module";
 import {UsersWarningFlagModule} from "./users-warning-flag.module";
 import GlobalCacheModule from "./global/cache.module";
 import GlobalConfigModule from "./global/config.module";
@@ -28,8 +28,8 @@ export class AppModule {
         HealthCheckModule,
         KeycloakModule,
         RoomsModule,
-        UsersModule,
-        EquipmentsModule,
+        AccountsModule,
+        DevicesModule,
         UsersWarningFlagModule,
       ],
       controllers: [AppController],

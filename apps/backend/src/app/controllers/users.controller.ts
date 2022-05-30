@@ -1,6 +1,6 @@
 import {Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards, UsePipes} from "@nestjs/common";
-import {UsersService} from "../services/users.service";
-import {Users} from "../models/users.entity";
+import {AccountsService} from "../services/accounts.service";
+import {Accounts} from "../models/account.entity";
 import {ApiBearerAuth, ApiOperation} from "@nestjs/swagger";
 import {RoomsValidation} from "../pipes/validation/rooms.validation";
 import {AuthGuard} from "../guards/auth.guard";
@@ -11,14 +11,14 @@ import {UsersRequestPayload} from "../payload/request/users.payload";
 @ApiBearerAuth()
 export class UsersController {
 
-  constructor(private readonly service: UsersService) {
+  constructor(private readonly service: AccountsService) {
   }
 
   @Post()
   @UsePipes(new UsersValidation())
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  getAll(@Body() payload: UsersRequestPayload): Promise<Users[]> {
+  getAll(@Body() payload: UsersRequestPayload): Promise<Accounts[]> {
     return this.service.getAllByPagination(payload);
   }
 

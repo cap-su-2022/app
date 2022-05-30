@@ -37,6 +37,5 @@ export const fetchRooms = createAsyncThunk<FetchRoomsSuccessResponse, void, {
     }
   } finally {
     thunkAPI.dispatch(toggleSpinnerOff());
-
   }
 });

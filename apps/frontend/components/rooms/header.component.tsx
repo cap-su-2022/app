@@ -8,7 +8,8 @@ const RoomsHeader: React.FC = () => {
   return (
     <div className={classes.container}>
       <BuildingWarehouse size={50}/>
-      <Text className={classes.text}>Rooms Management</Text>
+      <Text className={classes.text}>
+        Rooms Management</Text>
     </div>
   );
 }

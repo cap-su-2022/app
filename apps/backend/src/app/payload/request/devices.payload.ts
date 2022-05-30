@@ -3,7 +3,7 @@ import {IsNotEmpty, IsNumber, IsString, Max, Min} from 'class-validator';
 import {ContainsMany} from "../../validators/contains-many.validator";
 import {validationConfig} from "../../pipes/validation/global.validator";
 
-export class EquipmentsRequestPayload implements PaginationPayload<string> {
+export class DevicesRequestPayload implements PaginationPayload<string> {
   @IsString({
     message: 'Search property must be a string'
   })

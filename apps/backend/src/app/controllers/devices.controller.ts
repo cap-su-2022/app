@@ -11,23 +11,19 @@ import {
   UseGuards,
   UsePipes
 } from "@nestjs/common";
-import {EquipmentsService} from "../services/equipments.service";
+import {DevicesService} from "../services/devices.service";
 import {ApiOperation, ApiResponse} from "@nestjs/swagger";
-import {AddRoomRequest, UpdateRoomRequest} from "@app/models";
-import {Rooms} from "../models/rooms.entity";
-import {RoomsValidation} from "../pipes/validation/rooms.validation";
 import {AuthGuard} from "../guards/auth.guard";
-import {RoomsRequestPayload} from "../payload/request/rooms.payload";
-import {RoomsResponsePayload} from "../payload/response/rooms.payload";
-import {AddEquipmentRequest} from "../../../../../libs/models/src/lib/request/add-equipment-request.dto";
+import {AddDeviceRequest} from "../../../../../libs/models/src/lib/request/add-equipment-request.dto";
 import {DevicesResponsePayload} from "../payload/response/devices.payload";
-import {EquipmentsRequestPayload} from "../payload/request/equipments.payload";
+import {DevicesRequestPayload} from "../payload/request/devices.payload";
 import {UpdateDeviceRequest} from '@app/models';
+import {DevicesValidation} from "../pipes/validation/devices.validation";
 
-@Controller('v1/equipments')
-export class EquipmentsController {
+@Controller('v1/devices')
+export class DevicesController {
 
-  constructor(private readonly service: EquipmentsService) {
+  constructor(private readonly service: DevicesService) {
   }
 
   @ApiOperation({
@@ -54,7 +50,8 @@ export class EquipmentsController {
     description: 'Invalid role'
   })
   @Post('add')
-  addRoom(@Body() room: AddEquipmentRequest) {
+  @HttpCode(HttpStatus.OK)
+  addRoom(@Body() room: AddDeviceRequest) {
     return this.service.add(room);
   }
 
@@ -64,10 +61,10 @@ export class EquipmentsController {
   }
 
   @Post()
-  @UsePipes(new RoomsValidation())
+  @UsePipes(new DevicesValidation())
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  getDevices(@Body() request: EquipmentsRequestPayload): Promise<DevicesResponsePayload> {
+  getDevices(@Body() request: DevicesRequestPayload): Promise<DevicesResponsePayload> {
     return this.service.getAll(request);
   }
 

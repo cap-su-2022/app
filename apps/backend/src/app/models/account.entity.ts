@@ -1,14 +1,16 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {BeforeInsert, Column, Entity, Generated, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
 import {BaseEntity} from "./base/base.entity";
+import {randomUUID} from "crypto";
 
-@Entity(Users.name.toLocaleLowerCase())
-export class Users extends BaseEntity {
+@Entity(Accounts.name.toLocaleLowerCase())
+export class Accounts extends BaseEntity {
 
-  @PrimaryGeneratedColumn("uuid",
+  @PrimaryColumn("uuid",
     {
       name: "id",
       comment: "ID for Room",
     })
+  @Generated("uuid")
   id?: string;
 
   @Column({
@@ -117,4 +119,5 @@ export class Users extends BaseEntity {
 
   })
   avatar?: string;
+
 }

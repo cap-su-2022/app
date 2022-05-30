@@ -5,26 +5,23 @@ import {Archive, CalendarStats, ClipboardText, Clock, FileDescription, Id, X} fr
 import {convertDateToLocalDateString} from "../../utils/date.util";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 
-interface RoomInfoModalProps {
+interface InfoModalProps {
   isShown: boolean;
   toggleShown(): void;
-  toggleDisableRoomModalShown(): void;
+  toggleDisableModalShown(): void;
 }
 
-const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
+const InfoModal: React.FC<InfoModalProps> = (props) => {
   const {classes} = useStyles();
-  const theme = useMantineTheme();
-
-  const room = useAppSelector((state) => state.room.selectedRoom);
-
+  const device = useAppSelector((state) => state.device.selectedDevice);
   const dispatch = useAppDispatch();
-
   const dimension = useWindowDimensions();
-
 
   const ModalHeaderTitle: React.FC = () => {
     return (
-      <Text className={classes.modalHeaderTitle}>Room Information</Text>
+      <Text className={classes.modalHeaderTitle}>
+        Device Information
+      </Text>
     )
   };
 
@@ -39,34 +36,34 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
           <TextInput icon={<Id/>}
                      className={classes.textInput}
                      radius="md"
-                     label="Room ID"
-                     readOnly value={room.id}/>
+                     label="Device ID"
+                     readOnly value={device.id}/>
           <TextInput icon={<ClipboardText/>}
                      className={classes.textInput}
                      radius="md"
-                     label="Room name"
-                     readOnly value={room.name}/>
+                     label="Device name"
+                     readOnly value={device.name}/>
           <Textarea icon={<FileDescription/>}
                      className={classes.textInput}
                      radius="md"
-                     label="Room description"
-                     readOnly value={room.description}/>
+                     label="Device description"
+                     readOnly value={device.description}/>
           <div className={classes.modalInputDate}>
             <TextInput icon={<Clock/>}
                        className={classes.textInput}
                        radius="md"
                        label="Created At"
                        readOnly
-                       value={convertDateToLocalDateString(new Date(room.createdAt))}/>
-            <InputWrapper id="room-updatedat"
+                       value={convertDateToLocalDateString(new Date(device.createdAt))}/>
+            <InputWrapper id="device-updatedat"
                           label="Updated At"
-                          description="The date that the room information was updated">
-              <TextInput id="room-updatedat"
+                          description="The date that the device information was updated">
+              <TextInput id="device-updatedat"
                          icon={<CalendarStats/>}
                          className={classes.textInput}
                          radius="md"
                          readOnly
-                         value={convertDateToLocalDateString(new Date(room.createdAt))}
+                         value={convertDateToLocalDateString(new Date(device.createdAt))}
               />
             </InputWrapper>
           </div>
@@ -74,12 +71,12 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
 
         <div className={classes.modalFooter}>
           <Button
-            onClick={() => props.toggleDisableRoomModalShown()}
+            onClick={() => props.toggleDisableModalShown()}
             variant="outline"
             color={"red"}
             leftIcon={<Archive/>}
           >
-            Disable this room
+            Disable this device
           </Button>
 
           <Button onClick={() => props.toggleShown()}
@@ -118,4 +115,4 @@ const useStyles = createStyles({
   }
 });
 
-export default RoomInfoModal;
+export default InfoModal;

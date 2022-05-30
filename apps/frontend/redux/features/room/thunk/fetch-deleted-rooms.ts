@@ -3,13 +3,13 @@ import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
 import axios from "axios";
 import {Room} from "../../../../models/room.model";
 
-interface DeletedRoomRejectValueModel {
+interface RejectValue {
   message: string;
 }
 
 export const fetchDeletedRooms = createAsyncThunk<Room[], void, {
-  rejectValue: DeletedRoomRejectValueModel
-}>('rooms/fetch-deleted-rooms', async (any, thunkAPI) => {
+  rejectValue: RejectValue
+}>('room/fetch-deleted', async (any, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
 
   try {

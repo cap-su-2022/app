@@ -1,8 +1,8 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {BaseEntity} from "./base/base.entity";
 
-@Entity(Equipments.name.toLowerCase())
-export class Equipments extends BaseEntity {
+@Entity(Devices.name.toLowerCase())
+export class Devices extends BaseEntity {
 
   @PrimaryGeneratedColumn("uuid",
     {

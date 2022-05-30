@@ -12,11 +12,6 @@ import {restoreDeletedRoom} from "./thunk/restore-deleted.thunk";
 import {deleteRoomById} from "./thunk/delete-room-by-id";
 
 interface RoomState {
-  isDownloadModalShown: boolean;
-  isRoomAddModalShown: boolean;
-  isSuccessModalShown: boolean;
-  successMessage: string;
-
   selectedRoom: Room;
   rooms: Room[];
   disabledRooms: Room[];
@@ -30,11 +25,6 @@ interface RoomState {
 }
 
 const initialState: RoomState = {
-  isSuccessModalShown: false,
-  isRoomAddModalShown: false,
-  isDownloadModalShown: false,
-
-  successMessage: '',
   selectedRoom: {} as Room,
   rooms: [],
   disabledRooms: [],
@@ -51,12 +41,6 @@ export const roomSlice = createSlice({
   name: 'room',
   initialState: initialState,
   reducers: {
-    toggleSuccessModal(state) {
-      state.isSuccessModalShown = !state.isSuccessModalShown;
-    },
-    setSuccessModalMessage(state, action) {
-      state.successMessage = action.payload;
-    },
     changeRoomsCurrentPage(state, action) {
       state.currentPage = action.payload;
     },
@@ -77,12 +61,6 @@ export const roomSlice = createSlice({
       state.direction = 'ASC';
       state.currentPage = 1;
       state.textSearch = '';
-    },
-    toggleRoomsDownloadModalVisible(state) {
-      state.isDownloadModalShown = !state.isDownloadModalShown;
-    },
-    toggleRoomAddModalVisible(state) {
-      state.isRoomAddModalShown = !state.isRoomAddModalShown;
     },
   },
   extraReducers: (builder) => {
@@ -110,7 +88,11 @@ export const roomSlice = createSlice({
 
     builder.addCase(fetchRooms.fulfilled, (state, {payload}) => {
       state.totalPage = payload.totalPage;
-      state.rooms = payload.data;
+      state.rooms = payload.data.map((r, index) => {
+        r.stt = index + 1 + ((payload.currentPage - 1) * state.size);
+        console.log(r.stt);
+        return r;
+      });
     });
 
     builder.addCase(fetchRooms.rejected, (state, {payload}) => {
@@ -133,7 +115,7 @@ export const roomSlice = createSlice({
         state.disabledRooms = payload;
     });
     builder.addCase(fetchDeletedRooms.fulfilled, (state, {payload}) => {
-      state.disabledRooms = payload;
+      state.deletedRooms = payload;
     });
     builder.addCase(restoreDisabledRoom.fulfilled, (state, {payload}) => {
     });
@@ -147,7 +129,6 @@ export const roomSlice = createSlice({
 
 export const roomReducer = roomSlice.reducer;
 export const {
-  toggleSuccessModal, setSuccessModalMessage, changeRoomsCurrentPage, changeRoomsSize,
+  changeRoomsCurrentPage, changeRoomsSize,
   changeRoomsTextSearch, changeRoomsTotalPage, changeRoomsSortDirection, resetRoomFilter,
-  toggleRoomsDownloadModalVisible, toggleRoomAddModalVisible,
 } = roomSlice.actions;

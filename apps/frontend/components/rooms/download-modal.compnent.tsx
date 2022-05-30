@@ -1,23 +1,20 @@
 import React from "react";
 import {Button, createStyles, Divider, Modal, Switch, Text} from "@mantine/core";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {toggleRoomsDownloadModalVisible} from "../../redux/features/room/room.slice";
+import {useAppDispatch} from "../../redux/hooks";
 import {Download, FileDownload} from "tabler-icons-react";
 
-const DownloadModal: React.FC = () => {
+interface DownloadModalProps {
+  isShown: boolean;
+  toggleShown(): void;
+}
 
+const DownloadModal: React.FC<DownloadModalProps> = (props) => {
   const {classes} = useStyles();
-
-  const isShown = useAppSelector((state) => state.room.isDownloadModalShown);
-
   const dispatch = useAppDispatch();
 
   const ModalHeaderTitle: React.FC = () => {
     return (
-      <Text style={{
-        fontWeight: '600',
-        fontSize: 22
-      }}>
+      <Text className={classes.modalTitleText}>
         Export to Excel file
       </Text>
     );
@@ -26,44 +23,45 @@ const DownloadModal: React.FC = () => {
   return (
     <Modal centered
            title={<ModalHeaderTitle/>}
-           opened={isShown}
-           onClose={() => dispatch(toggleRoomsDownloadModalVisible())}>
-      <div style={{
-        margin: 10,
-        display: 'flex',
-        justifyContent: 'space-between',
-        flexDirection: 'column',
-        flexGrow: '1',
-      }}>
-        <Button color="green" style={{
-          marginTop: 10,
-        }} leftIcon={<FileDownload/>}>
+           opened={props.isShown}
+           onClose={() => props.toggleShown()}>
+      <div className={classes.buttonContainer}>
+        <Button color="green" className={classes.button} leftIcon={<FileDownload/>}>
           Export only this page
         </Button>
-        <Button color="orange" style={{
-          marginTop: 10,
-        }} leftIcon={<Download/>}>
+        <Button color="orange" className={classes.button} leftIcon={<Download/>}>
           Export all data
         </Button>
       </div>
-
-      <Divider style={{
-        marginTop: 10,
-        marginBottom: 10
-      }}/>
-      <Switch style={{
-        margin: 5
-      }} label="Including DISABLED data"/>
-      <Switch style={{
-        margin: 5
-      }} label="Including DELETED data"/>
-
+      <Divider className={classes.divider}/>
+      <Switch className={classes.switch} label="Including DISABLED data"/>
+      <Switch className={classes.switch} label="Including DELETED data"/>
     </Modal>
   );
 };
 
 const useStyles = createStyles({
-
+  modalTitleText: {
+    fontWeight: 600,
+    fontSize: 22
+  },
+  buttonContainer: {
+    margin: 10,
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'column',
+    flexGrow: 1,
+  },
+  button: {
+    marginTop: 10,
+  },
+  divider: {
+    marginTop: 10,
+    marginBottom: 10
+  },
+  switch: {
+    margin: 5
+  }
 });
 
 export default DownloadModal;

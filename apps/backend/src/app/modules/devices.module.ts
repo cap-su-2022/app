@@ -1,9 +1,9 @@
 import {Module} from "@nestjs/common";
-import {EquipmentsController} from "../controllers/equipments.controller";
+import {DevicesController} from "../controllers/devices.controller";
 import {EquipmentsHistoryController} from "../controllers/equipments-history.controller";
-import {EquipmentsService} from "../services/equipments.service";
+import {DevicesService} from "../services/devices.service";
 import {EquipmentsHistoryService} from "../services/equipments-history.service";
-import {EquipmentsRepository} from "../repositories/equipments.repository";
+import {DevicesRepository} from "../repositories/devices.repository";
 import {EquipmentsHistoryRepository} from "../repositories/equipments-history.repository";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import { KeycloakService } from "../services/keycloak.service";
@@ -14,18 +14,16 @@ import { HttpModule } from "@nestjs/axios";
   imports: [
     ConfigModule,
     HttpModule,
-    TypeOrmModule.forFeature([EquipmentsRepository, EquipmentsHistoryRepository]),
+    TypeOrmModule.forFeature([DevicesRepository, EquipmentsHistoryRepository]),
   ],
   controllers: [
-    EquipmentsController,
+    DevicesController,
     EquipmentsHistoryController,
   ],
   providers: [
-    EquipmentsService,
+    DevicesService,
     EquipmentsHistoryService,
-    EquipmentsRepository,
-    EquipmentsHistoryRepository,
     KeycloakService
   ]
 })
-export class EquipmentsModule {}
+export class DevicesModule {}

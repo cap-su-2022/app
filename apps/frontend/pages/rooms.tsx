@@ -9,29 +9,29 @@ import {
 import {
   InfoCircle, Pencil,
 } from "tabler-icons-react";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useReducer, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../redux/hooks";
 import Th from "../components/table/th.table.component";
 import {RowData} from "../models/table/row-data.model";
 import {useRouter} from "next/router";
 import {useDebouncedValue} from "@mantine/hooks";
-import RoomInfoModal from "../components/rooms/room-info-modal.component";
+import RoomInfoModal from "../components/rooms/info-modal.component";
 import {getRoomById} from "../redux/features/room/thunk/get-room-by-id";
-import TableHeader from "../components/rooms/table-header.component";
+import TableHeader from "../components/devices/table-header.component";
 import {fetchRooms} from "../redux/features/room/thunk/fetch-rooms";
 import NoDataFound from "../components/no-data-found";
 import {
   changeRoomsTextSearch,
 } from "../redux/features/room/room.slice";
 import TableFooter from "../components/rooms/table-footer.component";
-import RoomUpdateModal from "../components/rooms/room-update-modal.component";
+import RoomUpdateModal from "../components/rooms/update-modal.component";
 import RoomsHeader from "../components/rooms/header.component";
-import DisableRoomModal from "../components/rooms/disable-room-modal.component";
-import DeleteRoomModal from "../components/rooms/delete-room-modal.component";
-import AddRoomModal from "../components/rooms/add-room-modal.component";
+import DisableRoomModal from "../components/rooms/disable-modal.component";
+import DeleteRoomModal from "../components/rooms/delete-modal.component";
+import AddRoomModal from "../components/rooms/add-modal.component";
 import DownloadModal from "../components/rooms/download-modal.compnent";
-import RestoreDisabledRoomModal from "../components/rooms/restore-disabled-room.modal.component";
-import RestoreDeletedRoomModal from "../components/rooms/restore-deleted-room.modal.component";
+import RestoreDisabledRoomModal from "../components/rooms/restore-disabled.modal.component";
+import RestoreDeletedRoomModal from "../components/rooms/restore-deleted.modal.component";
 
 interface RoomsRowData extends RowData {
   stt: number;
@@ -40,38 +40,6 @@ interface RoomsRowData extends RowData {
   isDisabled: boolean;
   updatedAt: string;
 }
-
-interface TableSortProps {
-  currentPage: number;
-  totalPage: number;
-  size: number;
-  data: RoomsRowData[];
-}
-
-const initialState = {
-  data: {
-    totalPage: 0,
-    data: [],
-    currentPage: 0,
-    size: 0,
-  },
-  search: '',
-  page: 1,
-  itemPerPage: 3,
-  direction: 'ASC',
-  isAddModalShown: false,
-};
-
-interface RoomsResponseModel {
-  id: string;
-  name: string;
-  description: string;
-  updatedAt: string;
-  createdAt: string;
-  isDeleted: string;
-  isDisabled: string
-}
-
 
 function RoomsManagement(props: any) {
   const {classes} = useStyles();
@@ -87,13 +55,16 @@ function RoomsManagement(props: any) {
   const searchText = useAppSelector((state) => state.room.textSearch);
   const currentPage = useAppSelector((state) => state.room.currentPage);
   const direction = useAppSelector((state) => state.room.direction);
+
   //modal
+  const [isAddModalShown, setAddModalShown] = useState<boolean>(false);
   const [isDetailModalShown, setDetailModalShown] = useState<boolean>(false);
   const [isUpdateModalShown, setUpdateModalShown] = useState<boolean>(false);
   const [isDisableModalShown, setDisableModalShown] = useState<boolean>(false);
-  const [isDeleteRoomModalShown, setDeleteRoomModalShown] = useState<boolean>(false);
+  const [isDeleteModalShown, setDeleteModalShown] = useState<boolean>(false);
   const [isRestoreDisabledModalShown, setRestoreDisabledModalShown] = useState<boolean>(false);
   const [isRestoreDeletedModalShown, setRestoreDeletedModalShown] = useState<boolean>(false);
+  const [isDownloadModalShown, setDownloadModalShown] = useState<boolean>(false);
 
   const isSpinnerLoading = useAppSelector((state) => state.spinner.isEnabled);
   const [debouncedSearchValue] = useDebouncedValue(searchText, 400);
@@ -136,9 +107,9 @@ function RoomsManagement(props: any) {
   const handleRenderRows = () => {
     return rooms.map((row, index) => (
       <tr key={row.id}>
-        <td>{(rooms.length * (currentPage - 1)) + (index+ currentPage)}</td>
+        <td>{row.stt}</td>
         <td>{row.name}</td>
-        <td>{new Date(row.updatedAt).toDateString()}</td>
+        <td>{new Date(row.updatedAt).toLocaleDateString() + ' ' + new Date(row.updatedAt).toLocaleTimeString()}</td>
         <td>
           {row.isDisabled
             ? <Button compact color="red"
@@ -172,60 +143,62 @@ function RoomsManagement(props: any) {
     ));
   }
 
+  const THead = () => {
+    return (
+      <thead>
+      <tr>
+        <Th
+          sorted={sortBy === 'stt'}
+          reversed={null}
+          onSort={() => setSorting('stt')}
+        >
+          STT
+        </Th>
+        <Th
+          sorted={sortBy === 'name'}
+          reversed={null}
+          onSort={() => setSorting('name')}
+        >
+          Name
+        </Th>
+        <Th
+          sorted={sortBy === 'updatedAt'}
+          reversed={null}
+          onSort={() => setSorting('updatedAt')}
+        >
+          Updated At
+        </Th>
+        <Th onSort={null}>
+          Status
+        </Th>
+        <Th onSort={null}>
+          Action
+        </Th>
+      </tr>
+      </thead>
+    );
+  }
+
   return (
     <>
       <AdminLayout>
         <RoomsHeader/>
 
         <TableHeader searchText={searchText}
+                     toggleAddModalShown={() => setAddModalShown(!isAddModalShown)}
+                     toggleDownloadModalShown={() => setDownloadModalShown(!isDownloadModalShown)}
                      toggleRestoreDeletedModalShown={() => setRestoreDeletedModalShown(!isRestoreDeletedModalShown)}
                      toggleRestoreDisabledModalShown={() => setRestoreDisabledModalShown(!isRestoreDisabledModalShown)}
                      handleChangeSearchText={(val) => handleSearchChange(val)}/>
 
         {rooms?.length > 0 ? <>
-            <div style={{
-              margin: 10
-            }}>
-              <Table style={{
-                marginLeft: 10,
-                marginRight: 10,
-                marginBottom: 10
-              }}
+            <div className={classes.tableContainer}>
+              <Table className={classes.table}
                      horizontalSpacing="md"
                      verticalSpacing="xs"
                      sx={{tableLayout: 'auto', minWidth: 1000}}
               >
-                <thead>
-                <tr>
-                  <Th
-                    sorted={sortBy === 'stt'}
-                    reversed={null}
-                    onSort={() => setSorting('stt')}
-                  >
-                    STT
-                  </Th>
-                  <Th
-                    sorted={sortBy === 'name'}
-                    reversed={null}
-                    onSort={() => setSorting('name')}
-                  >
-                    Name
-                  </Th>
-                  <Th
-                    sorted={sortBy === 'updatedAt'}
-                    reversed={null}
-                    onSort={() => setSorting('updatedAt')}
-                  >
-                    Updated At
-                  </Th>
-                  <Th onSort={null}>
-                    Status
-                  </Th>
-                  <Th onSort={null}>
-                    Action
-                  </Th>
-                </tr>
-                </thead>
+                <THead/>
                 <tbody>
                 {handleRenderRows()}
                 </tbody>
@@ -238,7 +211,7 @@ function RoomsManagement(props: any) {
         <RoomUpdateModal
           isShown={isUpdateModalShown}
           toggleShown={() => setUpdateModalShown(!isUpdateModalShown)}
-          toggleDeleteModalShown={() => setDeleteRoomModalShown(!isDeleteRoomModalShown)}
+          toggleDeleteModalShown={() => setDeleteModalShown(!isDeleteModalShown)}
         />
         <RoomInfoModal isShown={isDetailModalShown}
                        toggleShown={() => setDetailModalShown(!isDetailModalShown)}
@@ -248,13 +221,13 @@ function RoomsManagement(props: any) {
                           toggleShown={() => setDisableModalShown(!isDisableModalShown)}
                           toggleDetailModalShown={() => setDetailModalShown(!isDetailModalShown)}/>
         <DeleteRoomModal
-          isShown={isDeleteRoomModalShown}
-          toggleShown={() => setDeleteRoomModalShown(!isDeleteRoomModalShown)}
+          isShown={isDeleteModalShown}
+          toggleShown={() => setDeleteModalShown(!isDeleteModalShown)}
           toggleUpdateModalShown={() => setUpdateModalShown(!isUpdateModalShown)}/>
 
-        <AddRoomModal/>
+        <AddRoomModal isShown={isAddModalShown} toggleShown={() => setAddModalShown(!isAddModalShown)}/>
 
-        <DownloadModal/>
+        <DownloadModal isShown={isDownloadModalShown} toggleShown={() => setDownloadModalShown(!isDownloadModalShown)}/>
         <RestoreDisabledRoomModal
           isShown={isRestoreDisabledModalShown}
           toggleShown={() => setRestoreDisabledModalShown(!isRestoreDisabledModalShown)} />
@@ -269,17 +242,16 @@ function RoomsManagement(props: any) {
 }
 
 const useStyles = createStyles({
-
+  tableContainer: {
+    margin: 10
+  },
+  table: {
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 10
+  },
 })
-/*
-* <tr>
-              <td>
-                <Text weight={500} align="center">
-                  Nothing found
-                </Text>
-              </td>
-            </tr>
-* */
+
 
 export default RoomsManagement;
 

@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {Button, createStyles, Select, Text, TextInput, Tooltip} from "@mantine/core";
+import React, {useEffect, useState} from "react";
+import {Button, createStyles, Modal, Select, Text, TextInput, Tooltip} from "@mantine/core";
 import {
   Archive, Download,
   Plus,
@@ -13,18 +13,20 @@ import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {
   changeRoomsSize,
   changeRoomsSortDirection,
-  resetRoomFilter, toggleRoomAddModalVisible,
-  toggleRoomsDownloadModalVisible
+  resetRoomFilter,
 } from "../../redux/features/room/room.slice";
 import {fetchDisabledRooms} from "../../redux/features/room/thunk/fetch-disabled-rooms";
 import {fetchDeletedRooms} from "../../redux/features/room/thunk/fetch-deleted-rooms";
+import ItemNotFoundModal from "../not-found-modal.component";
 
 
 interface TableHeaderProps {
   searchText: string;
   handleChangeSearchText(e: string): void;
+  toggleAddModalShown(): void;
   toggleRestoreDisabledModalShown(): void;
   toggleRestoreDeletedModalShown(): void;
+  toggleDownloadModalShown(): void;
 }
 
 const TableHeader: React.FC<TableHeaderProps> = (props) => {
@@ -35,8 +37,35 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
 
   const itemsPerPage = useAppSelector((state) => state.room.size);
   const direction = useAppSelector((state) => state.room.direction);
-  const [isDisabledRoomTooltipShown, setDisabledRoomTooltipShown] = useState<boolean>(false);
-  const [isAddRoomTooltipShown, setAddRoomTooltipShown] = useState<boolean>(false);
+  const disabledRooms = useAppSelector((state) => state.room.disabledRooms);
+  const deletedRooms = useAppSelector((state) => state.room.deletedRooms);
+  const [isNotFoundModalShown, setNotFoundModalShown] = useState<boolean>(false);
+
+  useEffect(() => {
+
+  }, [disabledRooms]);
+
+  useEffect(() => {
+
+  }, [deletedRooms]);
+
+  const handleViewDisabledRooms = async () => {
+    await dispatch(fetchDisabledRooms());
+    if (disabledRooms.length < 1) {
+      setNotFoundModalShown(!isNotFoundModalShown);
+    }  else {
+      props.toggleRestoreDisabledModalShown();
+    }
+  }
+
+  const handleViewDeletedRooms = async () =>  {
+    await dispatch(fetchDeletedRooms());
+    if (deletedRooms.length < 1) {
+      setNotFoundModalShown(!isNotFoundModalShown);
+    } else {
+      props.toggleRestoreDeletedModalShown();
+    }
+  }
 
   return (
     <div className={classes.tableSearchHeader}>
@@ -79,58 +108,32 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
 
         <div className={classes.sortButtonContainer}>
           <Text className={classes.sortButtonContainerTitle}>Download</Text>
-          <Button variant="outline" color="violet" onClick={() => dispatch(toggleRoomsDownloadModalVisible())}>
+          <Button variant="outline" color="violet" onClick={() => props.toggleDownloadModalShown()}>
             <Download/>
           </Button>
         </div>
 
       </div>
       <div className={classes.rightContainer}>
-        <Tooltip
-          label={"Add new room"}
-          opened={isAddRoomTooltipShown}
-          allowPointerEvents
-          withArrow
-          wrapLines
-          transition="rotate-left"
-          transitionDuration={250}
-          width={120}
-        >
           <Button variant="outline" color="green"
-                  onClick={() => {
-                    dispatch(toggleRoomAddModalVisible());
-                  }}>
+                  onClick={() => props.toggleAddModalShown()}>
             <Plus/>
           </Button>
-        </Tooltip>
 
-        <Tooltip
-          label={"View disabled rooms"}
-          opened={isDisabledRoomTooltipShown}
-          allowPointerEvents
-          withArrow
-          wrapLines
-          transition="rotate-left"
-          transitionDuration={250}
-          width={160}
-        >
           <Button variant="outline" color="green"
-                  onClick={() => {
-                    setDisabledRoomTooltipShown(!isDisabledRoomTooltipShown);
-                    dispatch(fetchDisabledRooms()).then(() => props.toggleRestoreDisabledModalShown());
-                  }}>
+                  onClick={() => handleViewDisabledRooms()}>
             <Archive/>
           </Button>
-        </Tooltip>
 
         <Button variant="outline" color="red"
-                onClick={() => {
-                  dispatch(fetchDeletedRooms()).then(() => props.toggleRestoreDeletedModalShown())
-                  setDisabledRoomTooltipShown(!isDisabledRoomTooltipShown);
-                }}>
+                onClick={() => handleViewDeletedRooms()}>
           <Trash/>
         </Button>
       </div>
+      {isNotFoundModalShown
+        ? <ItemNotFoundModal isShown={isNotFoundModalShown}
+        toggleShown={() => setNotFoundModalShown(!isNotFoundModalShown)}/>
+        : null}
     </div>);
 };
 

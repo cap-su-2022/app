@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable} from "@nestjs/common";
+import {BadRequestException, Injectable, Logger} from "@nestjs/common";
 import {AddRoomRequest} from "@app/models";
 import {UpdateResult} from "typeorm";
 import {NoSuchElementFoundException} from "../exception/no-such-element-found.exception";
@@ -7,9 +7,11 @@ import {Rooms} from '../models/rooms.entity';
 import {RoomsRepository} from "../repositories/rooms.repository";
 import {RoomsRequestPayload} from "../payload/request/rooms.payload";
 import {RoomsResponsePayload} from "../payload/response/rooms.payload";
-
+import {randomUUID} from "crypto";
 @Injectable()
 export class RoomsService {
+
+  private readonly logger = new Logger(RoomsService.name);
 
   constructor(
     private readonly repository: RoomsRepository) {
@@ -17,7 +19,10 @@ export class RoomsService {
 
 
   async add(room: AddRoomRequest): Promise<Rooms> {
-    return await this.repository.save(room, {
+    return await this.repository.save({
+      id: randomUUID(),
+      ...room
+    }, {
       transaction: true
     })
   }
@@ -36,11 +41,13 @@ export class RoomsService {
           offset: offset,
           limit: limit,
           direction: request.sort
-        }).catch(() => {
+        }).catch((e) => {
+          this.logger.error(e);
           throw new BadRequestException("One or more parameters is invalid");
         });
 
-    const total = await this.repository.getSize().catch(() => {
+    const total = await this.repository.getSize().catch((e) => {
+      this.logger.error(e);
       throw new BadRequestException("One or more parameters is invalid");
     });
     const totalPage = Math.ceil(total / request.size);
@@ -90,7 +97,7 @@ export class RoomsService {
   }
 
   handleRestoreDeletedRoomById(id: string) {
-    return this.repository.restoreDisabledRoomById(id);
+    return this.repository.restoreDeletedRoomById(id);
   }
 
   async handleRestoreDisabledRoomById(id: string) {

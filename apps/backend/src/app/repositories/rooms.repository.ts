@@ -1,4 +1,4 @@
-import {EntityRepository, Like, Repository, Equal,} from "typeorm";
+import {EntityRepository, Like, Repository, Equal, UpdateResult,} from "typeorm";
 import {RepositoryPaginationPayload} from "../models/search-pagination.payload";
 import {Rooms} from "../models/rooms.entity";
 
@@ -9,8 +9,8 @@ export class RoomsRepository extends Repository<Rooms> {
   async getSize(): Promise<number> {
     const result = await this.createQueryBuilder(`rooms`)
       .select(`COUNT(id) as size`)
-      .where(`rooms.is_disabled = 0`)
-      .andWhere(`rooms.is_deleted = 0`)
+      .where(`rooms.is_disabled = false`)
+      .andWhere(`rooms.is_deleted = false`)
       .getRawOne<{
       size: number
       }>();
@@ -18,52 +18,64 @@ export class RoomsRepository extends Repository<Rooms> {
   }
 
   findDisabledRooms() {
-    return this.query("SELECT * FROM rooms");
+    return this.createQueryBuilder('rooms')
+      .where('rooms.is_disabled = true')
+      .getMany();
   }
 
   findDeletedRooms(): Promise<Rooms[]> {
     return this.createQueryBuilder(`rooms`)
-      .where(`rooms.is_disabled = 0`)
-      .andWhere(`rooms.is_deleted = 1`)
+      .where(`rooms.is_deleted = true`)
       .getMany();
   }
 
   searchRoom(payload: RepositoryPaginationPayload): Promise<Rooms[]> {
-    const qb = this.createQueryBuilder(`rooms`);
-   // qb.where(`rooms.name LIKE :name`, {name: `%${payload.search}%`});
-  //  qb.orWhere(`rooms.description LIKE :description`, {description: `%${payload.search}%`})
-    qb.where(`rooms.is_disabled = 0`);
-    qb.andWhere(`rooms.is_deleted = 0`);
-    qb.orWhere(`rooms.id = :id`, {id: `%${payload.search}%`})
-        .orWhere(`rooms.name = :name`, {name: `%${payload.search}%`})
-        .orWhere(`rooms.description = :description`, {description: `%${payload.search}%`});
-    qb.skip(payload.offset);
-    qb.take(payload.limit);
-    qb.addOrderBy('id', payload.direction === 'ASC' ? 'ASC' : 'DESC');
-    return qb.getMany();
+    return this.createQueryBuilder(`rooms`)
+    .where(`rooms.name LIKE :name`, {name: `%${payload.search}%`})
+    .orWhere(`rooms.description LIKE :description`, {description: `%${payload.search}%`})
+    .where(`rooms.is_disabled = false`)
+    .andWhere(`rooms.is_deleted = false`)
+      .orWhere(`rooms.name = :name`, {name: `%${payload.search}%`})
+        .orWhere(`rooms.description = :description`, {description: `%${payload.search}%`})
+    .skip(payload.offset)
+    .take(payload.limit)
+    .addOrderBy('id', payload.direction === 'ASC' ? 'ASC' : 'DESC')
+     .getMany();
   }
 
-  async disableById(id) {
-    return await this.manager.transaction(async (em) => {
-       await em.queryRunner.query(`UPDATE rooms r SET r.is_disabled = 1 WHERE r.id = ?`, [id]);
-    });
+  disableById(id: string) {
+    return this.createQueryBuilder('rooms')
+      .update({
+        isDisabled: true
+      }).where("rooms.id = :id", {id: id})
+      .useTransaction(true)
+
+      .execute();
   }
 
-  async restoreDisabledRoomById(id) {
-    return await this.manager.transaction(async (em) => {
-      await em.queryRunner.query(`UPDATE rooms r SET r.is_disabled = 0 WHERE r.id = ?`, [id]);
-    });
+   restoreDisabledRoomById(id: string): Promise<UpdateResult> {
+    return this.createQueryBuilder('rooms')
+      .update({
+        isDisabled: false
+      }).where('rooms.id = :id', {id: id})
+      .useTransaction(true)
+      .execute();
   }
 
-  async deleteById(id) {
-    return await this.manager.transaction(async (em) => {
-      await em.queryRunner.query(`UPDATE rooms r SET r.is_deleted = 1, r.is_disabled = 0 WHERE r.id = ?`, [id]);
-    });
+   deleteById(id: string): Promise<UpdateResult> {
+    return this.createQueryBuilder('rooms')
+      .update({
+        isDeleted: true,
+        isDisabled: false,
+      }).where('rooms.id = :id', {id: id})
+      .execute();
   }
 
-  async restoreDeletedRoomById(id) {
-    return await this.manager.transaction(async (em) => {
-      await em.queryRunner.query(`UPDATE rooms r SET r.is_deleted = 0 WHERE r.id = ?`, [id]);
-    });
+   restoreDeletedRoomById(id: string): Promise<UpdateResult> {
+    return this.createQueryBuilder('rooms')
+      .update({
+        isDeleted: false
+      }).where('rooms.id = :id', {id: id})
+      .execute();
   }
 }

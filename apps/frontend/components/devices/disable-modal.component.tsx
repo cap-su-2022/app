@@ -3,36 +3,28 @@ import {Button, createStyles, Modal, Text} from "@mantine/core";
 import {Archive, X} from "tabler-icons-react";
 import {FPT_ORANGE_COLOR} from "@app/constants";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {
-  setSuccessModalMessage,
-  toggleSuccessModal
-} from "../../redux/features/room/room.slice";
-import {disableRoomById} from "../../redux/features/room/thunk/disable-room-by-id";
-import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
-import {deleteRoomById} from "../../redux/features/room/thunk/delete-room-by-id";
+import {resetRoomFilter} from "../../redux/features/room/room.slice";
+import {disableDeviceById} from "../../redux/features/devices/thunk/disable-by-id";
+import {fetchDevices} from "../../redux/features/devices/thunk/fetch-devices.thunk";
 
-interface DeleteRoomModalProps {
+interface DisableModalProps {
   isShown: boolean;
   toggleShown(): void;
-  toggleUpdateModalShown(): void;
+  toggleDetailModalShown(): void;
 }
-
-const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
+const DisableModal: React.FC<DisableModalProps> = (props) => {
 
   const {classes} = useStyles();
-
-  const selectedRoomId = useAppSelector((state) => state.room.selectedRoom.id);
-
+  const selectedDeviceId = useAppSelector((state) => state.device.selectedDevice.id);
   const dispatch = useAppDispatch();
 
   const handleDisableSelectedRoom = () => {
-    dispatch(deleteRoomById(selectedRoomId))
+    dispatch(disableDeviceById(selectedDeviceId))
       .then(() => {
+        dispatch(resetRoomFilter());
         props.toggleShown();
-        props.toggleUpdateModalShown();
-        dispatch(toggleSuccessModal());
-        dispatch(setSuccessModalMessage("Successfully disabled this room!"));
-        dispatch(fetchRooms());
+        props.toggleDetailModalShown();
+        dispatch(fetchDevices());
       })
   }
 
@@ -52,8 +44,8 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
       onClose={() => props.toggleShown()}>
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          Disable this will make this room <b>unusable</b> even it has been booked before.
-          <b> Users who booked this room</b> will receive the notification about this and that associated booking will
+          Disable this will make this device <b>unusable</b> even it has been booked before.
+          <b> Users who booked this device</b> will receive the notification about this and that associated booking will
           also be <b>cancelled</b>!
         </Text>
         <div className={classes.modalFooter}>
@@ -62,7 +54,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
           }}>Cancel</Button>
           <Button color="red" leftIcon={<Archive/>}
                   onClick={() => handleDisableSelectedRoom()}>
-            Disable this room
+            Disable this device
           </Button>
         </div>
       </div>
@@ -89,4 +81,4 @@ const useStyles = createStyles({
   }
 });
 
-export default DeleteRoomModal;
+export default DisableModal;

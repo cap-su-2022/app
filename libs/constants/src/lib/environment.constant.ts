@@ -16,6 +16,14 @@ export const Environment = {
       password: 'db.mysql.password',
       synchronize: 'db.mysql.synchronize',
     },
+    postgres: {
+      url: 'db.postgres.url',
+      port: 'db.postgres.port',
+      database: 'db.postgres.database',
+      username: 'db.postgres.username',
+      password: 'db.postgres.password',
+      synchronize: 'db.postgres.synchronize'
+    },
     keycloak: {
       url: 'db.keycloak.url',
       port: 'db.keycloak.port',

@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Avatar, Button, createStyles, Group, InputWrapper, Navbar, Text, TextInput} from "@mantine/core";
-import {At, BellRinging, Key, Logout, PhoneCall, Receipt2, SwitchHorizontal, User} from "tabler-icons-react";
+import {At, BellRinging, Key, Lock, Logout, PhoneCall, Receipt2, SwitchHorizontal, User} from "tabler-icons-react";
 interface UserInfoPreferneceProps {
 
 }
@@ -132,6 +132,9 @@ const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
           display: 'flex',
           flexDirection: 'column',
         }}>
+          <Button leftIcon={<Lock/>}>
+            Reset password
+          </Button>
           <Button>
             Authenticate with username password
           </Button>

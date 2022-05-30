@@ -10,16 +10,21 @@ function Th(props?: ThProps) {
   const Icon = sorted ? (reversed ? ChevronUp : ChevronDown) : Selector;
   return (
     <th className={classes.th}>
-      <UnstyledButton onClick={onSort} className={classes.control}>
-        <Group position="apart">
-          <Text weight={500} size="sm">
-            {children}
-          </Text>
-          <Center className={classes.icon}>
-            <Icon size={14}/>
-          </Center>
-        </Group>
-      </UnstyledButton>
+      {onSort === null
+        ? <Text weight={500} size="sm">
+          {children}
+        </Text>
+        : <UnstyledButton onClick={onSort} className={classes.control}>
+          <Group position="apart">
+            <Text weight={500} size="sm">
+              {children}
+            </Text>
+            <Center className={classes.icon}>
+              <Icon size={14}/>
+            </Center>
+          </Group>
+        </UnstyledButton>}
+
     </th>
   );
 }

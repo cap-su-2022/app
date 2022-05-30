@@ -1,7 +1,7 @@
 import {PaginationPayload} from "./pagination.payload";
 import {Rooms} from "../../models/rooms.entity";
-import {Equipments} from "../../models/equipments.entity";
+import {Devices} from "../../models/devices";
 
-export interface DevicesResponsePayload extends PaginationPayload<Rooms> {
-  data: Equipments[];
+export interface DevicesResponsePayload extends PaginationPayload<Devices> {
+  data: Devices[];
 }
