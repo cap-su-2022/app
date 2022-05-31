@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {Button, createStyles, Modal, Select, Text, TextInput, Tooltip} from "@mantine/core";
+import {Button, createStyles, Drawer, Menu, Modal, Select, Text, TextInput, Tooltip} from "@mantine/core";
 import {
   Archive, Download,
+  Filter,
   Plus,
   RotateClockwise,
   Search,
   SortAscendingLetters, SortDescendingLetters,
-  Trash
+  Trash,
+  X
 } from "tabler-icons-react";
 import {ItemsPerPageData} from "../../models/table/items-per-page.model";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
@@ -18,6 +20,7 @@ import {
 import {fetchDisabledRooms} from "../../redux/features/room/thunk/fetch-disabled-rooms";
 import {fetchDeletedRooms} from "../../redux/features/room/thunk/fetch-deleted-rooms";
 import ItemNotFoundModal from "../not-found-modal.component";
+import { FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE } from "@app/constants";
 
 
 interface TableHeaderProps {
@@ -39,6 +42,7 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
   const direction = useAppSelector((state) => state.room.direction);
   const disabledRooms = useAppSelector((state) => state.room.disabledRooms);
   const deletedRooms = useAppSelector((state) => state.room.deletedRooms);
+  const [isFilterMenuShown, setFilterMenuShown] = useState<boolean>(false);
   const [isNotFoundModalShown, setNotFoundModalShown] = useState<boolean>(false);
 
   useEffect(() => {
@@ -65,6 +69,20 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
     } else {
       props.toggleRestoreDeletedModalShown();
     }
+  }
+
+  const FilterMenu: React.FC = () => {
+    return (
+      <div style={{
+        width: 300,
+        height: 500,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+        <Button>ass</Button>
+      </div>
+    );
   }
 
   return (
@@ -115,6 +133,49 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
 
       </div>
       <div className={classes.rightContainer}>
+          
+          <Button onClick={() => setFilterMenuShown(!isFilterMenuShown)} style={{
+            backgroundColor: FPT_ORANGE_COLOR,
+            color: WHITE,
+          }}>
+            <Filter/>
+            <Drawer opened={isFilterMenuShown}
+            position="right"
+             onClose={() => setFilterMenuShown(false)}
+             closeOnClickOutside={true}
+             closeOnEscape={true}
+            overlayColor="#f2f2f2"
+              overlayOpacity={0.55}
+              overlayBlur={3}
+    >
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        flexDirection: 'column',
+        height: '92%'
+      }}>
+
+          <div style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+          }}>
+          <Button variant="outline" color="red" leftIcon={<X/>}>
+            Cancel
+            </Button>
+            <Button leftIcon={<Filter/>} style={{
+              backgroundColor: FPT_ORANGE_COLOR,
+              color: WHITE
+            }}>
+              Apply Filter
+            </Button>
+        </div>
+      </div>
+    </Drawer>
+          </Button>
+          
           <Button variant="outline" color="green"
                   onClick={() => props.toggleAddModalShown()}>
             <Plus/>
@@ -136,6 +197,7 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
         : null}
     </div>);
 };
+
 
 const useStyles = createStyles({
   tableSearchHeader: {

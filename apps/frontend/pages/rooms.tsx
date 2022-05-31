@@ -17,7 +17,7 @@ import {useRouter} from "next/router";
 import {useDebouncedValue} from "@mantine/hooks";
 import RoomInfoModal from "../components/rooms/info-modal.component";
 import {getRoomById} from "../redux/features/room/thunk/get-room-by-id";
-import TableHeader from "../components/devices/table-header.component";
+import TableHeader from "../components/rooms/table-header.component";
 import {fetchRooms} from "../redux/features/room/thunk/fetch-rooms";
 import NoDataFound from "../components/no-data-found";
 import {
