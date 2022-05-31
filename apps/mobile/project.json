@@ -27,7 +27,7 @@
       "options": {
         "entryFile": "apps/mobile/src/main.tsx",
         "platform": "ios",
-        "bundleOutput": "dist/apps/mobile/ios/main.jsbundle"
+        "bundleOutput": "apps/mobile/dist/ios/main.jsbundle"
       }
 
     },
@@ -48,7 +48,7 @@
       "options": {
         "entryFile": "apps/mobile/src/main.tsx",
         "platform": "android",
-        "bundleOutput": "dist/apps/mobile/android/main.jsbundle"
+        "bundleOutput": "apps/mobile/dist/android/main.jsbundle"
       }
     },
     "sync-deps": {
