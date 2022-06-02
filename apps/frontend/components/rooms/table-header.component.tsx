@@ -33,9 +33,8 @@ import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabl
 import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
 import ItemNotFoundModal from '../not-found-modal.component';
 import { FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE } from '@app/constants';
-import * as moment from 'moment';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import moment from 'moment';
+import { DatePicker} from '@mantine/dates';
 
 interface TableHeaderProps {
   searchText: string;
@@ -91,10 +90,10 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
 
   const resetFilter = () => {
     setItemsInPage('5');
-    setCreateFrom(null);
-    setCreateTo(null);
-    setUpdateFrom(null);
-    setUpdateTo(null);
+    setCreateFrom((new Date(2022, 0, 1)));
+    setCreateTo((new Date()));
+    setUpdateFrom((new Date(2022, 0, 1)));
+    setUpdateTo((new Date()));
     setCategory('libraryRoom');
     setIsShowDeleted(false);
     setIsShowDisabled(false);
@@ -206,11 +205,11 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
             }}
           >
             <h2 className={classes.titleFilter}>Filter menu</h2>
-            <div className={classes.itemsPerPage_div}>
+            <div className={classes.itemsPerPageDiv}>
               <label htmlFor="numInPage">Items per page</label>
               <select
                 name="numInPage"
-                className={classes.itemsPerPage_drop}
+                className={classes.itemsPerPageDrop}
                 value={itemsInPage}
                 onChange={(e) => setItemsInPage(e.target.value)}
               >
@@ -223,58 +222,55 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
               </select>
             </div>
             <p>Select date:</p>
-            <div className={classes.date_div}>
-              <p className={classes.date_lable}>Create at</p>
+            <div className={classes.dateDiv}>
+              <p className={classes.dateLable}>Create at</p>
               <div className={classes.customDatePickerWidth}>
                 <DatePicker
-                  selected={createFrom} 
+                  value={createFrom} 
                   onChange={(date) => setCreateFrom(date)}
                   maxDate={createTo ? new Date(createTo) : new Date()}
-                  placeholderText="Select a date"
-                  className={classes.date_input}
-                  dateFormat="dd/MM/yyyy"
+                  className={classes.dateInput}
+                  inputFormat="DD/MM/YYYY"
                 />
               </div>
               <div>
                 <DatePicker
-                  selected={createTo}
+                  value={createTo}
                   onChange={(date) => setCreateTo(date)}
                   minDate={new Date(createFrom)}
                   maxDate={new Date()}
-                  placeholderText="Select a date"
-                  className={classes.date_input}
-                  dateFormat="dd/MM/yyyy"
+                  className={classes.dateInput}
+                  inputFormat="DD/MM/YYYY"
                 />
               </div>
             </div>
-            <div className={classes.date_div}>
-              <p className={classes.date_lable}>Update at</p>
+            <div className={classes.dateDiv}>
+              <p className={classes.dateLable}>Update at</p>
               <div className={classes.customDatePickerWidth}>
                 <DatePicker
-                  selected={updateFrom}
+                  value={updateFrom}
                   onChange={(date) => setUpdateFrom(date)}
                   maxDate={updateTo ? new Date(updateTo) : new Date()}
-                  placeholderText="Select a date"
-                  className={classes.date_input}
-                  dateFormat="dd/MM/yyyy"
+                  className={classes.dateInput}
+                  inputFormat="DD/MM/YYYY"
                 />
               </div>
               <div>
                 <DatePicker
-                  selected={updateTo}
+                  value={updateTo}
                   onChange={(date) => setUpdateTo(date)}
                   minDate={new Date(updateFrom)}
                   maxDate={new Date()}
-                  className={classes.date_input}
-                  dateFormat="dd/MM/yyyy"
+                  className={classes.dateInput}
+                  inputFormat="DD/MM/YYYY"
                 />
               </div>
             </div>
-            <div className={classes.category_div}>
+            <div className={classes.categoryDiv}>
               <label htmlFor="category">Category</label>
               <select
                 name="category"
-                className={classes.category_drop}
+                className={classes.categoryDrop}
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
@@ -284,7 +280,7 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
             </div>
             <div>
               <p>Status</p>
-              <div className={classes.status_children_div}>
+              <div className={classes.statusChildrenDiv}>
                 <input
                   type="checkbox"
                   id="isDisable"
@@ -292,11 +288,11 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
                   value="true"
                   checked={isShowDisabled}
                   onChange={() => setIsShowDisabled(!isShowDisabled)}
-                  className={classes.status_checkbox}
+                  className={classes.statusCheckbox}
                 />
                 <label htmlFor="isDisable">Show disabled rooms </label>
               </div>
-              <div className={classes.status_children_div}>
+              <div className={classes.statusChildrenDiv}>
                 <input
                   type="checkbox"
                   id="isDelete"
@@ -304,12 +300,12 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
                   value="true"
                   checked={isShowDeleted}
                   onChange={() => setIsShowDeleted(!isShowDeleted)}
-                  className={classes.status_checkbox}
+                  className={classes.statusCheckbox}
                 />
                 <label htmlFor="isDelete">Show deleted rooms</label>
               </div>
             </div>
-            <div className={classes.reset_div}>
+            <div className={classes.resetDiv}>
               <button
                 className={classes.resetButton}
                 onClick={() => resetFilter()}
@@ -417,11 +413,11 @@ const useStyles = createStyles({
       '-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji',
   },
 
-  itemsPerPage_div: {
+  itemsPerPageDiv: {
     display: 'flex',
     flexDirection: 'column',
   },
-  itemsPerPage_drop: {
+  itemsPerPageDrop: {
     border: '2px solid',
     width: 100,
     textAlign: 'center',
@@ -430,12 +426,12 @@ const useStyles = createStyles({
     marginBottom: 20,
     borderRadius: 5,
   },
-  date_div: {
+  dateDiv: {
     marginTop: 10,
     marginBottom: 10,
     display: 'flex',
   },
-  date_lable: {
+  dateLable: {
     border: '1px solid',
     padding: 10,
     height: 50,
@@ -449,37 +445,46 @@ const useStyles = createStyles({
       width: '100%',
     },
   },
-  date_input: {
+  dateInput: {
     border: '1px solid',
     backgroundColor: '#fe6346',
     textAlign: 'center',
     margin: 2,
     borderRadius: 5,
     width: 115,
-    height: 52,
+    height: 50,
     color: '#fff',
-    // '&::-webkit-calendar-picker-indicator': {
-    //   display: 'none',
-    //   '-webkit-appearance': 'none'
-    // }
+    fontFamily: "sans-serif",
+    fontSize: "14px",
+    "& input": {
+      padding: "0 10px",
+      border: 'none',
+      borderRadius: "4px",
+      backgroundColor: '#fe6346',
+      height: 50,
+      color: '#fff',
+    },
+    "& button": {
+      color: '#fff',
+    }
   },
-  category_div: {
+  categoryDiv: {
     display: 'flex',
     flexDirection: 'column',
   },
-  category_drop: {
+  categoryDrop: {
     border: '1px solid',
     padding: 10,
     textAlign: 'center',
     marginTop: 10,
     borderRadius: 5,
   },
-  status_children_div: {
+  statusChildrenDiv: {
     marginTop: 10,
     marginBottom: 10,
     display: 'flex',
   },
-  status_checkbox: {
+  statusCheckbox: {
     height: 30,
     width: 30,
     marginRight: 10,
@@ -496,7 +501,7 @@ const useStyles = createStyles({
     marginTop: 10,
     marginBottom: 20,
   },
-  reset_div: {
+  resetDiv: {
     display: 'flex',
     justifyContent: 'center',
   },
