@@ -58,10 +58,10 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
   const [isFilterMenuShown, setFilterMenuShown] = useState<boolean>(false);
   const [isNotFoundModalShown, setNotFoundModalShown] =
     useState<boolean>(false);
-  const [createFrom, setCreateFrom] = useState(null);
-  const [createTo, setCreateTo] = useState(null);
-  const [updateFrom, setUpdateFrom] = useState(null);
-  const [updateTo, setUpdateTo] = useState(null);
+  const [createFrom, setCreateFrom] = useState((new Date(2022, 0, 1)));
+  const [createTo, setCreateTo] = useState(new Date());
+  const [updateFrom, setUpdateFrom] = useState((new Date(2022, 0, 1)));
+  const [updateTo, setUpdateTo] = useState(new Date());
   const [isShowDisabled, setIsShowDisabled] = useState(false);
   const [isShowDeleted, setIsShowDeleted] = useState(false);
   const [category, setCategory] = useState('libraryRoom');
@@ -90,15 +90,15 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
   };
 
   const resetFilter = () => {
-    setItemsInPage('5')
+    setItemsInPage('5');
     setCreateFrom(null);
     setCreateTo(null);
     setUpdateFrom(null);
     setUpdateTo(null);
-    setCategory('libraryRoom')
+    setCategory('libraryRoom');
     setIsShowDeleted(false);
     setIsShowDisabled(false);
-  }
+  };
 
   const FilterMenu: React.FC = () => {
     return (
@@ -185,147 +185,155 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
           className={classes.orangeButton}
         >
           <Filter />
-          <Drawer
-            opened={isFilterMenuShown}
-            position="right"
-            onClose={() => setFilterMenuShown(false)}
-            // closeOnClickOutside={false}
-            closeOnEscape={true}
-            overlayColor="#f2f2f2"
-            overlayOpacity={0.55}
-            overlayBlur={3}
-            size={400}
+        </Button>
+        <Drawer
+          opened={isFilterMenuShown}
+          position="right"
+          onClose={() => setFilterMenuShown(false)}
+          closeOnClickOutside={true}
+          closeOnEscape={true}
+          overlayColor="#f2f2f2"
+          overlayOpacity={0.55}
+          overlayBlur={3}
+          size={400}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              height: '92%',
+              margin: 10,
+            }}
           >
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                height: '92%',
-                margin: 10,
-              }}
-            >
-              <h2 className={classes.titleFilter}>Filter menu</h2>
-              <div className={classes.itemsPerPage_div}>
-                <label htmlFor="numInPage">Items per page</label>
-                <select
-                  name="numInPage"
-                  className={classes.itemsPerPage_drop}
-                  value={itemsInPage}
-                  onChange={(e) => setItemsInPage(e.target.value)}
-                >
-                  <option value="1">1</option>
-                  <option value="3">3</option>
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="50">50</option>
-                </select>
-              </div>
-              <p>Select date:</p>
-              <div className={classes.date_div}>
-                <p className={classes.date_lable}>Create at</p>
-                <div className={classes.customDatePickerWidth}>
-                  <DatePicker
-                    selected={createFrom}
-                    onChange={(date) => setCreateFrom(date)}
-                    maxDate={createTo ? new Date(createTo) : new Date()}
-                    placeholderText="Select a date"
-                    className={classes.date_input}
-                  />
-                </div>
-                <div>
-                  <DatePicker
-                    selected={createTo}
-                    onChange={(date) => setCreateTo(date)}
-                    minDate={new Date(createFrom)}
-                    maxDate={new Date()}
-                    placeholderText="Select a date"
-                    className={classes.date_input}
-                  />
-                </div>
-              </div>
-              <div className={classes.date_div}>
-                <p className={classes.date_lable}>Update at</p>
-                <div className={classes.customDatePickerWidth}>
-                  <DatePicker
-                    selected={updateFrom}
-                    onChange={(date) => setUpdateFrom(date)}
-                    maxDate={updateTo ? new Date(updateTo) : new Date()}
-                    placeholderText="Select a date"
-                    className={classes.date_input}
-                  />
-                </div>
-                <div>
-                  <DatePicker
-                    selected={updateTo}
-                    onChange={(date) => setUpdateTo(date)}
-                    minDate={new Date(updateFrom)}
-                    maxDate={new Date()}
-                    placeholderText="Select a date"
-                    className={classes.date_input}
-                  />
-                </div>
-              </div>
-              <div className={classes.category_div}>
-                <label htmlFor="category">Category</label>
-                <select
-                  name="category"
-                  className={classes.category_drop}
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  <option value="seminarRoom">Seminar Room</option>
-                  <option value="libraryRoom">Library Room</option>
-                </select>
+            <h2 className={classes.titleFilter}>Filter menu</h2>
+            <div className={classes.itemsPerPage_div}>
+              <label htmlFor="numInPage">Items per page</label>
+              <select
+                name="numInPage"
+                className={classes.itemsPerPage_drop}
+                value={itemsInPage}
+                onChange={(e) => setItemsInPage(e.target.value)}
+              >
+                <option value="1">1</option>
+                <option value="3">3</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+            <p>Select date:</p>
+            <div className={classes.date_div}>
+              <p className={classes.date_lable}>Create at</p>
+              <div className={classes.customDatePickerWidth}>
+                <DatePicker
+                  selected={createFrom} 
+                  onChange={(date) => setCreateFrom(date)}
+                  maxDate={createTo ? new Date(createTo) : new Date()}
+                  placeholderText="Select a date"
+                  className={classes.date_input}
+                  dateFormat="dd/MM/yyyy"
+                />
               </div>
               <div>
-                <p>Status</p>
-                <div className={classes.status_children_div}>
-                  <input
-                    type="checkbox"
-                    id="isDisable"
-                    name="isDisable"
-                    value="true"
-                    checked={isShowDisabled}
-                    onChange={() => setIsShowDisabled(true)}
-                    className={classes.status_checkbox}
-                  />
-                  <label htmlFor="isDisable">Show disabled rooms </label>
-                </div>
-                <div className={classes.status_children_div}>
-                  <input
-                    type="checkbox"
-                    id="isDelete"
-                    name="isDelete"
-                    value="true"
-                    checked={isShowDeleted}
-                    onChange={() => setIsShowDeleted(true)}
-                    className={classes.status_checkbox}
-                  />
-                  <label htmlFor="isDelete">Show deleted rooms</label>
-                </div>
-              </div>
-              <div className={classes.reset_div}>
-                <button className={classes.resetButton} onClick={() => resetFilter()}>Reset filter</button>
-              </div>
-              <div className={classes.buttonSpase}>
-                <Button
-                  variant="outline"
-                  color="red"
-                  leftIcon={<X />}
-                  onClick={() => {
-                    setFilterMenuShown(false);
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button leftIcon={<Filter />} className={classes.orangeButton}>
-                  Apply Filter
-                </Button>
+                <DatePicker
+                  selected={createTo}
+                  onChange={(date) => setCreateTo(date)}
+                  minDate={new Date(createFrom)}
+                  maxDate={new Date()}
+                  placeholderText="Select a date"
+                  className={classes.date_input}
+                  dateFormat="dd/MM/yyyy"
+                />
               </div>
             </div>
-          </Drawer>
-        </Button>
+            <div className={classes.date_div}>
+              <p className={classes.date_lable}>Update at</p>
+              <div className={classes.customDatePickerWidth}>
+                <DatePicker
+                  selected={updateFrom}
+                  onChange={(date) => setUpdateFrom(date)}
+                  maxDate={updateTo ? new Date(updateTo) : new Date()}
+                  placeholderText="Select a date"
+                  className={classes.date_input}
+                  dateFormat="dd/MM/yyyy"
+                />
+              </div>
+              <div>
+                <DatePicker
+                  selected={updateTo}
+                  onChange={(date) => setUpdateTo(date)}
+                  minDate={new Date(updateFrom)}
+                  maxDate={new Date()}
+                  className={classes.date_input}
+                  dateFormat="dd/MM/yyyy"
+                />
+              </div>
+            </div>
+            <div className={classes.category_div}>
+              <label htmlFor="category">Category</label>
+              <select
+                name="category"
+                className={classes.category_drop}
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value="seminarRoom">Seminar Room</option>
+                <option value="libraryRoom">Library Room</option>
+              </select>
+            </div>
+            <div>
+              <p>Status</p>
+              <div className={classes.status_children_div}>
+                <input
+                  type="checkbox"
+                  id="isDisable"
+                  name="isDisable"
+                  value="true"
+                  checked={isShowDisabled}
+                  onChange={() => setIsShowDisabled(!isShowDisabled)}
+                  className={classes.status_checkbox}
+                />
+                <label htmlFor="isDisable">Show disabled rooms </label>
+              </div>
+              <div className={classes.status_children_div}>
+                <input
+                  type="checkbox"
+                  id="isDelete"
+                  name="isDelete"
+                  value="true"
+                  checked={isShowDeleted}
+                  onChange={() => setIsShowDeleted(!isShowDeleted)}
+                  className={classes.status_checkbox}
+                />
+                <label htmlFor="isDelete">Show deleted rooms</label>
+              </div>
+            </div>
+            <div className={classes.reset_div}>
+              <button
+                className={classes.resetButton}
+                onClick={() => resetFilter()}
+              >
+                Reset filter
+              </button>
+            </div>
+            <div className={classes.buttonSpase}>
+              <Button
+                variant="outline"
+                color="red"
+                leftIcon={<X />}
+                onClick={() => {
+                  setFilterMenuShown(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button leftIcon={<Filter />} className={classes.orangeButton}>
+                Apply Filter
+              </Button>
+            </div>
+          </div>
+        </Drawer>
 
         <Button
           variant="outline"
