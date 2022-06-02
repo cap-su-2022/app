@@ -1,14 +1,30 @@
 import React, {useRef, useState} from 'react';
 import {createStyles, Header, Autocomplete, Group, Burger, Button, Select, ScrollArea, Text} from '@mantine/core';
 import {useBooleanToggle, useHover} from '@mantine/hooks';
-import {Bell, ChevronDown, Logout, Search, User} from 'tabler-icons-react';
+import {
+  Bell,
+  BuildingWarehouse,
+  ChevronDown,
+  Dashboard,
+  Devices,
+  Logout, Messages,
+  Search,
+  User,
+  Users
+} from 'tabler-icons-react';
 import {BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE} from "@app/constants";
 import {useOuterClick} from "../hooks/use-outer-clickk";
+import {ScrollViewComponent} from "react-native";
 
 
 interface HeaderSearchProps {
   links: { link: string; label: string }[];
+
 }
+
+const data = [
+  { link: '/notifications', label: 'View all notification'},
+];
 
 export function HeaderSearch() {
   const [opened, toggleOpened] = useBooleanToggle(false);
@@ -47,37 +63,247 @@ export function HeaderSearch() {
             <Button className={classes.button} onClick={() => toggleNotificationShown()}>
               <Bell className={classes.innerButton}/>
               {isNotificationShown
-              ? <div ref={innerRef} className={classes.notificationContainer}>
-                  <div style={{
-                    color: BLACK,
-                    margin: 10
-                  }}>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}>
-                      <div style={{
-                        width: 55,
-                        height: 50,
-                        borderRadius: 50,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: GRAY,
-                      }}>
-                        <Bell className={classes.innerButton}/>
-                      </div>
-                      <div style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        lineHeight: 1.5,
-                        marginLeft: 10
-                      }}>
-                        <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+              ? <div>
+                <div>
+                  <div className={classes.notificationLayoutForm}>
+                    <div>
+                      <div aria-label='Notification' className={classes.notificationLayoutPosition}>
+                        <div>
+                          <div className={classes.notificationLayoutSize}>
+                            <div ref={innerRef} className={classes.notificationContainerForm}>
+                              <div className={classes.notificationContainerLayout}>
+                                <div className={classes.notificationHeaderContainer}>
+                                  <div className={classes.notificationHeaderForm}>
+                                    <div className={classes.notificationHeaderLayout}>
+                                      <div>
+                                        <span className={classes.notificationHeaderContentFont}>
+                                            <h1 className={classes.notificationHeaderContentAttribute}
+                                                tabIndex={-1}>Notification</h1>
+                                          </span>
+                                      </div>
+                                      <div>
+                                        <Button variant='default' aria-label="Action to notification"
+                                                className={classes.notificationHeaderActionForm}>
+                                          <i className={classes.notificationHeaderActionIcon}></i>
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div>
+                                  <div aria-label="Notification Filter" className={classes.notificationFilterForm}>
+                                    <div className={classes.notificationFilterLayout}>
+                                      <Button variant='light' className={classes.notificationButton}>
+                                        <span className={classes.notificationButtonContent}>
+                                            All
+                                          </span>
+                                      </Button>
+                                    </div>
+                                    <div className={classes.notificationFilterLayout}>
+                                      <Button variant='default' className={classes.notificationButton}>
+                                          <span className={classes.notificationButtonContent}>
+                                            Not Read
+                                          </span>
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div aria-label='Notification List New'>
+                                      <div style={{
+                                        marginTop: '-4px',
+                                      }}>
+                                        <div>
+                                          <div className={classes.notificationListForm}>
+                                            <div className={classes.notificationListLayout}>
+                                              <div className={classes.notificationListHeaderFrom}>
+                                                <div className={classes.notificationListHeaderLayout}>
+                                                  <div className={classes.notificationListHeaderSize}>
+                                                  <span className={classes.notificationListContentForm}>
+                                                    <div className={classes.notificationListContentLayout}>
+                                                      <div className={classes.notificationListContentHeaderForm}>
+                                                        <h2 className={classes.notificationListContentHeaderLayout}>New</h2>
+                                                      </div>
+                                                      <div className={classes.notificationListContentLinkForm}>
+                                                        <div className={classes.notificationListContentLinkLayout}>
+                                                          <div>
+                                                            <a className={classes.notificationListContentLinkAttribute} href='/notifications'>
+                                                              <h2 className={classes.notificationListContentLinkFont}>View all notifications</h2>
+                                                            </a>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </span>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <a className={classes.notificationListContainer} href='#'>
+                                        <div className={classes.notificationListContainerLinkFrom}>
+                                          <div className={classes.notificationListContainerLinkLayout}>
+                                            <div className={classes.notificationListContainerContenIconForm}>
+                                              <Bell className={classes.innerButton}/>
+                                            </div>
+                                            <div className={classes.notificationListContainerContenMessageForm}>
+                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </a>
+                                    </div>
+                                    <div aria-label='Notification List Readed'>
+                                      <div style={{
+                                        marginTop: '-4px',
+                                      }}>
+                                        <div>
+                                          <div className={classes.notificationListForm}>
+                                            <div className={classes.notificationListLayout}>
+                                              <div className={classes.notificationListHeaderFrom}>
+                                                <div className={classes.notificationListHeaderLayout}>
+                                                  <div className={classes.notificationListHeaderSize}>
+                                                  <span className={classes.notificationListContentForm}>
+                                                    <div className={classes.notificationListContentLayout}>
+                                                      <div className={classes.notificationListContentHeaderForm}>
+                                                        <h2 className={classes.notificationListContentHeaderLayout}>Readed</h2>
+                                                      </div>
+                                                    </div>
+                                                  </span>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <a className={classes.notificationListContainer} href='#'>
+                                        <div className={classes.notificationListContainerLinkFrom}>
+                                          <div className={classes.notificationListContainerLinkLayout}>
+                                            <div className={classes.notificationListContainerContenIconForm}>
+                                              <Bell className={classes.innerButton}/>
+                                            </div>
+                                            <div className={classes.notificationListContainerContenMessageForm}>
+                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </a>
+                                    </div>
+                                    <div>
+                                      <a className={classes.notificationListContainer} href='#'>
+                                        <div className={classes.notificationListContainerLinkFrom}>
+                                          <div className={classes.notificationListContainerLinkLayout}>
+                                            <div className={classes.notificationListContainerContenIconForm}>
+                                              <Bell className={classes.innerButton}/>
+                                            </div>
+                                            <div className={classes.notificationListContainerContenMessageForm}>
+                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </a>
+                                    </div>
+                                    <div>
+                                      <a className={classes.notificationListContainer} href='#'>
+                                        <div className={classes.notificationListContainerLinkFrom}>
+                                          <div className={classes.notificationListContainerLinkLayout}>
+                                            <div className={classes.notificationListContainerContenIconForm}>
+                                              <Bell className={classes.innerButton}/>
+                                            </div>
+                                            <div className={classes.notificationListContainerContenMessageForm}>
+                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </a>
+                                    </div>
+                                    <div>
+                                      <a className={classes.notificationListContainer} href='#'>
+                                        <div className={classes.notificationListContainerLinkFrom}>
+                                          <div className={classes.notificationListContainerLinkLayout}>
+                                            <div className={classes.notificationListContainerContenIconForm}>
+                                              <Bell className={classes.innerButton}/>
+                                            </div>
+                                            <div className={classes.notificationListContainerContenMessageForm}>
+                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </a>
+                                    </div>
+                                    <div>
+                                      <a className={classes.notificationListContainer} href='#'>
+                                        <div className={classes.notificationListContainerLinkFrom}>
+                                          <div className={classes.notificationListContainerLinkLayout}>
+                                            <div className={classes.notificationListContainerContenIconForm}>
+                                              <Bell className={classes.innerButton}/>
+                                            </div>
+                                            <div className={classes.notificationListContainerContenMessageForm}>
+                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </a>
+                                    </div>
+                                    <div>
+                                      <a className={classes.notificationListContainer} href='#'>
+                                        <div className={classes.notificationListContainerLinkFrom}>
+                                          <div className={classes.notificationListContainerLinkLayout}>
+                                            <div className={classes.notificationListContainerContenIconForm}>
+                                              <Bell className={classes.innerButton}/>
+                                            </div>
+                                            <div className={classes.notificationListContainerContenMessageForm}>
+                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </a>
+                                    </div>
+                                    <div>
+                                      <a className={classes.notificationListContainer} href='#'>
+                                        <div className={classes.notificationListContainerLinkFrom}>
+                                          <div className={classes.notificationListContainerLinkLayout}>
+                                            <div className={classes.notificationListContainerContenIconForm}>
+                                              <Bell className={classes.innerButton}/>
+                                            </div>
+                                            <div className={classes.notificationListContainerContenMessageForm}>
+                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </a>
+                                    </div>
+                                    <div>
+                                      <a className={classes.notificationListContainer} href='#'>
+                                        <div className={classes.notificationListContainerLinkFrom}>
+                                          <div className={classes.notificationListContainerLinkLayout}>
+                                            <div className={classes.notificationListContainerContenIconForm}>
+                                              <Bell className={classes.innerButton}/>
+                                            </div>
+                                            <div className={classes.notificationListContainerContenMessageForm}>
+                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </a>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
               : null}
             </Button>
             <Button className={classes.button}>
@@ -116,17 +342,432 @@ const useStyles = createStyles((theme) => ({
     marginRight: 10,
 
   },
-  notificationContainer: {
+//-------------------------------------------START OF NOFITICATION---------------------------------------//
+//-------------------------------------------NOTIFICATION LAYOUT OUTSIDE-----------------------------------//
+  notificationLayoutForm:{
+    transform: 'translate(-172px, 48px)',
+    marginRight: '-9999px',
     position: 'absolute',
-    height: 600,
-    width: 350,
-    backgroundColor: LIGHT_GRAY,
-    top: 'calc(5vh)',
-    right: 'calc(0vw)',
-    borderRadius: 8,
-    boxShadow: '10px 10px 5px #aaaaaa'
-
+    top: -2,
+    left: 'calc(-2vw)',
+    zIndex: 1,
   },
+
+  notificationLayoutPosition:{
+    marginRight: '8px',
+    marginTop: '5px',
+    borderRadius: '8px',
+    boxShadow: '0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.5)',
+    overflowX: 'hidden',
+    backgroundColor: WHITE
+  },
+
+  notificationLayoutSize:{
+    maxHeight: 'calc(100vh - 56px - 16px)',
+    width: '360px',
+    display: 'flex',
+    backgroundColor: WHITE,
+    maxWidth: 'calc(100vw - 24px)',
+    flexDirection: "column"
+  },
+//---------------------------------NOTIFICATION HEADER 1---------------------------------------//
+  notificationContainerForm: {
+    minHeight: 0,
+    perspectiveOrigin: 'right top',
+    scrollbarWidth: 'none',
+    overflowX: 'hidden',
+    position: 'relative',
+    perspective: '1px',
+    transformStyle: 'preserve-3d',
+    willChange: 'transform,scroll-position',
+    display: 'flex',
+    flexShrink: 1,
+    overflowY: 'auto',
+    flexBasis: '100%',
+    flexDirection: 'column',
+    overscrollBehaviorY: 'contain',
+    flexGrow: 1,
+  },
+
+  notificationContainerLayout:{
+    fontFamily: 'inherit',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
+  },
+
+  notificationHeaderForm:{
+    boxSizing: 'border-box',
+    flexBasis: '0px',
+    position: 'relative',
+    display: 'flex',
+    minWidth: 0,
+    flexShrink: 1,
+    zIndex: 0,
+    maxWidth: '100%',
+    flexDirection: 'column',
+    flexGrow: 1,
+  },
+
+  notificationHeaderLayout:{
+    boxSizing: 'border-box',
+    flexShrink: 0,
+    flexWrap: 'nowrap',
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  notificationHeaderContentFont:{
+    wordBreak: 'break-word',
+    color: BLACK,
+    fontSize: '1.5rem',
+    textAlign: 'left',
+    minWidth: 0,
+    fontWeight: 700,
+    lineHeight: 1.1667,
+    maxWidth: '100%',
+    wordWrap: 'break-word',
+    display: 'block',
+    unicodeBidi: 'isolate',
+  },
+
+  notificationHeaderContentAttribute:{
+    fontFamily: 'inherit',
+    fontWeight: 'inherit',
+    fontSize: 'inherit',
+    color: 'inherit',
+    outline: 'none',
+    margin: 0,
+    padding: 0,
+    display: 'block',
+    marginBlockStart: '0.67em',
+    marginBlockEnd: '0.67em',
+    marginInlineStart: '0px',
+    marginInlineEnd: '0px',
+    wordBreak: 'break-word',
+    textAlign: 'left',
+    lineHeight: 1.1667,
+    wordWrap: 'break-word',
+  },
+
+  notificationHeaderActionForm:{
+    justifyContent: 'center',
+    padding: '0 0 0 0',
+    margin: '0 0 0 0',
+    boxSizing: 'border-box',
+    cursor: 'pointer',
+    position: 'relative',
+    height: '32px',
+    display: 'flex',
+    backgroundColor: 'transparent',
+    touchAction: 'manipulation',
+    borderRadius: '50%',
+    width: '32px',
+    alignItems: 'center',
+    borderWidth: 0,
+    border: 0,
+    listStyle: 'none',
+    outline: 'none',
+    textDecoration: 'none',
+  },
+//------------------------------------NOTIFICATION ACTION---------------------------------------//
+  notificationHeaderActionIcon:{
+    backgroundImage: 'url(https://static.xx.fbcdn.net/rsrc.php/v3/yV/r/GBw_R_G5XHi.png)',
+    backgroundPosition: "-147px -67px",
+    backgroundSize: 'auto',
+    width: '20px',
+    height: '20px',
+    backgroundRepeat: 'no-repeat',
+    display: 'inline-block',
+    verticalAlign: '-0.25em',
+    fontStyle: 'italic'
+  },
+
+  notificationHeaderContainer:{
+    fontFamily: 'inherit',
+    marginRight: '16px',
+    boxSizing: 'border-box',
+    flexShrink: 0,
+    flexWrap: 'nowrap',
+    position: 'relative',
+    marginBottom: '12px',
+    marginTop: '20px',
+    display: 'flex',
+    zIndex: 0,
+    justifyContent: 'space-between',
+    marginLeft: '16px',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+//-----------------------------------NOTIFICATION FILTER---------------------------------------//
+  notificationFilterForm:{
+    flexShrink: 0,
+    flexWrap: 'wrap',
+    display: 'flex',
+    paddingLeft: '16px',
+    flexDirection: 'row'
+  },
+
+  notificationFilterLayout:{
+    boxSizing: 'border-box',
+    paddingRight: '8px',
+    height: '100%'
+  },
+
+  notificationButton:{
+    boxSizing: 'border-box',
+    paddingBottom: 0,
+    borderRadius: '18px',
+    margin: 0,
+    paddingTop: 0,
+    border:0,
+  },
+
+  notificationButtonContent:{
+    fontFamily: 'inherit',
+    wordBreak: 'break-word',
+    fontWeight: 600,
+    fontSize: '.9375rem',
+    minWidth: 0,
+    maxWidth: '100%',
+    wordWrap: 'break-word',
+    display: 'block',
+    lineHeight: 1.3333,
+    unicodeBidi: 'isolate'
+  },
+//-----------------------------------NOTIFICATION LIST LAYOUT OUTSIDE----------------------------------------//
+  notificationListForm:{
+    boxSizing: 'border-box',
+    flexShrink: 0,
+    position: 'relative',
+    display: 'flex',
+    paddingBottom: '4px',
+    zIndex: 0,
+    maxWidth: '100%',
+    flexDirection: 'column',
+    paddingTop: '20px',
+  },
+
+  notificationListLayout:{
+    minHeight: 0,
+    boxSizing: 'border-box',
+    position: 'relative',
+    display: 'flex',
+    zIndex: 0,
+    flexDirection: 'column',
+    flexGrow: 1
+  },
+
+  notificationListHeaderFrom:{
+    boxSizing: 'border-box',
+    flexShrink: 0,
+    position: 'relative',
+    display: 'flex',
+    paddingRight: '16px',
+    zIndex: 0,
+    paddingLeft: '16px',
+    maxWidth: '100%',
+    flexDirection: 'column',
+  },
+
+  notificationListHeaderLayout:{
+    display: 'flex',
+    marginTop: '-5px',
+    marginBottom: '-5px',
+    flexDirection: 'column'
+  },
+
+  notificationListHeaderSize:{
+    marginBottom: '5px',
+    marginTop: '5px',
+  },
+//----------------------------------------NOTIFICATINO LIST CONTENT LAYOUT-------------------------------------//
+  notificationListContentForm:{
+    wordBreak: 'break-word',
+    color: BLACK,
+    fontWeight: 600,
+    minWidth: 0,
+    maxWidth: '100%',
+    lineHeight: 1.1765,
+    wordWrap: 'break-word',
+    display: 'block',
+    fontSize: '1.0625rem',
+    unicodeBidi: 'isolate',
+  },
+
+  notificationListContentLayout:{
+    boxSizing: 'border-box',
+    flexShrink: 0,
+    flexWrap: 'nowrap',
+    position: 'relative',
+    direction: 'ltr',
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+//---------------------------------NOTIFICATION LIST CONTENT HEADER 2------------------------------------------//
+  notificationListContentHeaderForm:{
+    boxSizing: 'border-box',
+    flexBasis: '0px',
+    position: 'relative',
+    display: 'flex',
+    minWidth: 0,
+    flexShrink: 1,
+    zIndex: 0,
+    maxWidth: '100%',
+    flexDirection: 'column',
+    flexGrow: 1
+  },
+
+  notificationListContentHeaderLayout:{
+    textAlign: 'left',
+    fontWeight: 'inherit',
+    fontSize: 'inherit',
+    minWidth: 0,
+    color: 'inherit',
+    maxWidth: '100%',
+    outline: 'none',
+    margin: 0,
+    padding: 0,
+    marginBlockStart: '0.83em',
+    marginBlockEnd: '0.83em',
+    marginInlineStart: '0px',
+    marginInlineEnd: '0px'
+  },
+//-------------------------------------------NOTICATION LIST CONTENT LINK-----------------------------------------------//
+  notificationListContentLinkForm:{
+    fontFamily: 'inherit',
+    justifyContent: 'center',
+    boxSizing: 'border-box',
+    flexShrink: 0,
+    alignSelf: 'flex-start',
+    position: 'relative',
+    display: 'flex',
+    minWidth: 0,
+    marginLeft: '8px',
+    zIndex: 0,
+    maxWidth: '100%',
+    flexDirection: 'column'
+  },
+
+  notificationListContentLinkLayout:{
+    fontFamily: 'inherit',
+    boxSizing: 'border-box',
+    flexShrink: 0,
+    flexWrap: 'nowrap',
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'space-between',
+    zIndex: 0,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+
+  notificationListContentLinkAttribute:{
+    fontFamily: 'inherit',
+    minHeight: 0,
+    padding: 0,
+    boxSizing: 'border-box',
+    borderBottomLeftRadius: '4px',
+    display: 'inline-block',
+    verticalAlign: 'bottom',
+    color: '#216FDB',
+    flexShrink: 0,
+    margin: 0,
+    WebkitTapHighlightColor: 'transparent',
+    cursor: 'pointer',
+    flexBasis: 'auto',
+    position: 'relative',
+    borderRadius: '4px',
+    textAlign: 'inherit',
+    minWidth: 0,
+    alignItems: 'stretch',
+    touchAction: 'manipulation',
+    zIndex: 0,
+    flexDirection: 'row',
+    WebkitUserSelect: 'none',
+    borderColor: 'rgba(0, 0, 0, 0.4)',
+    borderWidth: 0,
+    borderStyle: 'solid',
+    listStyle: 'none',
+    textDecoration: 'none!important',
+    outline: 'none',
+  },
+
+  notificationListContentLinkFont:{
+    textAlign: 'right',
+    fontFamily: 'inherit',
+    overflowY: 'hidden',
+    overflowX: 'hidden',
+    textOverflow: 'ellipsis',
+    position: 'relative',
+    whiteSpace: 'nowrap',
+    display: 'block',
+    marginBlockStart: '0.83em',
+    marginBlockEnd: '0.83em',
+    marginInlineStart: '0px',
+    marginInlineEnd: '0px',
+    unicodeBidi: 'isolate'
+  },
+//----------------------------------------NOTIFICATION LIST MESSAGE-------------------------------//
+  notificationListContainer:{
+    borderRadius: '8px',
+    padding: '0 0 0 0',
+    boxSizing: 'border-box',
+    WebkitTapHighlightColor: 'transparent',
+    cursor: 'pointer',
+    flexBasis: 'auto',
+    position: 'relative',
+    margin: '0 0 0 0',
+    textAlign: 'inherit',
+    alignItems: 'stretch',
+    backgroundColor: 'transparent',
+    touchAction: 'manipulation',
+    flexDirection: 'row',
+    userSelect: 'none',
+    display: 'block',
+    borderColor: 'rgba(0, 0, 0, 0.4)',
+    borderStyle: 'solid',
+    listStyle: 'none',
+    outline: 'none',
+    textDecoration: 'none',
+    color: '#385898',
+  },
+
+  notificationListContainerLinkFrom:{
+    color: BLACK,
+    margin: 10
+  },
+
+  notificationListContainerLinkLayout:{
+    display: 'flex',
+    alignItems: 'center'
+  },
+
+  notificationListContainerContenIconForm:{width: 60,
+    height: 50,
+    borderRadius: 50,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: GRAY
+  },
+
+  notificationListContainerContenMessageForm:{
+    display: 'flex',
+    flexWrap: 'wrap',
+    lineHeight: 1.5,
+    marginLeft: 10
+  },
+//------------------------------END OF NOTIFICATION-------------------------------------//
+
   button: {
     display: 'flex',
     alignItems: 'center',
