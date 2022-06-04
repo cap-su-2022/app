@@ -11,7 +11,7 @@ import {initializeFirebaseApp} from "./app/config/firebase.config";
 import * as net from 'net';
 
 async function bootstrap() {
-  const port = process.env.BACKEND_PORT || 5000;
+  const port = process.env.BACKEND_PORT || 7000;
   const host = process.env.BACKEND_HOST || `0.0.0.0`;
   const contextPath = process.env.BACKEND_CONTEXT_PATH || '/api';
   initializeFirebaseApp();
@@ -26,7 +26,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, getSwaggerConfig());
   SwaggerModule.setup(SWAGGER_CONFIG.contextPath, app, document);
 
-  await app.listen(5000, '0.0.0.0');
+  await app.listen(8000, '0.0.0.0');
 
   const client = net.connect({port: 80, host: "google.com"}, () => {
     Logger.log(`💻 External IP Address: ${client.localAddress}`);
