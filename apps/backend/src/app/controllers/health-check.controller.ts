@@ -9,13 +9,10 @@ export class HealthCheckController {
   @ApiOperation({
     description: 'Health checking devices',
   })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Successfully booked a new library room',
-  })
+
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request payload for health checking device is not validated',
+    description: 'Request payload for health check is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
