@@ -15,10 +15,6 @@ export class HealthCheckController {
     description: 'Request payload for health check is not validated',
   })
   @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Invalid role',
   })
