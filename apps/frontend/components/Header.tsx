@@ -14,17 +14,10 @@ import {
 } from 'tabler-icons-react';
 import {BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE} from "@app/constants";
 import {useOuterClick} from "../hooks/use-outer-clickk";
-import {ScrollViewComponent} from "react-native";
-
 
 interface HeaderSearchProps {
   links: { link: string; label: string }[];
-
 }
-
-const data = [
-  { link: '/notifications', label: 'View all notification'},
-];
 
 export function HeaderSearch() {
   const [opened, toggleOpened] = useBooleanToggle(false);
