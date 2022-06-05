@@ -22,21 +22,10 @@ const RoomBookingLater: React.FC = () => {
   const [isSlotSelected, setSlotSelected] = useState<boolean>(false);
 
   return (
-    <SafeAreaView style={{
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      flexGrow: 1
-    }}>
+    <SafeAreaView style={styles.container}>
       <ScrollView>
-        <View style={{
-          backgroundColor: WHITE
-        }}>
-          <Text style={{
-            margin: 10,
-            color: GRAY,
-            fontSize: 20,
-          }}>
+        <View style={styles.selectDateContainer}>
+          <Text style={styles.selectDateTitle}>
             Select a date
           </Text>
           <Calendar current={'2022-05-01'}
@@ -45,45 +34,18 @@ const RoomBookingLater: React.FC = () => {
 
                     renderArrow={(direction) => <View>
                       {direction === 'left'
-                        ? <View style={{
-                          width: deviceWidth / 11,
-                          height: deviceWidth / 11,
-                          borderRadius: 8,
-                          borderColor: FPT_ORANGE_COLOR,
-                          borderWidth: 1,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}>
+                        ? <View style={styles.selectDateChevronLeftButton}>
                           <ChevronLeftIcon color={FPT_ORANGE_COLOR}/>
                         </View>
-                        : <View style={{
-                          width: deviceWidth / 11,
-                          height: deviceWidth / 11,
-                          borderRadius: 8,
-                          borderColor: FPT_ORANGE_COLOR,
-                          borderWidth: 1,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}>
+                        : <View style={styles.selectDateChevronRightButton}>
                           <ChevronRightIcon color={FPT_ORANGE_COLOR}/>
                         </View>}
                     </View>}
           />
         </View>
-        <View style={{
-          marginTop: 20,
-          height: 120,
-          backgroundColor: WHITE
-        }}>
-          <View style={{
-            margin: 10
-          }}>
-            <Text style={{
-              color: '#808080',
-              fontSize: 20,
-            }}>Select a duration</Text>
+        <View style={styles.durationContainer}>
+          <View style={styles.durationTitleContainer}>
+            <Text style={styles.durationTitle}>Select a duration</Text>
           </View>
           <View style={{
             display: 'flex',
@@ -91,73 +53,25 @@ const RoomBookingLater: React.FC = () => {
             alignItems: 'center',
             justifyContent: 'space-around',
           }}>
-            {isSlotSelected ? <View style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-                <TouchableOpacity style={{
-                  margin: 5,
-                  backgroundColor: '#f2f2f2',
-                  height: 50,
-                  width: deviceWidth / 1.3,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: 8,
-                }}>
-                  <Text style={{
-                    fontSize: 24,
-                    fontWeight: '600',
-                  }}>
+            {isSlotSelected ?
+             <View style={styles.durationSlotContainer}>
+                <TouchableOpacity style={styles.durationSlotButton}>
+                  <Text style={styles.durationSlotButtonText}>
                     Slot 3 ( 10:30AM - 12:00PM )
                   </Text>
                 </TouchableOpacity>
               </View>
               :
-              <View style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-                <View style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <TouchableOpacity style={{
-                    margin: 5,
-                    backgroundColor: '#f2f2f2',
-                    height: 50,
-                    width: deviceWidth / 3,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: 8,
-                  }}>
-                    <Text style={{
-                      fontSize: 24,
-                      fontWeight: '600',
-                    }}>
+              <View style={styles.durationTimeContainer}>
+                <View style={styles.durationTimeBetweenContainer}>
+                  <TouchableOpacity style={styles.durationButton}>
+                    <Text style={styles.durationButtonText}>
                       10:30 AM
                     </Text>
                   </TouchableOpacity>
                   <SwitchHorizontalIcon color={BLACK}/>
-                  <TouchableOpacity style={{
-                    margin: 5,
-                    backgroundColor: '#f2f2f2',
-                    height: 50,
-                    width: deviceWidth / 3,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: 8,
-                  }}>
-                    <Text style={{
-                      fontSize: 24,
-                      fontWeight: '600',
-                    }}>
+                  <TouchableOpacity style={styles.durationButton}>
+                    <Text style={styles.durationButtonText}>
                       12:00 PM
                     </Text>
                   </TouchableOpacity>
@@ -167,15 +81,7 @@ const RoomBookingLater: React.FC = () => {
             <TouchableOpacity onPress={() => {
               console.log("change");
               setSlotSelected(!isSlotSelected);
-            }} style={{
-              height: deviceWidth / 8,
-              width: deviceWidth / 8,
-              backgroundColor: '#f2f2f2',
-              borderRadius: 8,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
+            }} style={styles.switchDurationButton}>
               <SwitchVerticalIcon color={BLACK}/>
             </TouchableOpacity>
           </View>
@@ -185,7 +91,6 @@ const RoomBookingLater: React.FC = () => {
           marginTop: 10,
           height: 60,
           backgroundColor: WHITE,
-
         }}>
           <View style={{
             margin: 10,
@@ -197,8 +102,8 @@ const RoomBookingLater: React.FC = () => {
           }}> Room booking time might affect with the library operation time. Please book your room wisely!</Text>
           </View>
         </View>
-      </ScrollView>
-      <View style={{
+
+        <View style={{
         height: 90,
         backgroundColor: WHITE,
         display: 'flex',
@@ -258,10 +163,112 @@ const RoomBookingLater: React.FC = () => {
           </View>
         </TouchableOpacity>
       </View>
+      </ScrollView>
+
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    flexGrow: 1
+  },
+  selectDateContainer: {
+    backgroundColor: WHITE
+  },
+  selectDateTitle: {
+    margin: 10,
+    color: GRAY,
+    fontSize: 20,
+  },
+  selectDateChevronLeftButton: {
+    width: deviceWidth / 11,
+    height: deviceWidth / 11,
+    borderRadius: 8,
+    borderColor: FPT_ORANGE_COLOR,
+    borderWidth: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectDateChevronRightButton: {
+    width: deviceWidth / 11,
+    height: deviceWidth / 11,
+    borderRadius: 8,
+    borderColor: FPT_ORANGE_COLOR,
+    borderWidth: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  durationContainer: {
+    marginTop: 20,
+    height: 120,
+    backgroundColor: WHITE
+  },
+  durationTitleContainer: {
+    margin: 10
+  },
+  durationTitle: {
+    color: '#808080',
+    fontSize: 20,
+  },
+  durationTimeContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  durationTimeBetweenContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  durationButton: {
+    margin: 5,
+    backgroundColor: '#f2f2f2',
+    height: 50,
+    width: deviceWidth / 3,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+  },
+  durationButtonText: {
+    fontSize: 24,
+    fontWeight: '600',
+  },
+  durationSlotButtonText: {
+    fontSize: 24,
+    fontWeight: '600',
+  },
+  durationSlotButton: {
+    margin: 5,
+    backgroundColor: '#f2f2f2',
+    height: 50,
+    width: deviceWidth / 1.3,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+  },
+  durationSlotContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  switchDurationButton: {
+    height: deviceWidth / 8,
+    width: deviceWidth / 8,
+    backgroundColor: '#f2f2f2',
+    borderRadius: 8,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+});
 
 export default RoomBookingLater;

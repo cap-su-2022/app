@@ -8,30 +8,39 @@ import QRScanButton from "../components/buttons/QRScanButton";
 import UserNavigator from "./user.navigator";
 import {Platform} from "react-native";
 import HomeNavigator from "./home.navigator";
+import {StackNavigator, StackScreen} from '@app/utils';
 
 const MainNavigator = () => {
     return (
-      <TabNavigator initialRouteName={HomeRoute.Home}
-                    screenOptions={{
-                      tabBarStyle: {
-                        height: Platform.OS === "android" ? 80 : 70
-                      },
-                      headerShown: false
-                    }}>
-        <TabScreen name={HomeRoute.Home} component={HomeNavigator} options={{
-          tabBarIcon: () => <HomeIcon color="black" size={30}/>,
-          tabBarLabel: () => null,
-        }}/>
-        <TabScreen name={QRScanRoute.QRScan} component={QRScan} options={{
-          tabBarLabel: () => null,
-          tabBarIcon: () => <QRScanButton/>
-        }}/>
-        <TabScreen name={UserNavigatorRoute} component={UserNavigator} options={{
-          tabBarLabel: () => null,
-          tabBarIcon: () => <UserIcon color="black" size={30}/>
-        }}/>
-      </TabNavigator>
+      <StackNavigator initialRouteName={"INITIAL"}>
+        <StackScreen name={"INITIAL"} component={HomeTabs}/>
+        <StackScreen name={QRScanRoute.QRScan} component={QRScan}/>
+      </StackNavigator>
+
     );
 };
+
+const HomeTabs: React.FC = () => {
+  return (      <TabNavigator initialRouteName={HomeRoute.Home}
+                              screenOptions={{
+                                tabBarStyle: {
+                                  height: Platform.OS === "android" ? 80 : 70
+                                },
+                                headerShown: false
+                              }}>
+    <TabScreen name={HomeRoute.Home} component={HomeNavigator} options={{
+      tabBarIcon: () => <HomeIcon color="black" size={30}/>,
+      tabBarLabel: () => null,
+    }}/>
+    <TabScreen name={QRScanRoute.QRScan} component={QRScan} options={{
+      tabBarLabel: () => null,
+      tabBarIcon: () => <QRScanButton/>
+    }}/>
+    <TabScreen name={UserNavigatorRoute} component={UserNavigator} options={{
+      tabBarLabel: () => null,
+      tabBarIcon: () => <UserIcon color="black" size={30}/>
+    }}/>
+  </TabNavigator>);
+}
 
 export default MainNavigator;

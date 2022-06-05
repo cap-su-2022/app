@@ -81,4 +81,11 @@ export class AccountRepository extends Repository<Accounts> {
       .addOrderBy('id', payload.direction === 'ASC' ? 'ASC' : 'DESC')
       .getMany();
   }
+
+  findIdByKeycloakId(keycloakId: string) {
+    return this.createQueryBuilder("accounts")
+      .select("accounts.id", "accountId")
+      .where("accounts.keycloak_id = :keycloakId", {keycloakId: keycloakId})
+      .getRawOne<{accountId: string}>();
+  }
 }

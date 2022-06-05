@@ -1,9 +1,9 @@
 import { MMKV } from 'react-native-mmkv';
 
-export const storage = new MMKV();
+export const LOCAL_STORAGE = new MMKV();
 
 export const useStorage = (key: string, defaultValue = undefined) => {
-  return storage.getString(key);
+  return LOCAL_STORAGE.getString(key);
 };
 
 export const LocalStorageKeys = {

@@ -69,8 +69,6 @@ function Login() {
     router.prefetch('/users');
     router.prefetch('/devices');
     router.prefetch('/feedback');
-
-
   }
 
   const handleLoginSubmit = async (values) => {

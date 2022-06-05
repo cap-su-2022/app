@@ -144,7 +144,9 @@ const HomeScreen: React.FC = () => {
                   </Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.quickAccessButton]}>
+              <TouchableOpacity onPress={() => {
+                navigate.navigate("ROOM_CHECKOUT");
+              }} style={[styles.quickAccessButton]}>
                 <View style={{
                   margin: 10,
                 }}>

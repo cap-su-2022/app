@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   },
   bookingNowButtonText: {
     color: FPT_ORANGE_COLOR,
-    fontSize: 20,
+    fontSize: deviceWidth / 23,
     fontWeight: '600',
   },
   bookingLaterContainer: {
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   bookingLaterButtonText: {
     color: WHITE,
     fontWeight: '600',
-    fontSize: 20,
+    fontSize: deviceWidth / 20,
   },
 });
 

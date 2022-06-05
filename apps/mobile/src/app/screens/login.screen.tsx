@@ -25,6 +25,7 @@ import LoginErrorModal from '../components/modals/login-error.component';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../redux/features/spinner';
 import { API_URL } from '../constants/constant';
 import { BLACK, FPT_ORANGE_COLOR } from '@app/constants';
+import { LOCAL_STORAGE } from "../utils/local-storage";
 
 const LoginScreen = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -94,10 +95,9 @@ const LoginScreen = () => {
         password: values.password,
       }),
     }).finally(() => dispatch(toggleSpinnerOff()));
-
     const data = await response.json();
-
-    console.log(response.status);
+    LOCAL_STORAGE.set('accessToken', response.headers['map']['authorization']);
+    LOCAL_STORAGE.set('user', JSON.stringify(data));
     if (response.status !== 200) {
       setLoginErrMsg(data.message);
 

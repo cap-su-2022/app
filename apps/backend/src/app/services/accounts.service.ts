@@ -24,6 +24,12 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     return null;
   }
 
+  getUserIdByKeycloakId(keycloakId: string): Promise<{
+    accountId: string
+  }> {
+    return this.repository.findIdByKeycloakId(keycloakId);
+  }
+
   findByKeycloakId(keycloakId: string): Promise<Accounts> {
     return this.repository.findByKeycloakId(keycloakId);
   }

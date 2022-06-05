@@ -7,6 +7,7 @@ import {ConfigService} from "@nestjs/config";
 import {REQUEST} from "@nestjs/core";
 import {Request} from "express";
 import {APPLICATION_X_WWW_FORM_URLENCODED, Environment} from "@app/constants";
+import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
 
 @Injectable({
   scope: Scope.REQUEST
@@ -152,15 +153,7 @@ export class KeycloakService {
   }
 
 
-  async getUserInfo(accessToken: string): Promise<{
-    sub: string;
-    email_verified: boolean;
-    name: string;
-    preferred_username: string;
-    given_name: string;
-    family_name: string;
-    email: string
-  }> {
+  async getUserInfo(accessToken: string): Promise<KeycloakUserInfoDTO> {
     if (!accessToken.includes("Bearer")) {
       accessToken = `Bearer ${accessToken}`;
     }

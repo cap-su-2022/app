@@ -68,6 +68,13 @@ export class RoomsService {
     return data;
   }
 
+  getAllWithoutPagination(): Promise<Rooms[]> {
+    return this.repository.createQueryBuilder('rooms')
+      .where("rooms.is_disabled = false")
+      .andWhere("rooms.is_deleted = false")
+      .getMany();
+  }
+
   async updateById(id: string, body: UpdateRoomRequest): Promise<UpdateResult> {
     let room;
 
