@@ -23,19 +23,35 @@ import CheckAlive from '../components/check-alive.component';
 import { Formik } from 'formik';
 import LoginErrorModal from '../components/modals/login-error.component';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../redux/features/spinner';
-import { API_URL } from '../constants/constant';
 import { BLACK, FPT_ORANGE_COLOR } from '@app/constants';
-import { LOCAL_STORAGE } from "../utils/local-storage";
+import { useAppDispatch } from "../redux/hooks";
+import { doLogin } from "../redux/features/auth/thunk/login.thunk";
+import { isUserSessionExisted, LOCAL_STORAGE } from "../utils/local-storage";
+import { validateAccessToken } from "../redux/features/auth/thunk/validate-access-token.thunk";
+import { deviceWidth } from "../utils/device";
 
 const LoginScreen = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
 
   const [isError, setError] = React.useState<boolean>(false);
   const [isLoginFailure, setLoginFailure] = React.useState<boolean>(false);
   const [loginErrMsg, setLoginErrMsg] = useState<string>();
+  useEffect(() => {
+    console.log(LOCAL_STORAGE.getString('refreshToken'));
 
-  const validateUserAccessToken = async () => {
+    console.log(LOCAL_STORAGE.getString('accessToken'));
+    console.log(LOCAL_STORAGE.getString('user'));
+
+    if (isUserSessionExisted()) {
+      dispatch(validateAccessToken()).unwrap().then(() => {
+        navigate.navigate("MAIN");
+      })
+    }
+
+  }, []);
+
+ /* const validateUserAccessToken = async () => {
     try {
       const response = await fetch(`${API_URL}/health/auth"}`, {
         method: 'GET',
@@ -55,7 +71,7 @@ const LoginScreen = () => {
     } finally {
       dispatch(toggleSpinnerOff());
     }
-  };
+  };*/
 
   const handleLoginWithGoogle = async () => {
     dispatch(toggleSpinnerOn());
@@ -84,35 +100,15 @@ const LoginScreen = () => {
       setLoginFailure(true);
       return;
     }
-    dispatch(toggleSpinnerOn());
-    const response = await fetch(`${API_URL}/auth/signin`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: values.username,
-        password: values.password,
-      }),
-    }).finally(() => dispatch(toggleSpinnerOff()));
-    const data = await response.json();
-    LOCAL_STORAGE.set('accessToken', response.headers['map']['authorization']);
-    LOCAL_STORAGE.set('user', JSON.stringify(data));
-    if (response.status !== 200) {
-      setLoginErrMsg(data.message);
-
-      setTimeout(() => {
-        dispatch(toggleSpinnerOff());
-        setLoginFailure(true);
-      }, 0);
-      return;
-    } else {
-      setTimeout(() => {
-        dispatch(toggleSpinnerOff());
-
-        navigate.navigate('MAIN');
-      }, 0);
-    }
+    dispatch(doLogin({
+      username: values.username.trim(),
+      password: values.password.trim()
+    })).unwrap().then(() => {
+      navigate.navigate('MAIN');
+    }).catch((e) => {
+      alert(JSON.stringify(e));
+      setLoginFailure(true);
+    });
   };
 
   return (
@@ -168,6 +164,13 @@ const LoginScreen = () => {
             </>
           )}
         </Formik>
+
+        <TouchableOpacity>
+          <Text style={{
+            color: FPT_ORANGE_COLOR,
+            fontSize: deviceWidth / 32
+          }}>Forgot password?</Text>
+        </TouchableOpacity>
 
         <View style={[styles.loginDividerContainer]}>
           <Divider num={10} />

@@ -1,25 +1,72 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {Calendar} from 'react-native-calendars';
 import {
+  ChartPieIcon,
   ChevronDoubleRightIcon,
   ChevronLeftIcon,
-  ChevronRightIcon,
+  ChevronRightIcon, ClockIcon,
   RefreshIcon,
   SwitchHorizontalIcon,
   SwitchVerticalIcon
 } from "react-native-heroicons/outline";
 import Asterik from "../../components/text/asterik";
 import {deviceWidth} from "../../utils/device";
-import {BLACK, FPT_ORANGE_COLOR, GRAY, WHITE} from "@app/constants";
+import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE } from "@app/constants";
+import RNPickerSelect from "react-native-picker-select";
+import { getTimeDetailBySlotNumber } from "../../utils/slot-resolver.util";
 
-
+const SLOTS = [
+  {
+    label: 'Slot 1',
+    value: 1,
+  },
+  {
+    label: 'Slot 2',
+    value: 2,
+  },
+  {
+    label: 'Slot 3',
+    value: 3,
+  },
+  {
+    label: 'Slot 4',
+    value: 4,
+  },
+  {
+    label: 'Slot 5',
+    value: 5,
+  },
+  {
+    label: 'Slot 6',
+    value: 6,
+  },
+]
 const RoomBookingLater: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
 
   const [isSlotSelected, setSlotSelected] = useState<boolean>(false);
+  const [slotStart, setSlotStart] = useState<number>(1);
+  const [slotEnd, setSlotEnd] = useState<number>(1);
+  const [bookTimeDetail, setBookTimeDetail] = useState<string>();
+
+  useEffect(() => {
+    if (slotEnd < slotStart) {
+      setSlotEnd(slotStart);
+    }
+    if (slotStart > slotEnd) {
+      setSlotStart(slotEnd);
+    }
+    const timeDetailSlotStart = getTimeDetailBySlotNumber(slotStart);
+    if (slotStart === slotEnd) {
+      setBookTimeDetail(`${timeDetailSlotStart.startTime} - ${timeDetailSlotStart.endTime}`);
+    } else {
+      const timeDetailSlotEnd = getTimeDetailBySlotNumber(slotEnd);
+      setBookTimeDetail(`${timeDetailSlotStart.startTime} - ${timeDetailSlotEnd.endTime}`)
+    }
+  }, [slotStart, slotEnd]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -47,118 +94,123 @@ const RoomBookingLater: React.FC = () => {
           <View style={styles.durationTitleContainer}>
             <Text style={styles.durationTitle}>Select a duration</Text>
           </View>
-          <View style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-          }}>
-            {isSlotSelected ?
-             <View style={styles.durationSlotContainer}>
-                <TouchableOpacity style={styles.durationSlotButton}>
-                  <Text style={styles.durationSlotButtonText}>
-                    Slot 3 ( 10:30AM - 12:00PM )
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              :
+          <View style={styles.filterDurationContainer}>
               <View style={styles.durationTimeContainer}>
+
                 <View style={styles.durationTimeBetweenContainer}>
-                  <TouchableOpacity style={styles.durationButton}>
-                    <Text style={styles.durationButtonText}>
-                      10:30 AM
+                  <View style={{
+                    height: 50,
+                    width: 50,
+                    borderRadius: 8,
+                    backgroundColor: LIGHT_GRAY,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
+                    <ChartPieIcon size={deviceWidth / 15} color={BLACK}/>
+                  </View>
+                  <View style={styles.durationButton}>
+                    <RNPickerSelect
+                      fixAndroidTouchableBug={true}
+                      items={SLOTS}
+                      style={{
+                      inputAndroid: {
+                        fontSize: deviceWidth / 21,
+                        fontWeight: '600',
+                        color: GRAY
+                      }
+                    }} useNativeAndroidPickerStyle={false}
+                                    value={slotStart}
+                                    onValueChange={(value) => {
+                                      if (value === undefined || value === null) {
+                                        setSlotStart(1);
+                                      } else {
+                                        setSlotStart(value);
+                                      }
+                                    }}/>
+                  </View>
+                  <ChevronRightIcon color={BLACK}/>
+                  <View style={styles.durationButton}>
+                    <RNPickerSelect
+                      fixAndroidTouchableBug={true}
+                      items={SLOTS}
+                      style={{
+                      inputAndroid: {
+                        fontSize: deviceWidth / 21,
+                        fontWeight: '600',
+                        color: GRAY
+                      }
+                    }} useNativeAndroidPickerStyle={false}
+                                    value={slotEnd}
+                                    onValueChange={(value) => {
+
+                                      if (value === undefined || value === null) {
+                                        setSlotEnd(1);
+                                      } else {
+                                        setSlotEnd(value);
+                                      };
+                                    }}/>
+                  </View>
+                </View>
+                <View style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}>
+                  <View style={{
+                    height: 50,
+                    width: 50,
+                    borderRadius: 8,
+                    backgroundColor: LIGHT_GRAY,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
+                    <ClockIcon size={deviceWidth / 15} color={BLACK}/>
+                  </View>
+                  <View style={{
+                    margin: 5,
+                    backgroundColor: LIGHT_GRAY,
+                    height: 50,
+                    width: deviceWidth / 1.33,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: 8,
+                  }}>
+                    <Text style={{
+                      fontSize: deviceWidth / 21,
+                      fontWeight: '600',
+                      color: GRAY
+                    }}>
+                      {bookTimeDetail}
                     </Text>
-                  </TouchableOpacity>
-                  <SwitchHorizontalIcon color={BLACK}/>
-                  <TouchableOpacity style={styles.durationButton}>
-                    <Text style={styles.durationButtonText}>
-                      12:00 PM
-                    </Text>
-                  </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            }
-            <TouchableOpacity onPress={() => {
-              console.log("change");
-              setSlotSelected(!isSlotSelected);
-            }} style={styles.switchDurationButton}>
-              <SwitchVerticalIcon color={BLACK}/>
-            </TouchableOpacity>
           </View>
 
         </View>
-        <View style={{
-          marginTop: 10,
-          height: 60,
-          backgroundColor: WHITE,
-        }}>
-          <View style={{
-            margin: 10,
-            display: 'flex',
-            flexDirection: 'row'
-          }}>
-            <Asterik/><Text style={{
-            fontSize: 16
-          }}> Room booking time might affect with the library operation time. Please book your room wisely!</Text>
+        <View style={styles.noticeContainer}>
+          <View style={styles.noticeTextContainer}>
+            <Asterik/><Text style={styles.noticeText}>
+            Room booking time might affect with the library operation time.
+            Please book your room wisely!
+          </Text>
           </View>
         </View>
 
-        <View style={{
-        height: 90,
-        backgroundColor: WHITE,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-      }}>
-        <TouchableOpacity style={{
-          height: 50,
-          width: 170,
-          borderRadius: 8,
-          borderWidth: 2,
-          borderColor: FPT_ORANGE_COLOR,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-          <View style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'row'
-          }}>
+        <View style={styles.footerContainer}>
+        <TouchableOpacity style={styles.resetCalendarButton}>
+          <View style={styles.resetCalendarButtonTextContainer}>
             <RefreshIcon color={FPT_ORANGE_COLOR}/>
-            <Text style={{
-              marginLeft: 5,
-              fontSize: 20,
-              color: FPT_ORANGE_COLOR,
-              fontWeight: '600',
-
-            }}>Reset Calendar</Text>
+            <Text style={styles.resetCalendarButtonText}>Reset Calendar</Text>
           </View>
         </TouchableOpacity>
-
-        <TouchableOpacity style={{
-          width: 170,
-          height: 50,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: FPT_ORANGE_COLOR,
-          borderRadius: 8,
-        }}>
-          <View style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'row'
-          }}>
-            <Text style={{
-              color: WHITE,
-              fontSize: 20,
-              fontWeight: '600',
-              marginRight: 5
-            }}>Next Step</Text>
+        <TouchableOpacity style={styles.nextStepButton}>
+          <View style={styles.nextStepButtonTextContainer}>
+            <Text style={styles.nextStepButtonText}>Next Step</Text>
             <ChevronDoubleRightIcon color={WHITE}/>
           </View>
         </TouchableOpacity>
@@ -170,6 +222,76 @@ const RoomBookingLater: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  footerContainer: {
+    height: 90,
+    backgroundColor: WHITE,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  noticeText: {
+    fontSize: 16
+  },
+  noticeTextContainer: {
+    margin: 10,
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  noticeContainer: {
+    marginTop: 10,
+    height: 60,
+    backgroundColor: WHITE,
+  },
+  filterDurationContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  resetCalendarButton: {
+    height: 50,
+    width: 170,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: FPT_ORANGE_COLOR,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  resetCalendarButtonTextContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row'
+  },
+  resetCalendarButtonText: {
+    marginLeft: 5,
+    fontSize: 20,
+    color: FPT_ORANGE_COLOR,
+    fontWeight: '600',
+  },
+  nextStepButton: {
+    width: 170,
+    height: 50,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: FPT_ORANGE_COLOR,
+    borderRadius: 8,
+  },
+  nextStepButtonTextContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  nextStepButtonText: {
+    color: WHITE,
+    fontSize: 20,
+    fontWeight: '600',
+    marginRight: 5
+  },
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -206,7 +328,7 @@ const styles = StyleSheet.create({
   },
   durationContainer: {
     marginTop: 20,
-    height: 120,
+    height: 180,
     backgroundColor: WHITE
   },
   durationTitleContainer: {

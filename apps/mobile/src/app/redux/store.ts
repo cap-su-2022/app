@@ -5,6 +5,7 @@ import {feedbackSearchFilterReducer} from "./features/feedback-search-filter";
 import { roomBookingReducer } from "./features/room-booking/slice";
 import { makeStore } from "../../../../frontend/redux/store";
 import { deviceReducer } from "./features/devices/slice";
+import { authReducer } from "./features/auth/slice";
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     feedbackSearchFilter: feedbackSearchFilterReducer,
     roomBooking: roomBookingReducer,
     device: deviceReducer,
+    auth: authReducer,
   }
 });
 

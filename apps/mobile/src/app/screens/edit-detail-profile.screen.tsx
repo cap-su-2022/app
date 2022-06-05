@@ -1,13 +1,41 @@
-import React, {Ref, useRef} from "react";
-import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View} from "react-native";
+import React, { Ref, useEffect, useRef, useState } from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from "react-native";
 import Asterik from "../components/text/asterik";
-import {Formik, FormikProps,} from 'formik';
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../redux/store";
-import {updateProfile} from "../redux/userSlice";
+import { ErrorMessage, Formik, FormikProps, FormikProvider, useFormik } from "formik";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { updateProfile } from "../redux/userSlice";
+
+import * as Yup from "yup";
+
+import {
+  ArrowCircleLeftIcon,
+  ClipboardCheckIcon,
+  DocumentIcon, MailIcon,
+  PencilIcon, PhoneIcon,
+  SaveIcon, UserIcon, ViewListIcon
+} from "react-native-heroicons/outline";
+import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE } from "@app/constants";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { deviceWidth } from "../utils/device";
+import DatePicker from "react-native-date-picker";
+import { convertDateToNormalizedDateString } from "../utils/date.util";
+import { AuthUser } from "../redux/models/auth-user.model";
+import { LOCAL_STORAGE } from "../utils/local-storage";
+import { IdentificationIcon } from "react-native-heroicons/outline";
+import Divider from "../components/text/divider";
 
 interface EditDetailProfileProps {
-  formikRef: Ref<FormikProps<any>>,
+  formikRef: Ref<FormikProps<any>>;
 }
 
 const EditDetailProfile = (props: EditDetailProfileProps) => {
@@ -15,121 +43,298 @@ const EditDetailProfile = (props: EditDetailProfileProps) => {
 
   const userState = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+
+  const [authUser, setAuthUser] = useState<AuthUser>(JSON.parse(LOCAL_STORAGE.getString("user")));
+
+
+  const [birthdate, setBirthdate] = useState(new Date("01/01/2000"));
+  const [isBirthdatePickerShown, setBirthdatePickerShown] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log(birthdate);
+    console.log(new Date());
+    if (birthdate.getTime() >= new Date().getTime()) {
+      alert("con cac");
+    }
+  }, [birthdate]);
 
   const handleUserProfileUpdate = (values) => {
-    dispatch(updateProfile({
-      fullname: values.fullname,
-      phone: values.phone,
-      studentCode: values.studentCode,
-    }));
-  }
+    dispatch(
+      updateProfile({
+        fullname: values.fullname,
+        phone: values.phone,
+        studentCode: values.studentCode
+      })
+    );
+  };
 
   const initialValues = {
-    fullname: userState.user.fullname,
-    phone: userState.user.phone,
-    studentCode: userState.user.studentCode,
-  }
+    id: authUser.id,
+    username: authUser.username,
+    fullname: authUser.fullname,
+    phone: authUser.phone,
+    email: authUser.email
+  };
 
-  return (
-    <SafeAreaView>
+  const UpdateSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email").required("Required"),
+    username: Yup.string().min(5, "Too short!").max(50, "Too long!").required("Required"),
+    phone: Yup.string().min(10, "Invalid Phone Number").max(50, "Too long!").required("Required")
+  });
+
+  const handleSetBirthdate = (date) => {
+    setBirthdate(date);
+  };
+
+  const formik = useFormik({
+    initialValues: initialValues,
+    onSubmit: (values) => handleUserProfileUpdate(values),
+    enableReinitialize: true,
+    validationSchema: UpdateSchema
+  });
+
+  const UserProfileInput = () => {
+    return (
       <ScrollView
-        ref={(ref) => {
-          scrollViewRef.current = ref;
-        }}
-        contentInsetAdjustmentBehavior="automatic"
         style={styles.scrollView}
       >
-        <Formik innerRef={props.formikRef} initialValues={initialValues}
-        onSubmit={(values) => {
-          handleUserProfileUpdate(values);
-        }}>
-          {({handleChange, handleBlur, handleSubmit, values}) => (
-            <>
-              <View style={[styles.header, styles.shadowBox]}>
-                <View>
-                  <Text style={[styles.textInputHeader]}>Họ & tên <Asterik/></Text>
+        <FormikProvider value={formik}>
+          <View>
+            <View style={{
+              display: "flex",
+              backgroundColor: WHITE,
+              marginTop: 10,
+              height: 410,
+              justifyContent: "center"
+            }}>
+              <View style={{
+                marginLeft: 10,
+                width: deviceWidth / 1.1
+              }}>
+                <Text style={[styles.textInputHeader]}>Id</Text>
+                <View style={styles.textInput}>
+                  <View style={styles.iconContainer}>
+                    <IdentificationIcon color={BLACK} />
+                  </View>
                   <TextInput
-                    style={[styles.textInput]}
-                    value={values.fullname}
-                    placeholder={"Vui lòng nhập họ và tên"}
-                    onBlur={handleBlur("fullname")}
-                    onChangeText={handleChange("fullname")}
-                    autoCapitalize="none"
+                    editable={false}
+                    autoFocus={false}
+                    value={formik.values.id}
+                  />
+                </View>
+              </View>
+
+              <View style={{
+                marginLeft: 10,
+                width: deviceWidth / 1.1
+              }}>
+                <Text style={[styles.textInputHeader]}>Username</Text>
+                <View style={styles.textInput}>
+                  <View style={styles.iconContainer}>
+                    <UserIcon color={BLACK} />
+                  </View>
+
+                  <TextInput
+                    editable={false}
+                    value={formik.values.username}
                     autoCorrect={false}
                   />
                 </View>
+              </View>
 
-                <View>
-                  <Text style={[styles.textInputHeader]}>Số điện thoại <Asterik/></Text>
-                  <TextInput
-                    style={[styles.textInput]}
-                    value={values.phone}
-                    placeholder={"Vui lòng nhập số điện thoại"}
-                    onBlur={handleBlur("phone")}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    onChangeText={handleChange("phone")}
-                  />
-                </View>
-
-                <View>
-                  <Text style={[styles.textInputHeader]}>Mã số sinh viên <Asterik/></Text>
-                  <TextInput
-                    placeholder={"Vui lòng nhập số điện thoại"}
-                    onBlur={handleBlur("studentCode")}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    style={[styles.textInput]}
-                    onChangeText={handleChange("studentCode")}
-                    value={values.studentCode}/>
-                </View>
+              <View style={{
+                marginLeft: 10,
+                width: deviceWidth / 1.1
+              }}>
+                <Text style={[styles.textInputHeader]}>
+                  Full name
+                  <Asterik />
+                </Text>
 
               </View>
-            </>
-          )}
+              <View style={{
+                marginLeft: 10,
+                width: deviceWidth / 1.1
+              }}>
+                <View style={styles.textInput}>
+                  <View style={styles.iconContainer}>
+                    <ViewListIcon color={BLACK} />
+                  </View>
+                  <TextInput
+                    onChange={() => formik.handleChange("fullname")}
+                    value={formik.values.fullname}
+                    placeholder={"Please enter your fullname"}
+                    onBlur={formik.handleBlur("fullname")}
+                    onChangeText={formik.handleChange("fullname")}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                  />
+                </View>
+              </View>
 
-        </Formik>
+              <View style={{
+                marginLeft: 10,
+                width: deviceWidth / 1.1
+              }}>
+                <Text style={[styles.textInputHeader]}>
+                  Phone number
+                  <Asterik />
+                </Text>
+                <View style={styles.textInput}>
+                  <View style={styles.iconContainer}>
+                    <PhoneIcon color={BLACK} />
+                  </View>
+                  <TextInput
+                    onChange={() => formik.handleChange("phone")}
+                    keyboardType={"phone-pad"}
+                    value={formik.values.phone}
+                    placeholder={"Please enter your phone number"}
+                    onBlur={formik.handleBlur("phone")}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    onChangeText={formik.handleChange("phone")}
+                    // @ts-ignore
+                    error={formik.errors.phone}
+                    touched={formik.touched.phone}
+                  />
+                  {formik.errors.phone && formik.touched.phone ? (
+                    <Text style={{ color: "#DC143C", fontWeight: "600" }}>{formik.errors.phone}</Text>
+                  ) : null}
+                </View>
+              </View>
+
+              <View style={{
+                marginLeft: 10,
+                width: deviceWidth / 1.1
+              }}>
+                <Text style={[styles.textInputHeader]}>
+                  Email
+                  <Asterik />
+                </Text>
+                <View style={styles.textInput}>
+                  <View style={styles.iconContainer}>
+                    <MailIcon color={BLACK} />
+                  </View>
+                  <TextInput
+                    keyboardType={"email-address"}
+                    placeholder={"Please enter your email"}
+                    onBlur={formik.handleBlur("email")}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    onChangeText={formik.handleChange("email")}
+                    value={formik.values.email}
+                    // @ts-ignore
+                    error={formik.errors.email}
+                    touched={formik.touched.email}
+                  />
+                  {formik.errors.email && formik.touched.email ? (
+                    <Text style={{ color: "#DC143C", fontWeight: "600" }}>{formik.errors.email}</Text>
+                  ) : null}
+                </View>
+              </View>
+            </View>
+          </View>
+        </FormikProvider>
       </ScrollView>
+    );
+  };
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <UserProfileInput />
+
+        <View style={styles.footerContainer}>
+          <TouchableOpacity style={styles.updateProfileButton} onPress={() => null}>
+            <PencilIcon color={WHITE} />
+            <Text style={styles.updateProfileButtonText}>Update profile</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
-}
+};
 
 export default EditDetailProfile;
 
 export const styles = StyleSheet.create({
+  iconContainer: {
+    height: 50,
+    width: 50,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  textInput: {
+    borderRadius: 50,
+    height: 50,
+    borderWidth: 1,
+    borderColor: "rgb(206, 212, 218)",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  container: {
+    display: "flex",
+    justifyContent: "space-between",
+    flexGrow: 1
+  },
   scrollView: {},
   shadowBox: {
-    backgroundColor: 'white',
-    shadowColor: 'black',
+    backgroundColor: "white",
+    shadowColor: "black",
     shadowOpacity: 0.15,
     shadowOffset: {
       width: 1,
-      height: 4,
+      height: 4
     },
     shadowRadius: 12,
     padding: 24,
-    marginBottom: 24,
+    marginBottom: 24
   },
   header: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     margin: 10,
     borderRadius: 5,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-    height: 250
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10
+  },
+  myHeader: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20
   },
   textInputHeader: {
-    margin: 5,
-    fontSize: 14,
+    marginLeft: 10,
+    fontSize: deviceWidth / 23,
+    fontWeight: "600"
   },
-  textInput: {
-    width: 350,
-    height: 40,
-    borderWidth: 1,
-    borderColor: 'rgb(206, 212, 218)',
-    borderRadius: 5,
+  footerContainer: {
+    backgroundColor: WHITE,
+    height: 70,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  updateProfileButton: {
+    width: deviceWidth / 1.25,
+    height: 50,
+    backgroundColor: FPT_ORANGE_COLOR,
+    borderRadius: 8,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10
+  },
+  updateProfileButtonText: {
+    color: WHITE,
+    fontSize: deviceWidth / 20,
+    fontWeight: "600",
+    marginLeft: 10
   }
-
 });

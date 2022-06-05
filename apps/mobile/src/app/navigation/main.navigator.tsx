@@ -12,7 +12,9 @@ import {StackNavigator, StackScreen} from '@app/utils';
 
 const MainNavigator = () => {
     return (
-      <StackNavigator initialRouteName={"INITIAL"}>
+      <StackNavigator screenOptions={{
+        headerShown: false
+      }} initialRouteName={"INITIAL"}>
         <StackScreen name={"INITIAL"} component={HomeTabs}/>
         <StackScreen name={QRScanRoute.QRScan} component={QRScan}/>
       </StackNavigator>

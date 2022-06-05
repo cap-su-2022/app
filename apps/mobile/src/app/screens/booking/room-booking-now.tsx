@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  VirtualizedList
+} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {HeartIcon, LibraryIcon, TicketIcon} from "react-native-heroicons/outline";
+import { ClockIcon, HeartIcon, LibraryIcon, SortDescendingIcon, TicketIcon } from "react-native-heroicons/outline";
 import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, PINK, WHITE } from "@app/constants";
 import { fetchAllBookingRooms } from "../../redux/features/room-booking/thunk/fetch-all";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -10,6 +18,8 @@ import { getTimeDetailBySlotNumber } from "../../utils/slot-resolver.util";
 import { deviceWidth } from "../../utils/device";
 import { SearchIcon, SortAscendingIcon } from "react-native-heroicons/solid";
 import { addToRoomBookingWishlist } from "../../redux/features/room-booking/thunk/add-to-wishlist.thunk";
+import RNPickerSelect from 'react-native-picker-select';
+import { BookingRoom } from "../../redux/models/booking-room.model";
 
 const RoomBookingNow: React.FC = () => {
 
@@ -20,6 +30,8 @@ const RoomBookingNow: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const [searchRoomName, setSearchRoomName] = useState<string>("");
+  const [sorting, setSorting] = useState<string>("ASC");
+  const [slot, setSlot] = useState<number>(1);
 
   useEffect(() => {
     dispatch(fetchAllBookingRooms()).unwrap().then((e) => {
@@ -47,6 +59,7 @@ const RoomBookingNow: React.FC = () => {
           FILTERING
         </Text>
         <View style={styles.filterBodyContainer}>
+
           <View style={styles.filterInputContainer}>
             <View style={styles.filterInputIconContainer}>
               <SearchIcon color={BLACK}/>
@@ -54,12 +67,113 @@ const RoomBookingNow: React.FC = () => {
             <View style={styles.filterInput}>
               <TextInput value={searchRoomName}
                          onChangeText={(text) => setSearchRoomName(text)}
-                         placeholder="Search by room name"/>
+                         placeholder="ex: LB12"/>
             </View>
           </View>
+
+          <View style={styles.filterInputContainer}>
+            <View style={styles.filterInputIconContainer}>
+              <ClockIcon color={BLACK}/>
+            </View>
+            <View style={styles.filterInput}>
+              <RNPickerSelect
+                useNativeAndroidPickerStyle={false}
+                value={slot}
+                onValueChange={(value) => setSlot(value)}
+                items={[
+                  {
+                    label: 'Slot 1',
+                    value: 1
+                  },
+                  {
+                    label: 'Slot 2',
+                    value: 2
+                  },
+                  {
+                    label: 'Slot 3',
+                    value: 3
+                  },
+                  {
+                    label: 'Slot 4',
+                    value: 4
+                  },
+                  {
+                    label: 'Slot 5',
+                    value: 5
+                  },
+                  {
+                    label: 'Slot 6',
+                    value: 6
+                  },
+                ]}/>
+            </View>
+          </View>
+
+
+
+          {sorting === 'ASC'
+          ? <TouchableOpacity
+              onPress={() => setSorting("DESC")}
+              style={styles.filterSortButton}>
+              <SortAscendingIcon color={BLACK}/>
+            </TouchableOpacity>
+          : <TouchableOpacity
+              onPress={() => setSorting("ASC")}
+              style={styles.filterSortButton}>
+              <SortDescendingIcon color={BLACK}/>
+            </TouchableOpacity>}
+        </View>
+      </View>
+    );
+  }
+
+  const BookingRoomRender = ({item}: {item: BookingRoom} ) => {
+    const startTime = getTimeDetailBySlotNumber(item.slot).startTime;
+    const endTime = getTimeDetailBySlotNumber(item.slot).endTime;
+    return (
+      <View key={item.stt} style={styles.roomBookingItemContainer}>
+        <View style={styles.roomBookingItem}>
+          <View style={styles.libraryIconContainer}>
+            <LibraryIcon color={FPT_ORANGE_COLOR}/>
+          </View>
+          <View style={styles.roomBookingDetail}>
+            <Text style={styles.roomText}>
+              Library Room
+            </Text>
+            <Text style={styles.roomCodeOuterText}>
+              Room Code: {item.roomName}
+            </Text>
+            <Text style={{
+              fontSize: 18
+            }}>Time:
+              <Text style={{
+                fontWeight: '600'
+              }}> Slot {item.slot} ({startTime} - {endTime})
+              </Text>
+            </Text>
+          </View>
+        </View>
+        <View style={styles.roomBookActionContainer}>
           <TouchableOpacity
-            style={styles.filterSortButton}>
-            <SortAscendingIcon color={BLACK}/>
+            onPress={() => handleAddToWishlist(item.roomId, item.slot)}
+            style={styles.addToWishListContainer}>
+            <View style={styles.addToWishListButtonContainer}>
+              <HeartIcon color={PINK}/><
+              Text style={styles.addToWishListButtonText}>
+              Add to wish list
+            </Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => handleBookRoom(item.roomId, item.slot)}
+            style={styles.bookNowContainer}>
+            <View style={styles.bookNowButtonContainer}>
+              <TicketIcon color={WHITE}/>
+              <Text style={styles.bookNowButtonText}>
+                Book this room now
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
       </View>
@@ -72,55 +186,12 @@ const RoomBookingNow: React.FC = () => {
 
     }}>
     <Filtering/>
-      <ScrollView style={{flex: 1}}>
-        {bookingRooms?.map((bookingRoom) =>
-          <View style={styles.roomBookingItemContainer}>
-            <View style={styles.roomBookingItem}>
-              <View style={styles.libraryIconContainer}>
-                <LibraryIcon color={FPT_ORANGE_COLOR}/>
-              </View>
-              <View style={styles.roomBookingDetail}>
-                <Text style={styles.roomText}>
-                  Library Room
-                </Text>
-                <Text style={styles.roomCodeOuterText}>
-                  Room Code: {bookingRoom.roomName}
-                </Text>
-                <Text style={{
-                  fontSize: 18
-                }}>Time:
-                  <Text style={{
-                    fontWeight: '600'
-                  }}> Slot {bookingRoom.slot} ({getTimeDetailBySlotNumber(bookingRoom.slot).startTime} - {getTimeDetailBySlotNumber(bookingRoom.slot).endTime})
-                  </Text>
-                </Text>
-              </View>
-            </View>
-            <View style={styles.roomBookActionContainer}>
-              <TouchableOpacity
-                onPress={() => handleAddToWishlist(bookingRoom.roomId, bookingRoom.slot)}
-                style={styles.addToWishListContainer}>
-                <View style={styles.addToWishListButtonContainer}>
-                  <HeartIcon color={PINK}/><
-                  Text style={styles.addToWishListButtonText}>
-                  Add to wish list
-                </Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => handleBookRoom(bookingRoom.roomId, bookingRoom.slot)}
-                style={styles.bookNowContainer}>
-                <View style={styles.bookNowButtonContainer}>
-                  <TicketIcon color={WHITE}/>
-                  <Text style={styles.bookNowButtonText}>
-                    Book this room now
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>)}
-      </ScrollView>
+        <VirtualizedList
+          data={bookingRooms}
+          keyExtractor={(data, index) => String(data.stt)}
+          getItemCount={() => bookingRooms.length}
+          getItem={(data, index) => data[index]}
+          renderItem={({item}: {item: BookingRoom}) => <BookingRoomRender  item={item}/>}/>
     </SafeAreaView>
   );
 };
@@ -166,7 +237,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
     height: 50,
-    width: deviceWidth / 1.6,
+    width: deviceWidth / 4,
   },
   filterSortButton: {
     width: 50,

@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useAppDispatch } from "../../redux/hooks";
 import { SearchIcon, SortAscendingIcon } from "react-native-heroicons/solid";
-import { BLACK, GRAY, LIGHT_GRAY, WHITE } from "@app/constants";
+import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE } from "@app/constants";
 import { deviceWidth } from "../../utils/device";
+import { CheckIcon, ChevronRightIcon, DeviceMobileIcon } from "react-native-heroicons/outline";
 
 
 const RoomBooking2: React.FC = () => {
@@ -11,7 +12,7 @@ const RoomBooking2: React.FC = () => {
   const dispatch = useAppDispatch();
   const [searchRoomName, setSearchRoomName] = useState<string>("");
 
-
+  const [isSelected, setSelected] = useState<boolean>(false);
 
   const Filtering: React.FC = () => {
     return (
@@ -40,16 +41,168 @@ const RoomBooking2: React.FC = () => {
 
   return (
     <SafeAreaView style={{ flex: 1}}>
-      <Filtering/>
-      <ScrollView>
+      <View style={styles.container}>
+        <View>
+          <Filtering/>
+          <ScrollView>
 
-      </ScrollView>
+            <TouchableOpacity
+              onPress={() => setSelected(!isSelected)}
+              style={[styles.selectCircleButton, {
+                borderColor: isSelected ? FPT_ORANGE_COLOR : GRAY,
+              }]}>
+              {!isSelected
+              ?  <View style={styles.selectOff}/>
+              : <View style={styles.selectOn}>
+                  <CheckIcon size={deviceWidth / 25} color={FPT_ORANGE_COLOR}/>
+                </View>}
+              <View style={styles.deviceIconContainer}>
+                <DeviceMobileIcon color={FPT_ORANGE_COLOR}/>
+              </View>
+
+              <View style={styles.deviceContainer}>
+                <View style={styles.deviceDescriptionContainer}>
+                  <Text style={{
+                    color: BLACK,
+                    fontSize: deviceWidth / 24,
+                    fontWeight: '600'
+                  }}>
+                    Air Conditioner Remote
+                  </Text>
+                  <Text style={{
+                    fontSize: deviceWidth / 26,
+                  }}>
+                    Device Code: D001
+                  </Text>
+                </View>
+
+
+                <TouchableOpacity style={styles.viewDetailButton}>
+                  <Text style={styles.viewDetailButtonText}>View detail</Text>
+                </TouchableOpacity>
+              </View>
+
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+        <View style={styles.footerContainer}>
+          <TouchableOpacity style={styles.nextStepButton}>
+            <ChevronRightIcon color={WHITE}/>
+            <Text style={styles.nextStepButtonText}>Next Step</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 
 };
 
 const styles = StyleSheet.create({
+  deviceDescriptionContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginLeft: 10
+  },
+    deviceContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexGrow: 1
+  },
+  deviceIconContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
+    height: 50,
+    width: 50,
+    borderWidth: 2,
+    borderColor: FPT_ORANGE_COLOR,
+    marginLeft: 10
+  },
+  selectCircleButton: {
+    backgroundColor: WHITE,
+    display: 'flex',
+    margin: 10,
+    height: 90,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+  },
+  selectOn: {
+    height: 20,
+    width: 20,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: FPT_ORANGE_COLOR,
+    position: 'absolute',
+    zIndex: 2,
+    left: -10,
+    top: -10,
+    backgroundColor: WHITE,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  selectOff: {
+    height: 20,
+    width: 20,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: GRAY,
+    position: 'absolute',
+    zIndex: 2,
+    left: -10,
+    top: -10,
+    backgroundColor: WHITE
+  },
+  viewDetailButtonText: {
+    color: FPT_ORANGE_COLOR
+  },
+  viewDetailButton: {
+    borderColor: FPT_ORANGE_COLOR,
+    borderWidth: 1,
+    width: deviceWidth / 5,
+    height: 30,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    marginTop: 40,
+    marginRight: 10
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    flexGrow: 1
+  },
+  nextStepButtonText: {
+    fontWeight: '600',
+    fontSize: deviceWidth / 21,
+    color: WHITE,
+    marginLeft: 10
+  },
+  nextStepButton: {
+    height: 50,
+    width: deviceWidth / 1.25,
+    backgroundColor: FPT_ORANGE_COLOR,
+    borderRadius: 8,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  footerContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 70,
+    backgroundColor: WHITE
+  },
   filterContainer: {
     display: 'flex',
     flexDirection: 'column',
