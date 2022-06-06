@@ -1,13 +1,15 @@
-import {BadRequestException, Injectable, Logger} from '@nestjs/common';
-import {Accounts} from '../models/account.entity';
-import {BaseService} from './base.service';
-import {UpdateDeviceRequest, UsersDTO} from '@app/models';
-import {AccountRepository} from '../repositories/account.repository.';
-import {KeycloakService} from './keycloak.service';
-import {UsersRequestPayload} from '../payload/request/users.payload';
-import {RoomsResponsePayload} from '../payload/response/rooms.payload';
-import {Devices} from '../models/devices';
-import {NoSuchElementFoundException} from '../exception/no-such-element-found.exception';
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
+import { Accounts } from "../models/account.entity";
+import { BaseService } from "./base.service";
+import { UpdateDeviceRequest, UsersDTO } from "@app/models";
+import { AccountRepository } from "../repositories/account.repository.";
+import { KeycloakService } from "./keycloak.service";
+import { UsersRequestPayload } from "../payload/request/users.payload";
+import { RoomsResponsePayload } from "../payload/response/rooms.payload";
+import { Devices } from "../models/devices";
+import { Express } from "express";
+
+type File = Express.Multer.File;
 
 @Injectable()
 export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
@@ -104,7 +106,11 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
 
   getById(id: string): Promise<Accounts> {
     try {
-      return this.repository.findOneOrFail(id);
+      return this.repository.findOneOrFail({
+        where: {
+          id: id
+        }
+      });
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException('Account does not exist');
@@ -153,13 +159,32 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
 
   getDisabledAccounts() {
     return this.repository
-      .createQueryBuilder('accounts')
-      .where('accounts.is_disabled = true')
-      .andWhere('accounts.is_deleted = false')
+      .createQueryBuilder("accounts")
+      .where("accounts.is_disabled = true")
+      .andWhere("accounts.is_deleted = false")
       .getMany();
   }
 
   syncUsersFromKeycloak(): Promise<any> {
     return Promise.resolve();
+  }
+
+  uploadAvatarByAccountId(image: File, id: string) {
+    console.log(image);
+  }
+
+  getAccountByKeycloakId(id: string) {
+    return this.repository.findOneOrFail({
+      where: {
+        keycloakId: id
+      }
+    }).catch((e) => {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while retrieving account");
+    });
+  }
+
+  changePassword(password: string) {
+
   }
 }

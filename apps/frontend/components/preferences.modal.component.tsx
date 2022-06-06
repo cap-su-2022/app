@@ -1,7 +1,7 @@
 import React from "react";
-import {Button, createStyles, Modal, Text} from "@mantine/core";
+import { createStyles, Modal, Text } from "@mantine/core";
 import UserInfoPreference from "./preferences/user-info.component";
-import {Settings, SettingsOff} from "tabler-icons-react";
+import { Settings } from "tabler-icons-react";
 
 interface PreferencesModalProps {
   isShown: boolean;
@@ -32,14 +32,6 @@ const PreferencesModal: React.FC<PreferencesModalProps> = (props) => {
       opened={props.isShown}
       onClose={() => props.toggleShown()}>
       <UserInfoPreference/>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'flex-end'
-      }}>
-        <Button color="green">
-          Save Changes
-        </Button>
-      </div>
     </Modal>
 
   );

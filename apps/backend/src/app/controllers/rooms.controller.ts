@@ -9,33 +9,27 @@ import {
   Post,
   Put,
   UseGuards,
-  UsePipes,
-} from '@nestjs/common';
-import {RoomsService} from '../services/rooms.service';
+  UsePipes
+} from "@nestjs/common";
+import { RoomsService } from "../services/rooms.service";
 
-import {AddRoomRequest, UpdateRoomRequest} from '@app/models';
-import {RoomsRequestPayload} from '../payload/request/rooms.payload';
-import {RoomsResponsePayload} from '../payload/response/rooms.payload';
-import {RoomsValidation} from '../pipes/validation/rooms.validation';
-import {AuthGuard} from '../guards/auth.guard';
-import {Rooms} from '../models/rooms.entity';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { AddRoomRequest, UpdateRoomRequest } from "@app/models";
+import { RoomsRequestPayload } from "../payload/request/rooms.payload";
+import { RoomsResponsePayload } from "../payload/response/rooms.payload";
+import { RoomsValidation } from "../pipes/validation/rooms.validation";
+import { AuthGuard } from "../guards/auth.guard";
+import { Rooms } from "../models/rooms.entity";
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
-@Controller('/v1/rooms')
+@Controller("/v1/rooms")
 @ApiBearerAuth()
-@ApiTags('Rooms')
+@ApiTags("Rooms")
 export class RoomsController {
   constructor(private readonly service: RoomsService) {
   }
 
   @ApiOperation({
-    description: 'Create new library room with the provided payload',
+    description: "Create new library room with the provided payload"
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -55,13 +49,15 @@ export class RoomsController {
   })
   @Post('add')
   @ApiBody({
-    type: AddRoomRequest,
+    type: AddRoomRequest
   })
+  @UseGuards(AuthGuard)
   addRoom(@Body() room: AddRoomRequest): Promise<Rooms> {
     return this.service.add(room);
   }
 
-  @Get('find/:id')
+  @Get("find/:id")
+  @UseGuards(AuthGuard)
   getRoomById(@Param() id: string): Promise<Rooms> {
     return this.service.findById(id);
   }
@@ -148,17 +144,20 @@ export class RoomsController {
     return this.service.handleRestoreDisabledRoomById(payload.id);
   }
 
-  @Put('update/:id')
-  updateRoomById(@Param() id: string, @Body() body: UpdateRoomRequest) {
-    return this.service.updateById(id, body);
+  @Put("update/:id")
+  @UseGuards(AuthGuard)
+  updateRoomById(@Param() payload: { id: string }, @Body() body: UpdateRoomRequest) {
+    return this.service.updateById(payload.id, body);
   }
 
-  @Put('disable/:id')
+  @Put("disable/:id")
+  @UseGuards(AuthGuard)
   disableRoomById(@Param() payload: { id: string }) {
     return this.service.disableById(payload.id);
   }
 
-  @Delete(':id')
+  @Delete(":id")
+  @UseGuards(AuthGuard)
   deleteRoomById(@Param() payload: { id: string }) {
     return this.service.deleteById(payload.id);
   }

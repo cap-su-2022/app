@@ -8,20 +8,28 @@ import {
   Param,
   Post,
   Put,
+  UploadedFile,
   UseGuards,
-  UsePipes,
-} from '@nestjs/common';
-import {AccountsService} from '../services/accounts.service';
-import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {AuthGuard} from '../guards/auth.guard';
-import {UsersValidation} from '../pipes/validation/users.validation';
-import {UsersRequestPayload} from '../payload/request/users.payload';
-import {AccountsResponsePayload} from '../payload/response/accounts.payload';
-import {AddDeviceRequest, UpdateDeviceRequest} from '@app/models';
+  UseInterceptors,
+  UsePipes
+} from "@nestjs/common";
+import { AccountsService } from "../services/accounts.service";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "../guards/auth.guard";
+import { UsersValidation } from "../pipes/validation/users.validation";
+import { UsersRequestPayload } from "../payload/request/users.payload";
+import { AccountsResponsePayload } from "../payload/response/accounts.payload";
+import { AddDeviceRequest, UpdateDeviceRequest } from "@app/models";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { Express } from "express";
+import { Multer } from "multer";
 
-@Controller('v1/accounts')
+type File = Express.Multer.File;
+
+
+@Controller("v1/accounts")
 @ApiBearerAuth()
-@ApiTags('Accounts')
+@ApiTags("Accounts")
 export class AccountsController {
   constructor(private readonly service: AccountsService) {
   }
@@ -60,59 +68,83 @@ export class AccountsController {
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
+    description: "Access token is invalidated"
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: 'Invalid role',
+    description: "Invalid role"
   })
-  @Post('add')
+  @Post("add")
   @HttpCode(HttpStatus.OK)
-  addRoom(@Body() room: AddDeviceRequest) {
+  @UseGuards(AuthGuard)
+  createNewUser(@Body() room: AddDeviceRequest) {
     return this.service.add(room);
   }
 
-  @Get('find/:id')
-  getDevicesById(@Param() id: string) {
-    return this.service.getById(id);
+  @Get("find/:id")
+  @UseGuards(AuthGuard)
+  getAccountById(@Param() payload: { id: string }) {
+    return this.service.getById(payload.id);
   }
 
-  @Get('disabled')
+  @Get("find-by-keycloak-id/:id")
   @UseGuards(AuthGuard)
-  getDisableRooms() {
+  getAccountByKeycloakId(@Param() payload: { id: string }) {
+    return this.service.getAccountByKeycloakId(payload.id);
+  }
+
+  @Get("disabled")
+  @UseGuards(AuthGuard)
+  getDisabledAccounts() {
     return this.service.getDisabledAccounts();
   }
 
-  @Get('deleted')
+  @Get("deleted")
   @UseGuards(AuthGuard)
-  getDeletedRooms() {
+  getDeletedAccounts() {
     return this.service.getDeletedAccounts();
   }
 
-  @Put('restore-deleted/:id')
+  @Put("restore-deleted/:id")
   @UseGuards(AuthGuard)
-  restoreDeletedRoomById(@Param() payload: { id: string }) {
+  restoreDeletedUserById(@Param() payload: { id: string }) {
     return this.service.handleRestoreAccountById(payload.id);
   }
 
-  @Put('restore-disabled/:id')
+  @Put("restore-disabled/:id")
   @UseGuards(AuthGuard)
-  restoreDisabledRoomById(@Param() payload: { id: string }) {
+  restoreDisabledAccountById(@Param() payload: { id: string }) {
     return this.service.handleRestoreDisabledAccountById(payload.id);
   }
 
-  @Put('update/:id')
-  updateRoomById(@Param() id: string, @Body() body: UpdateDeviceRequest) {
+  @Put("update/:id")
+  @UseGuards(AuthGuard)
+  updateAccountById(@Param() id: string, @Body() body: UpdateDeviceRequest) {
     return this.service.updateById(body, id);
   }
 
-  @Put('disable/:id')
-  disableRoomById(@Param() payload: { id: string }) {
+  @Put("disable/:id")
+  @UseGuards(AuthGuard)
+  disableAccountById(@Param() payload: { id: string }) {
     return this.service.disableById(payload.id);
   }
 
-  @Delete(':id')
-  deleteRoomById(@Param() payload: { id: string }) {
+  @Delete(":id")
+  @UseGuards(AuthGuard)
+  deleteAccountById(@Param() payload: { id: string }) {
     return this.service.deleteById(payload.id);
+  }
+
+  @Put("update/upload-avatar/:id")
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor("file"))
+  updateAccountUploadAvatarById(@UploadedFile() image: File, @Param() payload: { id: string }) {
+    return this.service.uploadAvatarByAccountId(image, payload.id);
+  }
+
+  @Put("update/change-password")
+  @UseGuards(AuthGuard)
+  changePassword(@Body() payload: { password: string }) {
+    return this.service.changePassword(payload.password);
   }
 }

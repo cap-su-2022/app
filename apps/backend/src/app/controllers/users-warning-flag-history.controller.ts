@@ -1,9 +1,10 @@
-import { Controller, Get, HttpStatus } from "@nestjs/common";
-import {UsersWarningFlagHistoryService} from "../services/users-warning-flag-hist.service";
-import {UsersWarningFlagHistory} from "../models/users-warning-flag.hist.entity";
-import {ApiBearerAuth, ApiOperation, ApiResponse} from "@nestjs/swagger";
+import { Controller, Get, HttpStatus, UseGuards } from "@nestjs/common";
+import { UsersWarningFlagHistoryService } from "../services/users-warning-flag-hist.service";
+import { UsersWarningFlagHistory } from "../models/users-warning-flag.hist.entity";
+import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { AuthGuard } from "../guards/auth.guard";
 
-@Controller('v1/users-warning-flag-history')
+@Controller("v1/users-warning-flag-history")
 @ApiBearerAuth()
 export class UsersWarningFlagHistoryController {
 
@@ -11,7 +12,7 @@ export class UsersWarningFlagHistoryController {
   }
 
   @ApiOperation({
-    description: 'History of warning users flag',
+    description: "History of warning users flag"
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -27,6 +28,7 @@ export class UsersWarningFlagHistoryController {
   })
 
   @Get()
+  @UseGuards(AuthGuard)
   getAll(): Promise<UsersWarningFlagHistory[]> {
     return this.service.getAllByPagination();
   }

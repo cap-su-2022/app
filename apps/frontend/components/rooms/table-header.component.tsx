@@ -1,12 +1,5 @@
-import React, { useState } from 'react';
-import {
-  Button,
-  createStyles,
-  Drawer,
-  Select,
-  Text,
-  TextInput,
-} from '@mantine/core';
+import React, { useState } from "react";
+import { Button, createStyles, Drawer, Select, Text, TextInput } from "@mantine/core";
 import {
   Archive,
   Download,
@@ -17,27 +10,28 @@ import {
   SortAscendingLetters,
   SortDescendingLetters,
   Trash,
-  X,
-} from 'tabler-icons-react';
-import { ItemsPerPageData } from '../../models/table/items-per-page.model';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  changeRoomsSize,
-  changeRoomsSortDirection,
-  resetRoomFilter,
-} from '../../redux/features/room/room.slice';
-import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import ItemNotFoundModal from '../not-found-modal.component';
-import { FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE } from '@app/constants';
-import { DatePicker} from '@mantine/dates';
+  X
+} from "tabler-icons-react";
+import { ItemsPerPageData } from "../../models/table/items-per-page.model";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { changeRoomsSize, changeRoomsSortDirection, resetRoomFilter } from "../../redux/features/room/room.slice";
+import { fetchDisabledRooms } from "../../redux/features/room/thunk/fetch-disabled-rooms";
+import { fetchDeletedRooms } from "../../redux/features/room/thunk/fetch-deleted-rooms";
+import ItemNotFoundModal from "../not-found-modal.component";
+import { FPT_ORANGE_COLOR, WHITE } from "@app/constants";
+import { DatePicker } from "@mantine/dates";
 
 interface TableHeaderProps {
   searchText: string;
+
   handleChangeSearchText(e: string): void;
+
   toggleAddModalShown(): void;
+
   toggleRestoreDisabledModalShown(): void;
+
   toggleRestoreDeletedModalShown(): void;
+
   toggleDownloadModalShown(): void;
 }
 

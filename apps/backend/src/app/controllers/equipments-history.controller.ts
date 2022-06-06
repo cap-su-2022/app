@@ -1,9 +1,10 @@
-import {Controller, Get, HttpStatus} from "@nestjs/common";
-import {EquipmentsHistoryService} from "../services/equipments-history.service";
-import {EquipmentsHistory} from "../models/equipments.hist.entity";
-import {ApiBearerAuth, ApiOperation, ApiResponse} from "@nestjs/swagger";
+import { Controller, Get, HttpStatus, UseGuards } from "@nestjs/common";
+import { EquipmentsHistoryService } from "../services/equipments-history.service";
+import { EquipmentsHistory } from "../models/equipments.hist.entity";
+import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { AuthGuard } from "../guards/auth.guard";
 
-@Controller('/v1/equipments-history')
+@Controller("/v1/equipments-history")
 @ApiBearerAuth()
 export class EquipmentsHistoryController {
 
@@ -11,7 +12,7 @@ export class EquipmentsHistoryController {
   }
 
   @ApiOperation({
-    description: 'Get all equipments history',
+    description: "Get all equipments history"
   })
 
   @ApiResponse({
@@ -28,6 +29,7 @@ export class EquipmentsHistoryController {
   })
 
   @Get()
+  @UseGuards(AuthGuard)
   getAll(): Promise<EquipmentsHistory[]> {
     return this.service.getAllByPagination();
   }
