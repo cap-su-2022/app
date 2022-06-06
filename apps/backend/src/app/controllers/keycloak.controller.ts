@@ -11,9 +11,9 @@ import {
   Request,
   Res
 } from "@nestjs/common";
-import {KeycloakService} from "../services/keycloak.service";
-import {ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse} from "@nestjs/swagger";
-import {KEYCLOAK_PATH} from "../constants/controllers/keycloak/path.constant";
+import { KeycloakService } from "../services/keycloak.service";
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { KEYCLOAK_PATH } from "../constants/controllers/keycloak/path.constant";
 import {AUTHORIZATION_LOWERCASE} from "../constants/network/headers.constant";
 import {Response} from "express";
 import {AuthenticationService} from "../services/authentication.service";
@@ -29,6 +29,7 @@ export class AuthenticationRequest {
 }
 @ApiBearerAuth()
 @Controller(KEYCLOAK_PATH.requestPath)
+@ApiTags("Authentication")
 export class KeycloakController {
 
   constructor(private readonly service: KeycloakService,

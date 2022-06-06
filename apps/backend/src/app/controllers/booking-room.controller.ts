@@ -6,8 +6,10 @@ import { User } from "../decorators/keycloak-user.decorator";
 import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
 import { WishlistBookingRoomRequestDTO } from "../dto/wishlist-booking-room.request.dto";
 import { AuthGuard } from "../guards/auth.guard";
+import { ApiTags } from "@nestjs/swagger";
 
-@Controller('/v1/booking-room')
+@Controller("/v1/booking-room")
+@ApiTags("Booking Room")
 export class BookingRoomController {
 
   constructor(private readonly service: BookingRoomService) {

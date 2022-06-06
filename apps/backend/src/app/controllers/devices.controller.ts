@@ -12,7 +12,7 @@ import {
   UsePipes
 } from "@nestjs/common";
 import { DevicesService } from "../services/devices.service";
-import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "../guards/auth.guard";
 import { AddDeviceRequest, UpdateDeviceRequest } from "@app/models";
 import { DevicesResponsePayload } from "../payload/response/devices.payload";
@@ -21,6 +21,7 @@ import { DevicesValidation } from "../pipes/validation/devices.validation";
 
 @Controller("v1/devices")
 @ApiBearerAuth()
+@ApiTags("Devices")
 export class DevicesController {
 
   constructor(private readonly service: DevicesService) {
