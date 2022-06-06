@@ -27,19 +27,11 @@ const PreferencesModal: React.FC<PreferencesModalProps> = (props) => {
   }
   return (
     <Modal
-      size="85%"
+      size="80%"
       title={<ModalHeader/>}
       opened={props.isShown}
       onClose={() => props.toggleShown()}>
       <UserInfoPreference/>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'flex-end'
-      }}>
-        <Button color="green">
-          Save Changes
-        </Button>
-      </div>
     </Modal>
 
   );

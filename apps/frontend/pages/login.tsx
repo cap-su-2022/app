@@ -26,6 +26,8 @@ import {doLoginWithGoogle} from "../redux/features/user/google-login.thunk";
 import Logo from "../components/logo";
 import {getCookie} from "../utils/cookie-extractor";
 import axios from "axios";
+// import { signIn } from 'next-auth/client';
+
 const LoginFailedModal = dynamic(() => import('../components/login-fail.modal'));
 
 const firebaseConfig = {
@@ -79,6 +81,26 @@ function Login() {
       password: values.password,
     })).then(() => handleSuccessAuthentication());
   }
+
+  // const handleLoginSubmit = async (values) => {
+
+  //   const username = values.username;
+  //   const password = values.password;
+
+  //   const result = await signIn('credentials', {
+  //     redirect: false,
+  //     username,
+  //     password,
+  //   });
+
+  //   if (!result?.error) {
+  //     router.replace('/');
+  //     // setAuthError(result?.error);
+  //   } else {
+  //     // setAuthError(result?.error);
+  //   }
+  // };
+
 
   const handleGoogleSignin = () => {
     dispatch(toggleSpinnerOn());
