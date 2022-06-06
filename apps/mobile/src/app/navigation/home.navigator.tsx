@@ -17,7 +17,9 @@ const HomeNavigator: React.FC = () => {
 
   return (
     <StackNavigator initialRouteName={"HOME_SCREEN"}>
-      <StackScreen name={"HOME_SCREEN"} component={HomeScreen}/>
+      <StackScreen name={"HOME_SCREEN"} options={{
+        headerShown: false
+      }} component={HomeScreen}/>
       <StackScreen name={"ROOM_BOOKING"} options={{
         headerShown: false
       }} component={RoomBookingNavigator}/>

@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import * as IconOutline from 'react-native-heroicons/outline';
-import { DocumentSearchIcon, LogoutIcon } from 'react-native-heroicons/outline';
+import { DocumentSearchIcon, LogoutIcon, UserCircleIcon } from "react-native-heroicons/outline";
 import * as Icon from 'react-native-heroicons/solid';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -37,7 +37,7 @@ const SettingsScreen = () => {
       >
         <View style={[styles.header]}>
           <View style={[styles.headerTitle]}>
-            <TouchableOpacity
+            {/*<TouchableOpacity
               onPress={() => navigate.navigate('EditUserProfile')}
               style={{
                 height: 40,
@@ -60,13 +60,24 @@ const SettingsScreen = () => {
               }}>
                 Profile
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity>*/}
           </View>
           <View style={[styles.headerBody]}>
             <Icon.UserCircleIcon size={80} color="#f06e28" />
             <Text style={[styles.userAvatarname]}>Ngô Nguyên Bằng</Text>
             <Text style={[styles.userEmail]}>bangnnse140937@fpt.edu.vn</Text>
           </View>
+        </View>
+        <View style={styles.logoutContainer}>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={() => navigate.navigate('EditUserProfile')}
+          >
+            <View style={styles.logoutIconContainer}>
+              <UserCircleIcon color={BLACK} />
+            </View>
+            <Text style={styles.logoutText}>My Profile</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.logoutContainer}>
           <TouchableOpacity
@@ -99,6 +110,7 @@ export default SettingsScreen;
 
 export const styles = StyleSheet.create({
   logoutText: {
+    color: BLACK,
     fontSize: 20,
   },
   logoutIconContainer: {
@@ -143,10 +155,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   userAvatarname: {
+    color: BLACK,
     fontWeight: '500',
   },
   userEmail: {
-    color: 'gray',
+    color: BLACK,
     fontSize: 12,
   },
   editProfileNavigation: {
