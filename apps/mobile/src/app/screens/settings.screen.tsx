@@ -8,18 +8,20 @@ import {
   View,
 } from 'react-native';
 import * as IconOutline from 'react-native-heroicons/outline';
-import { DocumentSearchIcon, LogoutIcon } from 'react-native-heroicons/outline';
+import { DocumentSearchIcon, LogoutIcon, UserCircleIcon } from "react-native-heroicons/outline";
 import * as Icon from 'react-native-heroicons/solid';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { LocalStorageKeys, useStorage } from '../utils/local-storage';
 import { BLACK, FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE } from '@app/constants';
+import { revokeUserSession } from "../utils/local-storage";
+import { deviceWidth } from "../utils/device";
 
 const SettingsScreen = () => {
   const scrollViewRef = useRef<null | ScrollView>(null);
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
 
   const handleLogout = () => {
+    revokeUserSession();
     setTimeout(() => {
       navigate.replace('LOGIN_SCREEN');
     }, 0);
@@ -35,27 +37,47 @@ const SettingsScreen = () => {
       >
         <View style={[styles.header]}>
           <View style={[styles.headerTitle]}>
-            <TouchableOpacity
-              onPress={() => {
-                navigate.navigate('EditUserProfile');
-              }}
-              style={[styles.editProfileNavigation]}
-            >
-              <Text
-                style={{
-                  color: '#fff',
-                }}
-              >
-                Con Cac
+            {/*<TouchableOpacity
+              onPress={() => navigate.navigate('EditUserProfile')}
+              style={{
+                height: 40,
+                width: deviceWidth / 3,
+                borderRadius: 50,
+                borderWidth: 2,
+                borderColor: FPT_ORANGE_COLOR,
+                display: 'flex',
+                justifyContent: 'flex-start',
+                flexDirection: 'row',
+                alignItems: 'center'
+            }}>
+              <IconOutline.UserCircleIcon
+                color={FPT_ORANGE_COLOR}
+                size={40}/>
+              <Text style={{
+                fontSize: deviceWidth / 23,
+                fontWeight: '600',
+                color: FPT_ORANGE_COLOR
+              }}>
+                Profile
               </Text>
-            </TouchableOpacity>
-            <IconOutline.UserCircleIcon color="black" size={40} />
+            </TouchableOpacity>*/}
           </View>
           <View style={[styles.headerBody]}>
             <Icon.UserCircleIcon size={80} color="#f06e28" />
             <Text style={[styles.userAvatarname]}>Ngô Nguyên Bằng</Text>
             <Text style={[styles.userEmail]}>bangnnse140937@fpt.edu.vn</Text>
           </View>
+        </View>
+        <View style={styles.logoutContainer}>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={() => navigate.navigate('EditUserProfile')}
+          >
+            <View style={styles.logoutIconContainer}>
+              <UserCircleIcon color={BLACK} />
+            </View>
+            <Text style={styles.logoutText}>My Profile</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.logoutContainer}>
           <TouchableOpacity
@@ -88,6 +110,7 @@ export default SettingsScreen;
 
 export const styles = StyleSheet.create({
   logoutText: {
+    color: BLACK,
     fontSize: 20,
   },
   logoutIconContainer: {
@@ -132,10 +155,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   userAvatarname: {
+    color: BLACK,
     fontWeight: '500',
   },
   userEmail: {
-    color: 'gray',
+    color: BLACK,
     fontSize: 12,
   },
   editProfileNavigation: {
@@ -145,5 +169,7 @@ export const styles = StyleSheet.create({
     backgroundColor: FPT_ORANGE_COLOR,
     borderRadius: 5,
     height: 30,
+    marginLeft: 10,
+    marginTop: 10
   },
 });

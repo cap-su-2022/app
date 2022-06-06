@@ -12,15 +12,16 @@ import {
   UsePipes
 } from "@nestjs/common";
 import {DevicesService} from "../services/devices.service";
-import {ApiOperation, ApiResponse} from "@nestjs/swagger";
+import {ApiBearerAuth, ApiOperation, ApiResponse} from "@nestjs/swagger";
 import {AuthGuard} from "../guards/auth.guard";
-import {AddDeviceRequest} from "../../../../../libs/models/src/lib/request/add-equipment-request.dto";
+import {AddDeviceRequest} from "@app/models";
 import {DevicesResponsePayload} from "../payload/response/devices.payload";
 import {DevicesRequestPayload} from "../payload/request/devices.payload";
 import {UpdateDeviceRequest} from '@app/models';
 import {DevicesValidation} from "../pipes/validation/devices.validation";
 
 @Controller('v1/devices')
+@ApiBearerAuth()
 export class DevicesController {
 
   constructor(private readonly service: DevicesService) {
@@ -39,7 +40,7 @@ export class DevicesController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request payload for libary room is not validated'
+    description: 'Request payload for library room is not validated'
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,

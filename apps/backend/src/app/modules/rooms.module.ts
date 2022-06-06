@@ -15,5 +15,6 @@ import ConfigModule from "./global/config.module";
   ],
   controllers: [RoomsController],
   providers: [RoomsService, KeycloakService],
+  exports: [RoomsService]
 })
 export class RoomsModule {}

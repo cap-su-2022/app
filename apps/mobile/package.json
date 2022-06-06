@@ -32,6 +32,19 @@
     "react-native-snap-carousel": "*",
     "react-native-tab-view": "*",
     "react-native-webview": "*",
-    "@react-native-async-storage/async-storage": "*"
+    "@react-native-async-storage/async-storage": "*",
+    "axios": "*",
+    "@mantine/core": "*",
+    "tabler-icons-react": "*",
+    "@mantine/hooks": "*",
+    "next": "*",
+    "@nrwl/next": "*",
+    "@mantine/next": "*",
+    "next-auth": "*",
+    "firebase": "*",
+    "next-redux-wrapper": "*",
+    "redux-logger": "*",
+    "yup": "*",
+    "react-native-picker-select": "*"
   }
 }

@@ -14,6 +14,7 @@ import GlobalTypeOrmModule from "./global/typeorm.module";
 import {KeycloakService} from "../services/keycloak.service";
 import {AuthGuard} from "../guards/auth.guard";
 import {HttpModule} from "@nestjs/axios";
+import { BookingRoomModule } from "./booking-room.module";
 
 @Global()
 export class AppModule {
@@ -31,6 +32,7 @@ export class AppModule {
         AccountsModule,
         DevicesModule,
         UsersWarningFlagModule,
+        BookingRoomModule,
       ],
       controllers: [AppController],
       providers: [

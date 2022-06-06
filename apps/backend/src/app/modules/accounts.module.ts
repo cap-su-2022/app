@@ -15,5 +15,7 @@ import { HttpModule } from '@nestjs/axios';
   ],
   controllers: [AccountsController],
   providers: [AccountsService, KeycloakService],
+  exports: [AccountsService],
+
 })
 export class AccountsModule {}

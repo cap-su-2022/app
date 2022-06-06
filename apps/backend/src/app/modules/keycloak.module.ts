@@ -20,6 +20,7 @@ import {AccountsService} from "../services/accounts.service";
   controllers: [KeycloakController],
   providers: [KeycloakService, ConfigService, AuthenticationService, AccountsService,
   ],
+  exports: [KeycloakService]
 })
 export class KeycloakModule {
 }
