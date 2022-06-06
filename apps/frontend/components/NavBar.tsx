@@ -4,8 +4,8 @@ import {
   Settings,
   TwoFA,
   DatabaseImport,
-  Logout, User, BuildingWarehouse, Users, Devices, Messages, Dashboard,
-} from 'tabler-icons-react';
+  Logout, User, BuildingWarehouse, Users, Devices, Messages, Dashboard, Bell
+} from "tabler-icons-react";
 import {FPT_ORANGE_COLOR} from "@app/constants";
 import {BLACK, WHITE} from "@app/constants";
 import {useRouter} from "next/router";
@@ -18,6 +18,7 @@ const data = [
   { link: '/accounts', label: 'Accounts', icon: Users },
   { link: '/devices', label: 'Devices', icon: Devices },
   { link: '/feedbacks', label: 'Feedback', icon: Messages },
+  { link: '/notifications', label: 'Notification', icon: Bell}
 ];
 
 export function NavbarSimpleColored() {
