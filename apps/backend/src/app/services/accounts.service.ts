@@ -157,6 +157,7 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
 
   syncUsersFromKeycloak(): Promise<any> {
     return Promise.resolve();
+
   }
 
   async uploadAvatarByAccountId(image: File, id: string): Promise<void> {
@@ -199,9 +200,10 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
       if (!user) {
         throw new BadRequestException("Account does not exist with the provided id");
       }
+
       return await this.repository.save({
-        ...payload,
-        ...user
+        ...user,
+        ...payload
       });
 
     } catch (e) {
