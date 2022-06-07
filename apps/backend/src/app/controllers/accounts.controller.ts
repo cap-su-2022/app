@@ -7,7 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
-  Put,
+  Put, Response,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -154,7 +154,6 @@ export class AccountsController {
   }
 
   @Put("update/upload-avatar/:id")
-  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor("file"))
   updateAccountUploadAvatarById(@UploadedFile() image: File, @Param() payload: { id: string }) {
     return this.service.uploadAvatarByAccountId(image, payload.id);
@@ -171,4 +170,10 @@ export class AccountsController {
   changePasswordByKeycloakId(@Param() payload: { id: string }, @Body() requestPayload: { password: string }) {
     return this.service.changePasswordByKeycloakId(payload.id, requestPayload.password);
   }
+
+  @Get("avatar")
+  getAvatarURLByKeycloakId(@User() keycloakUser: KeycloakUserInfoDTO) {
+    return this.service.getAvatarURLByKeycloakId(keycloakUser.sub);
+  }
+
 }

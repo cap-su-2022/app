@@ -15,6 +15,7 @@ import {KeycloakService} from "../services/keycloak.service";
 import {AuthGuard} from "../guards/auth.guard";
 import {HttpModule} from "@nestjs/axios";
 import { BookingRoomModule } from "./booking-room.module";
+import { CloudinaryModule } from "./cloudinary.module";
 
 @Global()
 export class AppModule {
@@ -26,13 +27,14 @@ export class AppModule {
         GlobalConfigModule,
         GlobalTypeOrmModule,
         HttpModule,
+        CloudinaryModule,
         HealthCheckModule,
         KeycloakModule,
         RoomsModule,
         AccountsModule,
         DevicesModule,
         UsersWarningFlagModule,
-        BookingRoomModule,
+        BookingRoomModule
       ],
       controllers: [AppController],
       providers: [

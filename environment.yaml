@@ -41,6 +41,7 @@ keycloak:
   grant_type:
     token_exchange: 'urn:ietf:params:oauth:grant-type:token-exchange'
     refresh_token: 'urn:ietf:params:oauth:token-type:refresh_token'
+    native_refresh_token: 'refresh_token'
     password: 'password'
 
 redis:
@@ -68,3 +69,9 @@ firebase:
       - "1013204251190-74m7mtno9e3ge4fdie3422hotor5217c.apps.googleusercontent.com"
       - "fptu-library-booking.firebaseapp.com"
       - "1013204251190-nkd63gan2a17tj8lffmh83jl6scco9g6.apps.googleusercontent.com"
+
+cloudinary:
+  name: "dryel0zfz"
+  apiKey: "376422144959338"
+  apiSecret: "9BC06IO522Z_99FHKsAqfh1K3xo"
+  secure: true

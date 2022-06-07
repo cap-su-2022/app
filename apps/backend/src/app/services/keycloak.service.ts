@@ -17,6 +17,8 @@ import { REQUEST } from "@nestjs/core";
 import { Request } from "express";
 import { APPLICATION_X_WWW_FORM_URLENCODED, Environment } from "@app/constants";
 import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
+import { AccessTokenResponsePayload } from "../payload/response/refresh_token.response.payload";
+import { RefreshTokenPayload } from "../payload/response/refresh-token.request.payload";
 
 @Injectable({
   scope: Scope.REQUEST
@@ -122,7 +124,8 @@ export class KeycloakService {
       }));
       return response.data as KeycloakSigninSuccessResponse;
     } catch (e) {
-      this.logger.error(e.message);
+      console.log(e.response.data);
+      this.logger.error(e.response.data);
       throw new HttpException(e.response?.data["error_description"], HttpStatus.UNAUTHORIZED);
     }
   }
@@ -187,12 +190,29 @@ export class KeycloakService {
 
   }
 
-  refreshAccessToken(accessToken): Promise<any> {
+  async refreshAccessToken(payload: RefreshTokenPayload): Promise<AccessTokenResponsePayload> {
+    const URL = `http://${this.keycloakHost}:${this.keycloakPort}/auth/realms/${this.keycloakRealm}/protocol/openid-connect/token`;
+    console.log(payload.refreshToken);
+    const refreshTokenPayload = new URLSearchParams({
+      client_id: this.configService.get<string>(Environment.keycloak.client.id),
+      client_secret: this.configService.get<string>(Environment.keycloak.client.secret),
+      grant_type: this.configService.get<string>(Environment.keycloak.grant_type.native_refresh_token),
+      refresh_token: payload.refreshToken
+    });
+
     try {
-      return Promise.resolve();
+      const response = await lastValueFrom(this.httpService.post(URL, refreshTokenPayload, {
+        headers: {
+          "Content-Type": APPLICATION_X_WWW_FORM_URLENCODED
+        }
+      }).pipe(map(e => e.data)));
+      return {
+        accessToken: response["access_token"],
+        refreshToken: response["refresh_token"]
+      };
     } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
+      this.logger.error(e.response.data);
+      throw new BadRequestException(e.response.data);
     }
   }
 
@@ -205,13 +225,13 @@ export class KeycloakService {
       const URL = `http://${this.keycloakHost}:${this.keycloakPort}/auth/realms/${this.keycloakRealm}/protocol/openid-connect/userinfo`;
       return await lastValueFrom(this.httpService.get(URL, {
           headers: {
-            "Authorization": `${accessToken}`
+            "Authorization": accessToken
           }
         }
       ).pipe(map(e => e.data)));
     } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
+      this.logger.error(e.response.data);
+      throw new BadRequestException(e.response?.data ?? "Invalidated request");
     }
   }
 

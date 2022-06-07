@@ -14,12 +14,14 @@ import {
 import { KeycloakService } from "../services/keycloak.service";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { KEYCLOAK_PATH } from "../constants/controllers/keycloak/path.constant";
-import {AUTHORIZATION_LOWERCASE} from "../constants/network/headers.constant";
-import {Response} from "express";
-import {AuthenticationService} from "../services/authentication.service";
-import {KeycloakUser, UsernamePasswordLoginResponse} from "@app/models";
+import { AUTHORIZATION_LOWERCASE } from "../constants/network/headers.constant";
+import { Response } from "express";
+import { AuthenticationService } from "../services/authentication.service";
+import { UsernamePasswordLoginResponse } from "@app/models";
 import { Roles } from "../enum/roles.enum";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
+import { AccessTokenResponsePayload } from "../payload/response/refresh_token.response.payload";
+import { RefreshTokenPayload } from "../payload/response/refresh-token.request.payload";
 
 export class AuthenticationRequest {
   @ApiProperty({
@@ -28,6 +30,20 @@ export class AuthenticationRequest {
   username?: string;
   password?: string;
 }
+
+class GoogleIDTokenRequest {
+  @ApiProperty({
+    example: "example-id-token-as-jwt",
+    type: String,
+    required: true,
+    description: "JWT ID Token given by Google Authentication Provider",
+    name: "token",
+    title: "Google ID Token"
+  })
+  token: string;
+}
+
+
 @ApiBearerAuth()
 @Controller(KEYCLOAK_PATH.requestPath)
 @ApiTags("Authentication")
@@ -82,15 +98,31 @@ export class KeycloakController {
     };
   }
 
-  @Post('signin/google')
+  @Post("signin/google")
   @HttpCode(HttpStatus.OK)
-  async signInWithGoogle(@Res({passthrough: true}) httpResponse: Response,
-                   @Body() request: { token: string }) {
+  @ApiOperation({
+    summary: "Login into system using Google ID Token",
+    description: "Use Google ID Token to login into the system then return the user instance with access token and refresh token"
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Successfully logged into the system"
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Invalid Google ID Token credentials"
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: "User"
+  })
+  async signInWithGoogle(@Res({ passthrough: true }) httpResponse: Response,
+                         @Body() request: GoogleIDTokenRequest) {
     const resp = await this.authenticationService.handleGoogleSignin(request.token);
-    httpResponse.setHeader('Authorization', resp.accessToken);
-    httpResponse.setHeader('AuthorizationRefreshToken', resp.refreshToken);
-    httpResponse.cookie('refreshToken', resp.refreshToken);
-    httpResponse.cookie('accessToken', resp.accessToken);
+    httpResponse.setHeader("Authorization", resp.accessToken);
+    httpResponse.setHeader("AuthorizationRefreshToken", resp.refreshToken);
+    httpResponse.cookie("refreshToken", resp.refreshToken);
+    httpResponse.cookie("accessToken", resp.accessToken);
     return {
       email: resp.email,
       id: resp.id,
@@ -104,8 +136,25 @@ export class KeycloakController {
   }
 
   @Post(KEYCLOAK_PATH.refreshAccessToken)
-  refreshAccessToken(@Body() accessToken) {
-    return this.service.refreshAccessToken(accessToken);
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: "Refresh access token using provided refresh token",
+    description: "Provide new access token and new refresh token by using provided refresh token"
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Successfully provides new access and refresh token"
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Failed to validate provided refresh token"
+  })
+  async refreshAccessToken(@Res({ passthrough: true }) res: Response,
+                           @Body() payload: RefreshTokenPayload): Promise<AccessTokenResponsePayload> {
+    const response = await this.service.refreshAccessToken(payload);
+    res.cookie("accessToken", response.accessToken);
+    res.cookie("refreshToken", response.refreshToken);
+    return response;
   }
 
   @Post(KEYCLOAK_PATH.signOut)

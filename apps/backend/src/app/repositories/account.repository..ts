@@ -1,5 +1,5 @@
-import {EntityRepository, Repository} from "typeorm";
-import {Accounts} from "../models/account.entity";
+import { EntityRepository, InsertResult, Repository, UpdateResult } from "typeorm";
+import { Accounts } from "../models/account.entity";
 
 @EntityRepository(Accounts)
 export class AccountRepository extends Repository<Accounts> {
@@ -82,17 +82,87 @@ export class AccountRepository extends Repository<Accounts> {
       .getMany();
   }
 
-  findIdByKeycloakId(keycloakId: string) {
+  findIdByKeycloakId(keycloakId: string): Promise<string> {
     return this.createQueryBuilder("accounts")
       .select("accounts.id", "accountId")
       .where("accounts.keycloak_id = :keycloakId", { keycloakId: keycloakId })
-      .getRawOne<{ accountId: string }>();
+      .getRawOne().then((data) => data ? data["id"] : undefined);
   }
 
   findKeycloakIdByAccountId(id: string): Promise<string> {
     return this.createQueryBuilder("accounts")
       .select("accounts.keycloak_id as keycloak_id")
       .where("accounts.id = :id", { id: id })
-      .getRawOne().then((data) => data ? data["keycloak_id"] : null);
+      .getRawOne().then((data) => data ? data["keycloak_id"] : undefined);
+  }
+
+  async findAvatarURLById(keycloakId: string): Promise<string> {
+    return this.createQueryBuilder("accounts")
+      .select("accounts.avatar")
+      .where("accounts.keycloak_id = :keycloakId", { keycloakId: keycloakId })
+      .getRawOne().then((data) => data ? data["avatar"] : undefined);
+  }
+
+  restoreDisabledAccountById(id: string) {
+    return this.createQueryBuilder("accounts")
+      .update({
+        isDisabled: false
+      })
+      .where("accounts.id = :id", { id: id })
+      .useTransaction(true)
+      .execute();
+  }
+
+  findDisabledAccounts(): Promise<Accounts[]> {
+    return this.createQueryBuilder("accounts")
+      .where("accounts.is_disabled = true")
+      .andWhere("accounts.is_deleted = false")
+      .getMany();
+  }
+
+  findDeletedAccounts(): Promise<Accounts[]> {
+    return this.createQueryBuilder("accounts")
+      .where("accounts.is_deleted = true")
+      .getMany();
+  }
+
+  async restoreAccountById(id: string): Promise<UpdateResult> {
+    return this.createQueryBuilder("accounts")
+      .update({
+        isDeleted: false
+      })
+      .where("accounts.id = :id", { id: id })
+      .useTransaction(true)
+      .execute();
+  }
+
+  disableAccountById(id: string): Promise<UpdateResult> {
+    return this.createQueryBuilder("devices")
+      .update({
+        isDisabled: true
+      })
+      .where("accounts.id = :id", { id: id })
+      .useTransaction(true)
+      .execute();
+  }
+
+  findById(id: string): Promise<Accounts> {
+    return this.findOneOrFail({
+      where: {
+        id: id
+      }
+    });
+  }
+
+  updatePartially(body: any, account: Accounts): Promise<Accounts> {
+    return this.save(
+      {
+        ...body,
+        ...account
+      },
+      {
+        transaction: true
+      }
+    );
   }
 }
