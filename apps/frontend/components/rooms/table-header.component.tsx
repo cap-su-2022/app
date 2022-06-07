@@ -1,15 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  createStyles,
-  Drawer,
-  Menu,
-  Modal,
-  Select,
-  Text,
-  TextInput,
-  Tooltip,
-} from '@mantine/core';
+import React, { useState } from "react";
+import { Button, createStyles, Drawer, Select, Text, TextInput } from "@mantine/core";
 import {
   Archive,
   Download,
@@ -20,28 +10,28 @@ import {
   SortAscendingLetters,
   SortDescendingLetters,
   Trash,
-  X,
-} from 'tabler-icons-react';
-import { ItemsPerPageData } from '../../models/table/items-per-page.model';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  changeRoomsSize,
-  changeRoomsSortDirection,
-  resetRoomFilter,
-} from '../../redux/features/room/room.slice';
-import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import ItemNotFoundModal from '../not-found-modal.component';
-import { FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE } from '@app/constants';
-import moment from 'moment';
-import { DatePicker} from '@mantine/dates';
+  X
+} from "tabler-icons-react";
+import { ItemsPerPageData } from "../../models/table/items-per-page.model";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { changeRoomsSize, changeRoomsSortDirection, resetRoomFilter } from "../../redux/features/room/room.slice";
+import { fetchDisabledRooms } from "../../redux/features/room/thunk/fetch-disabled-rooms";
+import { fetchDeletedRooms } from "../../redux/features/room/thunk/fetch-deleted-rooms";
+import ItemNotFoundModal from "../not-found-modal.component";
+import { FPT_ORANGE_COLOR, WHITE } from "@app/constants";
+import { DatePicker } from "@mantine/dates";
 
 interface TableHeaderProps {
   searchText: string;
+
   handleChangeSearchText(e: string): void;
+
   toggleAddModalShown(): void;
+
   toggleRestoreDisabledModalShown(): void;
+
   toggleRestoreDeletedModalShown(): void;
+
   toggleDownloadModalShown(): void;
 }
 
@@ -49,7 +39,6 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
   const { classes } = useStyles();
 
   const dispatch = useAppDispatch();
-  const today = moment().format('YYYY-MM-DD');
   const itemsPerPage = useAppSelector((state) => state.room.size);
   const direction = useAppSelector((state) => state.room.direction);
   const disabledRooms = useAppSelector((state) => state.room.disabledRooms);
@@ -66,9 +55,6 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
   const [category, setCategory] = useState('libraryRoom');
   const [itemsInPage, setItemsInPage] = useState('5');
 
-  useEffect(() => {}, [disabledRooms]);
-
-  useEffect(() => {}, [deletedRooms]);
 
   const handleViewDisabledRooms = async () => {
     await dispatch(fetchDisabledRooms());

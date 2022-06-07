@@ -1,13 +1,12 @@
-import {HttpException, HttpStatus, Injectable, Logger} from "@nestjs/common";
-import {AccountsService} from "./accounts.service";
-import {KeycloakService} from "./keycloak.service";
-import {UsernamePasswordCredentials, UsernamePasswordLoginResponse} from "@app/models";
-import {Roles} from "../enum/roles.enum";
-import {OAuth2Client} from "google-auth-library";
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { AccountsService } from "./accounts.service";
+import { KeycloakService } from "./keycloak.service";
+import { UsernamePasswordCredentials, UsernamePasswordLoginResponse } from "@app/models";
+import { Roles } from "../enum/roles.enum";
+import { OAuth2Client } from "google-auth-library";
 import Exception from "../constants/exception.constant";
-import {ConfigService} from "@nestjs/config";
-import {AccountRepository} from "../repositories/account.repository.";
-import {logger} from "nx/src/utils/logger";
+import { ConfigService } from "@nestjs/config";
+import { AccountRepository } from "../repositories/account.repository.";
 
 @Injectable()
 export class AuthenticationService {
@@ -32,7 +31,6 @@ export class AuthenticationService {
       const decodedToken = await client.verifyIdToken({
         idToken: idToken,
         audience: this.oAuthAudience,
-
       });
 
       const userGoogleId = decodedToken.getUserId();

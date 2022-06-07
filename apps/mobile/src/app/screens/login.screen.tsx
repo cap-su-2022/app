@@ -1,29 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Background from '../components/blob-scene-haikei.svg';
-import FPTULogo from '../components/LogoFPTU.svg';
-import Asterik from '../components/text/asterik';
-import Divider from '../components/text/divider';
-import GoogleIcon from '../components/google-icon.svg';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../redux/store';
-import { persistGoogleIdToken } from '../redux/userSlice';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { handleGoogleSignin } from '../services/google.service';
-import CheckAlive from '../components/check-alive.component';
-import { Formik } from 'formik';
-import LoginErrorModal from '../components/modals/login-error.component';
-import { toggleSpinnerOff, toggleSpinnerOn } from '../redux/features/spinner';
-import { BLACK, FPT_ORANGE_COLOR } from '@app/constants';
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import Background from "../components/blob-scene-haikei.svg";
+import FPTULogo from "../components/LogoFPTU.svg";
+import Asterik from "../components/text/asterik";
+import Divider from "../components/text/divider";
+import GoogleIcon from "../components/google-icon.svg";
+import { persistGoogleIdToken } from "../redux/userSlice";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { handleGoogleSignin } from "../services/google.service";
+import CheckAlive from "../components/check-alive.component";
+import { Formik } from "formik";
+import LoginErrorModal from "../components/modals/login-error.component";
+import { toggleSpinnerOff, toggleSpinnerOn } from "../redux/features/spinner";
+import { BLACK, FPT_ORANGE_COLOR } from "@app/constants";
 import { useAppDispatch } from "../redux/hooks";
 import { doLogin } from "../redux/features/auth/thunk/login.thunk";
 import { isUserSessionExisted, LOCAL_STORAGE } from "../utils/local-storage";
@@ -106,7 +97,6 @@ const LoginScreen = () => {
     })).unwrap().then(() => {
       navigate.navigate('MAIN');
     }).catch((e) => {
-      alert(JSON.stringify(e));
       setLoginFailure(true);
     });
   };

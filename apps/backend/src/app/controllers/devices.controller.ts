@@ -11,24 +11,24 @@ import {
   UseGuards,
   UsePipes
 } from "@nestjs/common";
-import {DevicesService} from "../services/devices.service";
-import {ApiBearerAuth, ApiOperation, ApiResponse} from "@nestjs/swagger";
-import {AuthGuard} from "../guards/auth.guard";
-import {AddDeviceRequest} from "@app/models";
-import {DevicesResponsePayload} from "../payload/response/devices.payload";
-import {DevicesRequestPayload} from "../payload/request/devices.payload";
-import {UpdateDeviceRequest} from '@app/models';
-import {DevicesValidation} from "../pipes/validation/devices.validation";
+import { DevicesService } from "../services/devices.service";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "../guards/auth.guard";
+import { AddDeviceRequest, UpdateDeviceRequest } from "@app/models";
+import { DevicesResponsePayload } from "../payload/response/devices.payload";
+import { DevicesRequestPayload } from "../payload/request/devices.payload";
+import { DevicesValidation } from "../pipes/validation/devices.validation";
 
-@Controller('v1/devices')
+@Controller("v1/devices")
 @ApiBearerAuth()
+@ApiTags("Devices")
 export class DevicesController {
 
   constructor(private readonly service: DevicesService) {
   }
 
   @ApiOperation({
-    description: 'Get all equipments'
+    description: "Get all equipments"
   })
   @ApiOperation({
     description: 'Create new library room with the provided payload'
@@ -44,20 +44,22 @@ export class DevicesController {
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated'
+    description: "Access token is invalidated"
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: 'Invalid role'
+    description: "Invalid role"
   })
-  @Post('add')
+  @Post("add")
   @HttpCode(HttpStatus.OK)
-  addRoom(@Body() room: AddDeviceRequest) {
+  @UseGuards(AuthGuard)
+  createNewDevice(@Body() room: AddDeviceRequest) {
     return this.service.add(room);
   }
 
   @Get("find/:id")
-  getDevicesById(@Param() id: string) {
+  @UseGuards(AuthGuard)
+  getDeviceById(@Param() id: string) {
     return this.service.findById(id);
   }
 
@@ -95,16 +97,19 @@ export class DevicesController {
   }
 
   @Put("update/:id")
+  @UseGuards(AuthGuard)
   updateRoomById(@Param() id: string, @Body() body: UpdateDeviceRequest) {
     return this.service.updateById(body, id);
   }
 
-  @Put('disable/:id')
+  @Put("disable/:id")
+  @UseGuards(AuthGuard)
   disableRoomById(@Param() payload: { id: string }) {
     return this.service.disableById(payload.id);
   }
 
   @Delete(":id")
+  @UseGuards(AuthGuard)
   deleteRoomById(@Param() payload: { id: string }) {
     return this.service.deleteById(payload.id);
   }

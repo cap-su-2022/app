@@ -1,34 +1,28 @@
-import React, {useEffect} from 'react';
-import {
-  createStyles,
-  TextInput,
-  PasswordInput,
-  Button, Text,
-} from '@mantine/core';
-import Image from 'next/image';
+import React, { useEffect } from "react";
+import { Button, createStyles, PasswordInput, TextInput } from "@mantine/core";
+import Image from "next/image";
 
-import {useFormik} from 'formik';
-import {dFlexCenter} from "../constants/css";
-import {useAppDispatch, useAppSelector} from "../redux/hooks";
-import {GetServerSideProps} from "next";
-import {doLogin} from "../redux/features/user/login.thunk";
-import dynamic from 'next/dynamic';
-import {SigninSchema} from "../validation/signin.schema";
-import {useRouter} from "next/router";
-import {doValidateAccessToken} from "../redux/features/user/validate-token.thunk";
-import {invalidateAuthUser} from "../redux/features/user/auth.slice";
-import {toggleSpinnerOff, toggleSpinnerOn} from "../redux/features/spinner";
+import { useFormik } from "formik";
+import { dFlexCenter } from "../constants/css";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { GetServerSideProps } from "next";
+import { doLogin } from "../redux/features/user/login.thunk";
+import dynamic from "next/dynamic";
+import { SigninSchema } from "../validation/signin.schema";
+import { useRouter } from "next/router";
+import { doValidateAccessToken } from "../redux/features/user/validate-token.thunk";
+import { invalidateAuthUser } from "../redux/features/user/auth.slice";
+import { toggleSpinnerOff, toggleSpinnerOn } from "../redux/features/spinner";
 import Divider from "../components/generic/divider";
-import {BLACK, FPT_ORANGE_COLOR, WHITE} from "@app/constants";
-import { initializeApp } from "firebase/app"
-import {getAuth, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';
-import {doLoginWithGoogle} from "../redux/features/user/google-login.thunk";
+import { BLACK, FPT_ORANGE_COLOR, WHITE } from "@app/constants";
+import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { doLoginWithGoogle } from "../redux/features/user/google-login.thunk";
 import Logo from "../components/logo";
-import {getCookie} from "../utils/cookie-extractor";
+import { getCookie } from "../utils/cookie-extractor";
 import axios from "axios";
-// import { signIn } from 'next-auth/client';
 
-const LoginFailedModal = dynamic(() => import('../components/login-fail.modal'));
+const LoginFailedModal = dynamic(() => import("../components/login-fail.modal"));
 
 const firebaseConfig = {
   apiKey: "AIzaSyBu0hVHThHGd5OQLxQWnNZLSgdLGiYsfZE",
@@ -54,7 +48,6 @@ function Login() {
   const authUser = useAppSelector((state) => state.auth.userLoginResponse);
 
   useEffect(() => {
-    console.log(authUser);
     if (authUser !== undefined || authUser?.access_token) {
       dispatch(doValidateAccessToken()).unwrap()
         .then(() => handleSuccessAuthentication())
@@ -81,26 +74,6 @@ function Login() {
       password: values.password,
     })).then(() => handleSuccessAuthentication());
   }
-
-  // const handleLoginSubmit = async (values) => {
-
-  //   const username = values.username;
-  //   const password = values.password;
-
-  //   const result = await signIn('credentials', {
-  //     redirect: false,
-  //     username,
-  //     password,
-  //   });
-
-  //   if (!result?.error) {
-  //     router.replace('/');
-  //     // setAuthError(result?.error);
-  //   } else {
-  //     // setAuthError(result?.error);
-  //   }
-  // };
-
 
   const handleGoogleSignin = () => {
     dispatch(toggleSpinnerOn());

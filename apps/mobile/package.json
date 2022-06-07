@@ -45,6 +45,8 @@
     "next-redux-wrapper": "*",
     "redux-logger": "*",
     "yup": "*",
-    "react-native-picker-select": "*"
+    "react-native-picker-select": "*",
+    "@mantine/dates": "*",
+    "react-native-reanimated": "*"
   }
 }

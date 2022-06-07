@@ -1,16 +1,19 @@
-import {Controller, Get, HttpStatus} from "@nestjs/common";
-import {UsersOTPService} from "../services/users-otp.service";
-import {UsersOTP} from "../models/users-otp.entity";
-import {ApiBearerAuth, ApiOperation, ApiResponse} from "@nestjs/swagger";
+import { Controller, Get, HttpStatus, UseGuards } from "@nestjs/common";
+import { UsersOTPService } from "../services/users-otp.service";
+import { UsersOTP } from "../models/users-otp.entity";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "../guards/auth.guard";
 
-@Controller('v1/users-otp')
+@Controller("v1/users-otp")
 @ApiBearerAuth()
+@ApiTags("Users OTP")
 export class UsersOTPController {
 
   constructor(private readonly service: UsersOTPService) {
   }
+
   @ApiOperation({
-    description: 'UsersOTP',
+    description: "UsersOTP"
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -25,6 +28,7 @@ export class UsersOTPController {
     description: 'Invalid role',
   })
   @Get()
+  @UseGuards(AuthGuard)
   getAll(): Promise<UsersOTP[]> {
     return this.service.getAllByPagination();
   }

@@ -1,15 +1,14 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import {createStyles, Text} from "@mantine/core";
-import {FPT_ORANGE_COLOR} from "@app/constants";
+import Image from "next/image";
+import { createStyles, Text } from "@mantine/core";
+import { FPT_ORANGE_COLOR } from "@app/constants";
 
 function FourOhFour() {
-  const {classes} = useStyles();
+  const { classes } = useStyles();
 
   return (
     <div className={classes.container}>
       <div className={classes.wrapper}>
-        <Image layout="fixed" width={400} height={400} src="/undraw/taken.svg" alt="Not found"/>
+        <Image layout="fixed" width={400} height={400} src="/undraw/taken.svg" alt="Not found" />
         <Text className={classes.text}>
           [404] The page you are trying to find doesn&apos;t exist!
         </Text>
@@ -37,8 +36,8 @@ const useStyles = createStyles({
     borderColor: `1px solid ${FPT_ORANGE_COLOR}`
   },
   text: {
-    fontWeight: '600',
-    fontSize: 30,
+    fontWeight: 600,
+    fontSize: 30
   }
 });
 
