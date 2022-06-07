@@ -14,6 +14,7 @@ import { PencilIcon, XIcon } from "react-native-heroicons/solid";
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from "@app/constants";
 import { deviceWidth } from "../utils/device";
 import { SaveIcon } from "react-native-heroicons/outline";
+import ChangePasswordScreen from "../screens/change-password.screen";
 
 const UserNavigator = () => {
 
@@ -45,6 +46,13 @@ const UserNavigator = () => {
           <XIcon color={BLACK}/>
         </TouchableOpacity>
       }} name="EditDetailProfile" component={EditDetailProfile}/>
+      <StackScreen options={{
+        headerShown: true,
+        headerTitle: 'Change Password',
+        headerLeft: () => <TouchableOpacity onPress={() => navigation.pop()}>
+          <XIcon color={BLACK}/>
+        </TouchableOpacity>
+      }} name="ChangePasswordProfile" component={ChangePasswordScreen}/>
       <StackScreen name="EditUserProfile"
                    options={{
                      headerShown: true,

@@ -6,6 +6,7 @@ import { roomBookingReducer } from "./features/room-booking/slice";
 import { makeStore } from "../../../../frontend/redux/store";
 import { deviceReducer } from "./features/devices/slice";
 import { authReducer } from "./features/auth/slice";
+import { accountReducer } from "./features/account/slice";
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     roomBooking: roomBookingReducer,
     device: deviceReducer,
     auth: authReducer,
+    account: accountReducer
   }
 });
 

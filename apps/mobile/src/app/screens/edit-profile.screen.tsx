@@ -65,7 +65,7 @@ const EditProfile = () => {
           </View>
         </ScrollView>
         <View style={styles.footerContainer}>
-          <TouchableOpacity style={styles.changePasswordButton}>
+          <TouchableOpacity style={styles.changePasswordButton} onPress={() => navigate.navigate('ChangePasswordProfile')}>
             <LockClosedIcon color={WHITE}/>
             <Text style={styles.changePasswordButtonText}>Change password</Text>
           </TouchableOpacity>

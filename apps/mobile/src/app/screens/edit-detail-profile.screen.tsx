@@ -1,4 +1,4 @@
-import React, { Ref, useEffect, useRef, useState } from "react";
+import React, { Ref, useEffect, useRef, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -6,33 +6,53 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
-} from "react-native";
-import Asterik from "../components/text/asterik";
-import { ErrorMessage, Formik, FormikProps, FormikProvider, useFormik } from "formik";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { updateProfile } from "../redux/userSlice";
+  View,
+} from 'react-native';
+import Asterik from '../components/text/asterik';
+import {
+  ErrorMessage,
+  Formik,
+  FormikProps,
+  FormikProvider,
+  useFormik,
+} from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { updateProfile } from '../redux/userSlice';
 
-import * as Yup from "yup";
+import * as Yup from 'yup';
 
 import {
   ArrowCircleLeftIcon,
   ClipboardCheckIcon,
-  DocumentIcon, MailIcon,
-  PencilIcon, PhoneIcon,
-  SaveIcon, UserIcon, ViewListIcon
-} from "react-native-heroicons/outline";
-import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE } from "@app/constants";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { deviceWidth } from "../utils/device";
-import DatePicker from "react-native-date-picker";
-import { convertDateToNormalizedDateString } from "../utils/date.util";
-import { AuthUser } from "../redux/models/auth-user.model";
-import { LOCAL_STORAGE } from "../utils/local-storage";
-import { IdentificationIcon } from "react-native-heroicons/outline";
-import Divider from "../components/text/divider";
+  DocumentIcon,
+  MailIcon,
+  PencilIcon,
+  PhoneIcon,
+  SaveIcon,
+  UserIcon,
+  ViewListIcon,
+} from 'react-native-heroicons/outline';
+import {
+  BLACK,
+  FPT_ORANGE_COLOR,
+  GRAY,
+  LIGHT_GRAY,
+  WHITE,
+} from '@app/constants';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { deviceWidth } from '../utils/device';
+import DatePicker from 'react-native-date-picker';
+import { convertDateToNormalizedDateString } from '../utils/date.util';
+import { AuthUser } from '../redux/models/auth-user.model';
+import { LOCAL_STORAGE } from '../utils/local-storage';
+import { IdentificationIcon } from 'react-native-heroicons/outline';
+import Divider from '../components/text/divider';
+import axios from 'axios';
+import { API_URL } from '../constants/constant';
+import { doUpdateProfile } from '../redux/features/account/thunk/update.thunk';
+import { useAppDispatch } from '../redux/hooks';
 
 interface EditDetailProfileProps {
   formikRef: Ref<FormikProps<any>>;
@@ -42,31 +62,38 @@ const EditDetailProfile = (props: EditDetailProfileProps) => {
   const scrollViewRef = useRef<null | ScrollView>(null);
 
   const userState = useSelector((state: RootState) => state.user);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
 
-  const [authUser, setAuthUser] = useState<AuthUser>(JSON.parse(LOCAL_STORAGE.getString("user")));
+  const [authUser, setAuthUser] = useState<AuthUser>(
+    JSON.parse(LOCAL_STORAGE.getString('user'))
+  );
 
-
-  const [birthdate, setBirthdate] = useState(new Date("01/01/2000"));
-  const [isBirthdatePickerShown, setBirthdatePickerShown] = useState<boolean>(false);
+  const [birthdate, setBirthdate] = useState(new Date('01/01/2000'));
+  const [isBirthdatePickerShown, setBirthdatePickerShown] =
+    useState<boolean>(false);
 
   useEffect(() => {
     console.log(birthdate);
     console.log(new Date());
     if (birthdate.getTime() >= new Date().getTime()) {
-      alert("con cac");
+      alert('con cac');
     }
   }, [birthdate]);
 
-  const handleUserProfileUpdate = (values) => {
+  const handleUserProfileUpdate = async (values) => {
     dispatch(
-      updateProfile({
+      doUpdateProfile({
         fullname: values.fullname,
         phone: values.phone,
-        studentCode: values.studentCode
+        email: values.email,
       })
-    );
+    )
+      .unwrap()
+      .then(() => navigate.pop())
+      .catch((e) => {
+        alert(e.message);
+      });
   };
 
   const initialValues = {
@@ -74,13 +101,19 @@ const EditDetailProfile = (props: EditDetailProfileProps) => {
     username: authUser.username,
     fullname: authUser.fullname,
     phone: authUser.phone,
-    email: authUser.email
+    email: authUser.email,
   };
 
   const UpdateSchema = Yup.object().shape({
-    email: Yup.string().email("Invalid email").required("Required"),
-    username: Yup.string().min(5, "Too short!").max(50, "Too long!").required("Required"),
-    phone: Yup.string().min(10, "Invalid Phone Number").max(50, "Too long!").required("Required")
+    email: Yup.string().email('Invalid email').required('Required'),
+    fullname: Yup.string()
+      .min(5, 'Too short!')
+      .max(50, 'Too long!')
+      .required('Required'),
+    phone: Yup.string()
+      .min(10, 'Invalid Phone Number')
+      .max(50, 'Too long!')
+      .required('Required'),
   });
 
   const handleSetBirthdate = (date) => {
@@ -91,27 +124,31 @@ const EditDetailProfile = (props: EditDetailProfileProps) => {
     initialValues: initialValues,
     onSubmit: (values) => handleUserProfileUpdate(values),
     enableReinitialize: true,
-    validationSchema: UpdateSchema
+    validationSchema: UpdateSchema,
   });
 
   const UserProfileInput = () => {
+    // @ts-ignore
+    // @ts-ignore
     return (
-      <ScrollView
-        style={styles.scrollView}
-      >
+      <ScrollView style={styles.scrollView}>
         <FormikProvider value={formik}>
           <View>
-            <View style={{
-              display: "flex",
-              backgroundColor: WHITE,
-              marginTop: 10,
-              height: 410,
-              justifyContent: "center"
-            }}>
-              <View style={{
-                marginLeft: 10,
-                width: deviceWidth / 1.1
-              }}>
+            <View
+              style={{
+                display: 'flex',
+                backgroundColor: WHITE,
+                marginTop: 10,
+                height: 410,
+                justifyContent: 'center',
+              }}
+            >
+              <View
+                style={{
+                  marginLeft: 10,
+                  width: deviceWidth / 1.1,
+                }}
+              >
                 <Text style={[styles.textInputHeader]}>Id</Text>
                 <View style={styles.textInput}>
                   <View style={styles.iconContainer}>
@@ -125,10 +162,12 @@ const EditDetailProfile = (props: EditDetailProfileProps) => {
                 </View>
               </View>
 
-              <View style={{
-                marginLeft: 10,
-                width: deviceWidth / 1.1
-              }}>
+              <View
+                style={{
+                  marginLeft: 10,
+                  width: deviceWidth / 1.1,
+                }}
+              >
                 <Text style={[styles.textInputHeader]}>Username</Text>
                 <View style={styles.textInput}>
                   <View style={styles.iconContainer}>
@@ -143,40 +182,53 @@ const EditDetailProfile = (props: EditDetailProfileProps) => {
                 </View>
               </View>
 
-              <View style={{
-                marginLeft: 10,
-                width: deviceWidth / 1.1
-              }}>
+              <View
+                style={{
+                  marginLeft: 10,
+                  width: deviceWidth / 1.1,
+                }}
+              >
                 <Text style={[styles.textInputHeader]}>
                   Full name
                   <Asterik />
                 </Text>
-
               </View>
-              <View style={{
-                marginLeft: 10,
-                width: deviceWidth / 1.1
-              }}>
+              <View
+                style={{
+                  marginLeft: 10,
+                  width: deviceWidth / 1.1,
+                }}
+              >
                 <View style={styles.textInput}>
                   <View style={styles.iconContainer}>
                     <ViewListIcon color={BLACK} />
                   </View>
                   <TextInput
-                    onChange={() => formik.handleChange("fullname")}
+                    onChange={() => formik.handleChange('fullname')}
                     value={formik.values.fullname}
-                    placeholder={"Please enter your fullname"}
-                    onBlur={formik.handleBlur("fullname")}
-                    onChangeText={formik.handleChange("fullname")}
+                    placeholder={'Please enter your fullname'}
+                    onBlur={formik.handleBlur('fullname')}
+                    onChangeText={formik.handleChange('fullname')}
                     autoCapitalize="none"
                     autoCorrect={false}
+                    // @ts-ignore
+                    error={formik.errors.fullname}
+                    touched={formik.touched.fullname}
                   />
                 </View>
+                {formik.errors.fullname && formik.touched.fullname ? (
+                  <Text style={{ color: '#DC143C', fontWeight: '600' }}>
+                    {formik.errors.fullname}
+                  </Text>
+                ) : null}
               </View>
 
-              <View style={{
-                marginLeft: 10,
-                width: deviceWidth / 1.1
-              }}>
+              <View
+                style={{
+                  marginLeft: 10,
+                  width: deviceWidth / 1.1,
+                }}
+              >
                 <Text style={[styles.textInputHeader]}>
                   Phone number
                   <Asterik />
@@ -186,28 +238,32 @@ const EditDetailProfile = (props: EditDetailProfileProps) => {
                     <PhoneIcon color={BLACK} />
                   </View>
                   <TextInput
-                    onChange={() => formik.handleChange("phone")}
-                    keyboardType={"phone-pad"}
+                    onChange={() => formik.handleChange('phone')}
+                    keyboardType={'phone-pad'}
                     value={formik.values.phone}
-                    placeholder={"Please enter your phone number"}
-                    onBlur={formik.handleBlur("phone")}
+                    placeholder={'Please enter your phone number'}
+                    onBlur={formik.handleBlur('phone')}
                     autoCapitalize="none"
                     autoCorrect={false}
-                    onChangeText={formik.handleChange("phone")}
+                    onChangeText={formik.handleChange('phone')}
                     // @ts-ignore
                     error={formik.errors.phone}
                     touched={formik.touched.phone}
                   />
-                  {formik.errors.phone && formik.touched.phone ? (
-                    <Text style={{ color: "#DC143C", fontWeight: "600" }}>{formik.errors.phone}</Text>
-                  ) : null}
                 </View>
+                {formik.errors.phone && formik.touched.phone ? (
+                  <Text style={{ color: '#DC143C', fontWeight: '600' }}>
+                    {formik.errors.phone}
+                  </Text>
+                ) : null}
               </View>
 
-              <View style={{
-                marginLeft: 10,
-                width: deviceWidth / 1.1
-              }}>
+              <View
+                style={{
+                  marginLeft: 10,
+                  width: deviceWidth / 1.1,
+                }}
+              >
                 <Text style={[styles.textInputHeader]}>
                   Email
                   <Asterik />
@@ -217,21 +273,23 @@ const EditDetailProfile = (props: EditDetailProfileProps) => {
                     <MailIcon color={BLACK} />
                   </View>
                   <TextInput
-                    keyboardType={"email-address"}
-                    placeholder={"Please enter your email"}
-                    onBlur={formik.handleBlur("email")}
+                    keyboardType={'email-address'}
+                    placeholder={'Please enter your email'}
+                    onBlur={formik.handleBlur('email')}
                     autoCapitalize="none"
                     autoCorrect={false}
-                    onChangeText={formik.handleChange("email")}
+                    onChangeText={formik.handleChange('email')}
                     value={formik.values.email}
                     // @ts-ignore
                     error={formik.errors.email}
                     touched={formik.touched.email}
                   />
-                  {formik.errors.email && formik.touched.email ? (
-                    <Text style={{ color: "#DC143C", fontWeight: "600" }}>{formik.errors.email}</Text>
-                  ) : null}
                 </View>
+                {formik.errors.email && formik.touched.email ? (
+                  <Text style={{ color: '#DC143C', fontWeight: '600' }}>
+                    {formik.errors.email}
+                  </Text>
+                ) : null}
               </View>
             </View>
           </View>
@@ -246,7 +304,10 @@ const EditDetailProfile = (props: EditDetailProfileProps) => {
         <UserProfileInput />
 
         <View style={styles.footerContainer}>
-          <TouchableOpacity style={styles.updateProfileButton} onPress={() => null}>
+          <TouchableOpacity
+            style={styles.updateProfileButton}
+            onPress={() => formik.handleSubmit()}
+          >
             <PencilIcon color={WHITE} />
             <Text style={styles.updateProfileButtonText}>Update profile</Text>
           </TouchableOpacity>
@@ -262,79 +323,79 @@ export const styles = StyleSheet.create({
   iconContainer: {
     height: 50,
     width: 50,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textInput: {
     borderRadius: 50,
     height: 50,
     borderWidth: 1,
-    borderColor: "rgb(206, 212, 218)",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center"
+    borderColor: 'rgb(206, 212, 218)',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   container: {
-    display: "flex",
-    justifyContent: "space-between",
-    flexGrow: 1
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexGrow: 1,
   },
   scrollView: {},
   shadowBox: {
-    backgroundColor: "white",
-    shadowColor: "black",
+    backgroundColor: 'white',
+    shadowColor: 'black',
     shadowOpacity: 0.15,
     shadowOffset: {
       width: 1,
-      height: 4
+      height: 4,
     },
     shadowRadius: 12,
     padding: 24,
-    marginBottom: 24
+    marginBottom: 24,
   },
   header: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     margin: 10,
     borderRadius: 5,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
   },
   myHeader: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
   textInputHeader: {
     marginLeft: 10,
     fontSize: deviceWidth / 23,
-    fontWeight: "600"
+    fontWeight: '600',
   },
   footerContainer: {
     backgroundColor: WHITE,
     height: 70,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   updateProfileButton: {
     width: deviceWidth / 1.25,
     height: 50,
     backgroundColor: FPT_ORANGE_COLOR,
     borderRadius: 8,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
   },
   updateProfileButtonText: {
     color: WHITE,
     fontSize: deviceWidth / 20,
-    fontWeight: "600",
-    marginLeft: 10
-  }
+    fontWeight: '600',
+    marginLeft: 10,
+  },
 });
