@@ -42,9 +42,10 @@ export const Environment = {
       secret: 'keycloak.client.secret',
     },
     grant_type: {
-      password: 'keycloak.grant_type.password',
-      token_exchange: 'keycloak.grant_type.token_exchange',
-      refresh_token: 'keycloak.grant_type.refresh_token',
+      password: "keycloak.grant_type.password",
+      token_exchange: "keycloak.grant_type.token_exchange",
+      refresh_token: "keycloak.grant_type.refresh_token",
+      native_refresh_token: "keycloak.grant_type.native_refresh_token"
     },
     master_username: 'keycloak.master_username',
     master_password: 'keycloak.master_password'
@@ -60,12 +61,18 @@ export const Environment = {
     port: 'elasticsearch.port',
   },
   firebase: {
-    apiKey: 'firebase.apiKey',
-    authDomain: 'firebase.authDomain',
-    projectId: 'firebase.projectId',
-    storageBucket: 'firebase.storageBucket',
-    messagingSenderId: 'firebase.messagingSenderId',
-    appId: 'firebase.appId',
-    measurementId: 'firebase.measurementId',
+    apiKey: "firebase.apiKey",
+    authDomain: "firebase.authDomain",
+    projectId: "firebase.projectId",
+    storageBucket: "firebase.storageBucket",
+    messagingSenderId: "firebase.messagingSenderId",
+    appId: "firebase.appId",
+    measurementId: "firebase.measurementId"
   },
+  cloudinary: {
+    name: "cloudinary.name",
+    apiKey: "cloudinary.apiKey",
+    apiSecret: "cloudinary.apiSecret",
+    secure: "cloudinary.secure"
+  }
 };

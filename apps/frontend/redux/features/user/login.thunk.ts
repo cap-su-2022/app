@@ -14,7 +14,7 @@ export const doLogin = createAsyncThunk<
   const dispatch = thunkApi.dispatch;
   dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.post(API_URL.user.login, {
+    const response = await axios.post("/api/v1/login", {
       username: credentials.username,
       password: credentials.password,
     });

@@ -1,9 +1,11 @@
-import { Controller, Get, UseGuards } from "@nestjs/common";
+import { Controller, Get, UseGuards, UseInterceptors } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "../guards/auth.guard";
+import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 
 @Controller("/v1/health")
 @ApiTags("Health Check")
+@UseInterceptors(new PathLoggerInterceptor(HealthCheckController.name))
 export class HealthCheckController {
 
 

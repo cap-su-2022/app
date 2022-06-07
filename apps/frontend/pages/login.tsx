@@ -71,8 +71,10 @@ function Login() {
   const handleLoginSubmit = async (values) => {
     dispatch(doLogin({
       username: values.username,
-      password: values.password,
-    })).then(() => handleSuccessAuthentication());
+      password: values.password
+    })).unwrap()
+      .then(() => handleSuccessAuthentication())
+      .catch((e) => null);
   }
 
   const handleGoogleSignin = () => {

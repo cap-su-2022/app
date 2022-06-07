@@ -1,24 +1,27 @@
-import {Module} from "@nestjs/common";
-import {KeycloakService} from "../services/keycloak.service";
-import {KeycloakController} from "../controllers/keycloak.controller";
-import {HttpModule} from "@nestjs/axios";
-import {TypeOrmModule} from "@nestjs/typeorm";
-import {ConfigService} from "@nestjs/config";
-import {AccountRepository} from "../repositories/account.repository.";
+import { Module } from "@nestjs/common";
+import { KeycloakService } from "../services/keycloak.service";
+import { KeycloakController } from "../controllers/keycloak.controller";
+import { HttpModule } from "@nestjs/axios";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { AccountRepository } from "../repositories/account.repository.";
 import ConfigModule from "./global/config.module";
-import {AuthenticationService} from "../services/authentication.service";
-import {AccountsService} from "../services/accounts.service";
+import { AuthenticationService } from "../services/authentication.service";
+import { CloudinaryService } from "../services/cloudinary.service";
+import { AccountsModule } from "./accounts.module";
 
 @Module({
   imports: [HttpModule,
     TypeOrmModule.forFeature([
-      AccountRepository,
+      AccountRepository
     ]),
     ConfigModule,
-
+    AccountsModule
   ],
   controllers: [KeycloakController],
-  providers: [KeycloakService, ConfigService, AuthenticationService, AccountsService,
+  providers: [
+    KeycloakService,
+    AuthenticationService,
+    CloudinaryService
   ],
   exports: [KeycloakService]
 })

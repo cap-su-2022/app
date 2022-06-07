@@ -6,8 +6,10 @@ import { AccountRepository } from "../repositories/account.repository.";
 import { KeycloakService } from "./keycloak.service";
 import { UsersRequestPayload } from "../payload/request/users.payload";
 import { RoomsResponsePayload } from "../payload/response/rooms.payload";
-import { Devices } from "../models/devices";
 import { Express } from "express";
+import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
+import { CloudinaryService } from "./cloudinary.service";
+
 
 type File = Express.Multer.File;
 
@@ -16,6 +18,7 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
   private readonly logger = new Logger(AccountsService.name);
 
   constructor(
+    private readonly cloudinaryService: CloudinaryService,
     private readonly keycloakService: KeycloakService,
     private readonly repository: AccountRepository
   ) {
@@ -26,9 +29,7 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     return null;
   }
 
-  getUserIdByKeycloakId(keycloakId: string): Promise<{
-    accountId: string
-  }> {
+  getUserIdByKeycloakId(keycloakId: string): Promise<string> {
     return this.repository.findIdByKeycloakId(keycloakId);
   }
 
@@ -36,8 +37,16 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     return this.repository.findByKeycloakId(keycloakId);
   }
 
-  add(model: UsersDTO): Promise<Accounts> {
-    return Promise.resolve(undefined);
+  async add(model: UsersDTO): Promise<Accounts> {
+    try {
+      const entity: Partial<Accounts> = {
+        ...model
+      };
+      return this.repository.save(entity);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while adding new account");
+    }
   }
 
   addAll(models: UsersDTO[]): Promise<Accounts[]> {
@@ -79,98 +88,88 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     };
   }
 
-  async updateById(body: UpdateDeviceRequest, id: string): Promise<Devices> {
-    let device;
+  async updateById(body: UpdateDeviceRequest, id: string): Promise<Accounts> {
 
     try {
-      device = await this.repository.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
+      const account = await this.repository.findById(id);
+      return await this.repository.updatePartially(body, account);
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('Account does not exist');
+      throw new BadRequestException("Account does not exist");
     }
 
-    return this.repository.save(
-      {
-        ...device,
-        ...body,
-      },
-      {
-        transaction: true,
-      }
-    );
   }
 
-  getById(id: string): Promise<Accounts> {
+  async getById(id: string): Promise<Accounts> {
     try {
-      return this.repository.findOneOrFail({
-        where: {
-          id: id
-        }
-      });
+      return await this.repository.findById(id);
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('Account does not exist');
+      throw new BadRequestException("Account does not exist");
     }
   }
 
-  disableById(id: string) {
-    return this.repository
-      .createQueryBuilder('devices')
-      .update({
-        isDisabled: true,
-      })
-      .where('accounts.id = :id', {id: id})
-      .useTransaction(true)
-      .execute();
+  async disableById(id: string): Promise<void> {
+    try {
+      await this.repository.disableAccountById(id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while disabling account");
+    }
   }
 
-  handleRestoreDisabledAccountById(id: string) {
-    return this.repository
-      .createQueryBuilder('accounts')
-      .update({
-        isDisabled: false,
-      })
-      .where('accounts.id = :id', {id: id})
-      .useTransaction(true)
-      .execute();
+  async handleRestoreDisabledAccountById(id: string) {
+    try {
+      return await this.repository.restoreDisabledAccountById(id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while restoring disabled account");
+    }
   }
 
-  handleRestoreAccountById(id: string) {
-    return this.repository
-      .createQueryBuilder('accounts')
-      .update({
-        isDeleted: false,
-      })
-      .where('accounts.id = :id', {id: id})
-      .useTransaction(true)
-      .execute();
+  async handleRestoreAccountById(id: string): Promise<void> {
+    try {
+
+      await this.repository.restoreAccountById(id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while getting deleted accounts");
+    }
   }
 
-  getDeletedAccounts() {
-    return this.repository
-      .createQueryBuilder('accounts')
-      .where('accounts.is_deleted = true')
-      .getMany();
+  async getDeletedAccounts(): Promise<Accounts[]> {
+    try {
+      return await this.repository.findDeletedAccounts();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while getting deleted accounts");
+    }
   }
 
-  getDisabledAccounts() {
-    return this.repository
-      .createQueryBuilder("accounts")
-      .where("accounts.is_disabled = true")
-      .andWhere("accounts.is_deleted = false")
-      .getMany();
+  async getDisabledAccounts(): Promise<Accounts[]> {
+    try {
+      return await this.repository.findDisabledAccounts();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while getting disabled accounts");
+    }
   }
 
   syncUsersFromKeycloak(): Promise<any> {
     return Promise.resolve();
+
   }
 
-  uploadAvatarByAccountId(image: File, id: string) {
-    console.log(image);
+  async uploadAvatarByAccountId(image: File, id: string): Promise<void> {
+    try {
+      await this.repository.findById(id);
+      await this.cloudinaryService.uploadImageAndGetURL(image.buffer, id);
+      const url = await this.cloudinaryService.getImageURLByFileName(id);
+      await this.repository.addAvatarURLById(url, id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while uploading avatar");
+    }
   }
 
   getAccountByKeycloakId(id: string) {
@@ -184,7 +183,46 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     });
   }
 
-  changePassword(password: string) {
+  async changePassword(keycloakUser: KeycloakUserInfoDTO, password: string): Promise<void> {
+    try {
+      await this.keycloakService.changePasswordByKeycloakId(keycloakUser.sub, password);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException("Error while changing account password");
+    }
+  }
 
+  async updateMyProfile(keycloakUser: KeycloakUserInfoDTO,
+                        payload: { fullname: string; phone: string; description: string }):
+    Promise<Accounts> {
+    try {
+      const user = await this.repository.findByKeycloakId(keycloakUser.sub);
+      if (!user) {
+        throw new BadRequestException("Account does not exist with the provided id");
+      }
+
+      return await this.repository.save({
+        ...user,
+        ...payload
+      });
+
+    } catch (e) {
+      throw new BadRequestException("Error while update your profile.");
+    }
+  }
+
+  async changePasswordByKeycloakId(id: string, password: string) {
+    try {
+      const keycloakId = await this.repository.findKeycloakIdByAccountId(id);
+      await this.keycloakService.changePasswordByKeycloakId(keycloakId, password);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while changing password by keycloak id");
+    }
+
+  }
+
+  async getAvatarURLByKeycloakId(keycloakId: string): Promise<string> {
+    return await this.repository.findAvatarURLById(keycloakId);
   }
 }

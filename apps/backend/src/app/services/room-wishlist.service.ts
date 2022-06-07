@@ -21,7 +21,7 @@ export class RoomWishlistService {
     if (isWishlistExisted) {
       throw new BadRequestException("This room wishlist is already existed!");
     }
-    const { accountId } = await this.accountService.getUserIdByKeycloakId(keycloakUserId);
+    const accountId = await this.accountService.getUserIdByKeycloakId(keycloakUserId);
 
     const entity: Partial<RoomWishlist> = {
       createdBy: accountId,
