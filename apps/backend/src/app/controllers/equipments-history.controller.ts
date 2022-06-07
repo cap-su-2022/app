@@ -1,11 +1,13 @@
-import { Controller, Get, HttpStatus, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpStatus, UseGuards, UseInterceptors } from "@nestjs/common";
 import { EquipmentsHistoryService } from "../services/equipments-history.service";
 import { EquipmentsHistory } from "../models/equipments.hist.entity";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { AuthGuard } from "../guards/auth.guard";
+import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 
 @Controller("/v1/equipments-history")
 @ApiBearerAuth()
+@UseInterceptors(new PathLoggerInterceptor(EquipmentsHistory.name))
 export class EquipmentsHistoryController {
 
   constructor(private readonly service: EquipmentsHistoryService) {

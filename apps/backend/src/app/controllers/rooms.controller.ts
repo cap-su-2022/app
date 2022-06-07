@@ -8,7 +8,7 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
+  UseGuards, UseInterceptors,
   UsePipes
 } from "@nestjs/common";
 import { RoomsService } from "../services/rooms.service";
@@ -20,10 +20,12 @@ import { RoomsValidation } from "../pipes/validation/rooms.validation";
 import { AuthGuard } from "../guards/auth.guard";
 import { Rooms } from "../models/rooms.entity";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 
 @Controller("/v1/rooms")
 @ApiBearerAuth()
 @ApiTags("Rooms")
+@UseInterceptors(new PathLoggerInterceptor(RoomsController.name))
 export class RoomsController {
   constructor(private readonly service: RoomsService) {
   }

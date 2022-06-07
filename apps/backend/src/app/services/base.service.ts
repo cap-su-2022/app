@@ -1,4 +1,3 @@
-import {PaginationPayload} from "../payload/request/pagination.payload";
 
 export abstract class BaseService<M, E, ID> {
   abstract getAll(): Promise<E[]>;

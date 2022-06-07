@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, UseGuards, UseInterceptors } from "@nestjs/common";
 import { BookingRoomService } from "../services/booking-room.service";
 import { BookingRoomResponseDTO } from "../dto/booking-room.response.dto";
 import { WishlistBookingRoomResponseDTO } from "../dto/wishlist-booking-room.response.dto";
@@ -7,9 +7,11 @@ import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
 import { WishlistBookingRoomRequestDTO } from "../dto/wishlist-booking-room.request.dto";
 import { AuthGuard } from "../guards/auth.guard";
 import { ApiTags } from "@nestjs/swagger";
+import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 
 @Controller("/v1/booking-room")
 @ApiTags("Booking Room")
+@UseInterceptors(new PathLoggerInterceptor(BookingRoomController.name))
 export class BookingRoomController {
 
   constructor(private readonly service: BookingRoomService) {

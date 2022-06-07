@@ -9,7 +9,7 @@ import {
   Post,
   Put,
   Request,
-  Res
+  Res, UseInterceptors
 } from "@nestjs/common";
 import { KeycloakService } from "../services/keycloak.service";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
@@ -18,7 +18,8 @@ import {AUTHORIZATION_LOWERCASE} from "../constants/network/headers.constant";
 import {Response} from "express";
 import {AuthenticationService} from "../services/authentication.service";
 import {KeycloakUser, UsernamePasswordLoginResponse} from "@app/models";
-import {Roles} from "../enum/roles.enum";
+import { Roles } from "../enum/roles.enum";
+import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 
 export class AuthenticationRequest {
   @ApiProperty({
@@ -30,6 +31,7 @@ export class AuthenticationRequest {
 @ApiBearerAuth()
 @Controller(KEYCLOAK_PATH.requestPath)
 @ApiTags("Authentication")
+@UseInterceptors(new PathLoggerInterceptor(KeycloakController.name))
 export class KeycloakController {
 
   constructor(private readonly service: KeycloakService,

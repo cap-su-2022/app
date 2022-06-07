@@ -20,8 +20,8 @@ function CustomApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (router.route === '/login') {
-        axios.get('/api/health/auth').catch(({response}) => {
+      if (router.route !== "/login") {
+        axios.get("/api/health/auth").catch(({ response }) => {
           if (response.status === 500) {
             dispatch(setSystemErrorMessage("Internal Server Error"));
             setSystemErrorModalShown(true);

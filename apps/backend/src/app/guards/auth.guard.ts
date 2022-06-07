@@ -1,7 +1,15 @@
-import {CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, Logger} from "@nestjs/common";
-import {KeycloakService} from "../services/keycloak.service";
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger,
+  UseInterceptors
+} from "@nestjs/common";
+import { KeycloakService } from "../services/keycloak.service";
+import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 
 @Injectable()
+@UseInterceptors(new PathLoggerInterceptor(AuthGuard.name))
 export class AuthGuard implements CanActivate {
 
   private static LOGGER = new Logger(AuthGuard.name);

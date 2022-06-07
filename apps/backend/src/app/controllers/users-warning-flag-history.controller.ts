@@ -1,11 +1,14 @@
-import { Controller, Get, HttpStatus, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpStatus, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UsersWarningFlagHistoryService } from "../services/users-warning-flag-hist.service";
 import { UsersWarningFlagHistory } from "../models/users-warning-flag.hist.entity";
-import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "../guards/auth.guard";
+import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 
 @Controller("v1/users-warning-flag-history")
 @ApiBearerAuth()
+@UseInterceptors(new PathLoggerInterceptor(UsersWarningFlagHistoryController.name))
+@ApiTags("Users Warning Flag History")
 export class UsersWarningFlagHistoryController {
 
   constructor(private readonly service: UsersWarningFlagHistoryService) {

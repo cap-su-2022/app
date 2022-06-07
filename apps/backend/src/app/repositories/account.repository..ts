@@ -78,14 +78,21 @@ export class AccountRepository extends Repository<Accounts> {
       .orWhere(`accounts.description = :description`, {description: `%${payload.search}%`})
       .skip(payload.offset)
       .take(payload.limit)
-      .addOrderBy('id', payload.direction === 'ASC' ? 'ASC' : 'DESC')
+      .addOrderBy("id", payload.direction === "ASC" ? "ASC" : "DESC")
       .getMany();
   }
 
   findIdByKeycloakId(keycloakId: string) {
     return this.createQueryBuilder("accounts")
       .select("accounts.id", "accountId")
-      .where("accounts.keycloak_id = :keycloakId", {keycloakId: keycloakId})
-      .getRawOne<{accountId: string}>();
+      .where("accounts.keycloak_id = :keycloakId", { keycloakId: keycloakId })
+      .getRawOne<{ accountId: string }>();
+  }
+
+  findKeycloakIdByAccountId(id: string): Promise<string> {
+    return this.createQueryBuilder("accounts")
+      .select("accounts.keycloak_id as keycloak_id")
+      .where("accounts.id = :id", { id: id })
+      .getRawOne().then((data) => data ? data["keycloak_id"] : null);
   }
 }

@@ -23,6 +23,9 @@ import { AddDeviceRequest, UpdateDeviceRequest } from "@app/models";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Express } from "express";
 import { Multer } from "multer";
+import { User } from "../decorators/keycloak-user.decorator";
+import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
+import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 
 type File = Express.Multer.File;
 
@@ -30,6 +33,7 @@ type File = Express.Multer.File;
 @Controller("v1/accounts")
 @ApiBearerAuth()
 @ApiTags("Accounts")
+@UseInterceptors(new PathLoggerInterceptor(AccountsController.name))
 export class AccountsController {
   constructor(private readonly service: AccountsService) {
   }
@@ -117,10 +121,24 @@ export class AccountsController {
     return this.service.handleRestoreDisabledAccountById(payload.id);
   }
 
-  @Put("update/:id")
+  @Put("update/id/:id")
   @UseGuards(AuthGuard)
-  updateAccountById(@Param() id: string, @Body() body: UpdateDeviceRequest) {
+  updateAccountById(@Param() id: string, @Body() body: {
+    phone: string;
+    fullname: string;
+    description: string;
+  }) {
     return this.service.updateById(body, id);
+  }
+
+  @Put("update-profile")
+  @UseGuards(AuthGuard)
+  updateMyProfile(@User() user: KeycloakUserInfoDTO, @Body() payload: {
+    fullname: string,
+    phone: string,
+    description: string
+  }) {
+    return this.service.updateMyProfile(user, payload);
   }
 
   @Put("disable/:id")
@@ -144,7 +162,13 @@ export class AccountsController {
 
   @Put("update/change-password")
   @UseGuards(AuthGuard)
-  changePassword(@Body() payload: { password: string }) {
-    return this.service.changePassword(payload.password);
+  changePassword(@User() keycloakUser: KeycloakUserInfoDTO, @Body() payload: { password: string }) {
+    return this.service.changePassword(keycloakUser, payload.password);
+  }
+
+  @Put("update/change-password/:id")
+  @UseGuards(AuthGuard)
+  changePasswordByKeycloakId(@Param() payload: { id: string }, @Body() requestPayload: { password: string }) {
+    return this.service.changePasswordByKeycloakId(payload.id, requestPayload.password);
   }
 }

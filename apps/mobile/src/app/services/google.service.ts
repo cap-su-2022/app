@@ -30,10 +30,7 @@ const handleAPIPostRequestCall = async (url: string, body: object, mediaType = "
 export const handleGoogleSignin = async () => {
   await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true}); // <-- Add this
   const {idToken} = await GoogleSignin.signIn();
-  console.log(idToken);
   const response = await handleAPIPostRequestCall(`http://172.16.4.119:5000/api/v1/auth/signin/google`, {token: idToken});
-  console.log(response);
   return response;
-  //const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-  //return auth().signInWithCredential(googleCredential);
+
 };

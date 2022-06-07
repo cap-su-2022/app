@@ -8,6 +8,7 @@ import { UsersRequestPayload } from "../payload/request/users.payload";
 import { RoomsResponsePayload } from "../payload/response/rooms.payload";
 import { Devices } from "../models/devices";
 import { Express } from "express";
+import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
 
 type File = Express.Multer.File;
 
@@ -184,7 +185,41 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     });
   }
 
-  changePassword(password: string) {
+  async changePassword(keycloakUser: KeycloakUserInfoDTO, password: string): Promise<void> {
+    try {
+      await this.keycloakService.changePasswordByKeycloakId(keycloakUser.sub, password);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException("Error while changing account password");
+    }
+  }
+
+  async updateMyProfile(keycloakUser: KeycloakUserInfoDTO,
+                        payload: { fullname: string; phone: string; description: string }):
+    Promise<Accounts> {
+    try {
+      const user = await this.repository.findByKeycloakId(keycloakUser.sub);
+      if (!user) {
+        throw new BadRequestException("Account does not exist with the provided id");
+      }
+      return await this.repository.save({
+        ...payload,
+        ...user
+      });
+
+    } catch (e) {
+      throw new BadRequestException("Error while update your profile.");
+    }
+  }
+
+  async changePasswordByKeycloakId(id: string, password: string) {
+    try {
+      const keycloakId = await this.repository.findKeycloakIdByAccountId(id);
+      await this.keycloakService.changePasswordByKeycloakId(keycloakId, password);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while changing password by keycloak id");
+    }
 
   }
 }

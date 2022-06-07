@@ -10,11 +10,11 @@ export const doLogin = createAsyncThunk<UserLoginSuccessModel, UserCredentials, 
   const dispatch = thunkApi.dispatch;
   dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.post(API_URL.user.login, {
+    const response = await axios.post("/api/v1/login", {
       username: credentials.username,
       password: credentials.password
     });
-    const data =  await response.data;
+    const data = await response.data;
     window.localStorage.setItem('user', JSON.stringify(data));
     return data;
   } catch (e) {

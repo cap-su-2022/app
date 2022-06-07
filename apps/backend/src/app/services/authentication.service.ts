@@ -26,7 +26,6 @@ export class AuthenticationService {
 
   async handleGoogleSignin(idToken: string): Promise<UsernamePasswordLoginResponse> {
     const client = new OAuth2Client(this.oAuthClientId);
-    console.log(idToken);
     try {
       const decodedToken = await client.verifyIdToken({
         idToken: idToken,
