@@ -2,8 +2,9 @@ import { Controller, Get, HttpStatus, UseGuards, UseInterceptors } from "@nestjs
 import { EquipmentsHistoryService } from "../services/equipments-history.service";
 import { EquipmentsHistory } from "../models/equipments.hist.entity";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { AuthGuard } from "../guards/auth.guard";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
+import { Roles } from "../decorators/role.decorator";
+import { Role } from "../enum/roles.enum";
 
 @Controller("/v1/equipments-history")
 @ApiBearerAuth()
@@ -31,7 +32,7 @@ export class EquipmentsHistoryController {
   })
 
   @Get()
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getAll(): Promise<EquipmentsHistory[]> {
     return this.service.getAllByPagination();
   }

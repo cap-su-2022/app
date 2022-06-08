@@ -103,10 +103,10 @@ export class Accounts extends BaseEntity {
 
   @Column({
     name: "role",
-    type: 'varchar',
-    length: '100',
+    type: "varchar",
+    length: "36",
     nullable: false,
-    comment: 'Role of the associated user.'
+    comment: "Role of the associated user."
   })
   role?: string;
 

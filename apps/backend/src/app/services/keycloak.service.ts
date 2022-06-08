@@ -231,7 +231,7 @@ export class KeycloakService {
       ).pipe(map(e => e.data)));
     } catch (e) {
       this.logger.error(e.response.data);
-      throw new BadRequestException(e.response?.data ?? "Invalidated request");
+      throw new UnauthorizedException("Invalid user credentials");
     }
   }
 

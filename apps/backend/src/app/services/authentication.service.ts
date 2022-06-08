@@ -2,11 +2,11 @@ import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { AccountsService } from "./accounts.service";
 import { KeycloakService } from "./keycloak.service";
 import { UsernamePasswordCredentials, UsernamePasswordLoginResponse } from "@app/models";
-import { Roles } from "../enum/roles.enum";
 import { OAuth2Client } from "google-auth-library";
 import Exception from "../constants/exception.constant";
 import { ConfigService } from "@nestjs/config";
 import { AccountRepository } from "../repositories/account.repository.";
+import { Accounts } from "../models/account.entity";
 
 @Injectable()
 export class AuthenticationService {
@@ -43,7 +43,7 @@ export class AuthenticationService {
         }
       }
       let keycloakUser;
-      let user;
+      let user: Accounts;
 
       if (keycloakToken?.keycloak_id) {
         keycloakUser = await this.keycloakService.getAuthenticationTokenByMasterAccount(keycloakToken.keycloak_id);
@@ -66,8 +66,9 @@ export class AuthenticationService {
         email: user.email,
         phone: user.phone,
         googleId: user.googleId,
-        role: Roles.APP_ADMIN,
+        role: user.role,
         fullname: user.fullname,
+        avatar: user.avatar
       };
     } catch (e) {
       this.logger.error(e);
@@ -90,7 +91,6 @@ export class AuthenticationService {
     const keycloakToken = await this.keycloakService.signInToKeycloak(credentials.username, credentials.password);
     const keycloakUser = await this.keycloakService.getUserInfo(keycloakToken.access_token);
     const user = await this.usersService.findByKeycloakId(keycloakUser.sub);
-    console.log(user);
     return {
       accessToken: keycloakToken.access_token,
       refreshToken: keycloakToken.refresh_token,
@@ -100,8 +100,9 @@ export class AuthenticationService {
       email: user.email,
       phone: user.phone,
       googleId: user.googleId,
-      role: Roles.APP_ADMIN,
+      role: user.role,
       fullname: user.fullname,
+      avatar: user.avatar
     }
   }
 }

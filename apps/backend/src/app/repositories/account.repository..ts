@@ -32,20 +32,21 @@ export class AccountRepository extends Repository<Accounts> {
 
   findByGoogleId(googleId: string): Promise<Accounts> {
     return this.createQueryBuilder("accounts")
-      .where("accounts.googleId = :googleId", {googleId})
-      .getOne();
+      .where("accounts.googleId = :googleId", { googleId })
+      .andWhere("accounts.is_disabled = false")
+      .andWhere("accounts.is_deleted = false")
+      .getOneOrFail();
   }
 
   findByKeycloakId(keycloakId: string): Promise<Accounts> {
     return this.createQueryBuilder("accounts")
-      .select(['accounts.id', 'accounts.keycloak_id', 'accounts.google_id',
-        'accounts.username', 'accounts.email', 'accounts.fullname', 'accounts.phone'])
-      .where("accounts.keycloak_id = :keycloakId", {keycloakId: keycloakId})
-      .getOne();
-  }
-
-  addNewLoginUser(payload: {}) {
-
+      .select(["accounts.id", "accounts.keycloak_id", "accounts.google_id",
+        "accounts.username", "accounts.email", "accounts.fullname", "accounts.phone",
+        "accounts.role", "accounts.avatar"])
+      .where("accounts.keycloak_id = :keycloakId", { keycloakId: keycloakId })
+      .andWhere("accounts.is_disabled = false")
+      .andWhere("accounts.is_deleted = false")
+      .getOneOrFail();
   }
 
   updateGoogleIdByEmail(userGoogleId: string, email: string) {
@@ -164,5 +165,12 @@ export class AccountRepository extends Repository<Accounts> {
         transaction: true
       }
     );
+  }
+
+  findRoleByKeycloakId(keycloakId: string): Promise<string> {
+    return this.createQueryBuilder("accounts")
+      .select("role")
+      .where("accounts.keycloak_id = :keycloakId", { keycloakId: keycloakId })
+      .getRawOne().then((data) => data ? data["role"] : undefined);
   }
 }

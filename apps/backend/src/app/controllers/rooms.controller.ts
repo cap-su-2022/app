@@ -17,10 +17,11 @@ import { AddRoomRequest, UpdateRoomRequest } from "@app/models";
 import { RoomsRequestPayload } from "../payload/request/rooms.payload";
 import { RoomsResponsePayload } from "../payload/response/rooms.payload";
 import { RoomsValidation } from "../pipes/validation/rooms.validation";
-import { AuthGuard } from "../guards/auth.guard";
 import { Rooms } from "../models/rooms.entity";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
+import { Roles } from "../decorators/role.decorator";
+import { Role } from "../enum/roles.enum";
 
 @Controller("/v1/rooms")
 @ApiBearerAuth()
@@ -53,13 +54,13 @@ export class RoomsController {
   @ApiBody({
     type: AddRoomRequest
   })
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   addRoom(@Body() room: AddRoomRequest): Promise<Rooms> {
     return this.service.add(room);
   }
 
   @Get("find/:id")
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getRoomById(@Param() id: string): Promise<Rooms> {
     return this.service.findById(id);
   }
@@ -67,10 +68,10 @@ export class RoomsController {
   @Post()
   @UsePipes(new RoomsValidation())
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
+    description: "Access token is invalidated"
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -90,11 +91,11 @@ export class RoomsController {
     return this.service.getAll(request);
   }
 
-  @Get('disabled')
-  @UseGuards(AuthGuard)
+  @Get("disabled")
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
+    description: "Access token is invalidated"
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -112,11 +113,11 @@ export class RoomsController {
     return this.service.getDisabledRooms();
   }
 
-  @Get('deleted')
-  @UseGuards(AuthGuard)
+  @Get("deleted")
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
+    description: "Access token is invalidated"
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -134,32 +135,32 @@ export class RoomsController {
     return this.service.getDeletedRooms();
   }
 
-  @Put('restore-deleted/:id')
-  @UseGuards(AuthGuard)
+  @Put("restore-deleted/:id")
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   restoreDeletedRoomById(@Param() payload: { id: string }) {
     return this.service.handleRestoreDeletedRoomById(payload.id);
   }
 
-  @Put('restore-disabled/:id')
-  @UseGuards(AuthGuard)
+  @Put("restore-disabled/:id")
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   restoreDisabledRoomById(@Param() payload: { id: string }) {
     return this.service.handleRestoreDisabledRoomById(payload.id);
   }
 
   @Put("update/:id")
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   updateRoomById(@Param() payload: { id: string }, @Body() body: UpdateRoomRequest) {
     return this.service.updateById(payload.id, body);
   }
 
   @Put("disable/:id")
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   disableRoomById(@Param() payload: { id: string }) {
     return this.service.disableById(payload.id);
   }
 
   @Delete(":id")
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   deleteRoomById(@Param() payload: { id: string }) {
     return this.service.deleteById(payload.id);
   }

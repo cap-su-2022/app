@@ -18,10 +18,11 @@ import { AUTHORIZATION_LOWERCASE } from "../constants/network/headers.constant";
 import { Response } from "express";
 import { AuthenticationService } from "../services/authentication.service";
 import { UsernamePasswordLoginResponse } from "@app/models";
-import { Roles } from "../enum/roles.enum";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 import { AccessTokenResponsePayload } from "../payload/response/refresh_token.response.payload";
 import { RefreshTokenPayload } from "../payload/response/refresh-token.request.payload";
+import { Roles } from "../decorators/role.decorator";
+import { Role } from "../enum/roles.enum";
 
 export class AuthenticationRequest {
   @ApiProperty({
@@ -47,16 +48,16 @@ class GoogleIDTokenRequest {
 @ApiBearerAuth()
 @Controller(KEYCLOAK_PATH.requestPath)
 @ApiTags("Authentication")
-@UseInterceptors(new PathLoggerInterceptor(KeycloakController.name))
-export class KeycloakController {
+@UseInterceptors(new PathLoggerInterceptor(AuthenticationController.name))
+export class AuthenticationController {
 
   constructor(private readonly service: KeycloakService,
               private readonly authenticationService: AuthenticationService) {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post('info')
-  async validateTokenAndGetUserInfo(@Body() payload: {token: string}) {
+  @Post("info")
+  async validateTokenAndGetUserInfo(@Body() payload: { token: string }) {
     if (Object.keys(payload).length < 1) {
       throw new BadRequestException("Must provide access token");
     }
@@ -93,8 +94,9 @@ export class KeycloakController {
       phone: resp.phone,
       username: resp.username,
       keycloakId: resp.keycloakId,
-      role: Roles.APP_ADMIN,
-      fullname: resp.fullname
+      role: resp.role,
+      fullname: resp.fullname,
+      avatar: resp.avatar
     };
   }
 
@@ -130,7 +132,7 @@ export class KeycloakController {
       phone: resp.phone,
       username: resp.username,
       keycloakId: resp.keycloakId,
-      role: Roles.APP_ADMIN,
+      role: resp.role,
       fullname: resp.fullname
     };
   }
@@ -191,12 +193,13 @@ export class KeycloakController {
 
   @Put(KEYCLOAK_PATH.refreshUserPasswordById)
   @ApiParam({
-    name: 'id',
+    name: "id",
     description: "The ID of the existed keycloak user",
     type: String,
     required: true,
-    example: 'ABCD1234',
+    example: "ABCD1234"
   })
+  @Roles(Role.APP_STAFF)
   resetKeycloakUserPassword(@Request() req: Request, @Param("id") id, @Body() password) {
     return this.service.resetKeycloakUserById(req, id, password.rawPasswword);
   }

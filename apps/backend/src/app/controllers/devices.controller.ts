@@ -13,12 +13,13 @@ import {
 } from "@nestjs/common";
 import { DevicesService } from "../services/devices.service";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { AuthGuard } from "../guards/auth.guard";
 import { AddDeviceRequest, UpdateDeviceRequest } from "@app/models";
 import { DevicesResponsePayload } from "../payload/response/devices.payload";
 import { DevicesRequestPayload } from "../payload/request/devices.payload";
 import { DevicesValidation } from "../pipes/validation/devices.validation";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
+import { Roles } from "../decorators/role.decorator";
+import { Role } from "../enum/roles.enum";
 
 @Controller("v1/devices")
 @ApiBearerAuth()
@@ -54,13 +55,13 @@ export class DevicesController {
   })
   @Post("add")
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   createNewDevice(@Body() room: AddDeviceRequest) {
     return this.service.add(room);
   }
 
   @Get("find/:id")
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getDeviceById(@Param() id: string) {
     return this.service.findById(id);
   }
@@ -68,50 +69,50 @@ export class DevicesController {
   @Post()
   @UsePipes(new DevicesValidation())
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getDevices(@Body() request: DevicesRequestPayload): Promise<DevicesResponsePayload> {
     return this.service.getAll(request);
   }
 
-  @Get('disabled')
-  @UseGuards(AuthGuard)
+  @Get("disabled")
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getDisableRooms() {
     return this.service.getDisabledDevices();
   }
 
-  @Get('deleted')
-  @UseGuards(AuthGuard)
+  @Get("deleted")
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getDeletedRooms() {
     return this.service.getDeletedDevices();
   }
 
-  @Put('restore-deleted/:id')
-  @UseGuards(AuthGuard)
+  @Put("restore-deleted/:id")
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   restoreDeletedRoomById(@Param() payload: { id: string }) {
     return this.service.handleRestoreDeviceById(payload.id);
   }
 
-  @Put('restore-disabled/:id')
-  @UseGuards(AuthGuard)
+  @Put("restore-disabled/:id")
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   restoreDisabledRoomById(@Param() payload: { id: string }) {
 
     return this.service.handleRestoreDisabledDeviceById(payload.id);
   }
 
   @Put("update/:id")
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   updateRoomById(@Param() id: string, @Body() body: UpdateDeviceRequest) {
     return this.service.updateById(body, id);
   }
 
   @Put("disable/:id")
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   disableRoomById(@Param() payload: { id: string }) {
     return this.service.disableById(payload.id);
   }
 
   @Delete(":id")
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   deleteRoomById(@Param() payload: { id: string }) {
     return this.service.deleteById(payload.id);
   }

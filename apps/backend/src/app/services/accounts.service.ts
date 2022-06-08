@@ -183,6 +183,15 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     });
   }
 
+  getAccountRoleByKeycloakId(keycloakId: string): Promise<string> {
+    try {
+      return this.repository.findRoleByKeycloakId(keycloakId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async changePassword(keycloakUser: KeycloakUserInfoDTO, password: string): Promise<void> {
     try {
       await this.keycloakService.changePasswordByKeycloakId(keycloakUser.sub, password);

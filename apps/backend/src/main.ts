@@ -13,8 +13,8 @@ import * as net from 'net';
 async function bootstrap() {
   const port = process.env.BACKEND_PORT || 5000;
   const host = process.env.BACKEND_HOST || `0.0.0.0`;
-  const contextPath = process.env.BACKEND_CONTEXT_PATH || '/api';
-  initializeFirebaseApp();
+  const contextPath = process.env.BACKEND_CONTEXT_PATH || "/api";
+  const firebaseProjectId = initializeFirebaseApp();
   const expressApp: Express = express();
 
   const app = await NestFactory.create(
@@ -26,14 +26,15 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, getSwaggerConfig());
   SwaggerModule.setup(SWAGGER_CONFIG.contextPath, app, document);
 
-  await app.listen(5000, '0.0.0.0');
+  await app.listen(port, host);
 
   const client = net.connect({port: 80, host: "google.com"}, () => {
-    Logger.log(`💻 External IP Address: ${client.localAddress}`);
-    Logger.log(`⚙️ Loopback IP Address: localhost (127.0.0.1)`);
-    Logger.log(`💎 Application is running on ports: 5000`);
-    Logger.log(
-      `🚀 HTTP API Endpoint is running on: http://${client.localAddress}:${port}${contextPath}`
+    Logger.debug(`💻 [IP] External Address: ${client.localAddress}`);
+    Logger.debug(`⚙️ [IP] Loopback Address: localhost (127.0.0.1)`);
+    Logger.debug(`[Firebase] Initialized with project id: ${firebaseProjectId}`);
+
+    Logger.debug(
+      `[API] Running on: http://${client.localAddress}:${port}${contextPath}`
     );
   });
 

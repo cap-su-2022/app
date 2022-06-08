@@ -2,8 +2,9 @@ import { Controller, Get, HttpStatus, UseGuards, UseInterceptors } from "@nestjs
 import { UsersOTPService } from "../services/users-otp.service";
 import { UsersOTP } from "../models/users-otp.entity";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { AuthGuard } from "../guards/auth.guard";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
+import { Roles } from "../decorators/role.decorator";
+import { Role } from "../enum/roles.enum";
 
 @Controller("v1/users-otp")
 @ApiBearerAuth()
@@ -30,7 +31,7 @@ export class UsersOTPController {
     description: 'Invalid role',
   })
   @Get()
-  @UseGuards(AuthGuard)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getAll(): Promise<UsersOTP[]> {
     return this.service.getAllByPagination();
   }
