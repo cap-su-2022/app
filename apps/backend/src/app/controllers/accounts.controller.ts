@@ -29,6 +29,11 @@ import { Role } from "../enum/roles.enum";
 
 type File = Express.Multer.File;
 
+class UploadProfileRequest {
+  fullname: string;
+  phone: string;
+  description: string;
+}
 
 @Controller("v1/accounts")
 @ApiBearerAuth()
@@ -244,11 +249,7 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: "Not enough privileges"
   })
-  updateMyProfile(@User() user: KeycloakUserInfoDTO, @Body() payload: {
-    fullname: string,
-    phone: string,
-    description: string
-  }) {
+  updateMyProfile(@User() user: KeycloakUserInfoDTO, @Body() payload: UploadProfileRequest) {
     return this.service.updateMyProfile(user, payload);
   }
 

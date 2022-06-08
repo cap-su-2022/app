@@ -216,6 +216,7 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
       });
 
     } catch (e) {
+      this.logger.error(e.message);
       throw new BadRequestException("Error while update your profile.");
     }
   }

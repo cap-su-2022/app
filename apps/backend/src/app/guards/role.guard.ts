@@ -28,11 +28,8 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const requestHeaders = request.headers;
     const accessToken = requestHeaders["authorization"] ?? getAccessTokenViaCookie(request);
-
     const keycloakUser = await this.keycloakService.getUserInfo(accessToken);
     const accountRole = await this.accountsService.getAccountRoleByKeycloakId(keycloakUser.sub);
-
-
 
     return requiredRoles.some((role) => accountRole === role);
   }
