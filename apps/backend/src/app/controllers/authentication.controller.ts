@@ -83,8 +83,7 @@ export class AuthenticationController {
     const resp = await this.authenticationService.handleUsernamePasswordLogin(account);
     httpResponse.setHeader('Authorization', resp.accessToken);
     httpResponse.setHeader('AuthorizationRefreshToken', resp.refreshToken);
-    httpResponse.cookie('refreshToken', resp.refreshToken);
-    httpResponse.cookie('accessToken', resp.accessToken);
+
     return {
       email: resp.email,
       id: resp.id,

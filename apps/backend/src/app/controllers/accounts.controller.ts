@@ -350,7 +350,7 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: "Not enough privileges"
   })
-  getAvatarURLByKeycloakId(@User() keycloakUser: KeycloakUserInfoDTO) {
+  getMyAvatarURL(@User() keycloakUser: KeycloakUserInfoDTO) {
     return this.service.getAvatarURLByKeycloakId(keycloakUser.sub);
   }
 
