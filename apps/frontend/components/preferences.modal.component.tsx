@@ -1,7 +1,7 @@
 import React from "react";
-import { createStyles, Modal, Text } from "@mantine/core";
+import {Button, createStyles, Modal, Text} from "@mantine/core";
 import UserInfoPreference from "./preferences/user-info.component";
-import { Settings } from "tabler-icons-react";
+import {Settings, SettingsOff} from "tabler-icons-react";
 
 interface PreferencesModalProps {
   isShown: boolean;
