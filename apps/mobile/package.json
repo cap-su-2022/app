@@ -47,6 +47,7 @@
     "yup": "*",
     "react-native-picker-select": "*",
     "@mantine/dates": "*",
-    "react-native-reanimated": "*"
+    "react-native-reanimated": "*",
+    "react-native-debounce-input": "*"
   }
 }

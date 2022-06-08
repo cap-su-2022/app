@@ -6,6 +6,7 @@ import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
 import { WishlistBookingRoomResponseDTO } from "../dto/wishlist-booking-room.response.dto";
 import { RoomWishlistService } from "./room-wishlist.service";
 import { WishlistBookingRoomRequestDTO } from "../dto/wishlist-booking-room.request.dto";
+import { BookingRoomsFilterRequestPayload } from "../payload/request/booking-rooms.request.payload";
 
 @Injectable()
 export class BookingRoomService {
@@ -18,7 +19,7 @@ export class BookingRoomService {
   }
 
 
-  async getBookingRooms(roomName: string): Promise<BookingRoomResponseDTO[]> {
+  async getBookingRooms(payload: BookingRoomsFilterRequestPayload): Promise<BookingRoomResponseDTO[]> {
     try {
       const rooms = await this.roomService.getAllWithoutPagination();
       const result: BookingRoomResponseDTO[] = [];
@@ -33,7 +34,11 @@ export class BookingRoomService {
           });
         }
       }
-      return result;
+      console.log(payload.search);
+      console.log(result
+        .filter((bookingRoom) => bookingRoom.roomName.includes(payload.search)));
+      return result
+        .filter((bookingRoom) => bookingRoom.roomName.includes(payload.search));
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException("Error while getting booking rooms");
@@ -51,12 +56,12 @@ export class BookingRoomService {
     }
   }
 
-  addToBookingRoomWishlist(user: KeycloakUserInfoDTO, wishlist: WishlistBookingRoomRequestDTO) {
+  async addToBookingRoomWishlist(user: KeycloakUserInfoDTO, wishlist: WishlistBookingRoomRequestDTO) {
     try {
-      return this.roomWishlistService.addToWishlist(user.sub, wishlist);
+      return await this.roomWishlistService.addToWishlist(user.sub, wishlist);
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException("An error occurred while adding booking room to wishlist");
+      throw new BadRequestException(e.message);
     }
   }
 }

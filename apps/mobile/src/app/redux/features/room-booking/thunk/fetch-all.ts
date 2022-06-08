@@ -8,14 +8,26 @@ import { LOCAL_STORAGE } from "../../../../utils/local-storage";
 interface RejectValue {
   message: string;
 }
-export const fetchAllBookingRooms = createAsyncThunk<BookingRoom[], void, {
+
+interface BookingRoomPayload {
+  slot: number;
+  search: string;
+  sorting: string;
+}
+
+export const fetchAllBookingRooms = createAsyncThunk<BookingRoom[], BookingRoomPayload, {
   rejectValue: RejectValue
-}>('room-booking/fetch-all', async (any, thunkAPI) => {
+}>("room-booking/fetch-all", async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
     const response = await axios.get(`${API_URL}/booking-room`, {
       headers: {
-        'Authorization': `Bearer ${LOCAL_STORAGE.getString('accessToken')}`
+        "Authorization": `Bearer ${LOCAL_STORAGE.getString("accessToken")}`
+      },
+      params: {
+        slot: payload,
+        search: payload.search,
+        sorting: payload.sorting
       }
     });
     return await response.data;
