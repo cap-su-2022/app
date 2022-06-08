@@ -1,8 +1,26 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Avatar, Button, createStyles, Group, InputWrapper, Navbar, Text, TextInput } from "@mantine/core";
-import { At, Key, Lock, PhoneCall, User } from "tabler-icons-react";
-import { FormikProvider, useFormik } from "formik";
-
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Avatar,
+  Button,
+  createStyles,
+  Group,
+  InputWrapper,
+  Navbar,
+  Text,
+  TextInput,
+} from '@mantine/core';
+import {
+  At,
+  BellRinging,
+  Key,
+  Lock,
+  Logout,
+  PhoneCall,
+  Receipt2,
+  SwitchHorizontal,
+  User,
+} from 'tabler-icons-react';
+import { Formik, useFormik } from 'formik';
 // interface UserInfoPreferneceProps {}
 
 interface UserInfoModel {
@@ -16,25 +34,19 @@ interface UserInfoModel {
   googleId: string;
   keycloakId: string;
 }
-
 const data = [
-  { link: "", label: "Profile", icon: User },
-  { link: "", label: "Authentication", icon: Key }
+  { link: '', label: 'Profile', icon: User },
+  { link: '', label: 'Authentication', icon: Key },
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface UserInfoPreferneceProps {
-
-}
-
-const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
+const UserInfoPreference: React.FC = () => {
   const { classes, cx } = useStyles();
-  const [active, setActive] = useState("Profile");
+  const [active, setActive] = useState('Profile');
 
   const links = data.map((item) => (
     <a
       className={cx(classes.link, {
-        [classes.linkActive]: item.label === active
+        [classes.linkActive]: item.label === active,
       })}
       href={item.link}
       key={item.label}
@@ -52,31 +64,30 @@ const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
   const avatarInputRef = useRef<HTMLInputElement>();
 
   useEffect(() => {
-    setUserInfo(JSON.parse(window.localStorage.getItem("user")));
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
-  const handleUpdateSubmit = async (values) => {
-    console.log(values);
-  };
-
-  const initialFormValues = {
-    avatar: userInfo.avatar,
-    username: userInfo.username,
-    fullname: userInfo.fullname,
-    email: userInfo.email,
-    phone: userInfo.phone
-  };
-
-  const formik = useFormik({
-    initialValues: initialFormValues,
-    enableReinitialize: true,
-    // validationSchema: SigninSchema,
-    onSubmit: (values) => handleUpdateSubmit(values)
-  });
-
   const UserProfile: React.FC = () => {
+    const handleUpdateSubmit = async (values) => {
+      console.log(values);
+    };
+
+    const initialFormValues = {
+      avatar: userInfo.avatar,
+      username: userInfo.username,
+      fullname: userInfo.fullname,
+      email: userInfo.email,
+      phone: userInfo.phone,
+    };
+
+    const formik = useFormik({
+      initialValues: initialFormValues,
+      enableReinitialize: true,
+      // validationSchema: SigninSchema,
+      onSubmit: (values) => handleUpdateSubmit(values),
+    });
     return (
-      <>
+      <form onSubmit={formik.handleSubmit}>
         <Group noWrap>
           <Avatar src={userInfo.avatar} size={150} radius="md" />
           <Button
@@ -91,13 +102,13 @@ const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
             type="file"
             ref={avatarInputRef}
             style={{
-              display: "none"
+              display: 'none',
             }}
           />
           <div>
             <Text
               size="xs"
-              sx={{ textTransform: "uppercase" }}
+              sx={{ textTransform: 'uppercase' }}
               weight={700}
               color="dimmed"
             >
@@ -126,17 +137,21 @@ const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
             </Group>
           </div>
         </Group>
-        <FormikProvider value={formik}>
+        <div
+          style={{
+            marginTop: 20,
+          }}
+        >
           <InputWrapper
             label="Username"
             description="This will be visible to other people"
           >
             <TextInput
               id="username"
-              onChange={formik.handleChange("username")}
+              onChange={formik.handleChange}
               error={formik.touched.username && Boolean(formik.errors.username)}
               value={formik.values.username}
-              label={"Username"}
+              label={'Username'}
               required
               name="username"
               disabled
@@ -148,10 +163,10 @@ const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
           >
             <TextInput
               id="fullname"
-              onChange={formik.handleChange("fullname")}
+              onChange={formik.handleChange('fullname')}
               error={formik.touched.fullname && Boolean(formik.errors.fullname)}
               value={formik.values.fullname}
-              label={"Fullname"}
+              label={'Fullname'}
               required
               name="fullname"
               placeholder="Set your own fullname"
@@ -163,10 +178,10 @@ const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
           >
             <TextInput
               id="email"
-              onChange={formik.handleChange("email")}
+              onChange={formik.handleChange}
               error={formik.touched.email && Boolean(formik.errors.email)}
               value={formik.values.email}
-              label={"Email"}
+              label={'Email'}
               required
               name="email"
               placeholder="Set your own email address"
@@ -178,10 +193,10 @@ const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
           >
             <TextInput
               id="phone"
-              onChange={formik.handleChange("phone")}
+              onChange={formik.handleChange}
               error={formik.touched.phone && Boolean(formik.errors.phone)}
               value={formik.values.phone}
-              label={"Phone"}
+              label={'Phone'}
               required
               name="phone"
               placeholder="Set your own phone number"
@@ -189,17 +204,17 @@ const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
           </InputWrapper>
           <div
             style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: "100px"
+              display: 'flex',
+              justifyContent: 'flex-end',
+              marginTop: '100px',
             }}
           >
-            <Button color="green" type="submit">
+            <Button color="green" type="submit" name="update">
               Save Changes nè
             </Button>
           </div>
-        </FormikProvider>
-      </>
+        </div>
+      </form>
     );
   };
 
@@ -208,8 +223,8 @@ const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
       <div>
         <div
           style={{
-            display: "flex",
-            flexDirection: "column"
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <Button leftIcon={<Lock />}>Reset password</Button>
@@ -222,9 +237,9 @@ const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
 
   const Renderer = ({ label }) => {
     switch (label) {
-      case "Profile":
+      case 'Profile':
         return <UserProfile />;
-      case "Authentication":
+      case 'Authentication':
         return <Authentication />;
     }
   };
@@ -232,7 +247,7 @@ const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
   return (
     <div
       style={{
-        display: "flex"
+        display: 'flex',
       }}
     >
       <Navbar height={700} width={{ sm: 200 }} p="sm">
@@ -241,7 +256,7 @@ const UserInfoPreference: React.FC<UserInfoPreferneceProps> = () => {
       <div
         style={{
           marginLeft: 20,
-          width: "100%"
+          width: '100%',
         }}
       >
         <Renderer label={active} />
@@ -255,24 +270,24 @@ const useStyles = createStyles((theme, _params, getRef) => {
   return {
     icon: {
       color:
-        theme.colorScheme === "dark"
+        theme.colorScheme === 'dark'
           ? theme.colors.dark[3]
-          : theme.colors.gray[5]
+          : theme.colors.gray[5],
     },
 
     name: {
       fontFamily: `Greycliff CF, ${theme.fontFamily}`,
     },
     control: {
-      position: "absolute",
+      position: 'absolute',
       width: 150,
-      top: "calc(25%)"
+      top: 'calc(25%)',
     },
     header: {
       paddingBottom: theme.spacing.md,
       marginBottom: theme.spacing.md * 1.5,
       borderBottom: `1px solid ${
-        theme.colorScheme === "dark"
+        theme.colorScheme === 'dark'
           ? theme.colors.dark[4]
           : theme.colors.gray[2]
       }`,
@@ -282,7 +297,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
       paddingTop: theme.spacing.md,
       marginTop: theme.spacing.md,
       borderTop: `1px solid ${
-        theme.colorScheme === "dark"
+        theme.colorScheme === 'dark'
           ? theme.colors.dark[4]
           : theme.colors.gray[2]
       }`,
@@ -290,56 +305,56 @@ const useStyles = createStyles((theme, _params, getRef) => {
 
     link: {
       ...theme.fn.focusStyles(),
-      display: "flex",
-      alignItems: "center",
-      textDecoration: "none",
+      display: 'flex',
+      alignItems: 'center',
+      textDecoration: 'none',
       fontSize: theme.fontSizes.sm,
       color:
-        theme.colorScheme === "dark"
+        theme.colorScheme === 'dark'
           ? theme.colors.dark[1]
           : theme.colors.gray[7],
       padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
       borderRadius: theme.radius.sm,
       fontWeight: 500,
 
-      "&:hover": {
+      '&:hover': {
         backgroundColor:
-          theme.colorScheme === "dark"
+          theme.colorScheme === 'dark'
             ? theme.colors.dark[6]
             : theme.colors.gray[0],
-        color: theme.colorScheme === "dark" ? theme.white : theme.black,
+        color: theme.colorScheme === 'dark' ? theme.white : theme.black,
 
         [`& .${icon}`]: {
-          color: theme.colorScheme === "dark" ? theme.white : theme.black
-        }
-      }
+          color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+        },
+      },
     },
 
     linkIcon: {
       ref: icon,
       color:
-        theme.colorScheme === "dark"
+        theme.colorScheme === 'dark'
           ? theme.colors.dark[2]
           : theme.colors.gray[6],
-      marginRight: theme.spacing.sm
+      marginRight: theme.spacing.sm,
     },
 
     linkActive: {
       '&, &:hover': {
         backgroundColor:
-          theme.colorScheme === "dark"
+          theme.colorScheme === 'dark'
             ? theme.fn.rgba(theme.colors[theme.primaryColor][8], 0.25)
             : theme.colors[theme.primaryColor][0],
         color:
-          theme.colorScheme === "dark"
+          theme.colorScheme === 'dark'
             ? theme.white
             : theme.colors[theme.primaryColor][7],
         [`& .${icon}`]: {
           color:
             theme.colors[theme.primaryColor][
-              theme.colorScheme === "dark" ? 5 : 7
-              ]
-        }
+              theme.colorScheme === 'dark' ? 5 : 7
+            ],
+        },
       },
     },
   };

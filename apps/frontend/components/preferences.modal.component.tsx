@@ -1,7 +1,7 @@
 import React from "react";
-import { createStyles, Modal, Text } from "@mantine/core";
+import {Button, createStyles, Modal, Text} from "@mantine/core";
 import UserInfoPreference from "./preferences/user-info.component";
-import { Settings } from "tabler-icons-react";
+import {Settings, SettingsOff} from "tabler-icons-react";
 
 interface PreferencesModalProps {
   isShown: boolean;
@@ -27,7 +27,7 @@ const PreferencesModal: React.FC<PreferencesModalProps> = (props) => {
   }
   return (
     <Modal
-      size="85%"
+      size="80%"
       title={<ModalHeader/>}
       opened={props.isShown}
       onClose={() => props.toggleShown()}>
