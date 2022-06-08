@@ -16,13 +16,6 @@ export class RolesGuard implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>();
-    const requestHeaders = request.headers;
-    const accessToken = requestHeaders["authorization"] ?? getAccessTokenViaCookie(request);
-
-    const keycloakUser = await this.keycloakService.getUserInfo(accessToken);
-    const accountRole = await this.accountsService.getAccountRoleByKeycloakId(keycloakUser.sub);
-
 
     const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
       context.getHandler(),
@@ -31,6 +24,16 @@ export class RolesGuard implements CanActivate {
     if (!requiredRoles) {
       return true;
     }
+
+    const request = context.switchToHttp().getRequest<Request>();
+    const requestHeaders = request.headers;
+    const accessToken = requestHeaders["authorization"] ?? getAccessTokenViaCookie(request);
+
+    const keycloakUser = await this.keycloakService.getUserInfo(accessToken);
+    const accountRole = await this.accountsService.getAccountRoleByKeycloakId(keycloakUser.sub);
+
+
+
     return requiredRoles.some((role) => accountRole === role);
   }
 }

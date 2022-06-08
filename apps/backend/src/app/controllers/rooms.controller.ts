@@ -8,7 +8,7 @@ import {
   Param,
   Post,
   Put,
-  UseGuards, UseInterceptors,
+  UseInterceptors,
   UsePipes
 } from "@nestjs/common";
 import { RoomsService } from "../services/rooms.service";
@@ -32,6 +32,7 @@ export class RoomsController {
   }
 
   @ApiOperation({
+    summary: "Create a new library room",
     description: "Create new library room with the provided payload"
   })
   @ApiResponse({
@@ -48,12 +49,9 @@ export class RoomsController {
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: 'Invalid role',
+    description: "Insufficient privileges"
   })
   @Post('add')
-  @ApiBody({
-    type: AddRoomRequest
-  })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   addRoom(@Body() room: AddRoomRequest): Promise<Rooms> {
     return this.service.add(room);

@@ -64,22 +64,20 @@ export class AuthenticationController {
     return this.service.getUserInfo(payload.token);
   }
 
-  @ApiOperation({})
+  @ApiOperation({
+    summary: "Username password login",
+    description: "Login into the system using provided username and password"
+  })
   @ApiBody({
     required: true,
     description: "Contains the username and password value.",
-    type: AuthenticationRequest,
+    type: AuthenticationRequest
   })
   @ApiResponse({
-    status: HttpStatus.OK,
+    status: HttpStatus.OK
   })
   @HttpCode(HttpStatus.OK)
   @Post(KEYCLOAK_PATH.signIn)
-  @ApiBody({
-    schema: {
-      type: 'object',
-    }
-  })
   async signIn(@Res({passthrough: true}) httpResponse: Response,
                @Body() account: { username: string, password: string }): Promise<Partial<UsernamePasswordLoginResponse>> {
     const resp = await this.authenticationService.handleUsernamePasswordLogin(account);
