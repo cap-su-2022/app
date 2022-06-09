@@ -20,9 +20,13 @@ const NextLogin = async (req: NextApiRequest, res: NextApiResponse) => {
       password: credentials.password
     });
     const body = await response.data;
-    console.log(body);
+
+    const accessToken = response.headers["authorization"];
+    const refreshToken = response.headers["authorizationrefreshtoken"];
+
     res.setHeader("Set-Cookie", [
-      `accessToken=${response.headers["set-cookie"]}; Max-Age=99999; path=/`
+      `accessToken=${accessToken}; Max-Age=999999; HttpOnly; path=/`,
+      `refreshToken=${refreshToken}; Max-Age=999999; HttpOnly; path=/`
     ]);
     res.json(body);
   } catch (e) {
