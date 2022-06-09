@@ -235,4 +235,13 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
   async getAvatarURLByKeycloakId(keycloakId: string): Promise<string> {
     return await this.repository.findAvatarURLById(keycloakId);
   }
+
+  async getCurrentProfileInformation(keycloakId: string): Promise<Accounts> {
+    try {
+      return await this.repository.findProfileInformationById(keycloakId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
 }

@@ -173,4 +173,14 @@ export class AccountRepository extends Repository<Accounts> {
       .where("accounts.keycloak_id = :keycloakId", { keycloakId: keycloakId })
       .getRawOne().then((data) => data ? data["role"] : undefined);
   }
+
+  async findProfileInformationById(keycloakId: string) {
+    return this.createQueryBuilder("a")
+      .select(["a.id", "a.username", "a.email", "a.description", "a.phone",
+        "a.effdate", "a.updated_at", "a.role", "a.fullname", "a.avatar"])
+      .where("a.keycloak_id = :keycloakId", { keycloakId })
+      .andWhere("a.is_disabled = false")
+      .andWhere("a.is_deleted = false")
+      .getOneOrFail();
+  }
 }

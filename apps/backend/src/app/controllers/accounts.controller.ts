@@ -26,6 +26,7 @@ import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
+import { Accounts } from "../models/account.entity";
 
 type File = Express.Multer.File;
 
@@ -130,9 +131,34 @@ export class AccountsController {
   })
   @Get("find/:id")
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @UsePipes()
   getAccountById(@Param() payload: { id: string }) {
     return this.service.getById(payload.id);
+  }
+
+  @ApiOperation({
+    summary: "Retrieve current profile information",
+    description: "Get profile information"
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Successfully retrieved the profile information"
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: "Error while retrieving profile information"
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Access token is invalid"
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: "Not enough privileges"
+  })
+  @Get("my-profile")
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  getCurrentProfileInformation(@User() user: KeycloakUserInfoDTO): Promise<Accounts> {
+    return this.service.getCurrentProfileInformation(user.sub);
   }
 
   @Get("find-by-keycloak-id/:id")
