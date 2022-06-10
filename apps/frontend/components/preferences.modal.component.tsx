@@ -27,7 +27,7 @@ const PreferencesModal: React.FC<PreferencesModalProps> = (props) => {
   }
   return (
     <Modal
-      size="80%"
+      size="70%"
       title={<ModalHeader/>}
       opened={props.isShown}
       onClose={() => props.toggleShown()}>

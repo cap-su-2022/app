@@ -10,6 +10,7 @@ import {setSystemErrorMessage} from "../redux/features/system/system.slice";
 import {useRouter} from "next/router";
 import SystemErrorModal from "../components/generic/system-error.modal";
 import Spinner from "../components/generic/spinner";
+import { NotificationsProvider } from "@mantine/notifications";
 
 function CustomApp({ Component, pageProps }: AppProps) {
 
@@ -39,7 +40,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
   })
 
   return (
-    <>
+    <NotificationsProvider>
       <Head>
         <title>
           FPTU Library Room Booking
@@ -67,7 +68,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
             }}/>
         </MantineProvider>
       </main>
-    </>
+    </NotificationsProvider>
   );
 }
 

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_URL } from '../../../utils/api';
+// import { API_URL } from '../../../utils/api';
 import { UserLoginSuccessModel } from '../../../models/user/user-login-success-response.model';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../spinner';
 
@@ -17,7 +17,8 @@ export const doLogin = createAsyncThunk<
     const response = await axios.post("/api/v1/login", {
       username: credentials.username,
       password: credentials.password,
-    });
+    }).then(() => axios.get(`/api/accounts/my-profile`, {}));
+
     const data = await response.data;
     window.localStorage.setItem('user', JSON.stringify(data));
     return data;
