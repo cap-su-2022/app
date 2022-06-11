@@ -86,7 +86,11 @@ export class DevicesService {
 
   async findById(id: string): Promise<Devices> {
     try {
-      return await this.repository.findOneOrFail(id);
+      return await this.repository.findOneOrFail({
+        where: {
+          id: id
+        }
+      });
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException("Error while retrieving device");

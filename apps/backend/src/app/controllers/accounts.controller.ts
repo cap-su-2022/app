@@ -13,7 +13,7 @@ import {
   UsePipes
 } from "@nestjs/common";
 import { AccountsService } from "../services/accounts.service";
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiProperty, ApiResponse, ApiTags, getSchemaPath } from "@nestjs/swagger";
 import { UsersValidation } from "../pipes/validation/users.validation";
 import { UsersRequestPayload } from "../payload/request/users.payload";
 import { AccountsResponsePayload } from "../payload/response/accounts.payload";
@@ -27,6 +27,7 @@ import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
 import { Accounts } from "../models/account.entity";
+import { ResponseObjectFactory } from "@nestjs/swagger/dist/services/response-object-factory";
 
 type File = Express.Multer.File;
 
@@ -34,6 +35,109 @@ class UploadProfileRequest {
   fullname: string;
   phone: string;
   description: string;
+}
+
+class CreateUserRequest {
+  @ApiProperty({
+    name: "username",
+    description: "Username of the account is used for logging into the system",
+    required: true,
+    type: String,
+    title: "username",
+    example: "account01",
+    minLength: 3,
+    maxLength: 100
+  })
+  username: string;
+
+  @ApiProperty({
+    name: "fullname",
+    description: "Fullname of the account",
+    minLength: 2,
+    maxLength: 200,
+    required: true,
+    title: "fullname",
+    type: String,
+    example: "Adios"
+  })
+  fullname: string;
+
+  @ApiProperty({
+    name: "phone",
+    description: "Phone number of the account",
+    minLength: 10,
+    maxLength: 10,
+    required: true,
+    type: String,
+    title: "phone",
+    example: "0123456789"
+  })
+  phone: string;
+
+  @ApiProperty({
+    name: "email",
+    description: "E-mail address of the account",
+    minLength: 10,
+    maxLength: 10,
+    required: true,
+    type: String,
+    title: "phone",
+    example: "account01@fpt.edu.vn"
+  })
+  email: string;
+
+  @ApiProperty({
+    name: "phone",
+    description: "Phone number of the account",
+    minLength: 10,
+    maxLength: 10,
+    required: true,
+    type: String,
+    title: "phone",
+    example: "0123456789"
+  })
+  description: string;
+
+  @ApiProperty({
+    name: "role",
+    description: "Role of the account",
+    required: true,
+    type: String,
+    title: "role",
+    example: Role.APP_STAFF,
+    enum: Role,
+    enumName: "role"
+  })
+  role: string;
+
+  @ApiProperty({
+    name: "avatar",
+    description: "Avatar of the account",
+    required: true,
+    type: String,
+    title: "avatar",
+    example: "http://google.com/",
+    minLength: 1,
+    maxLength: 256
+  })
+  avatar: string;
+
+  @ApiProperty({
+    name: "is_disabled",
+    description: "Disable status of the account",
+    required: true,
+    type: Boolean,
+    title: "is_disabled",
+    example: false
+  })
+  is_disabled: boolean;
+}
+
+class AccountCreationResponse {
+  @ApiProperty({
+    name: "id"
+  })
+  id: string;
 }
 
 @Controller("v1/accounts")
@@ -80,15 +184,30 @@ export class AccountsController {
     return this.service.syncUsersFromKeycloak();
   }
 
+
   @ApiOperation({
-    description: 'Get all users',
-  })
-  @ApiOperation({
-    description: 'Create new library room with the provided payload',
+    summary: "Create a new account",
+    description: "Create a new account with the provided payload"
   })
   @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Successfully created a new user',
+    status: HttpStatus.OK,
+    description: "Successfully created a new user",
+    type: Accounts,
+    schema: {
+      allOf: [
+        {
+          $ref: getSchemaPath(Accounts)
+        },
+        {
+          properties: {
+            results: {
+              type: "object",
+              items: { $ref: getSchemaPath(Accounts) }
+            }
+          }
+        }
+      ]
+    }
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -105,7 +224,7 @@ export class AccountsController {
   @Post("add")
   @HttpCode(HttpStatus.OK)
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  createNewUser(@Body() room: AddDeviceRequest) {
+  createNewUser(@Body() room: CreateUserRequest): Promise<Accounts> {
     return this.service.add(room);
   }
 
