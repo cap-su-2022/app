@@ -1,19 +1,36 @@
-import React, {useRef, useState} from 'react';
-import {createStyles, Header, Autocomplete, Group, Burger, Button, Select, ScrollArea, Text} from '@mantine/core';
-import {useBooleanToggle, useHover} from '@mantine/hooks';
+import React, { useRef, useState } from 'react';
+import {
+  createStyles,
+  Header,
+  Autocomplete,
+  Group,
+  Burger,
+  Button,
+  Select,
+  ScrollArea,
+  Text,
+} from '@mantine/core';
+import { useBooleanToggle, useHover } from '@mantine/hooks';
 import {
   Bell,
   BuildingWarehouse,
   ChevronDown,
   Dashboard,
   Devices,
-  Logout, Messages,
+  Logout,
+  Messages,
   Search,
   User,
-  Users
+  Users,
 } from 'tabler-icons-react';
-import {BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE} from "@app/constants";
-import {useOuterClick} from "../hooks/use-outer-clickk";
+import {
+  BLACK,
+  FPT_ORANGE_COLOR,
+  GRAY,
+  LIGHT_GRAY,
+  WHITE,
+} from '@app/constants';
+import { useOuterClick } from '../hooks/use-outer-clickk';
 
 interface HeaderSearchProps {
   links: { link: string; label: string }[];
@@ -27,10 +44,9 @@ export function HeaderSearch() {
 
   const toggleNotificationShown = () => {
     setNotificationShown(!isNotificationShown);
-  }
+  };
 
-  const innerRef = useOuterClick(ev => toggleNotificationShown());
-
+  const innerRef = useOuterClick((ev) => toggleNotificationShown());
 
   return (
     <Header height={56} className={classes.header} mb={20}>
@@ -41,92 +57,222 @@ export function HeaderSearch() {
         </Group>
 
         <Group>
-          <Group ml={50} spacing={5}>
+          <Group>
             <Button className={classes.avatarContainer}>
               <div className={classes.avatarImage}>
-                <User/>
+                <User />
               </div>
-              <Text style={{
-                fontWeight: 'bold',
-                fontSize: 18,
-              }}>
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 18,
+                }}
+              >
                 Bằng
               </Text>
             </Button>
-            <Button className={classes.button} onClick={() => toggleNotificationShown()}>
-              <Bell className={classes.innerButton}/>
-              {isNotificationShown
-              ? <div>
+            <Button
+              className={classes.button}
+              onClick={() => toggleNotificationShown()}
+            >
+              <Bell className={classes.innerButton} />
+              {isNotificationShown ? (
                 <div>
-                  <div className={classes.notificationLayoutForm}>
-                    <div>
-                      <div aria-label='Notification' className={classes.notificationLayoutPosition}>
-                        <div>
-                          <div className={classes.notificationLayoutSize}>
-                            <div ref={innerRef} className={classes.notificationContainerForm}>
-                              <div className={classes.notificationContainerLayout}>
-                                <div className={classes.notificationHeaderContainer}>
-                                  <div className={classes.notificationHeaderForm}>
-                                    <div className={classes.notificationHeaderLayout}>
-                                      <div>
-                                        <span className={classes.notificationHeaderContentFont}>
-                                            <h1 className={classes.notificationHeaderContentAttribute}
-                                                tabIndex={-1}>Notification</h1>
+                  <div>
+                    <div className={classes.notificationLayoutForm}>
+                      <div>
+                        <div
+                          aria-label="Notification"
+                          className={classes.notificationLayoutPosition}
+                        >
+                          <div>
+                            <div className={classes.notificationLayoutSize}>
+                              <div
+                                ref={innerRef}
+                                className={classes.notificationContainerForm}
+                              >
+                                <div
+                                  className={
+                                    classes.notificationContainerLayout
+                                  }
+                                >
+                                  <div
+                                    className={
+                                      classes.notificationHeaderContainer
+                                    }
+                                  >
+                                    <div
+                                      className={classes.notificationHeaderForm}
+                                    >
+                                      <div
+                                        className={
+                                          classes.notificationHeaderLayout
+                                        }
+                                      >
+                                        <div>
+                                          <span
+                                            className={
+                                              classes.notificationHeaderContentFont
+                                            }
+                                          >
+                                            <h1
+                                              className={
+                                                classes.notificationHeaderContentAttribute
+                                              }
+                                              tabIndex={-1}
+                                            >
+                                              Notification
+                                            </h1>
                                           </span>
+                                        </div>
+                                        <div>
+                                          <Button
+                                            variant="default"
+                                            aria-label="Action to notification"
+                                            className={
+                                              classes.notificationHeaderActionForm
+                                            }
+                                          >
+                                            <i
+                                              className={
+                                                classes.notificationHeaderActionIcon
+                                              }
+                                            ></i>
+                                          </Button>
+                                        </div>
                                       </div>
-                                      <div>
-                                        <Button variant='default' aria-label="Action to notification"
-                                                className={classes.notificationHeaderActionForm}>
-                                          <i className={classes.notificationHeaderActionIcon}></i>
-                                        </Button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div>
-                                  <div aria-label="Notification Filter" className={classes.notificationFilterForm}>
-                                    <div className={classes.notificationFilterLayout}>
-                                      <Button variant='light' className={classes.notificationButton}>
-                                        <span className={classes.notificationButtonContent}>
-                                            All
-                                          </span>
-                                      </Button>
-                                    </div>
-                                    <div className={classes.notificationFilterLayout}>
-                                      <Button variant='default' className={classes.notificationButton}>
-                                          <span className={classes.notificationButtonContent}>
-                                            Not Read
-                                          </span>
-                                      </Button>
                                     </div>
                                   </div>
                                   <div>
-                                    <div aria-label='Notification List New'>
-                                      <div style={{
-                                        marginTop: '-4px',
-                                      }}>
-                                        <div>
-                                          <div className={classes.notificationListForm}>
-                                            <div className={classes.notificationListLayout}>
-                                              <div className={classes.notificationListHeaderFrom}>
-                                                <div className={classes.notificationListHeaderLayout}>
-                                                  <div className={classes.notificationListHeaderSize}>
-                                                  <span className={classes.notificationListContentForm}>
-                                                    <div className={classes.notificationListContentLayout}>
-                                                      <div className={classes.notificationListContentHeaderForm}>
-                                                        <h2 className={classes.notificationListContentHeaderLayout}>New</h2>
-                                                      </div>
-                                                      <div className={classes.notificationListContentLinkForm}>
-                                                        <div className={classes.notificationListContentLinkLayout}>
-                                                          <div>
-                                                            <a className={classes.notificationListContentLinkAttribute} href='/notifications'>
-                                                              <h2 className={classes.notificationListContentLinkFont}>View all notifications</h2>
-                                                            </a>
+                                    <div
+                                      aria-label="Notification Filter"
+                                      className={classes.notificationFilterForm}
+                                    >
+                                      <div
+                                        className={
+                                          classes.notificationFilterLayout
+                                        }
+                                      >
+                                        <Button
+                                          variant="light"
+                                          className={classes.notificationButton}
+                                        >
+                                          <span
+                                            className={
+                                              classes.notificationButtonContent
+                                            }
+                                          >
+                                            All
+                                          </span>
+                                        </Button>
+                                      </div>
+                                      <div
+                                        className={
+                                          classes.notificationFilterLayout
+                                        }
+                                      >
+                                        <Button
+                                          variant="default"
+                                          className={classes.notificationButton}
+                                        >
+                                          <span
+                                            className={
+                                              classes.notificationButtonContent
+                                            }
+                                          >
+                                            Not Read
+                                          </span>
+                                        </Button>
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <div aria-label="Notification List New">
+                                        <div
+                                          style={{
+                                            marginTop: '-4px',
+                                          }}
+                                        >
+                                          <div>
+                                            <div
+                                              className={
+                                                classes.notificationListForm
+                                              }
+                                            >
+                                              <div
+                                                className={
+                                                  classes.notificationListLayout
+                                                }
+                                              >
+                                                <div
+                                                  className={
+                                                    classes.notificationListHeaderFrom
+                                                  }
+                                                >
+                                                  <div
+                                                    className={
+                                                      classes.notificationListHeaderLayout
+                                                    }
+                                                  >
+                                                    <div
+                                                      className={
+                                                        classes.notificationListHeaderSize
+                                                      }
+                                                    >
+                                                      <span
+                                                        className={
+                                                          classes.notificationListContentForm
+                                                        }
+                                                      >
+                                                        <div
+                                                          className={
+                                                            classes.notificationListContentLayout
+                                                          }
+                                                        >
+                                                          <div
+                                                            className={
+                                                              classes.notificationListContentHeaderForm
+                                                            }
+                                                          >
+                                                            <h2
+                                                              className={
+                                                                classes.notificationListContentHeaderLayout
+                                                              }
+                                                            >
+                                                              New
+                                                            </h2>
+                                                          </div>
+                                                          <div
+                                                            className={
+                                                              classes.notificationListContentLinkForm
+                                                            }
+                                                          >
+                                                            <div
+                                                              className={
+                                                                classes.notificationListContentLinkLayout
+                                                              }
+                                                            >
+                                                              <div>
+                                                                <a
+                                                                  className={
+                                                                    classes.notificationListContentLinkAttribute
+                                                                  }
+                                                                  href="/notifications"
+                                                                >
+                                                                  <h2
+                                                                    className={
+                                                                      classes.notificationListContentLinkFont
+                                                                    }
+                                                                  >
+                                                                    View all
+                                                                    notifications
+                                                                  </h2>
+                                                                </a>
+                                                              </div>
+                                                            </div>
                                                           </div>
                                                         </div>
-                                                      </div>
+                                                      </span>
                                                     </div>
-                                                  </span>
                                                   </div>
                                                 </div>
                                               </div>
@@ -134,38 +280,104 @@ export function HeaderSearch() {
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                    <div>
-                                      <a className={classes.notificationListContainer} href='#'>
-                                        <div className={classes.notificationListContainerLinkFrom}>
-                                          <div className={classes.notificationListContainerLinkLayout}>
-                                            <div className={classes.notificationListContainerContenIconForm}>
-                                              <Bell className={classes.innerButton}/>
-                                            </div>
-                                            <div className={classes.notificationListContainerContenMessageForm}>
-                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                      <div>
+                                        <a
+                                          className={
+                                            classes.notificationListContainer
+                                          }
+                                          href="#"
+                                        >
+                                          <div
+                                            className={
+                                              classes.notificationListContainerLinkFrom
+                                            }
+                                          >
+                                            <div
+                                              className={
+                                                classes.notificationListContainerLinkLayout
+                                              }
+                                            >
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenIconForm
+                                                }
+                                              >
+                                                <Bell
+                                                  className={
+                                                    classes.innerButton
+                                                  }
+                                                />
+                                              </div>
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenMessageForm
+                                                }
+                                              >
+                                                <b>Ngô Ngyên Bằng </b> đã yêu
+                                                cầu mượng phòng <b> LB12</b>
+                                              </div>
                                             </div>
                                           </div>
-                                        </div>
-                                      </a>
-                                    </div>
-                                    <div aria-label='Notification List Readed'>
-                                      <div style={{
-                                        marginTop: '-4px',
-                                      }}>
-                                        <div>
-                                          <div className={classes.notificationListForm}>
-                                            <div className={classes.notificationListLayout}>
-                                              <div className={classes.notificationListHeaderFrom}>
-                                                <div className={classes.notificationListHeaderLayout}>
-                                                  <div className={classes.notificationListHeaderSize}>
-                                                  <span className={classes.notificationListContentForm}>
-                                                    <div className={classes.notificationListContentLayout}>
-                                                      <div className={classes.notificationListContentHeaderForm}>
-                                                        <h2 className={classes.notificationListContentHeaderLayout}>Readed</h2>
-                                                      </div>
+                                        </a>
+                                      </div>
+                                      <div aria-label="Notification List Readed">
+                                        <div
+                                          style={{
+                                            marginTop: '-4px',
+                                          }}
+                                        >
+                                          <div>
+                                            <div
+                                              className={
+                                                classes.notificationListForm
+                                              }
+                                            >
+                                              <div
+                                                className={
+                                                  classes.notificationListLayout
+                                                }
+                                              >
+                                                <div
+                                                  className={
+                                                    classes.notificationListHeaderFrom
+                                                  }
+                                                >
+                                                  <div
+                                                    className={
+                                                      classes.notificationListHeaderLayout
+                                                    }
+                                                  >
+                                                    <div
+                                                      className={
+                                                        classes.notificationListHeaderSize
+                                                      }
+                                                    >
+                                                      <span
+                                                        className={
+                                                          classes.notificationListContentForm
+                                                        }
+                                                      >
+                                                        <div
+                                                          className={
+                                                            classes.notificationListContentLayout
+                                                          }
+                                                        >
+                                                          <div
+                                                            className={
+                                                              classes.notificationListContentHeaderForm
+                                                            }
+                                                          >
+                                                            <h2
+                                                              className={
+                                                                classes.notificationListContentHeaderLayout
+                                                              }
+                                                            >
+                                                              Readed
+                                                            </h2>
+                                                          </div>
+                                                        </div>
+                                                      </span>
                                                     </div>
-                                                  </span>
                                                   </div>
                                                 </div>
                                               </div>
@@ -173,118 +385,326 @@ export function HeaderSearch() {
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                    <div>
-                                      <a className={classes.notificationListContainer} href='#'>
-                                        <div className={classes.notificationListContainerLinkFrom}>
-                                          <div className={classes.notificationListContainerLinkLayout}>
-                                            <div className={classes.notificationListContainerContenIconForm}>
-                                              <Bell className={classes.innerButton}/>
-                                            </div>
-                                            <div className={classes.notificationListContainerContenMessageForm}>
-                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </a>
-                                    </div>
-                                    <div>
-                                      <a className={classes.notificationListContainer} href='#'>
-                                        <div className={classes.notificationListContainerLinkFrom}>
-                                          <div className={classes.notificationListContainerLinkLayout}>
-                                            <div className={classes.notificationListContainerContenIconForm}>
-                                              <Bell className={classes.innerButton}/>
-                                            </div>
-                                            <div className={classes.notificationListContainerContenMessageForm}>
-                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </a>
-                                    </div>
-                                    <div>
-                                      <a className={classes.notificationListContainer} href='#'>
-                                        <div className={classes.notificationListContainerLinkFrom}>
-                                          <div className={classes.notificationListContainerLinkLayout}>
-                                            <div className={classes.notificationListContainerContenIconForm}>
-                                              <Bell className={classes.innerButton}/>
-                                            </div>
-                                            <div className={classes.notificationListContainerContenMessageForm}>
-                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                      <div>
+                                        <a
+                                          className={
+                                            classes.notificationListContainer
+                                          }
+                                          href="#"
+                                        >
+                                          <div
+                                            className={
+                                              classes.notificationListContainerLinkFrom
+                                            }
+                                          >
+                                            <div
+                                              className={
+                                                classes.notificationListContainerLinkLayout
+                                              }
+                                            >
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenIconForm
+                                                }
+                                              >
+                                                <Bell
+                                                  className={
+                                                    classes.innerButton
+                                                  }
+                                                />
+                                              </div>
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenMessageForm
+                                                }
+                                              >
+                                                <b>Ngô Ngyên Bằng </b> đã yêu
+                                                cầu mượng phòng <b> LB12</b>
+                                              </div>
                                             </div>
                                           </div>
-                                        </div>
-                                      </a>
-                                    </div>
-                                    <div>
-                                      <a className={classes.notificationListContainer} href='#'>
-                                        <div className={classes.notificationListContainerLinkFrom}>
-                                          <div className={classes.notificationListContainerLinkLayout}>
-                                            <div className={classes.notificationListContainerContenIconForm}>
-                                              <Bell className={classes.innerButton}/>
-                                            </div>
-                                            <div className={classes.notificationListContainerContenMessageForm}>
-                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </a>
-                                    </div>
-                                    <div>
-                                      <a className={classes.notificationListContainer} href='#'>
-                                        <div className={classes.notificationListContainerLinkFrom}>
-                                          <div className={classes.notificationListContainerLinkLayout}>
-                                            <div className={classes.notificationListContainerContenIconForm}>
-                                              <Bell className={classes.innerButton}/>
-                                            </div>
-                                            <div className={classes.notificationListContainerContenMessageForm}>
-                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </a>
-                                    </div>
-                                    <div>
-                                      <a className={classes.notificationListContainer} href='#'>
-                                        <div className={classes.notificationListContainerLinkFrom}>
-                                          <div className={classes.notificationListContainerLinkLayout}>
-                                            <div className={classes.notificationListContainerContenIconForm}>
-                                              <Bell className={classes.innerButton}/>
-                                            </div>
-                                            <div className={classes.notificationListContainerContenMessageForm}>
-                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                        </a>
+                                      </div>
+                                      <div>
+                                        <a
+                                          className={
+                                            classes.notificationListContainer
+                                          }
+                                          href="#"
+                                        >
+                                          <div
+                                            className={
+                                              classes.notificationListContainerLinkFrom
+                                            }
+                                          >
+                                            <div
+                                              className={
+                                                classes.notificationListContainerLinkLayout
+                                              }
+                                            >
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenIconForm
+                                                }
+                                              >
+                                                <Bell
+                                                  className={
+                                                    classes.innerButton
+                                                  }
+                                                />
+                                              </div>
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenMessageForm
+                                                }
+                                              >
+                                                <b>Ngô Ngyên Bằng </b> đã yêu
+                                                cầu mượng phòng <b> LB12</b>
+                                              </div>
                                             </div>
                                           </div>
-                                        </div>
-                                      </a>
-                                    </div>
-                                    <div>
-                                      <a className={classes.notificationListContainer} href='#'>
-                                        <div className={classes.notificationListContainerLinkFrom}>
-                                          <div className={classes.notificationListContainerLinkLayout}>
-                                            <div className={classes.notificationListContainerContenIconForm}>
-                                              <Bell className={classes.innerButton}/>
-                                            </div>
-                                            <div className={classes.notificationListContainerContenMessageForm}>
-                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                        </a>
+                                      </div>
+                                      <div>
+                                        <a
+                                          className={
+                                            classes.notificationListContainer
+                                          }
+                                          href="#"
+                                        >
+                                          <div
+                                            className={
+                                              classes.notificationListContainerLinkFrom
+                                            }
+                                          >
+                                            <div
+                                              className={
+                                                classes.notificationListContainerLinkLayout
+                                              }
+                                            >
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenIconForm
+                                                }
+                                              >
+                                                <Bell
+                                                  className={
+                                                    classes.innerButton
+                                                  }
+                                                />
+                                              </div>
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenMessageForm
+                                                }
+                                              >
+                                                <b>Ngô Ngyên Bằng </b> đã yêu
+                                                cầu mượng phòng <b> LB12</b>
+                                              </div>
                                             </div>
                                           </div>
-                                        </div>
-                                      </a>
-                                    </div>
-                                    <div>
-                                      <a className={classes.notificationListContainer} href='#'>
-                                        <div className={classes.notificationListContainerLinkFrom}>
-                                          <div className={classes.notificationListContainerLinkLayout}>
-                                            <div className={classes.notificationListContainerContenIconForm}>
-                                              <Bell className={classes.innerButton}/>
-                                            </div>
-                                            <div className={classes.notificationListContainerContenMessageForm}>
-                                              <b>Ngô Ngyên Bằng </b> đã yêu cầu mượng phòng <b> LB12</b>
+                                        </a>
+                                      </div>
+                                      <div>
+                                        <a
+                                          className={
+                                            classes.notificationListContainer
+                                          }
+                                          href="#"
+                                        >
+                                          <div
+                                            className={
+                                              classes.notificationListContainerLinkFrom
+                                            }
+                                          >
+                                            <div
+                                              className={
+                                                classes.notificationListContainerLinkLayout
+                                              }
+                                            >
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenIconForm
+                                                }
+                                              >
+                                                <Bell
+                                                  className={
+                                                    classes.innerButton
+                                                  }
+                                                />
+                                              </div>
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenMessageForm
+                                                }
+                                              >
+                                                <b>Ngô Ngyên Bằng </b> đã yêu
+                                                cầu mượng phòng <b> LB12</b>
+                                              </div>
                                             </div>
                                           </div>
-                                        </div>
-                                      </a>
+                                        </a>
+                                      </div>
+                                      <div>
+                                        <a
+                                          className={
+                                            classes.notificationListContainer
+                                          }
+                                          href="#"
+                                        >
+                                          <div
+                                            className={
+                                              classes.notificationListContainerLinkFrom
+                                            }
+                                          >
+                                            <div
+                                              className={
+                                                classes.notificationListContainerLinkLayout
+                                              }
+                                            >
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenIconForm
+                                                }
+                                              >
+                                                <Bell
+                                                  className={
+                                                    classes.innerButton
+                                                  }
+                                                />
+                                              </div>
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenMessageForm
+                                                }
+                                              >
+                                                <b>Ngô Ngyên Bằng </b> đã yêu
+                                                cầu mượng phòng <b> LB12</b>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </a>
+                                      </div>
+                                      <div>
+                                        <a
+                                          className={
+                                            classes.notificationListContainer
+                                          }
+                                          href="#"
+                                        >
+                                          <div
+                                            className={
+                                              classes.notificationListContainerLinkFrom
+                                            }
+                                          >
+                                            <div
+                                              className={
+                                                classes.notificationListContainerLinkLayout
+                                              }
+                                            >
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenIconForm
+                                                }
+                                              >
+                                                <Bell
+                                                  className={
+                                                    classes.innerButton
+                                                  }
+                                                />
+                                              </div>
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenMessageForm
+                                                }
+                                              >
+                                                <b>Ngô Ngyên Bằng </b> đã yêu
+                                                cầu mượng phòng <b> LB12</b>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </a>
+                                      </div>
+                                      <div>
+                                        <a
+                                          className={
+                                            classes.notificationListContainer
+                                          }
+                                          href="#"
+                                        >
+                                          <div
+                                            className={
+                                              classes.notificationListContainerLinkFrom
+                                            }
+                                          >
+                                            <div
+                                              className={
+                                                classes.notificationListContainerLinkLayout
+                                              }
+                                            >
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenIconForm
+                                                }
+                                              >
+                                                <Bell
+                                                  className={
+                                                    classes.innerButton
+                                                  }
+                                                />
+                                              </div>
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenMessageForm
+                                                }
+                                              >
+                                                <b>Ngô Ngyên Bằng </b> đã yêu
+                                                cầu mượng phòng <b> LB12</b>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </a>
+                                      </div>
+                                      <div>
+                                        <a
+                                          className={
+                                            classes.notificationListContainer
+                                          }
+                                          href="#"
+                                        >
+                                          <div
+                                            className={
+                                              classes.notificationListContainerLinkFrom
+                                            }
+                                          >
+                                            <div
+                                              className={
+                                                classes.notificationListContainerLinkLayout
+                                              }
+                                            >
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenIconForm
+                                                }
+                                              >
+                                                <Bell
+                                                  className={
+                                                    classes.innerButton
+                                                  }
+                                                />
+                                              </div>
+                                              <div
+                                                className={
+                                                  classes.notificationListContainerContenMessageForm
+                                                }
+                                              >
+                                                <b>Ngô Ngyên Bằng </b> đã yêu
+                                                cầu mượng phòng <b> LB12</b>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </a>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
@@ -296,14 +716,13 @@ export function HeaderSearch() {
                     </div>
                   </div>
                 </div>
-              </div>
-              : null}
+              ) : null}
             </Button>
             <Button className={classes.button}>
-              <ChevronDown className={classes.innerButton}/>
+              <ChevronDown className={classes.innerButton} />
             </Button>
             <Button className={classes.button}>
-              <Logout color={BLACK}/>
+              <Logout color={BLACK} />
             </Button>
           </Group>
         </Group>
@@ -312,6 +731,10 @@ export function HeaderSearch() {
   );
 }
 const useStyles = createStyles((theme) => ({
+  header: {
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md,
+  },
   avatarContainer: {
     color: BLACK,
     height: 50,
@@ -321,8 +744,8 @@ const useStyles = createStyles((theme) => ({
     justifyContent: 'space-between',
     borderRadius: 50,
     '&:hover': {
-      backgroundColor: LIGHT_GRAY
-    }
+      backgroundColor: LIGHT_GRAY,
+    },
   },
   avatarImage: {
     width: 40,
@@ -333,11 +756,10 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: LIGHT_GRAY,
     borderRadius: 50,
     marginRight: 10,
-
   },
-//-------------------------------------------START OF NOFITICATION---------------------------------------//
-//-------------------------------------------NOTIFICATION LAYOUT OUTSIDE-----------------------------------//
-  notificationLayoutForm:{
+  //-------------------------------------------START OF NOFITICATION---------------------------------------//
+  //-------------------------------------------NOTIFICATION LAYOUT OUTSIDE-----------------------------------//
+  notificationLayoutForm: {
     transform: 'translate(-172px, 48px)',
     marginRight: '-9999px',
     position: 'absolute',
@@ -346,24 +768,25 @@ const useStyles = createStyles((theme) => ({
     zIndex: 1,
   },
 
-  notificationLayoutPosition:{
+  notificationLayoutPosition: {
     marginRight: '8px',
     marginTop: '5px',
     borderRadius: '8px',
-    boxShadow: '0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.5)',
+    boxShadow:
+      '0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.5)',
     overflowX: 'hidden',
-    backgroundColor: WHITE
+    backgroundColor: WHITE,
   },
 
-  notificationLayoutSize:{
+  notificationLayoutSize: {
     maxHeight: 'calc(100vh - 56px - 16px)',
     width: '360px',
     display: 'flex',
     backgroundColor: WHITE,
     maxWidth: 'calc(100vw - 24px)',
-    flexDirection: "column"
+    flexDirection: 'column',
   },
-//---------------------------------NOTIFICATION HEADER 1---------------------------------------//
+  //---------------------------------NOTIFICATION HEADER 1---------------------------------------//
   notificationContainerForm: {
     minHeight: 0,
     perspectiveOrigin: 'right top',
@@ -382,7 +805,7 @@ const useStyles = createStyles((theme) => ({
     flexGrow: 1,
   },
 
-  notificationContainerLayout:{
+  notificationContainerLayout: {
     fontFamily: 'inherit',
     position: 'relative',
     display: 'flex',
@@ -390,7 +813,7 @@ const useStyles = createStyles((theme) => ({
     flexGrow: 1,
   },
 
-  notificationHeaderForm:{
+  notificationHeaderForm: {
     boxSizing: 'border-box',
     flexBasis: '0px',
     position: 'relative',
@@ -403,7 +826,7 @@ const useStyles = createStyles((theme) => ({
     flexGrow: 1,
   },
 
-  notificationHeaderLayout:{
+  notificationHeaderLayout: {
     boxSizing: 'border-box',
     flexShrink: 0,
     flexWrap: 'nowrap',
@@ -415,7 +838,7 @@ const useStyles = createStyles((theme) => ({
     alignItems: 'center',
   },
 
-  notificationHeaderContentFont:{
+  notificationHeaderContentFont: {
     wordBreak: 'break-word',
     color: BLACK,
     fontSize: '1.5rem',
@@ -429,7 +852,7 @@ const useStyles = createStyles((theme) => ({
     unicodeBidi: 'isolate',
   },
 
-  notificationHeaderContentAttribute:{
+  notificationHeaderContentAttribute: {
     fontFamily: 'inherit',
     fontWeight: 'inherit',
     fontSize: 'inherit',
@@ -448,7 +871,7 @@ const useStyles = createStyles((theme) => ({
     wordWrap: 'break-word',
   },
 
-  notificationHeaderActionForm:{
+  notificationHeaderActionForm: {
     justifyContent: 'center',
     padding: '0 0 0 0',
     margin: '0 0 0 0',
@@ -468,20 +891,21 @@ const useStyles = createStyles((theme) => ({
     outline: 'none',
     textDecoration: 'none',
   },
-//------------------------------------NOTIFICATION ACTION---------------------------------------//
-  notificationHeaderActionIcon:{
-    backgroundImage: 'url(https://static.xx.fbcdn.net/rsrc.php/v3/yV/r/GBw_R_G5XHi.png)',
-    backgroundPosition: "-147px -67px",
+  //------------------------------------NOTIFICATION ACTION---------------------------------------//
+  notificationHeaderActionIcon: {
+    backgroundImage:
+      'url(https://static.xx.fbcdn.net/rsrc.php/v3/yV/r/GBw_R_G5XHi.png)',
+    backgroundPosition: '-147px -67px',
     backgroundSize: 'auto',
     width: '20px',
     height: '20px',
     backgroundRepeat: 'no-repeat',
     display: 'inline-block',
     verticalAlign: '-0.25em',
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
 
-  notificationHeaderContainer:{
+  notificationHeaderContainer: {
     fontFamily: 'inherit',
     marginRight: '16px',
     boxSizing: 'border-box',
@@ -497,31 +921,31 @@ const useStyles = createStyles((theme) => ({
     flexDirection: 'row',
     alignItems: 'center',
   },
-//-----------------------------------NOTIFICATION FILTER---------------------------------------//
-  notificationFilterForm:{
+  //-----------------------------------NOTIFICATION FILTER---------------------------------------//
+  notificationFilterForm: {
     flexShrink: 0,
     flexWrap: 'wrap',
     display: 'flex',
     paddingLeft: '16px',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
 
-  notificationFilterLayout:{
+  notificationFilterLayout: {
     boxSizing: 'border-box',
     paddingRight: '8px',
-    height: '100%'
+    height: '100%',
   },
 
-  notificationButton:{
+  notificationButton: {
     boxSizing: 'border-box',
     paddingBottom: 0,
     borderRadius: '18px',
     margin: 0,
     paddingTop: 0,
-    border:0,
+    border: 0,
   },
 
-  notificationButtonContent:{
+  notificationButtonContent: {
     fontFamily: 'inherit',
     wordBreak: 'break-word',
     fontWeight: 600,
@@ -531,10 +955,10 @@ const useStyles = createStyles((theme) => ({
     wordWrap: 'break-word',
     display: 'block',
     lineHeight: 1.3333,
-    unicodeBidi: 'isolate'
+    unicodeBidi: 'isolate',
   },
-//-----------------------------------NOTIFICATION LIST LAYOUT OUTSIDE----------------------------------------//
-  notificationListForm:{
+  //-----------------------------------NOTIFICATION LIST LAYOUT OUTSIDE----------------------------------------//
+  notificationListForm: {
     boxSizing: 'border-box',
     flexShrink: 0,
     position: 'relative',
@@ -546,17 +970,17 @@ const useStyles = createStyles((theme) => ({
     paddingTop: '20px',
   },
 
-  notificationListLayout:{
+  notificationListLayout: {
     minHeight: 0,
     boxSizing: 'border-box',
     position: 'relative',
     display: 'flex',
     zIndex: 0,
     flexDirection: 'column',
-    flexGrow: 1
+    flexGrow: 1,
   },
 
-  notificationListHeaderFrom:{
+  notificationListHeaderFrom: {
     boxSizing: 'border-box',
     flexShrink: 0,
     position: 'relative',
@@ -568,19 +992,19 @@ const useStyles = createStyles((theme) => ({
     flexDirection: 'column',
   },
 
-  notificationListHeaderLayout:{
+  notificationListHeaderLayout: {
     display: 'flex',
     marginTop: '-5px',
     marginBottom: '-5px',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
 
-  notificationListHeaderSize:{
+  notificationListHeaderSize: {
     marginBottom: '5px',
     marginTop: '5px',
   },
-//----------------------------------------NOTIFICATINO LIST CONTENT LAYOUT-------------------------------------//
-  notificationListContentForm:{
+  //----------------------------------------NOTIFICATINO LIST CONTENT LAYOUT-------------------------------------//
+  notificationListContentForm: {
     wordBreak: 'break-word',
     color: BLACK,
     fontWeight: 600,
@@ -593,7 +1017,7 @@ const useStyles = createStyles((theme) => ({
     unicodeBidi: 'isolate',
   },
 
-  notificationListContentLayout:{
+  notificationListContentLayout: {
     boxSizing: 'border-box',
     flexShrink: 0,
     flexWrap: 'nowrap',
@@ -605,8 +1029,8 @@ const useStyles = createStyles((theme) => ({
     flexDirection: 'row',
     alignItems: 'center',
   },
-//---------------------------------NOTIFICATION LIST CONTENT HEADER 2------------------------------------------//
-  notificationListContentHeaderForm:{
+  //---------------------------------NOTIFICATION LIST CONTENT HEADER 2------------------------------------------//
+  notificationListContentHeaderForm: {
     boxSizing: 'border-box',
     flexBasis: '0px',
     position: 'relative',
@@ -616,10 +1040,10 @@ const useStyles = createStyles((theme) => ({
     zIndex: 0,
     maxWidth: '100%',
     flexDirection: 'column',
-    flexGrow: 1
+    flexGrow: 1,
   },
 
-  notificationListContentHeaderLayout:{
+  notificationListContentHeaderLayout: {
     textAlign: 'left',
     fontWeight: 'inherit',
     fontSize: 'inherit',
@@ -632,10 +1056,10 @@ const useStyles = createStyles((theme) => ({
     marginBlockStart: '0.83em',
     marginBlockEnd: '0.83em',
     marginInlineStart: '0px',
-    marginInlineEnd: '0px'
+    marginInlineEnd: '0px',
   },
-//-------------------------------------------NOTICATION LIST CONTENT LINK-----------------------------------------------//
-  notificationListContentLinkForm:{
+  //-------------------------------------------NOTICATION LIST CONTENT LINK-----------------------------------------------//
+  notificationListContentLinkForm: {
     fontFamily: 'inherit',
     justifyContent: 'center',
     boxSizing: 'border-box',
@@ -647,10 +1071,10 @@ const useStyles = createStyles((theme) => ({
     marginLeft: '8px',
     zIndex: 0,
     maxWidth: '100%',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
 
-  notificationListContentLinkLayout:{
+  notificationListContentLinkLayout: {
     fontFamily: 'inherit',
     boxSizing: 'border-box',
     flexShrink: 0,
@@ -660,10 +1084,10 @@ const useStyles = createStyles((theme) => ({
     justifyContent: 'space-between',
     zIndex: 0,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
 
-  notificationListContentLinkAttribute:{
+  notificationListContentLinkAttribute: {
     fontFamily: 'inherit',
     minHeight: 0,
     padding: 0,
@@ -694,7 +1118,7 @@ const useStyles = createStyles((theme) => ({
     outline: 'none',
   },
 
-  notificationListContentLinkFont:{
+  notificationListContentLinkFont: {
     textAlign: 'right',
     fontFamily: 'inherit',
     overflowY: 'hidden',
@@ -707,10 +1131,10 @@ const useStyles = createStyles((theme) => ({
     marginBlockEnd: '0.83em',
     marginInlineStart: '0px',
     marginInlineEnd: '0px',
-    unicodeBidi: 'isolate'
+    unicodeBidi: 'isolate',
   },
-//----------------------------------------NOTIFICATION LIST MESSAGE-------------------------------//
-  notificationListContainer:{
+  //----------------------------------------NOTIFICATION LIST MESSAGE-------------------------------//
+  notificationListContainer: {
     borderRadius: '8px',
     padding: '0 0 0 0',
     boxSizing: 'border-box',
@@ -734,32 +1158,33 @@ const useStyles = createStyles((theme) => ({
     color: '#385898',
   },
 
-  notificationListContainerLinkFrom:{
+  notificationListContainerLinkFrom: {
     color: BLACK,
-    margin: 10
+    margin: 10,
   },
 
-  notificationListContainerLinkLayout:{
+  notificationListContainerLinkLayout: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   },
 
-  notificationListContainerContenIconForm:{width: 60,
+  notificationListContainerContenIconForm: {
+    width: 60,
     height: 50,
     borderRadius: 50,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: GRAY
+    backgroundColor: GRAY,
   },
 
-  notificationListContainerContenMessageForm:{
+  notificationListContainerContenMessageForm: {
     display: 'flex',
     flexWrap: 'wrap',
     lineHeight: 1.5,
-    marginLeft: 10
+    marginLeft: 10,
   },
-//------------------------------END OF NOTIFICATION-------------------------------------//
+  //------------------------------END OF NOTIFICATION-------------------------------------//
 
   button: {
     display: 'flex',
@@ -776,14 +1201,9 @@ const useStyles = createStyles((theme) => ({
   innerButton: {
     color: GRAY,
     '&:hover': {
-      color: WHITE
-    }
+      color: WHITE,
+    },
   },
-  header: {
-    paddingLeft: theme.spacing.md,
-    paddingRight: theme.spacing.md,
-  },
-
   inner: {
     height: 56,
     display: 'flex',
@@ -809,12 +1229,18 @@ const useStyles = createStyles((theme) => ({
     padding: '8px 12px',
     borderRadius: theme.radius.sm,
     textDecoration: 'none',
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
+    color:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[0]
+        : theme.colors.gray[7],
     fontSize: theme.fontSizes.sm,
     fontWeight: 500,
 
     '&:hover': {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0],
     },
   },
 }));

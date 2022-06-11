@@ -355,12 +355,18 @@ const useStyles = createStyles({
   tableSearchHeader: {
     display: 'flex',
     justifyContent: 'space-between',
+    '@media (max-width: 1130px)': {
+      flexDirection: 'column',
+    },
   },
   leftContainer: {
     display: 'flex',
     justifyContent: 'space-around',
     flexGrow: 0.15,
     margin: 10,
+    '@media (max-width: 1130px)': {
+      justifyContent: 'flex-start',
+    },
   },
   rightContainer: {
     display: 'flex',
@@ -368,14 +374,23 @@ const useStyles = createStyles({
     flexGrow: 0.1,
     alignItems: 'center',
     marginRight: 10,
+    '@media (max-width: 1130px)': {
+      justifyContent: 'space-between',
+      margin: "0 0 10px 10px",
+      maxWidth: "260px",
+    },
   },
   searchInput: {
     width: 300,
+    '@media (max-width: 865px)': {
+      maxWidth: "100px",
+    },
   },
   sortButtonContainer: {
     display: 'flex',
     flexDirection: 'column',
     marginTop: 4,
+    textAlign: 'center'
   },
   sortButtonContainerTitle: {
     fontWeight: 500,

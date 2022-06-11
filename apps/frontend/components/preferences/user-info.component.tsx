@@ -10,7 +10,7 @@ import {
   TextInput,
   Notification,
 } from '@mantine/core';
-import { showNotification, updateNotification } from '@mantine/notifications';
+import { showNotification } from '@mantine/notifications';
 import { At, Key, Lock, PhoneCall, User, Check, X } from 'tabler-icons-react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -58,7 +58,7 @@ const UserInfoPreference: React.FC = () => {
       }}
     >
       <item.icon className={classes.linkIcon} />
-      <span>{item.label}</span>
+      <span className={classes.displayLabelNav}>{item.label}</span>
     </a>
   ));
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
@@ -66,8 +66,8 @@ const UserInfoPreference: React.FC = () => {
   const avatarInputRef = useRef<HTMLInputElement>();
 
   function formatDate(string) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(string).toLocaleDateString([], options);
+    const options = {year: 'numeric', month: 'numeric', day: 'numeric' };
+    return new Date(string).toLocaleDateString(undefined, options as unknown);
   }
 
   useEffect(() => {
@@ -168,7 +168,7 @@ const UserInfoPreference: React.FC = () => {
     };
     return (
       <form onSubmit={formik.handleSubmit}>
-        <Group>
+        <Group className={classes.avatarAndInforArea}>
           <div>
             <Avatar
               src={uploadData || formik.values.avatar}
@@ -195,8 +195,7 @@ const UserInfoPreference: React.FC = () => {
               accept=".jpg, .png, jpeg"
             />
           </div>
-
-          <div>
+          <div className={classes.inforArea}>
             <Text
               size="xs"
               sx={{ textTransform: 'uppercase' }}
@@ -228,13 +227,8 @@ const UserInfoPreference: React.FC = () => {
             </Group>
           </div>
         </Group>
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-          }}
-        >
+
+        <div className={classes.displayGrid}>
           <TextInput
             id="username"
             description="This will be visible to other people"
@@ -299,8 +293,8 @@ const UserInfoPreference: React.FC = () => {
             label={'Effdate'}
             required
             name="effdate"
-            className={classes.width100}
             disabled
+            className={classes.fullWidth}
           />
           <Textarea
             id="description"
@@ -312,20 +306,21 @@ const UserInfoPreference: React.FC = () => {
             autosize
             minRows={2}
             value={formik.values.description}
-            className={classes.width100}
+            className={classes.fullWidth}
           />
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              marginTop: '100px',
-              width: '100%',
-            }}
-          >
-            <Button color="green" type="submit" name="update">
-              Save Changes nè
-            </Button>
-          </div>
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginTop: '100px',
+            width: '100%',
+          }}
+        >
+          <Button color="green" type="submit" name="update">
+            Save Changes
+          </Button>
         </div>
       </form>
     );
@@ -340,9 +335,9 @@ const UserInfoPreference: React.FC = () => {
             flexDirection: 'column',
           }}
         >
-          <Button leftIcon={<Lock />}>Reset password</Button>
-          <Button>Authenticate with username password</Button>
-          <Button>Link to Google</Button>
+          <Button leftIcon={<Lock />} className={classes.marginTop10}>Reset password</Button>
+          <Button className={classes.marginTop10}>Authenticate with username password</Button>
+          <Button className={classes.marginTop10}>Link to Google</Button>
         </div>
       </div>
     );
@@ -363,13 +358,14 @@ const UserInfoPreference: React.FC = () => {
         display: 'flex',
       }}
     >
-      <Navbar height={600} width={{ sm: 200 }} p="sm">
+      <Navbar className={classes.displayNav} p="sm">
         <Navbar.Section grow>{links}</Navbar.Section>
       </Navbar>
       <div
         style={{
           marginLeft: 20,
           width: '100%',
+          minWidth: 0,
         }}
       >
         <Renderer label={active} />
@@ -387,12 +383,51 @@ const useStyles = createStyles((theme, _params, getRef) => {
           ? theme.colors.dark[3]
           : theme.colors.gray[5],
     },
-    inputText: {
-      width: '40%',
-      minWidth: 220,
+    displayNav:{
+      height: "auto",
+      minHeight: 500,
+      width: 300,
+      '@media (max-width: 920px)': {
+        width: 100,
+      },
     },
-    width100: {
+    displayLabelNav:{
+      '@media (max-width: 920px)': {
+        display: 'none',
+      },
+    },
+    avatarAndInforArea: {
+      flexWrap: "nowrap",
+      '@media (max-width: 920px)': {
+        flexDirection: 'column',
+      },
+    },
+    inforArea: {
+      marginTop: '-30px',
+      '@media (max-width: 920px)': {
+        textAlign: 'center',
+      },
+    },
+    displayGrid: {
+      display: 'grid',
+      gridTemplateColumns: '50% 50%',
+      gap: '10px',
       width: '100%',
+      '@media (max-width: 920px)': {
+        gridTemplateColumns: '100%',
+      },
+    },
+    inputText: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+    },
+    fullWidth: {
+      gridColumnStart: 1,
+      gridColumnEnd: 3,
+      '@media (max-width: 920px)': {
+        gridColumnEnd: 2,
+      },
     },
     name: {
       fontFamily: `Greycliff CF, ${theme.fontFamily}`,
@@ -476,6 +511,9 @@ const useStyles = createStyles((theme, _params, getRef) => {
         },
       },
     },
+    marginTop10:{
+      marginTop: 10,
+    }
   };
 });
 

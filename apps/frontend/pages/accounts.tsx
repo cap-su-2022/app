@@ -143,7 +143,7 @@ function UsersPage() {
             }}
                    horizontalSpacing="md"
                    verticalSpacing="xs"
-                   sx={{tableLayout: 'auto', minWidth: 1000}}
+                  //  sx={{tableLayout: 'auto', minWidth: 1000}}
             >
               <thead>
               <tr>

@@ -137,22 +137,36 @@ const useStyles = createStyles({
   tableSearchHeader: {
     display: 'flex',
     justifyContent: 'space-between',
+    '@media (max-width: 1130px)': {
+      flexDirection: 'column',
+    },
   },
   leftContainer: {
     display: 'flex',
     justifyContent: 'space-around',
     flexGrow: 0.15,
-    margin: 10
+    margin: 10,
+    '@media (max-width: 1130px)': {
+      justifyContent: 'flex-start',
+    },
   },
   rightContainer: {
     display: 'flex',
     justifyContent: 'space-between',
     flexGrow: 0.1,
     alignItems: 'center',
-    marginRight: 10
+    marginRight: 10,
+    '@media (max-width: 1130px)': {
+      justifyContent: 'space-between',
+      margin: "0 0 10px 10px",
+      maxWidth: "200px",
+    },
   },
   searchInput: {
-    width: 300
+    width: 300,
+    '@media (max-width: 865px)': {
+      maxWidth: "100px",
+    },
   },
   sortButtonContainer: {
     display: 'flex',
