@@ -26,7 +26,11 @@ export class RoomsService {
 
   async findById(id: string): Promise<Rooms> {
     try {
-      return await this.repository.findOneOrFail(id);
+      return await this.repository.findOneOrFail({
+        where: {
+          id: id
+        }
+      });
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException("An error occurred while retrieving this room");
