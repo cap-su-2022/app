@@ -8,10 +8,10 @@ import {
   Param,
   Post,
   Put,
-  UseGuards, UseInterceptors,
+  UseInterceptors,
   UsePipes
 } from "@nestjs/common";
-import { DevicesService } from "../services/devices.service";
+import { DevicesService } from "../services";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AddDeviceRequest, UpdateDeviceRequest } from "@app/models";
 import { DevicesResponsePayload } from "../payload/response/devices.payload";
@@ -20,9 +20,9 @@ import { DevicesValidation } from "../pipes/validation/devices.validation";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
-import { Devices } from "../models/devices";
+import { Devices } from "../models";
 
-@Controller("v1/devices")
+@Controller("/v1/devices")
 @ApiBearerAuth()
 @ApiTags("Devices")
 @UseInterceptors(new PathLoggerInterceptor(DevicesController.name))

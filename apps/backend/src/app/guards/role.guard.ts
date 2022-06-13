@@ -1,10 +1,8 @@
-import { Injectable, CanActivate, ExecutionContext, Inject } from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { ROLES_KEY } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
-import { KeycloakService } from "../services/keycloak.service";
-import { Request } from "express";
-import { AccountsService } from "../services/accounts.service";
+import { KeycloakService, AccountsService } from "../services";
 import { getAccessTokenViaCookie } from "../validators/utils/access-token-extractor.util";
 
 @Injectable()
@@ -25,7 +23,7 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest<Request>();
+    const request = context.switchToHttp().getRequest();
     const requestHeaders = request.headers;
     const accessToken = requestHeaders["authorization"] ?? getAccessTokenViaCookie(request);
     const keycloakUser = await this.keycloakService.getUserInfo(accessToken);

@@ -1,9 +1,8 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
-import { RoomWishlistRepository } from "../repositories/room-wishlist.repository";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { RoomWishlistRepository } from "../repositories";
 import { WishlistBookingRoomRequestDTO } from "../dto/wishlist-booking-room.request.dto";
 import { AccountsService } from "./accounts.service";
-import { RoomWishlist } from "../models/room-wishlist.entity";
+import { RoomWishlist } from "../models";
 
 @Injectable()
 export class RoomWishlistService {

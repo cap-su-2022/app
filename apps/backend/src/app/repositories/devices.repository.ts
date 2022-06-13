@@ -1,9 +1,10 @@
-import { EntityRepository, Repository, UpdateResult } from "typeorm";
-import { Devices } from "../models/devices";
+import { Repository, UpdateResult } from "typeorm";
+import { Devices } from "../models";
 import { RepositoryPaginationPayload } from "../models/search-pagination.payload";
 import { AddDeviceRequest, UpdateDeviceRequest } from "@app/models";
+import { CustomRepository } from "../decorators/typeorm-ex.decorator";
 
-@EntityRepository(Devices)
+@CustomRepository(Devices)
 export class DevicesRepository extends Repository<Devices> {
   async getSize(): Promise<number> {
     const result = await this.createQueryBuilder(`devices`)
@@ -27,7 +28,6 @@ export class DevicesRepository extends Repository<Devices> {
       .orWhere(`devices.description = :description`, { description: `%${payload.search}%` })
       .skip(payload.offset)
       .take(payload.limit)
-      .addOrderBy("id", payload.direction === "ASC" ? "ASC" : "DESC")
       .getMany();
   }
 

@@ -1,13 +1,13 @@
 import { Module } from "@nestjs/common";
-import { KeycloakService } from "../services/keycloak.service";
+import { KeycloakService } from "../services";
 import { HttpModule } from "@nestjs/axios";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AccountRepository } from "../repositories/account.repository.";
+import { AccountRepository } from "../repositories";
 import ConfigModule from "./global/config.module";
-import { AuthenticationService } from "../services/authentication.service";
-import { CloudinaryService } from "../services/cloudinary.service";
+import { AuthenticationService } from "../services";
+import { CloudinaryService } from "../services";
 import { AccountsModule } from "./accounts.module";
-import { AuthenticationController } from "../controllers/authentication.controller";
+import { AuthenticationController } from "../controllers";
 
 @Module({
   imports: [HttpModule,

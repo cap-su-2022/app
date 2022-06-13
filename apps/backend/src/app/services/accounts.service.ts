@@ -1,17 +1,16 @@
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
-import { Accounts } from "../models/account.entity";
+import { Accounts } from "../models";
 import { BaseService } from "./base.service";
 import { UpdateDeviceRequest, UsersDTO } from "@app/models";
-import { AccountRepository } from "../repositories/account.repository.";
+import { AccountRepository } from "../repositories";
 import { KeycloakService } from "./keycloak.service";
 import { UsersRequestPayload } from "../payload/request/users.payload";
-import { RoomsResponsePayload } from "../payload/response/rooms.payload";
-import { Express } from "express";
-import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
 import { CloudinaryService } from "./cloudinary.service";
-
-
-type File = Express.Multer.File;
+import { AccountsResponsePayload } from "../payload/response/accounts.payload";
+import { KeycloakUserInstance } from "../dto/keycloak.user";
+import { Direction } from "../models/search-pagination.payload";
+import { ChangeProfilePasswordRequest } from "../payload/request/change-password.request.payload";
+import { randomUUID } from "crypto";
 
 @Injectable()
 export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
@@ -34,7 +33,12 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
   }
 
   findByKeycloakId(keycloakId: string): Promise<Accounts> {
-    return this.repository.findByKeycloakId(keycloakId);
+    try {
+      return this.repository.findByKeycloakId(keycloakId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 
   async add(model: UsersDTO): Promise<Accounts> {
@@ -59,7 +63,7 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
 
   async getAllByPagination(
     request: UsersRequestPayload
-  ): Promise<RoomsResponsePayload> {
+  ): Promise<AccountsResponsePayload> {
     const offset = request.size * (request.page - 1);
     const limit = request.size;
 
@@ -71,7 +75,7 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
         search: request.search,
         offset: offset,
         limit: limit,
-        direction: request.sort,
+        direction: request.sort as Direction[]
       });
       total = await this.repository.getSize();
     } catch (e) {
@@ -160,15 +164,20 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
 
   }
 
-  async uploadAvatarByAccountId(image: File, id: string): Promise<void> {
+  async uploadAvatarByAccountId(image: Express.Multer.File, id: string): Promise<void> {
     try {
-      await this.repository.findById(id);
-      await this.cloudinaryService.uploadImageAndGetURL(image.buffer, id);
-      const url = await this.cloudinaryService.getImageURLByFileName(id);
+      console.log(image);
+      const user = await this.repository.findById(id);
+      if (user.isDisabled || user.isDeleted) {
+        throw new BadRequestException("This account has been disabled");
+      }
+      const imageId = randomUUID();
+      await this.cloudinaryService.uploadImageAndGetURL(image.buffer, imageId);
+      const url = await this.cloudinaryService.getImageURLByFileName(imageId);
       await this.repository.addAvatarURLById(url, id);
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException("Error while uploading avatar");
+      throw new BadRequestException(e.message ?? "Error while uploading avatar");
     }
   }
 
@@ -192,16 +201,29 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     }
   }
 
-  async changePassword(keycloakUser: KeycloakUserInfoDTO, password: string): Promise<void> {
+  async changePassword(keycloakUser: KeycloakUserInstance, payload: ChangeProfilePasswordRequest): Promise<void> {
     try {
-      await this.keycloakService.changePasswordByKeycloakId(keycloakUser.sub, password);
+      if (payload.password === payload.newPassword) {
+        throw new BadRequestException("Old password must not be the same with new password.");
+      }
+      await this.keycloakService.signInToKeycloak(payload.username, payload.password);
+      await this.keycloakService.changePasswordByKeycloakId(keycloakUser.sub, payload.newPassword);
     } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException("Error while changing account password");
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message ?? "Error while changing account password");
     }
   }
 
-  async updateMyProfile(keycloakUser: KeycloakUserInfoDTO,
+  async getUsernameByAccountId(id: string): Promise<string> {
+    try {
+      return await this.repository.findUsernameById(id);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async updateMyProfile(keycloakUser: KeycloakUserInstance,
                         payload: { fullname: string; phone: string; description: string }):
     Promise<Accounts> {
     try {

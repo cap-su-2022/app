@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { RoomsService } from "./rooms.service";
-import { BookingRoomRepository } from "../repositories/booking-room.repository";
+import { BookingRoomRepository } from "../repositories";
 import { BookingRoomResponseDTO } from "../dto/booking-room.response.dto";
-import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
 import { WishlistBookingRoomResponseDTO } from "../dto/wishlist-booking-room.response.dto";
 import { RoomWishlistService } from "./room-wishlist.service";
 import { WishlistBookingRoomRequestDTO } from "../dto/wishlist-booking-room.request.dto";
 import { BookingRoomsFilterRequestPayload } from "../payload/request/booking-rooms.request.payload";
+import { KeycloakUserInstance } from "../dto/keycloak.user";
 
 @Injectable()
 export class BookingRoomService {
@@ -45,7 +45,7 @@ export class BookingRoomService {
     }
   }
 
-  getWishlistBookingRooms(roomName: string, keycloakUser: KeycloakUserInfoDTO):
+  getWishlistBookingRooms(roomName: string, keycloakUser: KeycloakUserInstance):
     Promise<WishlistBookingRoomResponseDTO[]> {
     try {
       return this.roomWishlistService
@@ -56,7 +56,7 @@ export class BookingRoomService {
     }
   }
 
-  async addToBookingRoomWishlist(user: KeycloakUserInfoDTO, wishlist: WishlistBookingRoomRequestDTO) {
+  async addToBookingRoomWishlist(user: KeycloakUserInstance, wishlist: WishlistBookingRoomRequestDTO) {
     try {
       return await this.roomWishlistService.addToWishlist(user.sub, wishlist);
     } catch (e) {

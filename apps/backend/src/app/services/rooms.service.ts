@@ -1,27 +1,50 @@
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { AddRoomRequest, UpdateRoomRequest } from "@app/models";
 import { UpdateResult } from "typeorm";
-import { Rooms } from "../models/rooms.entity";
-import { RoomsRepository } from "../repositories/rooms.repository";
+import { Rooms } from "../models";
+import { RoomsRepository } from "../repositories";
 import { RoomsRequestPayload } from "../payload/request/rooms.payload";
 import { RoomsResponsePayload } from "../payload/response/rooms.payload";
+import { KeycloakUserInstance } from "../dto/keycloak.user";
+import { Direction } from "../models/search-pagination.payload";
+import RoomsSearchService from "./rooms.search.service";
 
 @Injectable()
 export class RoomsService {
   private readonly logger = new Logger(RoomsService.name);
 
-  constructor(private readonly repository: RoomsRepository) {
+  constructor(
+    private readonly searchService: RoomsSearchService,
+    private readonly repository: RoomsRepository
+  ) {
   }
 
-  async add(room: AddRoomRequest): Promise<Rooms> {
+  async add(user: KeycloakUserInstance, room: AddRoomRequest): Promise<Rooms> {
     try {
-      return await this.repository.save(room, {
+      const isExisted = await this.repository.isExistedByName(room.name);
+      if (isExisted) {
+        throw new BadRequestException("This room is already existed");
+      }
+
+      const addedRoom = await this.repository.save({
+        createdBy: user.account_id,
+        updatedBy: user.account_id,
+        ...room
+      }, {
         transaction: true
       });
+
+      await this.searchService.indexRoom(addedRoom);
+
+      return addedRoom;
     } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException("An error occurred while adding this room");
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message ?? "An error occurred while adding this room");
     }
+  }
+
+  async syncRoomsDataWithElasticIndex() {
+
   }
 
   async findById(id: string): Promise<Rooms> {
@@ -38,25 +61,38 @@ export class RoomsService {
   }
 
   async getAll(request: RoomsRequestPayload): Promise<RoomsResponsePayload> {
+
+    const results = await this.searchService.search(request.search);
+    const ids = results.map((result) => result.id);
+    console.log(ids);
+    if (!ids.length) {
+      return {
+        data: [],
+        size: 0,
+        currentPage: request.page,
+        totalPage: 0
+      };
+    }
+
     const offset = request.size * (request.page - 1);
     const limit = request.size;
 
     const queryResult = await this.repository
       .searchRoom({
-        search: request.search,
+        search: ids,
         offset: offset,
         limit: limit,
-        direction: request.sort
+        direction: request.sort as Direction[]
       })
       .catch((e) => {
         this.logger.error(e);
         throw new BadRequestException("One or more parameters is invalid");
       });
-
     const total = await this.repository.getSize().catch((e) => {
       this.logger.error(e);
       throw new BadRequestException("One or more parameters is invalid");
     });
+    console.log(total);
     const totalPage = Math.ceil(total / request.size);
 
     return {
@@ -186,5 +222,11 @@ export class RoomsService {
       this.logger.error(e);
       throw new BadRequestException("Error occurred while deleting this room");
     }
+  }
+
+  async reSyncIndex() {
+    await this.searchService.removeAllIndex();
+    const rooms = await this.repository.getAllRoomsForElasticIndex();
+    await rooms.forEach((room) => this.searchService.indexRoom(room));
   }
 }

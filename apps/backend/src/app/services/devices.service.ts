@@ -1,9 +1,10 @@
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { DevicesRepository } from "../repositories/devices.repository";
 import { DevicesResponsePayload } from "../payload/response/devices.payload";
-import { Devices } from "../models/devices";
 import { AddDeviceRequest, UpdateDeviceRequest } from "@app/models";
 import { DevicesRequestPayload } from "../payload/request/devices.payload";
+import { Devices } from "../models";
+import { Direction } from "../models/search-pagination.payload";
 
 @Injectable()
 export class DevicesService {
@@ -49,7 +50,7 @@ export class DevicesService {
         search: request.search,
         offset: offset,
         limit: limit,
-        direction: request.sort
+        direction: request.sort as Direction[]
       }).catch((e) => {
       this.logger.error(e);
       throw new BadRequestException("One or more parameters is invalid");

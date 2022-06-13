@@ -1,7 +1,7 @@
-import {Module} from "@nestjs/common";
-import {HealthCheckController} from "../controllers/health-check.controller";
-import {KeycloakService} from "../services/keycloak.service";
-import {HttpModule} from "@nestjs/axios";
+import { Module } from "@nestjs/common";
+import { HealthCheckController } from "../controllers";
+import { KeycloakService } from "../services";
+import { HttpModule } from "@nestjs/axios";
 import ConfigModule from "./global/config.module";
 
 @Module({
@@ -9,7 +9,9 @@ import ConfigModule from "./global/config.module";
     HttpModule,
     ConfigModule
   ],
-  controllers: [HealthCheckController],
+  controllers: [
+    HealthCheckController
+  ],
   providers: [KeycloakService],
   exports: []
 })

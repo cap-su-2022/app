@@ -1,6 +1,5 @@
 import * as admin from "firebase-admin";
 import {FirebaseSettingsModel} from "@app/models";
-import {Logger} from "@nestjs/common";
 
 const firebaseServiceAccountFile = './fptu-library-booking-firebase-adminsdk-gbxgk-75d2eb543f.json';
 

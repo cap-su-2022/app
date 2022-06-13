@@ -81,8 +81,6 @@ export class AuthenticationController {
   async signIn(@Res({passthrough: true}) httpResponse: Response,
                @Body() account: { username: string, password: string }): Promise<Partial<UsernamePasswordLoginResponse>> {
     const resp = await this.authenticationService.handleUsernamePasswordLogin(account);
-    console.error("AccessToken: ", resp.accessToken);
-    console.error("RefeshToken: ",resp.refreshToken);
     httpResponse.setHeader('Authorization', resp.accessToken);
     httpResponse.setHeader('AuthorizationRefreshToken', resp.refreshToken);
 
@@ -95,7 +93,7 @@ export class AuthenticationController {
       keycloakId: resp.keycloakId,
       role: resp.role,
       fullname: resp.fullname,
-      avatar: resp.avatar,
+      avatar: resp.avatar
     };
   }
 

@@ -1,9 +1,10 @@
-import { EntityRepository, Repository } from "typeorm";
-import { RoomWishlist } from "../models/room-wishlist.entity";
+import { Repository } from "typeorm";
+import { RoomWishlist } from "../models";
 import { WishlistBookingRoomResponseDTO } from "../dto/wishlist-booking-room.response.dto";
 import { WishlistBookingRoomRequestDTO } from "../dto/wishlist-booking-room.request.dto";
+import { CustomRepository } from "../decorators/typeorm-ex.decorator";
 
-@EntityRepository(RoomWishlist)
+@CustomRepository(RoomWishlist)
 export class RoomWishlistRepository extends Repository<RoomWishlist> {
 
   findAllByKeycloakUserId(roomName: string, keycloakId: string) {

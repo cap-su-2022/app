@@ -1,8 +1,8 @@
-import { EntityRepository, Repository } from "typeorm";
-import { BookingRequest } from "../models/booking-request.entity";
-import { WishlistBookingRoomResponseDTO } from "../dto/wishlist-booking-room.response.dto";
+import { Repository } from "typeorm";
+import { BookingRequest } from "../models";
+import { CustomRepository } from "../decorators/typeorm-ex.decorator";
 
-@EntityRepository(BookingRequest)
-export class BookingRoomRepository extends Repository<BookingRequest>{
+@CustomRepository(BookingRequest)
+export class BookingRoomRepository extends Repository<BookingRequest> {
 
 }

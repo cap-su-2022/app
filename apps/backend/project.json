@@ -7,10 +7,12 @@
       "executor": "@nrwl/node:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/backend",
+        "outputPath": "apps/backend/dist",
         "main": "apps/backend/src/main.ts",
         "tsConfig": "apps/backend/tsconfig.app.json",
-        "assets": ["apps/backend/src/assets"]
+        "assets": [
+          "apps/backend/src/assets"
+        ]
       },
       "configurations": {
         "production": {

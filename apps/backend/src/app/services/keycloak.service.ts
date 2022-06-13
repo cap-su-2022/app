@@ -11,14 +11,12 @@ import {
 import { HttpService } from "@nestjs/axios";
 import { lastValueFrom, map, Observable } from "rxjs";
 import { KeycloakSigninSuccessResponse } from "../dto/keycloak-signin-success.response.dto";
-import { KeycloakUser } from "@app/models";
 import { ConfigService } from "@nestjs/config";
 import { REQUEST } from "@nestjs/core";
-import { Request } from "express";
 import { APPLICATION_X_WWW_FORM_URLENCODED, Environment } from "@app/constants";
-import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
 import { AccessTokenResponsePayload } from "../payload/response/refresh_token.response.payload";
 import { RefreshTokenPayload } from "../payload/response/refresh-token.request.payload";
+import { KeycloakUserInstance } from "../dto/keycloak.user";
 
 @Injectable({
   scope: Scope.REQUEST
@@ -130,7 +128,7 @@ export class KeycloakService {
     }
   }
 
-  async getUserByUsername(username: string, accessToken?: string): Promise<KeycloakUser> {
+  async getUserByUsername(username: string, accessToken?: string): Promise<KeycloakUserInstance> {
     const token = accessToken ?? this.httpRequest.headers["authorization"];
     const url = `http://${this.keycloakHost}:${this.keycloakPort}/auth/admin/realms/${this.keycloakRealm}/users?username=${username}`;
     try {
@@ -217,7 +215,7 @@ export class KeycloakService {
   }
 
 
-  async getUserInfo(accessToken: string): Promise<KeycloakUserInfoDTO> {
+  async getUserInfo(accessToken: string): Promise<KeycloakUserInstance> {
     if (!accessToken.includes("Bearer")) {
       accessToken = `Bearer ${accessToken}`;
     }

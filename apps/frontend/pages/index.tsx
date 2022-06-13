@@ -1,7 +1,6 @@
-import styles from './index.module.scss';
-import {NavbarSimpleColored} from '../components/NavBar';
-import {HeaderSearch} from '../components/Header';
-import {GetServerSideProps} from 'next';
+import styles from "./index.module.scss";
+import { WebNextRequest } from "next/dist/server/base-http/web";
+import axios from "axios";
 
 export function Index() {
   /*
@@ -17,12 +16,38 @@ export function Index() {
 }
 
 export const getServerSideProps = async (context) => {
+  const request = context.req as WebNextRequest;
+  const accessToken = request.cookies["accessToken"];
+  const refreshToken = request.cookies["refreshToken"];
+
+  try {
+    axios.get(`http://localhost:5000/api/v1/health/auth`, {
+      headers: {
+        "Authorization": accessToken
+      }
+    });
+    return {
+      redirect: {
+        destination: `/`,
+        permanent: true
+      }
+    };
+  } catch (e) {
+    try {
+      axios.post(`http://localhost:5000/api/v1/health/auth`, {
+        refreshToken: refreshToken
+      });
+    } catch (e) {
+
+    }
+  }
   return {
     redirect: {
-      basePath: `${context.req.url}/login`,
-      permanent: true,
-    },
+      destination: `login`,
+      permanent: true
+    }
   };
+
 };
 
 export default Index;

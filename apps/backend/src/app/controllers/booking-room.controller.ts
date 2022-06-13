@@ -1,14 +1,14 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, UseGuards, UseInterceptors } from "@nestjs/common";
-import { BookingRoomService } from "../services/booking-room.service";
+import { Body, Controller, Get, HttpStatus, Post, Query, UseInterceptors } from "@nestjs/common";
+import { BookingRoomService } from "../services";
 import { BookingRoomResponseDTO } from "../dto/booking-room.response.dto";
 import { WishlistBookingRoomResponseDTO } from "../dto/wishlist-booking-room.response.dto";
 import { User } from "../decorators/keycloak-user.decorator";
-import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
 import { WishlistBookingRoomRequestDTO } from "../dto/wishlist-booking-room.request.dto";
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiProduces, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
+import { KeycloakUserInstance } from "../dto/keycloak.user";
 
 @Controller("/v1/booking-room")
 @ApiTags("Booking Room")
@@ -87,7 +87,7 @@ export class BookingRoomController {
     type: String,
     required: true
   })
-  getWishlistBookingRooms(@User() user: KeycloakUserInfoDTO,
+  getWishlistBookingRooms(@User() user: KeycloakUserInstance,
                           @Query("roomName") roomName: string): Promise<WishlistBookingRoomResponseDTO[]> {
     return this.service.getWishlistBookingRooms(roomName, user);
   }
@@ -114,7 +114,7 @@ export class BookingRoomController {
     status: HttpStatus.FORBIDDEN,
     description: "Insufficient privileges"
   })
-  addToBookingRoomWishlist(@User() user: KeycloakUserInfoDTO,
+  addToBookingRoomWishlist(@User() user: KeycloakUserInstance,
                            @Body() bookingRoomWishlist: WishlistBookingRoomRequestDTO): Promise<any> {
     return this.service.addToBookingRoomWishlist(user, bookingRoomWishlist);
   }

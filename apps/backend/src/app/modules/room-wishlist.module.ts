@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { RoomWishlistRepository } from "../repositories/room-wishlist.repository";
-import { RoomWishlistService } from "../services/room-wishlist.service";
+import { RoomWishlistRepository } from "../repositories";
+import { RoomWishlistService } from "../services";
 import { AccountsModule } from "./accounts.module";
 
 @Module({

@@ -30,7 +30,6 @@ const NextLogin = async (req: NextApiRequest, res: NextApiResponse) => {
     ]);
     res.json(body);
   } catch (e) {
-    console.log(e.response.data);
     res.statusCode = 401;
 
     res.json(e.response.data);

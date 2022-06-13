@@ -5,8 +5,8 @@ import { UsernamePasswordCredentials, UsernamePasswordLoginResponse } from "@app
 import { OAuth2Client } from "google-auth-library";
 import Exception from "../constants/exception.constant";
 import { ConfigService } from "@nestjs/config";
-import { AccountRepository } from "../repositories/account.repository.";
-import { Accounts } from "../models/account.entity";
+import { AccountRepository } from "../repositories";
+import { Accounts } from "../models";
 
 @Injectable()
 export class AuthenticationService {

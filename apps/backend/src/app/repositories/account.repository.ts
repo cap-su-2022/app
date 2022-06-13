@@ -1,13 +1,15 @@
-import { EntityRepository, InsertResult, Repository, UpdateResult } from "typeorm";
-import { Accounts } from "../models/account.entity";
+import { Repository, UpdateResult } from "typeorm";
+import { Accounts } from "../models";
+import { CustomRepository } from "../decorators/typeorm-ex.decorator";
+import { RepositoryPaginationPayload } from "../models/search-pagination.payload";
 
-@EntityRepository(Accounts)
+@CustomRepository(Accounts)
 export class AccountRepository extends Repository<Accounts> {
 
-  findKeycloakIdByGoogleId(googleId: string): Promise<{keycloak_id: string}> {
+  findKeycloakIdByGoogleId(googleId: string): Promise<{ keycloak_id: string }> {
     return this.createQueryBuilder("accounts")
       .select("accounts.keycloak_id")
-      .where("accounts.google_id = :googleId", {googleId: googleId})
+      .where("accounts.google_id = :googleId", { googleId: googleId })
       .getRawOne();
   }
 
@@ -69,23 +71,22 @@ export class AccountRepository extends Repository<Accounts> {
     return result.size;
   }
 
-  search(payload: { search: string; offset: number; limit: number; direction: string }): Promise<Accounts[]> {
+  search(payload: RepositoryPaginationPayload): Promise<Accounts[]> {
     return this.createQueryBuilder(`accounts`)
-      .where(`accounts.name LIKE :name`, {name: `%${payload.search}%`})
-      .orWhere(`accounts.description LIKE :description`, {description: `%${payload.search}%`})
+      .where(`accounts.name LIKE :name`, { name: `%${payload.search}%` })
+      .orWhere(`accounts.description LIKE :description`, { description: `%${payload.search}%` })
       .where(`accounts.is_disabled = false`)
       .andWhere(`accounts.is_deleted = false`)
-      .orWhere(`accounts.username = :username`, {username: `%${payload.search}%`})
-      .orWhere(`accounts.description = :description`, {description: `%${payload.search}%`})
+      .orWhere(`accounts.username = :username`, { username: `%${payload.search}%` })
+      .orWhere(`accounts.description = :description`, { description: `%${payload.search}%` })
       .skip(payload.offset)
       .take(payload.limit)
-      .addOrderBy("id", payload.direction === "ASC" ? "ASC" : "DESC")
       .getMany();
   }
 
   findIdByKeycloakId(keycloakId: string): Promise<string> {
     return this.createQueryBuilder("accounts")
-      .select("accounts.id", "accountId")
+      .select("accounts.id", "id")
       .where("accounts.keycloak_id = :keycloakId", { keycloakId: keycloakId })
       .getRawOne().then((data) => data ? data["id"] : undefined);
   }
@@ -182,5 +183,12 @@ export class AccountRepository extends Repository<Accounts> {
       .andWhere("a.is_disabled = false")
       .andWhere("a.is_deleted = false")
       .getOneOrFail();
+  }
+
+  async findUsernameById(id: string): Promise<string> {
+    return this.createQueryBuilder("accounts")
+      .select("accounts.username as username")
+      .where("accounts.id = :id", { id })
+      .getRawOne().then((data) => data["username"]);
   }
 }
