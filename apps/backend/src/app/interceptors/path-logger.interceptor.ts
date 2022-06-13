@@ -1,6 +1,5 @@
 import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from "@nestjs/common";
 import { Observable } from "rxjs";
-import { Request } from "express";
 
 @Injectable()
 export class PathLoggerInterceptor implements NestInterceptor {
@@ -11,7 +10,7 @@ export class PathLoggerInterceptor implements NestInterceptor {
   }
 
   intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request = context.switchToHttp().getRequest();
     this.logger.debug(`API: [${request.method}] - ${request.url}`);
     return next.handle();
   }

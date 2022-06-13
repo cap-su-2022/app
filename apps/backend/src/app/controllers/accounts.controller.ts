@@ -12,30 +12,36 @@ import {
   UseInterceptors,
   UsePipes
 } from "@nestjs/common";
-import { AccountsService } from "../services/accounts.service";
-import { ApiBearerAuth, ApiOperation, ApiProperty, ApiResponse, ApiTags, getSchemaPath } from "@nestjs/swagger";
+import { AccountsService } from "../services";
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiProperty,
+  ApiResponse,
+  ApiTags,
+  getSchemaPath
+} from "@nestjs/swagger";
 import { UsersValidation } from "../pipes/validation/users.validation";
 import { UsersRequestPayload } from "../payload/request/users.payload";
 import { AccountsResponsePayload } from "../payload/response/accounts.payload";
-import { AddDeviceRequest } from "@app/models";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { Express } from "express";
-import { Multer } from "multer";
 import { User } from "../decorators/keycloak-user.decorator";
-import { KeycloakUserInfoDTO } from "../dto/keycloak-user-info.dto";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
-import { Accounts } from "../models/account.entity";
-import { ResponseObjectFactory } from "@nestjs/swagger/dist/services/response-object-factory";
-
-type File = Express.Multer.File;
+import { Accounts } from "../models";
+import { KeycloakUserInstance } from "../dto/keycloak.user";
+import { FastifyFileInterceptor } from "../interceptors/fastify-file.interceptor";
+import { ChangeProfilePasswordRequest } from "../payload/request/change-password.request.payload";
+import { diskStorage } from "multer";
+import { imageFileFilter } from "../validators/utils/file-upload.util";
 
 class UploadProfileRequest {
   fullname: string;
   phone: string;
   description: string;
 }
+
 
 class CreateUserRequest {
   @ApiProperty({
@@ -276,7 +282,7 @@ export class AccountsController {
   })
   @Get("my-profile")
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  getCurrentProfileInformation(@User() user: KeycloakUserInfoDTO): Promise<Accounts> {
+  getCurrentProfileInformation(@User() user: KeycloakUserInstance): Promise<Accounts> {
     return this.service.getCurrentProfileInformation(user.sub);
   }
 
@@ -394,7 +400,7 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: "Not enough privileges"
   })
-  updateMyProfile(@User() user: KeycloakUserInfoDTO, @Body() payload: UploadProfileRequest) {
+  updateMyProfile(@User() user: KeycloakUserInstance, @Body() payload: UploadProfileRequest) {
     return this.service.updateMyProfile(user, payload);
   }
 
@@ -427,7 +433,8 @@ export class AccountsController {
   }
 
   @Put("update/upload-avatar/:id")
-  @UseInterceptors(FileInterceptor("file"))
+  @ApiConsumes("multipart/form-data")
+  @UseInterceptors(FastifyFileInterceptor)
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: "Update account avatar by account id",
@@ -441,12 +448,36 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: "Not enough privileges"
   })
-  updateAccountUploadAvatarById(@UploadedFile() image: File, @Param() payload: { id: string }) {
+  updateAccountUploadAvatarById(@UploadedFile() image: Express.Multer.File, @Param() payload: { id: string }) {
     return this.service.uploadAvatarByAccountId(image, payload.id);
   }
 
+  @Put("update/upload-avatar/profile")
+  @ApiConsumes("multipart/form-data")
+  @UseInterceptors(
+    FastifyFileInterceptor("file", {})
+  ) @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: "Update account avatar by account id",
+    description: "Update account avatar by account id"
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Access token is invalid"
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: "Not enough privileges"
+  })
+  updateCurrentProfileAvatar(
+    @User() user: KeycloakUserInstance,
+    @UploadedFile() image: Express.Multer.File
+  ) {
+    return this.service.uploadAvatarByAccountId(image, user.account_id);
+  }
+
   @Put("update/change-password")
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: "Change password by current profile",
     description: "Change password by current profile"
@@ -459,8 +490,11 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: "Not enough privileges"
   })
-  changePassword(@User() keycloakUser: KeycloakUserInfoDTO, @Body() payload: { password: string }) {
-    return this.service.changePassword(keycloakUser, payload.password);
+  changePassword(
+    @User() keycloakUser: KeycloakUserInstance,
+    @Body() payload: ChangeProfilePasswordRequest
+  ) {
+    return this.service.changePassword(keycloakUser, payload);
   }
 
   @Put("update/change-password/:id")
@@ -482,7 +516,7 @@ export class AccountsController {
   }
 
   @Get("avatar")
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: "Get avatar URL by keycloak id",
     description: "Get avatar URL by keycloak id"
@@ -495,7 +529,7 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: "Not enough privileges"
   })
-  getMyAvatarURL(@User() keycloakUser: KeycloakUserInfoDTO) {
+  getMyAvatarURL(@User() keycloakUser: KeycloakUserInstance) {
     return this.service.getAvatarURLByKeycloakId(keycloakUser.sub);
   }
 

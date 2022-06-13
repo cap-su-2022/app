@@ -1,12 +1,12 @@
-import { Controller, Get, HttpStatus, UseGuards, UseInterceptors } from "@nestjs/common";
-import { UsersOTPService } from "../services/users-otp.service";
-import { UsersOTP } from "../models/users-otp.entity";
+import { Controller, Get, HttpStatus, UseInterceptors } from "@nestjs/common";
+import { UsersOTPService } from "../services";
+import { UsersOTP } from "../models/";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
 
-@Controller("v1/users-otp")
+@Controller("/v1/users-otp")
 @ApiBearerAuth()
 @ApiTags("Users OTP")
 @UseInterceptors(new PathLoggerInterceptor(UsersOTPController.name))

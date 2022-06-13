@@ -59,13 +59,10 @@ export class RoomsRequestPayload implements PaginationPayload<string> {
   size: number;
 
   @ApiProperty({
-    name: 'sort',
-    description: 'Sort direction',
-    type: 'ASC',
-    example: 'DESC',
+    name: "sort",
+    description: "Sort direction",
+    type: "ASC",
+    example: "DESC"
   })
-  @ContainsMany(['ASC', 'DESC'], {
-    message: `Sorting option must be 'ASC' or 'DESC'`,
-  })
-  sort: string;
+  sort: object;
 }

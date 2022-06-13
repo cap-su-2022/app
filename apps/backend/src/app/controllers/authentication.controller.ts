@@ -11,18 +11,18 @@ import {
   Request,
   Res, UseInterceptors
 } from "@nestjs/common";
-import { KeycloakService } from "../services/keycloak.service";
+import { KeycloakService } from "../services";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { KEYCLOAK_PATH } from "../constants/controllers/keycloak/path.constant";
 import { AUTHORIZATION_LOWERCASE } from "../constants/network/headers.constant";
-import { Response } from "express";
-import { AuthenticationService } from "../services/authentication.service";
+import { AuthenticationService } from "../services";
 import { UsernamePasswordLoginResponse } from "@app/models";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 import { AccessTokenResponsePayload } from "../payload/response/refresh_token.response.payload";
 import { RefreshTokenPayload } from "../payload/response/refresh-token.request.payload";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
+import { FastifyRequest, FastifyReply } from "fastify";
 
 export class AuthenticationRequest {
   @ApiProperty({
@@ -78,11 +78,15 @@ export class AuthenticationController {
   })
   @HttpCode(HttpStatus.OK)
   @Post(KEYCLOAK_PATH.signIn)
-  async signIn(@Res({passthrough: true}) httpResponse: Response,
+  async signIn(@Res({ passthrough: true }) httpResponse: FastifyReply,
                @Body() account: { username: string, password: string }): Promise<Partial<UsernamePasswordLoginResponse>> {
     const resp = await this.authenticationService.handleUsernamePasswordLogin(account);
-    httpResponse.setHeader('Authorization', resp.accessToken);
-    httpResponse.setHeader('AuthorizationRefreshToken', resp.refreshToken);
+    httpResponse.header("Authorization", resp.accessToken);
+    httpResponse.header("AuthorizationRefreshToken", resp.refreshToken);
+    httpResponse.header("Set-Cookie", [
+      `accessToken=${resp.accessToken}; Max-Age=999999; HttpOnly; path=/`,
+      `refreshToken=${resp.accessToken}; Max-Age=999999; HttpOnly; path=/`
+    ]);
 
     return {
       email: resp.email,
@@ -115,13 +119,15 @@ export class AuthenticationController {
     status: HttpStatus.BAD_REQUEST,
     description: "User"
   })
-  async signInWithGoogle(@Res({ passthrough: true }) httpResponse: Response,
+  async signInWithGoogle(@Res({ passthrough: true }) httpResponse: FastifyReply,
                          @Body() request: GoogleIDTokenRequest) {
     const resp = await this.authenticationService.handleGoogleSignin(request.token);
-    httpResponse.setHeader("Authorization", resp.accessToken);
-    httpResponse.setHeader("AuthorizationRefreshToken", resp.refreshToken);
-    httpResponse.cookie("refreshToken", resp.refreshToken);
-    httpResponse.cookie("accessToken", resp.accessToken);
+    httpResponse.header("Authorization", resp.accessToken);
+    httpResponse.header("AuthorizationRefreshToken", resp.refreshToken);
+    httpResponse.header("Set-Cookie", [
+      `accessToken=${resp.accessToken}; Max-Age=999999; HttpOnly; path=/`,
+      `refreshToken=${resp.accessToken}; Max-Age=999999; HttpOnly; path=/`
+    ]);
     return {
       email: resp.email,
       id: resp.id,
@@ -148,7 +154,7 @@ export class AuthenticationController {
     status: HttpStatus.UNAUTHORIZED,
     description: "Failed to validate provided refresh token"
   })
-  async refreshAccessToken(@Res({ passthrough: true }) res: Response,
+  async refreshAccessToken(@Res({ passthrough: true }) res,
                            @Body() payload: RefreshTokenPayload): Promise<AccessTokenResponsePayload> {
     const response = await this.service.refreshAccessToken(payload);
     res.cookie("accessToken", response.accessToken);

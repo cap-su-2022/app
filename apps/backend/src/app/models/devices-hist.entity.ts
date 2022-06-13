@@ -1,14 +1,14 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {BaseEntity} from "./base/base.entity";
 
-@Entity(EquipmentsHistory.name.toLowerCase())
-export class EquipmentsHistory extends BaseEntity {
+@Entity(DevicesHist.name.toLowerCase())
+export class DevicesHist extends BaseEntity {
 
   @PrimaryGeneratedColumn("increment",
     {
       name: "id",
       comment: "ID for Equipment History",
-      type: 'bigint',
+      type: "bigint"
     })
   equipmentsHistoryId?: number;
 

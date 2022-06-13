@@ -1,10 +1,8 @@
-import { forwardRef, Inject, Injectable, OnModuleInit } from "@nestjs/common";
+import { Injectable, OnModuleInit } from "@nestjs/common";
 import * as Cloudinary from "cloudinary";
 import { ConfigService } from "@nestjs/config";
 import { Environment } from "@app/constants";
-import { AccountRepository } from "../repositories/account.repository.";
 import * as streamifier from "streamifier";
-import { randomUUID } from "crypto";
 
 const cloudinary = Cloudinary.v2;
 const cloudinaryUploader = cloudinary.uploader;

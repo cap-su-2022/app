@@ -57,8 +57,10 @@ export const Environment = {
     password: 'redis.password',
   },
   elasticsearch: {
-    host: 'elasticsearch.host',
-    port: 'elasticsearch.port',
+    host: "elasticsearch.host",
+    port: "elasticsearch.port",
+    username: "elasticsearch.username",
+    password: "elasticsearch.password"
   },
   firebase: {
     apiKey: "firebase.apiKey",

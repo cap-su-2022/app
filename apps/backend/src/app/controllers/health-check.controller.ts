@@ -1,8 +1,6 @@
 import { Controller, Get, UseGuards, UseInterceptors } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
-import { Roles } from "../decorators/role.decorator";
-import { Role } from "../enum/roles.enum";
 import AuthGuard from "../guards/auth.guard";
 
 @Controller("/v1/health")

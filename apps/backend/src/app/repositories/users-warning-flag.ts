@@ -1,7 +1,8 @@
-import {EntityRepository, Repository} from "typeorm";
-import {UsersWarningFlag} from "../models/users-warning-flag.entity";
+import { Repository } from "typeorm";
+import { UsersWarningFlag } from "../models";
+import { CustomRepository } from "../decorators/typeorm-ex.decorator";
 
-@EntityRepository(UsersWarningFlag)
+@CustomRepository(UsersWarningFlag)
 export class UsersWarningFlagRepository extends Repository<UsersWarningFlag> {
 
 }

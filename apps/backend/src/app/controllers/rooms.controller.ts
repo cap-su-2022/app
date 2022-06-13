@@ -11,17 +11,20 @@ import {
   UseInterceptors,
   UsePipes
 } from "@nestjs/common";
-import { RoomsService } from "../services/rooms.service";
+import { RoomsService } from "../services";
 
 import { AddRoomRequest, UpdateRoomRequest } from "@app/models";
 import { RoomsRequestPayload } from "../payload/request/rooms.payload";
 import { RoomsResponsePayload } from "../payload/response/rooms.payload";
 import { RoomsValidation } from "../pipes/validation/rooms.validation";
-import { Rooms } from "../models/rooms.entity";
+import { Rooms } from "../models";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
+import { AddRoomValidation } from "../pipes/validation/add-room.validation";
+import { User } from "../decorators/keycloak-user.decorator";
+import { KeycloakUserInstance } from "../dto/keycloak.user";
 
 @Controller("/v1/rooms")
 @ApiBearerAuth()
@@ -45,16 +48,18 @@ export class RoomsController {
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
+    description: "Access token is invalidated"
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: "Insufficient privileges"
   })
-  @Post('add')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  addRoom(@Body() room: AddRoomRequest): Promise<Rooms> {
-    return this.service.add(room);
+  @Post("add")
+  @UsePipes(new AddRoomValidation())
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
+  addRoom(@User() user: KeycloakUserInstance,
+          @Body() room: AddRoomRequest): Promise<Rooms> {
+    return this.service.add(user, room);
   }
 
   @Get("find/:id")
@@ -79,8 +84,8 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: "Insufficient privileges"
   })
-  getRoomById(@Param() id: string): Promise<Rooms> {
-    return this.service.findById(id);
+  getRoomById(@Param() payload: { id: string }): Promise<Rooms> {
+    return this.service.findById(payload.id);
   }
 
   @Post()

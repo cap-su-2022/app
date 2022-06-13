@@ -1,21 +1,22 @@
 import { Module } from "@nestjs/common";
-import { AccountsController } from "../controllers/accounts.controller";
-import { AccountsService } from "../services/accounts.service";
-import { AccountRepository } from "../repositories/account.repository.";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { KeycloakService } from "../services/keycloak.service";
+import { AccountsController } from "../controllers";
+import { AccountsService } from "../services";
+import { AccountRepository } from "../repositories";
+import { KeycloakService } from "../services";
 import ConfigModule from "./global/config.module";
 import { HttpModule } from "@nestjs/axios";
-import { CloudinaryModule } from "./cloudinary.module";
-import { CloudinaryService } from "../services/cloudinary.service";
+import { CloudinaryService } from "../services";
+import { TypeOrmExModule } from "./global/typeorm-ex.module";
 
 @Module({
   imports: [
     ConfigModule,
     HttpModule,
-    TypeOrmModule.forFeature([AccountRepository])
+    TypeOrmExModule.forCustomRepository([AccountRepository])
   ],
-  controllers: [AccountsController],
+  controllers: [
+    AccountsController
+  ],
   providers: [AccountsService, KeycloakService, CloudinaryService],
   exports: [AccountsService]
 

@@ -48,6 +48,7 @@ function Login() {
   const authUser = useAppSelector((state) => state.auth.userLoginResponse);
 
   useEffect(() => {
+    router.prefetch("/dashboard");
     if (authUser !== undefined || authUser?.access_token) {
       dispatch(doValidateAccessToken()).unwrap()
         .then(() => handleSuccessAuthentication())
@@ -59,6 +60,7 @@ function Login() {
   }, []);
 
   const handleSuccessAuthentication = async () => {
+
     await router.replace('/dashboard');
     router.prefetch('/rooms');
     router.prefetch('/users');

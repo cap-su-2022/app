@@ -7,5 +7,11 @@ export interface Room {
   updatedAt: string;
   isDisabled: boolean;
   isDeleted: boolean;
+  createdBy: string;
+  updatedBy: string;
+  disabledAt: string;
+  deletedAt: string;
+  disabledBy: string;
+  deletedBy: string;
 }
 

@@ -51,8 +51,10 @@ redis:
   password:
 
 elasticsearch:
-  host: 'fu-lib-room.tk'
-  port: 9999
+  host: 'localhost'
+  port: 9200
+  username: 'elastic'
+  password: 'admin'
 
 firebase:
   apiKey: "AIzaSyBu0hVHThHGd5OQLxQWnNZLSgdLGiYsfZE"
