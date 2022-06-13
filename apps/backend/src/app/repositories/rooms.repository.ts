@@ -57,16 +57,23 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect("r.updatedAt", "updatedAt")
       .addSelect("a.username", "createdBy")
       .addSelect("aa.username", "updatedBy")
-      .where("r.id IN (:...ids)", { ids: payload.search })
+
+      .where(new Brackets(qb => qb.where("r.name LIKE :name", {
+        name: `%${payload.search}%`
+      }).orWhere("r.description LIKE :description", {
+        description: `%${payload.search}%`
+      })))
       .andWhere("r.is_disabled = false")
       .andWhere("r.is_deleted = false")
-      .take(payload.limit)
-      .skip(payload.offset);
+      .limit(payload.limit)
+
+      .offset(payload.offset)
     // .addOrderBy(`r.${payload.direction[0].name}`, payload.direction[0].order)
     //.addOrderBy(`r.${payload.direction[1].name}`, payload.direction[1].order)
     //.getRawMany<Rooms>();
     payload.direction.forEach((direction) => query
       .addOrderBy(`r.${direction.name}`, direction.order));
+    query.take(payload.limit).skip(payload.offset);
     return query.getRawMany<Rooms>();
   }
 

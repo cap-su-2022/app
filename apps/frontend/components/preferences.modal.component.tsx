@@ -1,10 +1,11 @@
-import React from 'react';
-import { Button, createStyles, Modal, Text } from '@mantine/core';
-import UserInfoPreference from './preferences/user-info.component';
-import { Settings, SettingsOff } from 'tabler-icons-react';
+import React from "react";
+import { Button, createStyles, Modal, Text } from "@mantine/core";
+import UserInfoPreference from "./preferences/user-info.component";
+import { Settings, SettingsOff } from "tabler-icons-react";
 
 interface PreferencesModalProps {
   isShown: boolean;
+
   toggleShown(): void;
 }
 
@@ -16,23 +17,23 @@ const PreferencesModal: React.FC<PreferencesModalProps> = (props) => {
       if (window.innerWidth > 540) setIsLessThan540px(false);
     }
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
   });
 
   const ModalHeader: React.FC = () => {
     return (
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
+          display: "flex",
+          alignItems: "center"
         }}
       >
         <Settings size={35} />
         <Text
           style={{
             marginLeft: 10,
-            fontWeight: '600',
-            fontSize: 22,
+            fontWeight: "600",
+            fontSize: 22
           }}
         >
           Preferences

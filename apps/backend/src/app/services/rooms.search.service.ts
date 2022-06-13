@@ -17,7 +17,9 @@ export default class RoomsSearchService {
       body: {
         id: room.id,
         name: room.name,
-        description: room.description
+        description: room.description,
+        isDisabled: room.isDisabled,
+        isDeleted: room.isDeleted
       }
     });
   }
@@ -37,6 +39,18 @@ export default class RoomsSearchService {
               {
                 wildcard: {
                   description: `*${text}*`
+                }
+              }
+            ],
+            must: [
+              {
+                match: {
+                  isDisabled: false
+                }
+              },
+              {
+                match: {
+                  isDeleted: false
                 }
               }
             ]

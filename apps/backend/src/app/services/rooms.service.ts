@@ -7,14 +7,12 @@ import { RoomsRequestPayload } from "../payload/request/rooms.payload";
 import { RoomsResponsePayload } from "../payload/response/rooms.payload";
 import { KeycloakUserInstance } from "../dto/keycloak.user";
 import { Direction } from "../models/search-pagination.payload";
-import RoomsSearchService from "./rooms.search.service";
 
 @Injectable()
 export class RoomsService {
   private readonly logger = new Logger(RoomsService.name);
 
   constructor(
-    private readonly searchService: RoomsSearchService,
     private readonly repository: RoomsRepository
   ) {
   }
@@ -34,8 +32,6 @@ export class RoomsService {
         transaction: true
       });
 
-      await this.searchService.indexRoom(addedRoom);
-
       return addedRoom;
     } catch (e) {
       this.logger.error(e.message);
@@ -43,9 +39,6 @@ export class RoomsService {
     }
   }
 
-  async syncRoomsDataWithElasticIndex() {
-
-  }
 
   async findById(id: string): Promise<Rooms> {
     try {
@@ -61,25 +54,12 @@ export class RoomsService {
   }
 
   async getAll(request: RoomsRequestPayload): Promise<RoomsResponsePayload> {
-
-    const results = await this.searchService.search(request.search);
-    const ids = results.map((result) => result.id);
-    console.log(ids);
-    if (!ids.length) {
-      return {
-        data: [],
-        size: 0,
-        currentPage: request.page,
-        totalPage: 0
-      };
-    }
-
     const offset = request.size * (request.page - 1);
     const limit = request.size;
 
     const queryResult = await this.repository
       .searchRoom({
-        search: ids,
+        search: request.search,
         offset: offset,
         limit: limit,
         direction: request.sort as Direction[]
@@ -92,7 +72,7 @@ export class RoomsService {
       this.logger.error(e);
       throw new BadRequestException("One or more parameters is invalid");
     });
-    console.log(total);
+
     const totalPage = Math.ceil(total / request.size);
 
     return {
@@ -224,9 +204,4 @@ export class RoomsService {
     }
   }
 
-  async reSyncIndex() {
-    await this.searchService.removeAllIndex();
-    const rooms = await this.repository.getAllRoomsForElasticIndex();
-    await rooms.forEach((room) => this.searchService.indexRoom(room));
-  }
 }

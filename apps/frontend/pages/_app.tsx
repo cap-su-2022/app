@@ -58,14 +58,14 @@ function CustomApp({ Component, pageProps }: AppProps) {
           }}
         >
 
-              <Spinner/>
-              <Component {...pageProps} />
+          <Spinner />
+          <Component {...pageProps} />
           <SystemErrorModal
             opened={isSystemErrorModalShown}
             handleClose={async () => {
               setSystemErrorModalShown(!isSystemErrorModalShown);
-              await router.replace('/');
-            }}/>
+              await router.replace("/");
+            }} />
         </MantineProvider>
       </main>
     </NotificationsProvider>
