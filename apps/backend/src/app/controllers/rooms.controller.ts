@@ -292,9 +292,4 @@ export class RoomsController {
   deleteRoomById(@Param() payload: { id: string }) {
     return this.service.deleteById(payload.id);
   }
-
-  @Get("resync-index")
-  reSyncIndex(): Promise<any> {
-    return this.service.reSyncIndex();
-  }
 }
