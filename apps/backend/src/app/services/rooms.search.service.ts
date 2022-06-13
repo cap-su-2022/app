@@ -44,8 +44,18 @@ export default class RoomsSearchService {
         }
       }
     });
-    console.log(body);
     const hits = body.hits.hits;
     return hits.map((item) => item._source);
+  }
+
+  removeAllIndex() {
+    return this.elasticSearchService.deleteByQuery({
+      index: this.index,
+      body: {
+        query: {
+          match_all: {}
+        }
+      }
+    });
   }
 }

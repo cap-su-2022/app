@@ -223,4 +223,10 @@ export class RoomsService {
       throw new BadRequestException("Error occurred while deleting this room");
     }
   }
+
+  async reSyncIndex() {
+    await this.searchService.removeAllIndex();
+    const rooms = await this.repository.getAllRoomsForElasticIndex();
+    await rooms.forEach((room) => this.searchService.indexRoom(room));
+  }
 }

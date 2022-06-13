@@ -15,7 +15,7 @@ const NextLogin = async (req: NextApiRequest, res: NextApiResponse) => {
   const credentials = req.body as Credential;
 
   try {
-    const response = await axios.post("http://localhost:5000/api/v1/auth/signin", {
+    const response = await axios.post("http://localhost:5000/api/v1/auth/refresh", {
       username: credentials.username,
       password: credentials.password
     });
@@ -30,6 +30,7 @@ const NextLogin = async (req: NextApiRequest, res: NextApiResponse) => {
     ]);
     res.json(body);
   } catch (e) {
+    console.log(e.response.data);
     res.statusCode = 401;
 
     res.json(e.response.data);

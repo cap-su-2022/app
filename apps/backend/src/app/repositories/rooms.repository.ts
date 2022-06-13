@@ -105,4 +105,11 @@ export class RoomsRepository extends Repository<Rooms> {
       }).where("rooms.id = :id", { id: id })
       .execute();
   }
+
+  getAllRoomsForElasticIndex(): Promise<Rooms[]> {
+    return this.createQueryBuilder("rooms")
+      .select(["rooms.id", "rooms.name", "rooms.description",
+        "rooms.isDeleted", "rooms.isDisabled"])
+      .getMany();
+  }
 }
