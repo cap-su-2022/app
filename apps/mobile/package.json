@@ -47,6 +47,7 @@
     "firebase": "*",
     "next-redux-wrapper": "*",
     "redux-logger": "*",
-    "yup": "*"
+    "yup": "*",
+    "@mantine/notifications": "*"
   }
 }

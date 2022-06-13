@@ -18,6 +18,8 @@ import { useAppDispatch } from '../../redux/hooks';
 import { updateProfile } from '../../redux/features/account/thunk/update-profile.thunk';
 import { uploadAvatar } from '../../redux/features/account/thunk/upload-avatar.thunk';
 import { fetchProfile } from '../../redux/features/account/thunk/fetch-profile.thunk';
+import ChangePassword from './change-password.component';
+import { useTransition, animated } from 'react-spring';
 // interface UserInfoPreferneceProps {}
 
 interface UserInfoModel {
@@ -66,7 +68,7 @@ const UserInfoPreference: React.FC = () => {
   const avatarInputRef = useRef<HTMLInputElement>();
 
   function formatDate(string) {
-    const options = {year: 'numeric', month: 'numeric', day: 'numeric' };
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
     return new Date(string).toLocaleDateString(undefined, options as unknown);
   }
 
@@ -314,7 +316,7 @@ const UserInfoPreference: React.FC = () => {
           style={{
             display: 'flex',
             justifyContent: 'flex-end',
-            marginTop: '100px',
+            marginTop: '50px',
             width: '100%',
           }}
         >
@@ -327,6 +329,12 @@ const UserInfoPreference: React.FC = () => {
   };
 
   const Authentication: React.FC = () => {
+    const [isShowChangePass, setIsShowChangePass] = useState(false);
+    const transition = useTransition(isShowChangePass, {
+      from: { x: -100, y: 0, opacity: 0 },
+      enter: { x: 0, y: 0, opacity: 1 },
+      leave: { x: 100, y: 0, opacity: 0 },
+    });
     return (
       <div>
         <div
@@ -335,9 +343,29 @@ const UserInfoPreference: React.FC = () => {
             flexDirection: 'column',
           }}
         >
-          <Button leftIcon={<Lock />} className={classes.marginTop10}>Reset password</Button>
-          <Button className={classes.marginTop10}>Authenticate with username password</Button>
+          <Button
+            leftIcon={<Lock />}
+            className={classes.marginTop10}
+            onClick={() => {
+              setIsShowChangePass((isShowChangePass) => !isShowChangePass);
+            }}
+          >
+            Reset password
+          </Button>
+          <Button className={classes.marginTop10}>
+            Authenticate with username password
+          </Button>
           <Button className={classes.marginTop10}>Link to Google</Button>
+          {/* {isShowChangePass? <ChangePassword username={userInfo.username} /> : ""} */}
+          {transition((style, item) =>
+            item ? (
+              <animated.div style={style}>
+                <ChangePassword username={userInfo.username} />
+              </animated.div>
+            ) : (
+              ''
+            )
+          )}
         </div>
       </div>
     );
@@ -353,21 +381,13 @@ const UserInfoPreference: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-      }}
-    >
+    <div className={classes.playoutModal}>
       <Navbar className={classes.displayNav} p="sm">
-        <Navbar.Section grow>{links}</Navbar.Section>
+        <Navbar.Section grow className={classes.displayNavSestion}>
+          {links}
+        </Navbar.Section>
       </Navbar>
-      <div
-        style={{
-          marginLeft: 20,
-          width: '100%',
-          minWidth: 0,
-        }}
-      >
+      <div className={classes.displayRightModal}>
         <Renderer label={active} />
       </div>
     </div>
@@ -383,21 +403,41 @@ const useStyles = createStyles((theme, _params, getRef) => {
           ? theme.colors.dark[3]
           : theme.colors.gray[5],
     },
-    displayNav:{
-      height: "auto",
+    playoutModal: {
+      display: 'flex',
+      transition: "height 0.25s ease-in",
+      '@media (max-width: 540px)': {
+        flexDirection: 'column',
+      },
+    },
+    displayNav: {
+      height: 'auto',
       minHeight: 500,
       width: 300,
       '@media (max-width: 920px)': {
-        width: 100,
+        width: 'auto',
+      },
+      '@media (max-width: 540px)': {
+        borderRight: '0px',
+        borderBottom: '1px solid #e9ecef',
+        marginBottom: '10px',
+        minHeight: '45px',
+        justifyContent: "space-evenly",
       },
     },
-    displayLabelNav:{
+    displayNavSestion: {
+      '@media (max-width: 540px)': {
+        display: 'flex',
+        height: '45px',
+      },
+    },
+    displayLabelNav: {
       '@media (max-width: 920px)': {
         display: 'none',
       },
     },
     avatarAndInforArea: {
-      flexWrap: "nowrap",
+      flexWrap: 'nowrap',
       '@media (max-width: 920px)': {
         flexDirection: 'column',
       },
@@ -406,6 +446,14 @@ const useStyles = createStyles((theme, _params, getRef) => {
       marginTop: '-30px',
       '@media (max-width: 920px)': {
         textAlign: 'center',
+      },
+    },
+    displayRightModal: {
+      marginLeft: 20,
+      width: '100%',
+      minWidth: 0,
+      '@media (max-width: 540px)': {
+        margin: 0,
       },
     },
     displayGrid: {
@@ -511,9 +559,9 @@ const useStyles = createStyles((theme, _params, getRef) => {
         },
       },
     },
-    marginTop10:{
+    marginTop10: {
       marginTop: 10,
-    }
+    },
   };
 });
 

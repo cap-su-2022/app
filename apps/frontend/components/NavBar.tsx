@@ -107,7 +107,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
     navbar: {
       maxWidth: 250,
       backgroundColor: FPT_ORANGE_COLOR,
-      '@media (max-width: 650px)': {
+      '@media (max-width: 780px)': {
         maxWidth: 100,
       },
     },
@@ -142,7 +142,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
       fontWeight: 500,
 
       'span': {
-        '@media (max-width: 650px)': {
+        '@media (max-width: 780px)': {
           display: "none"
         },
       },
