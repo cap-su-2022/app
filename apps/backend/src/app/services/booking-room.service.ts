@@ -7,6 +7,7 @@ import { RoomWishlistService } from "./room-wishlist.service";
 import { WishlistBookingRoomRequestDTO } from "../dto/wishlist-booking-room.request.dto";
 import { BookingRoomsFilterRequestPayload } from "../payload/request/booking-rooms.request.payload";
 import { KeycloakUserInstance } from "../dto/keycloak.user";
+import { RemoveWishlistRequest } from "../payload/request/remove-from-booking-room-wishlist.request.payload";
 
 @Injectable()
 export class BookingRoomService {
@@ -60,8 +61,17 @@ export class BookingRoomService {
     try {
       return await this.roomWishlistService.addToWishlist(user.sub, wishlist);
     } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(e.message);
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message ?? "Error while adding to booking room wish list");
+    }
+  }
+
+  async removeFromBookingRoomWishlist(user: KeycloakUserInstance, payload: RemoveWishlistRequest) {
+    try {
+      return await this.roomWishlistService.removeFromWishlist(user.account_id, payload);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message ?? "Error while removing from booking room wishlist");
     }
   }
 }

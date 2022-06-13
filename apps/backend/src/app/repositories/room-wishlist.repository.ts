@@ -25,12 +25,22 @@ export class RoomWishlistRepository extends Repository<RoomWishlist> {
       .execute();
   }
 
-  async checkIfWishlistAlreadyExist(wishlist: WishlistBookingRoomRequestDTO): Promise<boolean> {
+  async checkIfWishlistAlreadyExist(payload: { roomId: string, slot: number }): Promise<boolean> {
     return this.createQueryBuilder("room_wishlist")
       .select("COUNT(1)", "check")
-      .where("room_wishlist.room_id = :roomId", {roomId: wishlist.roomId})
-      .andWhere("room_wishlist.slot_num = :slot", {slot: wishlist.slot})
-      .getRawOne().then((data) =>  data.check > 0);
+      .where("room_wishlist.room_id = :roomId", { roomId: payload.roomId })
+      .andWhere("room_wishlist.slot_num = :slot", { slot: payload.slot })
+      .getRawOne().then((data) => data.check > 0);
+  }
+
+  removeFromWishlist(accountId: string, roomId: string, slot: number) {
+    return this.createQueryBuilder("room_wishlist")
+      .delete()
+      .where("room_wishlist.created_by = :createdBy", { createdBy: accountId })
+      .andWhere("room_wishlist.room_id = :roomId", { roomId: roomId })
+      .andWhere("room_wishlist.slot_num = :slot", { slot: slot })
+      .useTransaction(true)
+      .execute();
   }
 }/*
 SELECT rw.id, r.id as roomid, r.name as roomName, rw.slot_num as slot FROM room_wishlist rw INNER JOIN accounts a
