@@ -59,7 +59,7 @@ export function NavbarSimpleColored() {
   ));
 
   return (
-    <Navbar width={{ sm: 200, md: 220, xl: 250 }} height={'full'} p="md" className={classes.navbar}>
+    <Navbar height={"full"} p="md" className={classes.navbar}>
       <Navbar.Section grow>
         <Group className={classes.header} position="apart">
           <></>
@@ -105,7 +105,11 @@ const useStyles = createStyles((theme, _params, getRef) => {
   const icon = getRef('icon');
   return {
     navbar: {
+      maxWidth: 250,
       backgroundColor: FPT_ORANGE_COLOR,
+      "@media (max-width: 780px)": {
+        maxWidth: 100
+      }
     },
 
     version: {
@@ -138,9 +142,9 @@ const useStyles = createStyles((theme, _params, getRef) => {
       fontWeight: 500,
 
       'span': {
-        [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
-          display: 'none'
-        },
+        "@media (max-width: 780px)": {
+          display: "none"
+        }
       },
 
       '&:hover': {
