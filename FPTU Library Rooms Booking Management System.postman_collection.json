@@ -3221,9 +3221,26 @@
             },
             {
               "name": "Health check with access token",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtZkJPWlYxTnZZRG40TUxoUFQzYTRudkNhU1IxTmNqNjFrYWpkYXJVSG1BIn0.eyJleHAiOjE2NTUxMjAzOTUsImlhdCI6MTY1NTExNjc5NSwianRpIjoiOWI1M2Q5NWYtYTFlNS00YjRjLWFmYTAtODhkMDJlY2FiNWE3IiwiaXNzIjoiaHR0cDovL2Z1LWxpYi1yb29tLnRrOjkwOTAvYXV0aC9yZWFsbXMvYXV0aGVudGljYXRpb24iLCJhdWQiOlsicmVhbG0tbWFuYWdlbWVudCIsImFjY291bnQiXSwic3ViIjoiNzI5MTViYzktZjdjYi00ZjI5LWIyMzQtZTM1YzM4MTg3YjIyIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXV0aGVudGljYXRpb24tYXBpIiwic2Vzc2lvbl9zdGF0ZSI6ImQ0N2NmNjhhLWNjNWEtNDczMC05OWY2LWNhY2U4Y2Y4MWVlYiIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1hdXRoZW50aWNhdGlvbiIsIkFQUC1TVEFGRiIsIkFQUC1BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hbmFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1yZWFsbSIsInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXVlcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnRzIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWdyb3VwcyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctYXBwbGljYXRpb25zIiwidmlldy1jb25zZW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJkZWxldGUtYWNjb3VudCIsIm1hbmFnZS1jb25zZW50Iiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiZDQ3Y2Y2OGEtY2M1YS00NzMwLTk5ZjYtY2FjZThjZjgxZWViIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJCYW5nIE5nbyIsInByZWZlcnJlZF91c2VybmFtZSI6ImJhbmdubiIsImdpdmVuX25hbWUiOiJCYW5nIiwiZmFtaWx5X25hbWUiOiJOZ28iLCJlbWFpbCI6ImJhbmdubnNlMTQwOTM3QGZwdC5lZHUudm4ifQ.juPz5zqs0EfX2qROktkJsUetp1MfdCUNlDGdu2G2KWtHvoQC989gzmkzVvJ7uEUfDvqSb05TPGYHYBWKCSHCWK_0_xvpN4BDwE95qjXYxBouEF2CeSICZkb6PPWytABi6Bcy_YrZ3iVFmM8z9EA5zKZETtDYKeLP3jwuMV4kT2ZMZ3twDViIX_ohMzC1Sc2nrqcjbxkZK69PVJ8jFbdj81AJZkqpq1QBSBXxhG-Wf4Z_b-PxpXqf5UWV2LkgTqLL5U7z7IHwUuoIg53pzVKzjzDNGFPp097vveh918cDsID8ZOxlVNoEe76zWFEyOyw3YTRKpOmL3F8nmXPG8JPhKQ",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "GET",
                 "header": [],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": []
+                },
                 "url": {
                   "raw": "{{LOCAL_API}}/api/v1/health/auth",
                   "host": [
@@ -3950,7 +3967,7 @@
                   "bearer": [
                     {
                       "key": "token",
-                      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtZkJPWlYxTnZZRG40TUxoUFQzYTRudkNhU1IxTmNqNjFrYWpkYXJVSG1BIn0.eyJleHAiOjE2NTUwMjMwMzQsImlhdCI6MTY1NTAxOTQzNCwianRpIjoiMzY0ZGVkZDEtMzE4Yy00Nzg3LWI4OWItN2UxZGRhMjFkZGE5IiwiaXNzIjoiaHR0cDovL2Z1LWxpYi1yb29tLnRrOjkwOTAvYXV0aC9yZWFsbXMvYXV0aGVudGljYXRpb24iLCJhdWQiOlsicmVhbG0tbWFuYWdlbWVudCIsImFjY291bnQiXSwic3ViIjoiNzI5MTViYzktZjdjYi00ZjI5LWIyMzQtZTM1YzM4MTg3YjIyIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXV0aGVudGljYXRpb24tYXBpIiwic2Vzc2lvbl9zdGF0ZSI6IjBiNjViNjA5LWNiY2MtNGI0Ni05YjU2LTg3OWNlMmM2MDgwZSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1hdXRoZW50aWNhdGlvbiIsIkFQUC1TVEFGRiIsIkFQUC1BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hbmFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1yZWFsbSIsInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXVlcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnRzIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWdyb3VwcyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctYXBwbGljYXRpb25zIiwidmlldy1jb25zZW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJkZWxldGUtYWNjb3VudCIsIm1hbmFnZS1jb25zZW50Iiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiMGI2NWI2MDktY2JjYy00YjQ2LTliNTYtODc5Y2UyYzYwODBlIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJCYW5nIE5nbyIsInByZWZlcnJlZF91c2VybmFtZSI6ImJhbmdubiIsImdpdmVuX25hbWUiOiJCYW5nIiwiZmFtaWx5X25hbWUiOiJOZ28iLCJlbWFpbCI6ImJhbmdubnNlMTQwOTM3QGZwdC5lZHUudm4ifQ.T1dRbShggf1R2etWhHdVZfeirQd32pa0R5j3fwLUEZyBsTtiA2DgefRJWEoEMRHUZ3D-UEfIeXhw4m5UNmhAn6xqscT5uK_D4VxuowLZpzMAuKIf4c9lKzIFWMNRaJFI9S4IXbW35Di5izTnhDlI87jiW9E1Vqkn7RwOh8BqFPJ3ZQHeiyrPDIa21dWngceiG4lvw4qatCThR2ohV0YFPvfiIaE1PV_mOXEcVNEqsuowJgO1y73b5iD45WTSAs7yWMLR_sjcFcCwbk1yv8OY4BQ-QZsBfTsWThOtC8HnZpD5L8ARKHPl6g6hEb_TwOpcKD7IdpVknCAA6t_keIWSTA",
+                      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtZkJPWlYxTnZZRG40TUxoUFQzYTRudkNhU1IxTmNqNjFrYWpkYXJVSG1BIn0.eyJleHAiOjE2NTUxNDIyNjEsImlhdCI6MTY1NTEzODY2MSwianRpIjoiZTYyNjMyN2EtNGQzNy00ODI1LTkwYmItZDY2NThhZDllNjE1IiwiaXNzIjoiaHR0cDovL2Z1LWxpYi1yb29tLnRrOjkwOTAvYXV0aC9yZWFsbXMvYXV0aGVudGljYXRpb24iLCJhdWQiOlsicmVhbG0tbWFuYWdlbWVudCIsImFjY291bnQiXSwic3ViIjoiNzI5MTViYzktZjdjYi00ZjI5LWIyMzQtZTM1YzM4MTg3YjIyIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXV0aGVudGljYXRpb24tYXBpIiwic2Vzc2lvbl9zdGF0ZSI6ImM3ZTc1Y2JhLTMyZTktNGUwMy1hNWI5LWYyZmRmNzViYzQ2MyIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1hdXRoZW50aWNhdGlvbiIsIkFQUC1TVEFGRiIsIkFQUC1BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hbmFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1yZWFsbSIsInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXVlcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnRzIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWdyb3VwcyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctYXBwbGljYXRpb25zIiwidmlldy1jb25zZW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJkZWxldGUtYWNjb3VudCIsIm1hbmFnZS1jb25zZW50Iiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiYzdlNzVjYmEtMzJlOS00ZTAzLWE1YjktZjJmZGY3NWJjNDYzIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJCYW5nIE5nbyIsInByZWZlcnJlZF91c2VybmFtZSI6ImJhbmdubiIsImdpdmVuX25hbWUiOiJCYW5nIiwiZmFtaWx5X25hbWUiOiJOZ28iLCJlbWFpbCI6ImJhbmdubnNlMTQwOTM3QGZwdC5lZHUudm4ifQ.FIl2grqWOqQQFe2B06Bo_7w0x-8euQ5KiwMNXhLtMw9N_RPq79DUWQ0AipAiF4WUBdUwMzYCCS3KZg6KZOy8HdLBZkvg16REJatusIuBBeUBq8EshuzB8DvX6BR6-H-JeqZOC4mzNCZaaaFqCHf16jtYi7rfxzQbMG3ggTiHZecG3m4qN-0GEd04svqtM5Wph15gGgrT6BuL4-sKHQAO7nMs5D9YCG0moAgOZqNDB8Ebu_u3VG1PNt8S-grW-6CEm7G7Q1mIkXI2ywDy5aDQk7qB2DjRn1ZpBAw1Fb90pzykPYLQ2VIfdl_hBpbVmFuDmOFiDu8GjOBx3ifGwhpkEw",
                       "type": "string"
                     }
                   ]
@@ -3959,7 +3976,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"search\": \"\",\n    \"page\": 1,\n    \"size\": 14,\n    \"sort\": [\n        {\n            \"name\": \"name\",\n            \"order\": \"DESC\"\n        },\n        {\n            \"name\": \"description\",\n            \"order\": \"DESC\"\n        }\n    ]\n}",
+                  "raw": "{\n    \"search\": \"\",\n    \"page\": 100,\n    \"size\": 100,\n    \"sort\": [\n        {\n            \"name\": \"name\",\n            \"order\": \"DESC\"\n        },\n        {\n            \"name\": \"description\",\n            \"order\": \"DESC\"\n        }\n    ]\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -4591,6 +4608,14 @@
                   "body": null
                 }
               ]
+            },
+            {
+              "name": "Re-sync Elastic Search index",
+              "request": {
+                "method": "GET",
+                "header": []
+              },
+              "response": []
             }
           ]
         },
@@ -4971,10 +4996,29 @@
               ]
             },
             {
-              "name": "Remove from booking room wishlist",
+              "name": "Remove room booking from wishlist",
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtZkJPWlYxTnZZRG40TUxoUFQzYTRudkNhU1IxTmNqNjFrYWpkYXJVSG1BIn0.eyJleHAiOjE2NTUxNDYzODAsImlhdCI6MTY1NTE0Mjc4MCwianRpIjoiMjhkMmIxNGItOWVlMC00MTgyLTg1ODgtMzgwMmZjOGY1MDJiIiwiaXNzIjoiaHR0cDovL2Z1LWxpYi1yb29tLnRrOjkwOTAvYXV0aC9yZWFsbXMvYXV0aGVudGljYXRpb24iLCJhdWQiOlsicmVhbG0tbWFuYWdlbWVudCIsImFjY291bnQiXSwic3ViIjoiNzI5MTViYzktZjdjYi00ZjI5LWIyMzQtZTM1YzM4MTg3YjIyIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXV0aGVudGljYXRpb24tYXBpIiwic2Vzc2lvbl9zdGF0ZSI6IjJiMWRhOTdkLTRhMDktNGViMC1hZWRmLTY1Njg5YTU3ZjFmYiIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1hdXRoZW50aWNhdGlvbiIsIkFQUC1TVEFGRiIsIkFQUC1BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hbmFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1yZWFsbSIsInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXVlcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnRzIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWdyb3VwcyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctYXBwbGljYXRpb25zIiwidmlldy1jb25zZW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJkZWxldGUtYWNjb3VudCIsIm1hbmFnZS1jb25zZW50Iiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiMmIxZGE5N2QtNGEwOS00ZWIwLWFlZGYtNjU2ODlhNTdmMWZiIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJCYW5nIE5nbyIsInByZWZlcnJlZF91c2VybmFtZSI6ImJhbmdubiIsImdpdmVuX25hbWUiOiJCYW5nIiwiZmFtaWx5X25hbWUiOiJOZ28iLCJlbWFpbCI6ImJhbmdubnNlMTQwOTM3QGZwdC5lZHUudm4ifQ.ItpsFAqh4rhyQPcpQR5OT3UuufgKFS7q5AW67vUTZkV3IrikuJS0tYB0eDCDmlPux9_wG8aXEhcwfHqpnjydsOYfPKtR8Q7MbA76cLQoIGe-vLohcOkZ6Ti4X2rr3ywCGvt-FpMyZfs6e6EB2WbspjuNPIKyU2hd3-jxSfbgpuEerXc9ZtBsO35wvUCwikXYfAEENZY8Qcq7ldKcqLOR83Uaw_lyPRRXPzEkLPFGqZ4P7bbvdPqniB8PsAIQCHrzKnSlQi6Zwj_ZGPz6udvRKoA4C3n4JQ34xrWcS9Iwsr5AGN0CzuSr1i9EL2bTR1VKh4uuzP9N11G1RjZsMKjmnQ",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "DELETE",
                 "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"roomId\": \"3de0287e-35a8-4422-ba2e-7fbe796dcd2e\",\r\n    \"slot\": 2\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
                 "url": {
                   "raw": "{{LOCAL_API}}/api/v1/booking-room/remove-from-wishlist",
                   "host": [
@@ -4988,7 +5032,127 @@
                   ]
                 }
               },
-              "response": []
+              "response": [
+                {
+                  "name": "Remove room booking from wishlist",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"roomId\": \"3de0287e-35a8-4422-ba2e-7fbe796dcd2e\",\r\n    \"slot\": 2\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{LOCAL_API}}/api/v1/booking-room/remove-from-wishlist",
+                      "host": [
+                        "{{LOCAL_API}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "booking-room",
+                        "remove-from-wishlist"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Security-Policy",
+                      "value": "default-src 'self';style-src 'self' 'unsafe-inline' cdn.jsdelivr.net fonts.googleapis.com;font-src 'self' fonts.gstatic.com;img-src 'self' data: cdn.jsdelivr.net;script-src 'self' https: 'unsafe-inline' cdn.jsdelivr.net;base-uri 'self';block-all-mixed-content;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';upgrade-insecure-requests"
+                    },
+                    {
+                      "key": "Cross-Origin-Embedder-Policy",
+                      "value": "require-corp"
+                    },
+                    {
+                      "key": "Cross-Origin-Opener-Policy",
+                      "value": "same-origin"
+                    },
+                    {
+                      "key": "Cross-Origin-Resource-Policy",
+                      "value": "same-origin"
+                    },
+                    {
+                      "key": "X-DNS-Prefetch-Control",
+                      "value": "off"
+                    },
+                    {
+                      "key": "Expect-CT",
+                      "value": "max-age=0"
+                    },
+                    {
+                      "key": "X-Frame-Options",
+                      "value": "SAMEORIGIN"
+                    },
+                    {
+                      "key": "Strict-Transport-Security",
+                      "value": "max-age=15552000; includeSubDomains"
+                    },
+                    {
+                      "key": "X-Download-Options",
+                      "value": "noopen"
+                    },
+                    {
+                      "key": "X-Content-Type-Options",
+                      "value": "nosniff"
+                    },
+                    {
+                      "key": "Origin-Agent-Cluster",
+                      "value": "?1"
+                    },
+                    {
+                      "key": "X-Permitted-Cross-Domain-Policies",
+                      "value": "none"
+                    },
+                    {
+                      "key": "Referrer-Policy",
+                      "value": "no-referrer"
+                    },
+                    {
+                      "key": "X-XSS-Protection",
+                      "value": "0"
+                    },
+                    {
+                      "key": "vary",
+                      "value": "Origin, accept-encoding"
+                    },
+                    {
+                      "key": "access-control-allow-origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "content-length",
+                      "value": "23"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 13 Jun 2022 17:54:54 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"raw\": [],\n    \"affected\": 1\n}"
+                }
+              ]
             }
           ]
         },
@@ -5229,6 +5393,29 @@
               "body": "{\n    \"email\": \"bangnnse140937@fpt.edu.vn\",\n    \"id\": \"b48cf66b-f473-444d-9079-5275f07ab649\",\n    \"phone\": \"0961618601\",\n    \"username\": \"bangnn\",\n    \"keycloakId\": \"72915bc9-f7cb-4f29-b234-e35c38187b22\",\n    \"role\": \"System Admin\",\n    \"fullname\": null\n}"
             }
           ]
+        },
+        {
+          "name": "Health check auth",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtZkJPWlYxTnZZRG40TUxoUFQzYTRudkNhU1IxTmNqNjFrYWpkYXJVSG1BIn0.eyJleHAiOjE2NTUxMTc4MTYsImlhdCI6MTY1NTExNDIxNiwianRpIjoiOGMwM2E1MmUtMGFkYy00MjNlLWFjYmUtMGI3MmZkODk1NWRkIiwiaXNzIjoiaHR0cDovL2Z1LWxpYi1yb29tLnRrOjkwOTAvYXV0aC9yZWFsbXMvYXV0aGVudGljYXRpb24iLCJhdWQiOlsicmVhbG0tbWFuYWdlbWVudCIsImFjY291bnQiXSwic3ViIjoiNzI5MTViYzktZjdjYi00ZjI5LWIyMzQtZTM1YzM4MTg3YjIyIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXV0aGVudGljYXRpb24tYXBpIiwic2Vzc2lvbl9zdGF0ZSI6IjM1NmQzZWI2LWMyYzItNDgwMS04YzMwLTA0YzdhNzA4YTczMSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1hdXRoZW50aWNhdGlvbiIsIkFQUC1TVEFGRiIsIkFQUC1BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hbmFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1yZWFsbSIsInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXVlcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnRzIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWdyb3VwcyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctYXBwbGljYXRpb25zIiwidmlldy1jb25zZW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJkZWxldGUtYWNjb3VudCIsIm1hbmFnZS1jb25zZW50Iiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiMzU2ZDNlYjYtYzJjMi00ODAxLThjMzAtMDRjN2E3MDhhNzMxIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJCYW5nIE5nbyIsInByZWZlcnJlZF91c2VybmFtZSI6ImJhbmdubiIsImdpdmVuX25hbWUiOiJCYW5nIiwiZmFtaWx5X25hbWUiOiJOZ28iLCJlbWFpbCI6ImJhbmdubnNlMTQwOTM3QGZwdC5lZHUudm4ifQ.leaJR7hjZFJA7trvxHgSUGIyAl0wRBL89JigFuCvEmZMDdDw5BJLGt49fF2iSMKfWIrB-n3M2_7G4LX8HyymQ3-xRMUADK0Dx41p4TA_QQOhl4I4NSksrjHCB9EJkO7iMv9yPh754CKztK3jjN0lCSDQrvSESz2ajfbZg_41tGx4At1aUl1O2RwdSY8OQ0lYIXyrcPRb-7FK8JLKka_vpJEDVaTVI6VZGvH-AGKpgDikshBtR9sQf2NBh6krkRdOLShEeaJvuGYQLZz2UD8lRu62huLESHHXuJT4CGpGZdBo28tv1EPWEAlUgh-Ni4mSwiY_nbH-y4lJf01gmArbAA"
+            },
+            "url": {
+              "raw": "{{LOCAL_FRONTEND}}/api/v1/info",
+              "host": [
+                "{{LOCAL_FRONTEND}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "info"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },

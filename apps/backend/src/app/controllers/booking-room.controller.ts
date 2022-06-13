@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, Post, Put, Query, UseInterceptors } from "@nestjs/common";
 import { BookingRoomService } from "../services";
 import { BookingRoomResponseDTO } from "../dto/booking-room.response.dto";
 import { WishlistBookingRoomResponseDTO } from "../dto/wishlist-booking-room.response.dto";
@@ -9,6 +9,7 @@ import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
 import { KeycloakUserInstance } from "../dto/keycloak.user";
+import { RemoveWishlistRequest } from "../payload/request/remove-from-booking-room-wishlist.request.payload";
 
 @Controller("/v1/booking-room")
 @ApiTags("Booking Room")
@@ -92,7 +93,7 @@ export class BookingRoomController {
     return this.service.getWishlistBookingRooms(roomName, user);
   }
 
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @Post("add-to-wishlist")
   @ApiOperation({
     summary: "Add booking room to wishlist",
@@ -118,4 +119,13 @@ export class BookingRoomController {
                            @Body() bookingRoomWishlist: WishlistBookingRoomRequestDTO): Promise<any> {
     return this.service.addToBookingRoomWishlist(user, bookingRoomWishlist);
   }
+
+  @Delete("remove-from-wishlist")
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  removeFromBookingRoomWishlist(@User() user: KeycloakUserInstance,
+                                @Body() removeWishlistPayload: RemoveWishlistRequest) {
+    return this.service.removeFromBookingRoomWishlist(user, removeWishlistPayload);
+  }
 }
+
+
