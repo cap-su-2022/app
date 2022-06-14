@@ -254,8 +254,8 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
 
   }
 
-  async getAvatarURLByKeycloakId(keycloakId: string): Promise<string> {
-    return await this.repository.findAvatarURLById(keycloakId);
+  async getAvatarURLByAccountId(accountId: string): Promise<string> {
+    return await this.repository.findAvatarURLById(accountId);
   }
 
   async getCurrentProfileInformation(keycloakId: string): Promise<Accounts> {

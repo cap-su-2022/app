@@ -530,7 +530,7 @@ export class AccountsController {
     description: "Not enough privileges"
   })
   getMyAvatarURL(@User() keycloakUser: KeycloakUserInstance) {
-    return this.service.getAvatarURLByKeycloakId(keycloakUser.sub);
+    return this.service.getAvatarURLByAccountId(keycloakUser.account_id);
   }
 
 }
