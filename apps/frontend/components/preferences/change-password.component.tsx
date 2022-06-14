@@ -16,6 +16,7 @@ import { changePassword } from '../../redux/features/account/thunk/change-passwo
 export default function ChangePassword({ username }) {
   const { classes } = useStyles();
   const initialFormValues = {
+    oldPass: '',
     newPass: '',
     confirmPass: '',
   };
@@ -23,20 +24,23 @@ export default function ChangePassword({ username }) {
   const dispatch = useAppDispatch();
 
   const ChangePassSchema = Yup.object().shape({
+    oldPass: Yup.string().required('Input your current password'),
     newPass: Yup.string()
       .min(5, 'Password must be between 5-50 characters')
       .max(50, 'Password must be between 5-50 characters')
-      .required('Password is required'),
+      .required('New Password is required'),
     confirmPass: Yup.string().oneOf(
       [Yup.ref('newPass'), null],
       'Passwords must match'
     ),
   });
 
-  const handleChangePassSubmit = async (value) => {
+  const handleChangePassSubmit = async (value, {resetForm}) => {
     dispatch(
       changePassword({
-        password: value.newPass,
+        username: username,
+        password: value.oldPass,
+        newPassword: value.newPass,
       })
     )
       .unwrap()
@@ -50,6 +54,7 @@ export default function ChangePassword({ username }) {
           autoClose: 3000,
         })
       )
+      .then(() => resetForm({value: ''}))
       .catch((e) => {
         showNotification({
           id: 'load-data',
@@ -66,7 +71,7 @@ export default function ChangePassword({ username }) {
     initialValues: initialFormValues,
     enableReinitialize: true,
     validationSchema: ChangePassSchema,
-    onSubmit: (values) => handleChangePassSubmit(values),
+    onSubmit: (values, {resetForm}) => handleChangePassSubmit(values, {resetForm}),
   });
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -80,6 +85,23 @@ export default function ChangePassword({ username }) {
           Change password for {username}
         </Text>
       </div>
+
+      <PasswordInput
+        id="oldPass"
+        description="Input your current password"
+        onChange={formik.handleChange('oldPass')}
+        error={
+          formik.touched.oldPass && Boolean(formik.errors.oldPass)
+            ? formik.errors.oldPass
+            : null
+        }
+        value={formik.values.oldPass}
+        label={'Current Password'}
+        required
+        name="oldPass"
+        className={classes.inputText}
+        placeholder="New Password"
+      />
 
       <PasswordInput
         id="newPass"

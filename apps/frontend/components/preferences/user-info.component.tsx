@@ -19,6 +19,7 @@ import { uploadAvatar } from '../../redux/features/account/thunk/upload-avatar.t
 import { fetchProfile } from '../../redux/features/account/thunk/fetch-profile.thunk';
 import ChangePassword from './change-password.component';
 import { useTransition, animated } from 'react-spring';
+import { fetchAvatar } from '../../redux/features/account/thunk/fetch-avatar.thunk';
 // interface UserInfoPreferneceProps {}
 
 interface UserInfoModel {
@@ -43,8 +44,6 @@ const data = [
 const UserInfoPreference: React.FC = () => {
   const { classes, cx } = useStyles();
   const [active, setActive] = useState('Profile');
-  const [image, setImage] = useState<File>(null);
-  const [uploadData, setUploadData] = useState(null);
 
   const links = data.map((item) => (
     <a
@@ -64,6 +63,7 @@ const UserInfoPreference: React.FC = () => {
   ));
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
 
+  // const [image, setImage] = useState<File>(null);
   const avatarInputRef = useRef<HTMLInputElement>();
 
   function formatDate(string) {
@@ -123,7 +123,6 @@ const UserInfoPreference: React.FC = () => {
       phone: userInfo.phone,
       effdate: userInfo.effdate,
       description: userInfo.description,
-      img: image,
     };
 
     const UpdateSchema = Yup.object().shape({
@@ -145,24 +144,39 @@ const UserInfoPreference: React.FC = () => {
       onSubmit: (values) => handleUpdateSubmit(values),
     });
 
+    const [avatarURL, setAvatarURL] = useState(formik.values.avatar);
+
     const uploadToServer = (event) => {
       if (event.target.files && event.target.files[0]) {
         const i = event.target.files[0];
-        setUploadData(URL.createObjectURL(i));
+        setAvatarURL(URL.createObjectURL(i));
 
         dispatch(
           uploadAvatar({
-            id: userInfo.id,
             img: i,
           })
         )
           .unwrap()
-          .then(() => {
-            console.log('success');
-            setImage(i);
-          })
+          .then(() => dispatch(fetchProfile()))
+          .then(() =>
+            showNotification({
+              id: 'load-avatar',
+              color: 'teal',
+              title: 'Avatar updated',
+              message: 'Your avatar was updated successfully',
+              icon: <Check />,
+              autoClose: 3000,
+            })
+          )
           .catch((e) => {
-            alert(e.message);
+            showNotification({
+              id: 'load-data',
+              color: 'red',
+              title: 'Have error',
+              message: `${e.message}`,
+              icon: <X />,
+              autoClose: 3000,
+            });
           });
       }
     };
@@ -170,11 +184,7 @@ const UserInfoPreference: React.FC = () => {
       <form onSubmit={formik.handleSubmit}>
         <Group className={classes.avatarAndInforArea}>
           <div>
-            <Avatar
-              src={uploadData || formik.values.avatar}
-              size={150}
-              radius="md"
-            />
+            <Avatar src={avatarURL} size={150} radius="md" />
             <Button
               className={classes.control}
               size="xs"
@@ -403,7 +413,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
     },
     playoutModal: {
       display: 'flex',
-      transition: "height 0.25s ease-in",
+      transition: 'height 0.25s ease-in',
       '@media (max-width: 540px)': {
         flexDirection: 'column',
       },
@@ -420,17 +430,17 @@ const useStyles = createStyles((theme, _params, getRef) => {
         borderBottom: '1px solid #e9ecef',
         marginBottom: '10px',
         minHeight: '45px',
-        justifyContent: "space-evenly",
+        justifyContent: 'space-evenly',
       },
     },
     displayNavSestion: {
       '@media (max-width: 540px)': {
         display: 'flex',
         height: '45px',
-        'a':{
+        a: {
           flex: 1,
           justifyContent: 'center',
-        }
+        },
       },
     },
     displayLabelNav: {

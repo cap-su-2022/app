@@ -7,7 +7,9 @@ interface RejectValue {
 }
 
 interface ChangePasswordRequestModel {
+  username: string;
   password: string;
+  newPassword: string;
 }
 
 export interface ChangePasswordResponseModel {
@@ -22,7 +24,9 @@ export const changePassword = createAsyncThunk<ChangePasswordResponseModel,
   thunkApi.dispatch(toggleSpinnerOn());
   try {
     const response = await axios.put(`/api/accounts/update/change-password`, {
-      password: payload.password
+      username: payload.username,
+      password: payload.password,
+      newPassword: payload.newPassword,
     });
     return await response.data;
   } catch ({ response }) {
