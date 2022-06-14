@@ -8,7 +8,6 @@ import {
   Text,
   Textarea,
   TextInput,
-  Notification,
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { At, Key, Lock, PhoneCall, User, Check, X } from 'tabler-icons-react';
@@ -113,7 +112,6 @@ const UserInfoPreference: React.FC = () => {
             autoClose: 3000,
           });
         });
-      // console.log(values)
     };
 
     const initialFormValues = {
