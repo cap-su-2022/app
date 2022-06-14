@@ -10,7 +10,7 @@ interface PreferencesModalProps {
 }
 
 const PreferencesModal: React.FC<PreferencesModalProps> = (props) => {
-  const [isLessThan540px, setIsLessThan540px] = React.useState(false);
+  const [isLessThan540px, setIsLessThan540px] = React.useState((window.innerWidth <= 540));
   // const { classes, cx } = useStyles();
   React.useEffect(() => {
     function handleResize() {
