@@ -1,7 +1,7 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
-import { Device } from '../../../../models/device.model';
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { toggleSpinnerOff, toggleSpinnerOn } from "../../spinner";
+import { Device } from "../../../../models/device.model";
 
 interface UpdatePayload {
   id: string;
@@ -12,13 +12,11 @@ interface RejectValue {
   message: string;
 }
 
-export const updateDeviceById = createAsyncThunk<
-  any,
+export const updateDeviceById = createAsyncThunk<any,
   UpdatePayload,
   {
     rejectValue: RejectValue;
-  }
->('device/update-by-id', async (payload, thunkAPI) => {
+  }>("device/update-by-id", async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
     const response = await axios.put(
@@ -29,7 +27,7 @@ export const updateDeviceById = createAsyncThunk<
   } catch ({ response }) {
     if (response.status === 401 || response.status === 403) {
       return thunkAPI.rejectWithValue({
-        message: 'Access token is invalid',
+        message: "Access token is invalid"
       });
     }
   } finally {

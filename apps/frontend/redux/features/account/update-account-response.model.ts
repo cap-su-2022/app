@@ -3,6 +3,6 @@ export interface UpdateAccountResponseModel {
   phone: string,
   description: string,
   id: string,
-  username:string,
-  email: string, 
+  username: string,
+  email: string,
 }

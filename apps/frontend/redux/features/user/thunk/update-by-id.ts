@@ -1,7 +1,7 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
-import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
-import {User} from "../../../../models/user.model";
+import { toggleSpinnerOff, toggleSpinnerOn } from "../../spinner";
+import { User } from "../../../../models/user.model";
 
 interface UpdatePayload {
   id: string;

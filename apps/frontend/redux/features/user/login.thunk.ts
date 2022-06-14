@@ -16,11 +16,11 @@ export const doLogin = createAsyncThunk<
   try {
     const response = await axios.post("/api/v1/login", {
       username: credentials.username,
-      password: credentials.password,
+      password: credentials.password
     }).then(() => axios.get(`/api/accounts/my-profile`, {}));
 
     const data = await response.data;
-    window.localStorage.setItem('user', JSON.stringify(data));
+    window.localStorage.setItem("user", JSON.stringify(data));
     return data;
   } catch (e) {
     return thunkApi.rejectWithValue({
