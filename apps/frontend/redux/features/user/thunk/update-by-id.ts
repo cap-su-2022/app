@@ -1,11 +1,11 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
-import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
-import {Device} from "../../../../models/device.model";
+import { toggleSpinnerOff, toggleSpinnerOn } from "../../spinner";
+import { User } from "../../../../models/user.model";
 
 interface UpdatePayload {
   id: string;
-  payload: Device;
+  payload: User;
 }
 
 interface RejectValue {
