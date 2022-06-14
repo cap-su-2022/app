@@ -98,10 +98,10 @@ export class AccountRepository extends Repository<Accounts> {
       .getRawOne().then((data) => data ? data["keycloak_id"] : undefined);
   }
 
-  async findAvatarURLById(keycloakId: string): Promise<string> {
+  async findAvatarURLById(id: string): Promise<string> {
     return this.createQueryBuilder("accounts")
-      .select("accounts.avatar")
-      .where("accounts.keycloak_id = :keycloakId", { keycloakId: keycloakId })
+      .select("accounts.avatar", "avatar")
+      .where("accounts.id = :id", { id: id })
       .getRawOne().then((data) => data ? data["avatar"] : undefined);
   }
 
