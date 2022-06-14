@@ -4,8 +4,8 @@ import {
   Settings,
   TwoFA,
   DatabaseImport,
-  Logout, User, BuildingWarehouse, Users, Devices, Messages, Dashboard,
-} from 'tabler-icons-react';
+  Logout, User, BuildingWarehouse, Users, Devices, Messages, Dashboard, Bell
+} from "tabler-icons-react";
 import {FPT_ORANGE_COLOR} from "@app/constants";
 import {BLACK, WHITE} from "@app/constants";
 import {useRouter} from "next/router";
@@ -18,6 +18,7 @@ const data = [
   { link: '/accounts', label: 'Accounts', icon: Users },
   { link: '/devices', label: 'Devices', icon: Devices },
   { link: '/feedbacks', label: 'Feedback', icon: Messages },
+  { link: '/notifications', label: 'Notification', icon: Bell}
 ];
 
 export function NavbarSimpleColored() {
@@ -58,7 +59,7 @@ export function NavbarSimpleColored() {
   ));
 
   return (
-    <Navbar width={{ sm: 200, md: 220, xl: 250 }} height={'full'} p="md" className={classes.navbar}>
+    <Navbar height={"full"} p="md" className={classes.navbar}>
       <Navbar.Section grow>
         <Group className={classes.header} position="apart">
           <></>
@@ -104,7 +105,11 @@ const useStyles = createStyles((theme, _params, getRef) => {
   const icon = getRef('icon');
   return {
     navbar: {
+      maxWidth: 250,
       backgroundColor: FPT_ORANGE_COLOR,
+      "@media (max-width: 780px)": {
+        maxWidth: 100
+      }
     },
 
     version: {
@@ -137,9 +142,9 @@ const useStyles = createStyles((theme, _params, getRef) => {
       fontWeight: 500,
 
       'span': {
-        [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
-          display: 'none'
-        },
+        "@media (max-width: 780px)": {
+          display: "none"
+        }
       },
 
       '&:hover': {

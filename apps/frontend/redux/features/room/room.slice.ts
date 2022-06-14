@@ -1,15 +1,20 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {Room} from "../../../models/room.model";
 import {getRoomById} from "./thunk/get-room-by-id";
-import {disableRoomById} from "./thunk/disable-room-by-id";
-import {fetchRooms} from "./thunk/fetch-rooms";
-import {updateRoomById} from "./thunk/update-room-by-id";
-import {addRoom} from "./thunk/add-room";
-import {fetchDisabledRooms} from "./thunk/fetch-disabled-rooms";
-import {fetchDeletedRooms} from "./thunk/fetch-deleted-rooms";
-import {restoreDisabledRoom} from "./thunk/restore-disabled.thunk";
-import {restoreDeletedRoom} from "./thunk/restore-deleted.thunk";
-import {deleteRoomById} from "./thunk/delete-room-by-id";
+import { disableRoomById } from "./thunk/disable-room-by-id";
+import { fetchRooms } from "./thunk/fetch-rooms";
+import { updateRoomById } from "./thunk/update-room-by-id";
+import { addRoom } from "./thunk/add-room";
+import { fetchDisabledRooms } from "./thunk/fetch-disabled-rooms";
+import { fetchDeletedRooms } from "./thunk/fetch-deleted-rooms";
+import { restoreDisabledRoom } from "./thunk/restore-disabled.thunk";
+import { restoreDeletedRoom } from "./thunk/restore-deleted.thunk";
+import { deleteRoomById } from "./thunk/delete-room-by-id";
+
+interface Direction {
+  name: string;
+  direction: "ASC" | "DESC";
+}
 
 interface RoomState {
   selectedRoom: Room;
@@ -21,8 +26,19 @@ interface RoomState {
   size: number;
   textSearch: string;
   currentPage: number;
-  direction: 'ASC' | 'DESC';
+  direction: Direction[];
 }
+
+const defaultDirection: Direction[] = [
+  {
+    name: "name",
+    direction: "ASC"
+  },
+  {
+    name: "description",
+    direction: "ASC"
+  }
+];
 
 const initialState: RoomState = {
   selectedRoom: {} as Room,
@@ -32,9 +48,9 @@ const initialState: RoomState = {
 
   currentPage: 1,
   size: 3,
-  textSearch: '',
+  textSearch: "",
   totalPage: 1,
-  direction: "ASC",
+  direction: defaultDirection
 }
 
 export const roomSlice = createSlice({
@@ -54,11 +70,11 @@ export const roomSlice = createSlice({
       state.totalPage = action.payload;
     },
     changeRoomsSortDirection(state) {
-      state.direction = state.direction === 'ASC' ? 'DESC' : 'ASC';
+      return;
     },
     resetRoomFilter(state) {
       state.size = 3;
-      state.direction = 'ASC';
+      state.direction = defaultDirection;
       state.currentPage = 1;
       state.textSearch = '';
     },
@@ -118,10 +134,15 @@ export const roomSlice = createSlice({
       state.deletedRooms = payload;
     });
     builder.addCase(restoreDisabledRoom.fulfilled, (state, {payload}) => {
+      return;
+
     });
     builder.addCase(restoreDeletedRoom.fulfilled, (state, {payload}) => {
+      return;
+
     });
     builder.addCase(deleteRoomById.fulfilled, (state, {payload}) => {
+      return;
     });
   }
 

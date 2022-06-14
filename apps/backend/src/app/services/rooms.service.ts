@@ -1,32 +1,56 @@
-import {BadRequestException, Injectable, Logger} from '@nestjs/common';
-import {AddRoomRequest} from '@app/models';
-import {UpdateResult} from 'typeorm';
-import {UpdateRoomRequest} from '@app/models';
-import {Rooms} from '../models/rooms.entity';
-import {RoomsRepository} from '../repositories/rooms.repository';
-import {RoomsRequestPayload} from '../payload/request/rooms.payload';
-import {RoomsResponsePayload} from '../payload/response/rooms.payload';
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
+import { AddRoomRequest, UpdateRoomRequest } from "@app/models";
+import { UpdateResult } from "typeorm";
+import { Rooms } from "../models";
+import { RoomsRepository } from "../repositories";
+import { RoomsRequestPayload } from "../payload/request/rooms.payload";
+import { RoomsResponsePayload } from "../payload/response/rooms.payload";
+import { KeycloakUserInstance } from "../dto/keycloak.user";
+import { Direction } from "../models/search-pagination.payload";
 
 @Injectable()
 export class RoomsService {
   private readonly logger = new Logger(RoomsService.name);
 
-  constructor(private readonly repository: RoomsRepository) {
+  constructor(
+    private readonly repository: RoomsRepository
+  ) {
   }
 
-  async add(room: AddRoomRequest): Promise<Rooms> {
+  async add(user: KeycloakUserInstance, room: AddRoomRequest): Promise<Rooms> {
     try {
-      return await this.repository.save(room, {
-        transaction: true,
+      const isExisted = await this.repository.isExistedByName(room.name);
+      if (isExisted) {
+        throw new BadRequestException("This room is already existed");
+      }
+
+      const addedRoom = await this.repository.save({
+        createdBy: user.account_id,
+        updatedBy: user.account_id,
+        ...room
+      }, {
+        transaction: true
       });
+
+      return addedRoom;
     } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException('An error occurred while adding this room');
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message ?? "An error occurred while adding this room");
     }
   }
 
+
   async findById(id: string): Promise<Rooms> {
-    return this.repository.findOneOrFail(id);
+    try {
+      return await this.repository.findOneOrFail({
+        where: {
+          id: id
+        }
+      });
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException("An error occurred while retrieving this room");
+    }
   }
 
   async getAll(request: RoomsRequestPayload): Promise<RoomsResponsePayload> {
@@ -38,34 +62,56 @@ export class RoomsService {
         search: request.search,
         offset: offset,
         limit: limit,
-        direction: request.sort,
+        direction: request.sort as Direction[]
       })
       .catch((e) => {
         this.logger.error(e);
-        throw new BadRequestException('One or more parameters is invalid');
+        throw new BadRequestException("One or more parameters is invalid");
       });
-
     const total = await this.repository.getSize().catch((e) => {
       this.logger.error(e);
-      throw new BadRequestException('One or more parameters is invalid');
+      throw new BadRequestException("One or more parameters is invalid");
     });
+
     const totalPage = Math.ceil(total / request.size);
 
     return {
       data: queryResult,
       currentPage: request.page,
       totalPage: totalPage,
-      size: total,
+      size: total
     };
   }
 
   async getDeletedRooms(): Promise<Rooms[]> {
-    return await this.repository.findDeletedRooms();
+    try {
+      return await this.repository.findDeletedRooms();
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException("An error occurred while getting deleted rooms");
+    }
   }
 
   async getDisabledRooms() {
-    const data = await this.repository.findDisabledRooms();
-    return data;
+    try {
+      const data = await this.repository.findDisabledRooms();
+      return data;
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException("An error occurred while getting disabled rooms");
+    }
+  }
+
+  getAllWithoutPagination(): Promise<Rooms[]> {
+    try {
+      return this.repository.createQueryBuilder("rooms")
+        .where("rooms.is_disabled = false")
+        .andWhere("rooms.is_deleted = false")
+        .getMany();
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException("An error occurred while adding this room");
+    }
   }
 
   async updateById(id: string, body: UpdateRoomRequest): Promise<UpdateResult> {
@@ -74,10 +120,11 @@ export class RoomsService {
     try {
       room = await this.repository.findOneOrFail({
         where: {
-          id: id,
-        },
+          id: id
+        }
       });
     } catch (e) {
+      this.logger.error(e.message);
       throw new BadRequestException("Room doesn't exist with the provided id");
     }
 
@@ -85,15 +132,15 @@ export class RoomsService {
       return this.repository.save(
         {
           ...room,
-          ...body,
+          ...body
         },
         {
-          transaction: true,
+          transaction: true
         }
       );
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('Error occurred while adding this room');
+      throw new BadRequestException("Error occurred while updating this room");
     }
   }
 
@@ -107,7 +154,7 @@ export class RoomsService {
       }
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('Error occurred while disabling this room');
+      throw new BadRequestException("Error occurred while disabling this room");
     }
   }
 
@@ -122,7 +169,7 @@ export class RoomsService {
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
-        'Error occurred while restore the delete status of this room'
+        "Error occurred while restore the delete status of this room"
       );
     }
   }
@@ -138,7 +185,7 @@ export class RoomsService {
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
-        'Error occurred while restore the disabled status of this room'
+        "Error occurred while restore the disabled status of this room"
       );
     }
   }
@@ -153,7 +200,8 @@ export class RoomsService {
       }
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('Error occurred while deleting this room');
+      throw new BadRequestException("Error occurred while deleting this room");
     }
   }
+
 }

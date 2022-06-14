@@ -1,6 +1,5 @@
-import {BeforeInsert, Column, Entity, Generated, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
-import {BaseEntity} from "./base/base.entity";
-import {randomUUID} from "crypto";
+import { Column, Entity, Generated, PrimaryColumn } from "typeorm";
+import { BaseEntity } from "./base/base.entity";
 
 @Entity(Accounts.name.toLocaleLowerCase())
 export class Accounts extends BaseEntity {
@@ -103,10 +102,10 @@ export class Accounts extends BaseEntity {
 
   @Column({
     name: "role",
-    type: 'varchar',
-    length: '100',
+    type: "varchar",
+    length: "36",
     nullable: false,
-    comment: 'Role of the associated user.'
+    comment: "Role of the associated user."
   })
   role?: string;
 

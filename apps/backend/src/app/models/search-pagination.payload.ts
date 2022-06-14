@@ -1,6 +1,11 @@
 export interface RepositoryPaginationPayload {
-  search: string;
+  search: string[] | string;
   limit: number;
   offset: number;
-  direction: string;
+  direction: Direction[];
 };
+
+export type Direction = {
+  name: string;
+  order: "ASC" | "DESC";
+}

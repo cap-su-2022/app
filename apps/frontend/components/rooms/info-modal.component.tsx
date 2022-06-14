@@ -1,9 +1,9 @@
 import React from "react";
-import {Button, createStyles, InputWrapper, Modal, Text, Textarea, TextInput, useMantineTheme} from "@mantine/core";
-import {useWindowDimensions} from "../../hooks/use-window-dimensions";
-import {Archive, CalendarStats, ClipboardText, Clock, FileDescription, Id, X} from "tabler-icons-react";
-import {convertDateToLocalDateString} from "../../utils/date.util";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import { Button, createStyles, InputWrapper, Modal, Text, Textarea, TextInput } from "@mantine/core";
+import { useWindowDimensions } from "../../hooks/use-window-dimensions";
+import { Archive, CalendarStats, ClipboardText, Clock, FileDescription, Id, User, X } from "tabler-icons-react";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import dayjs from "dayjs";
 
 interface RoomInfoModalProps {
   isShown: boolean;
@@ -42,28 +42,30 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
                      label="Room name"
                      readOnly value={room.name}/>
           <Textarea icon={<FileDescription/>}
-                     className={classes.textInput}
-                     radius="md"
-                     label="Room description"
-                     readOnly value={room.description}/>
+                    className={classes.textInput}
+                    radius="md"
+                    label="Room description"
+                    readOnly value={room.description} />
           <div className={classes.modalInputDate}>
-            <TextInput icon={<Clock/>}
+            <TextInput icon={<Clock />}
                        className={classes.textInput}
                        radius="md"
                        label="Created At"
                        readOnly
-                       value={convertDateToLocalDateString(new Date(room.createdAt))}/>
-            <InputWrapper id="room-updatedat"
-                          label="Updated At"
-                          description="The date that the room information was updated">
-              <TextInput id="room-updatedat"
-                         icon={<CalendarStats/>}
-                         className={classes.textInput}
-                         radius="md"
-                         readOnly
-                         value={convertDateToLocalDateString(new Date(room.createdAt))}
-              />
-            </InputWrapper>
+                       value={dayjs(room.createdAt).format("DD/MM/YYYY HH:mm:ss")} />
+            <TextInput icon={<User />}
+                       className={classes.textInput}
+
+                       id="room-createdby"
+                       value={room.createdBy}
+            />
+            <TextInput id="room-updatedat"
+                       icon={<CalendarStats />}
+                       className={classes.textInput}
+                       radius="md"
+                       readOnly
+                       value={dayjs(room.createdAt).format("DD/MM/YYYY HH:mm:ss")}
+            />
           </div>
         </div>
 

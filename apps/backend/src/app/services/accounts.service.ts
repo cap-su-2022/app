@@ -1,19 +1,23 @@
-import {BadRequestException, Injectable, Logger} from '@nestjs/common';
-import {Accounts} from '../models/account.entity';
-import {BaseService} from './base.service';
-import {UpdateDeviceRequest, UsersDTO} from '@app/models';
-import {AccountRepository} from '../repositories/account.repository.';
-import {KeycloakService} from './keycloak.service';
-import {UsersRequestPayload} from '../payload/request/users.payload';
-import {RoomsResponsePayload} from '../payload/response/rooms.payload';
-import {Devices} from '../models/devices';
-import {NoSuchElementFoundException} from '../exception/no-such-element-found.exception';
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
+import { Accounts } from "../models";
+import { BaseService } from "./base.service";
+import { UpdateDeviceRequest, UsersDTO } from "@app/models";
+import { AccountRepository } from "../repositories";
+import { KeycloakService } from "./keycloak.service";
+import { UsersRequestPayload } from "../payload/request/users.payload";
+import { CloudinaryService } from "./cloudinary.service";
+import { AccountsResponsePayload } from "../payload/response/accounts.payload";
+import { KeycloakUserInstance } from "../dto/keycloak.user";
+import { Direction } from "../models/search-pagination.payload";
+import { ChangeProfilePasswordRequest } from "../payload/request/change-password.request.payload";
+import { randomUUID } from "crypto";
 
 @Injectable()
 export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
   private readonly logger = new Logger(AccountsService.name);
 
   constructor(
+    private readonly cloudinaryService: CloudinaryService,
     private readonly keycloakService: KeycloakService,
     private readonly repository: AccountRepository
   ) {
@@ -24,12 +28,29 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     return null;
   }
 
-  findByKeycloakId(keycloakId: string): Promise<Accounts> {
-    return this.repository.findByKeycloakId(keycloakId);
+  getUserIdByKeycloakId(keycloakId: string): Promise<string> {
+    return this.repository.findIdByKeycloakId(keycloakId);
   }
 
-  add(model: UsersDTO): Promise<Accounts> {
-    return Promise.resolve(undefined);
+  findByKeycloakId(keycloakId: string): Promise<Accounts> {
+    try {
+      return this.repository.findByKeycloakId(keycloakId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async add(model: UsersDTO): Promise<Accounts> {
+    try {
+      const entity: Partial<Accounts> = {
+        ...model
+      };
+      return this.repository.save(entity);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while adding new account");
+    }
   }
 
   addAll(models: UsersDTO[]): Promise<Accounts[]> {
@@ -42,7 +63,7 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
 
   async getAllByPagination(
     request: UsersRequestPayload
-  ): Promise<RoomsResponsePayload> {
+  ): Promise<AccountsResponsePayload> {
     const offset = request.size * (request.page - 1);
     const limit = request.size;
 
@@ -54,7 +75,7 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
         search: request.search,
         offset: offset,
         limit: limit,
-        direction: request.sort,
+        direction: request.sort as Direction[]
       });
       total = await this.repository.getSize();
     } catch (e) {
@@ -71,89 +92,178 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     };
   }
 
-  async updateById(body: UpdateDeviceRequest, id: string): Promise<Devices> {
-    let device;
+  async updateById(body: UpdateDeviceRequest, id: string): Promise<Accounts> {
 
     try {
-      device = await this.repository.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
+      const account = await this.repository.findById(id);
+      return await this.repository.updatePartially(body, account);
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('Account does not exist');
+      throw new BadRequestException("Account does not exist");
     }
 
-    return this.repository.save(
-      {
-        ...device,
-        ...body,
-      },
-      {
-        transaction: true,
-      }
-    );
   }
 
-  getById(id: string): Promise<Accounts> {
+  async getById(id: string): Promise<Accounts> {
     try {
-      return this.repository.findOneOrFail(id);
+      return await this.repository.findById(id);
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('Account does not exist');
+      throw new BadRequestException("Account does not exist");
     }
   }
 
-  disableById(id: string) {
-    return this.repository
-      .createQueryBuilder('devices')
-      .update({
-        isDisabled: true,
-      })
-      .where('accounts.id = :id', {id: id})
-      .useTransaction(true)
-      .execute();
+  async disableById(id: string): Promise<void> {
+    try {
+      await this.repository.disableAccountById(id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while disabling account");
+    }
   }
 
-  handleRestoreDisabledAccountById(id: string) {
-    return this.repository
-      .createQueryBuilder('accounts')
-      .update({
-        isDisabled: false,
-      })
-      .where('accounts.id = :id', {id: id})
-      .useTransaction(true)
-      .execute();
+  async handleRestoreDisabledAccountById(id: string) {
+    try {
+      return await this.repository.restoreDisabledAccountById(id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while restoring disabled account");
+    }
   }
 
-  handleRestoreAccountById(id: string) {
-    return this.repository
-      .createQueryBuilder('accounts')
-      .update({
-        isDeleted: false,
-      })
-      .where('accounts.id = :id', {id: id})
-      .useTransaction(true)
-      .execute();
+  async handleRestoreAccountById(id: string): Promise<void> {
+    try {
+
+      await this.repository.restoreAccountById(id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while getting deleted accounts");
+    }
   }
 
-  getDeletedAccounts() {
-    return this.repository
-      .createQueryBuilder('accounts')
-      .where('accounts.is_deleted = true')
-      .getMany();
+  async getDeletedAccounts(): Promise<Accounts[]> {
+    try {
+      return await this.repository.findDeletedAccounts();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while getting deleted accounts");
+    }
   }
 
-  getDisabledAccounts() {
-    return this.repository
-      .createQueryBuilder('accounts')
-      .where('accounts.is_disabled = true')
-      .andWhere('accounts.is_deleted = false')
-      .getMany();
+  async getDisabledAccounts(): Promise<Accounts[]> {
+    try {
+      return await this.repository.findDisabledAccounts();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while getting disabled accounts");
+    }
   }
 
   syncUsersFromKeycloak(): Promise<any> {
     return Promise.resolve();
+
+  }
+
+  async uploadAvatarByAccountId(image: Express.Multer.File, id: string): Promise<void> {
+    try {
+      console.log(image);
+      const user = await this.repository.findById(id);
+      if (user.isDisabled || user.isDeleted) {
+        throw new BadRequestException("This account has been disabled");
+      }
+      const imageId = randomUUID();
+      await this.cloudinaryService.uploadImageAndGetURL(image.buffer, imageId);
+      const url = await this.cloudinaryService.getImageURLByFileName(imageId);
+      await this.repository.addAvatarURLById(url, id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message ?? "Error while uploading avatar");
+    }
+  }
+
+  getAccountByKeycloakId(id: string) {
+    return this.repository.findOneOrFail({
+      where: {
+        keycloakId: id
+      }
+    }).catch((e) => {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while retrieving account");
+    });
+  }
+
+  getAccountRoleByKeycloakId(keycloakId: string): Promise<string> {
+    try {
+      return this.repository.findRoleByKeycloakId(keycloakId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async changePassword(keycloakUser: KeycloakUserInstance, payload: ChangeProfilePasswordRequest): Promise<void> {
+    try {
+      if (payload.password === payload.newPassword) {
+        throw new BadRequestException("Old password must not be the same with new password.");
+      }
+      await this.keycloakService.signInToKeycloak(payload.username, payload.password);
+      await this.keycloakService.changePasswordByKeycloakId(keycloakUser.sub, payload.newPassword);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message ?? "Error while changing account password");
+    }
+  }
+
+  async getUsernameByAccountId(id: string): Promise<string> {
+    try {
+      return await this.repository.findUsernameById(id);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async updateMyProfile(keycloakUser: KeycloakUserInstance,
+                        payload: { fullname: string; phone: string; description: string }):
+    Promise<Accounts> {
+    try {
+      const user = await this.repository.findByKeycloakId(keycloakUser.sub);
+      if (!user) {
+        throw new BadRequestException("Account does not exist with the provided id");
+      }
+
+      return await this.repository.save({
+        ...user,
+        ...payload
+      });
+
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while update your profile.");
+    }
+  }
+
+  async changePasswordByKeycloakId(id: string, password: string) {
+    try {
+      const keycloakId = await this.repository.findKeycloakIdByAccountId(id);
+      await this.keycloakService.changePasswordByKeycloakId(keycloakId, password);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Error while changing password by keycloak id");
+    }
+
+  }
+
+  async getAvatarURLByKeycloakId(keycloakId: string): Promise<string> {
+    return await this.repository.findAvatarURLById(keycloakId);
+  }
+
+  async getCurrentProfileInformation(keycloakId: string): Promise<Accounts> {
+    try {
+      return await this.repository.findProfileInformationById(keycloakId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 }

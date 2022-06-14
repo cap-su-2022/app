@@ -9,4 +9,5 @@ export interface UsernamePasswordLoginResponse {
   googleId: string;
   role: string;
   fullname: string;
+  avatar: string;
 }

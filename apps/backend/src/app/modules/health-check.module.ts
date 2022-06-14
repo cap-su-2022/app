@@ -1,17 +1,18 @@
-import {Module} from "@nestjs/common";
-import {HealthCheckController} from "../controllers/health-check.controller";
-import {AuthGuard} from "../guards/auth.guard";
-import {KeycloakService} from "../services/keycloak.service";
-import {HttpModule} from "@nestjs/axios";
+import { Module } from "@nestjs/common";
+import { HealthCheckController } from "../controllers";
+import { KeycloakService } from "../services";
+import { HttpModule } from "@nestjs/axios";
 import ConfigModule from "./global/config.module";
 
 @Module({
   imports: [
     HttpModule,
-    ConfigModule,
+    ConfigModule
   ],
-  controllers: [HealthCheckController],
-  providers: [ KeycloakService, AuthGuard],
+  controllers: [
+    HealthCheckController
+  ],
+  providers: [KeycloakService],
   exports: []
 })
 export class HealthCheckModule {}

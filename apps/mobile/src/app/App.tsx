@@ -1,13 +1,22 @@
-import React, {useState} from 'react';
-import {StatusBar,} from 'react-native';
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { SafeAreaView, StatusBar, Text, TouchableOpacity, View } from "react-native";
 
-import {NavigationContainer} from "@react-navigation/native";
-import {StackNavigator, StackScreen} from '@app/utils';
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "./redux/store";
+import { NavigationContainer } from "@react-navigation/native";
+import { StackNavigator, StackScreen } from "@app/utils";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "./redux/store";
 import LoginScreen from "./screens/login.screen";
 import MainNavigator from "./navigation/main.navigator";
-import {Spinner} from "./components/spinners/spinner";
+import { Spinner } from "./components/spinners/spinner";
+import axios from "axios";
+import { API_URL } from "./constants/constant";
+import AlertModal from "./components/modals/alert-modal.component";
+import { deviceWidth } from "./utils/device";
+import { ExclamationCircleIcon } from "react-native-heroicons/outline";
+import { BLACK, FPT_ORANGE_COLOR, WHITE } from "@app/constants";
+import { toggleSpinnerOff, toggleSpinnerOn } from "./redux/features/spinner";
+import RNExitApp from "react-native-exit-app";
+import CannotConnectToServer from "./components/cannot-connect-server.component";
 
 
 export const App = () => {
@@ -15,25 +24,40 @@ export const App = () => {
   const user = useSelector((state: RootState) => state.user);
   const isSpinnerLoading = useSelector((state: RootState) => state.spinner.isLoading);
   const dispatch: AppDispatch = useDispatch();
+  const [isPingTimedOut, setPingTimedOut] = useState<boolean>(false);
 
   const [initialRoute, setInitialRoute] = useState<string>("LOGIN_SCREEN");
 
+  useLayoutEffect(() => {
+    dispatch(toggleSpinnerOn());
+    axios.get(`${API_URL}/health`, {
+      timeout: 1500
+    }).catch(() => {
+      setPingTimedOut(true);
+    }).finally(() => dispatch(toggleSpinnerOff()));
+  }, []);
+
 
   return (
-    <>
-      <StatusBar barStyle="dark-content"/>
-      <NavigationContainer>
-        <StackNavigator initialRouteName={initialRoute} screenOptions={{
-          headerShown: false
-        }}>
-          <StackScreen name={"LOGIN_SCREEN"} component={LoginScreen}/>
-          <StackScreen name={"MAIN"} component={MainNavigator}/>
+    isPingTimedOut ?
+      <CannotConnectToServer
+        isShown={isPingTimedOut}
+        toggleShown={() => setPingTimedOut(false)}
+      /> :
+      <>
+        <StatusBar barStyle="dark-content" />
+        <NavigationContainer>
+          <StackNavigator initialRouteName={initialRoute} screenOptions={{
+            headerShown: false
+          }}>
+            <StackScreen name={"LOGIN_SCREEN"} component={LoginScreen} />
+            <StackScreen name={"MAIN"} component={MainNavigator} />
 
-        </StackNavigator>
+          </StackNavigator>
 
-        {isSpinnerLoading ? <Spinner/> : null}
-      </NavigationContainer>
-    </>
+          {isSpinnerLoading ? <Spinner/> : null}
+        </NavigationContainer>
+      </>
   );
 };
 

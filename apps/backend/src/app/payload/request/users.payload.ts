@@ -33,8 +33,8 @@ export class UsersRequestPayload implements PaginationPayload<string> {
   @IsNumber(validationConfig.number)
   size: number;
 
-  @ContainsMany(['ASC', 'DESC'], {
+  @ContainsMany(["ASC", "DESC"], {
     message: `Sorting option must be 'ASC' or 'DESC'`
   })
-  sort: string;
+  sort: object;
 };

@@ -4,9 +4,41 @@ import {Column, CreateDateColumn, Entity, UpdateDateColumn} from "typeorm";
 export abstract class BaseEntity {
 
   @Column({
-    name: "is_disabled",
+    name: "created_by",
     nullable: false,
     default: false,
+    type: "uuid"
+  })
+  createdBy: string;
+
+  @Column({
+    name: "updated_by",
+    nullable: false,
+    default: false,
+    type: "uuid"
+  })
+  updatedBy: string;
+
+  @Column({
+    name: "disabled_by",
+    nullable: false,
+    default: false,
+    type: "uuid"
+  })
+  disabledBy: string;
+
+  @Column({
+    name: "deleted_by",
+    nullable: false,
+    default: false,
+    type: "uuid"
+  })
+  deletedBy: string;
+
+  @Column({
+    name: "is_disabled",
+    nullable: false,
+    default: false
   })
   isDisabled: boolean;
 
