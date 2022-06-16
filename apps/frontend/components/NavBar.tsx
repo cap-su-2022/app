@@ -4,7 +4,7 @@ import {
   Settings,
   TwoFA,
   DatabaseImport,
-  Logout, User, BuildingWarehouse, Users, Devices, Messages, Dashboard, Bell
+  Logout, User, BuildingWarehouse, Users, Devices, Messages, Dashboard, Bell, Ticket
 } from "tabler-icons-react";
 import {FPT_ORANGE_COLOR} from "@app/constants";
 import {BLACK, WHITE} from "@app/constants";
@@ -13,12 +13,13 @@ import LogoutModal from "./logout.modal";
 import PreferencesModal from "./preferences.modal.component";
 
 const data = [
-  { link: '/dashboard', label: 'Dashboard', icon: Dashboard},
-  { link: '/rooms', label: 'Rooms', icon: BuildingWarehouse },
-  { link: '/accounts', label: 'Accounts', icon: Users },
-  { link: '/devices', label: 'Devices', icon: Devices },
-  { link: '/feedbacks', label: 'Feedback', icon: Messages },
-  { link: '/notifications', label: 'Notification', icon: Bell}
+  { link: "/dashboard", label: "Dashboard", icon: Dashboard },
+  { link: "/rooms", label: "Rooms", icon: BuildingWarehouse },
+  { link: "/accounts", label: "Accounts", icon: Users },
+  { link: "/devices", label: "Devices", icon: Devices },
+  { link: "/feedbacks", label: "Feedback", icon: Messages },
+  { link: "/notifications", label: "Notification", icon: Bell },
+  { link: "/booking-room", label: "Booking Room", icon: Ticket }
 ];
 
 export function NavbarSimpleColored() {
