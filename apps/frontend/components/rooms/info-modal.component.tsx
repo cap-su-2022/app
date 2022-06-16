@@ -31,41 +31,85 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
              opened={props.isShown}
              onClose={() => props.toggleShown()}>
         <div className={classes.modalBody}>
-          <TextInput icon={<Id/>}
-                     className={classes.textInput}
-                     radius="md"
-                     label="Room ID"
-                     readOnly value={room.id}/>
-          <TextInput icon={<ClipboardText/>}
-                     className={classes.textInput}
-                     radius="md"
-                     label="Room name"
-                     readOnly value={room.name}/>
-          <Textarea icon={<FileDescription/>}
-                    className={classes.textInput}
-                    radius="md"
-                    label="Room description"
-                    readOnly value={room.description} />
-          <div className={classes.modalInputDate}>
-            <TextInput icon={<Clock />}
+          <InputWrapper
+            label="Room ID"
+            description="Unique ID of the room"
+          >
+            <TextInput icon={<Id />}
                        className={classes.textInput}
                        radius="md"
-                       label="Created At"
-                       readOnly
-                       value={dayjs(room.createdAt).format("DD/MM/YYYY HH:mm:ss")} />
-            <TextInput icon={<User />}
+                       readOnly value={room.id} />
+          </InputWrapper>
+          <InputWrapper
+            label="Room name"
+            description="Unique room name"
+          >
+            <TextInput icon={<ClipboardText />}
                        className={classes.textInput}
+                       radius="md"
+                       readOnly value={room.name} />
+          </InputWrapper>
+          <InputWrapper
+            label="Room type"
+            description="Type of library in separated">
+            <TextInput icon={<ClipboardText />}
+                       className={classes.textInput}
+                       radius="md"
+                       readOnly value={room.type} />
+          </InputWrapper>
+          <InputWrapper
+            label="Room description"
+            description="Additional information of the room"
+          >
+            <Textarea icon={<FileDescription />}
+                      className={classes.textInput}
+                      radius="md"
+                      readOnly value={room.description} />
+          </InputWrapper>
+          <div style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between"
+          }}>
+            <InputWrapper
+              label="Created at">
+              <TextInput icon={<Clock />}
+                         className={classes.textInput}
+                         radius="md"
+                         readOnly
+                         value={dayjs(room.createdAt).format("DD/MM/YYYY HH:mm:ss")} />
+            </InputWrapper>
+            <InputWrapper label="Created by">
+              <TextInput icon={<User />}
+                         className={classes.textInput}
+                         radius="md"
 
-                       id="room-createdby"
-                       value={room.createdBy}
-            />
-            <TextInput id="room-updatedat"
-                       icon={<CalendarStats />}
-                       className={classes.textInput}
-                       radius="md"
-                       readOnly
-                       value={dayjs(room.createdAt).format("DD/MM/YYYY HH:mm:ss")}
-            />
+                         id="room-createdby"
+                         value={room.createdBy}
+              />
+            </InputWrapper>
+          </div>
+          <div style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between"
+          }}>
+            <InputWrapper label="Updated at">
+              <TextInput id="room-updatedat"
+                         icon={<CalendarStats />}
+                         className={classes.textInput}
+                         radius="md"
+                         readOnly
+                         value={dayjs(room.updatedAt).format("DD/MM/YYYY HH:mm:ss")} />
+            </InputWrapper>
+            <InputWrapper label="Updated by">
+              <TextInput id="room-updatedby"
+                         icon={<User />}
+                         className={classes.textInput}
+                         radius="md"
+                         readOnly
+                         value={room.updatedBy} />
+            </InputWrapper>
           </div>
         </div>
 

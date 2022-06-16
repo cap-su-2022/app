@@ -5,6 +5,7 @@ import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-na
 import Success from "../../components/success.svg";
 import { deviceWidth } from "../../utils/device";
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from "@app/constants";
+import QRCode from "react-native-qrcode-svg";
 
 export const RoomBookingSuccess: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
@@ -37,6 +38,7 @@ export const RoomBookingSuccess: React.FC = () => {
             fontSize: deviceWidth / 23
           }}>Please check-in your library in time</Text>
         </View>
+        <QRCode value="1233" />
         <TouchableOpacity style={{
           borderRadius: 8,
           backgroundColor: FPT_ORANGE_COLOR,

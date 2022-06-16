@@ -42,14 +42,14 @@ export class RoomsService {
 
   async findById(id: string): Promise<Rooms> {
     try {
-      return await this.repository.findOneOrFail({
-        where: {
-          id: id
-        }
-      });
+      const isExisted = await this.repository.isExistedById(id);
+      if (!isExisted) {
+        throw new BadRequestException("Room does not found with the id");
+      }
+      return await this.repository.findById(id);
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException("An error occurred while retrieving this room");
+      throw new BadRequestException(e.message ?? "An error occurred while retrieving this room");
     }
   }
 
@@ -83,18 +83,18 @@ export class RoomsService {
     };
   }
 
-  async getDeletedRooms(): Promise<Rooms[]> {
+  async getDeletedRooms(search: string): Promise<Rooms[]> {
     try {
-      return await this.repository.findDeletedRooms();
+      return await this.repository.findDeletedRooms(search);
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException("An error occurred while getting deleted rooms");
     }
   }
 
-  async getDisabledRooms() {
+  async getDisabledRooms(search: string): Promise<Rooms[]> {
     try {
-      const data = await this.repository.findDisabledRooms();
+      const data = await this.repository.findDisabledRooms(search);
       return data;
     } catch (e) {
       this.logger.error(e);
@@ -114,7 +114,7 @@ export class RoomsService {
     }
   }
 
-  async updateById(id: string, body: UpdateRoomRequest): Promise<UpdateResult> {
+  async updateById(id: string, body: UpdateRoomRequest): Promise<void> {
     let room;
 
     try {
@@ -127,12 +127,21 @@ export class RoomsService {
       this.logger.error(e.message);
       throw new BadRequestException("Room doesn't exist with the provided id");
     }
+    if (room.name !== body.name) {
+      const isExisted = await this.repository.isExistedByName(body.name);
+      if (isExisted) {
+        throw new BadRequestException("The room name you want to use is duplicated!");
+      }
+    }
+
 
     try {
-      return this.repository.save(
+      await this.repository.save(
         {
           ...room,
-          ...body
+          name: body.name,
+          description: body.description,
+          type: body.type
         },
         {
           transaction: true

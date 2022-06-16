@@ -6,6 +6,7 @@ interface AddRoomPayload {
   name: string;
   description: string;
   isDisabled: boolean;
+  type: string;
 }
 
 interface AddRoomRejectValue {
@@ -18,12 +19,22 @@ export const addRoom = createAsyncThunk<void, AddRoomPayload, {
   thunkAPI.dispatch(toggleSpinnerOn());
 
   try {
-    const response = await axios.post(`/api/rooms/add`, payload);
+    const response = await axios.post(`/api/rooms/add`, {
+      name: payload.name,
+      description: payload.description,
+      isDisabled: payload.isDisabled,
+      type: payload.type
+    });
     return await response.data;
-  } catch ({response}) {
-    if (response.status === 401 || response.status === 403) {
+  } catch (e) {
+    if (e.response.status === 401 || e.response.status === 403) {
       return thunkAPI.rejectWithValue({
-        message: 'Access token is invalid',
+        message: "Access token is invalid"
+      });
+    } else {
+      console.log(e);
+      return thunkAPI.rejectWithValue({
+        message: e.response.data.message
       });
     }
   } finally {

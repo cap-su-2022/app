@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
-import {createStyles, Table, ScrollArea, Modal, Text, Button} from '@mantine/core';
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {RotateClockwise, Trash} from "tabler-icons-react";
-import {restoreDisabledRoom} from "../../redux/features/room/thunk/restore-disabled.thunk";
-import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
-import {fetchDisabledRooms} from "../../redux/features/room/thunk/fetch-disabled-rooms";
-import {deleteRoomById} from "../../redux/features/room/thunk/delete-room-by-id";
+import React, { useEffect, useState } from "react";
+import { createStyles, Table, ScrollArea, Modal, Text, Button, InputWrapper, TextInput } from "@mantine/core";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { RotateClockwise, Search, Trash } from "tabler-icons-react";
+import { restoreDisabledRoom } from "../../redux/features/room/thunk/restore-disabled.thunk";
+import { fetchRooms } from "../../redux/features/room/thunk/fetch-rooms";
+import { fetchDisabledRooms } from "../../redux/features/room/thunk/fetch-disabled-rooms";
+import { deleteRoomById } from "../../redux/features/room/thunk/delete-room-by-id";
+import dayjs from "dayjs";
+import { useDebouncedValue } from "@mantine/hooks";
 
 interface RestoreDisabledRoomModalProps {
   isShown: boolean;
+
   toggleShown(): void;
 }
 
@@ -17,18 +20,26 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (props
   const disabledRooms = useAppSelector((state) => state.room.disabledRooms);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
+  const [search, setSearch] = useState<string>("");
+
+  const [searchDebounced] = useDebouncedValue<string>(search, 400);
+
+
+  useEffect(() => {
+    dispatch(fetchDisabledRooms(search));
+  }, [searchDebounced]);
 
   const handleActiveRoom = (id: string) => {
     dispatch(restoreDisabledRoom(id)).unwrap()
       .then(() => dispatch(fetchRooms()))
-      .then(() => dispatch(fetchDisabledRooms()).unwrap()
-        .then((disabledRooms) => disabledRooms.length < 1 ? props.toggleShown() : null ));
-  }
+      .then(() => dispatch(fetchDisabledRooms(search)).unwrap()
+        .then((disabledRooms) => disabledRooms.length < 1 ? props.toggleShown() : null));
+  };
 
   const handleDeleteRoom = (id: string) => {
     dispatch(deleteRoomById(id)).unwrap()
       .then(() => dispatch(fetchRooms()))
-      .then(() => dispatch(fetchDisabledRooms()).unwrap()
+      .then(() => dispatch(fetchDisabledRooms(search)).unwrap()
         .then((disabledRooms) => disabledRooms.length < 1 ? props.toggleShown() : null));
 
   }
@@ -36,16 +47,17 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (props
   const rows = disabledRooms?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
-      <td>{row.id}</td>
       <td>{row.name}</td>
-      <td>{row.updatedAt}</td>
+      <td>{row.type}</td>
+      <td>{dayjs(row.disabledAt).format("DD/MM/YYYY HH:mm:ss")}</td>
+      <td>{row.disabledBy}</td>
       <td style={{
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column"
       }}>
         <Button onClick={() => handleActiveRoom(row.id)} style={{
           margin: 5
-        }} variant="outline" color="green" leftIcon={<RotateClockwise/>}>
+        }} variant="outline" color="green" leftIcon={<RotateClockwise />}>
           Activate
         </Button>
         <Button onClick={() => handleDeleteRoom(row.id)} style={{
@@ -68,17 +80,23 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (props
            onClose={() => props.toggleShown()}
            centered
            size="85%"
-    title={<ModalHeaderTitle/>}
-    closeOnClickOutside={false}
-    closeOnEscape={false}>
-      <ScrollArea sx={{ height: 300 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+           title={<ModalHeaderTitle />}
+           closeOnClickOutside={false}
+           closeOnEscape={false}>
+      <ScrollArea sx={{ height: 700 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+        <InputWrapper label="Search"
+                      description="Search for library name...">
+          <TextInput onChange={(e) => setSearch(e.target.value)}
+                     icon={<Search />} />
+        </InputWrapper>
         <Table sx={{ minWidth: 700 }}>
           <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
           <tr>
             <th>STT</th>
-            <th>Id</th>
             <th>Name</th>
-            <th>Updated At</th>
+            <th>Type</th>
+            <th>Disabled at</th>
+            <th>Disabled by</th>
             <th>Action</th>
           </tr>
           </thead>

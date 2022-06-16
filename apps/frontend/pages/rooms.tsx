@@ -39,6 +39,7 @@ interface RoomsRowData extends RowData {
   name: string;
   isDisabled: boolean;
   updatedAt: string;
+  type: string;
 }
 
 function RoomsManagement(props: any) {
@@ -70,22 +71,24 @@ function RoomsManagement(props: any) {
   const [debouncedSearchValue] = useDebouncedValue(searchText, 400);
 
   const [sortBy, setSortBy] = useState<keyof RoomsRowData>(null);
+  const [sortName, setSortName] = useState<"ASC" | "DESC">("ASC");
+  const [sortUpdatedAt, setSortUpdatedAt] = useState<"ASC" | "DESC">("ASC");
 
   useEffect(() => {
     dispatch(fetchRooms()).unwrap().catch(() => {
-      router.replace('/login');
+      router.replace("/login");
     });
 
   }, [debouncedSearchValue, itemsPerPage, activePage, direction]);
 
 
   const handleShowInfoModal = async (id: string) => {
-    dispatch(getRoomById(id))
+    dispatch(getRoomById(id)).unwrap()
       .then(() => setDetailModalShown(!isDetailModalShown));
   }
 
   const handleShowUpdateModal = (id: string) => {
-    dispatch(getRoomById(id))
+    dispatch(getRoomById(id)).unwrap()
       .then(() => setUpdateModalShown(!isUpdateModalShown));
 
   }
@@ -109,7 +112,8 @@ function RoomsManagement(props: any) {
       <tr key={row.id}>
         <td>{row.stt}</td>
         <td>{row.name}</td>
-        <td>{new Date(row.updatedAt).toLocaleDateString() + ' ' + new Date(row.updatedAt).toLocaleTimeString()}</td>
+        <td>{row.type}</td>
+        <td>{new Date(row.updatedAt).toLocaleDateString() + " " + new Date(row.updatedAt).toLocaleTimeString()}</td>
         <td>
           {row.isDisabled
             ? <Button compact color="red"
@@ -150,21 +154,28 @@ function RoomsManagement(props: any) {
         <Th
           sorted={sortBy === 'stt'}
           reversed={null}
-          onSort={() => setSorting('stt')}
+          onSort={null}
         >
           STT
         </Th>
         <Th
-          sorted={sortBy === 'name'}
+          sorted={sortBy === "name"}
           reversed={null}
-          onSort={() => setSorting('name')}
+          onSort={() => setSorting("name")}
         >
           Name
         </Th>
         <Th
-          sorted={sortBy === 'updatedAt'}
+          sorted={sortBy === "type"}
           reversed={null}
-          onSort={() => setSorting('updatedAt')}
+          onSort={() => setSorting("type")}
+        >
+          Type
+        </Th>
+        <Th
+          sorted={sortBy === "updatedAt"}
+          reversed={null}
+          onSort={() => setSorting("updatedAt")}
         >
           Updated At
         </Th>
