@@ -119,4 +119,13 @@ export class RoomsRepository extends Repository<Rooms> {
         "rooms.isDeleted", "rooms.isDisabled"])
       .getMany();
   }
+
+  async findRoomNames() {
+    return this.createQueryBuilder("rooms")
+      .select("rooms.name", "name")
+      .where("rooms.is_disabled = false")
+      .andWhere("rooms.is_deleted = false")
+      .getRawMany<{ name: string }>()
+      .then((data) => data.map((room) => room.name));
+  }
 }

@@ -20,6 +20,16 @@ export class BookingRoomController {
   constructor(private readonly service: BookingRoomService) {
   }
 
+  @Get("accounts-name")
+  getUsernameList() {
+    return this.service.getUsernameList();
+  }
+
+  @Get("rooms-name")
+  getRoomsName() {
+    return this.service.getRoomsName();
+  }
+
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({

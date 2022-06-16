@@ -266,4 +266,8 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
       throw new BadRequestException(e.message);
     }
   }
+
+  getUsernameList(): Promise<string[]> {
+    return this.repository.findUsername();
+  }
 }

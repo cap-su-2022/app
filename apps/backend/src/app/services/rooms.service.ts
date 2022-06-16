@@ -204,4 +204,12 @@ export class RoomsService {
     }
   }
 
+  async getRoomsName() {
+    try {
+      return await this.repository.findRoomNames();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
 }

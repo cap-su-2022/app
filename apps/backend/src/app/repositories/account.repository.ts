@@ -191,4 +191,13 @@ export class AccountRepository extends Repository<Accounts> {
       .where("accounts.id = :id", { id })
       .getRawOne().then((data) => data["username"]);
   }
+
+  findUsername(): Promise<string[]> {
+    return this.createQueryBuilder("accounts")
+      .select("accounts.username", "username")
+      .where("accounts.is_disabled = false")
+      .andWhere("accounts.is_deleted = false")
+      .getRawMany<{ username: string }>()
+      .then((data) => data.map((acc) => acc.username));
+  }
 }

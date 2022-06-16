@@ -9,6 +9,7 @@ import { TypeOrmExModule } from "./global/typeorm-ex.module";
 import { DevicesModule } from "./devices.module";
 import { TasksService } from "../services/task.service";
 import { ScheduleModule } from "@nestjs/schedule";
+import { AccountsModule } from "./accounts.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ScheduleModule } from "@nestjs/schedule";
     RoomWishlistModule,
     KeycloakModule,
     RoomsModule,
+    AccountsModule,
 
     TypeOrmExModule.forCustomRepository([BookingRoomRepository, AccountRepository])
   ],

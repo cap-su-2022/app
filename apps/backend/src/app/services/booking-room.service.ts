@@ -9,6 +9,7 @@ import { BookingRoomsFilterRequestPayload } from "../payload/request/booking-roo
 import { KeycloakUserInstance } from "../dto/keycloak.user";
 import { RemoveWishlistRequest } from "../payload/request/remove-from-booking-room-wishlist.request.payload";
 import { DevicesService } from "./devices.service";
+import { AccountsService } from "./accounts.service";
 
 @Injectable()
 export class BookingRoomService {
@@ -18,7 +19,8 @@ export class BookingRoomService {
   constructor(private readonly roomService: RoomsService,
               private readonly deviceService: DevicesService,
               private readonly roomWishlistService: RoomWishlistService,
-              private readonly repository: BookingRoomRepository) {
+              private readonly repository: BookingRoomRepository,
+              private readonly accountService: AccountsService) {
   }
 
 
@@ -79,5 +81,13 @@ export class BookingRoomService {
 
   getBookingRoomDevices(name: string, type: string, sort: string) {
     return this.deviceService.getBookingRoomDeviceList(name, type, sort);
+  }
+
+  getUsernameList(): Promise<string[]> {
+    return this.accountService.getUsernameList();
+  }
+
+  getRoomsName(): Promise<string[]> {
+    return this.roomService.getRoomsName();
   }
 }
