@@ -1,9 +1,9 @@
 import React from "react";
 
 import {useNavigation} from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {StackNavigator, StackScreen} from '@app/utils';
-import {StatusBar, Text, TouchableOpacity} from "react-native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackNavigator, StackScreen } from "@app/utils";
+import { StatusBar, Text, TouchableOpacity } from "react-native";
 import RoomBooking1 from "../../screens/booking/room-booking-1";
 import { HeartIcon, XIcon } from "react-native-heroicons/outline";
 import RoomBookingNow from "../../screens/booking/room-booking-now";
@@ -11,14 +11,17 @@ import RoomBookingLater from "../../screens/booking/room-booking-later";
 import { BLACK, PINK } from "@app/constants";
 import RoomBookingWishlist from "../../screens/booking/room-booking-wishlist";
 import RoomBooking2 from "../../screens/booking/room-booking-2";
+import { RoomBooking3 } from "../../screens/booking/room-booking-3";
+import { RoomBookingSuccess } from "../../screens/booking/room-booking-success";
+import { RoomBookingFail } from "../../screens/booking/room-booking-fail";
 
 const RoomBookingNavigator: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
 
   return (
     <>
-      <StatusBar hidden/>
-      <StackNavigator  initialRouteName={"ROOM_BOOKING_1"} screenOptions={{
+      <StatusBar hidden />
+      <StackNavigator initialRouteName={"ROOM_BOOKING_1"} screenOptions={{
         headerTitle: () => <Text style={{
           color: BLACK,
           fontSize: 20,
@@ -30,19 +33,27 @@ const RoomBookingNavigator: React.FC = () => {
           <XIcon color="#808080"/>
         </TouchableOpacity>,
         headerRight: () => <TouchableOpacity onPress={() => navigate.navigate("ROOM_BOOKING_WISHLIST")}>
-          <HeartIcon color={PINK}/>
+          <HeartIcon color={PINK} />
         </TouchableOpacity>
       }}>
-        <StackScreen name={"ROOM_BOOKING_1"} options={{
-        }} component={RoomBooking1}/>
+        <StackScreen name={"ROOM_BOOKING_1"} options={{}} component={RoomBooking1} />
         <StackScreen name={"ROOM_BOOKING_2"} options={{
           headerShown: false
-        }} component={RoomBookingStep2}/>
-        <StackScreen name={"ROOM_BOOKING_NOW"} component={RoomBookingNow}/>
-        <StackScreen name={"ROOM_BOOKING_LATER"} component={RoomBookingLater}/>
+        }} component={RoomBookingStep2} />
+        <StackScreen name={"ROOM_BOOKING_3"} options={{
+          headerShown: false
+        }} component={RoomBooking3} />
+        <StackScreen name={"ROOM_BOOKING_SUCCESS"} options={{
+          headerShown: false
+        }} component={RoomBookingSuccess} />
+        <StackScreen name={"ROOM_BOOKING_FAIL"} options={{
+          headerShown: false
+        }} component={RoomBookingFail} />
+        <StackScreen name={"ROOM_BOOKING_NOW"} component={RoomBookingNow} />
+        <StackScreen name={"ROOM_BOOKING_LATER"} component={RoomBookingLater} />
         <StackScreen name={"ROOM_BOOKING_WISHLIST"} options={{
-    headerShown: false
-        }} component={RoomBookingWishlistNavigator}/>
+          headerShown: false
+        }} component={RoomBookingWishlistNavigator} />
       </StackNavigator>
     </>
   );

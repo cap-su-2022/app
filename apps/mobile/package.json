@@ -47,6 +47,9 @@
     "firebase": "*",
     "next-redux-wrapper": "*",
     "redux-logger": "*",
-    "yup": "*"
+    "yup": "*",
+    "react-native-image-picker": "*",
+    "@gorhom/bottom-sheet": "*",
+    "react-native-gesture-handler": "*"
   }
 }

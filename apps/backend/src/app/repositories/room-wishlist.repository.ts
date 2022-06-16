@@ -7,13 +7,18 @@ import { CustomRepository } from "../decorators/typeorm-ex.decorator";
 @CustomRepository(RoomWishlist)
 export class RoomWishlistRepository extends Repository<RoomWishlist> {
 
-  findAllByKeycloakUserId(roomName: string, keycloakId: string) {
+  findAllByKeycloakUserId(roomName: string, slotFrom: number, slotTo: number, keycloakId: string) {
     return this.createQueryBuilder("room_wishlist")
       .select("room_wishlist.id as id, r.id as roomId, r.name as roomName, room_wishlist.slot_num as slot")
       .innerJoin("rooms", "r", "r.id = room_wishlist.room_id")
       .innerJoin("accounts", "a", "room_wishlist.created_by = a.id")
-      .where("a.keycloak_id = :keycloakId", {keycloakId: keycloakId})
-      .andWhere("r.name LIKE :roomName", {roomName: `%${roomName ?? ""}%`})
+      .where("a.keycloak_id = :keycloakId", { keycloakId: keycloakId })
+      .andWhere("r.name LIKE :roomName", { roomName: `%${roomName ?? ""}%` })
+      .groupBy("room_wishlist.id")
+      .addGroupBy("r.id")
+      .addGroupBy("room_wishlist.slot_num")
+      .having("room_wishlist.slot_num >= :slotFrom", { slotFrom: slotFrom })
+      .andHaving("room_wishlist.slot_num <= :slotTo", { slotTo: slotTo })
       .getRawMany<WishlistBookingRoomResponseDTO>();
   }
 

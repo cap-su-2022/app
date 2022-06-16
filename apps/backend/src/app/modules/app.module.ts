@@ -1,7 +1,5 @@
 import { DynamicModule, Global, Scope } from "@nestjs/common";
 
-import { AppController } from "../controllers";
-import { AppService } from "../services";
 import { KeycloakModule } from "./keycloak.module";
 import { RoomsModule } from "./rooms.module";
 import { HealthCheckModule } from "./health-check.module";
@@ -16,8 +14,8 @@ import { BookingRoomModule } from "./booking-room.module";
 import { CloudinaryModule } from "./cloudinary.module";
 import { APP_GUARD } from "@nestjs/core";
 import { RolesGuard } from "../guards/role.guard";
-import GlobalElasticSearchModule from "./global/elastic-search.module";
-import { RoomWishlistModule } from "./room-wishlist.module";
+import { ScheduleModule } from "@nestjs/schedule";
+import { TasksService } from "../services/task.service";
 
 @Global()
 export class AppModule {
@@ -28,7 +26,6 @@ export class AppModule {
         GlobalCacheModule,
         GlobalConfigModule,
         GlobalTypeOrmModule,
-        GlobalElasticSearchModule,
         HttpModule,
         CloudinaryModule,
         HealthCheckModule,
@@ -37,11 +34,12 @@ export class AppModule {
         AccountsModule,
         DevicesModule,
         UsersWarningFlagModule,
-        BookingRoomModule
+        BookingRoomModule,
+        ScheduleModule.forRoot()
+
       ],
       controllers: [],
       exports: [
-        GlobalElasticSearchModule
       ],
       providers: [
         {
