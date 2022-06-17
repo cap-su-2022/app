@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { SearchIcon, SortAscendingIcon } from "react-native-heroicons/solid";
 import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE } from "@app/constants";
 import { deviceWidth } from "../../utils/device";
@@ -9,10 +8,13 @@ import { fetchBookingRoomDevices } from "../../redux/features/room-booking/thunk
 import DelayInput from "react-native-debounce-input";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useAppSelector } from "../../hooks/use-app-selector.hook";
+import { useAppDispatch } from "../../hooks/use-app-dispatch.hook";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
 
 
 const RoomBooking2: React.FC = () => {
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   const devices = useAppSelector((state) => state.roomBooking.devices);
   const dispatch = useAppDispatch();
@@ -43,7 +45,7 @@ const RoomBooking2: React.FC = () => {
             <View style={styles.filterInput}>
               <DelayInput minLength={0}
                           value={search}
-                          onChangeText={(text) => setSearch(text)}
+                          onChangeText={(text) => setSearch(text.toString())}
                           placeholder="Search by device name" />
             </View>
           </View>

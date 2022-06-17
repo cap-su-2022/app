@@ -21,7 +21,6 @@ import {
 } from "react-native-heroicons/outline";
 import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, PINK, WHITE } from "@app/constants";
 import { fetchAllBookingRooms } from "../../redux/features/room-booking/thunk/fetch-all";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { getTimeDetailBySlotNumber } from "../../utils/slot-resolver.util";
 import { deviceWidth } from "../../utils/device";
 import { SearchIcon, SortAscendingIcon } from "react-native-heroicons/solid";
@@ -31,35 +30,9 @@ import { BookingRoom } from "../../redux/models/booking-room.model";
 import AlertModal from "../../components/modals/alert-modal.component";
 import { useFormik } from "formik";
 import DelayInput from "react-native-debounce-input";
-import Empty from "../../components/empty.svg";
-
-
-const slots = [
-  {
-    label: "Slot 1",
-    value: 1
-  },
-  {
-    label: "Slot 2",
-    value: 2
-  },
-  {
-    label: "Slot 3",
-    value: 3
-  },
-  {
-    label: "Slot 4",
-    value: 4
-  },
-  {
-    label: "Slot 5",
-    value: 5
-  },
-  {
-    label: "Slot 6",
-    value: 6
-  }
-];
+import { useAppSelector } from "../../hooks/use-app-selector.hook";
+import { useAppDispatch } from "../../hooks/use-app-dispatch.hook";
+import { SLOTS } from "../../constants/slot.constant";
 
 const RoomBookingNow: React.FC = () => {
 
@@ -141,7 +114,7 @@ const RoomBookingNow: React.FC = () => {
                 fixAndroidTouchableBug={true}
                 value={slot}
                 onValueChange={(value) => setSlot(value)}
-                items={slots} />
+                items={SLOTS} />
             </View>
           </View>
 

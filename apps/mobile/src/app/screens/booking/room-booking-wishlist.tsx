@@ -9,17 +9,14 @@ import {
   View,
   VirtualizedList
 } from "react-native";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchAllWishlistRooms } from "../../redux/features/room-booking/thunk/fetch-all-wishlist.thunk";
-import { ExclamationCircleIcon, SearchIcon, SortAscendingIcon } from "react-native-heroicons/solid";
+import { ExclamationCircleIcon, SearchIcon } from "react-native-heroicons/solid";
 import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, RED, WHITE } from "@app/constants";
 import { deviceWidth } from "../../utils/device";
 import { RoomWishListResponse } from "../../redux/models/wishlist-booking-room.model";
 import {
   ArrowRightIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon, ClockIcon,
-  FilterIcon,
+  ClockIcon,
   LibraryIcon,
   TicketIcon,
   XIcon
@@ -27,48 +24,24 @@ import {
 import { getTimeDetailBySlotNumber } from "../../utils/slot-resolver.util";
 import { removeWishlistBookingRoom } from "../../redux/features/room-booking/thunk/remove-wishlist-booking-room.thunk";
 import Empty from "../../components/empty.svg";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AlertModal from "../../components/modals/alert-modal.component";
 import DelayInput from "react-native-debounce-input";
 import RNPickerSelect from "react-native-picker-select";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
+import { useAppDispatch } from "../../hooks/use-app-dispatch.hook";
+import { useAppSelector } from "../../hooks/use-app-selector.hook";
+import { SLOTS } from "../../constants/slot.constant";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface RoomBookingWishlistProps {
 
 }
 
-const SLOTS = [
-  {
-    label: "Slot 1",
-    value: 1
-  },
-  {
-    label: "Slot 2",
-    value: 2
-  },
-  {
-    label: "Slot 3",
-    value: 3
-  },
-  {
-    label: "Slot 4",
-    value: 4
-  },
-  {
-    label: "Slot 5",
-    value: 5
-  },
-  {
-    label: "Slot 6",
-    value: 6
-  }
-];
-const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = () => {
+const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
 
   const wishlistBookingRooms = useAppSelector((state) => state.roomBooking.wishlistBookingRooms);
   const dispatch = useAppDispatch();
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   const [isConfirmDeleteModalShown, setConfirmDeleteModalShown] = useState<boolean>(false);
   const [deleteBookingRoom, setDeleteBookingRoom] = useState<{ roomId: string, slot: number }>(null);
@@ -100,7 +73,11 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = () => {
   const handleAttemptRemoveBookingRoomFromWishlist = async () => {
     setConfirmDeleteModalShown(false);
     dispatch(removeWishlistBookingRoom(deleteBookingRoom)).unwrap()
-      .then(() => dispatch(fetchAllWishlistRooms(searchRoomName)));
+      .then(() => dispatch(fetchAllWishlistRooms({
+        search: searchRoomName,
+        from: slotStart,
+        to: slotEnd
+      })));
   };
 
   const handleSetSlotStart = (value) => {
@@ -212,7 +189,7 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = () => {
             <View style={styles.filterInput}>
               <DelayInput value={searchRoomName}
                           minLength={0}
-                          onChangeText={(text) => setSearchRoomName(text)}
+                          onChangeText={(text) => setSearchRoomName(text.toString())}
                           placeholder="Search by room name" />
             </View>
           </View>

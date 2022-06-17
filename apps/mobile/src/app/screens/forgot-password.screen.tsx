@@ -1,12 +1,11 @@
-import React from 'react';
-import { useAppDispatch } from "../redux/hooks";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { useAppNavigation } from "../hooks/use-app-navigation.hook";
+import { useAppDispatch } from "../hooks/use-app-dispatch.hook";
 
 const ForgotPassword: React.FC = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
   return (
     <SafeAreaView>
       <ScrollView>

@@ -1,13 +1,12 @@
 import React from "react";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import { BLACK, FPT_ORANGE_COLOR, RED, WHITE } from "@app/constants";
 import { deviceWidth } from "../../utils/device";
-import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, TicketIcon, XIcon } from "react-native-heroicons/outline";
+import { ChevronDoubleLeftIcon, TicketIcon } from "react-native-heroicons/outline";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
 
 export const RoomBooking3: React.FC = () => {
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

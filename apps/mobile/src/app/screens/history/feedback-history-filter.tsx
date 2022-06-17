@@ -10,6 +10,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../redux/store";
 import DatePicker from "react-native-date-picker";
 import LoginErrorModal from "../../components/modals/login-error.component";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
 
 const convertDateToDateStringPattern = (date = new Date()) => {
   return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
@@ -33,7 +34,7 @@ const FeedbackHistoryFilter: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
 
   const scrollViewRef = useRef<null | ScrollView>(null);
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   const [isStartDatePickerShown, setStartDatePickerShown] = useState<boolean>(false);
   const [isEndDatePickerShown, setEndDatePickerShown] = useState<boolean>(false);

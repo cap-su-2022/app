@@ -14,32 +14,23 @@ import {
   FormikProvider,
   useFormik,
 } from 'formik';
-import {  useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
-
 import * as Yup from 'yup';
 
 import {
-  MailIcon,
   PencilIcon,
-  PhoneIcon,
-  UserIcon,
   ViewListIcon,
-} from 'react-native-heroicons/outline';
+} from "react-native-heroicons/outline";
 import {
   BLACK,
   FPT_ORANGE_COLOR,
-  WHITE,
-} from '@app/constants';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { deviceWidth } from '../utils/device';
-import { AuthUser } from '../redux/models/auth-user.model';
-import { LOCAL_STORAGE } from '../utils/local-storage';
-import { IdentificationIcon } from 'react-native-heroicons/outline';
-
-import { useAppDispatch } from '../redux/hooks';
+  WHITE
+} from "@app/constants";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { deviceWidth } from "../utils/device";
 import { doChangePassword } from "../redux/features/account/thunk/changePassword.thunk";
+import { useAppDispatch } from "../hooks/use-app-dispatch.hook";
+import { useAppNavigation } from "../hooks/use-app-navigation.hook";
 
 interface ChangePasswordProps {
   formikRef: Ref<FormikProps<any>>;
@@ -49,7 +40,7 @@ const ChangePasswordScreen = (props: ChangePasswordProps) => {
   const scrollViewRef = useRef<null | ScrollView>(null);
 
   const dispatch = useAppDispatch();
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   const initialValues = {
     password: '',

@@ -2,16 +2,15 @@ import React, {useRef} from "react";
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {ChatAlt2Icon, LibraryIcon} from "react-native-heroicons/outline";
 import {LocalStorageKeys, useStorage} from "../../utils/local-storage";
-import {useNavigation} from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import Divider from "../../components/text/divider";
-import {BLACK, LIGHT_GRAY, WHITE} from "@app/constants";
+import { BLACK, LIGHT_GRAY, WHITE } from "@app/constants";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
 
 const HistoryScreen: React.FC = (props) => {
   const [authenticatedUser, setAuthenticatedUser] = useStorage(LocalStorageKeys.authenticatedUser);
 
   const scrollViewRef = useRef<null | ScrollView>(null);
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   return (
     <SafeAreaView>

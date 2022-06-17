@@ -6,9 +6,10 @@ import Success from "../../components/success.svg";
 import { deviceWidth } from "../../utils/device";
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from "@app/constants";
 import QRCode from "react-native-qrcode-svg";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
 
 export const RoomBookingSuccess: React.FC = () => {
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

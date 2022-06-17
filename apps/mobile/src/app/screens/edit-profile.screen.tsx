@@ -1,20 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import TextInformation from "../components/textInfomation/textInformation";
-import { ArrowCircleLeftIcon, BanIcon, PencilIcon } from "react-native-heroicons/outline";
+import { BanIcon } from "react-native-heroicons/outline";
 import { BLACK, FPT_ORANGE_COLOR, GRAY, RED, WHITE } from "@app/constants";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { deviceWidth } from "../utils/device";
 import Divider from "../components/text/divider";
 import { LockClosedIcon } from "react-native-heroicons/solid";
 import { AuthUser } from "../redux/models/auth-user.model";
 import { LOCAL_STORAGE } from "../utils/local-storage";
+import { useAppNavigation } from "../hooks/use-app-navigation.hook";
 
 
 const EditProfile = () => {
   const scrollViewRef = useRef<null | ScrollView>(null);
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   const [authUser, setAuthUser] = useState<AuthUser>(JSON.parse(LOCAL_STORAGE.getString('user')));
 

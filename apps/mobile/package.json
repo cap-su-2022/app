@@ -50,6 +50,7 @@
     "yup": "*",
     "react-native-image-picker": "*",
     "@gorhom/bottom-sheet": "*",
-    "react-native-gesture-handler": "*"
+    "react-native-gesture-handler": "*",
+    "react-native-qrcode-svg": "*"
   }
 }

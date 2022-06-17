@@ -19,10 +19,11 @@ import { deviceWidth } from "../utils/device";
 import axios from "axios";
 import { API_URL } from "../constants/constant";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import { useAppNavigation } from "../hooks/use-app-navigation.hook";
 
 const SettingsScreen = () => {
   const scrollViewRef = useRef<null | ScrollView>(null);
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   const handleLogout = () => {
     revokeUserSession();
