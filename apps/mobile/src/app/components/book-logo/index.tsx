@@ -7,7 +7,9 @@ import { deviceWidth } from "../../utils/device";
 const BookLogo: React.FC<any> = () => {
   return (
     <View style={styles.container}>
-      <Logo />
+      <Logo
+        width={deviceWidth / 8}
+        height={deviceWidth / 8} />
       <Text style={styles.textContent}>
         FLRBMS
       </Text>
@@ -18,11 +20,14 @@ const BookLogo: React.FC<any> = () => {
 const styles = StyleSheet.create({
   container: {
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 10
   },
   textContent: {
     fontSize: deviceWidth / 21,
-    textTransform: "capitalize",
+    textTransform: "uppercase",
     fontWeight: "600",
     color: FPT_ORANGE_COLOR
   }

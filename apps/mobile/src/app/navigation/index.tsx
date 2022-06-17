@@ -13,18 +13,14 @@ const NavigationContainer: React.FC<any> = () => {
 
   return (
     <NavigationContainer>
-      <StackNavigator
-        initialRouteName={"LOGIN_SCREEN"}
-        screenOptions={{
-          headerShown: false
-        }}>
-        <StackScreen
-          name={"LOGIN_SCREEN"}
-          component={LoginScreen} />
-        <StackScreen
-          name={"MAIN"}
-          component={MainNavigator} />
+      <StackNavigator initialRouteName={"LOGIN_SCREEN"} screenOptions={{
+        headerShown: false
+      }}>
+        <StackScreen name={"LOGIN_SCREEN"} component={LoginScreen} />
+        <StackScreen name={"MAIN"} component={MainNavigator} />
+
       </StackNavigator>
+
       {isSpinnerLoading ? <Spinner /> : null}
     </NavigationContainer>
   );

@@ -3,17 +3,17 @@ import React from "react";
 import {useNavigation} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigator, StackScreen } from "@app/utils";
-import { StatusBar, Text, TouchableOpacity } from "react-native";
+import { StatusBar, StyleSheet, Text, TouchableOpacity } from "react-native";
 import RoomBooking1 from "../../screens/booking/room-booking-1";
 import { HeartIcon, XIcon } from "react-native-heroicons/outline";
 import RoomBookingNow from "../../screens/booking/room-booking-now";
 import RoomBookingLater from "../../screens/booking/room-booking-later";
 import { BLACK, PINK } from "@app/constants";
-import RoomBookingWishlist from "../../screens/booking/room-booking-wishlist";
-import RoomBooking2 from "../../screens/booking/room-booking-2";
 import { RoomBooking3 } from "../../screens/booking/room-booking-3";
 import { RoomBookingSuccess } from "../../screens/booking/room-booking-success";
 import { RoomBookingFail } from "../../screens/booking/room-booking-fail";
+import RoomBookingStep2 from "./room-booking-step2.navigator";
+import RoomBookingWishlistNavigator from "./room-booking-wishlist.navigator";
 
 const RoomBookingNavigator: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
@@ -22,15 +22,12 @@ const RoomBookingNavigator: React.FC = () => {
     <>
       <StatusBar hidden />
       <StackNavigator initialRouteName={"ROOM_BOOKING_1"} screenOptions={{
-        headerTitle: () => <Text style={{
-          color: BLACK,
-          fontSize: 20,
-          fontWeight: '600',
-          marginLeft: 10
-        }}>Request for Room Booking</Text>,
+        headerTitle: () => <Text style={styles.headerText}>
+          Request for Room Booking
+        </Text>,
         headerBackVisible: false,
         headerLeft: () => <TouchableOpacity onPress={() => navigate.pop()}>
-          <XIcon color="#808080"/>
+          <XIcon color="#808080" />
         </TouchableOpacity>,
         headerRight: () => <TouchableOpacity onPress={() => navigate.navigate("ROOM_BOOKING_WISHLIST")}>
           <HeartIcon color={PINK} />
@@ -59,35 +56,13 @@ const RoomBookingNavigator: React.FC = () => {
   );
 };
 
-
-const RoomBookingStep2 = () => {
-  return (
-    <StackNavigator screenOptions={{
-      headerTitle: () => <Text style={{
-        color: BLACK,
-        fontSize: 20,
-        fontWeight: '600',
-      }}>Select your devices</Text>,
-      headerRight: () => null,
-    }} initialRouteName={"BOOKING_ROOM_STEP2"}>
-      <StackScreen name={"BOOKING_ROOM_STEP2"} component={RoomBooking2}/>
-    </StackNavigator>
-  )
-}
-
-const RoomBookingWishlistNavigator = () => {
-  return (
-    <StackNavigator screenOptions={{
-      headerTitle: () => <Text style={{
-        color: BLACK,
-        fontSize: 20,
-        fontWeight: '600',
-      }}>Booking Wishlist</Text>,
-      headerRight: () => null,
-    }} initialRouteName={"BOOKING_WISHLIST"}>
-      <StackScreen name={"BOOKING_WISHLIST"} component={RoomBookingWishlist}/>
-    </StackNavigator>
-  );
-}
+const styles = StyleSheet.create({
+  headerText: {
+    color: BLACK,
+    fontSize: 20,
+    fontWeight: "600",
+    marginLeft: 10
+  }
+});
 
 export default RoomBookingNavigator;

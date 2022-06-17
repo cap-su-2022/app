@@ -8,17 +8,13 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import * as IconOutline from "react-native-heroicons/outline";
 import { DocumentSearchIcon, LogoutIcon, UserCircleIcon } from "react-native-heroicons/outline";
 import * as Icon from "react-native-heroicons/solid";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BLACK, FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE } from "@app/constants";
 import { LOCAL_STORAGE, revokeUserSession } from "../utils/local-storage";
-import { deviceWidth } from "../utils/device";
 import axios from "axios";
 import { API_URL } from "../constants/constant";
-import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import { launchImageLibrary } from "react-native-image-picker";
 import { useAppNavigation } from "../hooks/use-app-navigation.hook";
 
 const SettingsScreen = () => {

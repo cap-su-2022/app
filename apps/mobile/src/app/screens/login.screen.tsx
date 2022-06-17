@@ -7,7 +7,6 @@ import Asterik from "../components/text/asterik";
 import Divider from "../components/text/divider";
 import GoogleIcon from "../components/google-icon.svg";
 import { persistGoogleIdToken } from "../redux/userSlice";
-import { handleGoogleSignin } from "../services/google.service";
 import CheckAlive from "../components/check-alive.component";
 import { Formik } from "formik";
 import LoginErrorModal from "../components/modals/login-error.component";
@@ -19,6 +18,8 @@ import { validateAccessToken } from "../redux/features/auth/thunk/validate-acces
 import { deviceWidth } from "../utils/device";
 import { useAppDispatch } from "../hooks/use-app-dispatch.hook";
 import { useAppNavigation } from "../hooks/use-app-navigation.hook";
+import BookLogo from "../components/book-logo";
+import { doGoogleLogin } from "../redux/features/auth/thunk/google-login.thunk";
 
 const LoginScreen = () => {
   const dispatch = useAppDispatch();
@@ -34,20 +35,14 @@ const LoginScreen = () => {
         navigate.navigate("MAIN");
       })
     }
-
   }, []);
 
   const handleLoginWithGoogle = async () => {
-    dispatch(toggleSpinnerOn());
-    const response = await handleGoogleSignin();
-    const idToken = await response.user.getIdToken();
-    if (idToken) {
-      dispatch(persistGoogleIdToken(idToken));
+    dispatch(doGoogleLogin()).unwrap().then(() => {
       setTimeout(() => {
-        dispatch(toggleSpinnerOff());
-        navigate.navigate('MAIN');
+        navigate.navigate("MAIN");
       }, 0);
-    }
+    });
   };
 
   const initialValues = {
@@ -79,7 +74,8 @@ const LoginScreen = () => {
       <Background style={[styles.background]} />
       <View style={[styles.loginContainer, styles.shadowProp]}>
         <View style={[styles.logoContainer]}>
-          <FPTULogo height={100} width={150} />
+          <FPTULogo height={deviceWidth / 3} width={deviceWidth / 3} />
+          <BookLogo />
         </View>
         <Formik
           initialValues={initialValues}
@@ -230,27 +226,31 @@ const styles = StyleSheet.create({
   },
   loginGoogleBtnTextContainer: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: "row"
   },
   googleIcon: {
     marginTop: 2,
-    marginRight: 6,
+    marginRight: 6
   },
   loginGoogleBtnText: {
     fontSize: 14,
-    color: BLACK,
+    color: BLACK
   },
-  logoContainer: {},
+  logoContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center"
+  },
   loginDividerContainer: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row"
   },
   loginDividerText: {
     fontSize: 10,
-    color: 'rgb(134, 142, 150)',
+    color: "rgb(134, 142, 150)",
     marginTop: 10,
     marginLeft: 6,
-    marginRight: 6,
+    marginRight: 6
   },
   shadowProp: {
     shadowColor: '#171717',
