@@ -1,18 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useAppDispatch } from "../../redux/hooks";
 import { SearchIcon, SortAscendingIcon } from "react-native-heroicons/solid";
 import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE } from "@app/constants";
 import { deviceWidth } from "../../utils/device";
 import { CheckIcon, ChevronRightIcon, DeviceMobileIcon } from "react-native-heroicons/outline";
+import { fetchBookingRoomDevices } from "../../redux/features/room-booking/thunk/fetch-booking-room-devices.thunk";
+import DelayInput from "react-native-debounce-input";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useAppSelector } from "../../hooks/use-app-selector.hook";
+import { useAppDispatch } from "../../hooks/use-app-dispatch.hook";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
 
 
 const RoomBooking2: React.FC = () => {
+  const navigate = useAppNavigation();
 
+  const devices = useAppSelector((state) => state.roomBooking.devices);
   const dispatch = useAppDispatch();
-  const [searchRoomName, setSearchRoomName] = useState<string>("");
 
   const [isSelected, setSelected] = useState<boolean>(false);
+
+  const [search, setSearch] = useState<string>("");
+  const [sort, setSort] = useState<"ASC" | "DESC">("ASC");
+
+  useEffect(() => {
+    dispatch(fetchBookingRoomDevices({
+      name: search,
+      sort: sort
+    }));
+  }, [search, sort, dispatch]);
 
   const Filtering: React.FC = () => {
     return (
@@ -23,12 +40,13 @@ const RoomBooking2: React.FC = () => {
         <View style={styles.filterBodyContainer}>
           <View style={styles.filterInputContainer}>
             <View style={styles.filterInputIconContainer}>
-              <SearchIcon color={BLACK}/>
+              <SearchIcon color={BLACK} />
             </View>
             <View style={styles.filterInput}>
-              <TextInput value={searchRoomName}
-                         onChangeText={(text) => setSearchRoomName(text)}
-                         placeholder="Search by device name"/>
+              <DelayInput minLength={0}
+                          value={search}
+                          onChangeText={(text) => setSearch(text.toString())}
+                          placeholder="Search by device name" />
             </View>
           </View>
           <TouchableOpacity style={styles.filterSortButton}>
@@ -43,52 +61,59 @@ const RoomBooking2: React.FC = () => {
     <SafeAreaView style={{ flex: 1}}>
       <View style={styles.container}>
         <View>
-          <Filtering/>
+          <Filtering />
           <ScrollView>
 
-            <TouchableOpacity
-              onPress={() => setSelected(!isSelected)}
-              style={[styles.selectCircleButton, {
-                borderColor: isSelected ? FPT_ORANGE_COLOR : GRAY,
-              }]}>
-              {!isSelected
-              ?  <View style={styles.selectOff}/>
-              : <View style={styles.selectOn}>
-                  <CheckIcon size={deviceWidth / 25} color={FPT_ORANGE_COLOR}/>
-                </View>}
-              <View style={styles.deviceIconContainer}>
-                <DeviceMobileIcon color={FPT_ORANGE_COLOR}/>
-              </View>
+            {devices.map((device) => {
+              return (
+                <TouchableOpacity
+                  onPress={() => setSelected(!isSelected)}
+                  style={[styles.selectCircleButton, {
+                    borderColor: isSelected ? FPT_ORANGE_COLOR : GRAY
+                  }]}>
+                  {!isSelected
+                    ? <View style={styles.selectOff} />
+                    : <View style={styles.selectOn}>
+                      <CheckIcon size={deviceWidth / 25} color={FPT_ORANGE_COLOR} />
+                    </View>}
+                  <View style={styles.deviceIconContainer}>
+                    <DeviceMobileIcon color={FPT_ORANGE_COLOR} />
+                  </View>
 
-              <View style={styles.deviceContainer}>
-                <View style={styles.deviceDescriptionContainer}>
-                  <Text style={{
-                    color: BLACK,
-                    fontSize: deviceWidth / 24,
-                    fontWeight: '600'
-                  }}>
-                    Air Conditioner Remote
-                  </Text>
-                  <Text style={{
-                    fontSize: deviceWidth / 26,
-                  }}>
-                    Device Code: D001
-                  </Text>
-                </View>
+                  <View style={styles.deviceContainer}>
+                    <View style={styles.deviceDescriptionContainer}>
+                      <Text style={{
+                        color: BLACK,
+                        fontSize: deviceWidth / 24,
+                        fontWeight: "600"
+                      }}>
+                        {device.name}
+                      </Text>
+                      <Text style={{
+                        fontSize: deviceWidth / 26
+                      }}>
+                        Device Code: {device.id.substring(device.id.length - 12, device.id.length)}
+                      </Text>
+                    </View>
 
 
-                <TouchableOpacity style={styles.viewDetailButton}>
-                  <Text style={styles.viewDetailButtonText}>View detail</Text>
+                    <TouchableOpacity style={styles.viewDetailButton}>
+                      <Text style={styles.viewDetailButtonText}>View detail</Text>
+                    </TouchableOpacity>
+                  </View>
+
                 </TouchableOpacity>
-              </View>
-
-            </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
         <View style={styles.footerContainer}>
-          <TouchableOpacity style={styles.nextStepButton}>
-            <ChevronRightIcon color={WHITE}/>
-            <Text style={styles.nextStepButtonText}>Next Step</Text>
+          <TouchableOpacity
+            onPress={() => navigate.navigate("ROOM_BOOKING_3")} style={styles.nextStepButton}>
+            <ChevronRightIcon color={WHITE} />
+            <Text style={styles.nextStepButtonText}>
+              Next Step
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

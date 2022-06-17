@@ -116,4 +116,14 @@ export class DevicesRepository extends Repository<Devices> {
       }
     );
   }
+
+  findDeviceListByBookingRoomRequest(name: string, type: string, sort: string) {
+    return this.createQueryBuilder("devices")
+      .select(["devices.id", "devices.name"])
+      .where("devices.is_disabled = false")
+      .andWhere("devices.is_deleted = false")
+      .andWhere("devices.name LIKE :name", { name: `%${name}%` })
+      .orderBy("devices.name", sort as "ASC" | "DESC")
+      .getMany();
+  }
 }

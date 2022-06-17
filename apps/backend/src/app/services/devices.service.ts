@@ -154,4 +154,13 @@ export class DevicesService {
       throw new BadRequestException("Error while disabling this device");
     }
   }
+
+  getBookingRoomDeviceList(name: string, type: string, sort: string) {
+    if (!sort) sort = "ASC";
+    if (sort !== "ASC" && sort !== "DESC") {
+      sort = "ASC";
+    }
+
+    return this.repository.findDeviceListByBookingRoomRequest(name, type, sort);
+  }
 }

@@ -7,19 +7,23 @@ interface DisabledRoomRejectValue {
   message: string;
 }
 
-export const fetchDisabledRooms = createAsyncThunk<Room[], void, {
+export const fetchDisabledRooms = createAsyncThunk<Room[], string, {
   rejectValue: DisabledRoomRejectValue
-}>('rooms/fetch-disabled-rooms', async (any, thunkAPI) => {
+}>("rooms/fetch-disabled-rooms", async (payload = "", thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
 
   try {
-    const response = await axios.get(`/api/rooms/disabled`);
+    const response = await axios.get(`/api/rooms/disabled?search=${payload}`);
     return await response.data;
-  } catch ({response}) {
+  } catch ({ response }) {
     if (response.status === 401 || response.status === 403) {
       return thunkAPI.rejectWithValue({
-        message: 'Access token is invalid'
-      })
+        message: "Access token is invalid"
+      });
+    } else {
+      return thunkAPI.rejectWithValue({
+        message: response.data.message
+      });
     }
   } finally {
     thunkAPI.dispatch(toggleSpinnerOff());

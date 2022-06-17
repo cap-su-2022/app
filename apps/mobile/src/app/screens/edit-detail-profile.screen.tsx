@@ -10,15 +10,12 @@ import {
 } from 'react-native';
 import Asterik from '../components/text/asterik';
 import {
-  ErrorMessage,
-  Formik,
   FormikProps,
   FormikProvider,
   useFormik,
 } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { updateProfile } from '../redux/userSlice';
 
 import * as Yup from 'yup';
 
@@ -36,23 +33,18 @@ import {
 import {
   BLACK,
   FPT_ORANGE_COLOR,
-  GRAY,
-  LIGHT_GRAY,
-  WHITE,
-} from '@app/constants';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { deviceWidth } from '../utils/device';
-import DatePicker from 'react-native-date-picker';
-import { convertDateToNormalizedDateString } from '../utils/date.util';
-import { AuthUser } from '../redux/models/auth-user.model';
-import { LOCAL_STORAGE } from '../utils/local-storage';
-import { IdentificationIcon } from 'react-native-heroicons/outline';
-import Divider from '../components/text/divider';
-import axios from 'axios';
-import { API_URL } from '../constants/constant';
-import { doUpdateProfile } from '../redux/features/account/thunk/update.thunk';
-import { useAppDispatch } from '../redux/hooks';
+  WHITE
+} from "@app/constants";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { deviceWidth } from "../utils/device";
+import { AuthUser } from "../redux/models/auth-user.model";
+import { LOCAL_STORAGE } from "../utils/local-storage";
+import { IdentificationIcon } from "react-native-heroicons/outline";
+import { doUpdateProfile } from "../redux/features/account/thunk/update.thunk";
+import { useAppDispatch } from "../hooks/use-app-dispatch.hook";
+import { useAppSelector } from "../hooks/use-app-selector.hook";
+import { useAppNavigation } from "../hooks/use-app-navigation.hook";
 
 interface EditDetailProfileProps {
   formikRef: Ref<FormikProps<any>>;
@@ -61,9 +53,9 @@ interface EditDetailProfileProps {
 const EditDetailProfile = (props: EditDetailProfileProps) => {
   const scrollViewRef = useRef<null | ScrollView>(null);
 
-  const userState = useSelector((state: RootState) => state.user);
+  const userState = useAppSelector((state: RootState) => state.user);
   const dispatch = useAppDispatch();
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   const [authUser, setAuthUser] = useState<AuthUser>(
     JSON.parse(LOCAL_STORAGE.getString('user'))

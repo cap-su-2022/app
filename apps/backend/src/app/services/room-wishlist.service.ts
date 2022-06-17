@@ -14,8 +14,8 @@ export class RoomWishlistService {
               private readonly accountService: AccountsService) {
   }
 
-  findAllWishlistBookingRoomsByKeycloakUserId(roomName: string, keycloakUserId: string) {
-    return this.repository.findAllByKeycloakUserId(roomName, keycloakUserId);
+  findAllWishlistBookingRoomsByKeycloakUserId(roomName: string, slotFrom: number, slotTo: number, keycloakUserId: string) {
+    return this.repository.findAllByKeycloakUserId(roomName, slotFrom, slotTo, keycloakUserId);
   }
 
   async addToWishlist(keycloakUserId: string, wishlist: WishlistBookingRoomRequestDTO) {

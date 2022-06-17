@@ -1,6 +1,6 @@
-import {createAsyncThunk} from "@reduxjs/toolkit";
-import axios from "axios";
-import {Room} from "../../../../models/room.model";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios, { AxiosError } from "axios";
+import { Room } from "../../../../models/room.model";
 import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
 
 interface UpdateRoomPayload {
@@ -16,15 +16,20 @@ export const updateRoomById = createAsyncThunk<any, UpdateRoomPayload, {
   rejectValue: UpdateRoomRejectValue
 }>('room/update-by-id', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
+  console.log(payload.payload);
   try {
     const response = await axios.put(`/api/rooms/update/${payload.id}`, payload.payload);
     return await response.data;
 
-  } catch ({response}) {
-    if (response.status === 401 || response.status === 403) {
+  } catch (e: AxiosError | any) {
+    if (e.response.status === 401 || e.response.status === 403) {
       return thunkAPI.rejectWithValue({
-        message: 'Access token is invalid'
-      })
+        message: "Access token is invalid"
+      });
+    } else {
+      return thunkAPI.rejectWithValue({
+        message: e.response.data.message
+      });
     }
   } finally {
     thunkAPI.dispatch(toggleSpinnerOff());

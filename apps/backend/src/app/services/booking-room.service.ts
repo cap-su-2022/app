@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger, Scope } from "@nestjs/common";
 import { RoomsService } from "./rooms.service";
 import { BookingRoomRepository } from "../repositories";
 import { BookingRoomResponseDTO } from "../dto/booking-room.response.dto";
@@ -8,6 +8,8 @@ import { WishlistBookingRoomRequestDTO } from "../dto/wishlist-booking-room.requ
 import { BookingRoomsFilterRequestPayload } from "../payload/request/booking-rooms.request.payload";
 import { KeycloakUserInstance } from "../dto/keycloak.user";
 import { RemoveWishlistRequest } from "../payload/request/remove-from-booking-room-wishlist.request.payload";
+import { DevicesService } from "./devices.service";
+import { AccountsService } from "./accounts.service";
 
 @Injectable()
 export class BookingRoomService {
@@ -15,8 +17,10 @@ export class BookingRoomService {
   private readonly logger = new Logger(BookingRoomService.name);
 
   constructor(private readonly roomService: RoomsService,
+              private readonly deviceService: DevicesService,
               private readonly roomWishlistService: RoomWishlistService,
-              private readonly repository: BookingRoomRepository) {
+              private readonly repository: BookingRoomRepository,
+              private readonly accountService: AccountsService) {
   }
 
 
@@ -46,11 +50,11 @@ export class BookingRoomService {
     }
   }
 
-  getWishlistBookingRooms(roomName: string, keycloakUser: KeycloakUserInstance):
+  getWishlistBookingRooms(roomName: string, slotFrom: number, slotTo: number, keycloakUser: KeycloakUserInstance):
     Promise<WishlistBookingRoomResponseDTO[]> {
     try {
       return this.roomWishlistService
-        .findAllWishlistBookingRoomsByKeycloakUserId(roomName, keycloakUser.sub);
+        .findAllWishlistBookingRoomsByKeycloakUserId(roomName, slotFrom, slotTo, keycloakUser.sub);
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException("An error occurred while adding this room");
@@ -73,5 +77,17 @@ export class BookingRoomService {
       this.logger.error(e.message);
       throw new BadRequestException(e.message ?? "Error while removing from booking room wishlist");
     }
+  }
+
+  getBookingRoomDevices(name: string, type: string, sort: string) {
+    return this.deviceService.getBookingRoomDeviceList(name, type, sort);
+  }
+
+  getUsernameList(): Promise<string[]> {
+    return this.accountService.getUsernameList();
+  }
+
+  getRoomsName(): Promise<string[]> {
+    return this.roomService.getRoomsName();
   }
 }

@@ -1,12 +1,11 @@
-import React from 'react';
+import React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useAppDispatch } from "../../redux/hooks";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
+import { useAppDispatch } from "../../hooks/use-app-dispatch.hook";
 
 const RoomCheckout1: React.FC = () => {
 
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
 
 

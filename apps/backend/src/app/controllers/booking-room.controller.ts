@@ -20,6 +20,16 @@ export class BookingRoomController {
   constructor(private readonly service: BookingRoomService) {
   }
 
+  @Get("accounts-name")
+  getUsernameList() {
+    return this.service.getUsernameList();
+  }
+
+  @Get("rooms-name")
+  getRoomsName() {
+    return this.service.getRoomsName();
+  }
+
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
@@ -59,6 +69,16 @@ export class BookingRoomController {
     });
   }
 
+  @Roles(Role.APP_LIBRARIAN, Role.APP_ADMIN, Role.APP_MANAGER, Role.APP_STAFF)
+  @Get("devices")
+  getBookingRoomDevices(
+    @Query("name") name: string,
+    @Query("type") type: string,
+    @Query("sort") sort: string
+  ) {
+    return this.service.getBookingRoomDevices(name, type, sort);
+  }
+
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @Get("wishlist")
   @ApiOperation({
@@ -89,8 +109,10 @@ export class BookingRoomController {
     required: true
   })
   getWishlistBookingRooms(@User() user: KeycloakUserInstance,
-                          @Query("roomName") roomName: string): Promise<WishlistBookingRoomResponseDTO[]> {
-    return this.service.getWishlistBookingRooms(roomName, user);
+                          @Query("roomName") roomName: string,
+                          @Query("from") slotFrom: number,
+                          @Query("to") slotTo: number): Promise<WishlistBookingRoomResponseDTO[]> {
+    return this.service.getWishlistBookingRooms(roomName, slotFrom, slotTo, user);
   }
 
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -123,8 +145,12 @@ export class BookingRoomController {
   @Delete("remove-from-wishlist")
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   removeFromBookingRoomWishlist(@User() user: KeycloakUserInstance,
-                                @Body() removeWishlistPayload: RemoveWishlistRequest) {
-    return this.service.removeFromBookingRoomWishlist(user, removeWishlistPayload);
+                                @Query("roomId") roomId: string,
+                                @Query("slot") slot: number) {
+    return this.service.removeFromBookingRoomWishlist(user, {
+      roomId: roomId,
+      slot: slot
+    });
   }
 }
 

@@ -98,10 +98,10 @@ export class AccountRepository extends Repository<Accounts> {
       .getRawOne().then((data) => data ? data["keycloak_id"] : undefined);
   }
 
-  async findAvatarURLById(keycloakId: string): Promise<string> {
+  async findAvatarURLById(id: string): Promise<string> {
     return this.createQueryBuilder("accounts")
-      .select("accounts.avatar")
-      .where("accounts.keycloak_id = :keycloakId", { keycloakId: keycloakId })
+      .select("accounts.avatar", "avatar")
+      .where("accounts.id = :id", { id: id })
       .getRawOne().then((data) => data ? data["avatar"] : undefined);
   }
 
@@ -190,5 +190,14 @@ export class AccountRepository extends Repository<Accounts> {
       .select("accounts.username as username")
       .where("accounts.id = :id", { id })
       .getRawOne().then((data) => data["username"]);
+  }
+
+  findUsername(): Promise<string[]> {
+    return this.createQueryBuilder("accounts")
+      .select("accounts.username", "username")
+      .where("accounts.is_disabled = false")
+      .andWhere("accounts.is_deleted = false")
+      .getRawMany<{ username: string }>()
+      .then((data) => data.map((acc) => acc.username));
   }
 }

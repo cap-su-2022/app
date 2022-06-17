@@ -8,7 +8,8 @@ import {ClockIcon} from "react-native-heroicons/solid";
 
 import {BLACK, FPT_ORANGE_COLOR, GRAY, GREEN, LIGHT_GRAY, RED, WHITE} from "@app/constants";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../../redux/store";
+import { AppDispatch, RootState } from "../../redux/store";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
 
 
 const searchTypeStyles = {
@@ -55,7 +56,7 @@ const FeedbackHistory: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
 
   const scrollViewRef = useRef<null | ScrollView>(null);
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   const searchTypeAllRef = useRef<TouchableOpacity>(null);
 

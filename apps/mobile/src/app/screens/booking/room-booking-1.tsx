@@ -4,11 +4,12 @@ import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import ReadingTime from '../../../../../../assets/undraw/reading-time.svg';
 import {deviceWidth} from "../../utils/device";
-import {FPT_ORANGE_COLOR, WHITE} from "@app/constants";
+import { FPT_ORANGE_COLOR, WHITE } from "@app/constants";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
 
 const RoomBooking1: React.FC = () => {
 
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   const handleRequestBookingNow = () => {
     navigate.navigate("ROOM_BOOKING_NOW");

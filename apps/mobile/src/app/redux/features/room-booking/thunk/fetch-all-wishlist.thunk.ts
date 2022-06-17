@@ -10,14 +10,20 @@ interface RejectValue {
   message: string;
 }
 
-export const fetchAllWishlistRooms = createAsyncThunk<RoomWishListResponse[], string, {
+interface Payload {
+  search: string;
+  from: number;
+  to: number;
+}
+
+export const fetchAllWishlistRooms = createAsyncThunk<RoomWishListResponse[], Payload, {
   rejectValue: RejectValue;
 }>("room-booking/fetch-all-wishlist", async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.get(`${API_URL}/booking-room/wishlist?roomName=${payload}`, {
+    const response = await axios.get(`${API_URL}/booking-room/wishlist?roomName=${payload.search}&from=${payload.from}&to=${payload.to}`, {
       headers: {
-        'Authorization': `Bearer ${LOCAL_STORAGE.getString('accessToken')}`
+        "Authorization": `Bearer ${LOCAL_STORAGE.getString("accessToken")}`
       }
     });
     return await response.data;

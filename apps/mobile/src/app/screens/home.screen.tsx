@@ -20,25 +20,27 @@ import NxCloud from "../icons/nx-cloud.svg";
 import GitHub from "../icons/github.svg";
 import Terminal from "../icons/terminal.svg";
 import Heart from "../icons/heart.svg";
-import React, {useRef, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../redux/store";
-import Carousel, {Pagination} from "react-native-snap-carousel";
-import {ClipboardCheckIcon, ClipboardCopyIcon, ExclamationIcon} from "react-native-heroicons/outline";
+import React, { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../redux/store";
+import Carousel, { Pagination } from "react-native-snap-carousel";
+import { ClipboardCheckIcon, ClipboardCopyIcon, ExclamationIcon } from "react-native-heroicons/outline";
 import { BLACK, FPT_ORANGE_COLOR, WHITE, YELLOW } from "@app/constants";
-import {deviceWidth} from "../utils/device";
-import {useNavigation} from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import { deviceWidth } from "../utils/device";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BellIcon } from "react-native-heroicons/solid";
+import { useAppNavigation } from "../hooks/use-app-navigation.hook";
+import { useAppDispatch } from "../hooks/use-app-dispatch.hook";
 
 const items = [
   {
-    title:"Item 1",
-    text: "Text 1",
+    title: "Item 1",
+    text: "Text 1"
   },
   {
-    title:"Item 2",
-    text: "Text 2",
+    title: "Item 2",
+    text: "Text 2"
   },
   {
     title:"Item 3",
@@ -58,9 +60,9 @@ const HomeScreen: React.FC = () => {
 
   const user = useSelector((state: RootState) => state.user.user);
 
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   const [whatsNextYCoord, setWhatsNextYCoord] = useState<number>(0);
   const scrollViewRef = useRef<null | ScrollView>(null);

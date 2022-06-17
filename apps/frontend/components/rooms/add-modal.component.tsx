@@ -1,52 +1,90 @@
 import React, {useEffect, useState} from "react";
 import {
   Button,
-  createStyles,
-  Modal,
+  createStyles, InputWrapper,
+  Modal, Select,
   Switch,
   Text,
   Textarea,
-  TextInput,
+  TextInput
 } from "@mantine/core";
 import {useWindowDimensions} from "../../hooks/use-window-dimensions";
 import {
-  ClipboardText,
+  Check,
+  ClipboardText, Cross,
   FileDescription,
   Plus,
   X
 } from "tabler-icons-react";
-import {useAppDispatch} from "../../redux/hooks";
-import {Form, FormikProvider, useFormik} from "formik";
-import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
-import {addRoom} from "../../redux/features/room/thunk/add-room";
+import { useAppDispatch } from "../../redux/hooks";
+import { Form, FormikProvider, useFormik } from "formik";
+import { fetchRooms } from "../../redux/features/room/thunk/fetch-rooms";
+import { addRoom } from "../../redux/features/room/thunk/add-room";
+import * as Yup from "yup";
+import { showNotification } from "@mantine/notifications";
+import { LIBRARY_ROOM_TYPE } from "../../constants/library-room-type.model";
 
 interface AddRoomModalProps {
   isShown: boolean;
+
   toggleShown(): void;
 }
 
+const AddRoomValidation = Yup.object().shape({
+  name: Yup.string()
+    .min(1, "Room name must have at least 1 character.")
+    .max(100, "Room name can only have at most 100 characters.")
+    .required("Room name is required!"),
+  description: Yup.string()
+    .max(500, "Room description only have at most 500 characters")
+});
+
 const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   const [isUpdateDisabled, setUpdateDisabled] = useState<boolean>(false);
+  const [roomType, setRoomType] = useState<string>(LIBRARY_ROOM_TYPE[0].value);
 
   const dispatch = useAppDispatch();
   const dimension = useWindowDimensions();
 
   const handleAddSubmit = async (values) => {
-    dispatch(addRoom(values))
+    dispatch(addRoom({
+      ...values,
+      type: roomType
+    }))
+      .unwrap()
+      .catch((e) => showNotification({
+        id: "load-data",
+        color: "red",
+        title: "Error while adding library room",
+        message: e.message ?? "Failed to add library room",
+        icon: <X />,
+        autoClose: 3000
+      }))
+      .then(() => showNotification({
+        id: "load-data",
+        color: "teal",
+        title: "Library room was added",
+        message: "Library room was successfully added to the system",
+        icon: <Check />,
+        autoClose: 3000
+      }))
       .then(() => {
         props.toggleShown();
-        dispatch(fetchRooms());
-        });
-  }
+        dispatch(fetchRooms())
+          .finally(() => formik.resetForm());
+      });
+  };
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      description: '',
-      disabled: false,
+      name: "",
+      description: "",
+      isDisabled: false,
+      type: "Library Room"
     },
     onSubmit: (values) => handleAddSubmit(values),
+    validationSchema: AddRoomValidation
   });
 
 
@@ -63,12 +101,17 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
   const ModalHeaderTitle: React.FC = () => {
     return (
       <Text className={classes.modalHeaderTitle}>Add new room</Text>
-    )
+    );
+  };
+
+  const handleCancelAddModal = () => {
+    props.toggleShown();
+    formik.resetForm();
   };
 
   return (
     <>
-      <Modal title={<ModalHeaderTitle/>}
+      <Modal title={<ModalHeaderTitle />}
              size={dimension.width / 2}
              centered
              opened={props.isShown}
@@ -76,30 +119,44 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
         <FormikProvider value={formik}>
           <Form onSubmit={formik.handleSubmit}>
             <div className={classes.modalBody}>
-              <TextInput icon={<ClipboardText/>}
-                         id="room-name"
-                         name="name"
-                         onChange={formik.handleChange}
-                         className={classes.textInput}
-                         radius="md"
-                         label="Room name"
-                         value={formik.values.name}/>
-              <Textarea icon={<FileDescription/>}
-                        className={classes.textInput}
-                        id="room-description"
-                        name="description"
-                        onChange={formik.handleChange}
-                        radius="md"
-                        label="Room description"
-                        value={formik.values.description}/>
-              <Switch label="Make this room disabled"
+              <InputWrapper required label="Room name"
+                            description="Room name must be unique. Maximum length is 100 characters">
+                <TextInput icon={<ClipboardText />}
+                           id="room-name"
+                           name="name"
+                           error={formik.errors.name}
+                           onChange={formik.handleChange}
+                           className={classes.textInput}
+                           radius="md"
+                           value={formik.values.name} />
+              </InputWrapper>
+              <InputWrapper
+                label="Room description"
+                description="(Optional) Maximum length is 500 characters."
+              >
+                <Textarea icon={<FileDescription />}
+                          className={classes.textInput}
+                          id="room-description"
+                          name="description"
+                          error={formik.errors.description}
+                          onChange={formik.handleChange}
+                          radius="md"
+                          value={formik.values.description} />
+              </InputWrapper>
+              <InputWrapper required label="Room type"
+                            description="Room type is to define room separately">
+                <Select name="type" id="room-type" onChange={(e) => setRoomType(e)}
+                        searchable value={roomType} data={LIBRARY_ROOM_TYPE} />
+              </InputWrapper>
+              <Switch label={<div style={{ fontSize: 14 }}>Make this room disabled</div>}
                       style={{
-                        marginTop: 20
+                        marginTop: 20,
+                        fontWeight: "500"
                       }}
                       onChange={formik.handleChange}
                       size="lg"
-                      checked={formik.values.disabled}
-                      name="disabled"
+                      checked={formik.values.isDisabled}
+                      name="isDisabled"
                       id="room-disabled"
               />
 
@@ -107,7 +164,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
 
             <div className={classes.modalFooter}>
               <Button
-                onClick={() => props.toggleShown()}
+                onClick={() => handleCancelAddModal()}
                 variant="outline"
                 color={"red"}
                 leftIcon={<X/>}

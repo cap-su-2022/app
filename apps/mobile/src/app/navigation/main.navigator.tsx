@@ -7,8 +7,8 @@ import QRScan from "../screens/qr-scan.screen";
 import QRScanButton from "../components/buttons/QRScanButton";
 import UserNavigator from "./user.navigator";
 import {Platform} from "react-native";
-import HomeNavigator from "./home.navigator";
-import {StackNavigator, StackScreen} from '@app/utils';
+import { StackNavigator, StackScreen } from "@app/utils";
+import HomeNavigator from "./home";
 
 const MainNavigator = () => {
     return (
@@ -44,5 +44,6 @@ const HomeTabs: React.FC = () => {
     }}/>
   </TabNavigator>);
 }
+
 
 export default MainNavigator;

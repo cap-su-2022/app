@@ -7,7 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
-  Put,
+  Put, Query,
   UseInterceptors,
   UsePipes
 } from "@nestjs/common";
@@ -126,18 +126,18 @@ export class RoomsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'One or more payload parameters are invalid',
+    description: "One or more payload parameters are invalid"
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully fetched disabled rooms',
+    description: "Successfully fetched disabled rooms"
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: "Insufficient privileges"
   })
-  getDisableRooms(): Promise<Rooms[]> {
-    return this.service.getDisabledRooms();
+  getDisableRooms(@Query("search") search = ""): Promise<Rooms[]> {
+    return this.service.getDisabledRooms(search);
   }
 
   @Get("deleted")
@@ -152,15 +152,15 @@ export class RoomsController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully fetched deleted rooms',
+    description: "Successfully fetched deleted rooms"
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: "Insufficient privileges"
   })
 
-  getDeletedRooms(): Promise<Rooms[]> {
-    return this.service.getDeletedRooms();
+  getDeletedRooms(@Query("search") search = ""): Promise<Rooms[]> {
+    return this.service.getDeletedRooms(search);
   }
 
   @Put("restore-deleted/:id")

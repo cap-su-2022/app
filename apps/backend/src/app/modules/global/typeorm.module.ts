@@ -36,8 +36,9 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
     ],
     synchronize: configService.get<boolean>(Environment.db.postgres.synchronize),
     logging: ["query"],
-    cache: false
-  } as TypeOrmModuleOptions),
+    cache: false,
+    timezone: "+7"
+  }),
   inject: [ConfigService]
 });
 

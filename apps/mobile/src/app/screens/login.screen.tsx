@@ -7,74 +7,42 @@ import Asterik from "../components/text/asterik";
 import Divider from "../components/text/divider";
 import GoogleIcon from "../components/google-icon.svg";
 import { persistGoogleIdToken } from "../redux/userSlice";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { handleGoogleSignin } from "../services/google.service";
 import CheckAlive from "../components/check-alive.component";
 import { Formik } from "formik";
 import LoginErrorModal from "../components/modals/login-error.component";
 import { toggleSpinnerOff, toggleSpinnerOn } from "../redux/features/spinner";
 import { BLACK, FPT_ORANGE_COLOR } from "@app/constants";
-import { useAppDispatch } from "../redux/hooks";
 import { doLogin } from "../redux/features/auth/thunk/login.thunk";
-import { isUserSessionExisted, LOCAL_STORAGE } from "../utils/local-storage";
+import { isUserSessionExisted } from "../utils/local-storage";
 import { validateAccessToken } from "../redux/features/auth/thunk/validate-access-token.thunk";
 import { deviceWidth } from "../utils/device";
+import { useAppDispatch } from "../hooks/use-app-dispatch.hook";
+import { useAppNavigation } from "../hooks/use-app-navigation.hook";
+import BookLogo from "../components/book-logo";
+import { doGoogleLogin } from "../redux/features/auth/thunk/google-login.thunk";
 
 const LoginScreen = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   const [isError, setError] = React.useState<boolean>(false);
   const [isLoginFailure, setLoginFailure] = React.useState<boolean>(false);
   const [loginErrMsg, setLoginErrMsg] = useState<string>();
+
   useEffect(() => {
-    console.log(LOCAL_STORAGE.getString('refreshToken'));
-
-    console.log(LOCAL_STORAGE.getString('accessToken'));
-    console.log(LOCAL_STORAGE.getString('user'));
-
     if (isUserSessionExisted()) {
       dispatch(validateAccessToken()).unwrap().then(() => {
         navigate.navigate("MAIN");
       })
     }
-
   }, []);
 
- /* const validateUserAccessToken = async () => {
-    try {
-      const response = await fetch(`${API_URL}/health/auth"}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer }`,
-        },
-      });
-      if (response.status !== 200) {
-      } else {
-        setTimeout(() => {
-          dispatch(toggleSpinnerOff());
-          navigate.navigate('MAIN');
-        }, 0);
-      }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      dispatch(toggleSpinnerOff());
-    }
-  };*/
-
   const handleLoginWithGoogle = async () => {
-    dispatch(toggleSpinnerOn());
-    const response = await handleGoogleSignin();
-    const idToken = await response.user.getIdToken();
-    if (idToken) {
-      dispatch(persistGoogleIdToken(idToken));
+    dispatch(doGoogleLogin()).unwrap().then(() => {
       setTimeout(() => {
-        dispatch(toggleSpinnerOff());
-        navigate.navigate('MAIN');
+        navigate.navigate("MAIN");
       }, 0);
-    }
+    });
   };
 
   const initialValues = {
@@ -106,7 +74,8 @@ const LoginScreen = () => {
       <Background style={[styles.background]} />
       <View style={[styles.loginContainer, styles.shadowProp]}>
         <View style={[styles.logoContainer]}>
-          <FPTULogo height={100} width={150} />
+          <FPTULogo height={deviceWidth / 3} width={deviceWidth / 3} />
+          <BookLogo />
         </View>
         <Formik
           initialValues={initialValues}
@@ -156,10 +125,7 @@ const LoginScreen = () => {
         </Formik>
 
         <TouchableOpacity>
-          <Text style={{
-            color: FPT_ORANGE_COLOR,
-            fontSize: deviceWidth / 32
-          }}>Forgot password?</Text>
+          <Text style={styles.forgotPasswordText}>Forgot password?</Text>
         </TouchableOpacity>
 
         <View style={[styles.loginDividerContainer]}>
@@ -260,27 +226,31 @@ const styles = StyleSheet.create({
   },
   loginGoogleBtnTextContainer: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: "row"
   },
   googleIcon: {
     marginTop: 2,
-    marginRight: 6,
+    marginRight: 6
   },
   loginGoogleBtnText: {
     fontSize: 14,
-    color: BLACK,
+    color: BLACK
   },
-  logoContainer: {},
+  logoContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center"
+  },
   loginDividerContainer: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row"
   },
   loginDividerText: {
     fontSize: 10,
-    color: 'rgb(134, 142, 150)',
+    color: "rgb(134, 142, 150)",
     marginTop: 10,
     marginLeft: 6,
-    marginRight: 6,
+    marginRight: 6
   },
   shadowProp: {
     shadowColor: '#171717',
@@ -289,16 +259,20 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   modal: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
     opacity: 0.5,
-    backgroundColor: 'rgb(206, 212, 218)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgb(206, 212, 218)",
+    justifyContent: "center",
+    alignItems: "center"
   },
+  forgotPasswordText: {
+    color: FPT_ORANGE_COLOR,
+    fontSize: deviceWidth / 32
+  }
 });
 
 export default LoginScreen;

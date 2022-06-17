@@ -23,7 +23,7 @@ export class RoomsRepository extends Repository<Rooms> {
     return this.createQueryBuilder("rooms")
       .select("COUNT(rooms.name)")
       .where("rooms.id = :id", { id })
-      .getRawOne().then((data) => data > 0);
+      .getRawOne().then((data) => data["count"] > 0);
   }
 
   async isExistedByName(name: string): Promise<boolean> {
@@ -33,15 +33,31 @@ export class RoomsRepository extends Repository<Rooms> {
       .getRawOne().then((data) => data["count"] > 0);
   }
 
-  findDisabledRooms() {
+  findDisabledRooms(search: string) {
     return this.createQueryBuilder("rooms")
+      .select("rooms.id", "id")
+      .addSelect("rooms.name", "name")
+      .addSelect("rooms.type", "type")
+      .addSelect("rooms.disabled_at", "disabledAt")
+      .addSelect("a.username", "disabledBy")
+      .innerJoin(Accounts, "a", "rooms.disabled_by = a.id")
       .where("rooms.is_disabled = true")
-      .getMany();
+      .andWhere("rooms.is_deleted = false")
+      .andWhere("rooms.name LIKE :search", { search: `%${search}%` })
+      .getRawMany<Rooms>();
   }
 
-  findDeletedRooms(): Promise<Rooms[]> {
+  findDeletedRooms(search: string): Promise<Rooms[]> {
     return this.createQueryBuilder(`rooms`)
+      .select("rooms.deleted_at", "deletedAt")
+      .addSelect("a.username", "deletedBy")
+      .addSelect("rooms.name", "name")
+      .addSelect("rooms.type", "type")
+      .addSelect("rooms.id", "id")
+      .innerJoin(Accounts, "a", "a.id = rooms.deleted_by")
       .where(`rooms.is_deleted = true`)
+      .andWhere("rooms.is_disabled = false")
+      .andWhere("rooms.name LIKE :name", { name: `%${search}%` })
       .getMany();
   }
 
@@ -118,5 +134,32 @@ export class RoomsRepository extends Repository<Rooms> {
       .select(["rooms.id", "rooms.name", "rooms.description",
         "rooms.isDeleted", "rooms.isDisabled"])
       .getMany();
+  }
+
+  async findRoomNames() {
+    return this.createQueryBuilder("rooms")
+      .select("rooms.name", "name")
+      .where("rooms.is_disabled = false")
+      .andWhere("rooms.is_deleted = false")
+      .getRawMany<{ name: string }>()
+      .then((data) => data.map((room) => room.name));
+  }
+
+  async findById(id: string): Promise<Rooms> {
+    return this.createQueryBuilder("rooms")
+      .select("rooms.id", "id")
+      .addSelect("rooms.name", "name")
+      .addSelect("rooms.type", "type")
+      .addSelect("rooms.created_at", "createdAt")
+      .addSelect("a.username", "createdBy")
+      .addSelect("rooms.updated_at", "updatedAt")
+      .addSelect("aa.username", "updatedBy")
+      .addSelect("rooms.description", "description")
+      .innerJoin(Accounts, "a", "rooms.created_by = a.id")
+      .innerJoin(Accounts, "aa", "rooms.updated_by = aa.id")
+      .where("rooms.is_disabled = false")
+      .andWhere("rooms.is_deleted = false")
+      .andWhere("rooms.id = :roomId", { roomId: id })
+      .getRawOne<Rooms>();
   }
 }

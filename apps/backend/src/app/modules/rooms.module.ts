@@ -6,7 +6,6 @@ import { HttpModule } from "@nestjs/axios";
 import ConfigModule from "./global/config.module";
 import { TypeOrmExModule } from "./global/typeorm-ex.module";
 import { KeycloakModule } from "./keycloak.module";
-import RoomsSearchService from "../services/rooms.search.service";
 
 @Module({
   imports: [
@@ -21,7 +20,7 @@ import RoomsSearchService from "../services/rooms.search.service";
   controllers: [
     RoomsController
   ],
-  providers: [RoomsService, RoomsSearchService],
+  providers: [RoomsService],
   exports: [RoomsService]
 })
 export class RoomsModule {}

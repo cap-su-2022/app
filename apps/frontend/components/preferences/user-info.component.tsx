@@ -7,19 +7,19 @@ import {
   Navbar,
   Text,
   Textarea,
-  TextInput
-} from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
-import { At, Key, Lock, PhoneCall, User, Check, X } from "tabler-icons-react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { useAppDispatch } from "../../redux/hooks";
-import { updateProfile } from "../../redux/features/account/thunk/update-profile.thunk";
-import { uploadAvatar } from "../../redux/features/account/thunk/upload-avatar.thunk";
-import { fetchProfile } from "../../redux/features/account/thunk/fetch-profile.thunk";
-import ChangePassword from "./change-password.component";
-import { useTransition, animated } from "react-spring";
-
+  TextInput,
+} from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
+import { At, Key, Lock, PhoneCall, User, Check, X } from 'tabler-icons-react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useAppDispatch } from '../../redux/hooks';
+import { updateProfile } from '../../redux/features/account/thunk/update-profile.thunk';
+import { uploadAvatar } from '../../redux/features/account/thunk/upload-avatar.thunk';
+import { fetchProfile } from '../../redux/features/account/thunk/fetch-profile.thunk';
+import ChangePassword from './change-password.component';
+import { useTransition, animated } from 'react-spring';
+import { fetchAvatar } from '../../redux/features/account/thunk/fetch-avatar.thunk';
 // interface UserInfoPreferneceProps {}
 
 interface UserInfoModel {
@@ -43,14 +43,12 @@ const data = [
 
 const UserInfoPreference: React.FC = () => {
   const { classes, cx } = useStyles();
-  const [active, setActive] = useState("Profile");
-  const [image, setImage] = useState<File>(null);
-  const [uploadData, setUploadData] = useState(null);
+  const [active, setActive] = useState('Profile');
 
   const links = data.map((item) => (
     <a
       className={cx(classes.link, {
-        [classes.linkActive]: item.label === active
+        [classes.linkActive]: item.label === active,
       })}
       href={item.link}
       key={item.label}
@@ -65,15 +63,16 @@ const UserInfoPreference: React.FC = () => {
   ));
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
 
+  // const [image, setImage] = useState<File>(null);
   const avatarInputRef = useRef<HTMLInputElement>();
 
   function formatDate(string) {
-    const options = { year: "numeric", month: "numeric", day: "numeric" };
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
     return new Date(string).toLocaleDateString(undefined, options as unknown);
   }
 
   useEffect(() => {
-    setUserInfo(JSON.parse(window.localStorage.getItem("user")));
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
   const dispatch = useAppDispatch();
@@ -86,7 +85,7 @@ const UserInfoPreference: React.FC = () => {
           fullname: values.fullname,
           phone: values.phone,
           email: values.email,
-          description: values.description
+          description: values.description,
         })
       )
         .unwrap()
@@ -95,22 +94,22 @@ const UserInfoPreference: React.FC = () => {
         })
         .then(() =>
           showNotification({
-            id: "load-data",
-            color: "teal",
-            title: "Data was updated",
-            message: "Your profile was updated successfully",
+            id: 'load-data',
+            color: 'teal',
+            title: 'Data was updated',
+            message: 'Your profile was updated successfully',
             icon: <Check />,
-            autoClose: 3000
+            autoClose: 3000,
           })
         )
         .catch((e) => {
           showNotification({
-            id: "load-data",
-            color: "red",
-            title: "Have error",
+            id: 'load-data',
+            color: 'red',
+            title: 'Have error',
             message: `${e.message}`,
             icon: <X />,
-            autoClose: 3000
+            autoClose: 3000,
           });
         });
     };
@@ -124,46 +123,60 @@ const UserInfoPreference: React.FC = () => {
       phone: userInfo.phone,
       effdate: userInfo.effdate,
       description: userInfo.description,
-      img: image
     };
 
     const UpdateSchema = Yup.object().shape({
-      email: Yup.string().email("Invalid email").required("Required"),
+      email: Yup.string().email('Invalid email').required('Required'),
       fullname: Yup.string()
-        .min(5, "Too short!")
-        .max(50, "Too long!")
-        .required("Required"),
+        .min(5, 'Too short!')
+        .max(50, 'Too long!')
+        .required('Required'),
       phone: Yup.string()
-        .min(10, "Invalid Phone Number")
-        .max(10, "Too long!")
-        .required("Required")
+        .min(10, 'Invalid Phone Number')
+        .max(10, 'Too long!')
+        .required('Required'),
     });
 
     const formik = useFormik({
       initialValues: initialFormValues,
       enableReinitialize: true,
       validationSchema: UpdateSchema,
-      onSubmit: (values) => handleUpdateSubmit(values)
+      onSubmit: (values) => handleUpdateSubmit(values),
     });
+
+    const [avatarURL, setAvatarURL] = useState(formik.values.avatar);
 
     const uploadToServer = (event) => {
       if (event.target.files && event.target.files[0]) {
         const i = event.target.files[0];
-        setUploadData(URL.createObjectURL(i));
+        setAvatarURL(URL.createObjectURL(i));
 
         dispatch(
           uploadAvatar({
-            id: userInfo.id,
-            img: i
+            img: i,
           })
         )
           .unwrap()
-          .then(() => {
-            console.log("success");
-            setImage(i);
-          })
+          .then(() => dispatch(fetchProfile()))
+          .then(() =>
+            showNotification({
+              id: 'load-avatar',
+              color: 'teal',
+              title: 'Avatar updated',
+              message: 'Your avatar was updated successfully',
+              icon: <Check />,
+              autoClose: 3000,
+            })
+          )
           .catch((e) => {
-            alert(e.message);
+            showNotification({
+              id: 'load-data',
+              color: 'red',
+              title: 'Have error',
+              message: `${e.message}`,
+              icon: <X />,
+              autoClose: 3000,
+            });
           });
       }
     };
@@ -171,11 +184,7 @@ const UserInfoPreference: React.FC = () => {
       <form onSubmit={formik.handleSubmit}>
         <Group className={classes.avatarAndInforArea}>
           <div>
-            <Avatar
-              src={uploadData || formik.values.avatar}
-              size={150}
-              radius="md"
-            />
+            <Avatar src={avatarURL} size={150} radius="md" />
             <Button
               className={classes.control}
               size="xs"
@@ -188,7 +197,7 @@ const UserInfoPreference: React.FC = () => {
               type="file"
               ref={avatarInputRef}
               style={{
-                display: "none"
+                display: 'none',
               }}
               id="avatar"
               onChange={uploadToServer}
@@ -199,7 +208,7 @@ const UserInfoPreference: React.FC = () => {
           <div className={classes.inforArea}>
             <Text
               size="xs"
-              sx={{ textTransform: "uppercase" }}
+              sx={{ textTransform: 'uppercase' }}
               weight={700}
               color="dimmed"
             >
@@ -233,10 +242,10 @@ const UserInfoPreference: React.FC = () => {
           <TextInput
             id="username"
             description="This will be visible to other people"
-            onChange={formik.handleChange("username")}
+            onChange={formik.handleChange('username')}
             error={formik.touched.username && Boolean(formik.errors.username)}
             value={formik.values.username}
-            label={"Username"}
+            label={'Username'}
             required
             name="username"
             disabled
@@ -245,10 +254,10 @@ const UserInfoPreference: React.FC = () => {
           <TextInput
             id="fullname"
             description="This will be visible to other people"
-            onChange={formik.handleChange("fullname")}
+            onChange={formik.handleChange('fullname')}
             error={formik.touched.fullname && Boolean(formik.errors.fullname)}
             value={formik.values.fullname}
-            label={"Fullname"}
+            label={'Fullname'}
             required
             name="fullname"
             placeholder="Set your own fullname"
@@ -264,7 +273,7 @@ const UserInfoPreference: React.FC = () => {
                 : null
             }
             value={formik.values.email}
-            label={"Email"}
+            label={'Email'}
             required
             name="email"
             placeholder="Set your own email address"
@@ -280,7 +289,7 @@ const UserInfoPreference: React.FC = () => {
                 : null
             }
             value={formik.values.phone}
-            label={"Phone"}
+            label={'Phone'}
             required
             name="phone"
             placeholder="Set your own phone number"
@@ -291,7 +300,7 @@ const UserInfoPreference: React.FC = () => {
             id="effdate"
             description="The date the account becomes active"
             value={formatDate(formik.values.effdate)}
-            label={"Effdate"}
+            label={'Effdate'}
             required
             name="effdate"
             disabled
@@ -313,10 +322,10 @@ const UserInfoPreference: React.FC = () => {
 
         <div
           style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "50px",
-            width: "100%"
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginTop: '50px',
+            width: '100%',
           }}
         >
           <Button color="green" type="submit" name="update">
@@ -332,14 +341,14 @@ const UserInfoPreference: React.FC = () => {
     const transition = useTransition(isShowChangePass, {
       from: { x: -100, y: 0, opacity: 0 },
       enter: { x: 0, y: 0, opacity: 1 },
-      leave: { x: 100, y: 0, opacity: 0 }
+      leave: { x: 100, y: 0, opacity: 0 },
     });
     return (
       <div>
         <div
           style={{
-            display: "flex",
-            flexDirection: "column"
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <Button
@@ -362,7 +371,7 @@ const UserInfoPreference: React.FC = () => {
                 <ChangePassword username={userInfo.username} />
               </animated.div>
             ) : (
-              ""
+              ''
             )
           )}
         </div>
@@ -398,91 +407,95 @@ const useStyles = createStyles((theme, _params, getRef) => {
   return {
     icon: {
       color:
-        theme.colorScheme === "dark"
+        theme.colorScheme === 'dark'
           ? theme.colors.dark[3]
-          : theme.colors.gray[5]
+          : theme.colors.gray[5],
     },
     playoutModal: {
-      display: "flex",
-      transition: "height 0.25s ease-in",
-      "@media (max-width: 540px)": {
-        flexDirection: "column"
-      }
+      display: 'flex',
+      transition: 'height 0.25s ease-in',
+      '@media (max-width: 540px)': {
+        flexDirection: 'column',
+      },
     },
     displayNav: {
-      height: "auto",
+      height: 'auto',
       minHeight: 500,
       width: 300,
-      "@media (max-width: 920px)": {
-        width: "auto"
+      '@media (max-width: 920px)': {
+        width: 'auto',
       },
-      "@media (max-width: 540px)": {
-        borderRight: "0px",
-        borderBottom: "1px solid #e9ecef",
-        marginBottom: "10px",
-        minHeight: "45px",
-        justifyContent: "space-evenly"
-      }
+      '@media (max-width: 540px)': {
+        borderRight: '0px',
+        borderBottom: '1px solid #e9ecef',
+        marginBottom: '10px',
+        minHeight: '45px',
+        justifyContent: 'space-evenly',
+      },
     },
     displayNavSestion: {
-      "@media (max-width: 540px)": {
-        display: "flex",
-        height: "45px"
-      }
+      '@media (max-width: 540px)': {
+        display: 'flex',
+        height: '45px',
+        a: {
+          flex: 1,
+          justifyContent: 'center',
+        },
+      },
     },
     displayLabelNav: {
-      "@media (max-width: 920px)": {
-        display: "none"
-      }
+      '@media (max-width: 920px)': {
+        display: 'none',
+      },
     },
     avatarAndInforArea: {
-      flexWrap: "nowrap",
-      "@media (max-width: 920px)": {
-        flexDirection: "column"
-      }
+      flexWrap: 'nowrap',
+      '@media (max-width: 920px)': {
+        flexDirection: 'column',
+      },
     },
     inforArea: {
-      marginTop: "-30px",
-      "@media (max-width: 920px)": {
-        textAlign: "center"
-      }
+      marginTop: '-30px',
+      '@media (max-width: 920px)': {
+        textAlign: 'center',
+      },
     },
     displayRightModal: {
       marginLeft: 20,
-      width: "100%",
+      width: '100%',
       minWidth: 0,
-      "@media (max-width: 540px)": {
-        margin: 0
-      }
+      '@media (max-width: 540px)': {
+        margin: 0,
+      },
     },
     displayGrid: {
-      display: "grid",
-      gridTemplateColumns: "50% 50%",
-      gap: "10px",
-      width: "100%",
-      "@media (max-width: 920px)": {
-        gridTemplateColumns: "100%"
-      }
+      display: 'grid',
+      gridTemplateColumns: '50% 50%',
+      gap: '10px',
+      width: '100%',
+      '@media (max-width: 920px)': {
+        gridTemplateColumns: '100%',
+      },
     },
     inputText: {
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between"
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
     },
     fullWidth: {
       gridColumnStart: 1,
       gridColumnEnd: 3,
-      "@media (max-width: 920px)": {
-        gridColumnEnd: 2
-      }
+      '@media (max-width: 920px)': {
+        gridColumnEnd: 2,
+      },
     },
     name: {
-      fontFamily: `Greycliff CF, ${theme.fontFamily}`
+      fontFamily: `Greycliff CF, ${theme.fontFamily}`,
     },
     control: {
-      position: "relative",
+      position: 'relative',
       width: 150,
-      bottom: 30
+      bottom: 30,
     },
     header: {
       paddingBottom: theme.spacing.md,
@@ -553,14 +566,14 @@ const useStyles = createStyles((theme, _params, getRef) => {
         [`& .${icon}`]: {
           color:
             theme.colors[theme.primaryColor][
-              theme.colorScheme === "dark" ? 5 : 7
-              ]
-        }
+              theme.colorScheme === 'dark' ? 5 : 7
+            ],
+        },
       },
     },
     marginTop10: {
-      marginTop: 10
-    }
+      marginTop: 10,
+    },
   };
 });
 

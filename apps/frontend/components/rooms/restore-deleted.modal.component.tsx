@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import {createStyles, Table, ScrollArea, Modal, Text, Button} from '@mantine/core';
+import React, { useEffect, useState } from "react";
+import { createStyles, Table, ScrollArea, Modal, Text, Button } from "@mantine/core";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {RotateClockwise} from "tabler-icons-react";
 import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
@@ -17,11 +17,15 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (props) 
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
 
+  useEffect(() => {
+    dispatch(fetchDeletedRooms());
+  }, []);
+
   const handleRestoreDeletedRoom = (id: string) => {
     dispatch(restoreDeletedRoom(id)).unwrap()
       .then(() => dispatch(fetchDeletedRooms()))
       .then(() => dispatch(fetchRooms()));
-  }
+  };
   const rows = deletedRooms?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>

@@ -254,8 +254,8 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
 
   }
 
-  async getAvatarURLByKeycloakId(keycloakId: string): Promise<string> {
-    return await this.repository.findAvatarURLById(keycloakId);
+  async getAvatarURLByAccountId(accountId: string): Promise<string> {
+    return await this.repository.findAvatarURLById(accountId);
   }
 
   async getCurrentProfileInformation(keycloakId: string): Promise<Accounts> {
@@ -265,5 +265,9 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
+  }
+
+  getUsernameList(): Promise<string[]> {
+    return this.repository.findUsername();
   }
 }

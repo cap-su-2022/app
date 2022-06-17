@@ -1,19 +1,18 @@
-import React from 'react';
+import React from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useAppDispatch } from "../../redux/hooks";
 import { FPT_ORANGE_COLOR, WHITE } from "@app/constants";
 import { deviceWidth } from "../../utils/device";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
+import { useAppDispatch } from "../../hooks/use-app-dispatch.hook";
 
 const RoomInBookingDetail: React.FC = () => {
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
 
   return (
-    <SafeAreaView style={{ flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <View style={{
-        display: 'flex',
+        display: "flex",
         flexGrow: 1,
         justifyContent: 'space-between'
       }}>

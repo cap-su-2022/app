@@ -9,14 +9,13 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon, ClockIcon,
   RefreshIcon,
-  SwitchHorizontalIcon,
-  SwitchVerticalIcon
 } from "react-native-heroicons/outline";
 import Asterik from "../../components/text/asterik";
 import { deviceHeight, deviceWidth } from "../../utils/device";
 import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE } from "@app/constants";
 import RNPickerSelect from "react-native-picker-select";
 import { getTimeDetailBySlotNumber } from "../../utils/slot-resolver.util";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
 
 const SLOTS = [
   {
@@ -45,7 +44,7 @@ const SLOTS = [
   },
 ]
 const RoomBookingLater: React.FC = () => {
-  const navigate = useNavigation<NativeStackNavigationProp<any>>();
+  const navigate = useAppNavigation();
 
   const [isSlotSelected, setSlotSelected] = useState<boolean>(false);
   const [slotStart, setSlotStart] = useState<number>(1);
