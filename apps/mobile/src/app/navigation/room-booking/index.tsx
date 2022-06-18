@@ -14,6 +14,7 @@ import { RoomBookingSuccess } from "../../screens/booking/room-booking-success";
 import { RoomBookingFail } from "../../screens/booking/room-booking-fail";
 import RoomBookingStep2 from "./room-booking-step2.navigator";
 import RoomBookingWishlistNavigator from "./room-booking-wishlist.navigator";
+import RoomBookingAlreadyBook from "../../screens/booking/room-booking-already-book";
 
 const RoomBookingNavigator: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
@@ -21,7 +22,7 @@ const RoomBookingNavigator: React.FC = () => {
   return (
     <>
       <StatusBar hidden />
-      <StackNavigator initialRouteName={"ROOM_BOOKING_1"} screenOptions={{
+      <StackNavigator initialRouteName={"ROOM_BOOKING_ALREADY_BOOKED"} screenOptions={{
         headerTitle: () => <Text style={styles.headerText}>
           Request for Room Booking
         </Text>,
@@ -33,6 +34,9 @@ const RoomBookingNavigator: React.FC = () => {
           <HeartIcon color={PINK} />
         </TouchableOpacity>
       }}>
+        <StackScreen name={"ROOM_BOOKING_ALREADY_BOOKED"} options={{
+          headerTitle: ""
+        }} component={RoomBookingAlreadyBook} />
         <StackScreen name={"ROOM_BOOKING_1"} options={{}} component={RoomBooking1} />
         <StackScreen name={"ROOM_BOOKING_2"} options={{
           headerShown: false

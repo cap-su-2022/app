@@ -19,15 +19,19 @@ const TableFooter: React.FC = () => {
       <Pagination total={totalPage} page={activePage}
                   onChange={(e) => handleChangePageIndex(e)}
                   withEdges
-                  color="orange"/>
+                  color="orange" />
+      <div>
+        Showing 1 of 9999
+      </div>
     </div>
   );
 };
 
 const useStyles = createStyles({
   pagination: {
-    display: 'flex',
-    justifyContent: 'center'
+    display: "flex",
+    justifyContent: "space-around",
+    flexDirection: "row"
   }
 });
 
