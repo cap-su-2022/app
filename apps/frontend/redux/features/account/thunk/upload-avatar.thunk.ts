@@ -1,5 +1,3 @@
-import { UploadAvatarRequestModel } from './../upload-avatar-request.model';
-import { UploadAvatarResponseModel } from './../upload-avatar-response.model';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
@@ -7,6 +5,17 @@ import axios from 'axios';
 interface RejectValue {
   message: string;
 }
+
+export interface UploadAvatarRequestModel {
+  img: File,
+}
+
+export interface UploadAvatarResponseModel {
+  url: string;
+  img: File;
+  id: string;
+}
+
 
 export const uploadAvatar = createAsyncThunk<
   UploadAvatarResponseModel,

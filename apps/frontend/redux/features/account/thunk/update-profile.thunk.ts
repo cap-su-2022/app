@@ -1,12 +1,28 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { UpdateAccountResponseModel } from "../update-account-response.model";
-import { UpdateAccountRequestModel } from "../update-account-request.model";
 import { toggleSpinnerOff, toggleSpinnerOn } from "../../spinner";
 import axios from "axios";
 
 interface RejectValue {
   message: string;
 }
+
+export interface UpdateAccountRequestModel {
+  id: string,
+  fullname: string,
+  phone: string,
+  email: string
+  description: string,
+}
+
+export interface UpdateAccountResponseModel {
+  fullname: string,
+  phone: string,
+  description: string,
+  id: string,
+  username: string,
+  email: string,
+}
+
 
 export const updateProfile = createAsyncThunk<UpdateAccountResponseModel,
   UpdateAccountRequestModel,

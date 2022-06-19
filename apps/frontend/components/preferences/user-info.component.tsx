@@ -19,7 +19,6 @@ import { uploadAvatar } from '../../redux/features/account/thunk/upload-avatar.t
 import { fetchProfile } from '../../redux/features/account/thunk/fetch-profile.thunk';
 import ChangePassword from './change-password.component';
 import { useTransition, animated } from 'react-spring';
-import { fetchAvatar } from '../../redux/features/account/thunk/fetch-avatar.thunk';
 // interface UserInfoPreferneceProps {}
 
 interface UserInfoModel {

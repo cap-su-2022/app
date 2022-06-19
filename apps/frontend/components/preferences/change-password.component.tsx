@@ -100,7 +100,7 @@ export default function ChangePassword({ username }) {
         required
         name="oldPass"
         className={classes.inputText}
-        placeholder="New Password"
+        placeholder="Current Password"
       />
 
       <PasswordInput

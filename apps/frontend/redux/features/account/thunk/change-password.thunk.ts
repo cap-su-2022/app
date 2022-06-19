@@ -35,6 +35,16 @@ export const changePassword = createAsyncThunk<ChangePasswordResponseModel,
         message: "Access token is invalid"
       });
     }
+    if (response.status === 400){
+      return thunkApi.rejectWithValue({
+        message: "Old password is incorrect"
+      });
+    }
+    if (response.status === 500){
+      return thunkApi.rejectWithValue({
+        message: "Can't connect to server, try again later"
+      });
+    }
   } finally {
     thunkApi.dispatch(toggleSpinnerOff());
   }
