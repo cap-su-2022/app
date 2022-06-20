@@ -7,6 +7,7 @@ import { RoomsRequestPayload } from "../payload/request/rooms.payload";
 import { RoomsResponsePayload } from "../payload/response/rooms.payload";
 import { KeycloakUserInstance } from "../dto/keycloak.user";
 import { Direction } from "../models/search-pagination.payload";
+import {ChooseBookingRoomFilterPayload} from "../payload/request/choose-booking-room-filter.payload";
 
 @Injectable()
 export class RoomsService {
@@ -220,5 +221,9 @@ export class RoomsService {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
+  }
+
+  getRoomsFilterByNameAndType(payload: ChooseBookingRoomFilterPayload) {
+    return this.repository.filterByNameAndType(payload);
   }
 }

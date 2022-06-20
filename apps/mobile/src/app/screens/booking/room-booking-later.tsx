@@ -95,7 +95,7 @@ const RoomBookingLater: React.FC = () => {
 
   const handleNextStep = () => {
     setTimeout(() => {
-      navigate.navigate("ROOM_BOOKING_2");
+      navigate.navigate("ROOM_BOOKING_CHOOSE_ROOM");
     }, 0);
   }
 

@@ -6,17 +6,21 @@ import { RoomWishListResponse } from "../../models/wishlist-booking-room.model";
 import { addToRoomBookingWishlist } from "./thunk/add-to-wishlist.thunk";
 import { fetchBookingRoomDevices } from "./thunk/fetch-booking-room-devices.thunk";
 import { Device } from "../../models/device.model";
+import {fetchChoosingBookingRoom} from "./thunk/fetch-choosing-booking-room.thunk";
+import {ChoosingBookingRoom} from "../../models/choosing-booking-room.model";
 
 interface RoomBookingState {
   bookingRooms: BookingRoom[],
   wishlistBookingRooms: RoomWishListResponse[];
+  choosingBookingRooms: ChoosingBookingRoom[];
   devices: Device[]
 }
 
 const initialState: RoomBookingState = {
   bookingRooms: [],
   wishlistBookingRooms: [],
-  devices: []
+  devices: [],
+  choosingBookingRooms: []
 };
 
 const roomBookingSlice = createSlice({
@@ -43,6 +47,9 @@ const roomBookingSlice = createSlice({
     });
     builder.addCase(fetchBookingRoomDevices.fulfilled, (state, { payload }) => {
       state.devices = payload;
+    });
+    builder.addCase(fetchChoosingBookingRoom.fulfilled, (state, {payload}) => {
+      state.choosingBookingRooms = payload;
     });
   }
 });

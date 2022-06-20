@@ -9,7 +9,6 @@ import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
 import { KeycloakUserInstance } from "../dto/keycloak.user";
-import { RemoveWishlistRequest } from "../payload/request/remove-from-booking-room-wishlist.request.payload";
 
 @Controller("/v1/booking-room")
 @ApiTags("Booking Room")
@@ -18,6 +17,12 @@ import { RemoveWishlistRequest } from "../payload/request/remove-from-booking-ro
 export class BookingRoomController {
 
   constructor(private readonly service: BookingRoomService) {
+  }
+
+  @Get('rooms')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  getChoosingBookingRooms(@Query('filter') filter: string) {
+    return this.service.getChoosingBookingRooms(filter);
   }
 
   @Get("accounts-name")
@@ -152,6 +157,7 @@ export class BookingRoomController {
       slot: slot
     });
   }
+
 }
 
 
