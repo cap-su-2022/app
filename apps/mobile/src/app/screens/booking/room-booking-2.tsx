@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ListRenderItemInfo,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  VirtualizedList
+} from "react-native";
 import { SearchIcon, SortAscendingIcon } from "react-native-heroicons/solid";
 import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE } from "@app/constants";
 import { deviceWidth } from "../../utils/device";
-import { CheckIcon, ChevronRightIcon, DeviceMobileIcon } from "react-native-heroicons/outline";
+import {CheckIcon, ChevronDoubleLeftIcon, ChevronRightIcon, DeviceMobileIcon} from "react-native-heroicons/outline";
 import { fetchBookingRoomDevices } from "../../redux/features/room-booking/thunk/fetch-booking-room-devices.thunk";
 import DelayInput from "react-native-debounce-input";
 import { useNavigation } from "@react-navigation/native";
@@ -11,6 +21,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAppSelector } from "../../hooks/use-app-selector.hook";
 import { useAppDispatch } from "../../hooks/use-app-dispatch.hook";
 import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
+import {Device} from "../../redux/models/device.model";
 
 
 const RoomBooking2: React.FC = () => {
@@ -19,7 +30,10 @@ const RoomBooking2: React.FC = () => {
   const devices = useAppSelector((state) => state.roomBooking.devices);
   const dispatch = useAppDispatch();
 
-  const [isSelected, setSelected] = useState<boolean>(false);
+  const [deviceIds, setDeviceIds] = useState<string[]>([]);
+
+  console.log(deviceIds);
+
 
   const [search, setSearch] = useState<string>("");
   const [sort, setSort] = useState<"ASC" | "DESC">("ASC");
@@ -57,57 +71,138 @@ const RoomBooking2: React.FC = () => {
     );
   }
 
+  const DeviceRenderItem: React.FC<{
+    device: Device
+  }> = (props) => {
+
+    return (
+      <TouchableOpacity
+        onPress={() => deviceIds.filter((id) => id === props.device.id)[0]
+          ? setDeviceIds(deviceIds.filter((id) => id !== props.device.id))
+          : setDeviceIds([...deviceIds, props.device.id])}
+        style={[styles.selectCircleButton, deviceIds.filter((id) => id === props.device.id)[0] ? {
+          borderWidth: 2,
+          borderColor: FPT_ORANGE_COLOR
+        }: null ]}>
+        <View style={styles.deviceIconContainer}>
+          <DeviceMobileIcon color={FPT_ORANGE_COLOR} />
+        </View>
+
+        <View style={styles.deviceContainer}>
+          <View style={styles.deviceDescriptionContainer}>
+            <Text style={{
+              color: BLACK,
+              fontSize: deviceWidth / 24,
+              fontWeight: "600"
+            }}>
+              {props.device.name}
+            </Text>
+            <Text style={{
+              fontSize: deviceWidth / 26
+            }}>
+              Device Code: {props.device.id.substring(props.device.id.length - 12, props.device.id.length)}
+            </Text>
+          </View>
+
+
+          <View style={{
+            marginTop: -20,
+            marginRight: 10
+          }}>
+            <TouchableOpacity style={styles.viewDetailButton}>
+              <Text style={styles.viewDetailButtonText}>View detail</Text>
+            </TouchableOpacity>
+            <View style={{
+              display: 'flex',
+              flexDirection: 'row',
+            }}>
+              <TouchableOpacity style={{
+                height: 30,
+                width: 30,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderColor: FPT_ORANGE_COLOR,
+                borderWidth: 2,
+                borderTopLeftRadius: 8,
+                borderBottomLeftRadius: 8,
+              }}>
+                <Text style={{
+                  color: FPT_ORANGE_COLOR,
+                  fontWeight: '600',
+                  fontSize: deviceWidth / 23
+                }}>-</Text>
+              </TouchableOpacity>
+              <TextInput style={{
+                height: 30,
+                width: 30,
+                borderRightWidth: 0,
+                borderLeftWidth: 0,
+                borderTopColor: FPT_ORANGE_COLOR,
+                borderBottomColor: FPT_ORANGE_COLOR,
+                borderTopWidth: 2,
+                borderBottomWidth: 2,
+              }}/>
+              <TouchableOpacity style={{
+                height: 30,
+                width: 30,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderColor: FPT_ORANGE_COLOR,
+                borderWidth: 2,
+                borderTopRightRadius: 8,
+                borderBottomRightRadius: 8,
+              }}>
+                <Text style={{
+                  color: FPT_ORANGE_COLOR,
+                  fontWeight: '600',
+                  fontSize: deviceWidth / 23
+                }}>+</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+      </TouchableOpacity>
+    );
+  }
+
   return (
     <SafeAreaView style={{ flex: 1}}>
       <View style={styles.container}>
         <View>
           <Filtering />
-          <ScrollView>
-
-            {devices.map((device) => {
-              return (
-                <TouchableOpacity
-                  onPress={() => setSelected(!isSelected)}
-                  style={[styles.selectCircleButton, {
-                    borderColor: isSelected ? FPT_ORANGE_COLOR : GRAY
-                  }]}>
-                  {!isSelected
-                    ? <View style={styles.selectOff} />
-                    : <View style={styles.selectOn}>
-                      <CheckIcon size={deviceWidth / 25} color={FPT_ORANGE_COLOR} />
-                    </View>}
-                  <View style={styles.deviceIconContainer}>
-                    <DeviceMobileIcon color={FPT_ORANGE_COLOR} />
-                  </View>
-
-                  <View style={styles.deviceContainer}>
-                    <View style={styles.deviceDescriptionContainer}>
-                      <Text style={{
-                        color: BLACK,
-                        fontSize: deviceWidth / 24,
-                        fontWeight: "600"
-                      }}>
-                        {device.name}
-                      </Text>
-                      <Text style={{
-                        fontSize: deviceWidth / 26
-                      }}>
-                        Device Code: {device.id.substring(device.id.length - 12, device.id.length)}
-                      </Text>
-                    </View>
-
-
-                    <TouchableOpacity style={styles.viewDetailButton}>
-                      <Text style={styles.viewDetailButtonText}>View detail</Text>
-                    </TouchableOpacity>
-                  </View>
-
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+          <VirtualizedList
+            getItemCount={(data) => data.length}
+            getItem={(data, index) => data[index]}
+            renderItem={(item: ListRenderItemInfo<Device>) => <DeviceRenderItem device={item.item}/>}
+            data={devices}/>
         </View>
         <View style={styles.footerContainer}>
+
+          <TouchableOpacity
+            onPress={() => navigate.pop()}
+            style={{
+              borderRadius: 8,
+              borderWidth: 2,
+              height: 50,
+              width: deviceWidth / 2.2,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderColor: FPT_ORANGE_COLOR
+            }}
+          >
+            <ChevronDoubleLeftIcon size={deviceWidth / 18} color={FPT_ORANGE_COLOR}/>
+            <Text style={{
+              fontWeight: '600',
+              fontSize: deviceWidth / 21,
+              color: FPT_ORANGE_COLOR
+            }}>Return back</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
             onPress={() => navigate.navigate("ROOM_BOOKING_3")} style={styles.nextStepButton}>
             <ChevronRightIcon color={WHITE} />
@@ -155,7 +250,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
   },
   selectOn: {
     height: 20,
@@ -209,11 +303,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: deviceWidth / 21,
     color: WHITE,
-    marginLeft: 10
   },
   nextStepButton: {
     height: 50,
-    width: deviceWidth / 1.25,
+    width: deviceWidth / 2.2,
     backgroundColor: FPT_ORANGE_COLOR,
     borderRadius: 8,
     display: 'flex',
@@ -223,9 +316,14 @@ const styles = StyleSheet.create({
   },
   footerContainer: {
     display: 'flex',
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     alignItems: 'center',
-    height: 70,
+    height: 90,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: WHITE
   },
   filterContainer: {

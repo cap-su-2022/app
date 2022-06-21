@@ -23,12 +23,14 @@ const ChooseRoomItemDetail: React.FC<ChooseRoomItemDetailProps> = (props) => {
        <ScrollView style={{
          display: 'flex',
          flexDirection: 'column',
-         flex: 1
+         flex: 1,
+         marginBottom: 20
        }}>
          <Text style={{
            color: BLACK,
            fontSize: deviceWidth / 19,
-           fontWeight: '600'
+           fontWeight: '600',
+           textAlign: 'center'
          }}>
            Room {room.name}
          </Text>

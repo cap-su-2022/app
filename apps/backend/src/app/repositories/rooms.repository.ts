@@ -2,7 +2,7 @@ import { Brackets, In, Like, Repository, UpdateResult } from "typeorm";
 import { RepositoryPaginationPayload } from "../models/search-pagination.payload";
 import { Rooms } from "../models/rooms.entity";
 import { CustomRepository } from "../decorators/typeorm-ex.decorator";
-import { Accounts } from "../models";
+import {Accounts, Devices} from "../models";
 import {ChooseBookingRoomFilterPayload} from "../payload/request/choose-booking-room-filter.payload";
 
 
@@ -137,13 +137,13 @@ export class RoomsRepository extends Repository<Rooms> {
       .getMany();
   }
 
-  async findRoomNames() {
+  async findRoomNames(): Promise<Devices[]> {
     return this.createQueryBuilder("rooms")
       .select("rooms.name", "name")
+      .addSelect('rooms.id', 'id')
       .where("rooms.is_disabled = false")
       .andWhere("rooms.is_deleted = false")
-      .getRawMany<{ name: string }>()
-      .then((data) => data.map((room) => room.name));
+      .getRawMany<Devices>();
   }
 
   async findById(id: string): Promise<Rooms> {
