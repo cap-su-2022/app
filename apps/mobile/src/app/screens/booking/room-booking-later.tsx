@@ -7,7 +7,7 @@ import {
   ChartPieIcon,
   ChevronDoubleRightIcon,
   ChevronLeftIcon,
-  ChevronRightIcon, ClockIcon,
+  ChevronRightIcon, ClockIcon, ExclamationCircleIcon,
   RefreshIcon,
 } from "react-native-heroicons/outline";
 import Asterik from "../../components/text/asterik";
@@ -16,6 +16,8 @@ import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE } from "@app/constants
 import RNPickerSelect from "react-native-picker-select";
 import { getTimeDetailBySlotNumber } from "../../utils/slot-resolver.util";
 import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
+import dayjs from "dayjs";
+import AlertModal from "../../components/modals/alert-modal.component";
 
 const SLOTS = [
   {
@@ -46,12 +48,26 @@ const SLOTS = [
 const RoomBookingLater: React.FC = () => {
   const navigate = useAppNavigation();
 
+  const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
   const [isSlotSelected, setSlotSelected] = useState<boolean>(false);
   const [slotStart, setSlotStart] = useState<number>(1);
   const [slotEnd, setSlotEnd] = useState<number>(1);
   const [currentSelectedDate, setCurrentSelectedDate] = useState<string>('2022-05-01');
 
   const [bookTimeDetail, setBookTimeDetail] = useState<string>();
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  useEffect(() => {
+    const dayOfWeek = dayjs(currentSelectedDate).day();
+    if (dayOfWeek === 0) {
+      const currentDateString = dayjs().toISOString().split('T')[0];
+      setCurrentSelectedDate(currentDateString);
+      setErrorMessage("Please select other day than Sunday");
+      setErrorModalShown(true);
+    }
+  }, [currentSelectedDate]);
+
+
 
 
   useEffect(() => {
@@ -132,7 +148,14 @@ const RoomBookingLater: React.FC = () => {
           <Calendar current={currentSelectedDate}
                     minDate={'2022-05-17'}
                     maxDate={'2022-09-31'}
-                    onDayPress={(e) => console.log(e)}
+                    onDayPress={(e) => setCurrentSelectedDate(e.dateString)}
+                    markedDates={{
+                      [currentSelectedDate]: {
+                        marked: true,
+                        selected: true,
+                        selectedColor: FPT_ORANGE_COLOR
+                      }
+                    }}
                     renderArrow={(direction) => <View>
                       {direction === 'left'
                         ? <View style={styles.selectDateChevronLeftButton}>
@@ -205,6 +228,54 @@ const RoomBookingLater: React.FC = () => {
           </Text>
           </View>
         </View>
+        <AlertModal
+          isOpened={isErrorModalShown}
+          height={deviceWidth / 2}
+          width={ deviceWidth / 1.5}
+          toggleShown={() => setErrorModalShown(!isErrorModalShown)}>
+          <View style={{
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'column',
+            justifyContent: 'space-around',
+            flex: 1
+          }}>
+            <View style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}>
+              <ExclamationCircleIcon size={deviceWidth / 8} color={FPT_ORANGE_COLOR}/>
+              <Text style={{
+                color: BLACK,
+                fontWeight: '600',
+                fontSize: deviceWidth / 23,
+                textAlign: 'center'
+              }}>
+                {errorMessage}
+              </Text>
+            </View>
+            <TouchableOpacity onPress={() => setErrorModalShown(false)}
+                              style={{
+              width: deviceWidth / 1.7,
+              height: 40,
+              backgroundColor: FPT_ORANGE_COLOR,
+              borderRadius: 8,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              <Text style={{
+                color: WHITE,
+                fontWeight: '600',
+                fontSize: deviceWidth / 23
+              }}>
+                I understand
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+        </AlertModal>
       </ScrollView>
     );
   }
