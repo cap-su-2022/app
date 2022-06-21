@@ -23,7 +23,7 @@ import {
   CheckIcon,
   ChevronDoubleLeftIcon,
   ChevronRightIcon,
-  DeviceMobileIcon,
+  DeviceMobileIcon, ExclamationCircleIcon,
 } from 'react-native-heroicons/outline';
 import { fetchBookingRoomDevices } from '../../redux/features/room-booking/thunk/fetch-booking-room-devices.thunk';
 import DelayInput from 'react-native-debounce-input';
@@ -34,6 +34,7 @@ import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
 import { Device } from '../../redux/models/device.model';
 import { step3ScheduleRoomBooking } from '../../redux/features/room-booking/slice';
+import AlertModal from "../../components/modals/alert-modal.component";
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
@@ -48,9 +49,6 @@ const RoomBooking2: React.FC = () => {
   const [search, setSearch] = useState<string>('');
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
-
-  const [search, setSearch] = useState<string>("");
-  const [sort, setSort] = useState<"ASC" | "DESC">("ASC");
 
   useEffect(() => {
     dispatch(
@@ -272,7 +270,6 @@ const RoomBooking2: React.FC = () => {
             onPress={() => handleNextStep()}
             style={styles.nextStepButton}
           >
-            onPress={() => handleNextStep()} style={styles.nextStepButton}>
             <ChevronRightIcon color={WHITE} />
             <Text style={styles.nextStepButtonText}>Next Step</Text>
           </TouchableOpacity>
