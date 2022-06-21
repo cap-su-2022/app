@@ -13,7 +13,13 @@ import {
 import { SearchIcon, SortAscendingIcon } from "react-native-heroicons/solid";
 import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE } from "@app/constants";
 import { deviceWidth } from "../../utils/device";
-import {CheckIcon, ChevronDoubleLeftIcon, ChevronRightIcon, DeviceMobileIcon} from "react-native-heroicons/outline";
+import {
+  CheckIcon,
+  ChevronDoubleLeftIcon,
+  ChevronRightIcon,
+  DeviceMobileIcon,
+  ExclamationCircleIcon
+} from "react-native-heroicons/outline";
 import { fetchBookingRoomDevices } from "../../redux/features/room-booking/thunk/fetch-booking-room-devices.thunk";
 import DelayInput from "react-native-debounce-input";
 import { useNavigation } from "@react-navigation/native";
@@ -22,6 +28,7 @@ import { useAppSelector } from "../../hooks/use-app-selector.hook";
 import { useAppDispatch } from "../../hooks/use-app-dispatch.hook";
 import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
 import {Device} from "../../redux/models/device.model";
+import AlertModal from "../../components/modals/alert-modal.component";
 
 
 const RoomBooking2: React.FC = () => {
@@ -31,9 +38,7 @@ const RoomBooking2: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const [deviceIds, setDeviceIds] = useState<string[]>([]);
-
-  console.log(deviceIds);
-
+  const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
 
   const [search, setSearch] = useState<string>("");
   const [sort, setSort] = useState<"ASC" | "DESC">("ASC");
@@ -44,6 +49,14 @@ const RoomBooking2: React.FC = () => {
       sort: sort
     }));
   }, [search, sort, dispatch]);
+
+  const handleNextStep = () => {
+    if (deviceIds.length < 1) {
+      setErrorModalShown(true);
+    } else {
+      navigate.navigate("ROOM_BOOKING_3")
+    }
+  }
 
   const Filtering: React.FC = () => {
     return (
@@ -204,7 +217,7 @@ const RoomBooking2: React.FC = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigate.navigate("ROOM_BOOKING_3")} style={styles.nextStepButton}>
+            onPress={() => handleNextStep()} style={styles.nextStepButton}>
             <ChevronRightIcon color={WHITE} />
             <Text style={styles.nextStepButtonText}>
               Next Step
@@ -212,6 +225,54 @@ const RoomBooking2: React.FC = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <AlertModal
+        isOpened={isErrorModalShown}
+        height={deviceWidth / 1.7}
+        width={deviceWidth / 1.3}
+        toggleShown={() => setErrorModalShown(!isErrorModalShown)}
+      >
+        <View style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          flex: 1
+        }}>
+          <View style={{
+            display: 'flex',
+            alignItems: 'center',
+          }}>
+            <ExclamationCircleIcon size={deviceWidth / 8} color={FPT_ORANGE_COLOR}/>
+            <Text style={{
+              color: BLACK,
+              fontWeight: '500',
+              fontSize: deviceWidth / 23,
+              textAlign: 'center'
+            }}>
+              Please choose device(s) before going to the next step
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 40,
+              width: deviceWidth / 1.7,
+              backgroundColor: FPT_ORANGE_COLOR,
+              borderRadius: 8
+            }}
+            onPress={() => setErrorModalShown(false)}>
+            <Text style={{
+              color: WHITE,
+              fontSize: deviceWidth / 23,
+              fontWeight: '600'
+            }}>
+              I understand
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </AlertModal>
     </SafeAreaView>
   );
 
