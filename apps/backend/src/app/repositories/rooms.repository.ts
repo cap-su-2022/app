@@ -3,6 +3,7 @@ import { RepositoryPaginationPayload } from "../models/search-pagination.payload
 import { Rooms } from "../models/rooms.entity";
 import { CustomRepository } from "../decorators/typeorm-ex.decorator";
 import { Accounts } from "../models";
+import {ChooseBookingRoomFilterPayload} from "../payload/request/choose-booking-room-filter.payload";
 
 
 @CustomRepository(Rooms)
@@ -161,5 +162,19 @@ export class RoomsRepository extends Repository<Rooms> {
       .andWhere("rooms.is_deleted = false")
       .andWhere("rooms.id = :roomId", { roomId: id })
       .getRawOne<Rooms>();
+  }
+
+  filterByNameAndType(payload: ChooseBookingRoomFilterPayload) {
+    return this.createQueryBuilder("rooms")
+      .select('rooms.id', 'id')
+      .addSelect('rooms.name', 'name')
+      .addSelect('rooms.type', 'type')
+      .where('rooms.is_disabled = false')
+      .andWhere('rooms.is_deleted = false')
+      .andWhere('rooms.type LIKE :type', {type: `%${payload.roomType.name}%`})
+      .andWhere('rooms.name LIKE :name', {name: `%${payload.roomName.name}%`})
+      .orderBy('rooms.name', payload.roomName.sort)
+      .addOrderBy('rooms.type', payload.roomType.sort)
+      .getRawMany<Rooms>();
   }
 }

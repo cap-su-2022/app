@@ -9,7 +9,7 @@ import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
 import { KeycloakUserInstance } from "../dto/keycloak.user";
-import { RemoveWishlistRequest } from "../payload/request/remove-from-booking-room-wishlist.request.payload";
+import {GetBookingRoomsPaginationPayload} from "../payload/request/get-booking-rooms-pagination.payload";
 
 @Controller("/v1/booking-room")
 @ApiTags("Booking Room")
@@ -20,6 +20,12 @@ export class BookingRoomController {
   constructor(private readonly service: BookingRoomService) {
   }
 
+  @Get('rooms')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  getChoosingBookingRooms(@Query('filter') filter: string) {
+    return this.service.getChoosingBookingRooms(filter);
+  }
+
   @Get("accounts-name")
   getUsernameList() {
     return this.service.getUsernameList();
@@ -28,6 +34,38 @@ export class BookingRoomController {
   @Get("rooms-name")
   getRoomsName() {
     return this.service.getRoomsName();
+  }
+
+  @Get("search")
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  getAllBookingRoomsPagination(
+    @Query("roomName") roomName = '',
+    @Query("sort") sort = 'ASC',
+    @Query("limit") limit = 5,
+    @Query("page") page = 1,
+    @Query("reasonType") reasonType = '',
+    @Query("checkInAt") checkInAt = 0,
+    @Query("checkOutAt") checkOutAt = 0,
+  ) {
+    console.log({
+      checkOutAt: checkOutAt,
+      checkInAt: checkInAt,
+      roomName: roomName,
+      page: page,
+      sort: sort,
+      limit: limit,
+      reasonType: reasonType,
+    });
+    return this.service.getAllBookingRoomsPagination({
+      checkOutAt: checkOutAt,
+      checkInAt: checkInAt,
+      roomName: roomName,
+      page: page,
+      sort: sort,
+      limit: limit,
+      reasonType: reasonType,
+
+    } as GetBookingRoomsPaginationPayload);
   }
 
   @Get()
@@ -152,6 +190,7 @@ export class BookingRoomController {
       slot: slot
     });
   }
+
 }
 
 

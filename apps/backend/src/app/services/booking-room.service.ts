@@ -10,6 +10,8 @@ import { KeycloakUserInstance } from "../dto/keycloak.user";
 import { RemoveWishlistRequest } from "../payload/request/remove-from-booking-room-wishlist.request.payload";
 import { DevicesService } from "./devices.service";
 import { AccountsService } from "./accounts.service";
+import {ChooseBookingRoomFilterPayload} from "../payload/request/choose-booking-room-filter.payload";
+import {GetBookingRoomsPaginationPayload} from "../payload/request/get-booking-rooms-pagination.payload";
 
 @Injectable()
 export class BookingRoomService {
@@ -89,5 +91,29 @@ export class BookingRoomService {
 
   getRoomsName(): Promise<string[]> {
     return this.roomService.getRoomsName();
+  }
+
+  getChoosingBookingRooms(filter: string) {
+    try {
+      const payload = filter ? JSON.parse(filter) as ChooseBookingRoomFilterPayload : {
+        roomName: {
+          name: '',
+          sort: 'ASC'
+        },
+        roomType: {
+          name: '',
+          sort: 'ASC'
+        }
+      } as ChooseBookingRoomFilterPayload;
+
+      return this.roomService.getRoomsFilterByNameAndType(payload);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  getAllBookingRoomsPagination(payload: GetBookingRoomsPaginationPayload) {
+    return this.repository.findByPaginationPayload(payload);
   }
 }
