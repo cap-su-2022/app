@@ -11,6 +11,7 @@ import { RemoveWishlistRequest } from "../payload/request/remove-from-booking-ro
 import { DevicesService } from "./devices.service";
 import { AccountsService } from "./accounts.service";
 import {ChooseBookingRoomFilterPayload} from "../payload/request/choose-booking-room-filter.payload";
+import {GetBookingRoomsPaginationPayload} from "../payload/request/get-booking-rooms-pagination.payload";
 
 @Injectable()
 export class BookingRoomService {
@@ -110,5 +111,9 @@ export class BookingRoomService {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
+  }
+
+  getAllBookingRoomsPagination(payload: GetBookingRoomsPaginationPayload) {
+    return this.repository.findByPaginationPayload(payload);
   }
 }
