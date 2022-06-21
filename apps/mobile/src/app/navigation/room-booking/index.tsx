@@ -18,6 +18,7 @@ import RoomBookingAlreadyBook from "../../screens/booking/room-booking-already-b
 import RoomBookingChooseRoom from "../../screens/booking/room-booking-choose-room";
 import ChooseRoomItemDetail from "../../screens/booking/ChooseRoom/choose-room-item-detail";
 import RoomBookingReadyToCheckOut from "../../screens/booking/checkout/ready-to-checkout";
+import NoRoomBookingCheckOut from "../../screens/booking/checkout/no-room-booking";
 
 const RoomBookingNavigator: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
@@ -56,7 +57,6 @@ const RoomBookingNavigator: React.FC = () => {
         <StackScreen name={"ROOM_BOOKING_NOW"} component={RoomBookingNow} />
         <StackScreen name={"ROOM_BOOKING_LATER"} component={RoomBookingLater} />
         <StackScreen name="ROOM_BOOKING_CHOOSE_ROOM" component={RoomBookingChooseRoom}/>
-        <StackScreen name="ROOM_BOOKING_READY_TO_CHECKOUT" component={RoomBookingReadyToCheckOut}/>
         <StackScreen name="ROOM_BOOKING_VIEW_ROOM_DETAIL" component={ChooseRoomItemDetail}/>
         <StackScreen name={"ROOM_BOOKING_WISHLIST"} options={{
           headerShown: false
