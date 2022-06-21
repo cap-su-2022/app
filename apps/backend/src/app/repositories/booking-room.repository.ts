@@ -29,7 +29,12 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .andWhere('booking_request.time_checkin >= :timeCheckIn', {timeCheckIn: payload.checkInAt})
       .andWhere('booking_request.time_checkout <= :timeCheckOut', {timeCheckOut: payload.checkOutAt})
       .orderBy('r.name', payload.sort === 'ASC' ? 'ASC' : 'DESC')
-
+      .limit(payload.limit)
+      .offset(payload.page)
       .getRawMany<BookingRequest>();
+  }
+
+  getTotalRowCount(): Promise<number> {
+    return;
   }
 }
