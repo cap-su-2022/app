@@ -13,21 +13,54 @@ interface RoomBookingState {
   bookingRooms: BookingRoom[],
   wishlistBookingRooms: RoomWishListResponse[];
   choosingBookingRooms: ChoosingBookingRoom[];
-  devices: Device[]
+  devices: Device[],
+  addRoomBooking: AddRoomBookingPayload,
+}
+
+interface BookingDevice {
+  devideId: string;
+  quantity: number;
+}
+
+interface AddRoomBookingPayload {
+  fromSlot: string;
+  toSlot: string;
+  roomId: string;
+  devices: BookingDevice[];
 }
 
 const initialState: RoomBookingState = {
   bookingRooms: [],
   wishlistBookingRooms: [],
   devices: [],
-  choosingBookingRooms: []
+  choosingBookingRooms: [],
+  addRoomBooking: {} as AddRoomBookingPayload,
 };
 
 const roomBookingSlice = createSlice({
   name: 'room-booking',
   initialState: initialState,
   reducers: {
-
+    step1ScheduleRoomBooking(state, {payload}) {
+      console.log(payload)
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        fromSlot: payload.fromSlot,
+        toSlot: payload.toSlot,
+      }
+    },
+    step2ScheduleRoomBooking(state, {payload}) {
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        roomId: payload.roomId
+      }
+    },
+    step3ScheduleRoomBooking(state, {payload}) {
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        devices: payload.devices
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAllBookingRooms.fulfilled, (state, {payload}) => {
@@ -56,4 +89,4 @@ const roomBookingSlice = createSlice({
 
 export const roomBookingReducer = roomBookingSlice.reducer;
 
-
+export const {step1ScheduleRoomBooking, step2ScheduleRoomBooking, step3ScheduleRoomBooking} = roomBookingSlice.actions;
