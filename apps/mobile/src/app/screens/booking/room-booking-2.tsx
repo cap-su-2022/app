@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   ListRenderItemInfo,
   SafeAreaView,
@@ -8,21 +8,32 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  VirtualizedList
-} from "react-native";
-import { SearchIcon, SortAscendingIcon } from "react-native-heroicons/solid";
-import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, WHITE } from "@app/constants";
-import { deviceWidth } from "../../utils/device";
-import {CheckIcon, ChevronDoubleLeftIcon, ChevronRightIcon, DeviceMobileIcon} from "react-native-heroicons/outline";
-import { fetchBookingRoomDevices } from "../../redux/features/room-booking/thunk/fetch-booking-room-devices.thunk";
-import DelayInput from "react-native-debounce-input";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useAppSelector } from "../../hooks/use-app-selector.hook";
-import { useAppDispatch } from "../../hooks/use-app-dispatch.hook";
-import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
-import {Device} from "../../redux/models/device.model";
-
+  VirtualizedList,
+} from 'react-native';
+import { SearchIcon, SortAscendingIcon } from 'react-native-heroicons/solid';
+import {
+  BLACK,
+  FPT_ORANGE_COLOR,
+  GRAY,
+  LIGHT_GRAY,
+  WHITE,
+} from '@app/constants';
+import { deviceWidth } from '../../utils/device';
+import {
+  CheckIcon,
+  ChevronDoubleLeftIcon,
+  ChevronRightIcon,
+  DeviceMobileIcon,
+} from 'react-native-heroicons/outline';
+import { fetchBookingRoomDevices } from '../../redux/features/room-booking/thunk/fetch-booking-room-devices.thunk';
+import DelayInput from 'react-native-debounce-input';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useAppSelector } from '../../hooks/use-app-selector.hook';
+import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
+import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
+import { Device } from '../../redux/models/device.model';
+import { step3ScheduleRoomBooking } from '../../redux/features/room-booking/slice';
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
@@ -34,153 +45,192 @@ const RoomBooking2: React.FC = () => {
 
   console.log(deviceIds);
 
-
-  const [search, setSearch] = useState<string>("");
-  const [sort, setSort] = useState<"ASC" | "DESC">("ASC");
+  const [search, setSearch] = useState<string>('');
+  const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
 
   useEffect(() => {
-    dispatch(fetchBookingRoomDevices({
-      name: search,
-      sort: sort
-    }));
+    dispatch(
+      fetchBookingRoomDevices({
+        name: search,
+        sort: sort,
+      })
+    );
   }, [search, sort, dispatch]);
+
+  const handleNextStep = () => {
+    navigate.navigate('ROOM_BOOKING_3');
+    dispatch(step3ScheduleRoomBooking({ devices: deviceIds }));
+  };
 
   const Filtering: React.FC = () => {
     return (
       <View style={styles.filterContainer}>
-        <Text style={styles.filterHeaderText}>
-          FILTERING
-        </Text>
+        <Text style={styles.filterHeaderText}>FILTERING</Text>
         <View style={styles.filterBodyContainer}>
           <View style={styles.filterInputContainer}>
             <View style={styles.filterInputIconContainer}>
               <SearchIcon color={BLACK} />
             </View>
             <View style={styles.filterInput}>
-              <DelayInput minLength={0}
-                          value={search}
-                          onChangeText={(text) => setSearch(text.toString())}
-                          placeholder="Search by device name" />
+              <DelayInput
+                minLength={0}
+                value={search}
+                onChangeText={(text) => setSearch(text.toString())}
+                placeholder="Search by device name"
+              />
             </View>
           </View>
           <TouchableOpacity style={styles.filterSortButton}>
-            <SortAscendingIcon color={BLACK}/>
+            <SortAscendingIcon color={BLACK} />
           </TouchableOpacity>
         </View>
       </View>
     );
-  }
+  };
 
   const DeviceRenderItem: React.FC<{
-    device: Device
+    device: Device;
   }> = (props) => {
-
     return (
       <TouchableOpacity
-        onPress={() => deviceIds.filter((id) => id === props.device.id)[0]
-          ? setDeviceIds(deviceIds.filter((id) => id !== props.device.id))
-          : setDeviceIds([...deviceIds, props.device.id])}
-        style={[styles.selectCircleButton, deviceIds.filter((id) => id === props.device.id)[0] ? {
-          borderWidth: 2,
-          borderColor: FPT_ORANGE_COLOR
-        }: null ]}>
+        onPress={() =>
+          deviceIds.filter((id) => id === props.device.id)[0]
+            ? setDeviceIds(deviceIds.filter((id) => id !== props.device.id))
+            : setDeviceIds([...deviceIds, props.device.id])
+        }
+        style={[
+          styles.selectCircleButton,
+          deviceIds.filter((id) => id === props.device.id)[0]
+            ? {
+                borderWidth: 2,
+                borderColor: FPT_ORANGE_COLOR,
+              }
+            : null,
+        ]}
+      >
         <View style={styles.deviceIconContainer}>
           <DeviceMobileIcon color={FPT_ORANGE_COLOR} />
         </View>
 
         <View style={styles.deviceContainer}>
           <View style={styles.deviceDescriptionContainer}>
-            <Text style={{
-              color: BLACK,
-              fontSize: deviceWidth / 24,
-              fontWeight: "600"
-            }}>
+            <Text
+              style={{
+                color: BLACK,
+                fontSize: deviceWidth / 24,
+                fontWeight: '600',
+              }}
+            >
               {props.device.name}
             </Text>
-            <Text style={{
-              fontSize: deviceWidth / 26
-            }}>
-              Device Code: {props.device.id.substring(props.device.id.length - 12, props.device.id.length)}
+            <Text
+              style={{
+                fontSize: deviceWidth / 26,
+              }}
+            >
+              Device Code:{' '}
+              {props.device.id.substring(
+                props.device.id.length - 12,
+                props.device.id.length
+              )}
             </Text>
           </View>
 
-
-          <View style={{
-            marginTop: -20,
-            marginRight: 10
-          }}>
+          <View
+            style={{
+              marginTop: -20,
+              marginRight: 10,
+            }}
+          >
             <TouchableOpacity style={styles.viewDetailButton}>
               <Text style={styles.viewDetailButtonText}>View detail</Text>
             </TouchableOpacity>
-            <View style={{
-              display: 'flex',
-              flexDirection: 'row',
-            }}>
-              <TouchableOpacity style={{
-                height: 30,
-                width: 30,
+            <View
+              style={{
                 display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderColor: FPT_ORANGE_COLOR,
-                borderWidth: 2,
-                borderTopLeftRadius: 8,
-                borderBottomLeftRadius: 8,
-              }}>
-                <Text style={{
-                  color: FPT_ORANGE_COLOR,
-                  fontWeight: '600',
-                  fontSize: deviceWidth / 23
-                }}>-</Text>
+                flexDirection: 'row',
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  height: 30,
+                  width: 30,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderColor: FPT_ORANGE_COLOR,
+                  borderWidth: 2,
+                  borderTopLeftRadius: 8,
+                  borderBottomLeftRadius: 8,
+                }}
+              >
+                <Text
+                  style={{
+                    color: FPT_ORANGE_COLOR,
+                    fontWeight: '600',
+                    fontSize: deviceWidth / 23,
+                  }}
+                >
+                  -
+                </Text>
               </TouchableOpacity>
-              <TextInput style={{
-                height: 30,
-                width: 30,
-                borderRightWidth: 0,
-                borderLeftWidth: 0,
-                borderTopColor: FPT_ORANGE_COLOR,
-                borderBottomColor: FPT_ORANGE_COLOR,
-                borderTopWidth: 2,
-                borderBottomWidth: 2,
-              }}/>
-              <TouchableOpacity style={{
-                height: 30,
-                width: 30,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderColor: FPT_ORANGE_COLOR,
-                borderWidth: 2,
-                borderTopRightRadius: 8,
-                borderBottomRightRadius: 8,
-              }}>
-                <Text style={{
-                  color: FPT_ORANGE_COLOR,
-                  fontWeight: '600',
-                  fontSize: deviceWidth / 23
-                }}>+</Text>
+              <TextInput
+                style={{
+                  height: 30,
+                  width: 30,
+                  borderRightWidth: 0,
+                  borderLeftWidth: 0,
+                  borderTopColor: FPT_ORANGE_COLOR,
+                  borderBottomColor: FPT_ORANGE_COLOR,
+                  borderTopWidth: 2,
+                  borderBottomWidth: 2,
+                }}
+              />
+              <TouchableOpacity
+                style={{
+                  height: 30,
+                  width: 30,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderColor: FPT_ORANGE_COLOR,
+                  borderWidth: 2,
+                  borderTopRightRadius: 8,
+                  borderBottomRightRadius: 8,
+                }}
+              >
+                <Text
+                  style={{
+                    color: FPT_ORANGE_COLOR,
+                    fontWeight: '600',
+                    fontSize: deviceWidth / 23,
+                  }}
+                >
+                  +
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
-
       </TouchableOpacity>
     );
-  }
+  };
 
   return (
-    <SafeAreaView style={{ flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <View>
           <Filtering />
           <VirtualizedList
             getItemCount={(data) => data.length}
             getItem={(data, index) => data[index]}
-            renderItem={(item: ListRenderItemInfo<Device>) => <DeviceRenderItem device={item.item}/>}
-            data={devices}/>
+            renderItem={(item: ListRenderItemInfo<Device>) => (
+              <DeviceRenderItem device={item.item} />
+            )}
+            data={devices}
+          />
         </View>
         <View style={styles.footerContainer}>
-
           <TouchableOpacity
             onPress={() => navigate.pop()}
             style={{
@@ -192,29 +242,35 @@ const RoomBooking2: React.FC = () => {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              borderColor: FPT_ORANGE_COLOR
+              borderColor: FPT_ORANGE_COLOR,
             }}
           >
-            <ChevronDoubleLeftIcon size={deviceWidth / 18} color={FPT_ORANGE_COLOR}/>
-            <Text style={{
-              fontWeight: '600',
-              fontSize: deviceWidth / 21,
-              color: FPT_ORANGE_COLOR
-            }}>Return back</Text>
+            <ChevronDoubleLeftIcon
+              size={deviceWidth / 18}
+              color={FPT_ORANGE_COLOR}
+            />
+            <Text
+              style={{
+                fontWeight: '600',
+                fontSize: deviceWidth / 21,
+                color: FPT_ORANGE_COLOR,
+              }}
+            >
+              Return back
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigate.navigate("ROOM_BOOKING_3")} style={styles.nextStepButton}>
+            onPress={() => handleNextStep()}
+            style={styles.nextStepButton}
+          >
             <ChevronRightIcon color={WHITE} />
-            <Text style={styles.nextStepButtonText}>
-              Next Step
-            </Text>
+            <Text style={styles.nextStepButtonText}>Next Step</Text>
           </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
   );
-
 };
 
 const styles = StyleSheet.create({
@@ -222,14 +278,14 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    marginLeft: 10
+    marginLeft: 10,
   },
-    deviceContainer: {
+  deviceContainer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flexGrow: 1
+    flexGrow: 1,
   },
   deviceIconContainer: {
     display: 'flex',
@@ -240,7 +296,7 @@ const styles = StyleSheet.create({
     width: 50,
     borderWidth: 2,
     borderColor: FPT_ORANGE_COLOR,
-    marginLeft: 10
+    marginLeft: 10,
   },
   selectCircleButton: {
     backgroundColor: WHITE,
@@ -264,7 +320,7 @@ const styles = StyleSheet.create({
     backgroundColor: WHITE,
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   selectOff: {
     height: 20,
@@ -276,10 +332,10 @@ const styles = StyleSheet.create({
     zIndex: 2,
     left: -10,
     top: -10,
-    backgroundColor: WHITE
+    backgroundColor: WHITE,
   },
   viewDetailButtonText: {
-    color: FPT_ORANGE_COLOR
+    color: FPT_ORANGE_COLOR,
   },
   viewDetailButton: {
     borderColor: FPT_ORANGE_COLOR,
@@ -291,13 +347,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     marginTop: 40,
-    marginRight: 10
+    marginRight: 10,
   },
   container: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    flexGrow: 1
+    flexGrow: 1,
   },
   nextStepButtonText: {
     fontWeight: '600',
@@ -312,7 +368,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   footerContainer: {
     display: 'flex',
@@ -324,7 +380,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: WHITE
+    backgroundColor: WHITE,
   },
   filterContainer: {
     display: 'flex',
@@ -345,11 +401,11 @@ const styles = StyleSheet.create({
     margin: 10,
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   filterInputContainer: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   filterInputIconContainer: {
     display: 'flex',

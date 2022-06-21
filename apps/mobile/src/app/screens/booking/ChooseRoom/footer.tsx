@@ -5,6 +5,8 @@ import {BLACK, FPT_ORANGE_COLOR, WHITE} from "@app/constants";
 import {deviceWidth} from "../../../utils/device";
 import {useAppNavigation} from "../../../hooks/use-app-navigation.hook";
 import AlertModal from "../../../components/modals/alert-modal.component";
+import {useAppDispatch} from "../../../hooks/use-app-dispatch.hook";
+import {step2ScheduleRoomBooking} from "../../../redux/features/room-booking/slice";
 
 interface ChooseRoomBookingFooterProps {
   roomId: string;
@@ -15,11 +17,13 @@ const ChooseRoomBookingFooter: React.FC<ChooseRoomBookingFooterProps> = (props) 
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
 
   const navigate = useAppNavigation();
+  const dispatch = useAppDispatch();
 
   const handleNextStep = () => {
     if (props.roomId === undefined) {
       setErrorModalShown(true);
     } else {
+      dispatch(step2ScheduleRoomBooking({roomId: props.roomId}))
       navigate.navigate('ROOM_BOOKING_2');
     }
   }

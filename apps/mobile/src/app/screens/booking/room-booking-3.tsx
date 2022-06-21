@@ -4,10 +4,12 @@ import { BLACK, FPT_ORANGE_COLOR, RED, WHITE } from "@app/constants";
 import { deviceWidth } from "../../utils/device";
 import { ChevronDoubleLeftIcon, TicketIcon } from "react-native-heroicons/outline";
 import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
+import {useAppSelector} from "../../hooks/use-app-selector.hook";
 
 export const RoomBooking3: React.FC = () => {
   const navigate = useAppNavigation();
-
+  const roomBooking = useAppSelector((state) => state.roomBooking.addRoomBooking);
+  console.log(roomBooking)
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{
