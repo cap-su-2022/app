@@ -7,7 +7,7 @@ import {useAppSelector} from "../../hooks/use-app-selector.hook";
 import {useAppDispatch} from "../../hooks/use-app-dispatch.hook";
 import {fetchChoosingBookingRoom} from "../../redux/features/room-booking/thunk/fetch-choosing-booking-room.thunk";
 import {ChoosingBookingRoom} from "../../redux/models/choosing-booking-room.model";
-import { deviceWidth } from '../../utils/device';
+import {deviceHeight, deviceWidth} from '../../utils/device';
 
 const RoomBookingChooseRoom: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -18,11 +18,8 @@ const RoomBookingChooseRoom: React.FC = () => {
   const [sortRoomName, setSortRoomName] = useState<string>("ASC");
   const [sortRoomType, setSortRoomType] = useState<string>("ASC");
 
-  const [roomId, setRoomId] = useState<string>(undefined);
 
-  useEffect(() => {
-    console.log(roomId);
-  }, [roomId]);
+  const [roomId, setRoomId] = useState<string>(undefined);
 
   useEffect(() => {
     dispatch(fetchChoosingBookingRoom({
@@ -53,7 +50,7 @@ const RoomBookingChooseRoom: React.FC = () => {
           />
           <VirtualizedList
             style={{
-              height: deviceWidth / 1.1,
+              height: deviceHeight / 1.55,
             }}
             data={choosingBookingRooms}
             getItemCount={(data) => data.length}
@@ -65,7 +62,9 @@ const RoomBookingChooseRoom: React.FC = () => {
               item={item.item}/>
           }/>
         </View>
-        <ChooseRoomBookingFooter/>
+        <ChooseRoomBookingFooter
+          roomId={roomId}
+        />
       </View>
     </SafeAreaView>
   );

@@ -9,7 +9,7 @@ import CheckoutSuccessfully from "../../screens/booking/checkout/checkout-succes
 
 const RoomCheckoutNavigator = () => {
   return (
-    <StackNavigator initialRouteName={"CHECKOUT_SUCCESSFULLY"} screenOptions={{
+    <StackNavigator initialRouteName={"READY_CHECKOUT"} screenOptions={{
       headerShown: false
     }}>
       <StackScreen name={"ROOM_CHECKOUT_1"} component={RoomCheckout1} />

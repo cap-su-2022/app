@@ -5,6 +5,8 @@ import {BLACK, FPT_ORANGE_COLOR, WHITE} from "@app/constants";
 import {InformationCircleIcon, LibraryIcon} from "react-native-heroicons/outline";
 import {ChoosingBookingRoom} from "../../../redux/models/choosing-booking-room.model";
 import {useAppNavigation} from "../../../hooks/use-app-navigation.hook";
+import {fetchRoomById} from "../../../redux/features/room/thunk/fetch-room-by-id.thunk";
+import {useAppDispatch} from "../../../hooks/use-app-dispatch.hook";
 
 interface ChooseRoomItemProps {
   item: ChoosingBookingRoom;
@@ -14,11 +16,15 @@ interface ChooseRoomItemProps {
 const ChooseRoomItem: React.FC<ChooseRoomItemProps> = (props) => {
 
   const navigate = useAppNavigation();
-
-  console.log(props.roomId === props.item.id);
+  const dispatch = useAppDispatch();
 
   const handleViewRoomDetail = (id: string) => {
-    navigate.pop();
+    console.log(id);
+    dispatch(fetchRoomById({
+      roomId: id
+    })).unwrap().then((e) => {
+      navigate.navigate("ROOM_BOOKING_VIEW_ROOM_DETAIL");
+    });
   }
 
   return (

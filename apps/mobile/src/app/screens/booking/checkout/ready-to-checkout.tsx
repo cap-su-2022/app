@@ -14,7 +14,7 @@ import Signature, { SignatureViewRef } from "react-native-signature-canvas";
 import QRCode from "react-native-qrcode-svg";
 import AlertModal from "../../../components/modals/alert-modal.component";
 
-const ReadyToCheckOut: React.FC<any> = () => {
+const RoomBookingReadyToCheckOut: React.FC<any> = () => {
 
   const navigate = useAppNavigation();
 
@@ -465,4 +465,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ReadyToCheckOut;
+export default RoomBookingReadyToCheckOut;
