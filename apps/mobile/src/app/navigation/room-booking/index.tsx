@@ -14,12 +14,10 @@ import { RoomBookingSuccess } from "../../screens/booking/room-booking-success";
 import { RoomBookingFail } from "../../screens/booking/room-booking-fail";
 import RoomBookingStep2 from "./room-booking-step2.navigator";
 import RoomBookingWishlistNavigator from "./room-booking-wishlist.navigator";
-import RoomBookingAlreadyBook from "../../screens/booking/room-booking-already-book";
 import RoomBookingChooseRoom from "../../screens/booking/room-booking-choose-room";
 import ChooseRoomItemDetail from "../../screens/booking/ChooseRoom/choose-room-item-detail";
-import RoomBookingReadyToCheckOut from "../../screens/booking/checkout/ready-to-checkout";
-import NoRoomBookingCheckOut from "../../screens/booking/checkout/no-room-booking";
 import AlreadyBookDetail from "../../screens/booking/AlreadyBook/Detail";
+import RoomBookingAlreadyBook from "../../screens/booking/checkin/room-booking-already-book";
 
 const RoomBookingNavigator: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();

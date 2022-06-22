@@ -4,31 +4,24 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
   VirtualizedList
 } from "react-native";
-import {deviceHeight, deviceWidth} from "../../utils/device";
-import { BLACK, FPT_ORANGE_COLOR, GREEN, LIGHT_GRAY, LIME, PINK, RED, TEAL, WHITE } from "@app/constants";
-import { useAppDispatch } from "../../hooks/use-app-dispatch.hook";
-import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
-import DelayInput from "react-native-debounce-input";
-import { LibraryIcon, SearchIcon, TagIcon } from "react-native-heroicons/outline";
-import {useAppSelector} from "../../hooks/use-app-selector.hook";
-import {fetchCurrentBookingRoomList} from "../../redux/features/room-booking/thunk/fetch-current-booking-list.thunk";
-import AlreadyBookItem from "./AlreadyBook/AlreadyBookItem";
-import {ChoosingBookingRoom} from "../../redux/models/choosing-booking-room.model";
-import {CurrentBookingRoom} from "../../redux/models/current-booking-room.model";
-import WarningModal from "./AlreadyBook/WarningModal";
-import AlreadyBookFilter from "./AlreadyBook/already-book-filter";
-/*
-*         <Text style={{
-          fontWeight: '600',
-          fontSize: deviceWidth / 23,
-          color: BLACK
-        }}>You already booked the the following room(s)</Text>
-* */
+import {deviceWidth} from "../../../utils/device";
+import { FPT_ORANGE_COLOR, WHITE } from "@app/constants";
+import { useAppDispatch } from "../../../hooks/use-app-dispatch.hook";
+import { useAppNavigation } from "../../../hooks/use-app-navigation.hook";
+import {useAppSelector} from "../../../hooks/use-app-selector.hook";
+import {fetchCurrentBookingRoomList} from "../../../redux/features/room-booking/thunk/fetch-current-booking-list.thunk";
+import AlreadyBookItem from "../AlreadyBook/AlreadyBookItem";
+import {CurrentBookingRoom} from "../../../redux/models/current-booking-room.model";
+import WarningModal from "../AlreadyBook/WarningModal";
+import AlreadyBookFilter from "../AlreadyBook/already-book-filter";
+import {ChevronDoubleRightIcon} from "react-native-heroicons/outline";
+
+const ALREADY_HAVE_ROOM_BOOKINGS = "You have room(s) are in booking progress! Please review again before booking a new room";
+
 const RoomBookingAlreadyBook: React.FC = () => {
 
   const currentBookingRooms = useAppSelector((state) => state.roomBooking.currentBookingRooms);
@@ -66,6 +59,7 @@ const RoomBookingAlreadyBook: React.FC = () => {
             onPress={() => navigate.navigate("ROOM_BOOKING_1")}
             style={styles.continueBookingButton}>
             <Text style={styles.continueBookingButtonText}>Continue booking</Text>
+
           </TouchableOpacity>
         </View>
 
@@ -73,7 +67,7 @@ const RoomBookingAlreadyBook: React.FC = () => {
       <WarningModal
         isShown={isWarningModalShown}
         toggleShown={() => setWarningModalShown(!isWarningModalShown)}
-        message="You have room(s) are in booking progress! Please review again before booking a new room"
+        message={ALREADY_HAVE_ROOM_BOOKINGS}
         />
     </SafeAreaView>
   );
@@ -89,7 +83,7 @@ const styles = StyleSheet.create({
   },
 
   footerContainer: {
-    height: 90,
+    height: 70,
     backgroundColor: WHITE,
     width: deviceWidth,
     display: "flex",
@@ -103,8 +97,9 @@ const styles = StyleSheet.create({
     backgroundColor: FPT_ORANGE_COLOR,
     borderRadius: 8,
     display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    flexDirection: 'row'
   },
   continueBookingButtonText: {
     color: WHITE,

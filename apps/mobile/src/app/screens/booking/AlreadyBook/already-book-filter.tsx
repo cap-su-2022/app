@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View} from "react-native";
 import {SearchIcon, TagIcon} from "react-native-heroicons/outline";
 import {BLACK, LIGHT_GRAY, WHITE} from "@app/constants";
 import DelayInput from "react-native-debounce-input";
 import {deviceWidth} from "../../../utils/device";
+import RNPickerSelect from "react-native-picker-select";
 
 interface AlreadyBookFilterProps {
   search: string;
@@ -11,6 +12,12 @@ interface AlreadyBookFilterProps {
 }
 
 const AlreadyBookFilter: React.FC<AlreadyBookFilterProps> = (props) => {
+
+  const [bookingRoomType, setBookingRoomType] = useState<string>("");
+
+  const handleBookingRoomTypeChange = (val) => {
+    setBookingRoomType(val);
+  }
   return (
     <View style={styles.filterContainer}>
       <View style={{
@@ -48,9 +55,18 @@ const AlreadyBookFilter: React.FC<AlreadyBookFilterProps> = (props) => {
           }}>
             <TagIcon color={BLACK} />
           </View>
-          <View style={styles.searchTypeContainer}>
-
-          </View>
+          <RNPickerSelect onValueChange={(e) => handleBookingRoomTypeChange(e.toString())} items={[{
+            label: 'Booking',
+            value: 'BOOKING'
+          }, {
+            label: 'Booked',
+            value: 'BOOKED'
+          }, {
+            label: 'Checked In',
+            value: 'CHECKED_IN',
+          }]}  style={{
+            inputAndroid: styles.searchTypeContainer
+          }}/>
         </View>
 
       </View>
