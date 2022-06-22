@@ -1,17 +1,18 @@
-import { BadRequestException, Injectable, Logger, Scope } from "@nestjs/common";
-import { RoomsService } from "./rooms.service";
-import { BookingRoomRepository } from "../repositories";
-import { BookingRoomResponseDTO } from "../dto/booking-room.response.dto";
-import { WishlistBookingRoomResponseDTO } from "../dto/wishlist-booking-room.response.dto";
-import { RoomWishlistService } from "./room-wishlist.service";
-import { WishlistBookingRoomRequestDTO } from "../dto/wishlist-booking-room.request.dto";
-import { BookingRoomsFilterRequestPayload } from "../payload/request/booking-rooms.request.payload";
-import { KeycloakUserInstance } from "../dto/keycloak.user";
-import { RemoveWishlistRequest } from "../payload/request/remove-from-booking-room-wishlist.request.payload";
-import { DevicesService } from "./devices.service";
-import { AccountsService } from "./accounts.service";
+import {BadRequestException, Injectable, Logger, Scope} from "@nestjs/common";
+import {RoomsService} from "./rooms.service";
+import {BookingRoomRepository} from "../repositories";
+import {BookingRoomResponseDTO} from "../dto/booking-room.response.dto";
+import {WishlistBookingRoomResponseDTO} from "../dto/wishlist-booking-room.response.dto";
+import {RoomWishlistService} from "./room-wishlist.service";
+import {WishlistBookingRoomRequestDTO} from "../dto/wishlist-booking-room.request.dto";
+import {BookingRoomsFilterRequestPayload} from "../payload/request/booking-rooms.request.payload";
+import {KeycloakUserInstance} from "../dto/keycloak.user";
+import {RemoveWishlistRequest} from "../payload/request/remove-from-booking-room-wishlist.request.payload";
+import {DevicesService} from "./devices.service";
+import {AccountsService} from "./accounts.service";
 import {ChooseBookingRoomFilterPayload} from "../payload/request/choose-booking-room-filter.payload";
 import {GetBookingRoomsPaginationPayload} from "../payload/request/get-booking-rooms-pagination.payload";
+import {Devices} from "../models";
 
 @Injectable()
 export class BookingRoomService {
@@ -89,7 +90,7 @@ export class BookingRoomService {
     return this.accountService.getUsernameList();
   }
 
-  getRoomsName(): Promise<string[]> {
+  getRoomsName(): Promise<Devices[]> {
     return this.roomService.getRoomsName();
   }
 
@@ -114,6 +115,43 @@ export class BookingRoomService {
   }
 
   getAllBookingRoomsPagination(payload: GetBookingRoomsPaginationPayload) {
-    return this.repository.findByPaginationPayload(payload);
+    try {
+      return this.repository.findByPaginationPayload(payload);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  getCurrentRoomBookingList(accountId: string) {
+    try {
+      return this.repository.findByCurrentBookingListAndAccountId(accountId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  getCurrentRoomBookingDetail(accountId: string, id: string) {
+    try {
+      return this.repository.findByIdAndAccountId(accountId, id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async cancelRoomBookingById(accountId: string, id: string): Promise<void> {
+    try {
+      const isExisted = await this.repository.existsById(id);
+      if (isExisted) {
+        await this.repository.cancelRoomBookingById(accountId, id);
+      } else {
+        throw new BadRequestException('Not found with the provided id');
+      }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 }

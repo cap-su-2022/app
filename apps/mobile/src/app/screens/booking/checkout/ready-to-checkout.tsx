@@ -13,6 +13,7 @@ import Divider from "../../../components/text/divider";
 import Signature, { SignatureViewRef } from "react-native-signature-canvas";
 import QRCode from "react-native-qrcode-svg";
 import AlertModal from "../../../components/modals/alert-modal.component";
+import { enableScreens } from "react-native-screens";
 
 const RoomBookingReadyToCheckOut: React.FC<any> = () => {
 
@@ -21,17 +22,73 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const scrollView = useRef<ScrollView>(null);
   const signature = useRef<SignatureViewRef>(null);
 
+  navigate.addListener('focus', (a) => {
+    setHidden(false);
+  });
+
+  useEffect(() => {
+    return () => {
+      setHidden(false);
+    }
+  }, [])
   const [isScrollEnabled, setScrollEnabled] = useState<boolean>(true);
+
+  const [isHidden, setHidden] = useState(false);
 
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("Error");
 
   const handleGetData = (e) => {
-    console.log("-----------------------");
-    console.log(e);
-    console.log("-----------------------");
 
   };
+
+  const ErrorAlertModal: React.FC = () => {
+    return (
+      <AlertModal
+        isOpened={isErrorModalShown}
+        height={deviceWidth / 1.25}
+        width={deviceWidth / 1.25}
+        toggleShown={() => setErrorModalShown(!isErrorModalShown)}
+      >
+        <View style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexGrow: 0.3
+        }}>
+          <View>
+            <ExclamationCircleIcon color={FPT_ORANGE_COLOR} size={deviceHeight / 13} />
+            <Text style={{
+              color: BLACK,
+              fontSize: deviceWidth / 23,
+              fontWeight: "500",
+              textAlign: "center"
+            }}>{errorMessage}</Text>
+
+          </View>
+          <View>
+            <TouchableOpacity style={{
+              width: deviceWidth / 1.5,
+              height: 50,
+              borderRadius: 8,
+              backgroundColor: FPT_ORANGE_COLOR,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center"
+            }}>
+              <Text style={{
+                fontSize: deviceWidth / 21,
+                fontWeight: "600",
+                color: WHITE
+              }}>
+                Close
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </AlertModal>
+    );
+  }
   return (
 
     <SafeAreaView style={{ flex: 1 }}>
@@ -162,114 +219,43 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
             </View>
           </View>
 
-          <View style={{
-            marginTop: 20
-
-          }}>
-            <Text style={{
-              color: GRAY,
-              fontSize: deviceWidth / 23,
-              fontWeight: "600",
-              marginBottom: 5
-            }}>DEVICE(S) DETAIL</Text>
-            <View style={{
-              width: deviceWidth / 1.05,
-              height: 100,
-              backgroundColor: WHITE,
-              borderRadius: 8,
-              display: "flex",
-              alignItems: "center",
-              flexDirection: "row"
-            }}>
-              <View style={{
-                marginLeft: 10,
-                marginRight: 10,
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center"
-              }}>
-                <View style={{
-                  width: 50,
-                  height: 50,
-                  borderRadius: 8,
-                  borderWidth: 2,
-                  borderColor: FPT_ORANGE_COLOR,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center"
-                }}>
+          <View style={styles.deviceDetailContainer}>
+            <Text style={styles.deviceDetailHeaderText}>DEVICE(S) DETAIL</Text>
+            <View style={styles.deviceDetailWrapper}>
+              <View style={styles.deviceContainer}>
+                <View style={styles.deviceIconContainer}>
                   <DeviceMobileIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 13} />
                 </View>
-                <View style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  marginLeft: 10
-                }}>
-                  <Text style={{
-                    color: BLACK,
-                    fontWeight: "500"
-                  }}>Name: Charging Socket Station</Text>
-                  <Text style={{
-                    color: BLACK,
-                    fontWeight: "500"
-
-                  }}>Quantity: 2</Text>
-                  <Text style={{
-                    color: BLACK,
-                    fontWeight: "500"
-
-                  }}>Requested at: 12:12 15/06/2022</Text>
+                <View style={styles.deviceDetailInfoContainer}>
+                  <Text style={styles.deviceDetailName}>
+                    Name: Charging Socket Station
+                  </Text>
+                  <Text style={styles.deviceDetailName}>Quantity: 2</Text>
+                  <Text style={styles.deviceDetailName}>Requested at: 12:12 15/06/2022</Text>
                 </View>
               </View>
             </View>
           </View>
 
-          <View style={{
-            marginTop: 20,
-            height: 220
-          }}>
-            <View style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexDirection: "row"
-            }}>
-              <Text style={{
-                color: GRAY,
-                fontWeight: "600",
-                fontSize: deviceWidth / 23,
-                marginBottom: 5
-              }}>
+          <View style={styles.signatureContainer}>
+            <View style={styles.signatureWrapper}>
+              <Text style={styles.signatureTitleHeader}>
                 CHECK-OUT SIGNATURE
               </Text>
               <TouchableOpacity onPress={() => {
-                signature.current.clearSignature();
-                signature.current.draw();
-              }} style={{
-                backgroundColor: GRAY,
-                borderRadius: 50,
-                width: 55,
-                height: 25,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                marginRight: 10
-              }}>
-                <Text style={{
-                  color: WHITE,
-                  fontSize: deviceWidth / 28,
-                  fontWeight: "600"
-                }}>CLEAR</Text>
-
+                setHidden(true);
+                if (signature) {
+                  signature.current.clearSignature();
+                  signature.current.draw();
+                }
+              }} style={styles.clearSignatureButton}>
+                <Text style={styles.clearSignatureButtonText}>
+                  CLEAR
+                </Text>
               </TouchableOpacity>
             </View>
-            <View style={{
-              height: 150,
-              width: deviceWidth / 1.05,
-              backgroundColor: WHITE,
-              borderRadius: 8
-            }}>
-              <Signature ref={signature} onEmpty={() => {
+            <View onTouchStart={() => !isHidden ? setHidden(true) : null} style={styles.signatureBoard}>
+              {isHidden ? <Signature ref={signature} onEmpty={() => {
                 scrollView.current.scrollTo({
                   x: undefined,
                   y: deviceHeight - 100,
@@ -280,9 +266,10 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
               }} onOK={(e) => handleGetData(e)} onBegin={() => {
                 setScrollEnabled(false);
               }}
-                         onEnd={() => setScrollEnabled(true)} style={{
+                                     onEnd={() => setScrollEnabled(true)} style={{
                 borderRadius: 8
-              }} />
+              }} /> : null}
+
             </View>
           </View>
         </ScrollView>
@@ -296,50 +283,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <AlertModal
-        isOpened={isErrorModalShown}
-        height={deviceWidth / 1.25}
-        width={deviceWidth / 1.25}
-        toggleShown={() => setErrorModalShown(!isErrorModalShown)}
-      >
-
-        <View style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexGrow: 0.3
-        }}>
-          <View>
-            <ExclamationCircleIcon color={FPT_ORANGE_COLOR} size={deviceHeight / 13} />
-            <Text style={{
-              color: BLACK,
-              fontSize: deviceWidth / 23,
-              fontWeight: "500",
-              textAlign: "center"
-            }}>{errorMessage}</Text>
-
-          </View>
-          <View>
-            <TouchableOpacity style={{
-              width: deviceWidth / 1.5,
-              height: 50,
-              borderRadius: 8,
-              backgroundColor: FPT_ORANGE_COLOR,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
-            }}>
-              <Text style={{
-                fontSize: deviceWidth / 21,
-                fontWeight: "600",
-                color: WHITE
-              }}>
-                Close
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </AlertModal>
+      <ErrorAlertModal/>
     </SafeAreaView>
   );
 
@@ -462,6 +406,87 @@ const styles = StyleSheet.create({
     color: WHITE,
     fontSize: deviceWidth / 18,
     fontWeight: "600"
+  },
+  deviceContainer: {
+    marginLeft: 10,
+    marginRight: 10,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  deviceDetailContainer: {
+    marginTop: 20
+  },
+  deviceDetailWrapper: {
+    width: deviceWidth / 1.05,
+    height: 100,
+    backgroundColor: WHITE,
+    borderRadius: 8,
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "row"
+  },
+  deviceDetailInfoContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginLeft: 10
+  },
+  deviceDetailHeaderText: {
+    color: GRAY,
+    fontSize: deviceWidth / 23,
+    fontWeight: "600",
+    marginBottom: 5
+  },
+  deviceIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: FPT_ORANGE_COLOR,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  deviceDetailName: {
+    color: BLACK,
+    fontWeight: "500"
+  },
+  signatureContainer: {
+    marginTop: 20,
+    height: 220
+  },
+  signatureWrapper: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row"
+  },
+  signatureTitleHeader: {
+    color: GRAY,
+    fontWeight: "600",
+    fontSize: deviceWidth / 23,
+    marginBottom: 5
+  },
+  clearSignatureButton: {
+    backgroundColor: GRAY,
+    borderRadius: 50,
+    width: 55,
+    height: 25,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10
+  },
+  clearSignatureButtonText: {
+    color: WHITE,
+    fontSize: deviceWidth / 28,
+    fontWeight: "600"
+  },
+  signatureBoard: {
+    height: 150,
+    width: deviceWidth / 1.05,
+    backgroundColor: WHITE,
+    borderRadius: 8
   }
 });
 

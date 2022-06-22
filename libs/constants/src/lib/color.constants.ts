@@ -11,3 +11,4 @@ export const PINK = "rgb(230, 73, 128)";
 export const GREEN = "rgb(64,192,87)";
 export const LIME = "rgb(130, 201, 30)";
 export const TEAL = "rgb(18, 184, 134)";
+export const BLUE = "#228be6";
