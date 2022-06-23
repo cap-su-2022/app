@@ -40,6 +40,9 @@
     "yup": "*",
     "react-native-image-picker": "*",
     "react-native-gesture-handler": "*",
-    "react-native-qrcode-svg": "*"
+    "react-native-qrcode-svg": "*",
+    "@mantine/notifications": "*",
+    "react-spring": "*",
+    "dayjs": "*"
   }
 }

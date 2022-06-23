@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Get, HttpStatus, Post, Put, Query, UseInterceptors } from "@nestjs/common";
+import {Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, UseInterceptors} from "@nestjs/common";
 import { BookingRoomService } from "../services";
 import { BookingRoomResponseDTO } from "../dto/booking-room.response.dto";
 import { WishlistBookingRoomResponseDTO } from "../dto/wishlist-booking-room.response.dto";
-import { User } from "../decorators/keycloak-user.decorator";
+import {KeycloakUser, User} from "../decorators/keycloak-user.decorator";
 import { WishlistBookingRoomRequestDTO } from "../dto/wishlist-booking-room.request.dto";
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
@@ -25,6 +25,25 @@ export class BookingRoomController {
   getChoosingBookingRooms(@Query('filter') filter: string) {
     return this.service.getChoosingBookingRooms(filter);
   }
+
+  @Get('current-booking-list')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  getCurrentRoomBookingListOfCurrentUser(@User() user: KeycloakUserInstance) {
+    return this.service.getCurrentRoomBookingList(user.account_id);
+  }
+
+  @Get('current-booking/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  getCurrentRoomBookingDetail(@User() user: KeycloakUserInstance, @Param() payload: {id: string}) {
+    return this.service.getCurrentRoomBookingDetail(user.account_id, payload.id);
+  }
+
+  @Put('current-booking/cancel/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  cancelRoomBookingById(@User() user: KeycloakUserInstance, @Param() payload: {id: string}) {
+    return this.service.cancelRoomBookingById(user.account_id, payload.id);
+  }
+
 
   @Get("accounts-name")
   getUsernameList() {
