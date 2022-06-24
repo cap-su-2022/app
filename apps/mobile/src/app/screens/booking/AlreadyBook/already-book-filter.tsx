@@ -19,7 +19,7 @@ const AlreadyBookFilter: React.FC<AlreadyBookFilterProps> = (props) => {
     setBookingRoomType(val);
   }
   return (
-    <View style={styles.filterContainer}>
+    <View style={[styles.filterContainer, {paddingTop: 10}]}>
       <View style={{
         display: "flex",
         justifyContent: "center",
@@ -38,6 +38,9 @@ const AlreadyBookFilter: React.FC<AlreadyBookFilterProps> = (props) => {
               onChangeText={(val) => props.setSearch(val.toString())} />
           </View>
         </View>
+        <View
+          style={{width: deviceWidth/20}}
+        />
 
         <View style={{
           display: "flex",
