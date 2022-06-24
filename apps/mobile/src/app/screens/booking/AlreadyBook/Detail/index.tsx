@@ -179,6 +179,7 @@ const AlreadyBookDetail: React.FC<any> = (props) => {
           </TouchableOpacity>
         </View>
       </View>
+
     </SafeAreaView>
   );
 };
