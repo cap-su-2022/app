@@ -1,5 +1,4 @@
 import {BLACK, FPT_ORANGE_COLOR, GRAY, WHITE} from '@app/constants';
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { deviceWidth } from 'apps/mobile/src/app/utils/device';
 import React, {useEffect} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
@@ -17,37 +16,8 @@ const AlreadyBookDetail: React.FC<any> = (props) => {
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
 
-
   useEffect(() => {
   }, []);
-
-  const InfoDetail = (props) => {
-    return (
-      <View>
-        <Text style={{
-          color: GRAY,
-          fontSize: deviceWidth / 24,
-          fontWeight: '600'
-        }}>
-          {props.title}
-        </Text>
-        <View style={{
-          display: 'flex',
-          height: 40,
-          width: deviceWidth / 1.05,
-          backgroundColor: WHITE,
-          borderRadius: 8,
-        }}>
-          <Text style={{
-            color: BLACK,
-            fontWeight: '500',
-            marginTop: 10,
-            marginLeft: 10
-          }}>{props.detail}</Text>
-        </View>
-      </View>
-    )
-  }
 
   const handleCancelBookingRoom = () => {
     dispatch(cancelRoomBookingById(currentBookingRoom.id))
@@ -96,9 +66,24 @@ const AlreadyBookDetail: React.FC<any> = (props) => {
             flexDirection: 'column',
             alignItems: 'center'
           }}>
-            <InfoDetail title={'Book At'} detail={dayjs(currentBookingRoom.bookedAt).format('HH:mm:ss DD/MM/YYYY')}/>
-            <InfoDetail title={'Check-in at'} detail={dayjs(currentBookingRoom.timeCheckIn).format('HH:mm:ss DD/MM/YYYY') }/>
-            <InfoDetail title={'Request at'} detail={dayjs(currentBookingRoom.requestedAt).format('HH:mm:ss DD/MM/YYYY')}/>
+            <Text style={{
+              color: GRAY,
+              fontSize: deviceWidth / 26,
+              fontWeight: '600',
+              display: 'flex',
+              alignSelf: 'flex-start',
+              marginLeft: 10
+            }}>TIME TO CHECK-IN</Text>
+            <View style={{
+              height: 50,
+              width: deviceWidth / 1.05,
+              borderRadius: 8,
+              backgroundColor: WHITE,
+              justifyContent: 'center',
+
+            }}>
+              <Text style={{marginLeft: 10, fontWeight: '500', color: BLACK}}>{dayjs(currentBookingRoom.timeCheckIn).format('HH:mm:ss DD/MM/YYYY')}</Text>
+            </View>
           </View>
         </ScrollView>
         <View style={{
