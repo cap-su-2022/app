@@ -3,35 +3,27 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 require_relative '../node_modules/@nrwl/react-native/nx_post_install'
 
 platform :ios, '11.0'
+install! 'cocoapods', :deterministic_uuids => false
 
 target 'Mobile' do
   config = use_native_modules!
-  permissions_path = '../node_modules/react-native-permissions/ios'
-  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
-  pod 'react-native-config', :path => '../node_modules/react-native-config'
-  pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
-  pod 'RNGoogleSignin', :path => '../node_modules/@react-native-google-signin/google-signin'
-  pod 'RNCPicker', :path => '../node_modules/@react-native-picker/picker'
-  pod 'react-native-mmkv', :path => '../node_modules/react-native-mmkv'
-  pod 'react-native-date-picker', :path => '../node_modules/react-native-date-picker'
-  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
-  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
-  pod 'RNSVG', :path => '../node_modules/react-native-svg'
-  pod 'RNScreens', :path => '../node_modules/react-native-screens'
-  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
-  pod 'RNFBAuth', :path => '../node_modules/@react-native-firebase/auth'
 
-  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
-  pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID"
-  pod 'Permission-Notifications', :path => "#{permissions_path}/Notifications"
-  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
-  pod 'Permission-PhotoLibraryAddOnly', :path => "#{permissions_path}/PhotoLibraryAddOnly"
+  # Flags change depending on the env values.
+  flags = get_default_flags()
 
   use_react_native!(
     :path => config[:reactNativePath],
     # to enable hermes on iOS, change `false` to `true` and then install pods
-    :hermes_enabled => false
+    :hermes_enabled => flags[:hermes_enabled],
+    :fabric_enabled => flags[:fabric_enabled],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+
+  target 'MobileTests' do
+    inherit! :complete
+    # Pods for testing
+  end
 
   # Enables Flipper.
   #

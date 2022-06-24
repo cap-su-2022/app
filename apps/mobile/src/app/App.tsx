@@ -10,12 +10,7 @@ import MainNavigator from "./navigation/main.navigator";
 import { Spinner } from "./components/spinners/spinner";
 import axios from "axios";
 import { API_URL } from "./constants/constant";
-import AlertModal from "./components/modals/alert-modal.component";
-import { deviceWidth } from "./utils/device";
-import { ExclamationCircleIcon } from "react-native-heroicons/outline";
-import { BLACK, FPT_ORANGE_COLOR, WHITE } from "@app/constants";
 import { toggleSpinnerOff, toggleSpinnerOn } from "./redux/features/spinner";
-import RNExitApp from "react-native-exit-app";
 import CannotConnectToServer from "./components/cannot-connect-server.component";
 
 
