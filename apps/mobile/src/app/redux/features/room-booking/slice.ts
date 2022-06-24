@@ -8,9 +8,6 @@ import { fetchBookingRoomDevices } from "./thunk/fetch-booking-room-devices.thun
 import { Device } from "../../models/device.model";
 import {fetchChoosingBookingRoom} from "./thunk/fetch-choosing-booking-room.thunk";
 import {ChoosingBookingRoom} from "../../models/choosing-booking-room.model";
-import {CurrentBookingRoom} from "../../models/current-booking-room.model";
-import {fetchCurrentBookingRoomList} from "./thunk/fetch-current-booking-list.thunk";
-import {fetchCurrentRoomBookingDetail} from "./thunk/fetch-current-booking-detail.thunk";
 
 interface RoomBookingState {
   bookingRooms: BookingRoom[],
@@ -18,9 +15,6 @@ interface RoomBookingState {
   choosingBookingRooms: ChoosingBookingRoom[];
   devices: Device[],
   addRoomBooking: AddRoomBookingPayload,
-  currentBookingRooms: CurrentBookingRoom[],
-  currentBookingRoom: CurrentBookingRoom,
-
 }
 
 interface BookingDevice {
@@ -41,8 +35,6 @@ const initialState: RoomBookingState = {
   devices: [],
   choosingBookingRooms: [],
   addRoomBooking: {} as AddRoomBookingPayload,
-  currentBookingRooms: [],
-  currentBookingRoom: {} as CurrentBookingRoom,
 };
 
 const roomBookingSlice = createSlice({
@@ -91,12 +83,6 @@ const roomBookingSlice = createSlice({
     });
     builder.addCase(fetchChoosingBookingRoom.fulfilled, (state, {payload}) => {
       state.choosingBookingRooms = payload;
-    });
-    builder.addCase(fetchCurrentBookingRoomList.fulfilled, (state, {payload}) => {
-      state.currentBookingRooms = payload;
-    });
-    builder.addCase(fetchCurrentRoomBookingDetail.fulfilled, (state, {payload}) => {
-      state.currentBookingRoom = payload;
     });
   }
 });

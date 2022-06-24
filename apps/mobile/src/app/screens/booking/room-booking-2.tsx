@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   ListRenderItemInfo,
   SafeAreaView,
@@ -23,7 +23,7 @@ import {
   CheckIcon,
   ChevronDoubleLeftIcon,
   ChevronRightIcon,
-  DeviceMobileIcon, ExclamationCircleIcon,
+  DeviceMobileIcon,
 } from 'react-native-heroicons/outline';
 import { fetchBookingRoomDevices } from '../../redux/features/room-booking/thunk/fetch-booking-room-devices.thunk';
 import DelayInput from 'react-native-debounce-input';
@@ -34,7 +34,6 @@ import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
 import { Device } from '../../redux/models/device.model';
 import { step3ScheduleRoomBooking } from '../../redux/features/room-booking/slice';
-import AlertModal from "../../components/modals/alert-modal.component";
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
@@ -48,7 +47,6 @@ const RoomBooking2: React.FC = () => {
 
   const [search, setSearch] = useState<string>('');
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
-  const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(
@@ -60,13 +58,9 @@ const RoomBooking2: React.FC = () => {
   }, [search, sort, dispatch]);
 
   const handleNextStep = () => {
-    if (deviceIds.length < 1) {
-      setErrorModalShown(true);
-    } else {
-      navigate.navigate("ROOM_BOOKING_3")
-      dispatch(step3ScheduleRoomBooking({ devices: deviceIds }));
-    }
-  }
+    navigate.navigate('ROOM_BOOKING_3');
+    dispatch(step3ScheduleRoomBooking({ devices: deviceIds }));
+  };
 
   const Filtering: React.FC = () => {
     return (
@@ -275,54 +269,6 @@ const RoomBooking2: React.FC = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <AlertModal
-        isOpened={isErrorModalShown}
-        height={deviceWidth / 1.7}
-        width={deviceWidth / 1.3}
-        toggleShown={() => setErrorModalShown(!isErrorModalShown)}
-      >
-        <View style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-around',
-          alignItems: 'center',
-          flex: 1
-        }}>
-          <View style={{
-            display: 'flex',
-            alignItems: 'center',
-          }}>
-            <ExclamationCircleIcon size={deviceWidth / 8} color={FPT_ORANGE_COLOR}/>
-            <Text style={{
-              color: BLACK,
-              fontWeight: '500',
-              fontSize: deviceWidth / 23,
-              textAlign: 'center'
-            }}>
-              Please choose device(s) before going to the next step
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: 40,
-              width: deviceWidth / 1.7,
-              backgroundColor: FPT_ORANGE_COLOR,
-              borderRadius: 8
-            }}
-            onPress={() => setErrorModalShown(false)}>
-            <Text style={{
-              color: WHITE,
-              fontSize: deviceWidth / 23,
-              fontWeight: '600'
-            }}>
-              I understand
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </AlertModal>
     </SafeAreaView>
   );
 };
