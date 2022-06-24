@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
   },
+
 });
 
 export default AlreadyBookFilter;

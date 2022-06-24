@@ -27,6 +27,7 @@ const AlreadyBookFilter: React.FC<AlreadyBookFilterProps> = (props) => {
           flexGrow: 1,
         }}
       >
+
         <View style={styles.searchContainer}>
           <View style={styles.searchIconContainer}>
             <SearchIcon color={BLACK} />
