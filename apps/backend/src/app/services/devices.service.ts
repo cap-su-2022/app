@@ -41,33 +41,17 @@ export class DevicesService {
     }
   }
 
-  async getAll(request: DevicesRequestPayload): Promise<DevicesResponsePayload> {
-    const offset = request.size * (request.page - 1);
-    const limit = request.size;
-
-    const queryResult = await this.repository.searchDevices(
+  async getAll(request: DevicesRequestPayload) {
+    return await this.repository.searchDevices(
       {
         search: request.search,
-        offset: offset,
-        limit: limit,
+        page: request.page,
+        limit: request.limit,
         direction: request.sort as Direction[]
       }).catch((e) => {
       this.logger.error(e);
       throw new BadRequestException("One or more parameters is invalid");
     });
-
-    const total = await this.repository.getSize().catch((e) => {
-      this.logger.error(e);
-      throw new BadRequestException("One or more parameters is invalid");
-    });
-    const totalPage = Math.ceil(total / request.size);
-
-    return {
-      data: queryResult,
-      currentPage: request.page,
-      totalPage: totalPage,
-      size: total
-    };
   }
 
   async updateById(body: UpdateDeviceRequest, id: string): Promise<Devices> {

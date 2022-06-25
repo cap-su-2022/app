@@ -63,33 +63,19 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
 
   async getAllByPagination(
     request: UsersRequestPayload
-  ): Promise<AccountsResponsePayload> {
-    const offset = request.size * (request.page - 1);
-    const limit = request.size;
-
-    let total = 0;
-    let queryResult = [] as Accounts[];
+  ) {
 
     try {
-      queryResult = await this.repository.search({
+      return await this.repository.search({
         search: request.search,
-        offset: offset,
-        limit: limit,
+        page: request.page,
+        limit: request.limit,
         direction: request.sort as Direction[]
       });
-      total = await this.repository.getSize();
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException('One or more parameters are invalid');
     }
-
-    const totalPage = Math.ceil(total / request.size);
-    return {
-      data: queryResult,
-      currentPage: request.page,
-      totalPage: totalPage,
-      size: total,
-    };
   }
 
   async updateById(body: UpdateDeviceRequest, id: string): Promise<Accounts> {

@@ -114,7 +114,7 @@ export class RoomsController {
   })
   getRooms(
     @Body() request: RoomsRequestPayload
-  ): Promise<RoomsResponsePayload> {
+  ) {
     return this.service.getAll(request);
   }
 

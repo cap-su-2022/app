@@ -8,6 +8,7 @@ import { RoomsResponsePayload } from "../payload/response/rooms.payload";
 import { KeycloakUserInstance } from "../dto/keycloak.user";
 import { Direction } from "../models/search-pagination.payload";
 import {ChooseBookingRoomFilterPayload} from "../payload/request/choose-booking-room-filter.payload";
+import {IPaginationMeta, Pagination} from "nestjs-typeorm-paginate";
 
 @Injectable()
 export class RoomsService {
@@ -54,34 +55,14 @@ export class RoomsService {
     }
   }
 
-  async getAll(request: RoomsRequestPayload): Promise<RoomsResponsePayload> {
-    const offset = request.size * (request.page - 1);
-    const limit = request.size;
-
-    const queryResult = await this.repository
+  async getAll(request: RoomsRequestPayload) {
+    return await this.repository
       .searchRoom({
         search: request.search,
-        offset: offset,
-        limit: limit,
+        limit: request.limit,
+        page: request.page,
         direction: request.sort as Direction[]
-      })
-      .catch((e) => {
-        this.logger.error(e);
-        throw new BadRequestException("One or more parameters is invalid");
       });
-    const total = await this.repository.getSize().catch((e) => {
-      this.logger.error(e);
-      throw new BadRequestException("One or more parameters is invalid");
-    });
-
-    const totalPage = Math.ceil(total / request.size);
-
-    return {
-      data: queryResult,
-      currentPage: request.page,
-      totalPage: totalPage,
-      size: total
-    };
   }
 
   async getDeletedRooms(search: string): Promise<Rooms[]> {

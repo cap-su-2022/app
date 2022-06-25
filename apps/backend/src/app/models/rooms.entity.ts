@@ -1,8 +1,9 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { RoomType } from "../enum/room-type.enum";
+import {BaseEntity} from "./base/base.entity";
 
 @Entity(Rooms.name.toLowerCase())
-export class Rooms {
+export class Rooms extends BaseEntity {
 
   @PrimaryGeneratedColumn("uuid", {
     name: "id"
@@ -32,58 +33,4 @@ export class Rooms {
     default: RoomType.LIBRARY_ROOM
   })
   type?: string;
-
-
-  @Column({
-    name: "created_by",
-    nullable: false,
-    default: false
-  })
-  createdBy?: string;
-
-  @Column({
-    name: "updated_by",
-    nullable: false,
-    default: false
-  })
-  updatedBy?: string;
-
-  @Column({
-    name: "disabled_by",
-    nullable: false,
-    default: false
-  })
-  disabledBy?: string;
-
-  @Column({
-    name: "deleted_by",
-    nullable: false,
-    default: false
-  })
-  deletedBy?: string;
-
-  @Column({
-    name: "is_disabled",
-    nullable: false,
-    default: false
-  })
-  isDisabled?: boolean;
-
-  @Column({
-    name: "is_deleted",
-    nullable: false,
-    default: false
-  })
-  isDeleted?: boolean;
-
-  @CreateDateColumn({
-    name: "created_at"
-  })
-  createdAt?: Date;
-
-  @UpdateDateColumn({
-    name: "updated_at"
-  })
-  updatedAt?: Date;
-
 }

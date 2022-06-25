@@ -56,7 +56,7 @@ export class RoomsRequestPayload implements PaginationPayload<string> {
     message: 'Size number must be positive integer',
   })
   @IsNumber(validationConfig.number)
-  size: number;
+  limit: number;
 
   @ApiProperty({
     name: "sort",

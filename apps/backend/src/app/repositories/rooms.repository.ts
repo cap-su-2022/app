@@ -1,9 +1,10 @@
 import { Brackets, In, Like, Repository, UpdateResult } from "typeorm";
 import { RepositoryPaginationPayload } from "../models/search-pagination.payload";
-import { Rooms } from "../models/rooms.entity";
+import { Rooms } from "../models";
 import { CustomRepository } from "../decorators/typeorm-ex.decorator";
 import {Accounts, Devices} from "../models";
 import {ChooseBookingRoomFilterPayload} from "../payload/request/choose-booking-room-filter.payload";
+import {IPaginationMeta, paginateRaw, Pagination} from "nestjs-typeorm-paginate";
 
 
 @CustomRepository(Rooms)
@@ -12,8 +13,8 @@ export class RoomsRepository extends Repository<Rooms> {
   async getSize(): Promise<number> {
     const result = await this.createQueryBuilder(`rooms`)
       .select(`COUNT(id) as size`)
-      .where(`rooms.is_disabled = false`)
-      .andWhere(`rooms.is_deleted = false`)
+      .where(`rooms.deleted_at IS NULL`)
+      .andWhere(`rooms.disabled_at IS NULL`)
       .getRawOne<{
         size: number
       }>();
@@ -42,8 +43,8 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect("rooms.disabled_at", "disabledAt")
       .addSelect("a.username", "disabledBy")
       .innerJoin(Accounts, "a", "rooms.disabled_by = a.id")
-      .where("rooms.is_disabled = true")
-      .andWhere("rooms.is_deleted = false")
+      .where(`rooms.deleted_at IS NULL`)
+      .andWhere(`rooms.disabled_at IS NOT NULL`)
       .andWhere("rooms.name LIKE :search", { search: `%${search}%` })
       .getRawMany<Rooms>();
   }
@@ -56,13 +57,13 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect("rooms.type", "type")
       .addSelect("rooms.id", "id")
       .innerJoin(Accounts, "a", "a.id = rooms.deleted_by")
-      .where(`rooms.is_deleted = true`)
-      .andWhere("rooms.is_disabled = false")
+      .where(`rooms.deleted_at IS NOT NULL`)
+      .andWhere(`rooms.disabled_at IS NULL`)
       .andWhere("rooms.name LIKE :name", { name: `%${search}%` })
       .getMany();
   }
 
-  searchRoom(payload: RepositoryPaginationPayload): Promise<Rooms[]> {
+  searchRoom(payload: RepositoryPaginationPayload) {
     const query = this.createQueryBuilder("r")
       .innerJoin(Accounts, "a", "r.created_by = a.id")
       .innerJoin(Accounts, "aa", "r.updated_by = aa.id")
@@ -80,24 +81,23 @@ export class RoomsRepository extends Repository<Rooms> {
       }).orWhere("r.description LIKE :description", {
         description: `%${payload.search}%`
       })))
-      .andWhere("r.is_disabled = false")
-      .andWhere("r.is_deleted = false")
-      .limit(payload.limit)
+      .andWhere(`r.deleted_at IS NULL`)
+      .andWhere(`r.disabled_at IS NULL`);
 
-      .offset(payload.offset)
-    // .addOrderBy(`r.${payload.direction[0].name}`, payload.direction[0].order)
-    //.addOrderBy(`r.${payload.direction[1].name}`, payload.direction[1].order)
-    //.getRawMany<Rooms>();
     payload.direction.forEach((direction) => query
       .addOrderBy(`r.${direction.name}`, direction.order));
-    query.take(payload.limit).skip(payload.offset);
-    return query.getRawMany<Rooms>();
+
+    return paginateRaw<Rooms>(query, {
+      limit: payload.limit,
+      page: payload.page,
+    });
   }
 
   disableById(id: string) {
     return this.createQueryBuilder("rooms")
       .update({
-        isDisabled: true
+        disabledBy: '',
+        disabledAt: new Date()
       }).where("rooms.id = :id", { id: id })
       .useTransaction(true)
 
@@ -107,7 +107,8 @@ export class RoomsRepository extends Repository<Rooms> {
   restoreDisabledRoomById(id: string): Promise<UpdateResult> {
     return this.createQueryBuilder("rooms")
       .update({
-        isDisabled: false
+        disabledAt: null,
+        disabledBy: null
       }).where("rooms.id = :id", { id: id })
       .useTransaction(true)
       .execute();
@@ -116,8 +117,10 @@ export class RoomsRepository extends Repository<Rooms> {
   deleteById(id: string): Promise<UpdateResult> {
     return this.createQueryBuilder("rooms")
       .update({
-        isDeleted: true,
-        isDisabled: false
+        disabledAt: null,
+        disabledBy: null,
+        deletedBy: '',
+        deletedAt: new Date()
       }).where("rooms.id = :id", { id: id })
       .execute();
   }
@@ -125,7 +128,8 @@ export class RoomsRepository extends Repository<Rooms> {
   restoreDeletedRoomById(id: string): Promise<UpdateResult> {
     return this.createQueryBuilder("rooms")
       .update({
-        isDeleted: false
+        deletedAt: null,
+        deletedBy: null
       }).where("rooms.id = :id", { id: id })
       .execute();
   }

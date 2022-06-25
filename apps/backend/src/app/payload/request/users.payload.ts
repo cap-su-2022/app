@@ -31,7 +31,7 @@ export class UsersRequestPayload implements PaginationPayload<string> {
     message: 'Size number must be positive integer'
   })
   @IsNumber(validationConfig.number)
-  size: number;
+  limit: number;
 
   @ContainsMany(["ASC", "DESC"], {
     message: `Sorting option must be 'ASC' or 'DESC'`

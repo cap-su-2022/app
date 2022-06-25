@@ -178,7 +178,7 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: "Not enough privileges"
   })
-  getAll(@Body() payload: UsersRequestPayload): Promise<AccountsResponsePayload> {
+  getAll(@Body() payload: UsersRequestPayload) {
     return this.service.getAllByPagination(payload);
   }
 

@@ -2,6 +2,7 @@ import { Repository, UpdateResult } from "typeorm";
 import { Accounts } from "../models";
 import { CustomRepository } from "../decorators/typeorm-ex.decorator";
 import { RepositoryPaginationPayload } from "../models/search-pagination.payload";
+import {IPaginationMeta, paginateRaw, Pagination} from "nestjs-typeorm-paginate";
 
 @CustomRepository(Accounts)
 export class AccountRepository extends Repository<Accounts> {
@@ -71,17 +72,18 @@ export class AccountRepository extends Repository<Accounts> {
     return result.size;
   }
 
-  search(payload: RepositoryPaginationPayload): Promise<Accounts[]> {
-    return this.createQueryBuilder(`accounts`)
+  search(payload: RepositoryPaginationPayload): Promise<Pagination<Accounts, IPaginationMeta>> {
+    const query = this.createQueryBuilder(`accounts`)
       .where(`accounts.name LIKE :name`, { name: `%${payload.search}%` })
       .orWhere(`accounts.description LIKE :description`, { description: `%${payload.search}%` })
       .andWhere("accounts.disabled_at IS NULL")
       .andWhere("accounts.deleted_at IS NULL")
       .orWhere(`accounts.username = :username`, { username: `%${payload.search}%` })
-      .orWhere(`accounts.description = :description`, { description: `%${payload.search}%` })
-      .skip(payload.offset)
-      .take(payload.limit)
-      .getMany();
+      .orWhere(`accounts.description = :description`, { description: `%${payload.search}%` });
+    return paginateRaw<Accounts>(query, {
+      page: payload.page,
+      limit: payload.limit,
+    });
   }
 
   findIdByKeycloakId(keycloakId: string): Promise<string> {
@@ -125,7 +127,7 @@ export class AccountRepository extends Repository<Accounts> {
 
   findDeletedAccounts(): Promise<Accounts[]> {
     return this.createQueryBuilder("accounts")
-      .where("accounts.is_deleted = true")
+      .where("accounts.deleted_at IS NOT NULL")
       .getMany();
   }
 
@@ -181,7 +183,7 @@ export class AccountRepository extends Repository<Accounts> {
   async findProfileInformationById(keycloakId: string) {
     return this.createQueryBuilder("a")
       .select(["a.id", "a.username", "a.email", "a.description", "a.phone",
-        "a.effdate", "a.updated_at", "a.role", "a.fullname", "a.avatar"])
+        "a.created_at", "a.updated_at", "a.role", "a.fullname", "a.avatar"])
       .where("a.keycloak_id = :keycloakId", { keycloakId })
       .andWhere("accounts.disabled_at IS NULL")
       .andWhere("accounts.deleted_at IS NULL")
