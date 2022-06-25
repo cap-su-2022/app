@@ -127,7 +127,7 @@ export class AccountRepository extends Repository<Accounts> {
 
   findDeletedAccounts(): Promise<Accounts[]> {
     return this.createQueryBuilder("accounts")
-      .where("accounts.is_deleted = true")
+      .where("accounts.deleted_at IS NOT NULL")
       .getMany();
   }
 
@@ -183,7 +183,7 @@ export class AccountRepository extends Repository<Accounts> {
   async findProfileInformationById(keycloakId: string) {
     return this.createQueryBuilder("a")
       .select(["a.id", "a.username", "a.email", "a.description", "a.phone",
-        "a.effdate", "a.updated_at", "a.role", "a.fullname", "a.avatar"])
+        "a.created_at", "a.updated_at", "a.role", "a.fullname", "a.avatar"])
       .where("a.keycloak_id = :keycloakId", { keycloakId })
       .andWhere("accounts.disabled_at IS NULL")
       .andWhere("accounts.deleted_at IS NULL")
