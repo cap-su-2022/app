@@ -15,6 +15,8 @@ import PreferencesModal from "./preferences.modal.component";
 const data = [
   { link: "/dashboard", label: "Dashboard", icon: Dashboard },
   { link: "/rooms", label: "Rooms", icon: BuildingWarehouse },
+  { link: "/room-type", label: "Room Type", icon: BuildingWarehouse },
+
   { link: "/accounts", label: "Accounts", icon: Users },
   { link: "/devices", label: "Devices", icon: Devices },
   { link: "/feedbacks", label: "Feedback", icon: Messages },

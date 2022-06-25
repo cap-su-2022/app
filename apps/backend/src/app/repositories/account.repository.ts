@@ -6,11 +6,11 @@ import { RepositoryPaginationPayload } from "../models/search-pagination.payload
 @CustomRepository(Accounts)
 export class AccountRepository extends Repository<Accounts> {
 
-  findKeycloakIdByGoogleId(googleId: string): Promise<{ keycloak_id: string }> {
+  findKeycloakIdByGoogleId(googleId: string): Promise<string> {
     return this.createQueryBuilder("accounts")
-      .select("accounts.keycloak_id")
+      .select("accounts.keycloak_id", 'keycloakId')
       .where("accounts.google_id = :googleId", { googleId: googleId })
-      .getRawOne();
+      .getRawOne().then((data) => data['keycloakId']);
   }
 
   async checkIfUserAlreadyHasAvatar(id: string): Promise<boolean> {
@@ -199,5 +199,12 @@ export class AccountRepository extends Repository<Accounts> {
       .andWhere("accounts.is_deleted = false")
       .getRawMany<{ username: string }>()
       .then((data) => data.map((acc) => acc.username));
+  }
+
+  existsById(id: string): Promise<boolean> {
+    return this.createQueryBuilder('accounts')
+      .select('COUNT(1)', 'count')
+      .where("accounts.id = :id", {id: id})
+      .getRawOne().then((data) => data['count'] > 0);
   }
 }

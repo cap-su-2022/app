@@ -5,7 +5,6 @@ import { UsernamePasswordCredentials, UsernamePasswordLoginResponse } from "@app
 import { OAuth2Client } from "google-auth-library";
 import Exception from "../constants/exception.constant";
 import { ConfigService } from "@nestjs/config";
-import { AccountRepository } from "../repositories";
 import { Accounts } from "../models";
 
 @Injectable()
@@ -16,10 +15,9 @@ export class AuthenticationService {
   private readonly oAuthClientId: string;
   private readonly oAuthAudience: string[];
 
-  constructor(private readonly usersService: AccountsService,
+  constructor(private readonly accountService: AccountsService,
               private readonly configService: ConfigService,
-              private readonly keycloakService: KeycloakService,
-              private readonly accountsRepository: AccountRepository) {
+              private readonly keycloakService: KeycloakService) {
     this.oAuthClientId = this.configService.get<string>("firebase.oauth.clientId");
     this.oAuthAudience = this.configService.get<string[]>("firebase.oauth.audience");
   }
@@ -33,24 +31,21 @@ export class AuthenticationService {
       });
 
       const userGoogleId = decodedToken.getUserId();
-      let keycloakToken = await this.accountsRepository.findKeycloakIdByGoogleId(userGoogleId);
-      if (!keycloakToken?.keycloak_id) {
-        const updateResp = await this.accountsRepository.updateGoogleIdByEmail(userGoogleId, decodedToken.getPayload().email);
-        if (updateResp.affected < 1) {
-          throw new HttpException('Invalid account. Please contract to administrator for more information', HttpStatus.UNAUTHORIZED);
-        } else {
-          keycloakToken = await this.accountsRepository.findKeycloakIdByGoogleId(userGoogleId);
-        }
+
+      let keycloakToken = await this.accountService.getKeycloakIdByGoogleId(userGoogleId);
+      if (keycloakToken === undefined) {
+         await this.accountService.updateGoogleIdByAccountEmail(userGoogleId, decodedToken.getPayload().email);
+        keycloakToken = await this.accountService.getKeycloakIdByGoogleId(userGoogleId);
       }
       let keycloakUser;
       let user: Accounts;
 
-      if (keycloakToken?.keycloak_id) {
-        keycloakUser = await this.keycloakService.getAuthenticationTokenByMasterAccount(keycloakToken.keycloak_id);
-        user = await this.accountsRepository.findByGoogleId(userGoogleId);
-        const doesUserHaveAvatar = await this.accountsRepository.checkIfUserAlreadyHasAvatar(user.id);
+      if (keycloakToken !== undefined) {
+        keycloakUser = await this.keycloakService.getAuthenticationTokenByMasterAccount(keycloakToken);
+        user = await this.accountService.getAccountByGoogleId(userGoogleId);
+        const doesUserHaveAvatar = await this.accountService.checkIfAccountAlreadyHasAvatarImage(user.id);
         if (!doesUserHaveAvatar) {
-          await this.accountsRepository.addAvatarURLById(decodedToken.getPayload().picture, user.id);
+          await this.accountService.addGoogleAvatarURLByAccountId(decodedToken.getPayload().picture, user.id);
         }
       } else {
         throw new HttpException('Invalid account. Please contract to administrator for more information', HttpStatus.UNAUTHORIZED);
@@ -90,7 +85,7 @@ export class AuthenticationService {
   async handleUsernamePasswordLogin(credentials: UsernamePasswordCredentials): Promise<UsernamePasswordLoginResponse> {
     const keycloakToken = await this.keycloakService.signInToKeycloak(credentials.username, credentials.password);
     const keycloakUser = await this.keycloakService.getUserInfo(keycloakToken.access_token);
-    const user = await this.usersService.findByKeycloakId(keycloakUser.sub);
+    const user = await this.accountService.findByKeycloakId(keycloakUser.sub);
     return {
       accessToken: keycloakToken.access_token,
       refreshToken: keycloakToken.refresh_token,
