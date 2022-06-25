@@ -31,7 +31,7 @@ export class DevicesRequestPayload implements PaginationPayload<string> {
     message: 'Size number must be positive integer'
   })
   @IsNumber(validationConfig.number)
-  size: number;
+  limit: number;
 
   sort: object;
 };

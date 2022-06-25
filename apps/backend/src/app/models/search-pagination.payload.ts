@@ -1,7 +1,7 @@
 export interface RepositoryPaginationPayload {
   search: string[] | string;
   limit: number;
-  offset: number;
+  page: number;
   direction: Direction[];
 };
 

@@ -1,5 +1,5 @@
 import {
-  BadRequestException,
+  BadRequestException, ForbiddenException,
   HttpException,
   HttpStatus,
   Inject,
@@ -147,14 +147,15 @@ export class KeycloakService {
   async getUserById(authToken: string, id: string) {
     const URL = `http://${this.keycloakHost}:${this.keycloakPort}/auth/admin/realms/${this.keycloakRealm}/users/${id}`;
     try {
-      return await this.httpService.get(URL, {
+      const resp = await lastValueFrom(this.httpService.get(URL, {
         headers: {
           "Authorization": authToken
         }
-      }).pipe(map(e => e.data));
+      }));
+      return resp.data;
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException(e.message);
+      throw new ForbiddenException(e.message);
     }
   }
 

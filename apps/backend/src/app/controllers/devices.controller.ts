@@ -108,7 +108,7 @@ export class DevicesController {
     status: HttpStatus.FORBIDDEN,
     description: "Insufficient privileges"
   })
-  getDevices(@Body() request: DevicesRequestPayload): Promise<DevicesResponsePayload> {
+  getDevices(@Body() request: DevicesRequestPayload) {
     return this.service.getAll(request);
   }
 
