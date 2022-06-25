@@ -3,6 +3,7 @@ import {Accounts, BookingRequest, Rooms} from "../models";
 import { CustomRepository } from "../decorators/typeorm-ex.decorator";
 import { BookingRoomStatus } from "../enum/booking-room-status.enum";
 import {GetBookingRoomsPaginationPayload} from "../payload/request/get-booking-rooms-pagination.payload";
+import {IPaginationMeta, paginateRaw} from "nestjs-typeorm-paginate";
 
 @CustomRepository(BookingRequest)
 export class BookingRoomRepository extends Repository<BookingRequest> {
@@ -14,8 +15,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getMany();
   }
 
-  findByPaginationPayload(payload: GetBookingRoomsPaginationPayload): Promise<BookingRequest[]> {
-    return this.createQueryBuilder('booking_request')
+  findByPaginationPayload(payload: GetBookingRoomsPaginationPayload) {
+    const query = this.createQueryBuilder('booking_request')
       .select('booking_request.time_checkin', 'checkInAt')
       .addSelect('booking_request.time_checkout', 'checkOutAt')
       .addSelect('booking_request.room_id', 'roomId')
@@ -28,10 +29,11 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .andWhere('r.name LIKE :roomName', {roomName: `%${payload.roomName ?? ''}%`})
       .andWhere('booking_request.time_checkin >= :timeCheckIn', {timeCheckIn: payload.checkInAt})
       .andWhere('booking_request.time_checkout <= :timeCheckOut', {timeCheckOut: payload.checkOutAt})
-      .orderBy('r.name', payload.sort === 'ASC' ? 'ASC' : 'DESC')
-      .limit(payload.limit)
-      .offset(payload.page)
-      .getRawMany<BookingRequest>();
+      .orderBy('r.name', payload.sort === 'ASC' ? 'ASC' : 'DESC');
+    return paginateRaw<BookingRequest, IPaginationMeta>(query, {
+      page: payload.page,
+      limit: payload.limit,
+    });
   }
 
   getTotalRowCount(): Promise<number> {

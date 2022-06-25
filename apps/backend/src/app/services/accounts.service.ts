@@ -168,7 +168,7 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     try {
       console.log(image);
       const user = await this.repository.findById(id);
-      if (user.isDisabled || user.isDeleted) {
+      if (!user.deletedAt || !user.disabledAt) {
         throw new BadRequestException("This account has been disabled");
       }
       const imageId = randomUUID();
@@ -324,5 +324,9 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
+  }
+
+  async getAccountIdByKeycloakId(keycloakId: string) {
+    return this.repository.findIdByKeycloakId(keycloakId);
   }
 }

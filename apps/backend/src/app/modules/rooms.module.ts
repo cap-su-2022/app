@@ -6,13 +6,13 @@ import { HttpModule } from "@nestjs/axios";
 import ConfigModule from "./global/config.module";
 import { TypeOrmExModule } from "./global/typeorm-ex.module";
 import { KeycloakModule } from "./keycloak.module";
+import {AccountsModule} from "./accounts.module";
 
 @Module({
   imports: [
+    AccountsModule,
     TypeOrmExModule.forCustomRepository([
-      RoomsRepository,
-      AccountRepository
-    ]),
+      RoomsRepository,]),
     HttpModule,
     ConfigModule,
     KeycloakModule

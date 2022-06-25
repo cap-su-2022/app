@@ -15,7 +15,8 @@ import { CloudinaryModule } from "./cloudinary.module";
 import { APP_GUARD } from "@nestjs/core";
 import { RolesGuard } from "../guards/role.guard";
 import { ScheduleModule } from "@nestjs/schedule";
-import { TasksService } from "../services/task.service";
+import {RolesModule} from "./roles.module";
+import {RoomTypeModule} from "./room-type.module";
 
 @Global()
 export class AppModule {
@@ -35,6 +36,8 @@ export class AppModule {
         DevicesModule,
         UsersWarningFlagModule,
         BookingRoomModule,
+        RoomTypeModule,
+        RolesModule,
         ScheduleModule.forRoot()
 
       ],

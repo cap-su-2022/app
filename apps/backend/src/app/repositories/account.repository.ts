@@ -35,8 +35,8 @@ export class AccountRepository extends Repository<Accounts> {
   findByGoogleId(googleId: string): Promise<Accounts> {
     return this.createQueryBuilder("accounts")
       .where("accounts.googleId = :googleId", { googleId })
-      .andWhere("accounts.is_disabled = false")
-      .andWhere("accounts.is_deleted = false")
+      .andWhere("accounts.disabled_at IS NULL")
+      .andWhere("accounts.deleted_at IS NULL")
       .getOneOrFail();
   }
 
@@ -46,8 +46,8 @@ export class AccountRepository extends Repository<Accounts> {
         "accounts.username", "accounts.email", "accounts.fullname", "accounts.phone",
         "accounts.role", "accounts.avatar"])
       .where("accounts.keycloak_id = :keycloakId", { keycloakId: keycloakId })
-      .andWhere("accounts.is_disabled = false")
-      .andWhere("accounts.is_deleted = false")
+      .andWhere("accounts.disabled_at IS NULL")
+      .andWhere("accounts.deleted_at IS NULL")
       .getOneOrFail();
   }
 
@@ -63,8 +63,8 @@ export class AccountRepository extends Repository<Accounts> {
   async getSize(): Promise<number> {
     const result = await this.createQueryBuilder(`accounts`)
       .select(`COUNT(id) as size`)
-      .where(`accounts.is_disabled = false`)
-      .andWhere(`accounts.is_deleted = false`)
+      .andWhere("accounts.disabled_at IS NULL")
+      .andWhere("accounts.deleted_at IS NULL")
       .getRawOne<{
         size: number
       }>();
@@ -75,8 +75,8 @@ export class AccountRepository extends Repository<Accounts> {
     return this.createQueryBuilder(`accounts`)
       .where(`accounts.name LIKE :name`, { name: `%${payload.search}%` })
       .orWhere(`accounts.description LIKE :description`, { description: `%${payload.search}%` })
-      .where(`accounts.is_disabled = false`)
-      .andWhere(`accounts.is_deleted = false`)
+      .andWhere("accounts.disabled_at IS NULL")
+      .andWhere("accounts.deleted_at IS NULL")
       .orWhere(`accounts.username = :username`, { username: `%${payload.search}%` })
       .orWhere(`accounts.description = :description`, { description: `%${payload.search}%` })
       .skip(payload.offset)
@@ -108,7 +108,8 @@ export class AccountRepository extends Repository<Accounts> {
   restoreDisabledAccountById(id: string) {
     return this.createQueryBuilder("accounts")
       .update({
-        isDisabled: false
+        disabledBy: null,
+        disabledAt: null
       })
       .where("accounts.id = :id", { id: id })
       .useTransaction(true)
@@ -117,8 +118,8 @@ export class AccountRepository extends Repository<Accounts> {
 
   findDisabledAccounts(): Promise<Accounts[]> {
     return this.createQueryBuilder("accounts")
-      .where("accounts.is_disabled = true")
-      .andWhere("accounts.is_deleted = false")
+      .andWhere("accounts.disabled_at IS NOT NULL")
+      .andWhere("accounts.deleted_at IS NULL")
       .getMany();
   }
 
@@ -131,7 +132,8 @@ export class AccountRepository extends Repository<Accounts> {
   async restoreAccountById(id: string): Promise<UpdateResult> {
     return this.createQueryBuilder("accounts")
       .update({
-        isDeleted: false
+        deletedAt: null,
+        deletedBy: null,
       })
       .where("accounts.id = :id", { id: id })
       .useTransaction(true)
@@ -141,7 +143,8 @@ export class AccountRepository extends Repository<Accounts> {
   disableAccountById(id: string): Promise<UpdateResult> {
     return this.createQueryBuilder("devices")
       .update({
-        isDisabled: true
+        disabledAt: new Date(),
+        disabledBy: ''
       })
       .where("accounts.id = :id", { id: id })
       .useTransaction(true)
@@ -180,8 +183,8 @@ export class AccountRepository extends Repository<Accounts> {
       .select(["a.id", "a.username", "a.email", "a.description", "a.phone",
         "a.effdate", "a.updated_at", "a.role", "a.fullname", "a.avatar"])
       .where("a.keycloak_id = :keycloakId", { keycloakId })
-      .andWhere("a.is_disabled = false")
-      .andWhere("a.is_deleted = false")
+      .andWhere("accounts.disabled_at IS NULL")
+      .andWhere("accounts.deleted_at IS NULL")
       .getOneOrFail();
   }
 
@@ -195,8 +198,8 @@ export class AccountRepository extends Repository<Accounts> {
   findUsername(): Promise<string[]> {
     return this.createQueryBuilder("accounts")
       .select("accounts.username", "username")
-      .where("accounts.is_disabled = false")
-      .andWhere("accounts.is_deleted = false")
+      .andWhere("accounts.disabled_at IS NULL")
+      .andWhere("accounts.deleted_at IS NULL")
       .getRawMany<{ username: string }>()
       .then((data) => data.map((acc) => acc.username));
   }

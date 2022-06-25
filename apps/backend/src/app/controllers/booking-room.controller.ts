@@ -66,15 +66,6 @@ export class BookingRoomController {
     @Query("checkInAt") checkInAt = 0,
     @Query("checkOutAt") checkOutAt = 0,
   ) {
-    console.log({
-      checkOutAt: checkOutAt,
-      checkInAt: checkInAt,
-      roomName: roomName,
-      page: page,
-      sort: sort,
-      limit: limit,
-      reasonType: reasonType,
-    });
     return this.service.getAllBookingRoomsPagination({
       checkOutAt: checkOutAt,
       checkInAt: checkInAt,
