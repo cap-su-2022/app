@@ -49,6 +49,7 @@
     "@mantine/next": "*",
     "firebase": "*",
     "next-redux-wrapper": "*",
-    "redux-logger": "*"
+    "redux-logger": "*",
+    "@react-native-picker/picker": "*"
   }
 }

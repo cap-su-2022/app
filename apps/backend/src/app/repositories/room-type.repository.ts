@@ -1,13 +1,14 @@
 import { CustomRepository } from "../decorators/typeorm-ex.decorator";
 import { Repository, UpdateResult } from "typeorm";
 import { RoomType } from "../models/room-type.entity";
-import { Pagination } from "../controllers/pagination.model";
+import { PaginationParams } from "../controllers/pagination.model";
 import { Accounts } from "../models";
+import {RoomTypeUpdateRequestPayload} from "../payload/request/room-type-update.request.payload";
 
 @CustomRepository(RoomType)
 export class RoomTypeRepository extends Repository<RoomType> {
 
-  findRoomTypesByPagination(pagination: Pagination): Promise<RoomType[]> {
+  findRoomTypesByPagination(pagination: PaginationParams): Promise<RoomType[]> {
     return this.createQueryBuilder('rt')
       .select('rt.id', 'id')
       .addSelect('rt.name', 'name')
@@ -41,9 +42,74 @@ export class RoomTypeRepository extends Repository<RoomType> {
   async deleteByIdAndAccountId(accontId: string, id: string): Promise<UpdateResult> {
     return this.createQueryBuilder('rt')
       .update({
-        isDeleted: true,
+        deletedAt: new Date(),
         deletedBy: accontId,
 
+      })
+      .where('rt.id = :id', {id: id})
+      .useTransaction(true)
+      .execute();
+  }
+
+  restoreDisabledById(id: string) {
+    return this.createQueryBuilder('rt')
+      .update({
+        disabledBy: null,
+        disabledAt: null,
+        updatedAt: new Date(),
+        updatedBy: ''
+      })
+      .where('rt.id = :id', {id: id})
+      .useTransaction(true)
+      .execute();
+  }
+
+  deleteById(id: string) {
+    return this.createQueryBuilder('rt')
+      .update({
+        deletedAt: new Date(),
+        deletedBy: ''
+      })
+      .where('rt.id = :id', {id: id})
+      .useTransaction(true)
+      .execute();
+  }
+
+  findDisabledByPagination(search: string): Promise<RoomType[]> {
+    return this.createQueryBuilder('rt')
+      .select('rt.id', 'id')
+      .addSelect('rt.name', 'name')
+      .where('rt.name LIKE :search', {search: search})
+      .andWhere('rt.disabled_at IS NOT NULL')
+      .getRawMany<RoomType>();
+  }
+
+  findDeletedByPagination(search: string): Promise<RoomType[]> {
+    return this.createQueryBuilder('rt')
+      .select('rt.id', 'id')
+      .addSelect('rt.name', 'name')
+      .where('rt.name LIKE :search', {search: search})
+      .andWhere('rt.deleted_at IS NOT NULL')
+      .getRawMany<RoomType>();
+  }
+
+  updateById(payload: RoomTypeUpdateRequestPayload) {
+    return this.createQueryBuilder('rt')
+      .update({
+        name: payload.name,
+        description: payload.description,
+        updatedBy: '',
+        updatedAt: new Date(),
+      })
+      .useTransaction(true)
+      .execute();
+  }
+
+  disableById(id: string, accountId: string) {
+    return this.createQueryBuilder('rt')
+      .update({
+        disabledAt: new Date(),
+        disabledBy: ''
       })
       .where('rt.id = :id', {id: id})
       .useTransaction(true)

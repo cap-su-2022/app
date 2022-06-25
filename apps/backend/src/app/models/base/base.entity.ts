@@ -36,25 +36,16 @@ export abstract class BaseEntity {
   deletedBy: string;
 
   @Column({
-    name: "is_disabled",
-    nullable: false,
-    default: false
-  })
-  isDisabled: boolean;
-
-  @Column({
     type: 'timestamptz',
     name: 'deleted_at',
   })
   deletedAt: Date;
 
-
   @Column({
-    name: "is_deleted",
-    nullable: false,
-    default: false
+    type: 'timestamptz',
+    name: 'disabled_at',
   })
-  isDeleted: boolean;
+  disabledAt: Date;
 
   @CreateDateColumn({
     name: 'created_at'

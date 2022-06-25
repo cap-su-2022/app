@@ -84,23 +84,6 @@ export class Accounts extends BaseEntity {
   description?: string;
 
   @Column({
-    name: "effdate",
-    nullable: false,
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    comment: 'The date that user is enabled.'
-  })
-  effdate?: Date;
-
-  @Column({
-    name: "inactive_date",
-    nullable: true,
-    type: 'timestamp',
-    comment: 'The date that user is disabled.'
-  })
-  inactiveDate?: Date;
-
-  @Column({
     name: "role",
     type: "varchar",
     length: "36",

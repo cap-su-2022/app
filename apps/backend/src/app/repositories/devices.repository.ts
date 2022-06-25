@@ -34,7 +34,8 @@ export class DevicesRepository extends Repository<Devices> {
   deleteDeviceById(id: string): Promise<UpdateResult> {
     return this.createQueryBuilder("devices")
       .update({
-        isDeleted: true
+        deletedAt: new Date(),
+        deletedBy: ''
       })
       .where("devices.id = :id", { id: id })
       .useTransaction(true)
@@ -60,7 +61,8 @@ export class DevicesRepository extends Repository<Devices> {
   disableById(id: string): Promise<UpdateResult> {
     return this.createQueryBuilder("devices")
       .update({
-        isDisabled: true
+        disabledAt: new Date(),
+        disabledBy: ''
       })
       .where("devices.id = :id", { id: id })
       .useTransaction(true)
@@ -70,7 +72,8 @@ export class DevicesRepository extends Repository<Devices> {
   restoreDisabledDeviceById(id: string): Promise<UpdateResult> {
     return this.createQueryBuilder("devices")
       .update({
-        isDisabled: false
+          deletedAt: null,
+        deletedBy: null,
       })
       .where("devices.id = :id", { id: id })
       .useTransaction(true)
@@ -80,7 +83,9 @@ export class DevicesRepository extends Repository<Devices> {
   async restoreDeletedDeviceById(id: string): Promise<UpdateResult> {
     return this.createQueryBuilder("devices")
       .update({
-        isDeleted: false
+        deletedBy: null,
+        deletedAt: null,
+
       })
       .where("devices.id = :id", { id: id })
       .useTransaction(true)

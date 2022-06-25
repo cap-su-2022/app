@@ -12,6 +12,8 @@ import {
   UsersWarningFlag,
   UsersWarningFlagHistory
 } from "../../models";
+import {Roles} from "../../models/role.entity";
+import {RoomType} from "../../models/room-type.entity";
 
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
@@ -32,7 +34,9 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       Rooms,
       UsersOTP,
       UsersWarningFlag,
-      UsersWarningFlagHistory
+      UsersWarningFlagHistory,
+      Roles,
+      RoomType
     ],
     synchronize: configService.get<boolean>(Environment.db.postgres.synchronize),
     logging: ["query"],
