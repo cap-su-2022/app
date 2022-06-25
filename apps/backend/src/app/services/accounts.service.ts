@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from "@nestjs/common";
+import { BadRequestException, HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { Accounts } from "../models";
 import { BaseService } from "./base.service";
 import { UpdateDeviceRequest, UsersDTO } from "@app/models";
@@ -269,5 +269,60 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
 
   getUsernameList(): Promise<string[]> {
     return this.repository.findUsername();
+  }
+
+  async getKeycloakIdByGoogleId(googleId: string): Promise<string> {
+    try {
+      return await this.repository.findKeycloakIdByGoogleId(googleId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getAccountByGoogleId(googleId: string): Promise<Accounts> {
+    try {
+      return await this.repository.findByGoogleId(googleId);
+    } catch (e) {
+      this.logger.error(e.emssage);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async checkIfAccountAlreadyHasAvatarImage(accountId: string): Promise<boolean> {
+    try {
+      const isExisted = this.repository.existsById(accountId);
+      if (!isExisted) {
+        throw new BadRequestException('Account does not exists with the provided id');
+      }
+      return await this.repository.checkIfUserAlreadyHasAvatar(accountId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async addGoogleAvatarURLByAccountId(googleImageURL: string, accountId: string): Promise<void> {
+    try {
+      const result = await this.repository.addAvatarURLById(googleImageURL, accountId);
+      if (result.affected < 1) {
+        throw new BadRequestException('Error while updating account google image');
+      }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async updateGoogleIdByAccountEmail(googleId: string, email: string): Promise<void> {
+    try {
+      const result = await this.repository.updateGoogleIdByEmail(googleId, email);
+      if (result.affected < 1) {
+        throw new HttpException('Invalid account. Please contract to administrator for more information', HttpStatus.UNAUTHORIZED);
+      }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 }

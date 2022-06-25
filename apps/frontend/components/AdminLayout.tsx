@@ -1,9 +1,12 @@
 import styles from './admin-layout.module.scss';
 import {NavbarSimpleColored} from "./NavBar";
 import {HeaderSearch} from "./Header";
-import React from "react";
+import React, { ReactNode } from "react";
 
-const AdminLayout: React.FC<React.ReactNode> = (props) => {
+interface AdminLayoutProps {
+  children: ReactNode;
+}
+const AdminLayout: React.FC<AdminLayoutProps> = (props) => {
   return (
     <>
       <div className={styles.page}>

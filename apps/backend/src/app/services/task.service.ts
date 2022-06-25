@@ -11,7 +11,7 @@ export class TasksService {
   constructor(private readonly repository: BookingRoomRepository) {
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  //@Cron(CronExpression.EVERY_10_SECONDS)
   async handleCheckRoomBookingStillInProgress() {
     const currentTime = new Date().getTime() + 25200000;
     const next5Mins = new Date(currentTime + (1000 * 60 * 5));

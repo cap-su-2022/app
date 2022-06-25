@@ -2,12 +2,19 @@ require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 require_relative '../node_modules/@nrwl/react-native/nx_post_install'
 
-platform :ios, '11.0'
+platform :ios, '13.0'
 install! 'cocoapods', :deterministic_uuids => false
 
 target 'Mobile' do
+  pod 'GoogleUtilities', '>=0', :modular_headers => true
+  pod 'FirebaseCore', '>=0', :modular_headers => true
   config = use_native_modules!
-
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID"
+  pod 'Permission-Notifications', :path => "#{permissions_path}/Notifications"
+  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
+  pod 'Permission-PhotoLibraryAddOnly', :path => "#{permissions_path}/PhotoLibraryAddOnly"
   # Flags change depending on the env values.
   flags = get_default_flags()
 
@@ -32,6 +39,16 @@ target 'Mobile' do
   use_flipper!()
 
   post_install do |installer|
+      #  installer.pods_project.targets.each do |target|
+       #     if target.name == 'RCT-Folly'
+        #        target.build_configurations.each do |config|
+         #           config.build_settings['HEADER_SEARCH_PATHS'] = "$(inherited) ${PODS_ROOT}/fmt/include"
+          #      end
+          #  end
+
+        #end
+          system("mkdir -p Pods/Headers/Public/FirebaseCore && cp Pods/FirebaseCore/Firebase/Core/Public/* Pods/Headers/Public/FirebaseCore/")
+
     react_native_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
     nx_post_install(installer)

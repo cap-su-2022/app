@@ -41,7 +41,7 @@
   bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
 #endif
 
-  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"Mobile", nil);
+  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"main", nil);
 
   if (@available(iOS 13.0, *)) {
     rootView.backgroundColor = [UIColor systemBackgroundColor];
@@ -60,7 +60,7 @@
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"src/main"];
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"apps/mobile/src/main"];
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
