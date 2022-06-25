@@ -10,7 +10,7 @@ export class AccountRepository extends Repository<Accounts> {
     return this.createQueryBuilder("accounts")
       .select("accounts.keycloak_id", 'keycloakId')
       .where("accounts.google_id = :googleId", { googleId: googleId })
-      .getRawOne().then((data) => data['keycloakId']);
+      .getRawOne().then((data) => data?.keycloakId);
   }
 
   async checkIfUserAlreadyHasAvatar(id: string): Promise<boolean> {
