@@ -10,6 +10,7 @@ export const doGoogleLogin = createAsyncThunk("auth/google-login", async (payloa
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true }); // <-- Add this
+
     const { idToken } = await GoogleSignin.signIn();
     const response = await axios.post(`${API_URL}/auth/signin/google`, { token: idToken});
     const data = await response.data;
