@@ -8,21 +8,21 @@ https:
 
 db:
   keycloak:
-    url: 'fu-lib-room.tk'
+    url: '34.142.193.100'
     port: 3307
     database: 'keycloak'
     username: 'root'
     password: 'root'
     synchronize: false
   mysql:
-    url: 'fu-lib-room.tk'
+    url: '34.142.193.100'
     port: 3306
     database: 'db'
     username: 'root'
     password: '12345678x@X'
     synchronize: false
   postgres:
-    url: 'fu-lib-room.tk'
+    url: '34.142.193.100'
     port: 5432
     database: 'postgres'
     username: 'admin'
@@ -30,7 +30,7 @@ db:
     synchronize: false
 
 keycloak:
-  host: 'fu-lib-room.tk'
+  host: '34.142.193.100'
   port: 9090
   client:
     realm: 'authentication'
@@ -45,13 +45,13 @@ keycloak:
     password: 'password'
 
 redis:
-  host: 'fu-lib-room.tk'
+  host: '34.142.193.100'
   port: 6379
   username:
   password:
 
 elasticsearch:
-  host: 'localhost'
+  host: '34.142.193.100'
   port: 9200
   username: 'elastic'
   password: 'admin'

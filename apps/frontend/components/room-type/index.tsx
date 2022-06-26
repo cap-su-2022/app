@@ -8,9 +8,9 @@ import { fetchRoomTypes } from '../../redux/features/room-type';
 import { PaginationParams } from '../../models/pagination-params.model';
 import { useDebouncedValue } from '@mantine/hooks';
 import InfoModal from './actions/info-modal.component';
-import { TableBody } from "../actions/table-body.component";
-import TableFooter from "../actions/table-footer.component";
-import TableHeader from "../actions/table-header.component";
+import { TableBody } from '../actions/table-body.component';
+import TableFooter from '../actions/table-footer.component';
+import TableHeader from '../actions/table-header.component';
 
 const defaultPagination = {
   dir: 'ASC',
@@ -33,7 +33,15 @@ const ManageRoomType: React.FC<any> = () => {
   useEffect(() => {
     console.log(pagination.dir);
     dispatch(fetchRoomTypes(pagination));
-  }, [pagination.page, pagination.limit, pagination.dir, pagination.sort, debounceSearchValue, pagination, dispatch]);
+  }, [
+    pagination.page,
+    pagination.limit,
+    pagination.dir,
+    pagination.sort,
+    debounceSearchValue,
+    pagination,
+    dispatch,
+  ]);
 
   const toggleSortDirection = () => {
     setPagination({
