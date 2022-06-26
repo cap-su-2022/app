@@ -44,7 +44,7 @@ export class RoomTypeService {
           'Room type does not found with the provided id'
         );
       }
-      return await this.repository.updateById(accountId, updatePayload);
+      return await this.repository.updateById(id, accountId, updatePayload);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

@@ -1,38 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Button,
   createStyles,
   InputWrapper,
   Modal,
-  Textarea,
   TextInput,
 } from '@mantine/core';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { fetchRoomTypeById } from '../../../redux/features/room-type';
-import { Disabled, Disabled2, PencilOff, X } from 'tabler-icons-react';
+import { PencilOff, X } from 'tabler-icons-react';
+import { InputInfoProps } from '../models/input-info-props.model';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface InfoModalProps {
   header: React.ReactNode;
-  id: string;
   isShown: boolean;
   toggleShown(): void;
+  fields: InputInfoProps[];
 }
 
 const InfoModal: React.FC<InfoModalProps> = (props) => {
   const { classes } = useStyles();
-
-  const dispatch = useAppDispatch();
-
-  const roomType = useAppSelector((state) => state.roomType.roomType);
-
-  useEffect(() => {
-    dispatch(fetchRoomTypeById(props.id));
-  }, [props.id]);
-
-  useEffect(() => {
-    console.log(props.isShown);
-  }, [props.isShown]);
 
   return (
     <Modal
@@ -50,19 +35,18 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
       onClose={() => props.toggleShown()}
     >
       <div className={classes.body}>
-        {roomType ? (
-          <div className={classes.inner}>
-            <InputWrapper label="Id">
-              <TextInput defaultValue={roomType.id} readOnly />
+        <div className={classes.inner}>
+          {props.fields.map((field, index) => (
+            <InputWrapper key={index} label={field.label}>
+              <TextInput
+                id={field.id}
+                name={field.name}
+                defaultValue={field.value}
+                readOnly={field.readOnly}
+              />
             </InputWrapper>
-            <InputWrapper label="Name">
-              <TextInput defaultValue={roomType.name} readOnly />
-            </InputWrapper>
-            <InputWrapper label="Description">
-              <Textarea defaultValue={roomType.description} readOnly />
-            </InputWrapper>
-          </div>
-        ) : null}
+          ))}
+        </div>
         <div className={classes.footer}>
           <Button leftIcon={<PencilOff />} onClick={() => {}} color="red">
             Disable

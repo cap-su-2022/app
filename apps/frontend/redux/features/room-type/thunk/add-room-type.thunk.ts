@@ -1,6 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
+import { fetchRoomTypes } from './fetch-room-types.thunk';
+import { defaultPaginationParams } from '../../../../models/pagination-params.model';
 
 export const addRoomType = createAsyncThunk<
   void,
@@ -27,5 +29,6 @@ export const addRoomType = createAsyncThunk<
     });
   } finally {
     thunkAPI.dispatch(toggleSpinnerOff());
+    thunkAPI.dispatch(fetchRoomTypes(defaultPaginationParams));
   }
 });

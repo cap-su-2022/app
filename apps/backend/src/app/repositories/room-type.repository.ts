@@ -108,16 +108,23 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .getRawMany<RoomType>();
   }
 
-  updateById(accountId: string, payload: RoomTypeUpdateRequestPayload) {
-    return this.createQueryBuilder('rt')
-      .update({
+  updateById(
+    roomTypeId: string,
+    accountId: string,
+    payload: RoomTypeUpdateRequestPayload
+  ) {
+    return this.save(
+      {
+        id: roomTypeId,
         name: payload.name,
         description: payload.description,
         updatedBy: accountId,
         updatedAt: new Date(),
-      })
-      .useTransaction(true)
-      .execute();
+      },
+      {
+        transaction: true,
+      }
+    );
   }
 
   disableById(accountId: string, id: string) {

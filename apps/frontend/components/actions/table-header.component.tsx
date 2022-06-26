@@ -26,7 +26,6 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
           placeholder="Search by name..."
           mb="md"
           icon={<Search size={14} />}
-          defaultValue=""
           value={props.search}
           onChange={handleSearchChange}
         />
