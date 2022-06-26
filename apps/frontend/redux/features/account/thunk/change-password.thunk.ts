@@ -28,6 +28,8 @@ export const changePassword = createAsyncThunk<ChangePasswordResponseModel,
       password: payload.password,
       newPassword: payload.newPassword,
     });
+
+    console.log(payload.username, payload.password, payload.newPassword);
     return await response.data;
   } catch ({ response }) {
     if (response.status === 401 || response.status === 403) {

@@ -17,7 +17,12 @@ export const fetchDevicesName = createAsyncThunk<
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
     const response = await axios.get(`api/booking-room/devices?name=&type=&sort=ASC`, {});
-    return await response.data;
+    const dataReturn = response.data.map((value) => ({
+      value: value.id,
+      label: value.name,
+    }));
+    console.log(dataReturn);
+    return await dataReturn;
   } catch ({ response }) {
     if (response.status === 401 || response.status === 403) {
       return thunkAPI.rejectWithValue({
