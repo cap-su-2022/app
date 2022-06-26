@@ -61,13 +61,13 @@ function Th({ style, children, reversed, sorted, onSort }: ThProps) {
   );
 }
 
-interface TableSortProps {
+interface TableBodyProps {
   data: any[];
   toggleSortDirection(): void;
   actionButtonCb: any;
 }
 
-export const TableSort: React.FC<TableSortProps> = (props) => {
+export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
