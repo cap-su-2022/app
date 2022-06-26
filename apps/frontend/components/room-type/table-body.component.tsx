@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import {
   createStyles,
   Table,
@@ -8,157 +8,142 @@ import {
   Text,
   Center,
   TextInput,
+  Button,
+  Image,
+  InputWrapper,
 } from '@mantine/core';
-import { Selector, ChevronDown, ChevronUp, Search } from 'tabler-icons-react';
+import {
+  Selector,
+  ChevronDown,
+  ChevronUp,
+  Search,
+  Filter,
+  RotateClockwise,
+  InfoCircle,
+  Pencil,
+  Trash,
+} from 'tabler-icons-react';
+import { useDebouncedValue } from '@mantine/hooks';
+import { FPT_ORANGE_COLOR } from '@app/constants';
 
 interface RowData {
   name: string;
-}
-
-interface TableSortProps {
-  data: RowData[];
 }
 
 interface ThProps {
   children: React.ReactNode;
   reversed: boolean;
   sorted: boolean;
-
+  style?: CSSProperties;
   onSort(): void;
 }
 
-function Th({ children, reversed, sorted, onSort }: ThProps) {
+function Th({ style, children, reversed, sorted, onSort }: ThProps) {
   const { classes } = useStyles();
   const Icon = sorted ? (reversed ? ChevronUp : ChevronDown) : Selector;
   return (
-    <th className={classes.th}>
-      <UnstyledButton onClick={onSort} className={classes.control}>
-        <Group position="apart">
-          <Text weight={500} size="sm">
-            {children}
-          </Text>
-          <Center className={classes.icon}>
-            <Icon size={14} />
-          </Center>
-        </Group>
-      </UnstyledButton>
+    <th style={style} className={classes.th}>
+      {onSort === null ? (
+        children
+      ) : (
+        <UnstyledButton onClick={onSort} className={classes.control}>
+          <Group position="apart">
+            <Text weight={500} size="sm">
+              {children}
+            </Text>
+            <Center className={classes.icon}>
+              <Icon size={14} />
+            </Center>
+          </Group>
+        </UnstyledButton>
+      )}
     </th>
   );
 }
 
-function filterData(data: RowData[], search: string) {
-  const keys = Object.keys(data[0]);
-  const query = search.toLowerCase().trim();
-  return data.filter((item) =>
-    keys.some((key) => item[key].toLowerCase().includes(query))
-  );
+interface TableSortProps {
+  data: any[];
+  toggleSortDirection(): void;
+  actionButtonCb: any;
 }
 
-function sortData(
-  data: RowData[],
-  payload: { sortBy: keyof RowData; reversed: boolean; search: string }
-) {
-  if (!payload.sortBy) {
-    return filterData(data, payload.search);
-  }
-
-  return filterData(
-    [...data].sort((a, b) => {
-      if (payload.reversed) {
-        return b[payload.sortBy].localeCompare(a[payload.sortBy]);
-      }
-
-      return a[payload.sortBy].localeCompare(b[payload.sortBy]);
-    }),
-    payload.search
-  );
-}
-
-export function TableSort({ data }: TableSortProps) {
-  const [search, setSearch] = useState('');
-  const [sortedData, setSortedData] = useState(data);
+export const TableSort: React.FC<TableSortProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
+
+  const { classes } = useStyles();
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
-    setSortBy(field);
-    setSortedData(sortData(data, { sortBy: field, reversed, search }));
+    props.toggleSortDirection();
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.currentTarget;
-    setSearch(value);
-    setSortedData(
-      sortData(data, { sortBy, reversed: reverseSortDirection, search: value })
-    );
-  };
-
-  const rows = sortedData.map((row) => (
+  const rows = props.data.map((row, index) => (
     <tr key={row.name}>
+      <td>{index + 1}</td>
       <td>{row.name}</td>
-      <td>{row.email}</td>
-      <td>{row.company}</td>
+      <td className={classes.actionButtonContainer}>
+        <Button
+          variant="outline"
+          onClick={() => {
+            props.actionButtonCb.info(row.id);
+          }}
+        >
+          <InfoCircle />
+        </Button>
+        <Button variant="outline" color="green" onClick={() => {}}>
+          <Pencil />
+        </Button>
+        <Button variant="outline" color="red" onClick={() => {}}>
+          <Trash />
+        </Button>
+      </td>
     </tr>
   ));
 
-  return (
-    <ScrollArea>
-      <TextInput
-        placeholder="Search by any field"
-        mb="md"
-        icon={<Search size={14} />}
-        value={search}
-        onChange={handleSearchChange}
-      />
-      <Table
-        horizontalSpacing="md"
-        verticalSpacing="xs"
-        sx={{ tableLayout: 'fixed', minWidth: 700 }}
-      >
-        <thead>
-          <tr>
-            <Th
-              sorted={sortBy === 'name'}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting('name')}
-            >
-              Name
-            </Th>
-            <Th
-              sorted={sortBy === 'email'}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting('email')}
-            >
-              Email
-            </Th>
-            <Th
-              sorted={sortBy === 'company'}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting('company')}
-            >
-              Company
-            </Th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.length > 0 ? (
-            rows
-          ) : (
-            <tr>
-              <td colSpan={Object.keys(data[0]).length}>
-                <Text weight={500} align="center">
-                  Nothing found
-                </Text>
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
-    </ScrollArea>
+  return props.data.length > 0 ? (
+    <Table
+      horizontalSpacing="md"
+      verticalSpacing="xs"
+      sx={{ tableLayout: 'fixed', minWidth: 700 }}
+    >
+      <thead>
+        <tr>
+          <Th
+            style={{
+              width: '5%',
+            }}
+            sorted={null}
+            reversed={reverseSortDirection}
+            onSort={null}
+          >
+            Row
+          </Th>
+          <Th
+            style={{
+              width: '75%',
+            }}
+            sorted={sortBy === 'name'}
+            reversed={reverseSortDirection}
+            onSort={() => setSorting('name')}
+          >
+            Name
+          </Th>
+          <Th sorted={null} reversed={reverseSortDirection} onSort={null}>
+            Actions
+          </Th>
+        </tr>
+      </thead>
+      <tbody>{rows}</tbody>
+    </Table>
+  ) : (
+    <div className={classes.notFoundContainer}>
+      <Image src="/location_search.svg" width={500} />
+      <div className={classes.notFoundText}>No result found</div>
+    </div>
   );
-}
+};
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -181,5 +166,21 @@ const useStyles = createStyles((theme) => ({
     width: 21,
     height: 21,
     borderRadius: 21,
+  },
+
+  notFoundContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  notFoundText: {
+    fontSize: 32,
+    fontWeight: 600,
+  },
+  actionButtonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 }));

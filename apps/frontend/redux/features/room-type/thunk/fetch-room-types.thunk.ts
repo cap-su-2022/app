@@ -16,7 +16,7 @@ export const fetchRoomTypes = createAsyncThunk<
 >('room-type/fetch-room-types', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.get('/api/v1/room-type', {
+    const response = await axios.get('api/room-type', {
       params: {
         page: payload.page,
         limit: payload.limit,

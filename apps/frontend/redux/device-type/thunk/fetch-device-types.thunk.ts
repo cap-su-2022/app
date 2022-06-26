@@ -16,7 +16,7 @@ export const fetchDeviceTypes = createAsyncThunk<
 >('device-type', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.get('/api/v1/device-type', {
+    const response = await axios.get('api/device-type', {
       params: {
         page: payload.page,
         limit: payload.limit,
@@ -27,6 +27,7 @@ export const fetchDeviceTypes = createAsyncThunk<
     });
     return await response.data;
   } catch (e) {
+    alert(e);
     return thunkAPI.rejectWithValue({
       message: e.response.data.message,
     });

@@ -19,7 +19,9 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .select('rt.id', 'id')
       .addSelect('rt.name', 'name')
       .where('rt.deleted_at IS NULL')
-      .andWhere('rt.name LIKE :search', { search: `%${pagination.search}%` })
+      .andWhere('LOWER(rt.name) LIKE :search', {
+        search: `%${pagination.search}%`,
+      })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
 
     return paginateRaw<RoomType>(query, {
