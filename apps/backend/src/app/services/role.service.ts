@@ -10,8 +10,8 @@ export class RoleService {
 
   async getRoleById(id: string) {
     try {
-      const isExsited = await this.repository.existsById(id);
-      if (!isExsited) {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
         throw new BadRequestException('Could not find role with provided id.');
       }
       return await this.repository.findById(id);
