@@ -110,6 +110,7 @@ const ManageRoomType: React.FC<any> = () => {
             data={roomTypes.items}
           />
           <InfoModal
+            header="Room Type Information"
             toggleShown={() => setInfoShown(!isInfoShown)}
             isShown={isInfoShown}
             id={id}
