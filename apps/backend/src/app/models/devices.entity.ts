@@ -1,18 +1,16 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
-import {BaseEntity} from "./base/base.entity";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, BaseEntityWithDisabled } from './base/base.entity';
 
 @Entity(Devices.name.toLowerCase())
-export class Devices extends BaseEntity {
-
-  @PrimaryGeneratedColumn("uuid",
-    {
-      name: "id",
-      comment: "ID for Equipments",
-    },)
+export class Devices extends BaseEntityWithDisabled {
+  @PrimaryGeneratedColumn('uuid', {
+    name: 'id',
+    comment: 'ID for Equipments',
+  })
   id?: string;
 
   @Column({
-    name: "name",
+    name: 'name',
     nullable: false,
     unique: true,
     length: 250,
@@ -22,17 +20,17 @@ export class Devices extends BaseEntity {
   name?: string;
 
   @Column({
-    name: "description",
+    name: 'description',
     nullable: false,
     unique: false,
     length: 500,
     type: 'varchar',
-    comment: 'Equipments description'
+    comment: 'Equipments description',
   })
   description?: string;
 
   @Column({
-    name: "effdate",
+    name: 'effdate',
     nullable: false,
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
@@ -40,7 +38,7 @@ export class Devices extends BaseEntity {
   effDate: Date;
 
   @Column({
-    name: "inactive_date",
+    name: 'inactive_date',
     nullable: true,
     type: 'timestamp',
   })

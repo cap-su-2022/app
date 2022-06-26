@@ -1,19 +1,17 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
-import {BaseEntity} from "./base/base.entity";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, BaseEntityWithDisabled } from './base/base.entity';
 
 @Entity(DevicesHist.name.toLowerCase())
-export class DevicesHist extends BaseEntity {
-
-  @PrimaryGeneratedColumn("increment",
-    {
-      name: "id",
-      comment: "ID for Equipment History",
-      type: "bigint"
-    })
+export class DevicesHist extends BaseEntityWithDisabled {
+  @PrimaryGeneratedColumn('increment', {
+    name: 'id',
+    comment: 'ID for Equipment History',
+    type: 'bigint',
+  })
   equipmentsHistoryId?: number;
 
   @Column({
-    name: "name",
+    name: 'name',
     nullable: false,
     unique: false,
     length: 36,
@@ -23,7 +21,7 @@ export class DevicesHist extends BaseEntity {
   id?: string;
 
   @Column({
-    name: "name",
+    name: 'name',
     nullable: false,
     unique: false,
     length: 250,
@@ -33,17 +31,17 @@ export class DevicesHist extends BaseEntity {
   name?: string;
 
   @Column({
-    name: "description",
+    name: 'description',
     nullable: true,
     unique: false,
     length: 500,
     type: 'varchar',
-    comment: 'Equipments description'
+    comment: 'Equipments description',
   })
   description?: string;
 
   @Column({
-    name: "effdate",
+    name: 'effdate',
     nullable: true,
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
@@ -51,7 +49,7 @@ export class DevicesHist extends BaseEntity {
   effDate: Date;
 
   @Column({
-    name: "inactive_date",
+    name: 'inactive_date',
     nullable: true,
     type: 'timestamp',
   })

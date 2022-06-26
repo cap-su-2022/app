@@ -1,17 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { RoomType } from "../enum/room-type.enum";
-import {BaseEntity} from "./base/base.entity";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { RoomType } from '../enum/room-type.enum';
+import { BaseEntity, BaseEntityWithDisabled } from './base/base.entity';
 
 @Entity(Rooms.name.toLowerCase())
-export class Rooms extends BaseEntity {
-
-  @PrimaryGeneratedColumn("uuid", {
-    name: "id"
+export class Rooms extends BaseEntityWithDisabled {
+  @PrimaryGeneratedColumn('uuid', {
+    name: 'id',
   })
   id?: string;
 
   @Column({
-    name: "name",
+    name: 'name',
     nullable: false,
     unique: true,
     length: 100,
@@ -19,18 +18,18 @@ export class Rooms extends BaseEntity {
   name?: string;
 
   @Column({
-    name: "description",
+    name: 'description',
     nullable: true,
     length: 500,
-    type: "varchar"
+    type: 'varchar',
   })
   description?: string;
 
   @Column({
-    name: "type",
+    name: 'type',
     nullable: false,
     length: 100,
-    default: RoomType.LIBRARY_ROOM
+    default: RoomType.LIBRARY_ROOM,
   })
   type?: string;
 }

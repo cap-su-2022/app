@@ -1,14 +1,22 @@
-import {Action, AnyAction, combineReducers, configureStore, ThunkAction} from "@reduxjs/toolkit";
-import {createWrapper, HYDRATE} from "next-redux-wrapper";
+import {
+  Action,
+  AnyAction,
+  combineReducers,
+  configureStore,
+  ThunkAction,
+} from '@reduxjs/toolkit';
+import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 import logger from 'redux-logger';
-import spinnerSlice from "./features/spinner/slice";
-import {authReducer} from "./features/user/auth.slice";
-import {roomReducer} from "./features/room/room.slice";
-import {systemReducer} from "./features/system/system.slice";
-import {devicesReducer} from "./features/devices/devices.slice";
-import {usersReducer} from "./features/user/user.slice";
+import spinnerSlice from './features/spinner/slice';
+import { authReducer } from './features/user/auth.slice';
+import { roomReducer } from './features/room/room.slice';
+import { systemReducer } from './features/system/system.slice';
+import { devicesReducer } from './features/devices/devices.slice';
+import { usersReducer } from './features/user/user.slice';
+import { roomTypeReducer } from './features/room-type';
+import { deviceTypeReducer } from './device-type';
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = process.env.NODE_ENV === 'production';
 
 const combinedReducer = combineReducers({
   spinner: spinnerSlice.reducer,
@@ -17,9 +25,14 @@ const combinedReducer = combineReducers({
   device: devicesReducer,
   system: systemReducer,
   user: usersReducer,
+  roomType: roomTypeReducer,
+  deviceType: deviceTypeReducer,
 });
 
-const reducer = (state: ReturnType<typeof combinedReducer>, action: AnyAction) => {
+const reducer = (
+  state: ReturnType<typeof combinedReducer>,
+  action: AnyAction
+) => {
   if (action.type === HYDRATE) {
     return {
       ...state, //use previous state
@@ -28,7 +41,7 @@ const reducer = (state: ReturnType<typeof combinedReducer>, action: AnyAction) =
   } else {
     return combinedReducer(state, action);
   }
-}
+};
 
 export const makeStore = () => {
   return configureStore({
@@ -42,9 +55,11 @@ type Store = ReturnType<typeof makeStore>;
 
 export type AppDispatch = Store['dispatch'];
 export type RootState = ReturnType<typeof combinedReducer>;
-export type AppThunk<ReturnType = void> = ThunkAction<ReturnType,
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
   RootState,
   unknown,
-  Action<string>>;
+  Action<string>
+>;
 
-export const wrapper = createWrapper(makeStore, {debug: !isProduction});
+export const wrapper = createWrapper(makeStore, { debug: !isProduction });

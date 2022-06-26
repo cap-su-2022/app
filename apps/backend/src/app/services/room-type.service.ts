@@ -1,19 +1,20 @@
-import { BadRequestException, Injectable, Logger } from "@nestjs/common";
-import { PaginationParams } from "../controllers/pagination.model";
-import { RoomTypeRepository } from "../repositories/room-type.repository";
-import { RoomTypeAddRequestPayload } from "../payload/request/room-type-add.request.payload";
-import { RoomType } from "../models/room-type.entity";
-import { RoomTypeUpdateRequestPayload } from "../payload/request/room-type-update.request.payload";
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { PaginationParams } from '../controllers/pagination.model';
+import { RoomTypeRepository } from '../repositories/room-type.repository';
+import { RoomTypeAddRequestPayload } from '../payload/request/room-type-add.request.payload';
+import { RoomType } from '../models/room-type.entity';
+import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
+import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class RoomTypeService {
-
   private readonly logger = new Logger(RoomTypeService.name);
 
-  constructor(private readonly repository: RoomTypeRepository) {
-  }
+  constructor(private readonly repository: RoomTypeRepository) {}
 
-  async getRoomTypesWithPagination(pagination: PaginationParams): Promise<RoomType[]> {
+  async getRoomTypesWithPagination(
+    pagination: PaginationParams
+  ): Promise<Pagination<RoomType>> {
     try {
       return await this.repository.findRoomTypesByPagination(pagination);
     } catch (e) {
@@ -31,18 +32,28 @@ export class RoomTypeService {
     }
   }
 
-  updateRoomTypeById(updatePayload: RoomTypeUpdateRequestPayload, id: string) {
+  async updateRoomTypeById(
+    accountId: string,
+    updatePayload: RoomTypeUpdateRequestPayload,
+    id: string
+  ) {
     try {
-      return this.repository.updateById(updatePayload);
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Room type does not found with the provided id'
+        );
+      }
+      return await this.repository.updateById(accountId, updatePayload);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
 
-  disableRoomTypeById(id: string) {
+  async disableRoomTypeById(accountId: string, id: string) {
     try {
-      return this.repository.disableById(id, '');
+      return await this.repository.disableById(accountId, id);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -67,41 +78,54 @@ export class RoomTypeService {
     }
   }
 
-  restoreDeletedRoomTypeById(id: string) {
+  async restoreDeletedRoomTypeById(accountId: string, id: string) {
     try {
-      return this.repository.restoreDisabledById(id);
+      const isExisted = this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Room type does not exist with the provided id'
+        );
+      }
+      return await this.repository.restoreDisabledById(accountId, id);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
 
-  restoreDisabledRoomTypeById(id: string) {
+  async restoreDisabledRoomTypeById(accountId: string, id: string) {
     try {
-      return this.repository.restoreDisabledById(id);
+      return await this.repository.restoreDisabledById(accountId, id);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
 
-  deleteRoomTypeById(id: string) {
+  deleteRoomTypeById(accountId: string, id: string) {
     try {
-      return this.repository.deleteById(id);
+      return this.repository.deleteById(accountId, id);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
 
-  async addRoomType(accountId: string, addRoomType: RoomTypeAddRequestPayload): Promise<RoomType> {
+  async addRoomType(
+    accountId: string,
+    addRoomType: RoomTypeAddRequestPayload
+  ): Promise<RoomType> {
     try {
       return await this.repository.save({
         createdBy: accountId,
         name: addRoomType.name,
-      })
+        description: addRoomType.description,
+        createdAt: new Date(),
+        updatedBy: accountId,
+        updatedAt: new Date(),
+      });
     } catch (e) {
-      this.logger.error(e.message);
+      this.logger.error(e);
       throw new BadRequestException(e.message);
     }
   }

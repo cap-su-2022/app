@@ -1,25 +1,31 @@
-import { CustomRepository } from "../decorators/typeorm-ex.decorator";
-import { Repository, UpdateResult } from "typeorm";
-import { RoomType } from "../models/room-type.entity";
-import { PaginationParams } from "../controllers/pagination.model";
-import { Accounts } from "../models";
-import {RoomTypeUpdateRequestPayload} from "../payload/request/room-type-update.request.payload";
+import { CustomRepository } from '../decorators/typeorm-ex.decorator';
+import { Repository, UpdateResult } from 'typeorm';
+import { RoomType } from '../models/room-type.entity';
+import { PaginationParams } from '../controllers/pagination.model';
+import { Accounts } from '../models';
+import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
+import {
+  IPaginationMeta,
+  paginateRaw,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 
 @CustomRepository(RoomType)
 export class RoomTypeRepository extends Repository<RoomType> {
-
-  findRoomTypesByPagination(pagination: PaginationParams): Promise<RoomType[]> {
-    return this.createQueryBuilder('rt')
+  findRoomTypesByPagination(
+    pagination: PaginationParams
+  ): Promise<Pagination<RoomType>> {
+    const query = this.createQueryBuilder('rt')
       .select('rt.id', 'id')
       .addSelect('rt.name', 'name')
-      .addSelect('rt.updated_at')
-      .addSelect('rt.is_disabled', 'isDisabled')
-      .where('rt.is_deleted = false')
-      .andWhere('rt.name LIKE :search', {search: `%${pagination.search}%`})
-      .limit(pagination.limit)
-      .offset(pagination.page)
-      .orderBy(pagination.sort, pagination.dir as "ASC" | "DESC")
-      .getRawMany();
+      .where('rt.deleted_at IS NULL')
+      .andWhere('rt.name LIKE :search', { search: `%${pagination.search}%` })
+      .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
+
+    return paginateRaw<RoomType>(query, {
+      page: pagination.page,
+      limit: pagination.limit,
+    });
   }
 
   async findById(id: string): Promise<RoomType> {
@@ -33,44 +39,51 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .addSelect('rt.updated_at', 'updatedAt')
       .innerJoin(Accounts, 'a', 'a.id = rt.created_by')
       .innerJoin(Accounts, 'aa', 'aa.id = rt.updated_by')
-      .where('rt.id = :id', {id: id})
-      .andWhere('rt.is_disabled = false')
-      .andWhere('rt.is_deleted = false')
+      .where('rt.id = :id', { id: id })
+      .andWhere('rt.deleted_at IS NULL')
       .getRawOne<RoomType>();
   }
 
-  async deleteByIdAndAccountId(accontId: string, id: string): Promise<UpdateResult> {
+  async deleteByIdAndAccountId(
+    accountId: string,
+    id: string
+  ): Promise<UpdateResult> {
     return this.createQueryBuilder('rt')
       .update({
         deletedAt: new Date(),
-        deletedBy: accontId,
-
+        deletedBy: accountId,
       })
-      .where('rt.id = :id', {id: id})
+      .where('rt.id = :id', { id: id })
       .useTransaction(true)
       .execute();
   }
 
-  restoreDisabledById(id: string) {
+  existsById(id: string): Promise<boolean> {
+    return this.createQueryBuilder('rt')
+      .select('COUNT(1)', 'count')
+      .where('rt.id = :id', { id: id })
+      .getRawOne()
+      .then((data) => data?.count > 0);
+  }
+
+  restoreDisabledById(accountId: string, id: string) {
     return this.createQueryBuilder('rt')
       .update({
-        disabledBy: null,
-        disabledAt: null,
         updatedAt: new Date(),
-        updatedBy: ''
+        updatedBy: accountId,
       })
-      .where('rt.id = :id', {id: id})
+      .where('rt.id = :id', { id: id })
       .useTransaction(true)
       .execute();
   }
 
-  deleteById(id: string) {
+  deleteById(accountId: string, id: string) {
     return this.createQueryBuilder('rt')
       .update({
         deletedAt: new Date(),
-        deletedBy: ''
+        deletedBy: accountId,
       })
-      .where('rt.id = :id', {id: id})
+      .where('rt.id = :id', { id: id })
       .useTransaction(true)
       .execute();
   }
@@ -79,7 +92,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
     return this.createQueryBuilder('rt')
       .select('rt.id', 'id')
       .addSelect('rt.name', 'name')
-      .where('rt.name LIKE :search', {search: search})
+      .where('rt.name LIKE :search', { search: search })
       .andWhere('rt.disabled_at IS NOT NULL')
       .getRawMany<RoomType>();
   }
@@ -88,30 +101,27 @@ export class RoomTypeRepository extends Repository<RoomType> {
     return this.createQueryBuilder('rt')
       .select('rt.id', 'id')
       .addSelect('rt.name', 'name')
-      .where('rt.name LIKE :search', {search: search})
+      .where('rt.name LIKE :search', { search: search })
       .andWhere('rt.deleted_at IS NOT NULL')
       .getRawMany<RoomType>();
   }
 
-  updateById(payload: RoomTypeUpdateRequestPayload) {
+  updateById(accountId: string, payload: RoomTypeUpdateRequestPayload) {
     return this.createQueryBuilder('rt')
       .update({
         name: payload.name,
         description: payload.description,
-        updatedBy: '',
+        updatedBy: accountId,
         updatedAt: new Date(),
       })
       .useTransaction(true)
       .execute();
   }
 
-  disableById(id: string, accountId: string) {
+  disableById(accountId: string, id: string) {
     return this.createQueryBuilder('rt')
-      .update({
-        disabledAt: new Date(),
-        disabledBy: ''
-      })
-      .where('rt.id = :id', {id: id})
+      .update({})
+      .where('rt.id = :id', { id: id })
       .useTransaction(true)
       .execute();
   }
