@@ -29,50 +29,50 @@ export class RoomTypeRepository extends Repository<RoomType> {
   }
 
   async findById(id: string): Promise<RoomType> {
-    return this.createQueryBuilde"rt"t')
-      .selec"rt.id"d'"id"d')
-      .addSelec"rt.name"e'"name"e')
-      .addSelec"rt.description"n'"description"n')
-      .addSelec"a.username"e'"createdBy"y')
-      .addSelec"rt.created_at"t'"createdAt"t')
-      .addSelec"aa.username"e'"updatedBy"y')
-      .addSelec"rt.updated_at"t'"updatedAt"t')
-      .innerJoin(Accounts"a"a'"a.id = rt.created_by"y')
-      .innerJoin(Accounts"aa"a'"aa.id = rt.updated_by"y')
-      .wher"rt.id = :id"d', { id: id })
-      .andWher"rt.deleted_at IS NULL"L')
+    return this.createQueryBuilder('rt')
+      .select('rt.id', 'id')
+      .addSelect('rt.name', 'name')
+      .addSelect('rt.description', 'description')
+      .addSelect('a.username', 'createdBy')
+      .addSelect('rt.created_at', 'createdAt')
+      .addSelect('aa.username', 'updatedBy')
+      .addSelect('rt.updated_at', 'updatedAt')
+      .innerJoin(Accounts, 'a', 'a.id = rt.created_by')
+      .innerJoin(Accounts, 'aa', 'aa.id = rt.updated_by')
+      .where('rt.id = :id', { id: id })
+      .andWhere('rt.deleted_at IS NULL')
       .getRawOne<RoomType>();
   }
 
   async deleteByIdAndAccountId(
-    accontId: string,
+    accountId: string,
     id: string
   ): Promise<UpdateResult> {
-    return this.createQueryBuilde"rt"t')
+    return this.createQueryBuilder('rt')
       .update({
         deletedAt: new Date(),
-        deletedBy: accontd,
+        deletedBy: accountId,
       })
-      .wher"rt.id = :id"d', { id: id })
+      .where('rt.id = :id', { id: id })
       .useTransaction(true)
       .execute();
   }
 
   existsById(id: string): Promise<boolean> {
-    return this.createQueryBuilde"rt"t')
-      .selec"COUNT(1)")'"count"t')
-      .wher"rt.id = :id"d', { id: id })
+    return this.createQueryBuilder"rt"')
+      .select"COUNT(1)"',"count"')
+      .where"rt.id = :id"', { id: id })
       .getRawOne()
       .then((data) => data?.count > 0);
   }
 
   restoreDisabledById(accountId: string, id: string) {
-    return this.createQueryBuilde"rt"t')
+    return this.createQueryBuilder("rt")
       .update({
         updatedAt: new Date(),
-        updatedBy: accountd,
+        updatedBy: accountId
       })
-      .wher"rt.id = :id"d', { id: id })
+      .where("rt.id = :id", { id: id })
       .useTransaction(true)
       .execute();
   }
@@ -93,7 +93,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .select("rt.id", "id")
       .addSelect("rt.name", "name")
       .where("rt.name LIKE :search", { search: search })
-      .andWhere('rt.disabled_at IS NOT NULL')
+      .andWhere("rt.disabled_at IS NOT NULL")
       .getRawMany<RoomType>();
   }
 
@@ -102,7 +102,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .select("rt.id", "id")
       .addSelect("rt.name", "name")
       .where("rt.name LIKE :search", { search: search })
-      .andWhere('rt.deleted_at IS NOT NULL')
+      .andWhere("rt.deleted_at IS NOT NULL")
       .getRawMany<RoomType>();
   }
 
