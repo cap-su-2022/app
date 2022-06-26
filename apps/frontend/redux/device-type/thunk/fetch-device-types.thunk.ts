@@ -1,28 +1,28 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
+import { toggleSpinnerOff, toggleSpinnerOn } from '../../features/spinner';
 import axios from 'axios';
-import { PaginationResponse } from '../../../../models/pagination-response.payload';
-import { RoomType } from '../../../../models/room-type.model';
-import { PaginationParams } from '../../../../models/pagination-params.model';
+import { PaginationResponse } from '../../../models/pagination-response.payload';
+import { DeviceType } from '../../../models/device-type.model';
+import { PaginationParams } from '../../../models/pagination-params.model';
 
-export const fetchRoomTypes = createAsyncThunk<
-  PaginationResponse<RoomType>,
+export const fetchDeviceTypes = createAsyncThunk<
+  PaginationResponse<DeviceType>,
   PaginationParams,
   {
     rejectValue: {
       message: string;
     };
   }
->('room-type/fetch-room-types', async (payload, thunkAPI) => {
+>('device-type', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.get('/api/v1/room-type', {
+    const response = await axios.get('/api/v1/device-type', {
       params: {
         page: payload.page,
         limit: payload.limit,
-        search: payload.search,
         sort: payload.sort,
         dir: payload.dir,
+        search: payload.search,
       },
     });
     return await response.data;

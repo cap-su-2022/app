@@ -1,28 +1,38 @@
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
-import { AccountsService } from "./accounts.service";
-import { KeycloakService } from "./keycloak.service";
-import { UsernamePasswordCredentials, UsernamePasswordLoginResponse } from "@app/models";
-import { OAuth2Client } from "google-auth-library";
-import Exception from "../constants/exception.constant";
-import { ConfigService } from "@nestjs/config";
-import { Accounts } from "../models";
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { AccountsService } from './accounts.service';
+import { KeycloakService } from './keycloak.service';
+import {
+  UsernamePasswordCredentials,
+  UsernamePasswordLoginResponse,
+} from '@app/models';
+import { OAuth2Client } from 'google-auth-library';
+import Exception from '../constants/exception.constant';
+import { ConfigService } from '@nestjs/config';
+import { Accounts } from '../models';
 
 @Injectable()
 export class AuthenticationService {
-
   private readonly logger = new Logger(AuthenticationService.name);
 
   private readonly oAuthClientId: string;
   private readonly oAuthAudience: string[];
 
-  constructor(private readonly accountService: AccountsService,
-              private readonly configService: ConfigService,
-              private readonly keycloakService: KeycloakService) {
-    this.oAuthClientId = this.configService.get<string>("firebase.oauth.clientId");
-    this.oAuthAudience = this.configService.get<string[]>("firebase.oauth.audience");
+  constructor(
+    private readonly accountService: AccountsService,
+    private readonly configService: ConfigService,
+    private readonly keycloakService: KeycloakService
+  ) {
+    this.oAuthClientId = this.configService.get<string>(
+      'firebase.oauth.clientId'
+    );
+    this.oAuthAudience = this.configService.get<string[]>(
+      'firebase.oauth.audience'
+    );
   }
 
-  async handleGoogleSignin(idToken: string): Promise<UsernamePasswordLoginResponse> {
+  async handleGoogleSignin(
+    idToken: string
+  ): Promise<UsernamePasswordLoginResponse> {
     const client = new OAuth2Client(this.oAuthClientId);
     try {
       const decodedToken = await client.verifyIdToken({
@@ -32,25 +42,43 @@ export class AuthenticationService {
 
       const userGoogleId = decodedToken.getUserId();
 
-      let keycloakToken = await this.accountService.getKeycloakIdByGoogleId(userGoogleId);
+      let keycloakToken = await this.accountService.getKeycloakIdByGoogleId(
+        userGoogleId
+      );
       if (keycloakToken === undefined) {
-         await this.accountService.updateGoogleIdByAccountEmail(userGoogleId, decodedToken.getPayload().email);
-        keycloakToken = await this.accountService.getKeycloakIdByGoogleId(userGoogleId);
+        await this.accountService.updateGoogleIdByAccountEmail(
+          userGoogleId,
+          decodedToken.getPayload().email
+        );
+        keycloakToken = await this.accountService.getKeycloakIdByGoogleId(
+          userGoogleId
+        );
       }
       let keycloakUser;
       let user: Accounts;
 
       if (keycloakToken !== undefined) {
-        keycloakUser = await this.keycloakService.getAuthenticationTokenByMasterAccount(keycloakToken);
+        keycloakUser =
+          await this.keycloakService.getAuthenticationTokenByMasterAccount(
+            keycloakToken
+          );
         user = await this.accountService.getAccountByGoogleId(userGoogleId);
-        const doesUserHaveAvatar = await this.accountService.checkIfAccountAlreadyHasAvatarImage(user.id);
+        const doesUserHaveAvatar =
+          await this.accountService.checkIfAccountAlreadyHasAvatarImage(
+            user.id
+          );
         if (!doesUserHaveAvatar) {
-          await this.accountService.addGoogleAvatarURLByAccountId(decodedToken.getPayload().picture, user.id);
+          await this.accountService.addGoogleAvatarURLByAccountId(
+            decodedToken.getPayload().picture,
+            user.id
+          );
         }
       } else {
-        throw new HttpException('Invalid account. Please contract to administrator for more information', HttpStatus.UNAUTHORIZED);
+        throw new HttpException(
+          'Invalid account. Please contract to administrator for more information',
+          HttpStatus.UNAUTHORIZED
+        );
       }
-
 
       return {
         accessToken: keycloakUser.access_token,
@@ -63,7 +91,7 @@ export class AuthenticationService {
         googleId: user.googleId,
         role: user.role,
         fullname: user.fullname,
-        avatar: user.avatar
+        avatar: user.avatar,
       };
     } catch (e) {
       this.logger.error(e);
@@ -73,19 +101,38 @@ export class AuthenticationService {
 
   handleGoogleSignInException(e) {
     if (`${e} `.includes('Token used too late')) {
-      throw new HttpException(Exception.googleAccessTokenException.expired, HttpStatus.BAD_REQUEST);
-    } else if (`${e} `.includes("Invalid token signature")) {
-      throw new HttpException(Exception.googleAccessTokenException.invalidToken, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        Exception.googleAccessTokenException.expired,
+        HttpStatus.BAD_REQUEST
+      );
+    } else if (`${e} `.includes('Invalid token signature')) {
+      throw new HttpException(
+        Exception.googleAccessTokenException.invalidToken,
+        HttpStatus.BAD_REQUEST
+      );
     } else {
-      throw new HttpException(Exception.googleAccessTokenException.invalidToken, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        Exception.googleAccessTokenException.invalidToken,
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 
-
-  async handleUsernamePasswordLogin(credentials: UsernamePasswordCredentials): Promise<UsernamePasswordLoginResponse> {
-    const keycloakToken = await this.keycloakService.signInToKeycloak(credentials.username, credentials.password);
-    const keycloakUser = await this.keycloakService.getUserInfo(keycloakToken.access_token);
+  async handleUsernamePasswordLogin(
+    credentials: UsernamePasswordCredentials
+  ): Promise<UsernamePasswordLoginResponse> {
+    const keycloakToken = await this.keycloakService.signInToKeycloak(
+      credentials.username,
+      credentials.password
+    );
+    console.log(1);
+    const keycloakUser = await this.keycloakService.getUserInfo(
+      keycloakToken.access_token
+    );
+    console.log(2);
     const user = await this.accountService.findByKeycloakId(keycloakUser.sub);
+    console.log(3);
+
     return {
       accessToken: keycloakToken.access_token,
       refreshToken: keycloakToken.refresh_token,
@@ -97,7 +144,7 @@ export class AuthenticationService {
       googleId: user.googleId,
       role: user.role,
       fullname: user.fullname,
-      avatar: user.avatar
-    }
+      avatar: user.avatar,
+    };
   }
 }

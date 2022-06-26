@@ -13,8 +13,6 @@ import { Selector, ChevronDown, ChevronUp, Search } from 'tabler-icons-react';
 
 interface RowData {
   name: string;
-  email: string;
-  company: string;
 }
 
 interface TableSortProps {

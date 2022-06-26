@@ -14,7 +14,7 @@ export class RoomTypeService {
 
   async getRoomTypesWithPagination(
     pagination: PaginationParams
-  ): Promise<Pagination<RoomType, IPaginationMeta>> {
+  ): Promise<Pagination<RoomType>> {
     try {
       return await this.repository.findRoomTypesByPagination(pagination);
     } catch (e) {

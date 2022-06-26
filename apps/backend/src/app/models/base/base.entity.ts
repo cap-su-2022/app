@@ -11,18 +11,18 @@ export abstract class BaseEntity {
   createdBy: string;
 
   @Column({
-    name:"updated_by"',
+    name: 'updated_by',
     nullable: false,
     default: false,
-    type:"uuid",
+    type: 'uuid',
   })
   updatedBy: string;
 
   @Column({
-    name: "deleted_by",
+    name: 'deleted_by',
     nullable: false,
     default: false,
-    type: "uuid"
+    type: 'uuid',
   })
   deletedBy: string;
 
@@ -33,28 +33,28 @@ export abstract class BaseEntity {
   deletedAt: Date;
 
   @CreateDateColumn({
-    name: "created_at"
+    name: 'created_at',
   })
   createdAt: Date;
 
   @UpdateDateColumn({
-    name: "updated_at"
+    name: 'updated_at',
   })
   updatedAt: Date;
 }
 
 export abstract class BaseEntityWithDisabled extends BaseEntity {
   @Column({
-    type: "timestamptz",
-    name: "disabled_at"
+    type: 'timestamptz',
+    name: 'disabled_at',
   })
   disabledAt?: Date;
 
   @Column({
-    name: "disabled_by",
+    name: 'disabled_by',
     nullable: false,
     default: false,
-    type: "uuid"
+    type: 'uuid',
   })
   disabledBy?: string;
 }

@@ -64,91 +64,91 @@ export class RoleController {
     @Query('search', new DefaultValuePipe('')) search: string,
     @Query('dir', new DefaultValuePipe('ASC')) dir: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Qu"limit"mit', new DefaultValuePipe(10), ParseIntPipe) limit: number
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number
   ) {
     return this.service.getRolesByPagination({
       dir,
       page,
       search,
-      limit
+      limit,
     } as PaginationParams);
   }
 
-  @Get(":id")
+  @Get(':id')
   @ApiOperation({
-    summary: "Get role by id",
-    description: "Get role by id"
+    summary: 'Get role by id',
+    description: 'Get role by id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Id for roel is not validated"
+    description: 'Id for roel is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully fetched role by id"
+    description: 'Successfully fetched role by id',
   })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getRoleById(@Param('id') id: string) {
     return this.service.getRoleById(id);
   }
 
-  @Put(":id")
+  @Put(':id')
   @ApiOperation({
-    summary: "Update role by id",
-    description: "Update role by id"
+    summary: 'Update role by id',
+    description: 'Update role by id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Request payload for role is not validated"
+    description: 'Request payload for role is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully updated role with provided id"
+    description: 'Successfully updated role with provided id',
   })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   updateRoleById(
     @Body() body,
     @User() user: KeycloakUserInstance,
-    @Param("id") payload: { id: string; }
+    @Param('id') payload: { id: string }
   ) {
     return this.service.updateRoleById(user.account_id, payload.id, body);
   }
 
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Request payload for role is not validated"
+    description: 'Request payload for role is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully added role"
+    description: 'Successfully added role',
   })
   @ApiOperation({
-    summary: "Add role",
-    description: "Add role"
+    summary: 'Add role',
+    description: 'Add role',
   })
   @HttpCode(HttpStatus.OK)
   @Post()
@@ -157,31 +157,31 @@ export class RoleController {
     return this.service.addRole(body, user.account_id);
   }
 
-  @Delete(":id")
+  @Delete(':id')
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully removed role with provided id"
+    description: 'Successfully removed role with provided id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Id for role is not validated"
+    description: 'Id for role is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: "Delete role by id",
-    description: "Delete role by id"
+    summary: 'Delete role by id',
+    description: 'Delete role by id',
   })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   deleteRoleById(
     @User() keycloakUser: KeycloakUserInstance,
-    @Param("id") id: string;
+    @Param('id') id: string
   ) {
     return this.service.deleteRoleById(keycloakUser.account_id, id);
   }

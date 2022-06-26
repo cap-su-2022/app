@@ -20,27 +20,27 @@ export class Devices extends BaseEntityWithDisabled {
   name?: string;
 
   @Column({
-    name"description"n',
+    name: 'description',
     nullable: false,
     unique: false,
     length: 500,
-    type"varchar"r',
-    comment"Equipments description"',
+    type: 'varchar',
+    comment: 'Equipments description',
   })
   description?: string;
 
   @Column({
-    name: "effdate",
+    name: 'effdate',
     nullable: false,
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP"
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
   })
   effDate: Date;
 
   @Column({
-    name: "inactive_date",
+    name: 'inactive_date',
     nullable: true,
-    type: "timestamp"
+    type: 'timestamp',
   })
   inactiveDate: Date;
 }

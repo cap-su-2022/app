@@ -21,37 +21,37 @@ export class DevicesHist extends BaseEntityWithDisabled {
   id?: string;
 
   @Column({
-    name"name"e',
+    name: 'name',
     nullable: false,
     unique: false,
     length: 250,
-    type"varchar"r',
-    comment"Equipments name"',
+    type: 'varchar',
+    comment: 'Equipments name',
   })
   name?: string;
 
   @Column({
-    name: "description",
+    name: 'description',
     nullable: true,
     unique: false,
     length: 500,
-    type: "varchar",
-    comment: "Equipments description"
+    type: 'varchar',
+    comment: 'Equipments description',
   })
   description?: string;
 
   @Column({
-    name: "effdate",
+    name: 'effdate',
     nullable: true,
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP"
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
   })
   effDate: Date;
 
   @Column({
-    name: "inactive_date",
+    name: 'inactive_date',
     nullable: true,
-    type: "timestamp"
+    type: 'timestamp',
   })
   inactiveDate: Date;
 }

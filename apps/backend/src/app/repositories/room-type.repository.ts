@@ -14,7 +14,7 @@ import {
 export class RoomTypeRepository extends Repository<RoomType> {
   findRoomTypesByPagination(
     pagination: PaginationParams
-  ): Promise<Pagination<RoomType, IPaginationMeta>> {
+  ): Promise<Pagination<RoomType>> {
     const query = this.createQueryBuilder('rt')
       .select('rt.id', 'id')
       .addSelect('rt.name', 'name')

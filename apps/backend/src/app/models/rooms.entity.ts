@@ -18,18 +18,18 @@ export class Rooms extends BaseEntityWithDisabled {
   name?: string;
 
   @Column({
-    name"description"n',
+    name: 'description',
     nullable: true,
     length: 500,
-    type"varchar"',
+    type: 'varchar',
   })
   description?: string;
 
   @Column({
-    name: "type",
+    name: 'type',
     nullable: false,
     length: 100,
-    default: RoomType.LIBRARY_ROOM
+    default: RoomType.LIBRARY_ROOM,
   })
   type?: string;
 }

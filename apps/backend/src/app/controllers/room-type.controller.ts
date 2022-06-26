@@ -59,73 +59,73 @@ export class RoomTypeController {
   })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getRoomTypes(
-    @Qu"limit"mit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Qu"dir"dir', new DefaultValueP"ASC"ASC')) dir: string,
-    @Qu"page"age', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Qu"sort"ort', new DefaultValueP"name"ame')) sort: string,
-    @Qu"search"rch', new DefaultValueP""e('')) search: string
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('dir', new DefaultValuePipe('ASC')) dir: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('sort', new DefaultValuePipe('name')) sort: string,
+    @Query('search', new DefaultValuePipe('')) search: string
   ) {
     return this.service.getRoomTypesWithPagination({
       limit,
       dir,
       sort,
       search,
-      page
+      page,
     });
   }
 
-  @Get(":id")
+  @Get(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully fetched room type by id"
+    description: 'Successfully fetched room type by id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Request params for roles is not validated"
+    description: 'Request params for roles is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: "Get room type by id",
-    description: "Get room type by id"
+    summary: 'Get room type by id',
+    description: 'Get room type by id',
   })
-  getRoomTypeById(@Param("id") id: string) {
+  getRoomTypeById(@Param('id') id: string) {
     return this.service.getRoomTypeById(id);
   }
 
-  @Put(":id")
+  @Put(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully updated room type by id"
+    description: 'Successfully updated room type by id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Request params for roles is not validated"
+    description: 'Request params for roles is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: "Update room type by id",
-    description: "Update room type by id"
+    summary: 'Update room type by id',
+    description: 'Update room type by id',
   })
   updateRoomTypeById(
     @Body() updatePayload: RoomTypeUpdateRequestPayload,
-    @Param("id") id: string,
-    @User() keycloakUser: KeycloakUserInstance;
+    @Param('id') id: string,
+    @User() keycloakUser: KeycloakUserInstance
   ) {
     return this.service.updateRoomTypeById(
       keycloakUser.account_id,
@@ -134,112 +134,112 @@ export class RoomTypeController {
     );
   }
 
-  @Put("disable/:id")
+  @Put('disable/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully fetched disabled room type by id"
+    description: 'Successfully fetched disabled room type by id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Request params for roles is not validated"
+    description: 'Request params for roles is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: "Get disabled room type by id",
-    description: "Get disabled room type by id"
+    summary: 'Get disabled room type by id',
+    description: 'Get disabled room type by id',
   })
   disableRoomTypeById(
-    @Param("id") id: string,
-    @User() keycloakUser: KeycloakUserInstance;
+    @Param('id') id: string,
+    @User() keycloakUser: KeycloakUserInstance
   ) {
     return this.service.disableRoomTypeById(keycloakUser.account_id, id);
   }
 
-  @Get("disabled")
+  @Get('disabled')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully got disabled room types"
+    description: 'Successfully got disabled room types',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Request params for roles is not validated"
+    description: 'Request params for roles is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: "Get disabled room types",
-    description: "Get disabled room types"
+    summary: 'Get disabled room types',
+    description: 'Get disabled room types',
   })
-  getDisabledRoomTypes(@Query("search") search: string) {
+  getDisabledRoomTypes(@Query('search') search: string) {
     return this.service.getDisabledRoomTypes(search);
   }
 
-  @Get("deleted")
+  @Get('deleted')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully deleted room types"
+    description: 'Successfully deleted room types',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Request params for roles is not validated"
+    description: 'Request params for roles is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: "Get deleted room types",
-    description: "Get deleted room types"
+    summary: 'Get deleted room types',
+    description: 'Get deleted room types',
   })
-  getDeletedRoomTypes(@Query("search") search: string) {
+  getDeletedRoomTypes(@Query('search') search: string) {
     return this.service.getDeletedRoomTypes(search);
   }
 
-  @Put("restore-disabled/:id")
+  @Put('restore-disabled/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully restored disabled room by id"
+    description: 'Successfully restored disabled room by id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Request params for roles is not validated"
+    description: 'Request params for roles is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: "Restore disabled room type by id",
-    description: "Restore disabled room type by id"
+    summary: 'Restore disabled room type by id',
+    description: 'Restore disabled room type by id',
   })
   restoreDisabledRoomTypeById(
-    @Param("id") id: string,
-    @User() keycloakUser: KeycloakUserInstance;
+    @Param('id') id: string,
+    @User() keycloakUser: KeycloakUserInstance
   ) {
     return this.service.restoreDisabledRoomTypeById(
       keycloakUser.account_id,
@@ -247,60 +247,60 @@ export class RoomTypeController {
     );
   }
 
-  @Put("restore-deleted/:id")
+  @Put('restore-deleted/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully restored deleted room by id"
+    description: 'Successfully restored deleted room by id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Request params for deleted room type is not validated"
+    description: 'Request params for deleted room type is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: "Successfully restored deleted room type by id",
-    description: "Successfully restored deleted room type by id"
+    summary: 'Successfully restored deleted room type by id',
+    description: 'Successfully restored deleted room type by id',
   })
   restoreDeletedRoomTypeById(
-    @Param("id") id: string,
-    @User() keycloakUser: KeycloakUserInstance;
+    @Param('id') id: string,
+    @User() keycloakUser: KeycloakUserInstance
   ) {
     return this.service.restoreDeletedRoomTypeById(keycloakUser.account_id, id);
   }
 
-  @Delete(":id")
+  @Delete(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully deleted room type by id"
+    description: 'Successfully deleted room type by id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Request params for delete room type is not validated"
+    description: 'Request params for delete room type is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: "Delete room type by id",
-    description: "Delete room type by id"
+    summary: 'Delete room type by id',
+    description: 'Delete room type by id',
   })
   deleteRoomTypeById(
-    @Param("id") id: string,
-    @User() keycloakUser: KeycloakUserInstance;
+    @Param('id') id: string,
+    @User() keycloakUser: KeycloakUserInstance
   ) {
     return this.service.deleteRoomTypeById(keycloakUser.account_id, id);
   }
@@ -309,28 +309,28 @@ export class RoomTypeController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: "Add room type",
-    description: "Add room type"
+    summary: 'Add room type',
+    description: 'Add room type',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully added room type"
+    description: 'Successfully added room type',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Request params for roles is not validated"
+    description: 'Request params for roles is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Access token is invalidated"
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: "Insufficient privileges"
+    description: 'Insufficient privileges',
   })
   addRoomType(
     @User() keycloakUser: KeycloakUserInstance,
-    @Body() addRoomType: RoomTypeAddRequestPayload;
+    @Body() addRoomType: RoomTypeAddRequestPayload
   ) {
     return this.service.addRoomType(keycloakUser.account_id, addRoomType);
   }
