@@ -59,7 +59,6 @@ export class RoleController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getRolesByPagination(
     @Query('search', new DefaultValuePipe('')) search: string,
     @Query('dir', new DefaultValuePipe('ASC')) dir: string,

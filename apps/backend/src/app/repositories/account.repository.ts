@@ -199,10 +199,10 @@ export class AccountRepository extends Repository<Accounts> {
 
   findRoleByKeycloakId(keycloakId: string): Promise<string> {
     return this.createQueryBuilder('accounts')
-      .select('accounts.role')
+      .select('accounts.role', 'role')
       .where('accounts.keycloak_id = :keycloakId', { keycloakId: keycloakId })
       .getRawOne()
-      .then((data) => (data ? data['role'] : undefined));
+      .then((data) => data?.role);
   }
 
   async findProfileInformationById(keycloakId: string) {
