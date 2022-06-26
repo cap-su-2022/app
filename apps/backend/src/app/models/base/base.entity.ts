@@ -1,31 +1,22 @@
-import {Column, CreateDateColumn, Entity, UpdateDateColumn} from "typeorm";
+import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export abstract class BaseEntity {
-
   @Column({
-    name: "created_by",
+    name: 'created_by',
     nullable: false,
     default: false,
-    type: "uuid"
+    type: 'uuid',
   })
   createdBy: string;
 
   @Column({
-    name: "updated_by",
+    name:"updated_by"',
     nullable: false,
     default: false,
-    type: "uuid"
+    type:"uuid",
   })
   updatedBy: string;
-
-  @Column({
-    name: "disabled_by",
-    nullable: false,
-    default: false,
-    type: "uuid"
-  })
-  disabledBy: string;
 
   @Column({
     name: "deleted_by",
@@ -41,14 +32,8 @@ export abstract class BaseEntity {
   })
   deletedAt: Date;
 
-  @Column({
-    type: 'timestamptz',
-    name: 'disabled_at',
-  })
-  disabledAt: Date;
-
   @CreateDateColumn({
-    name: 'created_at'
+    name: "created_at"
   })
   createdAt: Date;
 
@@ -56,5 +41,20 @@ export abstract class BaseEntity {
     name: "updated_at"
   })
   updatedAt: Date;
+}
 
+export abstract class BaseEntityWithDisabled extends BaseEntity {
+  @Column({
+    type: "timestamptz",
+    name: "disabled_at"
+  })
+  disabledAt?: Date;
+
+  @Column({
+    name: "disabled_by",
+    nullable: false,
+    default: false,
+    type: "uuid"
+  })
+  disabledBy?: string;
 }

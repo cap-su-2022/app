@@ -1,34 +1,32 @@
-import { Column, Entity, Generated, PrimaryColumn } from "typeorm";
-import { BaseEntity } from "./base/base.entity";
+import { Column, Entity, Generated, PrimaryColumn } from 'typeorm';
+import { BaseEntity, BaseEntityWithDisabled } from './base/base.entity';
 
 @Entity(Accounts.name.toLocaleLowerCase())
-export class Accounts extends BaseEntity {
-
-  @PrimaryColumn("uuid",
-    {
-      name: "id",
-      comment: "ID for Room",
-    })
-  @Generated("uuid")
+export class Accounts extends BaseEntityWithDisabled {
+  @PrimaryColumn('uuid', {
+    name: 'id',
+    comment: 'ID for Room',
+  })
+  @Generated('uuid')
   id?: string;
 
   @Column({
-    name: "keycloak_id",
+    name: 'keycloak_id',
     nullable: false,
     unique: true,
     length: 36,
     type: 'varchar',
-    comment: 'The keycloak account id that associated with this user.'
+    comment: 'The keycloak account id that associated with this user.',
   })
   keycloakId?: string;
 
   @Column({
-    name: "google_id",
+    name"google_id"d',
     nullable: false,
     unique: true,
     length: 21,
-    type: 'varchar',
-    comment: 'The google account id that associated with this user.'
+    type"varchar"r',
+    comment"The google account id that associated with this user."',
   })
   googleId?: string;
 
@@ -37,8 +35,7 @@ export class Accounts extends BaseEntity {
     nullable: false,
     unique: true,
     length: 100,
-    type: 'varchar',
-
+    type: "varchar"
   })
   username?: string;
 
@@ -47,8 +44,7 @@ export class Accounts extends BaseEntity {
     nullable: false,
     unique: true,
     length: 200,
-    type: 'varchar',
-
+    type: "varchar"
   })
   fullname?: string;
 
@@ -57,8 +53,8 @@ export class Accounts extends BaseEntity {
     nullable: false,
     unique: true,
     length: 100,
-    type: 'varchar',
-    comment: 'The email of the user'
+    type: "varchar",
+    comment: "The email of the user"
   })
   email?: string;
 
@@ -67,8 +63,8 @@ export class Accounts extends BaseEntity {
     nullable: false,
     unique: true,
     length: 10,
-    type: 'varchar',
-    comment: 'The phone number of the user'
+    type: "varchar",
+    comment: "The phone number of the user"
   })
   phone?: string;
 
@@ -77,9 +73,8 @@ export class Accounts extends BaseEntity {
     nullable: false,
     unique: false,
     length: 500,
-    type: 'varchar',
-    comment: 'Describe the user.'
-
+    type: "varchar",
+    comment: "Describe the user."
   })
   description?: string;
 
@@ -97,9 +92,7 @@ export class Accounts extends BaseEntity {
     nullable: false,
     unique: true,
     length: 256,
-    type: 'varchar',
-
+    type: "varchar"
   })
   avatar?: string;
-
 }
