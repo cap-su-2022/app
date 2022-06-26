@@ -3,14 +3,14 @@ import { Button, createStyles } from '@mantine/core';
 import AdminLayout from '../AdminLayout';
 import Header from '../common/header.component';
 import { BuildingWarehouse, InfoCircle } from 'tabler-icons-react';
-import { TableSort } from './table-body.component';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchRoomTypes } from '../../redux/features/room-type';
 import { PaginationParams } from '../../models/pagination-params.model';
-import TableFooter from '../actions/table-footer.component';
-import TableHeader from '../actions/table-header.component';
 import { useDebouncedValue } from '@mantine/hooks';
 import InfoModal from './actions/info-modal.component';
+import { TableBody } from "../actions/table-body.component";
+import TableFooter from "../actions/table-footer.component";
+import TableHeader from "../actions/table-header.component";
 
 const defaultPagination = {
   dir: 'ASC',
@@ -90,14 +90,13 @@ const ManageRoomType: React.FC<any> = () => {
       <Header title="Room Type" icon={<BuildingWarehouse size={50} />} />
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
-        actionsLeft={<ActionsFilter />}
-        actionsRight={null}
+        actions={<ActionsFilter />}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
       />
       {roomTypes.items ? (
         <>
-          <TableSort
+          <TableBody
             actionButtonCb={handleActionsCb}
             toggleSortDirection={() => toggleSortDirection()}
             data={roomTypes.items}
