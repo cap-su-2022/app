@@ -18,8 +18,8 @@ export const fetchRoomsName = createAsyncThunk<
   try {
     const response = await axios.get(`api/booking-room/rooms-name`, {});
     const dataReturn = response.data.map((value) => ({
-      value: value,
-      label: value,
+      value: value.id,
+      label: value.name,
     }));
     return await dataReturn;
   } catch ({ response }) {

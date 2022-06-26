@@ -7,8 +7,8 @@ import { TableSort } from './table-body.component';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchRoomTypes } from '../../redux/features/room-type';
 import { PaginationParams } from '../../models/pagination-params.model';
-import TableFooter from './table-footer.component';
-import TableHeader from './table-header.component';
+import TableFooter from '../actions/table-footer.component';
+import TableHeader from '../actions/table-header.component';
 import { useDebouncedValue } from '@mantine/hooks';
 import InfoModal from './actions/info-modal.component';
 
@@ -23,7 +23,6 @@ const defaultPagination = {
 const ManageRoomType: React.FC<any> = () => {
   const styles = useStyles();
   const roomTypes = useAppSelector((state) => state.roomType.roomTypes);
-
   const [pagination, setPagination] =
     useState<PaginationParams>(defaultPagination);
 
@@ -34,13 +33,7 @@ const ManageRoomType: React.FC<any> = () => {
   useEffect(() => {
     console.log(pagination.dir);
     dispatch(fetchRoomTypes(pagination));
-  }, [
-    pagination.page,
-    pagination.limit,
-    pagination.dir,
-    pagination.sort,
-    debounceSearchValue,
-  ]);
+  }, [pagination.page, pagination.limit, pagination.dir, pagination.sort, debounceSearchValue, pagination, dispatch]);
 
   const toggleSortDirection = () => {
     setPagination({
@@ -97,7 +90,8 @@ const ManageRoomType: React.FC<any> = () => {
       <Header title="Room Type" icon={<BuildingWarehouse size={50} />} />
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
-        actions={<ActionsFilter />}
+        actionsLeft={<ActionsFilter />}
+        actionsRight={null}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
       />

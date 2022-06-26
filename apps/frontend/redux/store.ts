@@ -10,6 +10,7 @@ import logger from 'redux-logger';
 import spinnerSlice from './features/spinner/slice';
 import { authReducer } from './features/user/auth.slice';
 import { roomReducer } from './features/room/room.slice';
+import { roomBookingReducer } from './features/room-booking/room-booking.slice';
 import { systemReducer } from './features/system/system.slice';
 import { devicesReducer } from './features/devices/devices.slice';
 import { usersReducer } from './features/user/user.slice';
@@ -23,6 +24,7 @@ const combinedReducer = combineReducers({
   auth: authReducer,
   room: roomReducer,
   device: devicesReducer,
+  roomBooking: roomBookingReducer,
   system: systemReducer,
   user: usersReducer,
   roomType: roomTypeReducer,
