@@ -59,69 +59,69 @@ export class RoomTypeRepository extends Repository<RoomType> {
   }
 
   existsById(id: string): Promise<boolean> {
-    return this.createQueryBuilder"rt"')
-      .select"COUNT(1)"',"count"')
-      .where"rt.id = :id"', { id: id })
+    return this.createQueryBuilder('rt')
+      .select('COUNT(1)', 'count')
+      .where('rt.id = :id', { id: id })
       .getRawOne()
       .then((data) => data?.count > 0);
   }
 
   restoreDisabledById(accountId: string, id: string) {
-    return this.createQueryBuilder("rt")
+    return this.createQueryBuilder('rt')
       .update({
         updatedAt: new Date(),
-        updatedBy: accountId
+        updatedBy: accountId,
       })
-      .where("rt.id = :id", { id: id })
+      .where('rt.id = :id', { id: id })
       .useTransaction(true)
       .execute();
   }
 
   deleteById(accountId: string, id: string) {
-    return this.createQueryBuilder("rt")
+    return this.createQueryBuilder('rt')
       .update({
         deletedAt: new Date(),
-        deletedBy: accountId
+        deletedBy: accountId,
       })
-      .where("rt.id = :id", { id: id })
+      .where('rt.id = :id', { id: id })
       .useTransaction(true)
       .execute();
   }
 
   findDisabledByPagination(search: string): Promise<RoomType[]> {
-    return this.createQueryBuilder("rt")
-      .select("rt.id", "id")
-      .addSelect("rt.name", "name")
-      .where("rt.name LIKE :search", { search: search })
-      .andWhere("rt.disabled_at IS NOT NULL")
+    return this.createQueryBuilder('rt')
+      .select('rt.id', 'id')
+      .addSelect('rt.name', 'name')
+      .where('rt.name LIKE :search', { search: search })
+      .andWhere('rt.disabled_at IS NOT NULL')
       .getRawMany<RoomType>();
   }
 
   findDeletedByPagination(search: string): Promise<RoomType[]> {
-    return this.createQueryBuilder("rt")
-      .select("rt.id", "id")
-      .addSelect("rt.name", "name")
-      .where("rt.name LIKE :search", { search: search })
-      .andWhere("rt.deleted_at IS NOT NULL")
+    return this.createQueryBuilder('rt')
+      .select('rt.id', 'id')
+      .addSelect('rt.name', 'name')
+      .where('rt.name LIKE :search', { search: search })
+      .andWhere('rt.deleted_at IS NOT NULL')
       .getRawMany<RoomType>();
   }
 
   updateById(accountId: string, payload: RoomTypeUpdateRequestPayload) {
-    return this.createQueryBuilder("rt")
+    return this.createQueryBuilder('rt')
       .update({
         name: payload.name,
         description: payload.description,
         updatedBy: accountId,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .useTransaction(true)
       .execute();
   }
 
   disableById(accountId: string, id: string) {
-    return this.createQueryBuilder("rt")
+    return this.createQueryBuilder('rt')
       .update({})
-      .where("rt.id = :id", { id: id })
+      .where('rt.id = :id', { id: id })
       .useTransaction(true)
       .execute();
   }
