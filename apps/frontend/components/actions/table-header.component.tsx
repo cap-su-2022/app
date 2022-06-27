@@ -3,6 +3,7 @@ import { Button, createStyles, InputWrapper, TextInput } from '@mantine/core';
 import { RotateClockwise, Search } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useDebouncedValue } from '@mantine/hooks';
+import Filter from './drawer/filter.drawer';
 
 interface TableHeaderProps {
   handleResetFilter(): void;
@@ -12,6 +13,7 @@ interface TableHeaderProps {
 }
 
 const TableHeader: React.FC<TableHeaderProps> = (props) => {
+  const [isFilterShown, setFilterShown] = useState<boolean>(false);
   const { classes } = useStyles();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,8 +41,13 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
         >
           <RotateClockwise color={FPT_ORANGE_COLOR} />
         </Button>
+        <Button onClick={() => setFilterShown(!isFilterShown)}>Fitler</Button>
         {props.actions}
       </div>
+      <Filter
+        isShown={isFilterShown}
+        toggleShown={() => setFilterShown(!isFilterShown)}
+      />
     </div>
   );
 };
