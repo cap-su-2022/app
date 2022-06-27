@@ -1,35 +1,28 @@
-import { Module } from "@nestjs/common";
-import { DevicesController } from "../controllers";
-import { EquipmentsHistoryController } from "../controllers";
-import { DevicesService } from "../services";
-import { DevicesHistService } from "../services";
-import { DevicesRepository } from "../repositories";
-import { DevicesHistRepository } from "../repositories";
-import { KeycloakService } from "../services";
-import { ConfigModule } from "@nestjs/config";
-import { HttpModule } from "@nestjs/axios";
-import { TypeOrmExModule } from "./global/typeorm-ex.module";
+import { Module } from '@nestjs/common';
+import { DevicesController } from '../controllers';
+import { EquipmentsHistoryController } from '../controllers';
+import { DevicesService } from '../services';
+import { DevicesHistService } from '../services';
+import { DevicesRepository } from '../repositories';
+import { DevicesHistRepository } from '../repositories';
+import { KeycloakService } from '../services';
+import { ConfigModule } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
+import { TypeOrmExModule } from './global/typeorm-ex.module';
+import { AccountsModule } from './accounts.module';
 
 @Module({
   imports: [
     ConfigModule,
     HttpModule,
+    AccountsModule,
     TypeOrmExModule.forCustomRepository([
       DevicesRepository,
-      DevicesHistRepository
-    ])
+      DevicesHistRepository,
+    ]),
   ],
-  controllers: [
-    DevicesController,
-    EquipmentsHistoryController
-  ],
-  providers: [
-    DevicesService,
-    DevicesHistService,
-    KeycloakService
-  ],
-  exports: [
-    DevicesService
-  ]
+  controllers: [DevicesController, EquipmentsHistoryController],
+  providers: [DevicesService, DevicesHistService, KeycloakService],
+  exports: [DevicesService],
 })
 export class DevicesModule {}
