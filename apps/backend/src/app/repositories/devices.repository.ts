@@ -40,11 +40,11 @@ export class DevicesRepository extends Repository<Devices> {
     });
   }
 
-  deleteDeviceById(id: string): Promise<UpdateResult> {
+  deleteDeviceById(accountId: string, id: string): Promise<UpdateResult> {
     return this.createQueryBuilder('devices')
       .update({
         deletedAt: new Date(),
-        deletedBy: '',
+        deletedBy: accountId,
       })
       .where('devices.id = :id', { id: id })
       .useTransaction(true)
