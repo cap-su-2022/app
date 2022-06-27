@@ -1,9 +1,7 @@
-export interface GetBookingRoomsPaginationPayload {
-  roomName: string;
-  limit: number;
-  page: number;
-  sort: string;
+import { PaginationParams } from '../../controllers/pagination.model';
+
+export interface GetBookingRoomsPaginationPayload extends PaginationParams {
   reasonType: string;
-  checkInAt: number;
-  checkOutAt: number;
+  checkInAt: string;
+  checkOutAt: string;
 }

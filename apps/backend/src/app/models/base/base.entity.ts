@@ -8,7 +8,7 @@ export abstract class BaseEntity {
     default: false,
     type: 'uuid',
   })
-  createdBy: string;
+  createdBy?: string;
 
   @Column({
     name: 'updated_by',
@@ -16,7 +16,7 @@ export abstract class BaseEntity {
     default: false,
     type: 'uuid',
   })
-  updatedBy: string;
+  updatedBy?: string;
 
   @Column({
     name: 'deleted_by',
@@ -24,23 +24,23 @@ export abstract class BaseEntity {
     default: false,
     type: 'uuid',
   })
-  deletedBy: string;
+  deletedBy?: string;
 
   @Column({
     type: 'timestamptz',
     name: 'deleted_at',
   })
-  deletedAt: Date;
+  deletedAt?: Date;
 
   @CreateDateColumn({
     name: 'created_at',
   })
-  createdAt: Date;
+  createdAt?: Date;
 
   @UpdateDateColumn({
     name: 'updated_at',
   })
-  updatedAt: Date;
+  updatedAt?: Date;
 }
 
 export abstract class BaseEntityWithDisabled extends BaseEntity {
