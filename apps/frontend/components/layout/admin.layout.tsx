@@ -1,8 +1,9 @@
-import styles from './admin-layout.module.scss';
-import { NavbarSimpleColored } from './NavBar';
-import { HeaderSearch } from './Header';
+import styles from '../admin-layout.module.scss';
 import React, { ReactNode } from 'react';
 import { createStyles } from '@mantine/core';
+import { LayoutHeader } from './header.layout';
+import LayoutSidebar from './sidebar.layout';
+import LayoutFooter from './footer.layout';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -12,18 +13,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = (props) => {
   return (
     <>
       <div className={styles.page}>
-        <NavbarSimpleColored />
-        <div
-          style={{
-            width: '100%',
-          }}
-        >
-          <HeaderSearch
-            links={[{ link: 'ass', label: 'Thư viện đại học FPT' }]}
-          />
+        <LayoutSidebar />
+
+        <div className={classes.headerRight}>
+          <LayoutHeader />
           <div className={classes.wrapper}>{props.children}</div>
         </div>
       </div>
+      <LayoutFooter links={[]} />
     </>
   );
 };
@@ -33,6 +30,9 @@ const useStyles = createStyles((theme) => {
     wrapper: {
       marginLeft: 20,
       marginRight: 20,
+    },
+    headerRight: {
+      width: '100%',
     },
   };
 });

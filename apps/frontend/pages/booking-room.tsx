@@ -1,5 +1,5 @@
 import { Button, createStyles, Modal, Table, Text } from '@mantine/core';
-import AdminLayout from '../components/AdminLayout';
+import AdminLayout from '../components/layout/admin.layout';
 import React, { useEffect, useState } from 'react';
 import {
   BuildingWarehouse,
@@ -244,7 +244,11 @@ const BookingRoom = () => {
 
   const ActionsRightFilter: React.FC = () => {
     return (
-      <Button variant="outline" color="violet" onClick={() => setAddModalShown(true)}>
+      <Button
+        variant="outline"
+        color="violet"
+        onClick={() => setAddModalShown(true)}
+      >
         <Plus />
       </Button>
     );
@@ -256,8 +260,7 @@ const BookingRoom = () => {
 
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
-        actionsLeft={<ActionsLeftFilter />}
-        actionsRight={<ActionsRightFilter/>}
+        actions={<ActionsLeftFilter />}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
       />

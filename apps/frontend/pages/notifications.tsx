@@ -1,31 +1,20 @@
-import {GetServerSideProps} from "next";
-import AdminLayout from "../components/AdminLayout";
-import {
-  Button,
-  createStyles, Grid,
-  ScrollArea,
-  Table,
-} from "@mantine/core";
-import React, {useEffect, useReducer, useState} from "react";
-import {useAppDispatch, useAppSelector} from "../redux/hooks";
-import {RowData} from "../models/table/row-data.model";
-import {useRouter} from "next/router";
-import {BLACK, GRAY, WHITE} from "@app/constants";
-import {useDebouncedValue} from "@mantine/hooks";
-import {fetchRooms} from "../redux/features/room/thunk/fetch-rooms";
-import {Bell, Message, User} from "tabler-icons-react";
-import {opacity} from "react-native-reanimated/lib/types/lib/reanimated2";
+import { GetServerSideProps } from 'next';
+import AdminLayout from '../components/layout/admin.layout';
 
+import { Button, createStyles } from '@mantine/core';
+import React from 'react';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { useRouter } from 'next/router';
+import { BLACK, GRAY, WHITE } from '@app/constants';
+import { Message, User } from 'tabler-icons-react';
 
 function NotificationManagement(props: any) {
-  const {classes} = useStyles();
+  const { classes } = useStyles();
 
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   const isSpinnerLoading = useAppSelector((state) => state.spinner.isEnabled);
-
-
 
   return (
     <AdminLayout>
@@ -44,28 +33,103 @@ function NotificationManagement(props: any) {
                             <div className={classes.notificationSpacingHeader}>
                               <div className={classes.notificationLayout}>
                                 <div className={classes.notificationLayoutForm}>
-                                  <div className={classes.notificationLayoutSize}>
-                                    <div className={classes.notificationLayoutPosition}>
-                                      <div aria-label='Notification' className={classes.notificationContainer}>
-                                        <div className={classes.notificationContainerBack}></div>
-                                        <div aria-label='Notification Header' className={classes.notificationHeaderForm}>
-                                          <div className={classes.notificationHeaderLayout}>
-                                            <div className={classes.notificationHeaderBoxSize}>
-                                              <div className={classes.notificationHeaderContentForm}>
-                                                <div className={classes.notificationHeaderContentLayout}>
-                                                  <div className={classes.notificationHeaderContentSize}>
-                                                    <span className={classes.notificationHeaderContentAttribute}>
-                                                      <h1 className={classes.notificationHeaderContentName}>Notification</h1>
+                                  <div
+                                    className={classes.notificationLayoutSize}
+                                  >
+                                    <div
+                                      className={
+                                        classes.notificationLayoutPosition
+                                      }
+                                    >
+                                      <div
+                                        aria-label="Notification"
+                                        className={
+                                          classes.notificationContainer
+                                        }
+                                      >
+                                        <div
+                                          className={
+                                            classes.notificationContainerBack
+                                          }
+                                        ></div>
+                                        <div
+                                          aria-label="Notification Header"
+                                          className={
+                                            classes.notificationHeaderForm
+                                          }
+                                        >
+                                          <div
+                                            className={
+                                              classes.notificationHeaderLayout
+                                            }
+                                          >
+                                            <div
+                                              className={
+                                                classes.notificationHeaderBoxSize
+                                              }
+                                            >
+                                              <div
+                                                className={
+                                                  classes.notificationHeaderContentForm
+                                                }
+                                              >
+                                                <div
+                                                  className={
+                                                    classes.notificationHeaderContentLayout
+                                                  }
+                                                >
+                                                  <div
+                                                    className={
+                                                      classes.notificationHeaderContentSize
+                                                    }
+                                                  >
+                                                    <span
+                                                      className={
+                                                        classes.notificationHeaderContentAttribute
+                                                      }
+                                                    >
+                                                      <h1
+                                                        className={
+                                                          classes.notificationHeaderContentName
+                                                        }
+                                                      >
+                                                        Notification
+                                                      </h1>
                                                     </span>
                                                   </div>
                                                 </div>
                                               </div>
-                                              <div className={classes.notificationHeaderButtonForm}>
-                                                <div className={classes.notificationHeaderButtonLayout}>
-                                                  <div className={classes.notificationHeaderButtonSize}>
-                                                    <Button variant='default' className={classes.notificationHeaderButtonAttribute}>
-                                                      <i className={classes.notificationHeaderIconAttribute}></i>
-                                                      <div className={classes.notificationHeaderIconBack}></div>
+                                              <div
+                                                className={
+                                                  classes.notificationHeaderButtonForm
+                                                }
+                                              >
+                                                <div
+                                                  className={
+                                                    classes.notificationHeaderButtonLayout
+                                                  }
+                                                >
+                                                  <div
+                                                    className={
+                                                      classes.notificationHeaderButtonSize
+                                                    }
+                                                  >
+                                                    <Button
+                                                      variant="default"
+                                                      className={
+                                                        classes.notificationHeaderButtonAttribute
+                                                      }
+                                                    >
+                                                      <i
+                                                        className={
+                                                          classes.notificationHeaderIconAttribute
+                                                        }
+                                                      ></i>
+                                                      <div
+                                                        className={
+                                                          classes.notificationHeaderIconBack
+                                                        }
+                                                      ></div>
                                                     </Button>
                                                   </div>
                                                 </div>
@@ -74,131 +138,403 @@ function NotificationManagement(props: any) {
                                           </div>
                                         </div>
                                         <div>
-                                          <div aria-label='Notification Filter' className={classes.notificationFilterForm}>
-                                            <div className={classes.notificationFilterButtonForm}>
-                                              <Button variant='light' className={classes.notificationFilterButtonLayout}>
-                                                <span className={classes.notificationFilterButtonAttribute}>
-                                                  <span className={classes.notificationFilterButtonName}>All</span>
+                                          <div
+                                            aria-label="Notification Filter"
+                                            className={
+                                              classes.notificationFilterForm
+                                            }
+                                          >
+                                            <div
+                                              className={
+                                                classes.notificationFilterButtonForm
+                                              }
+                                            >
+                                              <Button
+                                                variant="light"
+                                                className={
+                                                  classes.notificationFilterButtonLayout
+                                                }
+                                              >
+                                                <span
+                                                  className={
+                                                    classes.notificationFilterButtonAttribute
+                                                  }
+                                                >
+                                                  <span
+                                                    className={
+                                                      classes.notificationFilterButtonName
+                                                    }
+                                                  >
+                                                    All
+                                                  </span>
                                                 </span>
-                                                <div className={classes.notificationFilterButtonAttributeBack}></div>
+                                                <div
+                                                  className={
+                                                    classes.notificationFilterButtonAttributeBack
+                                                  }
+                                                ></div>
                                               </Button>
                                             </div>
-                                            <div className={classes.notificationFilterButtonForm}>
-                                              <Button variant='default' className={classes.notificationFilterButtonLayout}>
-                                                <span className={classes.notificationFilterButtonAttribute}>
-                                                  <span className={classes.notificationFilterButtonName}>Not Read</span>
+                                            <div
+                                              className={
+                                                classes.notificationFilterButtonForm
+                                              }
+                                            >
+                                              <Button
+                                                variant="default"
+                                                className={
+                                                  classes.notificationFilterButtonLayout
+                                                }
+                                              >
+                                                <span
+                                                  className={
+                                                    classes.notificationFilterButtonAttribute
+                                                  }
+                                                >
+                                                  <span
+                                                    className={
+                                                      classes.notificationFilterButtonName
+                                                    }
+                                                  >
+                                                    Not Read
+                                                  </span>
                                                 </span>
-                                                <div className={classes.notificationFilterButtonAttributeBack}></div>
+                                                <div
+                                                  className={
+                                                    classes.notificationFilterButtonAttributeBack
+                                                  }
+                                                ></div>
                                               </Button>
                                             </div>
                                           </div>
                                           <div>
-                                            <div aria-label='Notification List' className={classes.notificationListForm}>
-                                              <div style={{outline: 'none' }}>
+                                            <div
+                                              aria-label="Notification List"
+                                              className={
+                                                classes.notificationListForm
+                                              }
+                                            >
+                                              <div style={{ outline: 'none' }}>
                                                 <div>
-                                                  <div className={classes.notificationListLayout}>
-                                                    <div className={classes.notificationListHeaderForm}>
-                                                      <div className={classes.notificationListHeaderLayout}>
-                                                        <div className={classes.notificationListContentForm}>
-                                                          <h2 className={classes.notificationListContentContainerForm}>
-                                                            <span className={classes.notificationListContentAttribute}>
-                                                              <span className={classes.notificationListContentName}>
+                                                  <div
+                                                    className={
+                                                      classes.notificationListLayout
+                                                    }
+                                                  >
+                                                    <div
+                                                      className={
+                                                        classes.notificationListHeaderForm
+                                                      }
+                                                    >
+                                                      <div
+                                                        className={
+                                                          classes.notificationListHeaderLayout
+                                                        }
+                                                      >
+                                                        <div
+                                                          className={
+                                                            classes.notificationListContentForm
+                                                          }
+                                                        >
+                                                          <h2
+                                                            className={
+                                                              classes.notificationListContentContainerForm
+                                                            }
+                                                          >
+                                                            <span
+                                                              className={
+                                                                classes.notificationListContentAttribute
+                                                              }
+                                                            >
+                                                              <span
+                                                                className={
+                                                                  classes.notificationListContentName
+                                                                }
+                                                              >
                                                                 Before
                                                               </span>
                                                             </span>
                                                           </h2>
                                                         </div>
-                                                        <div style={{
-                                                          marginTop: '5px',
-                                                          marginBottom: '5px'
-                                                        }}>
-                                                        </div>
+                                                        <div
+                                                          style={{
+                                                            marginTop: '5px',
+                                                            marginBottom: '5px',
+                                                          }}
+                                                        ></div>
                                                       </div>
                                                     </div>
                                                   </div>
                                                 </div>
                                               </div>
-                                              <div className={classes.notificationListBodyForm}>
-                                                <div className={classes.notificationListBodyLayout}>
-                                                  <div style={{paddingLeft: '8px', paddingRight: '8px'}}>
+                                              <div
+                                                className={
+                                                  classes.notificationListBodyForm
+                                                }
+                                              >
+                                                <div
+                                                  className={
+                                                    classes.notificationListBodyLayout
+                                                  }
+                                                >
+                                                  <div
+                                                    style={{
+                                                      paddingLeft: '8px',
+                                                      paddingRight: '8px',
+                                                    }}
+                                                  >
                                                     <div>
-                                                      <a className={classes.notificationListTabLinkForm}>
-                                                        <div className={classes.notificationListTabContainer}>
-                                                          <div className={classes.notificationListTabIconForm}>
-                                                            <div className={classes.notificationListTabIconFormLayout}>
-                                                              <svg style={{height: '56px', width: '56px'}} className={classes.notificationListTabIconFormAttribute}>
+                                                      <a
+                                                        className={
+                                                          classes.notificationListTabLinkForm
+                                                        }
+                                                      >
+                                                        <div
+                                                          className={
+                                                            classes.notificationListTabContainer
+                                                          }
+                                                        >
+                                                          <div
+                                                            className={
+                                                              classes.notificationListTabIconForm
+                                                            }
+                                                          >
+                                                            <div
+                                                              className={
+                                                                classes.notificationListTabIconFormLayout
+                                                              }
+                                                            >
+                                                              <svg
+                                                                style={{
+                                                                  height:
+                                                                    '56px',
+                                                                  width: '56px',
+                                                                }}
+                                                                className={
+                                                                  classes.notificationListTabIconFormAttribute
+                                                                }
+                                                              >
                                                                 <mask>
-                                                                  <circle cx={28} cy={28} fill='white' r={28}></circle>
-                                                                  <circle cx={48} cy={48} fill='white' r={9}></circle>
+                                                                  <circle
+                                                                    cx={28}
+                                                                    cy={28}
+                                                                    fill="white"
+                                                                    r={28}
+                                                                  ></circle>
+                                                                  <circle
+                                                                    cx={48}
+                                                                    cy={48}
+                                                                    fill="white"
+                                                                    r={9}
+                                                                  ></circle>
                                                                 </mask>
                                                                 <g>
-                                                                  <User x={0} y={0} height='100%' width='100%' preserveAspectRatio='xMinYMin slice'
-                                                                        className={classes.notificationListTabImageAttribute}></User>
-                                                                  <circle cx={28} cy={28} r={28} className={classes.notificationListTabImageCircleAttribute}></circle>
+                                                                  <User
+                                                                    x={0}
+                                                                    y={0}
+                                                                    height="100%"
+                                                                    width="100%"
+                                                                    preserveAspectRatio="xMinYMin slice"
+                                                                    className={
+                                                                      classes.notificationListTabImageAttribute
+                                                                    }
+                                                                  ></User>
+                                                                  <circle
+                                                                    cx={28}
+                                                                    cy={28}
+                                                                    r={28}
+                                                                    className={
+                                                                      classes.notificationListTabImageCircleAttribute
+                                                                    }
+                                                                  ></circle>
                                                                 </g>
                                                               </svg>
-                                                              <div className={classes.notificationListContainerContentIconForm}
-                                                                   style={{
-                                                                     bottom: '8px',
-                                                                     right: '8px',
-                                                                     transform: 'translate(50%, 50%)'
-                                                                   }}>
-                                                                <div className={classes.notificationListContainerContentIconLayout}>
-                                                                  <div className={classes.notificationListContainerContentIconAttribute} style={{backgroundColor: 'transparent'}}>
-                                                                    <Message style={{height: '28px', width: '28px'}}
-                                                                             className={classes.notificationListContainerContentIconName}>
-                                                                    </Message>
+                                                              <div
+                                                                className={
+                                                                  classes.notificationListContainerContentIconForm
+                                                                }
+                                                                style={{
+                                                                  bottom: '8px',
+                                                                  right: '8px',
+                                                                  transform:
+                                                                    'translate(50%, 50%)',
+                                                                }}
+                                                              >
+                                                                <div
+                                                                  className={
+                                                                    classes.notificationListContainerContentIconLayout
+                                                                  }
+                                                                >
+                                                                  <div
+                                                                    className={
+                                                                      classes.notificationListContainerContentIconAttribute
+                                                                    }
+                                                                    style={{
+                                                                      backgroundColor:
+                                                                        'transparent',
+                                                                    }}
+                                                                  >
+                                                                    <Message
+                                                                      style={{
+                                                                        height:
+                                                                          '28px',
+                                                                        width:
+                                                                          '28px',
+                                                                      }}
+                                                                      className={
+                                                                        classes.notificationListContainerContentIconName
+                                                                      }
+                                                                    ></Message>
                                                                   </div>
-                                                                  <div className={classes.notificationListContainerContentIconAttributeBack}></div>
+                                                                  <div
+                                                                    className={
+                                                                      classes.notificationListContainerContentIconAttributeBack
+                                                                    }
+                                                                  ></div>
                                                                 </div>
                                                               </div>
                                                             </div>
                                                           </div>
-                                                          <div className={classes.notificationListTabMessageForm}>
-                                                            <div className={classes.notificationListTabMessageLayout}>
+                                                          <div
+                                                            className={
+                                                              classes.notificationListTabMessageForm
+                                                            }
+                                                          >
+                                                            <div
+                                                              className={
+                                                                classes.notificationListTabMessageLayout
+                                                              }
+                                                            >
                                                               <div>
-                                                                <div className={classes.notificationListTabMessageContainerForm}>
-                                                                  <div className={classes.notificationListTabMessageContainerLayout}>
-                                                                  <span className={classes.notificationListTabMessageContainerSize}>
-                                                                    <span className={classes.notificationListTabMessageContainerAttribute}
-                                                                          style={{
-                                                                            WebkitBoxOrient: 'vertical',
-                                                                            WebkitLineClamp: 3,
-                                                                            display: '-webkit-box'
-                                                                          }}>
-                                                                      <div className={classes.notificationListTabMessageContainerAttributeHidden}>Not Read</div>
-                                                                      <strong>Ngô Ngyên Bằng</strong> đã yêu cầu mượng phòng <strong> LB12 </strong> vào thứ Năm: #IDRQSR_123 [10:00 02/06/2022] Lý do: Mượn để họp.
-                                                                    </span>
-                                                                  </span>
-                                                                  </div>
-                                                                  <div style={{
-                                                                    marginTop: '5px',
-                                                                    marginBottom: '5px'
-                                                                  }}>
-                                                                  <span className={classes.notificationListTabTimeForm}>
-                                                                    <span className={classes.notificationListTabTimeLayout}>
-                                                                      <span className={classes.notificationListTabTimeAttribute}>
-                                                                        14 giờ trước
+                                                                <div
+                                                                  className={
+                                                                    classes.notificationListTabMessageContainerForm
+                                                                  }
+                                                                >
+                                                                  <div
+                                                                    className={
+                                                                      classes.notificationListTabMessageContainerLayout
+                                                                    }
+                                                                  >
+                                                                    <span
+                                                                      className={
+                                                                        classes.notificationListTabMessageContainerSize
+                                                                      }
+                                                                    >
+                                                                      <span
+                                                                        className={
+                                                                          classes.notificationListTabMessageContainerAttribute
+                                                                        }
+                                                                        style={{
+                                                                          WebkitBoxOrient:
+                                                                            'vertical',
+                                                                          WebkitLineClamp: 3,
+                                                                          display:
+                                                                            '-webkit-box',
+                                                                        }}
+                                                                      >
+                                                                        <div
+                                                                          className={
+                                                                            classes.notificationListTabMessageContainerAttributeHidden
+                                                                          }
+                                                                        >
+                                                                          Not
+                                                                          Read
+                                                                        </div>
+                                                                        <strong>
+                                                                          Ngô
+                                                                          Ngyên
+                                                                          Bằng
+                                                                        </strong>{' '}
+                                                                        đã yêu
+                                                                        cầu
+                                                                        mượng
+                                                                        phòng{' '}
+                                                                        <strong>
+                                                                          {' '}
+                                                                          LB12{' '}
+                                                                        </strong>{' '}
+                                                                        vào thứ
+                                                                        Năm:
+                                                                        #IDRQSR_123
+                                                                        [10:00
+                                                                        02/06/2022]
+                                                                        Lý do:
+                                                                        Mượn để
+                                                                        họp.
                                                                       </span>
                                                                     </span>
-                                                                  </span>
+                                                                  </div>
+                                                                  <div
+                                                                    style={{
+                                                                      marginTop:
+                                                                        '5px',
+                                                                      marginBottom:
+                                                                        '5px',
+                                                                    }}
+                                                                  >
+                                                                    <span
+                                                                      className={
+                                                                        classes.notificationListTabTimeForm
+                                                                      }
+                                                                    >
+                                                                      <span
+                                                                        className={
+                                                                          classes.notificationListTabTimeLayout
+                                                                        }
+                                                                      >
+                                                                        <span
+                                                                          className={
+                                                                            classes.notificationListTabTimeAttribute
+                                                                          }
+                                                                        >
+                                                                          14 giờ
+                                                                          trước
+                                                                        </span>
+                                                                      </span>
+                                                                    </span>
                                                                   </div>
                                                                 </div>
                                                               </div>
-                                                              <div className={classes.notificationListTabBreaker}>
-                                                                <div style={{maxWidth: '100%'}}></div>
+                                                              <div
+                                                                className={
+                                                                  classes.notificationListTabBreaker
+                                                                }
+                                                              >
+                                                                <div
+                                                                  style={{
+                                                                    maxWidth:
+                                                                      '100%',
+                                                                  }}
+                                                                ></div>
                                                               </div>
                                                             </div>
-                                                            <div className={classes.notificationListTabNoteForm}>
+                                                            <div
+                                                              className={
+                                                                classes.notificationListTabNoteForm
+                                                              }
+                                                            >
                                                               <div>
-                                                                <div className={classes.notificationListTabNoteLayout}>
-                                                                  <span className={classes.notificationListTabNoteAttribute}></span>
+                                                                <div
+                                                                  className={
+                                                                    classes.notificationListTabNoteLayout
+                                                                  }
+                                                                >
+                                                                  <span
+                                                                    className={
+                                                                      classes.notificationListTabNoteAttribute
+                                                                    }
+                                                                  ></span>
                                                                 </div>
                                                               </div>
                                                             </div>
                                                           </div>
                                                         </div>
-                                                        <div className={classes.notificationListTabContainerBack}></div>
+                                                        <div
+                                                          className={
+                                                            classes.notificationListTabContainerBack
+                                                          }
+                                                        ></div>
                                                       </a>
                                                     </div>
                                                   </div>
@@ -211,7 +547,9 @@ function NotificationManagement(props: any) {
                                     </div>
                                   </div>
                                 </div>
-                                <div className={classes.notificationLayoutFormBack}></div>
+                                <div
+                                  className={classes.notificationLayoutFormBack}
+                                ></div>
                               </div>
                             </div>
                           </div>
@@ -227,14 +565,11 @@ function NotificationManagement(props: any) {
       </div>
     </AdminLayout>
   );
-
-
 }
 
 const useStyles = createStyles({
-
   //--------------------------------BODY LAYOUT OUTSIDE----------------------------------//
-  bodyForm:{
+  bodyForm: {
     fontFamily: 'Segoe UI Historic, Segoe UI, Helvetica, Arial, sans-serif',
     overflowY: 'visible',
     backgroundColor: WHITE,
@@ -242,67 +577,67 @@ const useStyles = createStyles({
     overscrollBehaviorY: 'none',
   },
 
-  bodyLayout:{
+  bodyLayout: {
     fontFamily: 'inherit',
     boxSizing: 'border-box',
     position: 'relative',
     zIndex: 0,
-    display: 'block'
+    display: 'block',
   },
 
-  bodyPosition:{
+  bodyPosition: {
     fontFamily: 'inherit',
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
   },
 
-  bodySize:{
+  bodySize: {
     fontFamily: 'inherit',
     position: 'relative',
     minHeight: 'calc(100vh - 56px)',
     display: 'flex',
     flexDirection: 'column',
-    top: '-20px'
+    top: '-20px',
   },
 
-  bodyContainerForm:{
+  bodyContainerForm: {
     fontFamily: 'inherit',
     position: 'relative',
     display: 'flex',
     zIndex: 0,
     minHeight: 'inherit',
     marginBottom: 'calc(-100vh + 56px)',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
 
-  bodyContainerLayout:{
+  bodyContainerLayout: {
     fontFamily: 'inherit',
     display: 'flex',
-    minHeight:'inherit',
-    flexDirection: 'column'
+    minHeight: 'inherit',
+    flexDirection: 'column',
   },
 
-  bodyContainerSize:{
+  bodyContainerSize: {
     fontFamily: 'inherit',
     display: 'flex',
     minWidth: 0,
     minHeight: 'inherit',
     flexDirection: 'column',
-    flexGrow: 1
+    flexGrow: 1,
   },
 
-  bodyColumn:{
+  bodyColumn: {
     fontFamily: 'inherit',
     justifyContent: 'center',
     position: 'relative',
     minWidth: '900px',
     display: 'flex',
     zIndex: 0,
-    minHeight: 'inherit'
+    minHeight: 'inherit',
   },
 
-  bodyColumnBack:{
+  bodyColumnBack: {
     fontFamily: 'inherit',
     display: 'none',
     position: 'relative',
@@ -310,16 +645,16 @@ const useStyles = createStyles({
     zIndex: 0,
     minHeight: 'inherit',
     flexDirection: 'column',
-    flexGrow: 1
+    flexGrow: 1,
   },
-//-----------------------NOTIFICATION BLOCK OUTSIDE---------------------------------------------------//
-  notificationForm:{
+  //-----------------------NOTIFICATION BLOCK OUTSIDE---------------------------------------------------//
+  notificationForm: {
     fontFamily: 'inherit',
     justifyContent: 'center',
-    display: 'flex'
+    display: 'flex',
   },
 
-  notificationSpacingHeader:{
+  notificationSpacingHeader: {
     fontFamily: 'inherit',
     marginTop: '16px',
     zIndex: 1,
@@ -331,17 +666,17 @@ const useStyles = createStyles({
     maxWidth: '100%',
     boxSizing: 'content-box',
     flexDirection: 'column',
-    top: '56px'
+    top: '56px',
   },
 
-  notificationLayout:{
+  notificationLayout: {
     fontFamily: 'inherit',
     position: 'relative',
     width: '100%',
-    display: 'flex'
+    display: 'flex',
   },
   //-------------------------------NOTIFICATION lAYOUT OUTSIDE---------------//
-  notificationLayoutForm:{
+  notificationLayoutForm: {
     borderRadius: 'max(0px, min(8px, ((100vw - 4px) - 100%) * 9999)) / 8px',
     borderTopRightRadius: '8px',
     borderTopLeftRadius: '8px',
@@ -358,13 +693,14 @@ const useStyles = createStyles({
     zIndex: 0,
   },
 
-  notificationLayoutFormBack:{
+  notificationLayoutFormBack: {
     backgroundRepeat: 'repeat-y',
     backgroundSize: '6px 1px',
     position: 'absolute',
     width: '6px',
     transitionDuration: '200ms',
-    backgroundImage:'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYA…gYAZiEGACYhCbvba2Vg0ABVQBrt7JOT8AAAAASUVORK5CYII=)',
+    backgroundImage:
+      'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYA…gYAZiEGACYhCbvba2Vg0ABVQBrt7JOT8AAAAASUVORK5CYII=)',
     top: 0,
     bottom: 0,
     pointerEvents: 'none',
@@ -372,16 +708,16 @@ const useStyles = createStyles({
     left: '-5px',
   },
 
-  notificationLayoutSize:{
+  notificationLayoutSize: {
     fontFamily: 'inherit',
     display: 'flex',
     backgroundColor: WHITE,
     maxWidth: 'calc(100vw - 24px)',
     minHeight: 'inherit',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
 
-  notificationLayoutPosition:{
+  notificationLayoutPosition: {
     fontFamily: 'inherit',
     minHeight: 0,
     perspectiveOrigin: 'right top',
@@ -397,19 +733,19 @@ const useStyles = createStyles({
     flexBasis: '100%',
     flexDirection: 'column',
     overscrollBehaviorY: 'contain',
-    flexGrow: 1
+    flexGrow: 1,
   },
 
   //--------------------------------NOTIFICATION CONTAINER-----------------------------------//
-  notificationContainer:{
+  notificationContainer: {
     fontFamily: 'inherit',
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
-    flexGrow: 1
+    flexGrow: 1,
   },
 
-  notificationContainerBack:{
+  notificationContainerBack: {
     fontFamily: 'inherit',
     position: 'absolute',
     right: 0,
@@ -419,7 +755,7 @@ const useStyles = createStyles({
   },
 
   //------------------------------------NOTIFICATION HEADER------------------------------------------------//
-  notificationHeaderForm:{
+  notificationHeaderForm: {
     fontFamily: 'inherit',
     margin: '20px 16px 12px 16px',
     boxSizing: 'border-box',
@@ -430,10 +766,10 @@ const useStyles = createStyles({
     justifyContent: 'space-between',
     zIndex: 0,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
 
-  notificationHeaderLayout:{
+  notificationHeaderLayout: {
     fontFamily: 'inherit',
     boxSizing: 'border-box',
     flexBasis: '0px',
@@ -444,10 +780,10 @@ const useStyles = createStyles({
     zIndex: 0,
     maxWidth: '100%',
     flexDirection: 'column',
-    flexGrow: 1
+    flexGrow: 1,
   },
 
-  notificationHeaderBoxSize:{
+  notificationHeaderBoxSize: {
     fontFamily: 'inherit',
     boxSizing: 'border-box',
     flexShrink: 0,
@@ -457,10 +793,10 @@ const useStyles = createStyles({
     justifyContent: 'space-between',
     zIndex: 0,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
-//------------------------------------NOTIFICATION HEADER CONTENT------------------------------------------------//
-  notificationHeaderContentForm:{
+  //------------------------------------NOTIFICATION HEADER CONTENT------------------------------------------------//
+  notificationHeaderContentForm: {
     fontFamily: 'inherit',
     boxSizing: 'border-box',
     flexBasis: 'auto',
@@ -473,22 +809,22 @@ const useStyles = createStyles({
     display: 'block',
   },
 
-  notificationHeaderContentLayout:{
+  notificationHeaderContentLayout: {
     fontFamily: 'inherit',
     marginBottom: '-7px',
     marginTop: '-7px',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
 
-  notificationHeaderContentSize:{
+  notificationHeaderContentSize: {
     fontFamily: 'inherit',
     marginBottom: '7px',
     marginTop: '7px',
-    display: 'block'
+    display: 'block',
   },
 
-  notificationHeaderContentAttribute:{
+  notificationHeaderContentAttribute: {
     fontFamily: 'inherit',
     //wordBreak: 'break-word',
     color: BLACK,
@@ -500,18 +836,18 @@ const useStyles = createStyles({
     maxWidth: '100%',
     //wordWrap: 'break-word',
     display: 'block',
-    unicodeBidi: 'isolate'
+    unicodeBidi: 'isolate',
   },
 
-  notificationHeaderContentName:{
+  notificationHeaderContentName: {
     fontFamily: 'inherit',
     fontWeight: 'inherit',
     fontSize: 'inherit',
     color: 'inherit',
     outline: 'none',
   },
-//--------------------------------NOTIFICATION HEAEDER ICON-------------------------------------//
-  notificationHeaderButtonForm:{
+  //--------------------------------NOTIFICATION HEAEDER ICON-------------------------------------//
+  notificationHeaderButtonForm: {
     fontFamily: 'inherit',
     justifyContent: 'center',
     boxSizing: 'border-box',
@@ -523,23 +859,23 @@ const useStyles = createStyles({
     minWidth: '100%',
     flexDirection: 'column',
     maxHeight: '17px',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
 
-  notificationHeaderButtonLayout:{
+  notificationHeaderButtonLayout: {
     fontFamily: 'inherit',
     flexShrink: 0,
-    display: 'flex'
+    display: 'flex',
   },
 
-  notificationHeaderButtonSize:{
+  notificationHeaderButtonSize: {
     fontFamily: 'inherit',
     marginTop: '-8px',
     marginBottom: '-8px',
-    display: 'flex'
+    display: 'flex',
   },
 
-  notificationHeaderButtonAttribute:{
+  notificationHeaderButtonAttribute: {
     fontFamily: 'inherit',
     justifyContent: 'center',
     borderRadius: '50%',
@@ -560,52 +896,54 @@ const useStyles = createStyles({
     border: 0,
     listStyle: 'none',
     outline: 'none',
-    textDecoration: 'none'
+    textDecoration: 'none',
   },
 
-  notificationHeaderIconAttribute:{
-    backgroundImage: 'url(https://static.xx.fbcdn.net/rsrc.php/v3/y5/r/c1SM8kb7vI5.png)',
+  notificationHeaderIconAttribute: {
+    backgroundImage:
+      'url(https://static.xx.fbcdn.net/rsrc.php/v3/y5/r/c1SM8kb7vI5.png)',
     backgroundPosition: '-147px -67px',
     backgroundSize: 'auto',
     width: '20px',
     height: '20px',
     backgroundRepeat: 'no-repeat',
     display: 'inline-block',
-    WebkitFilter: 'invert(39%) sepia(21%) saturate(200%) saturate(109.5%) hue-rotate(174deg) brightness(94%) contrast(86%)',
+    WebkitFilter:
+      'invert(39%) sepia(21%) saturate(200%) saturate(109.5%) hue-rotate(174deg) brightness(94%) contrast(86%)',
     verticalAlign: '-0.25em',
   },
 
-  notificationHeaderIconBack:{
+  notificationHeaderIconBack: {
     fontFamily: 'inherit',
     borderRadius: '50%',
     position: 'absolute',
     transitionTimingFunction: 'cubic-bezier(0, 0, 1, 1)',
-    right:0,
-    top:0,
-    bottom:0,
-    left:0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    left: 0,
     pointerEvents: 'none',
     transitionDuration: '100ms',
-    opacity:0,
+    opacity: 0,
     transitionProperty: 'opacity',
   },
   //------------------------------------NOTIFICATION FILTER------------------------------------------------//
-  notificationFilterForm:{
+  notificationFilterForm: {
     flexShrink: 0,
     flexWrap: 'wrap',
     display: 'flex',
     paddingLeft: '16px',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
-//----------------------------------------NOTIFICATION FILTER BUTTON-----------------------------------------//
-  notificationFilterButtonForm:{
+  //----------------------------------------NOTIFICATION FILTER BUTTON-----------------------------------------//
+  notificationFilterButtonForm: {
     fontFamily: 'inherit',
     boxSizing: 'border-box',
     paddingRight: '8px',
-    height: '100%'
+    height: '100%',
   },
 
-  notificationFilterButtonLayout:{
+  notificationFilterButtonLayout: {
     fontFamily: 'inherit',
     paddingLeft: '12px',
     height: '36px',
@@ -632,10 +970,10 @@ const useStyles = createStyles({
     border: 0,
     listStyle: 'none',
     outline: 'none',
-    textDecoration: 'none'
+    textDecoration: 'none',
   },
 
-  notificationFilterButtonAttribute:{
+  notificationFilterButtonAttribute: {
     fontFamily: 'inherit',
     wordBreak: 'break-word',
     fontWeight: 600,
@@ -645,20 +983,20 @@ const useStyles = createStyles({
     wordWrap: 'break-word',
     display: 'block',
     lineHeight: 1.3333,
-    unicodeBidi: 'isolate'
+    unicodeBidi: 'isolate',
   },
 
-  notificationFilterButtonName:{
+  notificationFilterButtonName: {
     fontFamily: 'inherit',
     overflowY: 'hidden',
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     position: 'relative',
     whiteSpace: 'nowrap',
-    display: 'block'
+    display: 'block',
   },
 
-  notificationFilterButtonAttributeBack:{
+  notificationFilterButtonAttributeBack: {
     borderRadius: '18px',
     position: 'absolute',
     transitionTimingFunction: 'cubic-bezier(0, 0, 1, 1)',
@@ -669,11 +1007,11 @@ const useStyles = createStyles({
     pointerEvents: 'none',
     transitionDuration: '100ms',
     opacity: 0,
-    transitionProperty: 'opacity'
+    transitionProperty: 'opacity',
   },
 
   //-----------------------------NOTIFICATION lIST----------------------------------------------//
-  notificationListForm:{
+  notificationListForm: {
     alignContent: 'inherit',
     maxHeight: 'inherit',
     flexGrow: 'inherit',
@@ -685,10 +1023,10 @@ const useStyles = createStyles({
     justifyContent: 'inherit',
     height: 'inherit',
     display: 'inherit',
-    alignItems: 'inherit'
+    alignItems: 'inherit',
   },
 
-  notificationListLayout:{
+  notificationListLayout: {
     boxSizing: 'inherit',
     flexShrink: 0,
     position: 'relative',
@@ -696,21 +1034,21 @@ const useStyles = createStyles({
     zIndex: 0,
     maxWidth: '100%',
     flexDirection: 'column',
-    paddingTop: '20px'
+    paddingTop: '20px',
   },
 
   //-------------------------------NOTIFICATION LIST HEADER-------------------------------------//
-  notificationListHeaderForm:{
+  notificationListHeaderForm: {
     minHeight: 0,
     boxSizing: 'border-box',
     position: 'relative',
     display: 'flex',
     zIndex: 0,
     flexDirection: 'column',
-    flexGrow: 1
+    flexGrow: 1,
   },
 
-  notificationListHeaderLayout:{
+  notificationListHeaderLayout: {
     boxSizing: 'border-box',
     flexShrink: 0,
     position: 'relative',
@@ -719,33 +1057,33 @@ const useStyles = createStyles({
     zIndex: 0,
     paddingLeft: '16px',
     maxWidth: '100%',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
 
   //----------------------------------NOTIFICATION LIST CONTENT---------------------------------------//
 
-  notificationListContentForm:{
+  notificationListContentForm: {
     display: 'flex',
     marginTop: '-5px',
     marginBottom: '-5px',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
 
-  notificationListContentLayout:{
+  notificationListContentLayout: {
     marginTop: '5px',
     marginBottom: '5px',
   },
 
-  notificationListContentContainerForm:{
+  notificationListContentContainerForm: {
     fontWeight: 'inherit',
     fontSize: 'inherit',
     minWidth: 0,
     color: 'inherit',
     maxWidth: '100%',
-    outline: 'none'
+    outline: 'none',
   },
 
-  notificationListContentAttribute:{
+  notificationListContentAttribute: {
     wordBreak: 'break-word',
     color: BLACK,
     fontWeight: 600,
@@ -756,31 +1094,31 @@ const useStyles = createStyles({
     wordWrap: 'break-word',
     display: 'block',
     fontSize: '1.0625rem',
-    unicodeBidi: 'isolate'
+    unicodeBidi: 'isolate',
   },
 
-  notificationListContentName:{
+  notificationListContentName: {
     WebkitBoxOrient: 'vertical',
     WebkitLineClamp: 2,
     display: '-webkit-box',
     overflowY: 'hidden',
     paddingBottom: '1px',
     overflowX: 'hidden',
-    position: 'relative'
-  },
-
-  //-----------------------------------NOTIFICATION LIST BODY----------------------------------//
-  notificationListBodyForm:{
     position: 'relative',
   },
 
-  notificationListBodyLayout:{
+  //-----------------------------------NOTIFICATION LIST BODY----------------------------------//
+  notificationListBodyForm: {
+    position: 'relative',
+  },
+
+  notificationListBodyLayout: {
     paddingLeft: '8px',
-    paddingRight: '8px'
+    paddingRight: '8px',
   },
 
   //-----------------------------------NOTIFICATION lIST TAB  ------------------------------------//
-  notificationListTabLinkForm:{
+  notificationListTabLinkForm: {
     borderRadius: '8px',
     minHeight: '0',
     padding: 0,
@@ -804,10 +1142,10 @@ const useStyles = createStyles({
     borderStyle: 'solid',
     listStyle: 'none',
     outline: 'none',
-    textDecoration: 'none'
+    textDecoration: 'none',
   },
 
-  notificationListTabContainer:{
+  notificationListTabContainer: {
     paddingLeft: '8px',
     boxSizing: 'border-box',
     paddingBottom: 0,
@@ -828,50 +1166,49 @@ const useStyles = createStyles({
     flexDirection: 'row',
     alignItems: 'center',
     borderStyle: 'solid',
-    borderWidth: 0
+    borderWidth: 0,
   },
-//---------------------------NOTIFICATION LIST TAB ICON----------------------------------//
-  notificationListTabIconForm:{
+  //---------------------------NOTIFICATION LIST TAB ICON----------------------------------//
+  notificationListTabIconForm: {
     marginRight: '12px',
     alignSelf: 'flex-start',
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
     marginBottom: '8px',
-    marginTop: '8px'
+    marginTop: '8px',
   },
 
-  notificationListTabIconFormLayout:{
+  notificationListTabIconFormLayout: {
     display: 'inline-block',
     verticalAlign: 'bottom',
     position: 'relative',
-    zIndex: 0
+    zIndex: 0,
   },
 
-  notificationListTabIconFormAttribute:{
+  notificationListTabIconFormAttribute: {
     verticalAlign: 'bottom',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
 
-  notificationListTabImageAttribute:{
+  notificationListTabImageAttribute: {
     height: '56px',
-    width: '56px'
+    width: '56px',
   },
 
-  notificationListTabImageCircleAttribute:{
+  notificationListTabImageCircleAttribute: {
     strokeWidth: 2,
     fill: 'none',
-    stroke: 'rgba(0, 0, 0, 0.1)'
+    stroke: 'rgba(0, 0, 0, 0.1)',
   },
 
-
-  notificationListContainerContentIconForm:{
+  notificationListContainerContentIconForm: {
     borderRadius: '50%',
-    position: "absolute",
+    position: 'absolute',
     zIndex: 2,
   },
 
-  notificationListContainerContentIconLayout:{
+  notificationListContainerContentIconLayout: {
     alignContent: 'inherit',
     borderRadius: 'inherit',
     position: 'relative',
@@ -880,10 +1217,10 @@ const useStyles = createStyles({
     justifyContent: 'inherit',
     height: 'inherit',
     display: 'inherit',
-    alignItems: 'inherit'
+    alignItems: 'inherit',
   },
 
-  notificationListContainerContentIconAttribute:{
+  notificationListContainerContentIconAttribute: {
     minHeight: 0,
     justifyContent: 'center',
     overflowY: 'hidden',
@@ -906,15 +1243,15 @@ const useStyles = createStyles({
     alignItems: 'center',
     paddingLeft: 0,
     borderWidth: 0,
-    borderStyle: 'solid'
+    borderStyle: 'solid',
   },
 
-  notificationListContainerContentIconName:{
+  notificationListContainerContentIconName: {
     verticalAlign: '-0.25em',
     objectFit: 'cover',
   },
 
-  notificationListContainerContentIconAttributeBack:{
+  notificationListContainerContentIconAttributeBack: {
     borderRadius: '50%',
     position: 'absolute',
     transitionTimingFunction: 'cubic-bezier(0, 0, 1, 1)',
@@ -925,10 +1262,10 @@ const useStyles = createStyles({
     pointerEvents: 'none',
     transitionDuration: '200ms',
     opacity: 0,
-    transitionProperty: 'opacity'
+    transitionProperty: 'opacity',
   },
 
-  notificationListTabMessageForm:{
+  notificationListTabMessageForm: {
     minHeight: 0,
     padding: 0,
     margin: 0,
@@ -946,7 +1283,7 @@ const useStyles = createStyles({
     borderWidth: 0,
   },
 
-  notificationListTabMessageLayout:{
+  notificationListTabMessageLayout: {
     minHeight: 0,
     padding: '12px 0px 12px l',
     boxSizing: 'border-box',
@@ -961,22 +1298,22 @@ const useStyles = createStyles({
     flexDirection: 'column',
     flexGrow: 1,
     borderStyle: 'solid',
-    borderWidth: 0
+    borderWidth: 0,
   },
 
-  notificationListTabMessageContainerForm:{
+  notificationListTabMessageContainerForm: {
     display: 'flex',
     marginTop: '-5px',
     marginBottom: '-5px',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
 
-  notificationListTabMessageContainerLayout:{
+  notificationListTabMessageContainerLayout: {
     marginTop: '5px',
     marginBottom: '5px',
   },
 
-  notificationListTabMessageContainerSize:{
+  notificationListTabMessageContainerSize: {
     wordBreak: 'break-word',
     color: BLACK,
     fontFamily: 'inherit',
@@ -988,23 +1325,23 @@ const useStyles = createStyles({
     fontWeight: 400,
     display: 'block',
     lineHeight: 1.3333,
-    unicodeBidi: 'isolate'
+    unicodeBidi: 'isolate',
   },
 
-  notificationListTabMessageContainerAttribute:{
+  notificationListTabMessageContainerAttribute: {
     overflowX: 'hidden',
     overflowY: 'hidden',
-    position: 'relative'
+    position: 'relative',
   },
 
-  notificationListTabMessageContainerAttributeHidden:{
+  notificationListTabMessageContainerAttributeHidden: {
     clip: 'rect(0,0,0,0)',
     position: 'absolute',
     clipPath: 'polygon(0 0,0 0,0 0,0 0)',
-    wordBreak:'keep-all'
+    wordBreak: 'keep-all',
   },
 
-  notificationListTabTimeForm:{
+  notificationListTabTimeForm: {
     wordBreak: 'break-word',
     color: '#8A8D91',
     lineHeight: 1.2308,
@@ -1014,20 +1351,20 @@ const useStyles = createStyles({
     maxWidth: '100%',
     wordWrap: 'break-word',
     fontWeight: 400,
-    display: 'block'
+    display: 'block',
   },
 
-  notificationListTabTimeLayout:{
+  notificationListTabTimeLayout: {
     overflowY: 'hidden',
     paddingBottom: '1px',
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     position: 'relative',
     whiteSpace: 'nowrap',
-    display: 'block'
+    display: 'block',
   },
 
-  notificationListTabTimeAttribute:{
+  notificationListTabTimeAttribute: {
     wordBreak: 'break-word',
     color: ' hsl(214, 89%, 52%)',
     fontWeight: 600,
@@ -1035,25 +1372,25 @@ const useStyles = createStyles({
     minWidth: 0,
     fontSize: '0.8125rem',
     maxWidth: '100%',
-    wordWrap: 'break-word'
+    wordWrap: 'break-word',
   },
 
-  notificationListTabBreaker:{
+  notificationListTabBreaker: {
     display: 'flex',
     marginLeft: '-12px',
     flexDirection: 'column',
-    marginRight: '-12px'
+    marginRight: '-12px',
   },
 
-  notificationListTabNoteForm:{
+  notificationListTabNoteForm: {
     marginLeft: '12px',
     alignSelf: 'center',
-    position: "relative",
+    position: 'relative',
     marginBottom: '8px',
     marginTop: '8px',
   },
 
-  notificationListTabNoteLayout:{
+  notificationListTabNoteLayout: {
     minHeight: 0,
     justifyContent: 'center',
     paddingRight: 0,
@@ -1083,42 +1420,40 @@ const useStyles = createStyles({
     borderStyle: 'solid',
     listStyle: 'none',
     outline: 'none',
-    textDecoration: 'none'
+    textDecoration: 'none',
   },
 
-  notificationListTabNoteAttribute:{
+  notificationListTabNoteAttribute: {
     borderRadius: '50%',
     display: 'inline-flex',
     backgroundColor: 'hsl(214, 89%, 52%)',
     width: '12px',
     height: '12px',
-    border: 0
+    border: 0,
   },
 
-  notificationListTabContainerBack:{
+  notificationListTabContainerBack: {
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
     borderRadius: 'inherit',
     position: 'absolute',
     transitionTimingFunction: 'cubic-bezier(0, 0, 1, 1)',
-    right:0,
+    right: 0,
     top: 0,
     left: 0,
     bottom: 0,
     pointerEvents: 'none',
     transitionDuration: '100ms',
     opacity: 0,
-    transitionProperty: 'opacity'
+    transitionProperty: 'opacity',
   },
-})
-
+});
 
 export default NotificationManagement;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-
   return {
     props: {
       assa: null,
-    }
+    },
   };
-}
+};

@@ -8,8 +8,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
 } from 'tabler-icons-react';
-import AdminLayout from "../components/AdminLayout";
-
+import AdminLayout from '../components/layout/admin.layout';
 
 const icons = {
   user: UserPlus,
@@ -19,7 +18,12 @@ const icons = {
 };
 
 interface StatsGridProps {
-  data: { title: string; icon: keyof typeof icons; value: string; diff: number }[];
+  data: {
+    title: string;
+    icon: keyof typeof icons;
+    value: string;
+    diff: number;
+  }[];
 }
 
 const data: StatsGridProps = {
@@ -28,20 +32,19 @@ const data: StatsGridProps = {
       diff: 1,
       icon: 'user',
       title: 'Feedback',
-      value: '1233'
+      value: '1233',
     },
     {
       diff: -1,
       icon: 'discount',
       value: '69',
-      title: 'Room Booking'
-    }
-  ]
-}
+      title: 'Room Booking',
+    },
+  ],
+};
 
 function DashboardPage() {
-
-  const {classes} = useStyles();
+  const { classes } = useStyles();
 
   const stats = data.data.map((stat) => {
     const Icon = icons[stat.icon];
@@ -90,8 +93,8 @@ function DashboardPage() {
         </SimpleGrid>
       </div>
     </AdminLayout>
-  )
-};
+  );
+}
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -111,7 +114,10 @@ const useStyles = createStyles((theme) => ({
   },
 
   icon: {
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[4],
+    color:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[3]
+        : theme.colors.gray[4],
   },
 
   title: {
