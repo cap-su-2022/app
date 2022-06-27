@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -81,18 +83,20 @@ export class BookingRoomController {
   @Get('search')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getAllBookingRoomsPagination(
-    @Query('roomName') roomName = '',
-    @Query('sort') sort = 'ASC',
-    @Query('limit') limit = 5,
-    @Query('page') page = 1,
-    @Query('reasonType') reasonType = '',
-    @Query('checkInAt') checkInAt = 0,
-    @Query('checkOutAt') checkOutAt = 0
+    @Query('search', new DefaultValuePipe('')) search: string,
+    @Query('sort', new DefaultValuePipe('booked_at')) sort: string,
+    @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('reasonType', new DefaultValuePipe('')) reasonType: string,
+    @Query('checkInAt', new DefaultValuePipe('')) checkInAt: string,
+    @Query('checkOutAt', new DefaultValuePipe('')) checkOutAt: string,
+    @Query('dir', new DefaultValuePipe('ASC')) dir: string
   ) {
     return this.service.getAllBookingRoomsPagination({
       checkOutAt: checkOutAt,
       checkInAt: checkInAt,
-      roomName: roomName,
+      search: search,
+      dir: dir,
       page: page,
       sort: sort,
       limit: limit,

@@ -26,11 +26,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.booked_at', 'bookedAt')
       .addSelect('booking_request.id', 'id')
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
-      .where('booking_request.reason_type LIKE :reason', {
-        reason: `%${payload.reasonType ?? ''}%`,
-      })
-      .andWhere('r.name LIKE :roomName', {
-        roomName: `%${payload.roomName ?? ''}%`,
+      .where('r.name LIKE :roomName', {
+        roomName: `%${payload.search}%`,
       })
       .andWhere('booking_request.time_checkin >= :timeCheckIn', {
         timeCheckIn: payload.checkInAt,
@@ -38,7 +35,12 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .andWhere('booking_request.time_checkout <= :timeCheckOut', {
         timeCheckOut: payload.checkOutAt,
       })
-      .orderBy('r.name', payload.sort === 'ASC' ? 'ASC' : 'DESC');
+      .orderBy(payload.sort, payload.dir as 'ASC' | 'DESC');
+    if (payload.reasonType && payload.reasonType !== '') {
+      query.andWhere('booking_request.reason_type = :reason', {
+        reason: payload.reasonType,
+      });
+    }
     return paginateRaw<BookingRequest, IPaginationMeta>(query, {
       page: payload.page,
       limit: payload.limit,
