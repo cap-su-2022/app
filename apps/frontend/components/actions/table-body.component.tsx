@@ -16,16 +16,10 @@ import {
   Selector,
   ChevronDown,
   ChevronUp,
-  Search,
-  Filter,
-  RotateClockwise,
   InfoCircle,
   Pencil,
   Trash,
 } from 'tabler-icons-react';
-import { useDebouncedValue } from '@mantine/hooks';
-import { FPT_ORANGE_COLOR } from '@app/constants';
-
 interface RowData {
   name: string;
 }
@@ -86,16 +80,22 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
       <td className={classes.actionButtonContainer}>
         <Button
           variant="outline"
-          onClick={() => {
-            props.actionButtonCb.info(row.id);
-          }}
+          onClick={() => props.actionButtonCb.info(row.id)}
         >
           <InfoCircle />
         </Button>
-        <Button variant="outline" color="green" onClick={() => {}}>
+        <Button
+          variant="outline"
+          color="green"
+          onClick={() => props.actionButtonCb.update(row.id)}
+        >
           <Pencil />
         </Button>
-        <Button variant="outline" color="red" onClick={() => {}}>
+        <Button
+          variant="outline"
+          color="red"
+          onClick={() => props.actionButtonCb.delete(row.id)}
+        >
           <Trash />
         </Button>
       </td>

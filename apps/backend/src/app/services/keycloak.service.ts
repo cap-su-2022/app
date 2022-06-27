@@ -171,7 +171,6 @@ export class KeycloakService {
       );
       return response.data as KeycloakSigninSuccessResponse;
     } catch (e) {
-      console.log(e.response.data);
       this.logger.error(e.response.data);
       throw new HttpException(
         e.response?.data['error_description'],

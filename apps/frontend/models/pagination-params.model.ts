@@ -8,5 +8,12 @@ export interface PaginationParams {
   reasonType?: string;
   checkInAt?: string;
   checkOutAt?: string;
-
 }
+
+export const defaultPaginationParams: PaginationParams = {
+  page: 1,
+  limit: 5,
+  search: '',
+  dir: 'ASC',
+  sort: 'name',
+};

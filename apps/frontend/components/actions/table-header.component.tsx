@@ -6,8 +6,7 @@ import { useDebouncedValue } from '@mantine/hooks';
 
 interface TableHeaderProps {
   handleResetFilter(): void;
-  actionsLeft: React.ReactNode;
-  actionsRight: React.ReactNode;
+  actions: React.ReactNode;
   setSearch(val: string): void;
   search: string;
 }
@@ -22,29 +21,26 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
 
   return (
     <div className={classes.container}>
-      <div className={classes.displayFlex}>
-        <InputWrapper label="Search">
-          <TextInput
-            placeholder="Search by name..."
-            mb="md"
-            icon={<Search size={14} />}
-            defaultValue=""
-            value={props.search}
-            onChange={handleSearchChange}
-          />
-        </InputWrapper>
-        <div className={classes.actions}>
-          <Button
-            onClick={() => props.handleResetFilter()}
-            color="orange"
-            variant="outline"
-          >
-            <RotateClockwise color={FPT_ORANGE_COLOR} />
-          </Button>
-          {props.actionsLeft}
-        </div>
+      <InputWrapper label="Search">
+        <TextInput
+          placeholder="Search by name..."
+          mb="md"
+          icon={<Search size={14} />}
+          value={props.search}
+          onChange={handleSearchChange}
+        />
+      </InputWrapper>
+
+      <div className={classes.actions}>
+        <Button
+          onClick={() => props.handleResetFilter()}
+          color="orange"
+          variant="outline"
+        >
+          <RotateClockwise color={FPT_ORANGE_COLOR} />
+        </Button>
+        {props.actions}
       </div>
-      <div className={classes.actions}>{props.actionsRight}</div> 
     </div>
   );
 };
@@ -54,17 +50,12 @@ const useStyles = createStyles((theme) => {
     container: {
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'space-between',
     },
     actions: {
       display: 'flex',
       alignItems: 'center',
       marginTop: 10,
       marginLeft: 10,
-    },
-    displayFlex: {
-      display: 'flex',
-      justifyContent: 'space-between',
     },
   };
 });
