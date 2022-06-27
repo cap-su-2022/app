@@ -88,14 +88,6 @@ export default function NewBookingRequestComponent() {
     { name: string; quantity: number }[]
   >([]);
 
-  const checkIsChecked = (name) => {
-    for (let i = 0; i < listDeviceChecked.length; i++) {
-      if (listDeviceChecked[i].name === name) {
-        return true;
-      }
-    }
-    return false;
-  };
   //   const getQuantity = (name) => {
   //     for (let i = 0; i < listDeviceChecked.length; i++) {
   //       if (listDeviceChecked[i].name === name) {
@@ -186,8 +178,10 @@ export default function NewBookingRequestComponent() {
     }
   };
 
+  console.log("LIST ROOM NAME:, ",listRoomName)
+
   const initialFormValues = {
-    roomName: listRoomName[0] ? listRoomName[0].value : null,
+    roomName: listRoomName,
     fromSlot: getNextSlot(),
     toSlot: getNextSlot(),
     bookDate: bookDate,

@@ -3,11 +3,11 @@ import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
 import { PaginationResponse } from '../../../../models/pagination-response.payload';
 import { RoomBooking } from '../../../../models/room-booking.model';
-import { PaginationParams } from '../../../../models/pagination-params.model';
+import { BookingRequestParams } from '../../../../models/pagination/booking-room-params.model';
 
 export const fetchRoomBookings = createAsyncThunk<
   PaginationResponse<RoomBooking>,
-  PaginationParams,
+  BookingRequestParams,
   {
     rejectValue: {
       message: string;
@@ -20,14 +20,14 @@ export const fetchRoomBookings = createAsyncThunk<
       params: {
         limit: payload.limit,
         page: payload.page,
-        roomName: payload.roomName,
+        search: payload.search,
         reasonType: payload.reasonType,
         checkInAt: payload.checkInAt,
         checkOutAt: payload.checkOutAt,
-        sort: payload.sort,       
+        sort: payload.sort, 
+        dir: payload.dir,     
       },
     });
-    console.log("DATA NE: ",response.data);
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

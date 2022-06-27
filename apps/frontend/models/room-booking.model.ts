@@ -5,8 +5,8 @@ export interface RoomBooking {
   roomName: string
   timeCheckin: string;
   timeCheckout: string;
-  requestBy: string;
-  requestAt: string;
+  requestedBy: string;
+  requestedAt: string;
   status: string;
   bookedAt: string;
   checkInAt: string;

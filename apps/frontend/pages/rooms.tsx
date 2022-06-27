@@ -1,45 +1,195 @@
-import { GetServerSideProps } from 'next';
-import AdminLayout from '../components/layout/admin.layout';
-import { Button, createStyles, Table } from '@mantine/core';
-import { InfoCircle, Pencil } from 'tabler-icons-react';
-import React, { useEffect, useReducer, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import Th from '../components/table/th.table.component';
-import { RowData } from '../models/table/row-data.model';
-import { useRouter } from 'next/router';
-import { useDebouncedValue } from '@mantine/hooks';
-import RoomInfoModal from '../components/rooms/info-modal.component';
-import { getRoomById } from '../redux/features/room/thunk/get-room-by-id';
-import TableHeader from '../components/rooms/table-header.component';
-import { fetchRooms } from '../redux/features/room/thunk/fetch-rooms';
-import NoDataFound from '../components/no-data-found';
-import { changeRoomsTextSearch } from '../redux/features/room/room.slice';
-import TableFooter from '../components/rooms/table-footer.component';
-import RoomUpdateModal from '../components/rooms/update-modal.component';
-import RoomsHeader from '../components/rooms/header.component';
-import DisableRoomModal from '../components/rooms/disable-modal.component';
-import DeleteRoomModal from '../components/rooms/delete-modal.component';
-import AddRoomModal from '../components/rooms/add-modal.component';
-import DownloadModal from '../components/rooms/download-modal.compnent';
-import RestoreDisabledRoomModal from '../components/rooms/restore-disabled.modal.component';
-import RestoreDeletedRoomModal from '../components/rooms/restore-deleted.modal.component';
+import {GetServerSideProps} from "next";
+import AdminLayout from "../components/AdminLayout";
+import {
+  Button,
+  createStyles,
+  ScrollArea,
+  Table,
+} from "@mantine/core";
+import {
+  InfoCircle, Pencil,
+} from "tabler-icons-react";
+import React, {useEffect, useReducer, useState} from "react";
+import {useAppDispatch, useAppSelector} from "../redux/hooks";
+import Th from "../components/table/th.table.component";
+import {RowData} from "../models/table/row-data.model";
+import {useRouter} from "next/router";
+import {useDebouncedValue} from "@mantine/hooks";
+import RoomInfoModal from "../components/rooms/info-modal.component";
+import {getRoomById} from "../redux/features/room/thunk/get-room-by-id";
+import TableHeader from "../components/rooms/table-header.component";
+import {fetchRooms} from "../redux/features/room/thunk/fetch-rooms";
+import NoDataFound from "../components/no-data-found";
+import {
+  changeRoomsTextSearch,
+} from "../redux/features/room/room.slice";
+import TableFooter from "../components/rooms/table-footer.component";
+import RoomUpdateModal from "../components/rooms/update-modal.component";
+import RoomsHeader from "../components/rooms/header.component";
+import DisableRoomModal from "../components/rooms/disable-modal.component";
+import DeleteRoomModal from "../components/rooms/delete-modal.component";
+import AddRoomModal from "../components/rooms/add-modal.component";
+import DownloadModal from "../components/rooms/download-modal.compnent";
+import RestoreDisabledRoomModal from "../components/rooms/restore-disabled.modal.component";
+import RestoreDeletedRoomModal from "../components/rooms/restore-deleted.modal.component";
+import { RoomParams } from '../models/pagination/room-params.model';
 
-interface RoomsRowData extends RowData {
-  stt: number;
-  id: string;
-  name: string;
-  isDisabled: boolean;
-  updatedAt: string;
-  type: string;
-}
+const defaultPagination = {
+  limit: 5,
+  page: 1,
+  name: '',
+  type: '',
+  sort: 'ASC',
+};
+
 
 function RoomsManagement(props: any) {
   const { classes } = useStyles();
+  const [id, setId] = useState<string>('');
+  const [isInfoShown, setInfoShown] = useState<boolean>(false);
+  const [isAddShown, setAddShown] = useState<boolean>(false);
+  const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
+  const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
+  const room = useAppSelector((state) => state.room.selectedRoom);
+
+
+  const rooms = useAppSelector(
+    (state) => state.room.rooms
+  );
+
+  const [pagination, setPagination] =
+    useState<RoomParams>(defaultPagination);
+  console.log(pagination)
+  const [debounceSearchValue] = useDebouncedValue(pagination.name, 400);
 
   const dispatch = useAppDispatch();
-  const router = useRouter();
 
-  const rooms = useAppSelector((state) => state.room.rooms);
+  useEffect(() => {
+    dispatch(fetchRooms(pagination));
+  }, [
+    pagination.page,
+    pagination.limit,
+    pagination.name,
+    pagination.type,
+    pagination.sort,
+    debounceSearchValue,
+    pagination,
+    dispatch,
+  ]);
+
+  const infoFields = [
+    {
+      label: 'Id',
+      id: 'id',
+      name: 'id',
+      value: room.id,
+      readOnly: true,
+    },
+    {
+      label: 'Name',
+      id: 'name',
+      name: 'name',
+      value: room.name,
+      readOnly: true,
+    },
+    {
+      label: 'Type',
+      id: 'type',
+      name: 'type',
+      value: room.type,
+      readOnly: true,
+    },
+    {
+      label: 'Description',
+      id: 'description',
+      name: 'description',
+      value: room.description,
+      readOnly: true,
+    },
+    {
+      label: 'Create By',
+      id: 'createdBy',
+      name: 'createdBy',
+      value: room.createdBy,
+      readOnly: true,
+    },
+    {
+      label: 'Create At',
+      id: 'createdAt',
+      name: 'createdAt',
+      value: room.createdAt,
+      readOnly: true,
+    },
+    {
+      label: 'Update By',
+      id: 'updatedBy',
+      name: 'updatedBy',
+      value: room.updatedBy,
+      readOnly: true,
+    },
+    {
+      label: 'Update At',
+      id: 'updatedAt',
+      name: 'updatedAt',
+      value: room.updatedAt,
+      readOnly: true,
+    },
+  ];
+
+  const toggleSortDirection = () => {
+    setPagination({
+      ...pagination,
+      dir: pagination.dir === 'ASC' ? 'DESC' : 'ASC',
+    });
+  };
+
+  const handleSearchValue = (val: string) => {
+    setPagination({
+      ...defaultPagination,
+      name: val,
+    });
+  };
+
+  const handleLimitChange = (val: number) => {
+    setPagination({
+      ...pagination,
+      limit: val,
+    });
+  };
+
+  const handlePageChange = (val: number) => {
+    setPagination({
+      ...pagination,
+      page: val,
+    });
+  };
+
+  const handleFetchById = (idVal) => {
+    return dispatch(fetchRoomBookingById(idVal));
+  };
+
+  const handleActionsCb = {
+    info: (id) => {
+      setId(id);
+      handleFetchById(id)
+        .unwrap()
+        .then(() => setInfoShown(!isInfoShown));
+    },
+    update: (id) => {
+      setId(id);
+      handleFetchById(id)
+        .unwrap()
+        .then(() => setUpdateShown(!isUpdateShown));
+    },
+    delete: (id) => {
+      setId(id);
+      setDeleteShown(!isDeleteShown);
+    },
+  };
+
+  const handleResetFilter = () => {
+    setPagination(defaultPagination);
+  };
 
   const itemsPerPage = useAppSelector((state) => state.room.size);
   const activePage = useAppSelector((state) => state.room.currentPage);

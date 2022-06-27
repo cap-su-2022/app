@@ -21,7 +21,6 @@ export const fetchDevicesName = createAsyncThunk<
       value: value.id,
       label: value.name,
     }));
-    console.log(dataReturn);
     return await dataReturn;
   } catch ({ response }) {
     if (response.status === 401 || response.status === 403) {

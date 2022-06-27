@@ -21,9 +21,11 @@ import {
   Trash,
 } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
+import moment from 'moment';
 
 interface RowData {
   name: string;
+  booked_at: string;
 }
 
 interface ThProps {
@@ -59,7 +61,7 @@ function Th({ style, children, reversed, sorted, onSort }: ThProps) {
 
 interface TableBodyProps {
   data: any[];
-  toggleSortDirection(): void;
+  toggleSortDirection(label): void;
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
@@ -68,23 +70,42 @@ interface TableBodyProps {
 export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
+  console.log("rever: ",reverseSortDirection)
 
   const { classes } = useStyles();
-
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
-    props.toggleSortDirection();
+    props.toggleSortDirection(field);
   };
 
+  // props.data.map((row, index) => {
+  //   console.log('IDDDDD: ', row.id);
+  // });
+
   const rows = props.data.map((row, index) => (
-    <tr key={row.name}>
+    <tr key={index}>
       <td>
         {props.page === 1
           ? index + 1
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
-      <td>{row.name}</td>
+      <td>{row.roomName}</td>
+      <td>{moment(row.bookedAt).format('HH:MM DD/MM/YYYY')}</td>
+      <td>
+        {row.status === 'BOOKING' ? (
+          <div className={classes.bookingDisplay}>{row.status}</div>
+        ) : null}
+        {row.status === 'BOOKED' ? (
+          <div className={classes.bookedDisplay}>{row.status}</div>
+        ) : null}
+        {row.status === 'CHECKED IN' ? (
+          <div className={classes.processingDisplay}>{row.status}</div>
+        ) : null}
+        {row.status === 'CANCELLED' ? (
+          <div className={classes.canceledDisplay}>{row.status}</div>
+        ) : null}
+      </td>
       <td className={classes.actionButtonContainer}>
         <Button
           variant="outline"
@@ -126,18 +147,31 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             reversed={reverseSortDirection}
             onSort={null}
           >
-            Row
+            STT
           </Th>
 
           <Th
-            style={{
-              width: '75%',
-            }}
             sorted={sortBy === 'name'}
             reversed={reverseSortDirection}
             onSort={() => setSorting('name')}
           >
-            Name
+            Room Name
+          </Th>
+
+          <Th
+            sorted={sortBy === 'booked_at'}
+            reversed={reverseSortDirection}
+            onSort={() => setSorting('booked_at')}
+          >
+            Booked At
+          </Th>
+
+          <Th
+            sorted={null}
+            reversed={reverseSortDirection}
+            onSort={null}
+          >
+            Status
           </Th>
 
           <Th sorted={null} reversed={reverseSortDirection} onSort={null}>
@@ -189,5 +223,37 @@ const useStyles = createStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  bookingDisplay: {
+    color: '#228be6',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#0000ff1c',
+    fontWeight: 600,
+  },
+  bookedDisplay: {
+    color: '#fd7e14',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#fd7e1442',
+    fontWeight: 600,
+  },
+  canceledDisplay: {
+    color: 'red',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#ff00001c',
+    fontWeight: 600,
+  },
+  processingDisplay: {
+    color: '#40c057',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#00800024',
+    fontWeight: 600,
   },
 }));

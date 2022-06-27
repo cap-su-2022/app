@@ -61,7 +61,6 @@ const ManageRoomType: React.FC<any> = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log(pagination.dir);
     dispatch(fetchRoomTypes(pagination));
   }, [
     pagination.page,
@@ -72,7 +71,7 @@ const ManageRoomType: React.FC<any> = () => {
     pagination,
     dispatch,
   ]);
-
+  console.log(pagination)
   const toggleSortDirection = () => {
     setPagination({
       ...pagination,
@@ -292,6 +291,8 @@ const ManageRoomType: React.FC<any> = () => {
             actionButtonCb={handleActionsCb}
             toggleSortDirection={() => toggleSortDirection()}
             data={roomTypes.items}
+            page={pagination.page}
+            itemsPerPage={pagination.limit}
           />
           <InfoModal
             header="Room Type Information"
@@ -299,14 +300,7 @@ const ManageRoomType: React.FC<any> = () => {
             toggleShown={() => setInfoShown(!isInfoShown)}
             isShown={isInfoShown}
           />
-          <AddModal
-            header="Add new room type"
-            isShown={isAddShown}
-            toggleShown={() => handleAddModalClose()}
-            formik={addFormik}
-            fields={addFields}
-            handleSubmit={() => addFormik.handleSubmit()}
-          />
+
           <UpdateModal
             fields={updateFields}
             formik={updateFormik}
@@ -317,6 +311,14 @@ const ManageRoomType: React.FC<any> = () => {
           />
         </>
       ) : null}
+      <AddModal
+        header="Add new room type"
+        isShown={isAddShown}
+        toggleShown={() => handleAddModalClose()}
+        formik={addFormik}
+        fields={addFields}
+        handleSubmit={() => addFormik.handleSubmit()}
+      />
       {roomTypes.meta ? (
         <TableFooter
           handlePageChange={(val) => handlePageChange(val)}
