@@ -1,23 +1,23 @@
-import {createAsyncThunk} from "@reduxjs/toolkit";
-import axios, {AxiosError, AxiosResponse} from "axios";
-import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
-import {Room} from "../../../../models/room.model";
-import {RootState} from "../../../store";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
+import { Room } from '../../../../models/room.model';
+import { RootState } from '../../../store';
+import { RoomParams } from '../../../../models/pagination/room-params.model';
+import { PaginationResponse } from '../../../../models/pagination-response.payload';
 
-interface FetchRoomsSuccessResponse {
-  data: Room[],
-  currentPage: number;
-  totalPage: number;
-  size: number;
-}
 
 interface FetchRoomsRejectPayload {
   message: string;
 }
 
-export const fetchRooms = createAsyncThunk<FetchRoomsSuccessResponse, void, {
-  rejectValue: FetchRoomsRejectPayload
-}>('room/fetch-rooms', async (payload, thunkAPI) => {
+export const fetchRooms = createAsyncThunk<
+  PaginationResponse<Room>,
+  RoomParams,
+  {
+    rejectValue: FetchRoomsRejectPayload;
+  }
+>('room/fetch-rooms', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   const state = thunkAPI.getState() as RootState;
   try {
@@ -25,15 +25,15 @@ export const fetchRooms = createAsyncThunk<FetchRoomsSuccessResponse, void, {
       search: state.room.textSearch,
       page: state.room.currentPage,
       size: state.room.size,
-      sort: state.room.direction
+      sort: state.room.direction,
     });
 
-    return await response.data as FetchRoomsSuccessResponse;
-  } catch ({response}) {
+    return await response.data;
+  } catch ({ response }) {
     if (response.status === 401 || response.status === 403) {
       return thunkAPI.rejectWithValue({
-        message: 'Access token is invalid'
-      })
+        message: 'Access token is invalid',
+      });
     }
   } finally {
     thunkAPI.dispatch(toggleSpinnerOff());

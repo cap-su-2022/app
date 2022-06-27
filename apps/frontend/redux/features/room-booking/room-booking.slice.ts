@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RoomBooking } from '../../../models/room-booking.model';
 import { fetchRoomBookings } from './thunk/fetch-room-booking-list';
+import { fetchRoomBookingById } from './thunk/fetch-room-booking-by-id';
 import { PaginationResponse } from '../../../models/pagination-response.payload';
 
 // import { updateRoomBookingById } from "./thunk/update-room-booking-by-id";
@@ -28,6 +29,10 @@ export const roomBookingSlice = createSlice({
 
     builder.addCase(fetchRoomBookings.rejected, (state, { payload }) => {
       console.log('Fetch rejected', state);
+    });
+
+    builder.addCase(fetchRoomBookingById.fulfilled, (state, { payload }) => {
+      state.roomBooking = payload;
     });
 
     //   builder.addCase(updateRoomBookingById.fulfilled, (state, {payload}) => {

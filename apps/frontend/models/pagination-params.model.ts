@@ -4,10 +4,6 @@ export interface PaginationParams {
   search?: string;
   dir?: string;
   sort?: string;
-  roomName?: string;
-  reasonType?: string;
-  checkInAt?: string;
-  checkOutAt?: string;
 }
 
 export const defaultPaginationParams: PaginationParams = {

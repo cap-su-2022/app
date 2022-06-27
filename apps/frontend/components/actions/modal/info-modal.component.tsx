@@ -8,6 +8,7 @@ import {
 } from '@mantine/core';
 import { PencilOff, X } from 'tabler-icons-react';
 import { InputInfoProps } from '../models/input-info-props.model';
+import moment from 'moment';
 
 interface InfoModalProps {
   header: React.ReactNode;
@@ -18,6 +19,7 @@ interface InfoModalProps {
 
 const InfoModal: React.FC<InfoModalProps> = (props) => {
   const { classes } = useStyles();
+  console.log(props.fields);
 
   return (
     <Modal
