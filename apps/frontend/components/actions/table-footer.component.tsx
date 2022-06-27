@@ -52,6 +52,7 @@ const TableFooter: React.FC<TableFooterProps> = (props) => {
         Showing {props.metadata.itemCount} of {props.metadata.totalItems}
       </div>
       <Pagination
+        color="orange"
         page={props.metadata.currentPage}
         total={pagination.active}
         onChange={(val) => props.handlePageChange(val)}
