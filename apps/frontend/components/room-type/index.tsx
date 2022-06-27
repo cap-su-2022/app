@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Button, createStyles } from '@mantine/core';
-import AdminLayout from '../AdminLayout';
 import Header from '../common/header.component';
 import { BuildingWarehouse, InfoCircle, Plus } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -26,6 +25,7 @@ import { InputTypes } from '../actions/models/input-type.constant';
 import UpdateModal from '../actions/modal/update-modal.component';
 import { updateRoomTypeById } from '../../redux/features/room-type/thunk/update-room-type-by-id.thunk';
 import { InputUpdateProps } from '../actions/models/input-update-props.model';
+import AdminLayout from '../layout/admin.layout';
 
 const AddRoomTypeValidation = Yup.object().shape({
   name: Yup.string()

@@ -1,9 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { createStyles, Navbar, Group, Code } from '@mantine/core';
 import {
-  Settings,
-  TwoFA,
-  DatabaseImport,
   Logout,
   User,
   BuildingWarehouse,
@@ -13,27 +10,40 @@ import {
   Dashboard,
   Bell,
   Ticket,
+  Door,
+  DeviceTablet,
+  BarrierBlock,
+  BrandHipchat,
+  DeviceMobileMessage,
+  MessageCode,
 } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { BLACK, WHITE } from '@app/constants';
 import { useRouter } from 'next/router';
-import LogoutModal from './logout.modal';
-import PreferencesModal from './preferences.modal.component';
+import LogoutModal from '../logout.modal';
+import PreferencesModal from '../preferences.modal.component';
 
 const data = [
   { link: '/dashboard', label: 'Dashboard', icon: Dashboard },
   { link: '/rooms', label: 'Rooms', icon: BuildingWarehouse },
-  { link: '/room-type', label: 'Room Type', icon: BuildingWarehouse },
-  { link: '/device-type', label: 'Device Type', icon: Devices },
-
+  { link: '/room-type', label: 'Room Type', icon: Door },
+  { link: '/device-type', label: 'Device Type', icon: DeviceTablet },
+  { link: '/role', label: 'Role', icon: BarrierBlock },
   { link: '/accounts', label: 'Accounts', icon: Users },
   { link: '/devices', label: 'Devices', icon: Devices },
   { link: '/feedbacks', label: 'Feedback', icon: Messages },
   { link: '/notifications', label: 'Notification', icon: Bell },
   { link: '/booking-room', label: 'Booking Room', icon: Ticket },
+  {
+    link: '/booking-reason',
+    label: 'Booking Reason',
+    icon: DeviceMobileMessage,
+  },
+  { link: '/feedback', label: 'Feedback', icon: BrandHipchat },
+  { link: '/feedback-type', label: 'Feedback Type', icon: MessageCode },
 ];
 
-export function NavbarSimpleColored() {
+function LayoutSidebar() {
   const { classes, cx } = useStyles();
 
   const logoutAnchorRef = useRef<HTMLAnchorElement>();
@@ -89,7 +99,7 @@ export function NavbarSimpleColored() {
 
       <Navbar.Section className={classes.footer}>
         <a
-          href="#"
+          href="apps/frontend/components/layout/NavBar#"
           className={classes.link}
           onClick={(event) => {
             event.preventDefault();
@@ -108,7 +118,7 @@ export function NavbarSimpleColored() {
 
         <>
           <a
-            href="#"
+            href="apps/frontend/components/layout/NavBar#"
             className={classes.link}
             onClick={(event) => handleLogoutSubmit(event)}
           >
@@ -207,3 +217,5 @@ const useStyles = createStyles((theme, _params, getRef) => {
     },
   };
 });
+
+export default LayoutSidebar;

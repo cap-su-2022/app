@@ -1,5 +1,5 @@
 import { Button, createStyles, Modal, Table, Text } from '@mantine/core';
-import AdminLayout from '../components/AdminLayout';
+import AdminLayout from '../components/layout/admin.layout';
 import React, { useEffect, useState } from 'react';
 import {
   BuildingWarehouse,

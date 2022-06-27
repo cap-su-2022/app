@@ -190,10 +190,6 @@ function RoomsManagement(props: any) {
   const handleResetFilter = () => {
     setPagination(defaultPagination);
   };
-////////////////////////////////////
-
-  const router = useRouter();
-
 
   const itemsPerPage = useAppSelector((state) => state.room.size);
   const activePage = useAppSelector((state) => state.room.currentPage);
@@ -207,48 +203,49 @@ function RoomsManagement(props: any) {
   const [isUpdateModalShown, setUpdateModalShown] = useState<boolean>(false);
   const [isDisableModalShown, setDisableModalShown] = useState<boolean>(false);
   const [isDeleteModalShown, setDeleteModalShown] = useState<boolean>(false);
-  const [isRestoreDisabledModalShown, setRestoreDisabledModalShown] = useState<boolean>(false);
-  const [isRestoreDeletedModalShown, setRestoreDeletedModalShown] = useState<boolean>(false);
-  const [isDownloadModalShown, setDownloadModalShown] = useState<boolean>(false);
+  const [isRestoreDisabledModalShown, setRestoreDisabledModalShown] =
+    useState<boolean>(false);
+  const [isRestoreDeletedModalShown, setRestoreDeletedModalShown] =
+    useState<boolean>(false);
+  const [isDownloadModalShown, setDownloadModalShown] =
+    useState<boolean>(false);
 
   const isSpinnerLoading = useAppSelector((state) => state.spinner.isEnabled);
   const [debouncedSearchValue] = useDebouncedValue(searchText, 400);
 
   const [sortBy, setSortBy] = useState<keyof RoomsRowData>(null);
-  const [sortName, setSortName] = useState<"ASC" | "DESC">("ASC");
-  const [sortUpdatedAt, setSortUpdatedAt] = useState<"ASC" | "DESC">("ASC");
+  const [sortName, setSortName] = useState<'ASC' | 'DESC'>('ASC');
+  const [sortUpdatedAt, setSortUpdatedAt] = useState<'ASC' | 'DESC'>('ASC');
 
   useEffect(() => {
-    dispatch(fetchRooms()).unwrap().catch(() => {
-      router.replace("/login");
-    });
-
+    dispatch(fetchRooms())
+      .unwrap()
+      .catch(() => {
+        router.replace('/login');
+      });
   }, [debouncedSearchValue, itemsPerPage, activePage, direction]);
 
-
   const handleShowInfoModal = async (id: string) => {
-    dispatch(getRoomById(id)).unwrap()
+    dispatch(getRoomById(id))
+      .unwrap()
       .then(() => setDetailModalShown(!isDetailModalShown));
-  }
+  };
 
   const handleShowUpdateModal = (id: string) => {
-    dispatch(getRoomById(id)).unwrap()
+    dispatch(getRoomById(id))
+      .unwrap()
       .then(() => setUpdateModalShown(!isUpdateModalShown));
-
-  }
-
+  };
 
   const setSorting = (field: keyof RoomsRowData) => {
- //   const reversed = field === sortBy ? !reverseSortDirection : false;
-  //  setReverseSortDirection(reversed);
-
+    //   const reversed = field === sortBy ? !reverseSortDirection : false;
+    //  setReverseSortDirection(reversed);
   };
 
   const handleSearchChange = (search: string) => {
     if (!isSpinnerLoading) {
       dispatch(changeRoomsTextSearch(search));
     }
-
   };
 
   const handleRenderRows = () => {
@@ -257,164 +254,196 @@ function RoomsManagement(props: any) {
         <td>{row.stt}</td>
         <td>{row.name}</td>
         <td>{row.type}</td>
-        <td>{new Date(row.updatedAt).toLocaleDateString() + " " + new Date(row.updatedAt).toLocaleTimeString()}</td>
         <td>
-          {row.isDisabled
-            ? <Button compact color="red"
-                      variant="light"
-                      radius="xl"
-                      size="md">Disabled</Button>
-            : <Button compact color="green"
-                      variant="light"
-                      radius="xl"
-                      size="md">Active</Button>
-          }
+          {new Date(row.updatedAt).toLocaleDateString() +
+            ' ' +
+            new Date(row.updatedAt).toLocaleTimeString()}
         </td>
         <td>
-          <div style={{
-            display: 'flex',
-          }}>
-            <Button style={{
-              marginRight: 5
-            }} onClick={() => handleShowInfoModal(row.id)}
-                    variant="outline"
-                    color="orange">
-              <InfoCircle size={20}/>
+          {row.isDisabled ? (
+            <Button compact color="red" variant="light" radius="xl" size="md">
+              Disabled
             </Button>
-            <Button variant="outline" color="blue"
-            onClick={() => handleShowUpdateModal(row.id)}>
-              <Pencil size={20}/>
+          ) : (
+            <Button compact color="green" variant="light" radius="xl" size="md">
+              Active
+            </Button>
+          )}
+        </td>
+        <td>
+          <div
+            style={{
+              display: 'flex',
+            }}
+          >
+            <Button
+              style={{
+                marginRight: 5,
+              }}
+              onClick={() => handleShowInfoModal(row.id)}
+              variant="outline"
+              color="orange"
+            >
+              <InfoCircle size={20} />
+            </Button>
+            <Button
+              variant="outline"
+              color="blue"
+              onClick={() => handleShowUpdateModal(row.id)}
+            >
+              <Pencil size={20} />
             </Button>
           </div>
         </td>
       </tr>
     ));
-  }
+  };
 
   const THead = () => {
     return (
       <thead>
-      <tr>
-        <Th
-          sorted={sortBy === 'stt'}
-          reversed={null}
-          onSort={null}
-        >
-          STT
-        </Th>
-        <Th
-          sorted={sortBy === "name"}
-          reversed={null}
-          onSort={() => setSorting("name")}
-        >
-          Name
-        </Th>
-        <Th
-          sorted={sortBy === "type"}
-          reversed={null}
-          onSort={() => setSorting("type")}
-        >
-          Type
-        </Th>
-        <Th
-          sorted={sortBy === "updatedAt"}
-          reversed={null}
-          onSort={() => setSorting("updatedAt")}
-        >
-          Updated At
-        </Th>
-        <Th onSort={null}>
-          Status
-        </Th>
-        <Th onSort={null}>
-          Action
-        </Th>
-      </tr>
+        <tr>
+          <Th sorted={sortBy === 'stt'} reversed={null} onSort={null}>
+            STT
+          </Th>
+          <Th
+            sorted={sortBy === 'name'}
+            reversed={null}
+            onSort={() => setSorting('name')}
+          >
+            Name
+          </Th>
+          <Th
+            sorted={sortBy === 'type'}
+            reversed={null}
+            onSort={() => setSorting('type')}
+          >
+            Type
+          </Th>
+          <Th
+            sorted={sortBy === 'updatedAt'}
+            reversed={null}
+            onSort={() => setSorting('updatedAt')}
+          >
+            Updated At
+          </Th>
+          <Th onSort={null}>Status</Th>
+          <Th onSort={null}>Action</Th>
+        </tr>
       </thead>
     );
-  }
+  };
 
   return (
     <>
       <AdminLayout>
-        <RoomsHeader/>
+        <RoomsHeader />
 
-        <TableHeader searchText={searchText}
-                     toggleAddModalShown={() => setAddModalShown(!isAddModalShown)}
-                     toggleDownloadModalShown={() => setDownloadModalShown(!isDownloadModalShown)}
-                     toggleRestoreDeletedModalShown={() => setRestoreDeletedModalShown(!isRestoreDeletedModalShown)}
-                     toggleRestoreDisabledModalShown={() => setRestoreDisabledModalShown(!isRestoreDisabledModalShown)}
-                     handleChangeSearchText={(val) => handleSearchChange(val)}/>
+        <TableHeader
+          searchText={searchText}
+          toggleAddModalShown={() => setAddModalShown(!isAddModalShown)}
+          toggleDownloadModalShown={() =>
+            setDownloadModalShown(!isDownloadModalShown)
+          }
+          toggleRestoreDeletedModalShown={() =>
+            setRestoreDeletedModalShown(!isRestoreDeletedModalShown)
+          }
+          toggleRestoreDisabledModalShown={() =>
+            setRestoreDisabledModalShown(!isRestoreDisabledModalShown)
+          }
+          handleChangeSearchText={(val) => handleSearchChange(val)}
+        />
 
-        {rooms?.length > 0 ? <>
+        {rooms?.length > 0 ? (
+          <>
             <div className={classes.tableContainer}>
-              <Table className={classes.table}
-                     horizontalSpacing="md"
-                     verticalSpacing="xs"
-                    //  sx={{tableLayout: 'auto', minWidth: 1000}}
+              <Table
+                className={classes.table}
+                horizontalSpacing="md"
+                verticalSpacing="xs"
+                //  sx={{tableLayout: 'auto', minWidth: 1000}}
               >
-                <THead/>
-                <tbody>
-                {handleRenderRows()}
-                </tbody>
+                <THead />
+                <tbody>{handleRenderRows()}</tbody>
               </Table>
             </div>
-            <TableFooter/>
+            <TableFooter />
           </>
-
-          : <NoDataFound/>}
+        ) : (
+          <NoDataFound />
+        )}
         <RoomUpdateModal
           isShown={isUpdateModalShown}
           toggleShown={() => setUpdateModalShown(!isUpdateModalShown)}
-          toggleDeleteModalShown={() => setDeleteModalShown(!isDeleteModalShown)}
+          toggleDeleteModalShown={() =>
+            setDeleteModalShown(!isDeleteModalShown)
+          }
         />
-        <RoomInfoModal isShown={isDetailModalShown}
-                       toggleShown={() => setDetailModalShown(!isDetailModalShown)}
-                       toggleDisableRoomModalShown={() => setDisableModalShown(!isDisableModalShown)}
+        <RoomInfoModal
+          isShown={isDetailModalShown}
+          toggleShown={() => setDetailModalShown(!isDetailModalShown)}
+          toggleDisableRoomModalShown={() =>
+            setDisableModalShown(!isDisableModalShown)
+          }
         />
-        <DisableRoomModal isShown={isDisableModalShown}
-                          toggleShown={() => setDisableModalShown(!isDisableModalShown)}
-                          toggleDetailModalShown={() => setDetailModalShown(!isDetailModalShown)}/>
+        <DisableRoomModal
+          isShown={isDisableModalShown}
+          toggleShown={() => setDisableModalShown(!isDisableModalShown)}
+          toggleDetailModalShown={() =>
+            setDetailModalShown(!isDetailModalShown)
+          }
+        />
         <DeleteRoomModal
           isShown={isDeleteModalShown}
           toggleShown={() => setDeleteModalShown(!isDeleteModalShown)}
-          toggleUpdateModalShown={() => setUpdateModalShown(!isUpdateModalShown)}/>
+          toggleUpdateModalShown={() =>
+            setUpdateModalShown(!isUpdateModalShown)
+          }
+        />
 
-        <AddRoomModal isShown={isAddModalShown} toggleShown={() => setAddModalShown(!isAddModalShown)}/>
+        <AddRoomModal
+          isShown={isAddModalShown}
+          toggleShown={() => setAddModalShown(!isAddModalShown)}
+        />
 
-        <DownloadModal isShown={isDownloadModalShown} toggleShown={() => setDownloadModalShown(!isDownloadModalShown)}/>
+        <DownloadModal
+          isShown={isDownloadModalShown}
+          toggleShown={() => setDownloadModalShown(!isDownloadModalShown)}
+        />
         <RestoreDisabledRoomModal
           isShown={isRestoreDisabledModalShown}
-          toggleShown={() => setRestoreDisabledModalShown(!isRestoreDisabledModalShown)} />
+          toggleShown={() =>
+            setRestoreDisabledModalShown(!isRestoreDisabledModalShown)
+          }
+        />
         <RestoreDeletedRoomModal
           isShown={isRestoreDeletedModalShown}
-          toggleShown={() => setRestoreDeletedModalShown(!isRestoreDeletedModalShown)} />
+          toggleShown={() =>
+            setRestoreDeletedModalShown(!isRestoreDeletedModalShown)
+          }
+        />
       </AdminLayout>
     </>
   );
-
-
 }
 
 const useStyles = createStyles({
   tableContainer: {
-    margin: 10
+    margin: 10,
   },
   table: {
     marginLeft: 10,
     marginRight: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
-})
-
+});
 
 export default RoomsManagement;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-
   return {
     props: {
       assa: null,
-    }
+    },
   };
-}
+};
