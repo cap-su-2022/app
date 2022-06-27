@@ -1,5 +1,3 @@
-import { Repository } from "typeorm";
+import { Repository } from 'typeorm';
 
-export class DeviceTypeRepository extends Repository<any> {
-
-}
+export class DeviceTypeRepository extends Repository<any> {}

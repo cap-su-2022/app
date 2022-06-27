@@ -1,5 +1,3 @@
-import { Repository } from "typeorm";
+import { Repository } from 'typeorm';
 
-export class AccountHistRepository extends Repository<any>{
-
-}
+export class AccountHistRepository extends Repository<any> {}
