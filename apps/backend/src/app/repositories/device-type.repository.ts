@@ -97,22 +97,20 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   }
 
   updateById(
-    roomTypeId: string,
+    deviceTypeId: string,
     accountId: string,
     payload: RoomTypeUpdateRequestPayload
-  ) {
-    return this.save(
-      {
-        id: roomTypeId,
+  ): Promise<UpdateResult> {
+    return this.createQueryBuilder('device_type')
+      .update({
         name: payload.name,
         description: payload.description,
-        updatedBy: accountId,
         updatedAt: new Date(),
-      },
-      {
-        transaction: true,
-      }
-    );
+        updatedBy: accountId,
+      })
+      .where('device_type.id = :id', { id: deviceTypeId })
+      .useTransaction(true)
+      .execute();
   }
 
   async permanentlyDeleteById(id: string) {
