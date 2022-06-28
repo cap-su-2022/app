@@ -118,4 +118,21 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   async permanentlyDeleteById(id: string) {
     return Promise.resolve(undefined);
   }
+
+  async addNew(
+    accountId: string,
+    payload: { name: string; description: string }
+  ): Promise<DeviceType> {
+    return this.save<DeviceType>(
+      {
+        name: payload.name,
+        description: payload.description,
+        createdBy: accountId,
+        createdAt: new Date(),
+      },
+      {
+        transaction: true,
+      }
+    );
+  }
 }

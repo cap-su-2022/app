@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Post,
   Put,
   Query,
 } from '@nestjs/common';
@@ -40,6 +41,14 @@ export class DeviceTypeController {
   @Get(':id')
   getDeviceTypeById(@Param('id') id: string): Promise<DeviceType> {
     return this.service.getDeviceTypeById(id);
+  }
+
+  @Post()
+  addNewDeviceType(
+    @User() user: KeycloakUserInstance,
+    @Body() payload: { name: string; description: string }
+  ) {
+    return this.service.addNewDeviceType(user.account_id, payload);
   }
 
   @Put(':id')

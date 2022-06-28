@@ -55,4 +55,16 @@ export class DeviceTypeService {
       throw new BadRequestException(e.message);
     }
   }
+
+  async addNewDeviceType(
+    accountId: string,
+    payload: { name: string; description: string }
+  ) {
+    try {
+      return await this.repository.addNew(accountId, payload);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
+  }
 }
