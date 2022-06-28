@@ -28,18 +28,18 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   }
 
   async findById(id: string): Promise<DeviceType> {
-    return this.createQueryBuilder('rt')
-      .select('rt.id', 'id')
-      .addSelect('rt.name', 'name')
-      .addSelect('rt.description', 'description')
+    return this.createQueryBuilder('dt')
+      .select('dt.id', 'id')
+      .addSelect('dt.name', 'name')
+      .addSelect('dt.description', 'description')
       .addSelect('a.username', 'createdBy')
-      .addSelect('rt.created_at', 'createdAt')
+      .addSelect('dt.created_at', 'createdAt')
       .addSelect('aa.username', 'updatedBy')
-      .addSelect('rt.updated_at', 'updatedAt')
-      .innerJoin(Accounts, 'a', 'a.id = rt.created_by')
-      .innerJoin(Accounts, 'aa', 'aa.id = rt.updated_by')
-      .where('rt.id = :id', { id: id })
-      .andWhere('rt.deleted_at IS NULL')
+      .addSelect('dt.updated_at', 'updatedAt')
+      .innerJoin(Accounts, 'a', 'a.id = dt.created_by')
+      .leftJoin(Accounts, 'aa', 'aa.id = dt.updated_by')
+      .where('dt.id = :id', { id: id })
+      .andWhere('dt.deleted_at IS NULL')
       .getRawOne<DeviceType>();
   }
 
