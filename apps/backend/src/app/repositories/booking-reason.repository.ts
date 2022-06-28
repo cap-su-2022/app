@@ -12,7 +12,7 @@ export class BookingReasonRepository extends Repository<BookingReason> {
     payload: PaginationParams
   ): Promise<Pagination<BookingReason>> {
     const query = this.createQueryBuilder('br')
-      .addSelect('br.id', 'id')
+      .select('br.id', 'id')
       .addSelect('br.name', 'name')
       .where('br.deleted_at IS NULL')
       .andWhere('LOWER(br.name) LIKE :search', {

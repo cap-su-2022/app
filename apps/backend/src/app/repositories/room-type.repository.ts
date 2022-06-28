@@ -80,12 +80,12 @@ export class RoomTypeRepository extends Repository<RoomType> {
   }
 
   deleteById(accountId: string, id: string) {
-    return this.createQueryBuilder('rt')
+    return this.createQueryBuilder('room_type')
       .update({
         deletedAt: new Date(),
         deletedBy: accountId,
       })
-      .where('rt.id = :id', { id: id })
+      .where('room_type.id = :id', { id: id })
       .useTransaction(true)
       .execute();
   }

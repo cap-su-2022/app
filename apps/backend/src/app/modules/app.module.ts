@@ -1,22 +1,24 @@
-import { DynamicModule, Global, Scope } from "@nestjs/common";
+import { DynamicModule, Global, Scope } from '@nestjs/common';
 
-import { KeycloakModule } from "./keycloak.module";
-import { RoomsModule } from "./rooms.module";
-import { HealthCheckModule } from "./health-check.module";
-import { AccountsModule } from "./accounts.module";
-import { DevicesModule } from "./devices.module";
-import { UsersWarningFlagModule } from "./users-warning-flag.module";
-import GlobalCacheModule from "./global/cache.module";
-import GlobalConfigModule from "./global/config.module";
-import GlobalTypeOrmModule from "./global/typeorm.module";
-import { HttpModule } from "@nestjs/axios";
-import { BookingRoomModule } from "./booking-room.module";
-import { CloudinaryModule } from "./cloudinary.module";
-import { APP_GUARD } from "@nestjs/core";
-import { RolesGuard } from "../guards/role.guard";
-import { ScheduleModule } from "@nestjs/schedule";
-import {RolesModule} from "./roles.module";
-import {RoomTypeModule} from "./room-type.module";
+import { KeycloakModule } from './keycloak.module';
+import { RoomsModule } from './rooms.module';
+import { HealthCheckModule } from './health-check.module';
+import { AccountsModule } from './accounts.module';
+import { DevicesModule } from './devices.module';
+import { UsersWarningFlagModule } from './users-warning-flag.module';
+import GlobalCacheModule from './global/cache.module';
+import GlobalConfigModule from './global/config.module';
+import GlobalTypeOrmModule from './global/typeorm.module';
+import { HttpModule } from '@nestjs/axios';
+import { BookingRoomModule } from './booking-room.module';
+import { CloudinaryModule } from './cloudinary.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from '../guards/role.guard';
+import { ScheduleModule } from '@nestjs/schedule';
+import { RolesModule } from './roles.module';
+import { RoomTypeModule } from './room-type.module';
+import { DeviceTypeModule } from './device-type.module';
+import { BookingReasonModule } from './booking-reason.module';
 
 @Global()
 export class AppModule {
@@ -37,21 +39,21 @@ export class AppModule {
         UsersWarningFlagModule,
         BookingRoomModule,
         RoomTypeModule,
+        DeviceTypeModule,
+        BookingReasonModule,
         RolesModule,
-        ScheduleModule.forRoot()
-
+        ScheduleModule.forRoot(),
       ],
       controllers: [],
-      exports: [
-      ],
+      exports: [],
       providers: [
         {
           provide: APP_GUARD,
           useClass: RolesGuard,
           scope: Scope.REQUEST,
-          inject: [KeycloakModule]
-        }
-      ]
+          inject: [KeycloakModule],
+        },
+      ],
     };
   }
 }

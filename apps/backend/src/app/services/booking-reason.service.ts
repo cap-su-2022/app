@@ -35,4 +35,13 @@ export class BookingReasonService {
       throw new BadRequestException(e.message);
     }
   }
+
+  async getBookingReasonById(id: string): Promise<BookingReason> {
+    try {
+      return await this.repository.findById(id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
 }

@@ -1,6 +1,6 @@
-import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { Environment } from "@app/constants";
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Environment } from '@app/constants';
 import {
   Accounts,
   BookingRequest,
@@ -10,15 +10,17 @@ import {
   RoomWishlist,
   UsersOTP,
   UsersWarningFlag,
-  UsersWarningFlagHistory
-} from "../../models";
-import {Roles} from "../../models/role.entity";
-import {RoomType} from "../../models/room-type.entity";
+  UsersWarningFlagHistory,
+} from '../../models';
+import { Roles } from '../../models/role.entity';
+import { RoomType } from '../../models/room-type.entity';
+import { DeviceType } from '../../models/device-type.entity';
+import { BookingReason } from '../../models/booking-reason.entity';
 
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
   useFactory: (configService: ConfigService) => ({
-    type: "postgres",
+    type: 'postgres',
     host: configService.get<string>(Environment.db.postgres.url),
     port: configService.get<number>(Environment.db.postgres.port),
     username: configService.get<string>(Environment.db.postgres.username),
@@ -36,14 +38,18 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       UsersWarningFlag,
       UsersWarningFlagHistory,
       Roles,
-      RoomType
+      RoomType,
+      DeviceType,
+      BookingReason,
     ],
-    synchronize: configService.get<boolean>(Environment.db.postgres.synchronize),
-    logging: ["query"],
+    synchronize: configService.get<boolean>(
+      Environment.db.postgres.synchronize
+    ),
+    logging: ['query'],
     cache: false,
-    timezone: "+7"
+    timezone: '+7',
   }),
-  inject: [ConfigService]
+  inject: [ConfigService],
 });
 
 export default GlobalTypeOrmModule;

@@ -1,8 +1,8 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
 
-@Entity('role')
-export class Roles extends BaseEntity {
+@Entity('device_type')
+export class DeviceType extends BaseEntity {
   @PrimaryGeneratedColumn('uuid', {
     name: 'id',
   })
@@ -11,12 +11,14 @@ export class Roles extends BaseEntity {
   @Column({
     name: 'name',
     type: 'varchar',
+    length: 100,
   })
   name?: string;
 
   @Column({
     name: 'description',
     type: 'varchar',
+    length: 500,
   })
   description?: string;
 }
