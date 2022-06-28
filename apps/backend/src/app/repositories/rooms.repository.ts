@@ -9,6 +9,8 @@ import {
   paginateRaw,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { RoomsPaginationParams } from '../controllers/rooms-pagination.model';
+import { RoomType } from '../models/room-type.entity';
 
 @CustomRepository(Rooms)
 export class RoomsRepository extends Repository<Rooms> {
@@ -67,47 +69,40 @@ export class RoomsRepository extends Repository<Rooms> {
       .getMany();
   }
 
-  searchRoom(payload: RepositoryPaginationPayload) {
+  searchRoom(payload: RoomsPaginationParams) {
     const query = this.createQueryBuilder('r')
       .innerJoin(Accounts, 'a', 'r.created_by = a.id')
       .innerJoin(Accounts, 'aa', 'r.updated_by = aa.id')
       .select('r.id', 'id')
       .addSelect('r.name', 'name')
       .addSelect('r.description', 'description')
-      .addSelect('r.type', 'type')
+      .addSelect('rt.name', 'type')
       .addSelect('r.createdAt', 'createdAt')
       .addSelect('r.updatedAt', 'updatedAt')
       .addSelect('a.username', 'createdBy')
       .addSelect('aa.username', 'updatedBy')
-
-      .where(
-        new Brackets((qb) =>
-          qb
-            .where('r.name LIKE :name', {
-              name: `%${payload.search}%`,
-            })
-            .orWhere('r.description LIKE :description', {
-              description: `%${payload.search}%`,
-            })
-        )
-      )
+      .innerJoin(RoomType, 'rt', 'rt.id = r.type')
+      .where('LOWER(r.name) LIKE LOWER(:search)', {
+        search: `%${payload.search}%`,
+      })
       .andWhere(`r.deleted_at IS NULL`)
-      .andWhere(`r.disabled_at IS NULL`);
-
-    payload.direction.forEach((direction) =>
-      query.addOrderBy(`r.${direction.name}`, direction.order)
-    );
-
+      .andWhere(`r.disabled_at IS NULL`)
+      .orderBy(payload.sort, payload.dir as 'ASC' | 'DESC');
+    if (payload.roomType && payload.roomType !== '') {
+      query.andWhere('rt.name = :roomTypeName', {
+        roomTypeName: payload.roomType,
+      });
+    }
     return paginateRaw<Rooms>(query, {
       limit: payload.limit,
       page: payload.page,
     });
   }
 
-  disableById(id: string) {
+  disableById(accountId: string, id: string) {
     return this.createQueryBuilder('rooms')
       .update({
-        disabledBy: '',
+        disabledBy: accountId,
         disabledAt: new Date(),
       })
       .where('rooms.id = :id', { id: id })

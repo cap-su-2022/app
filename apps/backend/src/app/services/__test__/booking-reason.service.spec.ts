@@ -1,0 +1,113 @@
+import { AppService } from '../app.service';
+import { Test } from '@nestjs/testing';
+import { BookingReasonService } from '../booking-reason.service';
+import { PaginationParams } from '../../controllers/pagination.model';
+import { BookingReasonRepository } from '../../repositories/booking-reason.repository';
+import { BookingReasonHistService } from '../booking-reason-hist.service';
+import { BookingReasonHistRepository } from '../../repositories/booking-reason-hist.repository';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import mock = jest.mock;
+import { Repository } from 'typeorm';
+import { BookingReason } from '../../models/booking-reason.entity';
+import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
+import { BookingReasonHist } from '../../models/booking-reason-hist.entity';
+
+export type MockType<T> = {
+  [P in keyof T]?: jest.Mock<unknown>;
+};
+
+export class MockFactory {
+  static getMock<T>(
+    type: new (...args: any[]) => T,
+    includes?: string[]
+  ): MockType<T> {
+    const mock: MockType<T> = {};
+
+    Object.getOwnPropertyNames(type.prototype)
+      .filter(
+        (key: string) =>
+          key !== 'constructor' && (!includes || includes.includes(key))
+      )
+      .map((key: string) => {
+        mock[key] = jest.fn();
+      });
+
+    return mock;
+  }
+}
+
+export const mockRepository = jest.fn(() => ({
+  metadata: {
+    columns: [],
+    relations: [],
+  },
+}));
+describe('BookingReasonService', () => {
+  let service: BookingReasonService;
+  let repository: BookingReasonRepository;
+
+  beforeAll(async () => {
+    const app = await Test.createTestingModule({
+      providers: [
+        BookingReasonService,
+        BookingReasonHistService,
+        BookingReasonRepository,
+        BookingReasonHistRepository,
+      ],
+    }).compile();
+
+    service = app.get<BookingReasonService>(BookingReasonService);
+    repository = app.get<BookingReasonRepository>(BookingReasonRepository);
+  });
+
+  describe('createNewBookingReason', () => {
+    const accountId = 'abc';
+    const payload: BookingReason = {
+      name: 'abc',
+      description: 'abc',
+    };
+    it('should create a new booking reason', async () => {
+      const expected: BookingReason = {
+        name: 'abc',
+        description: 'abc',
+      };
+      jest
+        .spyOn(repository, 'createNew')
+        .mockReturnValueOnce(Promise.resolve(expected));
+      const actual = await service.createNewBookingReason(accountId, payload);
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  describe('getAllByPagination', () => {
+    const paginationParams: PaginationParams = {
+      dir: 'ASC',
+      search: '',
+      limit: 5,
+      page: 1,
+      sort: 'name',
+    };
+
+    it('should return all booking reasons', async () => {
+      const expected = {
+        meta: {},
+        links: {},
+        items: [
+          {
+            id: '1',
+            createdAt: new Date(),
+            createdBy: 'abc',
+            description: 'abc',
+            name: 'abc',
+          },
+        ],
+      } as Pagination<BookingReason>;
+      jest
+        .spyOn(repository, 'findByPagination')
+        .mockReturnValueOnce(Promise.resolve(expected));
+
+      const actual = await service.getAllByPagination(paginationParams);
+      expect(actual).toEqual(expected);
+    });
+  });
+});

@@ -9,6 +9,7 @@ import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { Direction } from '../models/search-pagination.payload';
 import { ChooseBookingRoomFilterPayload } from '../payload/request/choose-booking-room-filter.payload';
 import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
+import { RoomsPaginationParams } from '../controllers/rooms-pagination.model';
 
 @Injectable()
 export class RoomsService {
@@ -58,13 +59,8 @@ export class RoomsService {
     }
   }
 
-  async getAll(request: RoomsRequestPayload) {
-    return await this.repository.searchRoom({
-      search: request.search,
-      limit: request.limit,
-      page: request.page,
-      direction: request.sort as Direction[],
-    });
+  async getAll(request: RoomsPaginationParams) {
+    return await this.repository.searchRoom(request);
   }
 
   async getDeletedRooms(search: string): Promise<Rooms[]> {
@@ -143,9 +139,9 @@ export class RoomsService {
     }
   }
 
-  async disableById(id: string): Promise<any> {
+  async disableById(accountId: string, id: string): Promise<any> {
     try {
-      const result = await this.repository.disableById(id);
+      const result = await this.repository.disableById(accountId, id);
       if (result.affected < 1) {
         throw new BadRequestException(
           "Room doesn't exist with the provided id"

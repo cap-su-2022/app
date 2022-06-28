@@ -11,6 +11,7 @@ import {
   Query,
   UseInterceptors,
   UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { RoomsService } from '../services';
 
@@ -31,6 +32,9 @@ import { Role } from '../enum/roles.enum';
 import { AddRoomValidation } from '../pipes/validation/add-room.validation';
 import { User } from '../decorators/keycloak-user.decorator';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { Max, Min } from 'class-validator';
+import { PaginationParams } from './pagination.model';
+import { RoomsPaginationParams } from './rooms-pagination.model';
 
 @Controller('/v1/rooms')
 @ApiBearerAuth()
@@ -95,7 +99,7 @@ export class RoomsController {
     return this.service.findById(payload.id);
   }
 
-  @Post()
+  @Get()
   @UsePipes(new RoomsValidation())
   @HttpCode(HttpStatus.OK)
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -119,8 +123,8 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getRooms(@Body() request: RoomsRequestPayload) {
-    return this.service.getAll(request);
+  getRooms(@Query() payload: RoomsPaginationParams) {
+    return this.service.getAll(payload);
   }
 
   @Get('disabled')
@@ -271,11 +275,8 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  disableRoomById(
-    @User() user: KeycloakUserInstance,
-    @Param() payload: { id: string }
-  ) {
-    return this.service.disableById(payload.id);
+  disableRoomById(@User() user: KeycloakUserInstance, @Param('id') id: string) {
+    return this.service.disableById(user.account_id, id);
   }
 
   @Delete(':id')
