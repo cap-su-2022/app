@@ -3,7 +3,7 @@ import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
 import { PaginationResponse } from '../../../../models/pagination-response.payload';
 import { RoomBooking } from '../../../../models/room-booking.model';
-import { BookingRequestParams } from '../../../../models/pagination/booking-room-params.model';
+import { BookingRequestParams } from '../../../../models/pagination-params/booking-room-params.model';
 
 export const fetchRoomBookings = createAsyncThunk<
   PaginationResponse<RoomBooking>,
@@ -24,8 +24,8 @@ export const fetchRoomBookings = createAsyncThunk<
         reasonType: payload.reasonType,
         checkInAt: payload.checkInAt,
         checkOutAt: payload.checkOutAt,
-        sort: payload.sort, 
-        dir: payload.dir,     
+        sort: payload.sort,
+        dir: payload.dir,
       },
     });
     return await response.data;

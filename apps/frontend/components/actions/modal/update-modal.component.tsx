@@ -50,6 +50,7 @@ const UpdateModal: React.FC<UpdateModalProps> = (props) => {
                   onChange={props.formik.handleChange}
                   error={props.formik.errors[field.id]}
                   inputtype={field.inputtype}
+                  data={field.data}
                   value={props.formik.values[field.id]}
                 />
               </InputWrapper>
@@ -88,6 +89,6 @@ const useStyles = createStyles({
     alignItems: 'center',
     marginTop: 20,
   },
-});
+})
 
 export default UpdateModal;

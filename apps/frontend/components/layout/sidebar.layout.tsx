@@ -65,11 +65,11 @@ function LayoutSidebar() {
     return item.label === active || router.route === item.link;
   };
 
-  const links = data.map((item) => (
+  const links = data.map((item, index) => (
     <a
       className={cx(classes.link, { [classes.linkActive]: isMenuSelect(item) })}
       href={item.link}
-      key={item.label}
+      key={index}
       onClick={async (event) => {
         event.preventDefault();
         setActive(item.label);

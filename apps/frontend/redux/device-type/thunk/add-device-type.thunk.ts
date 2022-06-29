@@ -1,13 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
+import { toggleSpinnerOff, toggleSpinnerOn } from '../../features/spinner';
 import axios from 'axios';
-import { defaultPaginationParams } from '../../../../models/pagination-params.model';
 import { fetchDeviceTypes } from './fetch-device-types.thunk';
+import { defaultPaginationParams } from '../../../models/pagination-params.model';
 
-export const updateDeviceTypeById = createAsyncThunk<
+export const addDeviceType = createAsyncThunk<
   void,
   {
-    id?: string;
     name?: string;
     description?: string;
   },
@@ -16,10 +15,10 @@ export const updateDeviceTypeById = createAsyncThunk<
       message: string;
     };
   }
->('device-type/update-by-id', async (payload, thunkAPI) => {
+>('device-type/add', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.put(`api/device-type/${payload.id}`, {
+    const response = await axios.post(`api/device-type`, {
       name: payload.name,
       description: payload.description,
     });
