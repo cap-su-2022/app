@@ -107,6 +107,7 @@ const ManageRoomType: React.FC<any> = () => {
   const [isInfoShown, setInfoShown] = useState<boolean>(false);
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
+  const [isDisableShown, setDisableShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
   const roomType = useAppSelector((state) => state.roomType.roomType);
 
@@ -298,6 +299,7 @@ const ManageRoomType: React.FC<any> = () => {
             fields={infoFields}
             toggleShown={() => setInfoShown(!isInfoShown)}
             isShown={isInfoShown}
+            toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
           />
 
           <UpdateModal

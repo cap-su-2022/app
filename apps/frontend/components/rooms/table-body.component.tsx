@@ -107,7 +107,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
 
           <Th
             style={{
-              width: '50%',
+              width: '30%',
             }}
             sorted={sortBy === 'name'}
             reversed={reverseSortDirection}
@@ -125,6 +125,9 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           </Th>
 
           <Th
+          style={{
+            width: '20%',
+          }}
             sorted={null}
             reversed={reverseSortDirection}
             onSort={null}

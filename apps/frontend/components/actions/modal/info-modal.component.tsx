@@ -14,6 +14,7 @@ interface InfoModalProps {
   header: React.ReactNode;
   isShown: boolean;
   toggleShown(): void;
+  toggleDisableModalShown(): void,
   fields: InputInfoProps[];
 }
 
@@ -53,7 +54,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
           ))}
         </div>
         <div className={classes.footer}>
-          <Button leftIcon={<PencilOff />} onClick={() => {}} color="red">
+          <Button leftIcon={<PencilOff />} onClick={() => props.toggleDisableModalShown()} color="red">
             Disable
           </Button>
 

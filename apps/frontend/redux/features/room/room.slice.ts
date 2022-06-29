@@ -15,11 +15,17 @@ import { PaginationResponse } from '../../../models/pagination-response.payload'
 interface InitialState {
   rooms: PaginationResponse<Room>;
   room: Room;
+  disabledRooms: Room[];
+  deletedRooms: Room[];
+
 }
 
 const initialState: InitialState = {
   rooms: {} as PaginationResponse<Room>,
   room: {} as Room,
+  disabledRooms: [],
+  deletedRooms: [],
+
 };
 
 export const roomSlice = createSlice({
@@ -88,7 +94,3 @@ export const roomSlice = createSlice({
 });
 
 export const roomReducer = roomSlice.reducer;
-export const {
-  changeRoomsCurrentPage, changeRoomsSize,
-  changeRoomsTextSearch, changeRoomsTotalPage, changeRoomsSortDirection, resetRoomFilter,
-} = roomSlice.actions;

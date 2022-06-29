@@ -1,7 +1,13 @@
 import { GetServerSideProps } from 'next';
 import AdminLayout from '../components/layout/admin.layout';
 import { Button, createStyles, ScrollArea, Table } from '@mantine/core';
-import { BuildingWarehouse, Download, Plus } from 'tabler-icons-react';
+import {
+  ArchiveOff,
+  BuildingWarehouse,
+  Download,
+  PencilOff,
+  Plus,
+} from 'tabler-icons-react';
 import React, { useEffect, useReducer, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -23,9 +29,8 @@ import { RoomParams } from '../models/pagination-params/room-params.model';
 import { FormikValues, useFormik } from 'formik';
 import Header from '../components/common/header.component';
 import InfoModal from '../components/actions/modal/info-modal.component';
-import UpdateModal from '../components/actions/modal/update-modal.component';
+import UpdateModal from '../components/rooms/update-modal.component';
 import { InputTypes } from '../components/actions/models/input-type.constant';
-import { InputAddProps } from '../components/actions/models/input-add-props.model';
 import { InputUpdateProps } from '../components/actions/models/input-update-props.model';
 import { updateRoomById } from '../redux/features/room/thunk/update-room-by-id';
 import { fetchRoomTypes } from '../redux/features/room-type';
@@ -60,9 +65,9 @@ const defaultPagination = {
 function RoomsManagement(props: any) {
   const { classes } = useStyles();
   const rooms = useAppSelector((state) => state.room.rooms);
+  const [roomTypes, setRoomTypes] = useState([]);
   const [pagination, setPagination] = useState<RoomParams>(defaultPagination);
   const [debounceSearchValue] = useDebouncedValue(pagination.name, 400);
-  const [roomType, setRoomType] = useState([]);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -85,10 +90,10 @@ function RoomsManagement(props: any) {
       const paload = response.payload as PaginationResponse<RoomType>;
       const items = paload.items;
       const tmp = items.map((item) => ({
-        value: item.name,
-        lable: item.name,
+        value: item.id,
+        label: item.name,
       }));
-      setRoomType(tmp);
+      setRoomTypes(tmp);
     });
   }, []);
 
@@ -133,6 +138,11 @@ function RoomsManagement(props: any) {
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
+  const [isRestoreDeletedShown, setRestoreDeletedShown] =
+    useState<boolean>(false);
+  const [isDisableShown, setDisableShown] = useState<boolean>(false);
+  const [isRestoreDisabledShown, setRestoreDisabledShown] =
+    useState<boolean>(false);
   const room = useAppSelector((state) => state.room.room);
 
   const ActionsFilter: React.FC = () => {
@@ -145,6 +155,22 @@ function RoomsManagement(props: any) {
           style={{ marginRight: 10 }}
         >
           <Plus />
+        </Button>
+        <Button
+          variant="outline"
+          color="red"
+          onClick={() => setRestoreDisabledShown(true)}
+          style={{ marginRight: 10 }}
+        >
+          <PencilOff color={'red'} />
+        </Button>
+        <Button
+          variant="outline"
+          color="red"
+          onClick={() => setRestoreDeletedShown(true)}
+          style={{ marginRight: 10 }}
+        >
+          <ArchiveOff />
         </Button>
         <Button variant="outline" color="violet">
           <Download />
@@ -168,7 +194,9 @@ function RoomsManagement(props: any) {
     },
     delete: (id) => {
       setId(id);
-      setDeleteShown(!isDeleteShown);
+      handleFetchById(id)
+        .unwrap()
+        .then(() => setDeleteShown(!isDeleteShown));
     },
   };
 
@@ -230,50 +258,66 @@ function RoomsManagement(props: any) {
       readOnly: true,
     },
   ];
+  // const deleteFields: InputDeleteProps[] = [
+  //   {
+  //     label: 'Name',
+  //     id: 'name',
+  //     name: 'name',
+  //     required: true,
+  //     inputtype: InputTypes.TextInput,
+  //   },
+  //   {
+  //     label: 'Id',
+  //     id: 'id',
+  //     name: 'id',
+  //     required: true,
+  //     inputtype: InputTypes.TextInput,
+  //   },
+  // ];
 
-  const updateFields: InputUpdateProps[] = [
-    {
-      id: 'id',
-      name: 'id',
-      description: 'Id of Room',
-      inputtype: InputTypes.TextInput,
-      label: 'Id',
-      readOnly: true,
-      required: false,
-      value: room.id,
-    },
-    {
-      id: 'name',
-      name: 'name',
-      description: 'Room name',
-      inputtype: InputTypes.TextInput,
-      label: 'Room name',
-      readOnly: false,
-      required: true,
-      value: room.name,
-    },
-    {
-      id: 'type',
-      name: 'type',
-      description: 'Room type',
-      inputtype: InputTypes.Select,
-      label: 'Room type',
-      readOnly: false,
-      required: true,
-      data: roomType,
-      value: room.type,
-    },
-    {
-      id: 'description',
-      name: 'description',
-      description: 'Room description',
-      inputtype: InputTypes.TextArea,
-      label: 'Description',
-      readOnly: false,
-      required: false,
-      value: room.description,
-    },
-  ];
+  // const updateFields: InputUpdateProps[] = [
+  //   {
+  //     id: 'id',
+  //     name: 'id',
+  //     description: 'Id of Room',
+  //     inputtype: InputTypes.TextInput,
+  //     label: 'Id',
+  //     readOnly: true,
+  //     required: false,
+  //     value: room.id,
+  //   },
+  //   {
+  //     id: 'name',
+  //     name: 'name',
+  //     description: 'Room name',
+  //     inputtype: InputTypes.TextInput,
+  //     label: 'Room name',
+  //     readOnly: false,
+  //     required: true,
+  //     value: room.name,
+  //   },
+  //   {
+  //     id: 'type',
+  //     name: 'type',
+  //     description: 'Room type',
+  //     inputtype: InputTypes.Select,
+  //     label: 'Room type',
+  //     readOnly: false,
+  //     required: true,
+  //     data: roomTypes,
+  //     value: room.type,
+  //   },
+  //   {
+  //     id: 'description',
+  //     name: 'description',
+  //     description: 'Room description',
+  //     inputtype: InputTypes.TextArea,
+  //     label: 'Description',
+  //     readOnly: false,
+  //     required: false,
+  //     value: room.description,
+  //   },
+  // ];
 
   const handleAddModalClose = () => {
     setAddShown(!isAddShown);
@@ -283,7 +327,7 @@ function RoomsManagement(props: any) {
     dispatch(
       updateRoomById({
         id: values.id,
-        payload: { name: values.name, description: values.description },
+        payload: values.payload,
       })
     )
       .unwrap()
@@ -322,6 +366,17 @@ function RoomsManagement(props: any) {
           search={pagination.search}
         />
 
+        <RestoreDisabledRoomModal
+          isShown={isRestoreDisabledShown}
+          toggleShown={() => setRestoreDisabledShown(!isRestoreDisabledShown)}
+          pagination={pagination}
+        />
+        <RestoreDeletedRoomModal
+          isShown={isRestoreDeletedShown}
+          toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
+          pagination={pagination}
+        />
+
         {rooms.items ? (
           <>
             <TableBody
@@ -336,15 +391,26 @@ function RoomsManagement(props: any) {
               fields={infoFields}
               toggleShown={() => setInfoShown(!isInfoShown)}
               isShown={isInfoShown}
+              toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
             />
-
+            <DisableRoomModal
+              isShown={isDisableShown}
+              toggleShown={() => setDisableShown(!isDisableShown)}
+              toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+              pagination={pagination}
+            />
+            <DeleteRoomModal
+              isShown={isDeleteShown}
+              toggleShown={() => setDeleteShown(!isDeleteShown)}
+              pagination={pagination}
+            />
             <UpdateModal
-              fields={updateFields}
               formik={updateFormik}
               handleSubmit={() => updateFormik.handleSubmit()}
-              header="Update current room"
               isShown={isUpdateShown}
               toggleShown={() => setUpdateShown(!isUpdateShown)}
+              pagination={pagination}
+              roomTypes={roomTypes}
             />
           </>
         ) : (
@@ -353,7 +419,9 @@ function RoomsManagement(props: any) {
 
         <AddRoomModal
           isShown={isAddShown}
+          pagination={pagination}
           toggleShown={() => handleAddModalClose()}
+          roomTypes={roomTypes}
         />
         {rooms.meta ? (
           <TableFooter

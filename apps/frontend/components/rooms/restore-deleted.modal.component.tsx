@@ -5,10 +5,12 @@ import {RotateClockwise} from "tabler-icons-react";
 import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
 import {fetchDeletedRooms} from "../../redux/features/room/thunk/fetch-deleted-rooms";
 import {restoreDeletedRoom} from "../../redux/features/room/thunk/restore-deleted.thunk";
+import { RoomParams } from "../../models/pagination-params/room-params.model";
 
 interface RestoreDeletedRoomModalProps {
   isShown: boolean;
   toggleShown(): void;
+  pagination: RoomParams;
 }
 
 const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (props) => {
@@ -24,7 +26,7 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (props) 
   const handleRestoreDeletedRoom = (id: string) => {
     dispatch(restoreDeletedRoom(id)).unwrap()
       .then(() => dispatch(fetchDeletedRooms()))
-      .then(() => dispatch(fetchRooms()));
+      .then(() => dispatch(fetchRooms(props.pagination)));
   };
   const rows = deletedRooms?.map((row, index) => (
     <tr key={row.id}>
