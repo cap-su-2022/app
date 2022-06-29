@@ -55,18 +55,18 @@ export class RoomsRepository extends Repository<Rooms> {
       .getRawMany<Rooms>();
   }
 
-  findDeletedRooms(search: string): Promise<Rooms[]> {
+  findDeletedRooms(search: string) {
     return this.createQueryBuilder(`rooms`)
-      .select('rooms.deleted_at', 'deletedAt')
-      .addSelect('a.username', 'deletedBy')
+      .select('rooms.id', 'id')
       .addSelect('rooms.name', 'name')
       .addSelect('rooms.type', 'type')
-      .addSelect('rooms.id', 'id')
-      .innerJoin(Accounts, 'a', 'a.id = rooms.deleted_by')
+      .addSelect('rooms.deleted_at', 'deletedAt')
+      .addSelect('a.username', 'deletedBy')
+      .innerJoin(Accounts, 'a', 'rooms.deleted_by = a.id')
       .where(`rooms.deleted_at IS NOT NULL`)
       .andWhere(`rooms.disabled_at IS NULL`)
       .andWhere('rooms.name LIKE :name', { name: `%${search}%` })
-      .getMany();
+      .getRawMany<Rooms>();
   }
 
   searchRoom(payload: RoomsPaginationParams) {

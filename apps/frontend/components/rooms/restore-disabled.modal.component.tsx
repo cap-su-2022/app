@@ -71,7 +71,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
       <td>{index + 1}</td>
       <td>{row.name}</td>
       <td>{row.roomTypeName}</td>
-      <td>{dayjs(row.disabledAt).format('DD/MM/YYYY HH:mm:ss')}</td>
+      <td>{dayjs(row.disabledAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.disabledBy}</td>
       <td
         style={{
