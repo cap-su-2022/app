@@ -6,6 +6,7 @@ import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
 import {deleteRoomById} from "../../redux/features/room/thunk/delete-room-by-id";
 import { RoomParams } from "../../models/pagination-params/room-params.model";
+import { fetchDeletedRooms } from "../../redux/features/room/thunk/fetch-deleted-rooms";
 
 interface DeleteRoomModalProps {
   isShown: boolean;
@@ -25,6 +26,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
       .then(() => {
         props.toggleShown();
         dispatch(fetchRooms(props.pagination));
+        dispatch(fetchDeletedRooms());
       })
   }
 
