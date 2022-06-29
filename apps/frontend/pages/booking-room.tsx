@@ -2,10 +2,7 @@ import { Button, createStyles, Modal, Table, Text } from '@mantine/core';
 import AdminLayout from '../components/layout/admin.layout';
 import React, { useEffect, useState } from 'react';
 import {
-  BuildingWarehouse,
   Download,
-  InfoCircle,
-  Pencil,
   Plus,
   Ticket,
 } from 'tabler-icons-react';
@@ -17,12 +14,12 @@ import { RowData } from '../models/table/row-data.model';
 import { fetchRoomBookings } from '../redux/features/room-booking/thunk/fetch-room-booking-list';
 import { fetchRoomBookingById } from '../redux/features/room-booking/thunk/fetch-room-booking-by-id';
 import TableHeader from '../components/actions/table-header.component';
+import { TableBody } from '../components/booking-room/table-body.component';
 import TableFooter from '../components/actions/table-footer.component';
 import NoDataFound from '../components/no-data-found';
-import { BookingRequestParams } from '../models/pagination/booking-room-params.model';
+import { BookingRequestParams } from '../models/pagination-params/booking-room-params.model';
 import { useDebouncedValue } from '@mantine/hooks';
 import Header from '../components/common/header.component';
-import { TableBody } from '../components/booking-room/table-body.component';
 import InfoModal from '../components/actions/modal/info-modal.component';
 import dayjs from 'dayjs';
 
@@ -230,7 +227,7 @@ const BookingRoom = () => {
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter />}
         setSearch={(val) => handleSearchValue(val)}
-        search={pagination.roomName}
+        search={pagination.search}
       />
 
       {roomBookingList.items ? (

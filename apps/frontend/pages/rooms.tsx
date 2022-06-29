@@ -1,67 +1,79 @@
-import {GetServerSideProps} from "next";
-import AdminLayout from "../components/AdminLayout";
+import { GetServerSideProps } from 'next';
+import AdminLayout from '../components/layout/admin.layout';
+import { Button, createStyles, ScrollArea, Table } from '@mantine/core';
 import {
-  Button,
-  createStyles,
-  ScrollArea,
-  Table,
-} from "@mantine/core";
-import {
-  InfoCircle, Pencil,
-} from "tabler-icons-react";
-import React, {useEffect, useReducer, useState} from "react";
-import {useAppDispatch, useAppSelector} from "../redux/hooks";
-import Th from "../components/table/th.table.component";
-import {RowData} from "../models/table/row-data.model";
-import {useRouter} from "next/router";
-import {useDebouncedValue} from "@mantine/hooks";
-import RoomInfoModal from "../components/rooms/info-modal.component";
-import {getRoomById} from "../redux/features/room/thunk/get-room-by-id";
-import TableHeader from "../components/rooms/table-header.component";
-import {fetchRooms} from "../redux/features/room/thunk/fetch-rooms";
-import NoDataFound from "../components/no-data-found";
-import {
-  changeRoomsTextSearch,
-} from "../redux/features/room/room.slice";
-import TableFooter from "../components/rooms/table-footer.component";
-import RoomUpdateModal from "../components/rooms/update-modal.component";
-import RoomsHeader from "../components/rooms/header.component";
-import DisableRoomModal from "../components/rooms/disable-modal.component";
-import DeleteRoomModal from "../components/rooms/delete-modal.component";
-import AddRoomModal from "../components/rooms/add-modal.component";
-import DownloadModal from "../components/rooms/download-modal.compnent";
-import RestoreDisabledRoomModal from "../components/rooms/restore-disabled.modal.component";
-import RestoreDeletedRoomModal from "../components/rooms/restore-deleted.modal.component";
-import { RoomParams } from '../models/pagination/room-params.model';
+  BuildingWarehouse,
+  Download,
+  InfoCircle,
+  Pencil,
+  Plus,
+} from 'tabler-icons-react';
+import React, { useEffect, useReducer, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import Th from '../components/table/th.table.component';
+import { RowData } from '../models/table/row-data.model';
+import { useRouter } from 'next/router';
+import { useDebouncedValue } from '@mantine/hooks';
+import RoomInfoModal from '../components/rooms/info-modal.component';
+import { fetchRooms } from '../redux/features/room/thunk/fetch-rooms';
+import { getRoomById } from '../redux/features/room/thunk/get-room-by-id';
+import NoDataFound from '../components/no-data-found';
+import { changeRoomsTextSearch } from '../redux/features/room/room.slice';
+import TableHeader from '../components/actions/table-header.component';
+import { TableBody } from '../components/rooms/table-body.component';
+import TableFooter from '../components/actions/table-footer.component';
+import RoomUpdateModal from '../components/rooms/update-modal.component';
+import RoomsHeader from '../components/rooms/header.component';
+import DisableRoomModal from '../components/rooms/disable-modal.component';
+import DeleteRoomModal from '../components/rooms/delete-modal.component';
+import AddRoomModal from '../components/rooms/add-modal.component';
+import DownloadModal from '../components/rooms/download-modal.compnent';
+import RestoreDisabledRoomModal from '../components/rooms/restore-disabled.modal.component';
+import RestoreDeletedRoomModal from '../components/rooms/restore-deleted.modal.component';
+import { RoomParams } from '../models/pagination-params/room-params.model';
+import { FormikValues, useFormik } from 'formik';
+import Header from '../components/common/header.component';
+import InfoModal from '../components/actions/modal/info-modal.component';
+import UpdateModal from '../components/actions/modal/update-modal.component';
+import { InputTypes } from '../components/actions/models/input-type.constant';
+import { InputAddProps } from '../components/actions/models/input-add-props.model';
+import { InputUpdateProps } from '../components/actions/models/input-update-props.model';
+import { updateRoomById } from '../redux/features/room/thunk/update-room-by-id';
+import { fetchRoomTypes } from '../redux/features/room-type';
+
+import AddModal from '../components/actions/modal/add-modal.component';
+import * as Yup from 'yup';
+import dayjs from 'dayjs';
+import { RoomType } from '../models/room-type.model';
+import { PaginationResponse } from '../models/pagination-response.payload';
+
+const UpdateRoomValidation = Yup.object().shape({
+  name: Yup.string()
+    .min(1, 'Minimum device type name is 1 character')
+    .max(100, 'Maximum device type name is 100 characters.')
+    .required('Device type name is required'),
+  description: Yup.string().max(
+    500,
+    'Maximum device type description is 500 characters'
+  ),
+});
 
 const defaultPagination = {
   limit: 5,
   page: 1,
   name: '',
+  search: '',
   type: '',
-  sort: 'ASC',
+  sort: 'name',
+  dir: 'ASC',
 };
-
 
 function RoomsManagement(props: any) {
   const { classes } = useStyles();
-  const [id, setId] = useState<string>('');
-  const [isInfoShown, setInfoShown] = useState<boolean>(false);
-  const [isAddShown, setAddShown] = useState<boolean>(false);
-  const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
-  const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
-  const room = useAppSelector((state) => state.room.selectedRoom);
-
-
-  const rooms = useAppSelector(
-    (state) => state.room.rooms
-  );
-
-  const [pagination, setPagination] =
-    useState<RoomParams>(defaultPagination);
-  console.log(pagination)
+  const rooms = useAppSelector((state) => state.room.rooms);
+  const [pagination, setPagination] = useState<RoomParams>(defaultPagination);
   const [debounceSearchValue] = useDebouncedValue(pagination.name, 400);
-
+  const [roomType, setRoomType] = useState([]);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -72,10 +84,106 @@ function RoomsManagement(props: any) {
     pagination.name,
     pagination.type,
     pagination.sort,
+    pagination.dir,
+    pagination.search,
     debounceSearchValue,
     pagination,
     dispatch,
   ]);
+
+  useEffect(() => {
+    dispatch(fetchRoomTypes({ limit: 9999, page: 1 })).then((response) => {
+      const paload  = response.payload as PaginationResponse<RoomType>
+      const items = paload.items
+      const tmp = items.map((item) => (
+        {
+          value: item.name,
+          lable: item.name,
+        }
+      ))
+      setRoomType(tmp)
+    });
+  },[]);
+
+  const toggleSortDirection = () => {
+    setPagination({
+      ...pagination,
+      dir: pagination.dir === 'ASC' ? 'DESC' : 'ASC',
+    });
+  };
+
+  const handleSearchValue = (val: string) => {
+    setPagination({
+      ...defaultPagination,
+      search: val,
+    });
+  };
+
+  const handleLimitChange = (val: number) => {
+    setPagination({
+      ...pagination,
+      limit: val,
+    });
+  };
+
+  const handlePageChange = (val: number) => {
+    setPagination({
+      ...pagination,
+      page: val,
+    });
+  };
+
+  const handleResetFilter = () => {
+    setPagination(defaultPagination);
+  };
+
+  const handleFetchById = (idVal) => {
+    return dispatch(getRoomById(idVal));
+  };
+
+  const [id, setId] = useState<string>('');
+  const [isInfoShown, setInfoShown] = useState<boolean>(false);
+  const [isAddShown, setAddShown] = useState<boolean>(false);
+  const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
+  const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
+  const room = useAppSelector((state) => state.room.room);
+
+  const ActionsFilter: React.FC = () => {
+    return (
+      <>
+        <Button
+          variant="outline"
+          color="violet"
+          onClick={() => setAddShown(true)}
+          style={{ marginRight: 10 }}
+        >
+          <Plus />
+        </Button>
+        <Button variant="outline" color="violet">
+          <Download />
+        </Button>
+      </>
+    );
+  };
+
+  const handleActionsCb = {
+    info: (id) => {
+      setId(id);
+      handleFetchById(id)
+        .unwrap()
+        .then(() => setInfoShown(!isInfoShown));
+    },
+    update: (id) => {
+      setId(id);
+      handleFetchById(id)
+        .unwrap()
+        .then(() => setUpdateShown(!isUpdateShown));
+    },
+    delete: (id) => {
+      setId(id);
+      setDeleteShown(!isDeleteShown);
+    },
+  };
 
   const infoFields = [
     {
@@ -100,13 +208,6 @@ function RoomsManagement(props: any) {
       readOnly: true,
     },
     {
-      label: 'Description',
-      id: 'description',
-      name: 'description',
-      value: room.description,
-      readOnly: true,
-    },
-    {
       label: 'Create By',
       id: 'createdBy',
       name: 'createdBy',
@@ -117,7 +218,7 @@ function RoomsManagement(props: any) {
       label: 'Create At',
       id: 'createdAt',
       name: 'createdAt',
-      value: room.createdAt,
+      value: dayjs(room.createdAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
     },
     {
@@ -131,297 +232,168 @@ function RoomsManagement(props: any) {
       label: 'Update At',
       id: 'updatedAt',
       name: 'updatedAt',
-      value: room.updatedAt,
+      value: dayjs(room.updatedAt).format('HH:mm DD/MM/YYYY'),
+      readOnly: true,
+    },
+    {
+      label: 'Description',
+      id: 'description',
+      name: 'description',
+      value: room.description,
       readOnly: true,
     },
   ];
+  // const addFields: InputAddProps[] = [
+  //   {
+  //     label: 'Name',
+  //     description: 'Room name must be unique between others (Max 100 char.)',
+  //     id: 'name',
+  //     name: 'name',
+  //     required: true,
+  //     inputtype: InputTypes.TextInput,
+  //   },
+  //   {
+  //     label: 'Description',
+  //     description:
+  //       'Device type description describe additional information (Max 500 char.)',
+  //     id: 'description',
+  //     name: 'description',
+  //     required: false,
+  //     inputtype: InputTypes.TextArea,
+  //   },
+  // ];
 
-  const toggleSortDirection = () => {
-    setPagination({
-      ...pagination,
-      dir: pagination.dir === 'ASC' ? 'DESC' : 'ASC',
-    });
-  };
-
-  const handleSearchValue = (val: string) => {
-    setPagination({
-      ...defaultPagination,
-      name: val,
-    });
-  };
-
-  const handleLimitChange = (val: number) => {
-    setPagination({
-      ...pagination,
-      limit: val,
-    });
-  };
-
-  const handlePageChange = (val: number) => {
-    setPagination({
-      ...pagination,
-      page: val,
-    });
-  };
-
-  const handleFetchById = (idVal) => {
-    return dispatch(fetchRoomBookingById(idVal));
-  };
-
-  const handleActionsCb = {
-    info: (id) => {
-      setId(id);
-      handleFetchById(id)
-        .unwrap()
-        .then(() => setInfoShown(!isInfoShown));
+  const updateFields: InputUpdateProps[] = [
+    {
+      id: 'id',
+      name: 'id',
+      description: 'Id of Room',
+      inputtype: InputTypes.TextInput,
+      label: 'Id',
+      readOnly: true,
+      required: false,
+      value: room.id,
     },
-    update: (id) => {
-      setId(id);
-      handleFetchById(id)
-        .unwrap()
-        .then(() => setUpdateShown(!isUpdateShown));
+    {
+      id: 'name',
+      name: 'name',
+      description: 'Room name',
+      inputtype: InputTypes.TextInput,
+      label: 'Room name',
+      readOnly: false,
+      required: true,
+      value: room.name,
     },
-    delete: (id) => {
-      setId(id);
-      setDeleteShown(!isDeleteShown);
+    {
+      id: 'type',
+      name: 'type',
+      description: 'Room type',
+      inputtype: InputTypes.Select,
+      label: 'Room type',
+      readOnly: false,
+      required: true,
+      data: roomType,
+      value: room.type,
     },
+    {
+      id: 'description',
+      name: 'description',
+      description: 'Room description',
+      inputtype: InputTypes.TextArea,
+      label: 'Description',
+      readOnly: false,
+      required: false,
+      value: room.description,
+    },
+  ];
+
+  const handleAddModalClose = () => {
+    setAddShown(!isAddShown);
   };
 
-  const handleResetFilter = () => {
-    setPagination(defaultPagination);
-  };
-
-  const itemsPerPage = useAppSelector((state) => state.room.size);
-  const activePage = useAppSelector((state) => state.room.currentPage);
-  const searchText = useAppSelector((state) => state.room.textSearch);
-  const currentPage = useAppSelector((state) => state.room.currentPage);
-  const direction = useAppSelector((state) => state.room.direction);
-
-  //modal
-  const [isAddModalShown, setAddModalShown] = useState<boolean>(false);
-  const [isDetailModalShown, setDetailModalShown] = useState<boolean>(false);
-  const [isUpdateModalShown, setUpdateModalShown] = useState<boolean>(false);
-  const [isDisableModalShown, setDisableModalShown] = useState<boolean>(false);
-  const [isDeleteModalShown, setDeleteModalShown] = useState<boolean>(false);
-  const [isRestoreDisabledModalShown, setRestoreDisabledModalShown] =
-    useState<boolean>(false);
-  const [isRestoreDeletedModalShown, setRestoreDeletedModalShown] =
-    useState<boolean>(false);
-  const [isDownloadModalShown, setDownloadModalShown] =
-    useState<boolean>(false);
-
-  const isSpinnerLoading = useAppSelector((state) => state.spinner.isEnabled);
-  const [debouncedSearchValue] = useDebouncedValue(searchText, 400);
-
-  const [sortBy, setSortBy] = useState<keyof RoomsRowData>(null);
-  const [sortName, setSortName] = useState<'ASC' | 'DESC'>('ASC');
-  const [sortUpdatedAt, setSortUpdatedAt] = useState<'ASC' | 'DESC'>('ASC');
-
-  useEffect(() => {
-    dispatch(fetchRooms())
+  const handleUpdateSubmit = (values: FormikValues) => {
+    dispatch(
+      updateRoomById({
+        id: values.id,
+        payload: { name: values.name, description: values.description },
+      })
+    )
       .unwrap()
-      .catch(() => {
-        router.replace('/login');
-      });
-  }, [debouncedSearchValue, itemsPerPage, activePage, direction]);
-
-  const handleShowInfoModal = async (id: string) => {
-    dispatch(getRoomById(id))
-      .unwrap()
-      .then(() => setDetailModalShown(!isDetailModalShown));
+      .then((e) => handleUpdateModalClose());
   };
 
-  const handleShowUpdateModal = (id: string) => {
-    dispatch(getRoomById(id))
-      .unwrap()
-      .then(() => setUpdateModalShown(!isUpdateModalShown));
+  const updateFormik = useFormik({
+    validationSchema: UpdateRoomValidation,
+    initialValues: {
+      id: room.id,
+      name: room.name,
+      description: room.description,
+    },
+    enableReinitialize: true,
+    onSubmit: (e) => handleUpdateSubmit(e),
+  });
+
+  const handleUpdateModalClose = () => {
+    setUpdateShown(!isUpdateShown);
+    updateFormik.resetForm();
   };
 
-  const setSorting = (field: keyof RoomsRowData) => {
-    //   const reversed = field === sortBy ? !reverseSortDirection : false;
-    //  setReverseSortDirection(reversed);
-  };
-
-  const handleSearchChange = (search: string) => {
-    if (!isSpinnerLoading) {
-      dispatch(changeRoomsTextSearch(search));
-    }
-  };
-
-  const handleRenderRows = () => {
-    return rooms.map((row, index) => (
-      <tr key={row.id}>
-        <td>{row.stt}</td>
-        <td>{row.name}</td>
-        <td>{row.type}</td>
-        <td>
-          {new Date(row.updatedAt).toLocaleDateString() +
-            ' ' +
-            new Date(row.updatedAt).toLocaleTimeString()}
-        </td>
-        <td>
-          {row.isDisabled ? (
-            <Button compact color="red" variant="light" radius="xl" size="md">
-              Disabled
-            </Button>
-          ) : (
-            <Button compact color="green" variant="light" radius="xl" size="md">
-              Active
-            </Button>
-          )}
-        </td>
-        <td>
-          <div
-            style={{
-              display: 'flex',
-            }}
-          >
-            <Button
-              style={{
-                marginRight: 5,
-              }}
-              onClick={() => handleShowInfoModal(row.id)}
-              variant="outline"
-              color="orange"
-            >
-              <InfoCircle size={20} />
-            </Button>
-            <Button
-              variant="outline"
-              color="blue"
-              onClick={() => handleShowUpdateModal(row.id)}
-            >
-              <Pencil size={20} />
-            </Button>
-          </div>
-        </td>
-      </tr>
-    ));
-  };
-
-  const THead = () => {
-    return (
-      <thead>
-        <tr>
-          <Th sorted={sortBy === 'stt'} reversed={null} onSort={null}>
-            STT
-          </Th>
-          <Th
-            sorted={sortBy === 'name'}
-            reversed={null}
-            onSort={() => setSorting('name')}
-          >
-            Name
-          </Th>
-          <Th
-            sorted={sortBy === 'type'}
-            reversed={null}
-            onSort={() => setSorting('type')}
-          >
-            Type
-          </Th>
-          <Th
-            sorted={sortBy === 'updatedAt'}
-            reversed={null}
-            onSort={() => setSorting('updatedAt')}
-          >
-            Updated At
-          </Th>
-          <Th onSort={null}>Status</Th>
-          <Th onSort={null}>Action</Th>
-        </tr>
-      </thead>
-    );
-  };
+  ////////////////////////////////////
 
   return (
     <>
       <AdminLayout>
-        <RoomsHeader />
-
+        <Header
+          title="Rooms Management"
+          icon={<BuildingWarehouse size={50} />}
+        />
         <TableHeader
-          searchText={searchText}
-          toggleAddModalShown={() => setAddModalShown(!isAddModalShown)}
-          toggleDownloadModalShown={() =>
-            setDownloadModalShown(!isDownloadModalShown)
-          }
-          toggleRestoreDeletedModalShown={() =>
-            setRestoreDeletedModalShown(!isRestoreDeletedModalShown)
-          }
-          toggleRestoreDisabledModalShown={() =>
-            setRestoreDisabledModalShown(!isRestoreDisabledModalShown)
-          }
-          handleChangeSearchText={(val) => handleSearchChange(val)}
+          handleResetFilter={() => handleResetFilter()}
+          actions={<ActionsFilter />}
+          setSearch={(val) => handleSearchValue(val)}
+          search={pagination.search}
         />
 
-        {rooms?.length > 0 ? (
+        {rooms.items ? (
           <>
-            <div className={classes.tableContainer}>
-              <Table
-                className={classes.table}
-                horizontalSpacing="md"
-                verticalSpacing="xs"
-                //  sx={{tableLayout: 'auto', minWidth: 1000}}
-              >
-                <THead />
-                <tbody>{handleRenderRows()}</tbody>
-              </Table>
-            </div>
-            <TableFooter />
+            <TableBody
+              actionButtonCb={handleActionsCb}
+              toggleSortDirection={() => toggleSortDirection()}
+              data={rooms.items}
+              page={pagination.page}
+              itemsPerPage={pagination.limit}
+            />
+            <InfoModal
+              header="Room Information"
+              fields={infoFields}
+              toggleShown={() => setInfoShown(!isInfoShown)}
+              isShown={isInfoShown}
+            />
+
+            <UpdateModal
+              fields={updateFields}
+              formik={updateFormik}
+              handleSubmit={() => updateFormik.handleSubmit()}
+              header="Update current room"
+              isShown={isUpdateShown}
+              toggleShown={() => setUpdateShown(!isUpdateShown)}
+            />
           </>
         ) : (
           <NoDataFound />
         )}
-        <RoomUpdateModal
-          isShown={isUpdateModalShown}
-          toggleShown={() => setUpdateModalShown(!isUpdateModalShown)}
-          toggleDeleteModalShown={() =>
-            setDeleteModalShown(!isDeleteModalShown)
-          }
-        />
-        <RoomInfoModal
-          isShown={isDetailModalShown}
-          toggleShown={() => setDetailModalShown(!isDetailModalShown)}
-          toggleDisableRoomModalShown={() =>
-            setDisableModalShown(!isDisableModalShown)
-          }
-        />
-        <DisableRoomModal
-          isShown={isDisableModalShown}
-          toggleShown={() => setDisableModalShown(!isDisableModalShown)}
-          toggleDetailModalShown={() =>
-            setDetailModalShown(!isDetailModalShown)
-          }
-        />
-        <DeleteRoomModal
-          isShown={isDeleteModalShown}
-          toggleShown={() => setDeleteModalShown(!isDeleteModalShown)}
-          toggleUpdateModalShown={() =>
-            setUpdateModalShown(!isUpdateModalShown)
-          }
-        />
 
         <AddRoomModal
-          isShown={isAddModalShown}
-          toggleShown={() => setAddModalShown(!isAddModalShown)}
+          isShown={isAddShown}
+          toggleShown={() => handleAddModalClose()}
         />
-
-        <DownloadModal
-          isShown={isDownloadModalShown}
-          toggleShown={() => setDownloadModalShown(!isDownloadModalShown)}
-        />
-        <RestoreDisabledRoomModal
-          isShown={isRestoreDisabledModalShown}
-          toggleShown={() =>
-            setRestoreDisabledModalShown(!isRestoreDisabledModalShown)
-          }
-        />
-        <RestoreDeletedRoomModal
-          isShown={isRestoreDeletedModalShown}
-          toggleShown={() =>
-            setRestoreDeletedModalShown(!isRestoreDeletedModalShown)
-          }
-        />
+        {rooms.meta ? (
+          <TableFooter
+            handlePageChange={(val) => handlePageChange(val)}
+            handleLimitChange={(val) => handleLimitChange(val)}
+            metadata={rooms.meta}
+          />
+        ) : null}
       </AdminLayout>
     </>
   );

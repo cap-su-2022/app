@@ -1,16 +1,12 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import {
   createStyles,
   Table,
-  ScrollArea,
   UnstyledButton,
   Group,
   Text,
   Center,
-  TextInput,
   Button,
-  Image,
-  InputWrapper,
 } from '@mantine/core';
 import {
   Selector,
@@ -21,15 +17,25 @@ import {
   Trash,
 } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
+import moment from 'moment';
 import Th from '../../components/table/th.table.component';
 
 interface RowData {
   name: string;
+  booked_at: string;
+}
+
+interface ThProps {
+  children: React.ReactNode;
+  reversed: boolean;
+  sorted: boolean;
+  style?: CSSProperties;
+  onSort(): void;
 }
 
 interface TableBodyProps {
   data: any[];
-  toggleSortDirection(): void;
+  toggleSortDirection(label): void;
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
@@ -40,21 +46,21 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
   const { classes } = useStyles();
-
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
-    props.toggleSortDirection();
+    props.toggleSortDirection(field);
   };
 
   const rows = props.data.map((row, index) => (
-    <tr key={row.id}>
+    <tr key={index}>
       <td>
         {props.page === 1
           ? index + 1
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
       <td>{row.name}</td>
+      <td>{row.type}</td>
       <td className={classes.actionButtonContainer}>
         <Button
           variant="outline"
@@ -96,12 +102,12 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             reversed={reverseSortDirection}
             onSort={null}
           >
-            Row
+            STT
           </Th>
 
           <Th
             style={{
-              width: '75%',
+              width: '50%',
             }}
             sorted={sortBy === 'name'}
             reversed={reverseSortDirection}
@@ -110,7 +116,19 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             Name
           </Th>
 
-          <Th sorted={null} reversed={reverseSortDirection} onSort={null}>
+          <Th
+            sorted={sortBy === 'booked_at'}
+            reversed={reverseSortDirection}
+            onSort={() => setSorting('booked_at')}
+          >
+            Type
+          </Th>
+
+          <Th
+            sorted={null}
+            reversed={reverseSortDirection}
+            onSort={null}
+          >
             Actions
           </Th>
         </tr>
@@ -159,5 +177,37 @@ const useStyles = createStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  bookingDisplay: {
+    color: '#228be6',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#0000ff1c',
+    fontWeight: 600,
+  },
+  bookedDisplay: {
+    color: '#fd7e14',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#fd7e1442',
+    fontWeight: 600,
+  },
+  canceledDisplay: {
+    color: 'red',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#ff00001c',
+    fontWeight: 600,
+  },
+  processingDisplay: {
+    color: '#40c057',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#00800024',
+    fontWeight: 600,
   },
 }));

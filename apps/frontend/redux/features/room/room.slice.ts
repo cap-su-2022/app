@@ -10,81 +10,25 @@ import { fetchDeletedRooms } from "./thunk/fetch-deleted-rooms";
 import { restoreDisabledRoom } from "./thunk/restore-disabled.thunk";
 import { restoreDeletedRoom } from "./thunk/restore-deleted.thunk";
 import { deleteRoomById } from "./thunk/delete-room-by-id";
+import { PaginationResponse } from '../../../models/pagination-response.payload';
 
-interface Direction {
-  name: string;
-  direction: "ASC" | "DESC";
+interface InitialState {
+  rooms: PaginationResponse<Room>;
+  room: Room;
 }
 
-interface RoomState {
-  selectedRoom: Room;
-  rooms: Room[];
-  disabledRooms: Room[];
-  deletedRooms: Room[];
-
-  totalPage: number;
-  size: number;
-  textSearch: string;
-  currentPage: number;
-  direction: Direction[];
-}
-
-const defaultDirection: Direction[] = [
-  {
-    name: "name",
-    direction: "ASC"
-  },
-  {
-    name: "description",
-    direction: "ASC"
-  }
-];
-
-const initialState: RoomState = {
-  selectedRoom: {} as Room,
-  rooms: [],
-  disabledRooms: [],
-  deletedRooms: [],
-
-  currentPage: 1,
-  size: 3,
-  textSearch: "",
-  totalPage: 1,
-  direction: defaultDirection
-}
+const initialState: InitialState = {
+  rooms: {} as PaginationResponse<Room>,
+  room: {} as Room,
+};
 
 export const roomSlice = createSlice({
-  name: 'room',
+  name: 'roomType',
   initialState: initialState,
-  reducers: {
-    changeRoomsCurrentPage(state, action) {
-      state.currentPage = action.payload;
-    },
-    changeRoomsSize(state, action) {
-      state.size = action.payload;
-    },
-    changeRoomsTextSearch(state, action) {
-      state.textSearch = action.payload;
-    },
-    changeRoomsTotalPage(state, action) {
-      state.totalPage = action.payload;
-    },
-    changeRoomsSortDirection(state) {
-      return;
-    },
-    resetRoomFilter(state) {
-      state.size = 3;
-      state.direction = defaultDirection;
-      state.currentPage = 1;
-      state.textSearch = '';
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getRoomById.pending, (state) => {
-
-    });
-    builder.addCase(getRoomById.fulfilled, (state, {payload}) => {
-      state.selectedRoom = payload;
+    builder.addCase(getRoomById.fulfilled, (state, { payload }) => {
+      state.room = payload;
     });
     builder.addCase(getRoomById.rejected, (state, {payload}) => {
 
@@ -102,13 +46,8 @@ export const roomSlice = createSlice({
 
     });
 
-    builder.addCase(fetchRooms.fulfilled, (state, {payload}) => {
-      state.totalPage = payload.totalPage;
-      state.rooms = payload.data.map((r, index) => {
-        r.stt = index + 1 + ((payload.currentPage - 1) * state.size);
-        console.log(r.stt);
-        return r;
-      });
+    builder.addCase(fetchRooms.fulfilled, (state, { payload }) => {
+      state.rooms = payload;
     });
 
     builder.addCase(fetchRooms.rejected, (state, {payload}) => {

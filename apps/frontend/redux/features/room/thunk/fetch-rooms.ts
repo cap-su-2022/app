@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import { Room } from '../../../../models/room.model';
 import { RootState } from '../../../store';
-import { RoomParams } from '../../../../models/pagination/room-params.model';
+import { PaginationParams } from '../../../../models/pagination-params.model';
 import { PaginationResponse } from '../../../../models/pagination-response.payload';
 
 
@@ -13,21 +13,24 @@ interface FetchRoomsRejectPayload {
 
 export const fetchRooms = createAsyncThunk<
   PaginationResponse<Room>,
-  RoomParams,
+  PaginationParams,
   {
     rejectValue: FetchRoomsRejectPayload;
   }
 >('room/fetch-rooms', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
-  const state = thunkAPI.getState() as RootState;
   try {
-    const response = await axios.post(`api/rooms`, {
-      search: state.room.textSearch,
-      page: state.room.currentPage,
-      size: state.room.size,
-      sort: state.room.direction,
+    console.log(payload);
+    const response = await axios.get(`api/rooms`, {
+      params: {
+        page: payload.page,
+        search: payload.search,
+        dir: payload.dir,
+        limit: payload.limit,
+        sort: payload.sort,
+      },
     });
-
+    console.log("DATTAAAAA",response.data)
     return await response.data;
   } catch ({ response }) {
     if (response.status === 401 || response.status === 403) {
