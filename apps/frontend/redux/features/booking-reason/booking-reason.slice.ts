@@ -6,13 +6,13 @@ import { fetchBookingReasonById } from './thunk/fetch-booking-reason-by-id.thunk
 import { fetchBookingReasons } from './thunk/fetch-booking-reasons.thunk';
 
 interface InitialState {
-  bookingReasons: PaginationResponse<BookingReason>;
-  bookingReason: BookingReason;
+  deviceTypes: PaginationResponse<BookingReason>;
+  deviceType: BookingReason;
 }
 
 const initialState: InitialState = {
-  bookingReasons: {} as PaginationResponse<BookingReason>,
-  bookingReason: {} as BookingReason,
+  deviceTypes: {} as PaginationResponse<BookingReason>,
+  deviceType: {} as BookingReason,
 };
 
 export const bookingReasonSlice = createSlice({
@@ -21,10 +21,10 @@ export const bookingReasonSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchBookingReasons.fulfilled, (state, { payload }) => {
-      state.bookingReasons = payload;
+      state.deviceTypes = payload;
     });
     builder.addCase(fetchBookingReasonById.fulfilled, (state, { payload }) => {
-      state.bookingReason = payload;
+      state.deviceType = payload;
     });
   },
 });

@@ -1,17 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { DeviceType } from '../../../models/device-type.model';
 import { PaginationResponse } from '../../../models/pagination-response.payload';
 import { fetchRoles } from './thunk/fetch-roles.thunk';
 import { fetchRoleById } from './thunk/fetch-role-by-id.thunk';
 import { Role } from '../../../models/role.model';
 
 interface InitialState {
-  roles: PaginationResponse<Role>;
-  role: Role;
+  deviceTypes: PaginationResponse<Role>;
+  deviceType: Role;
 }
 
 const initialState: InitialState = {
-  roles: {} as PaginationResponse<Role>,
-  role: {} as Role,
+  deviceTypes: {} as PaginationResponse<Role>,
+  deviceType: {} as Role,
 };
 
 export const roleSlice = createSlice({
@@ -20,10 +21,10 @@ export const roleSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchRoles.fulfilled, (state, { payload }) => {
-      state.roles = payload;
+      state.deviceTypes = payload;
     });
     builder.addCase(fetchRoleById.fulfilled, (state, { payload }) => {
-      state.role = payload;
+      state.deviceType = payload;
     });
   },
 });
