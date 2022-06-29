@@ -1,7 +1,7 @@
 import ManageBookingReason from '../components/booking-room-reason';
 
 function BookingReason() {
-  return <ManageBookingReason />;
+  return <ManageBookingReason/>;
 }
 
 export default BookingReason;

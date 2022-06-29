@@ -29,7 +29,7 @@ import AdminLayout from '../layout/admin.layout';
 
 const AddBookingReasonValidation = Yup.object().shape({
   name: Yup.string()
-    .min(1, 'Minimum booking reason is 1 character')
+    .min(1, 'Minimum booking reason is 1 character ')
     .max(100, 'Maximum booking reason is 100 characters.')
     .required('Booking reason name is required'),
   description: Yup.string().max(

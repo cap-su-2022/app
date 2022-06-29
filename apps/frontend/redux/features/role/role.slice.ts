@@ -7,6 +7,7 @@ import { Role } from '../../../models/role.model';
 interface InitialState {
   roles: PaginationResponse<Role>;
   role: Role;
+
 }
 
 const initialState: InitialState = {

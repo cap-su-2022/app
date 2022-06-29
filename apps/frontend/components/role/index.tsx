@@ -29,7 +29,7 @@ import AdminLayout from '../layout/admin.layout';
 
 const AddRoleValidation = Yup.object().shape({
   name: Yup.string()
-    .min(1, 'Minimum role name is 1 character')
+    .min(1, 'Minimum role name is 1 character ')
     .max(100, 'Maximum role name is 100 characters.')
     .required('Role name is required'),
   description: Yup.string().max(

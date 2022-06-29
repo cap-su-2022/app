@@ -13,6 +13,7 @@ interface InitialState {
 const initialState: InitialState = {
   bookingReasons: {} as PaginationResponse<BookingReason>,
   bookingReason: {} as BookingReason,
+
 };
 
 export const bookingReasonSlice = createSlice({
