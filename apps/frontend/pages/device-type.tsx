@@ -114,6 +114,7 @@ const ManageDeviceType: React.FC<any> = () => {
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
+  const [isDisableShown, setDisableShown] = useState<boolean>(false);
   const deviceType = useAppSelector((state) => state.deviceType.deviceType);
 
   const ActionsFilter: React.FC = () => {
@@ -299,6 +300,7 @@ const ManageDeviceType: React.FC<any> = () => {
             header="Device Type Information"
             fields={infoFields}
             toggleShown={() => setInfoShown(!isInfoShown)}
+            toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
             isShown={isInfoShown}
           />
 

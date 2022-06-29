@@ -5,26 +5,29 @@ import {FPT_ORANGE_COLOR} from "@app/constants";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {disableRoomById} from "../../redux/features/room/thunk/disable-room-by-id";
 import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
-import {resetRoomFilter} from "../../redux/features/room/room.slice";
+import { RoomParams } from "../../models/pagination-params/room-params.model";
+import { fetchDisabledRooms } from "../../redux/features/room/thunk/fetch-disabled-rooms";
 
 interface DisableRoomModalProps {
   isShown: boolean;
   toggleShown(): void;
-  toggleDetailModalShown(): void;
+  toggleInforModalShown(): void;
+  pagination: RoomParams;
 }
 const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
 
   const {classes} = useStyles();
-  const selectedRoomId = useAppSelector((state) => state.room.selectedRoom.id);
+  const selectedRoomId = useAppSelector((state) => state.room.room.id);
+
   const dispatch = useAppDispatch();
 
   const handleDisableSelectedRoom = () => {
     dispatch(disableRoomById(selectedRoomId))
       .then(() => {
-        dispatch(resetRoomFilter());
         props.toggleShown();
-        props.toggleDetailModalShown();
-        dispatch(fetchRooms());
+        props.toggleInforModalShown();
+        dispatch(fetchDisabledRooms(''))
+        dispatch(fetchRooms(props.pagination));
       })
   }
 

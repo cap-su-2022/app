@@ -2,6 +2,7 @@ export interface Room {
   stt: number;
   id: string;
   name: string;
+  roomTypeId: string,
   roomTypeName: string;
   description: string;
   createdAt: string;

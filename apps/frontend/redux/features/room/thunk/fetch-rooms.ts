@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import { Room } from '../../../../models/room.model';
 import { RootState } from '../../../store';
-import { PaginationParams } from '../../../../models/pagination-params.model';
+import { RoomParams } from '../../../../models/pagination-params/room-params.model';
 import { PaginationResponse } from '../../../../models/pagination-response.payload';
 
 
@@ -13,7 +13,7 @@ interface FetchRoomsRejectPayload {
 
 export const fetchRooms = createAsyncThunk<
   PaginationResponse<Room>,
-  PaginationParams,
+  RoomParams,
   {
     rejectValue: FetchRoomsRejectPayload;
   }
@@ -30,7 +30,6 @@ export const fetchRooms = createAsyncThunk<
         sort: payload.sort,
       },
     });
-    console.log("DATTAAAAA",response.data)
     return await response.data;
   } catch ({ response }) {
     if (response.status === 401 || response.status === 403) {

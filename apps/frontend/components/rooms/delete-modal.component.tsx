@@ -5,29 +5,26 @@ import {FPT_ORANGE_COLOR} from "@app/constants";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
 import {deleteRoomById} from "../../redux/features/room/thunk/delete-room-by-id";
-import {resetRoomFilter} from "../../redux/features/room/room.slice";
+import { RoomParams } from "../../models/pagination-params/room-params.model";
 
 interface DeleteRoomModalProps {
   isShown: boolean;
   toggleShown(): void;
-  toggleUpdateModalShown(): void;
+  pagination: RoomParams;
 }
 
 const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
 
   const {classes} = useStyles();
-
-  const selectedRoomId = useAppSelector((state) => state.room.selectedRoom.id);
+  const selectedRoomId = useAppSelector((state) => state.room.room.id);
 
   const dispatch = useAppDispatch();
 
   const handleDeleteRoom = () => {
     dispatch(deleteRoomById(selectedRoomId))
       .then(() => {
-        dispatch(resetRoomFilter());
         props.toggleShown();
-        props.toggleUpdateModalShown();
-        dispatch(fetchRooms());
+        dispatch(fetchRooms(props.pagination));
       })
   }
 
