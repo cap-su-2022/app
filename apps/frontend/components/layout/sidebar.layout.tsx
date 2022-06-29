@@ -16,6 +16,7 @@ import {
   BrandHipchat,
   DeviceMobileMessage,
   MessageCode,
+  Clock2,
 } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { BLACK, WHITE } from '@app/constants';
@@ -41,12 +42,12 @@ const data = [
   },
   { link: '/feedback', label: 'Feedback', icon: BrandHipchat },
   { link: '/feedback-type', label: 'Feedback Type', icon: MessageCode },
+  { link: '/slot', label: 'Slot', icon: Clock2 },
 ];
 
 function LayoutSidebar() {
   const { classes, cx } = useStyles();
 
-  const logoutAnchorRef = useRef<HTMLAnchorElement>();
   const [isLogoutModalShown, setLogoutModalShown] = useState<boolean>(false);
   const [active, setActive] = useState('Billing');
 

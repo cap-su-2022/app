@@ -12,11 +12,11 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   findByPagination(
     pagination: PaginationParams
   ): Promise<Pagination<DeviceType>> {
-    const query = this.createQueryBuilder('rt')
-      .select('rt.id', 'id')
-      .addSelect('rt.name', 'name')
-      .where('rt.deleted_at IS NULL')
-      .andWhere('LOWER(rt.name) LIKE LOWER(:search)', {
+    const query = this.createQueryBuilder('dt')
+      .select('dt.id', 'id')
+      .addSelect('dt.name', 'name')
+      .where('dt.deleted_at IS NULL')
+      .andWhere('LOWER(dt.name) LIKE LOWER(:search)', {
         search: `%${pagination.search}%`,
       })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');

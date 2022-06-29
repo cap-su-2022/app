@@ -16,8 +16,9 @@ import { devicesReducer } from './features/devices/devices.slice';
 import { usersReducer } from './features/user/user.slice';
 import { roomTypeReducer } from './features/room-type';
 import { deviceTypeReducer } from './features/device-type';
-import { roleReducer } from './features/role/role.slice';
-import { bookingReasonReducer } from './features/booking-reason/booking-reason.slice';
+import { roleReducer } from './features/role';
+import { bookingReasonReducer } from './features/booking-reason';
+import { slotReducer } from './features/slot/slot.slice';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -33,6 +34,7 @@ const combinedReducer = combineReducers({
   deviceType: deviceTypeReducer,
   role: roleReducer,
   bookingReason: bookingReasonReducer,
+  slot: slotReducer,
 });
 
 const reducer = (

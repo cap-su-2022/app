@@ -305,6 +305,6 @@ export class RoomsController {
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string }
   ) {
-    return this.service.deleteById(payload.id);
+    return this.service.deleteById(user.account_id, payload.id);
   }
 }

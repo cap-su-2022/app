@@ -16,6 +16,7 @@ import { Roles } from '../../models/role.entity';
 import { RoomType } from '../../models/room-type.entity';
 import { DeviceType } from '../../models/device-type.entity';
 import { BookingReason } from '../../models/booking-reason.entity';
+import { Slot } from '../../models/slot.entity';
 
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
@@ -41,6 +42,7 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       RoomType,
       DeviceType,
       BookingReason,
+      Slot,
     ],
     synchronize: configService.get<boolean>(
       Environment.db.postgres.synchronize

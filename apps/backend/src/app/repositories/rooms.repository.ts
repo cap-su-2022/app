@@ -122,12 +122,12 @@ export class RoomsRepository extends Repository<Rooms> {
       .execute();
   }
 
-  deleteById(id: string): Promise<UpdateResult> {
+  deleteById(accountId: string, id: string): Promise<UpdateResult> {
     return this.createQueryBuilder('rooms')
       .update({
         disabledAt: null,
         disabledBy: null,
-        deletedBy: '',
+        deletedBy: accountId,
         deletedAt: new Date(),
       })
       .where('rooms.id = :id', { id: id })
@@ -169,7 +169,8 @@ export class RoomsRepository extends Repository<Rooms> {
     return this.createQueryBuilder('rooms')
       .select('rooms.id', 'id')
       .addSelect('rooms.name', 'name')
-      .addSelect('rooms.type', 'type')
+      .addSelect('rt.id', 'roomTypeId')
+      .addSelect('rt.name', 'roomTypeName')
       .addSelect('rooms.created_at', 'createdAt')
       .addSelect('a.username', 'createdBy')
       .addSelect('rooms.updated_at', 'updatedAt')
@@ -177,6 +178,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('rooms.description', 'description')
       .innerJoin(Accounts, 'a', 'rooms.created_by = a.id')
       .innerJoin(Accounts, 'aa', 'rooms.updated_by = aa.id')
+      .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
       .where('rooms.disabled_at IS NULL')
       .andWhere('rooms.deleted_at IS NULL')
       .andWhere('rooms.id = :roomId', { roomId: id })

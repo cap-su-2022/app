@@ -19,6 +19,7 @@ import { RolesModule } from './roles.module';
 import { RoomTypeModule } from './room-type.module';
 import { DeviceTypeModule } from './device-type.module';
 import { BookingReasonModule } from './booking-reason.module';
+import { SlotModule } from './slot.module';
 
 @Global()
 export class AppModule {
@@ -42,6 +43,7 @@ export class AppModule {
         DeviceTypeModule,
         BookingReasonModule,
         RolesModule,
+        SlotModule,
         ScheduleModule.forRoot(),
       ],
       controllers: [],

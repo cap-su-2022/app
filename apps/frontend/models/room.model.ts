@@ -2,7 +2,7 @@ export interface Room {
   stt: number;
   id: string;
   name: string;
-  type: string;
+  roomTypeName: string;
   description: string;
   createdAt: string;
   updatedAt: string;
@@ -15,4 +15,3 @@ export interface Room {
   disabledBy: string;
   deletedBy: string;
 }
-

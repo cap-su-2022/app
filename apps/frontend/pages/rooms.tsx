@@ -191,7 +191,7 @@ function RoomsManagement(props: any) {
       label: 'Type',
       id: 'type',
       name: 'type',
-      value: room.type,
+      value: room.roomTypeName,
       readOnly: true,
     },
     {
@@ -230,25 +230,6 @@ function RoomsManagement(props: any) {
       readOnly: true,
     },
   ];
-  // const addFields: InputAddProps[] = [
-  //   {
-  //     label: 'Name',
-  //     description: 'Room name must be unique between others (Max 100 char.)',
-  //     id: 'name',
-  //     name: 'name',
-  //     required: true,
-  //     inputtype: InputTypes.TextInput,
-  //   },
-  //   {
-  //     label: 'Description',
-  //     description:
-  //       'Device type description describe additional information (Max 500 char.)',
-  //     id: 'description',
-  //     name: 'description',
-  //     required: false,
-  //     inputtype: InputTypes.TextArea,
-  //   },
-  // ];
 
   const updateFields: InputUpdateProps[] = [
     {

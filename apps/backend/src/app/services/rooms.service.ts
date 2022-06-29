@@ -50,7 +50,11 @@ export class RoomsService {
       if (!isExisted) {
         throw new BadRequestException('Room does not found with the id');
       }
-      return await this.repository.findById(id);
+      const result = await this.repository.findById(id);
+      if (!result) {
+        throw new BadRequestException('Room does not found with the id');
+      }
+      return result;
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
@@ -185,9 +189,9 @@ export class RoomsService {
     }
   }
 
-  async deleteById(id: string) {
+  async deleteById(accountId: string, id: string) {
     try {
-      const result = await this.repository.deleteById(id);
+      const result = await this.repository.deleteById(accountId, id);
       if (result.affected < 1) {
         throw new BadRequestException(
           "Room doesn't exist with the provided id"
