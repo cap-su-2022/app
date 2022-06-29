@@ -13,7 +13,7 @@ export const deleteRoleById = createAsyncThunk<
 >('role/delete-by-id', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.delete(`api/role/${payload}`);
+    const response = await axios.delete(`api/roles/${payload}`);
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

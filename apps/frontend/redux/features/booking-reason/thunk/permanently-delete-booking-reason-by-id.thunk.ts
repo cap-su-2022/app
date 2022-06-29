@@ -14,7 +14,7 @@ export const permanentlyDeleteBookingReasonById = createAsyncThunk<
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
     const response = await axios.delete(
-      `api/booking-reason/permanent/${payload}`
+      `api/booking-reasons/permanent/${payload}`
     );
     return await response.data;
   } catch (e) {

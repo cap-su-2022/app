@@ -13,7 +13,7 @@ export const permanentlyDeleteRoleById = createAsyncThunk<
 >('role/permanently-delete-by-id', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.delete(`api/role/permanent/${payload}`);
+    const response = await axios.delete(`api/roles/permanent/${payload}`);
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

@@ -13,9 +13,7 @@ export const restoreDeletedRoleById = createAsyncThunk<
 >('role/restore-deleted-by-id', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.put(
-      `api/role/restore-deleted/${payload}`
-    );
+    const response = await axios.put(`api/roles/restore-deleted/${payload}`);
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

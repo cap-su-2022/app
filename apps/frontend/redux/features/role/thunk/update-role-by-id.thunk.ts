@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
 import { defaultPaginationParams } from '../../../../models/pagination-params.model';
-import { fetchRoles } from "./fetch-roles.thunk";
+import { fetchRoles } from './fetch-roles.thunk';
 
 export const updateRoleById = createAsyncThunk<
   void,
@@ -19,7 +19,7 @@ export const updateRoleById = createAsyncThunk<
 >('role/update-by-id', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.put(`api/role/${payload.id}`, {
+    const response = await axios.put(`api/roles/${payload.id}`, {
       id: payload.id,
       name: payload.name,
       description: payload.description,

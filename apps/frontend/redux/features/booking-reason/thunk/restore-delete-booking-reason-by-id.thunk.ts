@@ -14,7 +14,7 @@ export const restoreDeletedBookingReasonById = createAsyncThunk<
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
     const response = await axios.put(
-      `api/booking-reason/restore-deleted/${payload}`
+      `api/booking-reasons/restore-deleted/${payload}`
     );
     return await response.data;
   } catch (e) {

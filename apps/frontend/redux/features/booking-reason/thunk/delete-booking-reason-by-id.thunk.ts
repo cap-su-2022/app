@@ -13,7 +13,7 @@ export const deleteBookingReasonById = createAsyncThunk<
 >('booking-reason/delete-by-id', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.delete(`api/booking-reason/${payload}`);
+    const response = await axios.delete(`api/booking-reasons/${payload}`);
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

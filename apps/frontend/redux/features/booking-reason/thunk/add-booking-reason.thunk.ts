@@ -18,7 +18,7 @@ export const addBookingReaspn = createAsyncThunk<
 >('booking-reason/add', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.post(`api/booking-reason`, {
+    const response = await axios.post(`api/booking-reasons`, {
       name: payload.name,
       description: payload.description,
     });

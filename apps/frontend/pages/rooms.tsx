@@ -1,24 +1,13 @@
 import { GetServerSideProps } from 'next';
 import AdminLayout from '../components/layout/admin.layout';
 import { Button, createStyles, ScrollArea, Table } from '@mantine/core';
-import {
-  BuildingWarehouse,
-  Download,
-  InfoCircle,
-  Pencil,
-  Plus,
-} from 'tabler-icons-react';
+import { BuildingWarehouse, Download, Plus } from 'tabler-icons-react';
 import React, { useEffect, useReducer, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import Th from '../components/table/th.table.component';
-import { RowData } from '../models/table/row-data.model';
-import { useRouter } from 'next/router';
 import { useDebouncedValue } from '@mantine/hooks';
-import RoomInfoModal from '../components/rooms/info-modal.component';
 import { fetchRooms } from '../redux/features/room/thunk/fetch-rooms';
 import { getRoomById } from '../redux/features/room/thunk/get-room-by-id';
 import NoDataFound from '../components/no-data-found';
-import { changeRoomsTextSearch } from '../redux/features/room/room.slice';
 import TableHeader from '../components/actions/table-header.component';
 import { TableBody } from '../components/rooms/table-body.component';
 import TableFooter from '../components/actions/table-footer.component';
@@ -93,17 +82,15 @@ function RoomsManagement(props: any) {
 
   useEffect(() => {
     dispatch(fetchRoomTypes({ limit: 9999, page: 1 })).then((response) => {
-      const paload  = response.payload as PaginationResponse<RoomType>
-      const items = paload.items
-      const tmp = items.map((item) => (
-        {
-          value: item.name,
-          lable: item.name,
-        }
-      ))
-      setRoomType(tmp)
+      const paload = response.payload as PaginationResponse<RoomType>;
+      const items = paload.items;
+      const tmp = items.map((item) => ({
+        value: item.name,
+        lable: item.name,
+      }));
+      setRoomType(tmp);
     });
-  },[]);
+  }, []);
 
   const toggleSortDirection = () => {
     setPagination({

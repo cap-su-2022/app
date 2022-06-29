@@ -1,6 +1,5 @@
 import { Button, createStyles, Table } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import AdminLayout from '../components/layout/AdminLayout';
 import TableHeader from '../components/users/table-header.component';
 import Th from '../components/table/th.table.component';
 import TableFooter from '../components/users/table-footer.component';
@@ -22,6 +21,7 @@ import DeleteModal from '../components/users/delete-modal.component';
 import { User } from '../models/user.model';
 import { fetchUsers } from '../redux/features/user/thunk/fetch-users.thunk';
 import { fetchUserById } from '../redux/features/user/thunk/fetch-by-id.thunk';
+import AdminLayout from '../components/layout/admin.layout';
 interface UserRowData extends RowData, User {}
 
 function UsersPage() {
@@ -194,7 +194,9 @@ function UsersPage() {
                   >
                     Status
                   </Th>
-                  <Th onSort={null}>Action</Th>
+                  <Th onSort={null} reversed sorted>
+                    Action
+                  </Th>
                 </tr>
               </thead>
               <tbody>{handleRenderRows()}</tbody>

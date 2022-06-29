@@ -19,7 +19,7 @@ export const updateRoleById = createAsyncThunk<
 >('booking-reason/update-by-id', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.put(`api/booking-reason/${payload.id}`, {
+    const response = await axios.put(`api/booking-reasons/${payload.id}`, {
       id: payload.id,
       name: payload.name,
       description: payload.description,

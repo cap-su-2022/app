@@ -16,7 +16,7 @@ export const fetchBookingReasons = createAsyncThunk<
 >('booking-reason/fetch-booking-reasons', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.get('api/booking-reason', {
+    const response = await axios.get('api/booking-reasons', {
       params: {
         page: payload.page,
         limit: payload.limit,
