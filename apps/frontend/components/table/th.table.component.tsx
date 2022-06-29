@@ -4,16 +4,16 @@ import {Center, createStyles, Group, Text, UnstyledButton} from "@mantine/core";
 import React from "react";
 
 function Th(props?: ThProps) {
-  const {children, reversed, sorted, onSort} = props;
+  const {style, children, reversed, sorted, onSort} = props;
 
   const {classes} = useStyles();
   const Icon = sorted ? (reversed ? ChevronUp : ChevronDown) : Selector;
   return (
-    <th className={classes.th}>
+    <th style={style} className={classes.th}>
       {onSort === null
-        ? <Text weight={500} size="sm">
+        ? <Text weight={500} size="sm" className={classes.control}>
           {children}
-        </Text>
+          </Text>
         : <UnstyledButton onClick={onSort} className={classes.control}>
           <Group position="apart">
             <Text weight={500} size="sm">

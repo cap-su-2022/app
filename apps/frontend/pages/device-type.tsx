@@ -1,57 +1,58 @@
 import React, { useEffect, useState } from 'react';
 import { Button, createStyles } from '@mantine/core';
-import Header from '../common/header.component';
+import AdminLayout from '../components/layout/admin.layout';
+import Header from '../components/common/header.component';
 import { BuildingWarehouse, InfoCircle, Plus } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
-  fetchRoomTypeById,
-  fetchRoomTypes,
-} from '../../redux/features/room-type';
+  fetchDeviceTypes,
+  fetchDeviceTypeById,
+  updateDeviceTypeById,
+  deleteDeviceTypeById,
+  addDeviceType,
+} from '../redux/features/device-type';
 import {
   defaultPaginationParams,
   PaginationParams,
-} from '../../models/pagination-params.model';
+} from '../models/pagination-params.model';
 import { useDebouncedValue } from '@mantine/hooks';
-import TableHeader from '../actions/table-header.component';
-import { TableBody } from '../actions/table-body.component';
-import TableFooter from '../actions/table-footer.component';
-import InfoModal from '../actions/modal/info-modal.component';
+import TableHeader from '../components/actions/table-header.component';
+import { TableBody } from '../components/actions/table-body.component';
+import TableFooter from '../components/actions/table-footer.component';
 import * as Yup from 'yup';
-import AddModal from '../actions/modal/add-modal.component';
+import AddModal from '../components/actions/modal/add-modal.component';
 import { FormikValues, useFormik } from 'formik';
-import { addRoomType } from '../../redux/features/room-type/thunk/add-room-type.thunk';
-import { InputAddProps } from '../actions/models/input-add-props.model';
-import { InputTypes } from '../actions/models/input-type.constant';
-import UpdateModal from '../actions/modal/update-modal.component';
-import { updateRoomTypeById } from '../../redux/features/room-type/thunk/update-room-type-by-id.thunk';
-import { InputUpdateProps } from '../actions/models/input-update-props.model';
-import AdminLayout from '../layout/admin.layout';
+import { InputAddProps } from '../components/actions/models/input-add-props.model';
+import { InputTypes } from '../components/actions/models/input-type.constant';
+import InfoModal from '../components/actions/modal/info-modal.component';
+import UpdateModal from '../components/actions/modal/update-modal.component';
+import { InputUpdateProps } from '../components/actions/models/input-update-props.model';
 
-const AddRoomTypeValidation = Yup.object().shape({
+const AddDeviceTypeValidation = Yup.object().shape({
   name: Yup.string()
-    .min(1, 'Minimum room type name is 1 character')
-    .max(100, 'Maximum room type name is 100 characters.')
-    .required('Room type name is required'),
+    .min(1, 'Minimum device type name is 1 character')
+    .max(100, 'Maximum device type name is 100 characters.')
+    .required('Device type name is required'),
   description: Yup.string().max(
     500,
-    'Maximum room type description is 500 characters'
+    'Maximum Device type description is 500 characters'
   ),
 });
 
-const UpdateRoomTypeValidation = Yup.object().shape({
+const UpdateDeviceTypeValidation = Yup.object().shape({
   name: Yup.string()
-    .min(1, 'Minimum room type name is 1 character')
-    .max(100, 'Maximum room type name is 100 characters.')
-    .required('Room type name is required'),
+    .min(1, 'Minimum device type name is 1 character')
+    .max(100, 'Maximum device type name is 100 characters.')
+    .required('Device type name is required'),
   description: Yup.string().max(
     500,
-    'Maximum room type description is 500 characters'
+    'Maximum device type description is 500 characters'
   ),
 });
 
-const ManageRoomType: React.FC<any> = () => {
+const ManageDeviceType: React.FC<any> = () => {
   const styles = useStyles();
-  const roomTypes = useAppSelector((state) => state.roomType.roomTypes);
+  const deviceTypes = useAppSelector((state) => state.deviceType.deviceTypes);
   const [pagination, setPagination] = useState<PaginationParams>(
     defaultPaginationParams
   );
@@ -61,7 +62,7 @@ const ManageRoomType: React.FC<any> = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchRoomTypes(pagination));
+    dispatch(fetchDeviceTypes(pagination));
   }, [
     pagination.page,
     pagination.limit,
@@ -71,6 +72,7 @@ const ManageRoomType: React.FC<any> = () => {
     pagination,
     dispatch,
   ]);
+
   const toggleSortDirection = () => {
     setPagination({
       ...pagination,
@@ -103,16 +105,16 @@ const ManageRoomType: React.FC<any> = () => {
     setPagination(defaultPaginationParams);
   };
 
+  const handleFetchById = (idVal) => {
+    return dispatch(fetchDeviceTypeById(idVal));
+  };
+
   const [id, setId] = useState<string>('');
   const [isInfoShown, setInfoShown] = useState<boolean>(false);
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
-  const roomType = useAppSelector((state) => state.roomType.roomType);
-
-  const handleFetchById = (idVal) => {
-    return dispatch(fetchRoomTypeById(idVal));
-  };
+  const deviceType = useAppSelector((state) => state.deviceType.deviceType);
 
   const ActionsFilter: React.FC = () => {
     return (
@@ -150,21 +152,21 @@ const ManageRoomType: React.FC<any> = () => {
       label: 'Id',
       id: 'id',
       name: 'id',
-      value: roomType.id,
+      value: deviceType.id,
       readOnly: true,
     },
     {
       label: 'Name',
       id: 'name',
       name: 'name',
-      value: roomType.name,
+      value: deviceType.name,
       readOnly: true,
     },
     {
       label: 'Description',
       id: 'description',
       name: 'description',
-      value: roomType.description,
+      value: deviceType.description,
       readOnly: true,
     },
   ];
@@ -173,7 +175,7 @@ const ManageRoomType: React.FC<any> = () => {
     {
       label: 'Name',
       description:
-        'Room type name must be unique between others (Max 100 char.)',
+        'Device type name must be unique between others (Max 100 char.)',
       id: 'name',
       name: 'name',
       required: true,
@@ -182,7 +184,7 @@ const ManageRoomType: React.FC<any> = () => {
     {
       label: 'Description',
       description:
-        'Room type description describe additional information (Max 500 char.)',
+        'Device type description describe additional information (Max 500 char.)',
       id: 'description',
       name: 'description',
       required: false,
@@ -194,32 +196,32 @@ const ManageRoomType: React.FC<any> = () => {
     {
       id: 'id',
       name: 'id',
-      description: 'Id of Room type',
+      description: 'Id of Device type',
       inputtype: InputTypes.TextInput,
       label: 'Id',
       readOnly: true,
       required: false,
-      value: roomType.id,
+      value: deviceType.id,
     },
     {
       id: 'name',
       name: 'name',
-      description: 'Room type name',
+      description: 'Device type name',
       inputtype: InputTypes.TextInput,
-      label: 'Room type name',
+      label: 'Device type name',
       readOnly: false,
       required: true,
-      value: roomType.name,
+      value: deviceType.name,
     },
     {
       id: 'description',
       name: 'description',
-      description: 'Room type description',
+      description: 'Device type description',
       inputtype: InputTypes.TextArea,
       label: 'Description',
       readOnly: false,
       required: false,
-      value: roomType.description,
+      value: deviceType.description,
     },
   ];
   const handleAddModalClose = () => {
@@ -228,7 +230,7 @@ const ManageRoomType: React.FC<any> = () => {
   };
   const handleAddSubmit = (values: FormikValues) => {
     dispatch(
-      addRoomType({
+      addDeviceType({
         name: values.name,
         description: values.description,
       })
@@ -239,7 +241,7 @@ const ManageRoomType: React.FC<any> = () => {
 
   const handleUpdateSubmit = (values: FormikValues) => {
     dispatch(
-      updateRoomTypeById({
+      updateDeviceTypeById({
         id: values.id,
         name: values.name,
         description: values.description,
@@ -250,11 +252,11 @@ const ManageRoomType: React.FC<any> = () => {
   };
 
   const updateFormik = useFormik({
-    validationSchema: UpdateRoomTypeValidation,
+    validationSchema: UpdateDeviceTypeValidation,
     initialValues: {
-      id: roomType.id,
-      name: roomType.name,
-      description: roomType.description,
+      id: deviceType.id,
+      name: deviceType.name,
+      description: deviceType.description,
     },
     enableReinitialize: true,
     onSubmit: (e) => handleUpdateSubmit(e),
@@ -266,7 +268,7 @@ const ManageRoomType: React.FC<any> = () => {
   };
 
   const addFormik = useFormik({
-    validationSchema: AddRoomTypeValidation,
+    validationSchema: AddDeviceTypeValidation,
     initialValues: {
       name: '',
       description: '',
@@ -277,24 +279,24 @@ const ManageRoomType: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Room Type" icon={<BuildingWarehouse size={50} />} />
+      <Header title="Device Type" icon={<BuildingWarehouse size={50} />} />
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter />}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
       />
-      {roomTypes.items ? (
+      {deviceTypes.items ? (
         <>
           <TableBody
             actionButtonCb={handleActionsCb}
             toggleSortDirection={() => toggleSortDirection()}
-            data={roomTypes.items}
+            data={deviceTypes.items}
             page={pagination.page}
             itemsPerPage={pagination.limit}
           />
           <InfoModal
-            header="Room Type Information"
+            header="Device Type Information"
             fields={infoFields}
             toggleShown={() => setInfoShown(!isInfoShown)}
             isShown={isInfoShown}
@@ -304,25 +306,25 @@ const ManageRoomType: React.FC<any> = () => {
             fields={updateFields}
             formik={updateFormik}
             handleSubmit={() => updateFormik.handleSubmit()}
-            header="Update current room type"
+            header="Update current device type"
             isShown={isUpdateShown}
             toggleShown={() => setUpdateShown(!isUpdateShown)}
           />
         </>
       ) : null}
       <AddModal
-        header="Add new room type"
+        header="Add new device type"
         isShown={isAddShown}
         toggleShown={() => handleAddModalClose()}
         formik={addFormik}
         fields={addFields}
         handleSubmit={() => addFormik.handleSubmit()}
       />
-      {roomTypes.meta ? (
+      {deviceTypes.meta ? (
         <TableFooter
           handlePageChange={(val) => handlePageChange(val)}
           handleLimitChange={(val) => handleLimitChange(val)}
-          metadata={roomTypes.meta}
+          metadata={deviceTypes.meta}
         />
       ) : null}
     </AdminLayout>
@@ -335,4 +337,4 @@ const useStyles = createStyles((theme) => {
   };
 });
 
-export default ManageRoomType;
+export default ManageDeviceType;

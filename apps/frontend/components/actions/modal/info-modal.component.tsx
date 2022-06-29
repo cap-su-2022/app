@@ -19,7 +19,6 @@ interface InfoModalProps {
 
 const InfoModal: React.FC<InfoModalProps> = (props) => {
   const { classes } = useStyles();
-  console.log(props.fields);
 
   return (
     <Modal
@@ -39,7 +38,11 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
       <div className={classes.body}>
         <div className={classes.inner}>
           {props.fields.map((field, index) => (
-            <InputWrapper key={index} label={field.label}>
+            <InputWrapper
+              key={index}
+              label={field.label}
+              className={classes.inputWrapper}
+            >
               <TextInput
                 id={field.id}
                 name={field.name}
@@ -54,7 +57,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             Disable
           </Button>
 
-          <Button leftIcon={<X />} color="orange">
+          <Button leftIcon={<X />} color="orange" onClick={() => props.toggleShown()}>
             Close
           </Button>
         </div>
@@ -71,8 +74,19 @@ const useStyles = createStyles({
     justifyContent: 'space-between',
   },
   inner: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: 'grid',
+    gridTemplateColumns: 'auto auto',
+  },
+  inputWrapper: {
+    margin: 10,
+    '&:first-of-type': {
+      gridColumnStart: 1,
+      gridColumnEnd: 3,
+    },
+    '&:last-of-type': {
+      gridColumnStart: 1,
+      gridColumnEnd: 3,
+    },
   },
   footer: {
     display: 'flex',

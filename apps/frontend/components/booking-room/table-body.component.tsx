@@ -1,16 +1,12 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import {
   createStyles,
   Table,
-  ScrollArea,
   UnstyledButton,
   Group,
   Text,
   Center,
-  TextInput,
   Button,
-  Image,
-  InputWrapper,
 } from '@mantine/core';
 import {
   Selector,
@@ -22,6 +18,7 @@ import {
 } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import moment from 'moment';
+import Th from '../../components/table/th.table.component';
 
 interface RowData {
   name: string;
@@ -36,28 +33,28 @@ interface ThProps {
   onSort(): void;
 }
 
-function Th({ style, children, reversed, sorted, onSort }: ThProps) {
-  const { classes } = useStyles();
-  const Icon = sorted ? (reversed ? ChevronUp : ChevronDown) : Selector;
-  return (
-    <th style={style} className={classes.th}>
-      {onSort === null ? (
-        children
-      ) : (
-        <UnstyledButton onClick={onSort} className={classes.control}>
-          <Group position="apart">
-            <Text weight={500} size="sm">
-              {children}
-            </Text>
-            <Center className={classes.icon}>
-              <Icon size={14} />
-            </Center>
-          </Group>
-        </UnstyledButton>
-      )}
-    </th>
-  );
-}
+// function Th({ style, children, reversed, sorted, onSort }: ThProps) {
+//   const { classes } = useStyles();
+//   const Icon = sorted ? (reversed ? ChevronUp : ChevronDown) : Selector;
+//   return (
+//     <th style={style} className={classes.th}>
+//       {onSort === null ? (
+//         <div className={classes.control}>{children}</div>
+//       ) : (
+//         <UnstyledButton onClick={onSort} className={classes.control}>
+//           <Group position="apart">
+//             <Text weight={500} size="sm">
+//               {children}
+//             </Text>
+//             <Center className={classes.icon}>
+//               <Icon size={14} />
+//             </Center>
+//           </Group>
+//         </UnstyledButton>
+//       )}
+//     </th>
+//   );
+// }
 
 interface TableBodyProps {
   data: any[];
@@ -70,7 +67,6 @@ interface TableBodyProps {
 export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  console.log("rever: ",reverseSortDirection)
 
   const { classes } = useStyles();
   const setSorting = (field: keyof RowData) => {
@@ -78,10 +74,6 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     setReverseSortDirection(reversed);
     props.toggleSortDirection(field);
   };
-
-  // props.data.map((row, index) => {
-  //   console.log('IDDDDD: ', row.id);
-  // });
 
   const rows = props.data.map((row, index) => (
     <tr key={index}>
@@ -112,20 +104,6 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           onClick={() => props.actionButtonCb.info(row.id)}
         >
           <InfoCircle />
-        </Button>
-        <Button
-          variant="outline"
-          color="green"
-          onClick={() => props.actionButtonCb.update(row.id)}
-        >
-          <Pencil />
-        </Button>
-        <Button
-          variant="outline"
-          color="red"
-          onClick={() => props.actionButtonCb.delete(row.id)}
-        >
-          <Trash />
         </Button>
       </td>
     </tr>
@@ -166,15 +144,18 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             Booked At
           </Th>
 
+          <Th sorted={null} reversed={reverseSortDirection} onSort={null}>
+            Status
+          </Th>
+
           <Th
+            style={{
+              width: '10%',
+            }}
             sorted={null}
             reversed={reverseSortDirection}
             onSort={null}
           >
-            Status
-          </Th>
-
-          <Th sorted={null} reversed={reverseSortDirection} onSort={null}>
             Actions
           </Th>
         </tr>
