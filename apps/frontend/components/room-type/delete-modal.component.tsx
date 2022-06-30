@@ -3,28 +3,28 @@ import { Button, createStyles, Modal, Text } from '@mantine/core';
 import { Archive, ScanEye, Trash, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-id';
-import { RoomParams } from '../../models/pagination-params/room-params.model';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
+import { fetchDeletedRoomTypes, fetchRoomTypes } from '../../redux/features/room-type/';
+import { deleteRoomTypeById } from '../../redux/features/room-type/';
+import { PaginationParams } from '../../models/pagination-params.model';
+// import { fetchDeletedRoomTypes } from '../../redux/features/room-type';
 
-interface DeleteRoomModalProps {
+interface DeleteModalProps {
   isShown: boolean;
   toggleShown(): void;
-  pagination: RoomParams;
+  pagination: PaginationParams;
 }
 
-const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
+const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const { classes } = useStyles();
-  const selectedRoomId = useAppSelector((state) => state.room.room.id);
+  const selectedRoomTypeId = useAppSelector((state) => state.roomType.roomType.id);
 
   const dispatch = useAppDispatch();
 
   const handleDeleteRoom = () => {
-    dispatch(deleteRoomById(selectedRoomId)).then(() => {
+    dispatch(deleteRoomTypeById(selectedRoomTypeId)).then(() => {
       props.toggleShown();
-      dispatch(fetchRooms(props.pagination));
-      dispatch(fetchDeletedRooms());
+      dispatch(fetchRoomTypes(props.pagination));
+      dispatch(fetchDeletedRoomTypes());
     });
   };
 
@@ -34,7 +34,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
 
   return (
     <Modal
-      closeOnClickOutside={false}
+      closeOnClickOutside={true}
       centered
       zIndex={2000}
       title={<ModalHeaderTitle />}
@@ -43,12 +43,10 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          Delete this will make this room <b>unusable</b> even if it has been
-          booked before.
-          <b> Users who booked this room</b> will receive a notification about
-          this and that associated booking will also be <b>cancelled</b>!<br />
-          <br />
-          This room also will not be available from now on after being deleted.
+          Deleting this room type will <b>also delete rooms of this room type</b>. And
+          make that rooms unusable even if it has been booked before. Users who
+          booked this room will receive a notification about this and that
+          associated booking will also be cancelled!
         </Text>
         <div className={classes.modalFooter}>
           <Button
@@ -65,11 +63,11 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
             leftIcon={<Trash />}
             onClick={() => handleDeleteRoom()}
           >
-            Delete this room
+            Delete this type
           </Button>
-          <div style={{textAlign: 'center', width: '100%', marginTop: 10 }}>
+          <div style={{ textAlign: 'center', width: '100%', marginTop: 10 }}>
             <Button leftIcon={<ScanEye />} style={{ backgroundColor: 'blue' }}>
-              View list request for this room
+              View list room with this type
             </Button>
           </div>
         </div>
@@ -97,4 +95,4 @@ const useStyles = createStyles({
   },
 });
 
-export default DeleteRoomModal;
+export default DeleteModal;

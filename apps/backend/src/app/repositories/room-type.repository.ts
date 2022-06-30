@@ -79,6 +79,19 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .execute();
   }
 
+  restoreDeletedById(accountId: string, id: string): Promise<UpdateResult> {
+    return this.createQueryBuilder('room_type')
+      .update({
+        updatedAt: new Date(),
+        updatedBy: accountId,
+        deletedAt: null,
+        deletedBy: null,
+      })
+      .where('room_type.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
+  }
+  
   deleteById(accountId: string, id: string) {
     return this.createQueryBuilder('room_type')
       .update({
@@ -103,7 +116,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
     return this.createQueryBuilder('rt')
       .select('rt.id', 'id')
       .addSelect('rt.name', 'name')
-      .where('rt.name LIKE :search', { search: search })
+      .where('rt.name LIKE :search', { search: `%${search}%` })
       .andWhere('rt.deleted_at IS NOT NULL')
       .getRawMany<RoomType>();
   }

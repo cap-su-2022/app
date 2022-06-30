@@ -9,43 +9,40 @@ import {
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { RotateClockwise } from 'tabler-icons-react';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import { restoreDeletedRoom } from '../../redux/features/room/thunk/restore-deleted.thunk';
+import { fetchRoomTypes } from '../../redux/features/room-type';
+import { fetchDeletedRoomTypes } from '../../redux/features/room-type';
+import { restoreDeletedRoomTypeById } from '../../redux/features/room-type';
 import { RoomParams } from '../../models/pagination-params/room-params.model';
 import dayjs from 'dayjs';
 
-interface RestoreDeletedRoomModalProps {
+interface RestoreDeletedModalProps {
   isShown: boolean;
   toggleShown(): void;
   pagination: RoomParams;
 }
 
-const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
+const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   props
 ) => {
   const { classes, cx } = useStyles();
-  const deletedRooms = useAppSelector((state) => state.room.deletedRooms);
+  const deletedRoomTypes = useAppSelector((state) => state.roomType.deletedRoomTypes);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchDeletedRooms());
+    dispatch(fetchDeletedRoomTypes());
   }, []);
 
-  const handleRestoreDeletedRoom = (id: string) => {
-    dispatch(restoreDeletedRoom(id))
+  const handleRestoreDeletedRoomType = (id: string) => {
+    dispatch(restoreDeletedRoomTypeById(id))
       .unwrap()
-      .then(() => dispatch(fetchDeletedRooms()))
-      .then(() => dispatch(fetchRooms(props.pagination)));
+      .then(() => dispatch(fetchDeletedRoomTypes()))
+      .then(() => dispatch(fetchRoomTypes(props.pagination)));
   };
-  const rows = deletedRooms?.map((row, index) => (
+  const rows = deletedRoomTypes?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
       <td>{row.name}</td>
-      <td>{row.roomTypeName}</td>
-      <td>{dayjs(row.updatedAt).format('HH:mm DD/MM/YYYY')}</td>
-      <td>{row.deletedBy}</td>
       <td
         style={{
           display: 'flex',
@@ -53,7 +50,7 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
         }}
       >
         <Button
-          onClick={() => handleRestoreDeletedRoom(row.id)}
+          onClick={() => handleRestoreDeletedRoomType(row.id)}
           style={{
             margin: 5,
           }}
@@ -101,9 +98,6 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
             <tr>
               <th>STT</th>
               <th>Name</th>
-              <th>Type</th>
-              <th>Delete At</th>
-              <th>Delete By</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -141,4 +135,4 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default RestoreDeletedRoomModal;
+export default RestoreDeletedModal;
