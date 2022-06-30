@@ -149,12 +149,12 @@ function RoomsManagement(props: any) {
     return (
       <>
         <Button
-          variant="outline"
-          color="violet"
+          leftIcon={<Plus />}
+          color="green"
           onClick={() => setAddShown(true)}
           style={{ marginRight: 10 }}
         >
-          <Plus />
+          Add
         </Button>
         <Button
           variant="outline"
@@ -258,66 +258,6 @@ function RoomsManagement(props: any) {
       readOnly: true,
     },
   ];
-  // const deleteFields: InputDeleteProps[] = [
-  //   {
-  //     label: 'Name',
-  //     id: 'name',
-  //     name: 'name',
-  //     required: true,
-  //     inputtype: InputTypes.TextInput,
-  //   },
-  //   {
-  //     label: 'Id',
-  //     id: 'id',
-  //     name: 'id',
-  //     required: true,
-  //     inputtype: InputTypes.TextInput,
-  //   },
-  // ];
-
-  // const updateFields: InputUpdateProps[] = [
-  //   {
-  //     id: 'id',
-  //     name: 'id',
-  //     description: 'Id of Room',
-  //     inputtype: InputTypes.TextInput,
-  //     label: 'Id',
-  //     readOnly: true,
-  //     required: false,
-  //     value: room.id,
-  //   },
-  //   {
-  //     id: 'name',
-  //     name: 'name',
-  //     description: 'Room name',
-  //     inputtype: InputTypes.TextInput,
-  //     label: 'Room name',
-  //     readOnly: false,
-  //     required: true,
-  //     value: room.name,
-  //   },
-  //   {
-  //     id: 'type',
-  //     name: 'type',
-  //     description: 'Room type',
-  //     inputtype: InputTypes.Select,
-  //     label: 'Room type',
-  //     readOnly: false,
-  //     required: true,
-  //     data: roomTypes,
-  //     value: room.type,
-  //   },
-  //   {
-  //     id: 'description',
-  //     name: 'description',
-  //     description: 'Room description',
-  //     inputtype: InputTypes.TextArea,
-  //     label: 'Description',
-  //     readOnly: false,
-  //     required: false,
-  //     value: room.description,
-  //   },
-  // ];
 
   const handleAddModalClose = () => {
     setAddShown(!isAddShown);
@@ -349,8 +289,6 @@ function RoomsManagement(props: any) {
     setUpdateShown(!isUpdateShown);
     updateFormik.resetForm();
   };
-
-  ////////////////////////////////////
 
   return (
     <>

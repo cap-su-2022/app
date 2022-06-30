@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Button, createStyles } from '@mantine/core';
 import Header from '../common/header.component';
-import { BuildingWarehouse, InfoCircle, Plus } from 'tabler-icons-react';
+import {
+  ArchiveOff,
+  BuildingWarehouse,
+  InfoCircle,
+  PencilOff,
+  Plus,
+} from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fetchRoomTypeById,
@@ -25,7 +31,9 @@ import { InputTypes } from '../actions/models/input-type.constant';
 import UpdateModal from '../actions/modal/update-modal.component';
 import { updateRoomTypeById } from '../../redux/features/room-type/thunk/update-room-type-by-id.thunk';
 import { InputUpdateProps } from '../actions/models/input-update-props.model';
+import DeleteModal from './delete-modal.component';
 import AdminLayout from '../layout/admin.layout';
+import RestoreDeletedModal from './restore-deleted.modal.component'
 
 const AddRoomTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -109,6 +117,8 @@ const ManageRoomType: React.FC<any> = () => {
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
   const [isDisableShown, setDisableShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
+  const [isRestoreDeletedShown, setRestoreDeletedShown] =
+    useState<boolean>(false);
   const roomType = useAppSelector((state) => state.roomType.roomType);
 
   const handleFetchById = (idVal) => {
@@ -117,13 +127,31 @@ const ManageRoomType: React.FC<any> = () => {
 
   const ActionsFilter: React.FC = () => {
     return (
-      <Button
-        leftIcon={<Plus />}
-        color="green"
-        onClick={() => setAddShown(!isAddShown)}
-      >
-        Add
-      </Button>
+      <div>
+        <Button
+          leftIcon={<Plus />}
+          color="green"
+          onClick={() => setAddShown(!isAddShown)}
+          style={{ marginRight: 10 }}
+        >
+          Add
+        </Button>
+        {/* <Button
+          variant="outline"
+          color="red"
+          onClick={() => setRestoreDisabledShown(true)}
+          style={{ marginRight: 10 }}
+        >
+          <PencilOff color={'red'} />
+        </Button> */}
+        <Button
+          variant="outline"
+          color="red"
+          onClick={() => setRestoreDeletedShown(true)}
+        >
+          <ArchiveOff />
+        </Button>
+      </div>
     );
   };
 
@@ -142,7 +170,9 @@ const ManageRoomType: React.FC<any> = () => {
     },
     delete: (id) => {
       setId(id);
-      setDeleteShown(!isDeleteShown);
+      handleFetchById(id)
+        .unwrap()
+        .then(() => setDeleteShown(!isDeleteShown));
     },
   };
 
@@ -285,6 +315,11 @@ const ManageRoomType: React.FC<any> = () => {
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
       />
+      <RestoreDeletedModal
+        isShown={isRestoreDeletedShown}
+        toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
+        pagination={pagination}
+      />
       {roomTypes.items ? (
         <>
           <TableBody
@@ -309,6 +344,12 @@ const ManageRoomType: React.FC<any> = () => {
             header="Update current room type"
             isShown={isUpdateShown}
             toggleShown={() => setUpdateShown(!isUpdateShown)}
+          />
+
+          <DeleteModal
+            isShown={isDeleteShown}
+            toggleShown={() => setDeleteShown(!isDeleteShown)}
+            pagination={pagination}
           />
         </>
       ) : null}

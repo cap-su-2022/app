@@ -35,6 +35,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
   const [search, setSearch] = useState<string>('');
 
   const [searchDebounced] = useDebouncedValue<string>(search, 400);
+  console.log(disabledRooms)
 
   useEffect(() => {
     dispatch(fetchDisabledRooms(search));
