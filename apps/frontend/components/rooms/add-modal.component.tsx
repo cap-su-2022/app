@@ -37,6 +37,7 @@ interface AddRoomModalProps {
 
 const AddRoomValidation = Yup.object().shape({
   name: Yup.string()
+    .trim()
     .min(1, 'Room name must have at least 1 character.')
     .max(100, 'Room name can only have at most 100 characters.')
     .required('Room name is required!'),
