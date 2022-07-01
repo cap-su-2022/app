@@ -43,6 +43,7 @@ import { showNotification } from '@mantine/notifications';
 
 const AddRoomTypeValidation = Yup.object().shape({
   name: Yup.string()
+    .trim()
     .min(1, 'Minimum room type name is 1 character')
     .max(100, 'Maximum room type name is 100 characters.')
     .required('Room type name is required'),
@@ -54,6 +55,7 @@ const AddRoomTypeValidation = Yup.object().shape({
 
 const UpdateRoomTypeValidation = Yup.object().shape({
   name: Yup.string()
+    .trim()
     .min(1, 'Minimum room type name is 1 character')
     .max(100, 'Maximum room type name is 100 characters.')
     .required('Room type name is required'),
@@ -70,7 +72,7 @@ const ManageRoomType: React.FC<any> = () => {
   const [pagination, setPagination] = useState<PaginationParams>(
     defaultPaginationParams
   );
-  
+
   const [debounceSearchValue] = useDebouncedValue(pagination.search, 400);
 
   const dispatch = useAppDispatch();
@@ -89,10 +91,8 @@ const ManageRoomType: React.FC<any> = () => {
 
   useEffect(() => {
     dispatch(fetchRoomTypeNames())
-    .unwrap()
-    .then((roomTypes) =>
-      setRoomTypeNames(roomTypes)
-    );
+      .unwrap()
+      .then((roomTypes) => setRoomTypeNames(roomTypes));
   }, []);
 
   const toggleSortDirection = () => {
@@ -279,28 +279,28 @@ const ManageRoomType: React.FC<any> = () => {
         description: values.description,
       })
     )
-    .unwrap()
-    .then(() =>
-      showNotification({
-        id: 'Add-room-type',
-        color: 'teal',
-        title: 'Room type was added',
-        message: 'Room type was successfully added',
-        icon: <Check />,
-        autoClose: 3000,
-      })
-    )
-    .then((e) => handleAddModalClose())
-    .catch((e) => {
-      showNotification({
-        id: 'Add-room-type',
-        color: 'red',
-        title: 'Error while add room type',
-        message: `${e.message}`,
-        icon: <X />,
-        autoClose: 3000,
+      .unwrap()
+      .then(() =>
+        showNotification({
+          id: 'Add-room-type',
+          color: 'teal',
+          title: 'Room type was added',
+          message: 'Room type was successfully added',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .then((e) => handleAddModalClose())
+      .catch((e) => {
+        showNotification({
+          id: 'Add-room-type',
+          color: 'red',
+          title: 'Error while add room type',
+          message: `${e.message}`,
+          icon: <X />,
+          autoClose: 3000,
+        });
       });
-    })
   };
 
   const handleUpdateSubmit = (values: FormikValues) => {
@@ -313,27 +313,26 @@ const ManageRoomType: React.FC<any> = () => {
     )
       .unwrap()
       .then(() =>
-      showNotification({
-        id: 'Update-room-type',
-        color: 'teal',
-        title: 'Room type was updated',
-        message: 'Room type was successfully updated',
-        icon: <Check />,
-        autoClose: 3000,
-      })
-    )
-    .then((e) => handleUpdateModalClose())
-    .catch((e) => {
-      showNotification({
-        id: 'Update-room-type',
-        color: 'red',
-        title: 'Error while update room type',
-        message: `${e.message}`,
-        icon: <X />,
-        autoClose: 3000,
+        showNotification({
+          id: 'Update-room-type',
+          color: 'teal',
+          title: 'Room type was updated',
+          message: 'Room type was successfully updated',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .then((e) => handleUpdateModalClose())
+      .catch((e) => {
+        showNotification({
+          id: 'Update-room-type',
+          color: 'red',
+          title: 'Error while update room type',
+          message: `${e.message}`,
+          icon: <X />,
+          autoClose: 3000,
+        });
       });
-    })
-      
   };
 
   const updateFormik = useFormik({

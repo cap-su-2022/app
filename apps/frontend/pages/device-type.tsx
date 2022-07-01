@@ -40,6 +40,7 @@ import { showNotification } from '@mantine/notifications';
 
 const AddDeviceTypeValidation = Yup.object().shape({
   name: Yup.string()
+    .trim()
     .min(1, 'Minimum device type name is 1 character')
     .max(100, 'Maximum device type name is 100 characters.')
     .required('Device type name is required'),
@@ -51,6 +52,7 @@ const AddDeviceTypeValidation = Yup.object().shape({
 
 const UpdateDeviceTypeValidation = Yup.object().shape({
   name: Yup.string()
+    .trim()
     .min(1, 'Minimum device type name is 1 character')
     .max(100, 'Maximum device type name is 100 characters.')
     .required('Device type name is required'),
@@ -128,11 +130,11 @@ const ManageDeviceType: React.FC<any> = () => {
   const deviceType = useAppSelector((state) => state.deviceType.deviceType);
 
   useEffect(() => {
-    if(!isUpdateShown){
+    if (!isUpdateShown) {
       updateFormik.resetForm();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[isUpdateShown])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isUpdateShown]);
 
   const ActionsFilter: React.FC = () => {
     return (

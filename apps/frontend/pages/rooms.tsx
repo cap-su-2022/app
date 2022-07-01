@@ -43,6 +43,7 @@ import { PaginationResponse } from '../models/pagination-response.payload';
 
 const UpdateRoomValidation = Yup.object().shape({
   name: Yup.string()
+    .trim()
     .min(1, 'Minimum device type name is 1 character')
     .max(100, 'Maximum device type name is 100 characters.')
     .required('Device type name is required'),
@@ -87,10 +88,8 @@ function RoomsManagement(props: any) {
 
   useEffect(() => {
     dispatch(fetchRoomTypeNames())
-    .unwrap()
-    .then((roomTypes) =>
-      setRoomTypeNames(roomTypes)
-    );
+      .unwrap()
+      .then((roomTypes) => setRoomTypeNames(roomTypes));
   }, []);
 
   const toggleSortDirection = () => {
