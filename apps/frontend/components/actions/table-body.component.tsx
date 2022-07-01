@@ -84,19 +84,19 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{ tableLayout: 'fixed', minWidth: 700 }}
+      sx={{ tableLayout: 'fixed'}}
     >
       <thead>
         <tr>
           <Th
             style={{
-              width: '5%',
+              width: '50px',
             }}
             sorted={null}
             reversed={reverseSortDirection}
             onSort={null}
           >
-            Row
+            STT
           </Th>
 
           <Th
@@ -110,7 +110,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             Name
           </Th>
 
-          <Th sorted={null} reversed={reverseSortDirection} onSort={null}>
+          <Th sorted={null} reversed={reverseSortDirection} onSort={null} style={{width: 220}}>
             Actions
           </Th>
         </tr>

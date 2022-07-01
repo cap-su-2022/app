@@ -2,7 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Button, createStyles } from '@mantine/core';
 import AdminLayout from '../components/layout/admin.layout';
 import Header from '../components/common/header.component';
-import { BuildingWarehouse, InfoCircle, Plus } from 'tabler-icons-react';
+import {
+  ArchiveOff,
+  BuildingWarehouse,
+  Check,
+  InfoCircle,
+  Plus,
+  X,
+} from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
   fetchDeviceTypes,
@@ -27,6 +34,9 @@ import { InputTypes } from '../components/actions/models/input-type.constant';
 import InfoModal from '../components/actions/modal/info-modal.component';
 import UpdateModal from '../components/actions/modal/update-modal.component';
 import { InputUpdateProps } from '../components/actions/models/input-update-props.model';
+import RestoreDeletedModal from '../components/device-type/restore-deleted.modal.component';
+import DeleteModal from '../components/device-type/delete-modal.component';
+import { showNotification } from '@mantine/notifications';
 
 const AddDeviceTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -44,10 +54,9 @@ const UpdateDeviceTypeValidation = Yup.object().shape({
     .min(1, 'Minimum device type name is 1 character')
     .max(100, 'Maximum device type name is 100 characters.')
     .required('Device type name is required'),
-  description: Yup.string().max(
-    500,
-    'Maximum device type description is 500 characters'
-  ),
+  description: Yup.string()
+    .max(500, 'Maximum device type description is 500 characters')
+    .nullable(),
 });
 
 const ManageDeviceType: React.FC<any> = () => {
@@ -114,18 +123,37 @@ const ManageDeviceType: React.FC<any> = () => {
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
-  const [isDisableShown, setDisableShown] = useState<boolean>(false);
+  const [isRestoreDeletedShown, setRestoreDeletedShown] =
+    useState<boolean>(false);
   const deviceType = useAppSelector((state) => state.deviceType.deviceType);
+
+  useEffect(() => {
+    if(!isUpdateShown){
+      updateFormik.resetForm();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[isUpdateShown])
 
   const ActionsFilter: React.FC = () => {
     return (
-      <Button
-        leftIcon={<Plus />}
-        color="green"
-        onClick={() => setAddShown(!isAddShown)}
-      >
-        Add
-      </Button>
+      <div>
+        <Button
+          leftIcon={<Plus />}
+          color="green"
+          onClick={() => setAddShown(!isAddShown)}
+          style={{ marginRight: 10 }}
+        >
+          Add
+        </Button>
+
+        <Button
+          variant="outline"
+          color="red"
+          onClick={() => setRestoreDeletedShown(true)}
+        >
+          <ArchiveOff />
+        </Button>
+      </div>
     );
   };
 
@@ -144,7 +172,9 @@ const ManageDeviceType: React.FC<any> = () => {
     },
     delete: (id) => {
       setId(id);
-      setDeleteShown(!isDeleteShown);
+      handleFetchById(id)
+        .unwrap()
+        .then(() => setDeleteShown(!isDeleteShown));
     },
   };
 
@@ -237,7 +267,27 @@ const ManageDeviceType: React.FC<any> = () => {
       })
     )
       .unwrap()
-      .then((e) => handleAddModalClose());
+      .then(() =>
+        showNotification({
+          id: 'Add-device-type',
+          color: 'teal',
+          title: 'Device type was added',
+          message: 'Device type was successfully added',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .then((e) => handleAddModalClose())
+      .catch((e) => {
+        showNotification({
+          id: 'Add-device-type',
+          color: 'red',
+          title: 'Error while Add device type',
+          message: `${e.message}`,
+          icon: <X />,
+          autoClose: 3000,
+        });
+      });
   };
 
   const handleUpdateSubmit = (values: FormikValues) => {
@@ -249,7 +299,27 @@ const ManageDeviceType: React.FC<any> = () => {
       })
     )
       .unwrap()
-      .then((e) => handleUpdateModalClose());
+      .then(() =>
+        showNotification({
+          id: 'Update-device-type',
+          color: 'teal',
+          title: 'Device type was updated',
+          message: 'Device type was successfully updated',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .then((e) => handleUpdateModalClose())
+      .catch((e) => {
+        showNotification({
+          id: 'Update-device-type',
+          color: 'red',
+          title: 'Error while update device type',
+          message: `${e.message}`,
+          icon: <X />,
+          autoClose: 3000,
+        });
+      });
   };
 
   const updateFormik = useFormik({
@@ -287,6 +357,12 @@ const ManageDeviceType: React.FC<any> = () => {
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
       />
+
+      <RestoreDeletedModal
+        isShown={isRestoreDeletedShown}
+        toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
+        pagination={pagination}
+      />
       {deviceTypes.items ? (
         <>
           <TableBody
@@ -300,7 +376,7 @@ const ManageDeviceType: React.FC<any> = () => {
             header="Device Type Information"
             fields={infoFields}
             toggleShown={() => setInfoShown(!isInfoShown)}
-            toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
+            // toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
             isShown={isInfoShown}
           />
 
@@ -311,6 +387,12 @@ const ManageDeviceType: React.FC<any> = () => {
             header="Update current device type"
             isShown={isUpdateShown}
             toggleShown={() => setUpdateShown(!isUpdateShown)}
+          />
+          <DeleteModal
+            isShown={isDeleteShown}
+            toggleShown={() => setDeleteShown(!isDeleteShown)}
+            pagination={pagination}
+            // roomTypes={roomTypeNames}
           />
         </>
       ) : null}

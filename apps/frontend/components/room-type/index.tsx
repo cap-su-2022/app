@@ -4,9 +4,11 @@ import Header from '../common/header.component';
 import {
   ArchiveOff,
   BuildingWarehouse,
+  Check,
   InfoCircle,
   PencilOff,
   Plus,
+  X,
 } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -37,6 +39,7 @@ import AdminLayout from '../layout/admin.layout';
 import RestoreDeletedModal from './restore-deleted.modal.component';
 import { RoomType } from '../../models/room-type.model';
 import { PaginationResponse } from '../../models/pagination-response.payload';
+import { showNotification } from '@mantine/notifications';
 
 const AddRoomTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -276,8 +279,28 @@ const ManageRoomType: React.FC<any> = () => {
         description: values.description,
       })
     )
-      .unwrap()
-      .then((e) => handleAddModalClose());
+    .unwrap()
+    .then(() =>
+      showNotification({
+        id: 'Add-room-type',
+        color: 'teal',
+        title: 'Room type was added',
+        message: 'Room type was successfully added',
+        icon: <Check />,
+        autoClose: 3000,
+      })
+    )
+    .then((e) => handleAddModalClose())
+    .catch((e) => {
+      showNotification({
+        id: 'Add-room-type',
+        color: 'red',
+        title: 'Error while add room type',
+        message: `${e.message}`,
+        icon: <X />,
+        autoClose: 3000,
+      });
+    })
   };
 
   const handleUpdateSubmit = (values: FormikValues) => {
@@ -289,7 +312,28 @@ const ManageRoomType: React.FC<any> = () => {
       })
     )
       .unwrap()
-      .then((e) => handleUpdateModalClose());
+      .then(() =>
+      showNotification({
+        id: 'Update-room-type',
+        color: 'teal',
+        title: 'Room type was updated',
+        message: 'Room type was successfully updated',
+        icon: <Check />,
+        autoClose: 3000,
+      })
+    )
+    .then((e) => handleUpdateModalClose())
+    .catch((e) => {
+      showNotification({
+        id: 'Update-room-type',
+        color: 'red',
+        title: 'Error while update room type',
+        message: `${e.message}`,
+        icon: <X />,
+        autoClose: 3000,
+      });
+    })
+      
   };
 
   const updateFormik = useFormik({

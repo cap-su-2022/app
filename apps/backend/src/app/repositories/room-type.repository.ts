@@ -125,8 +125,12 @@ export class RoomTypeRepository extends Repository<RoomType> {
     return this.createQueryBuilder('rt')
       .select('rt.id', 'id')
       .addSelect('rt.name', 'name')
+      .addSelect('rt.deleted_at', 'deletedAt')
+      .addSelect('a.username', 'deletedBy')
+      .innerJoin(Accounts, 'a', 'a.id = rt.deleted_by')
       .where('rt.name LIKE :search', { search: `%${search}%` })
       .andWhere('rt.deleted_at IS NOT NULL')
+      .orderBy('rt.deleted_at', 'DESC')
       .getRawMany<RoomType>();
   }
 

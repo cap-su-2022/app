@@ -88,12 +88,30 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   }
 
   findDeletedByPagination(search: string): Promise<DeviceType[]> {
-    return this.createQueryBuilder('rt')
-      .select('rt.id', 'id')
-      .addSelect('rt.name', 'name')
-      .where('rt.name LIKE :search', { search: search })
-      .andWhere('rt.deleted_at IS NOT NULL')
-      .getRawMany<RoomType>();
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    return this.createQueryBuilder('device_type')
+      .select('device_type.id', 'id')
+      .addSelect('device_type.name', 'name')
+      .addSelect('device_type.deleted_at', 'deletedAt')
+      .addSelect('a.username', 'deletedBy')
+      .innerJoin(Accounts, 'a', 'a.id = device_type.deleted_by')
+      .where('device_type.name LIKE :search', { search: `%${search}%` })
+      .andWhere('device_type.deleted_at IS NOT NULL')
+      .orderBy('device_type.deleted_at', 'DESC')
+      .getRawMany<DeviceType>();
+  }
+
+  restoreDeletedById(accountId: string, id: string): Promise<UpdateResult> {
+    return this.createQueryBuilder('device_type')
+      .update({
+        updatedAt: new Date(),
+        updatedBy: accountId,
+        deletedAt: null,
+        deletedBy: null,
+      })
+      .where('device_type.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
   }
 
   updateById(

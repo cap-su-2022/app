@@ -47,6 +47,30 @@ export class DeviceTypeService {
     }
   }
 
+  getDeletedDeviceTypes(search: string) {
+    try {
+      return this.repository.findDeletedByPagination(search);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async restoreDeletedRoomTypeById(accountId: string, id: string) {
+    try {
+      const isExisted = this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Room type does not exist with the provided id'
+        );
+      }
+      return await this.repository.restoreDeletedById(accountId, id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async permanentlyDeleteDeviceTypeById(id: string) {
     try {
       return await this.repository.permanentlyDeleteById(id);

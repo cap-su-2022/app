@@ -4,6 +4,7 @@ import {
   DefaultValuePipe,
   Delete,
   Get,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -16,6 +17,9 @@ import { DeviceTypeService } from '../services/device-type.service';
 import { PaginationParams } from './pagination.model';
 import { User } from '../decorators/keycloak-user.decorator';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { Roles } from '../decorators/role.decorator';
+import { Role } from '../enum/roles.enum';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('/v1/device-type')
 export class DeviceTypeController {
@@ -71,5 +75,60 @@ export class DeviceTypeController {
   @Delete('permanent/:id')
   permanentlyDeleteDeviceTypeById(@Param('id') id: string) {
     return this.service.permanentlyDeleteDeviceTypeById(id);
+  }
+
+  @Get('deleted')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully deleted device types',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get deleted device types',
+    description: 'Get deleted device types',
+  })
+  getDeletedDeviceTypes(@Query('search') search: string) {
+    return this.service.getDeletedDeviceTypes(search);
+  }
+
+  @Put('restore-deleted/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully restored deleted room by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for deleted room type is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Successfully restored deleted room type by id',
+    description: 'Successfully restored deleted room type by id',
+  })
+  restoreDeletedRoomTypeById(
+    @Param('id') id: string,
+    @User() keycloakUser: KeycloakUserInstance
+  ) {
+    return this.service.restoreDeletedRoomTypeById(keycloakUser.account_id, id);
   }
 }

@@ -8,14 +8,12 @@ import { fetchDeletedRoomTypes } from './thunk/fetch-deleted-room-types';
 interface InitialState {
   roomTypes: PaginationResponse<RoomType>;
   roomType: RoomType;
-  disabledRoomTypes: RoomType[];
   deletedRoomTypes: RoomType[];
 }
 
 const initialState: InitialState = {
   roomTypes: {} as PaginationResponse<RoomType>,
   roomType: {} as RoomType,
-  disabledRoomTypes: [],
   deletedRoomTypes: [],
 };
 

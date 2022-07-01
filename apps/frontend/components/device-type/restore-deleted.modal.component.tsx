@@ -8,12 +8,11 @@ import {
   Button,
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { RotateClockwise } from 'tabler-icons-react';
-import { fetchRoomTypes } from '../../redux/features/room-type';
-import { fetchDeletedRoomTypes } from '../../redux/features/room-type';
-import { restoreDeletedRoomTypeById } from '../../redux/features/room-type';
+import { Check, RotateClockwise, X } from 'tabler-icons-react';
 import { PaginationParams } from '../../models/pagination-params.model';
 import dayjs from 'dayjs';
+import { fetchDeletedDeviceTypes, fetchDeviceTypes, restoreDeletedDeviceTypeById } from '../../redux/features/device-type';
+import { showNotification } from '@mantine/notifications';
 
 interface RestoreDeletedModalProps {
   isShown: boolean;
@@ -25,21 +24,44 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   props
 ) => {
   const { classes, cx } = useStyles();
-  const deletedRoomTypes = useAppSelector((state) => state.roomType.deletedRoomTypes);
+  const deletedDeviceTypes = useAppSelector((state) => state.deviceType.deletedDeviceTypes);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchDeletedRoomTypes());
+    dispatch(fetchDeletedDeviceTypes());
   }, []);
 
   const handleRestoreDeletedRoomType = (id: string) => {
-    dispatch(restoreDeletedRoomTypeById(id))
+    dispatch(restoreDeletedDeviceTypeById(id))
       .unwrap()
-      .then(() => dispatch(fetchDeletedRoomTypes()))
-      .then(() => dispatch(fetchRoomTypes(props.pagination)));
+      .catch((e) =>
+        showNotification({
+          id: 'restore-data',
+          color: 'red',
+          title: 'Error while restore device type',
+          message: e.message ?? 'Failed to restore device type',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'restore-data',
+          color: 'teal',
+          title: 'Device type was restored',
+          message: 'Device type was successfully restored',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .then(() => {
+        props.toggleShown();
+        dispatch(fetchDeletedDeviceTypes());
+        dispatch(fetchDeviceTypes(props.pagination));
+      })
   };
-  const rows = deletedRoomTypes?.map((row, index) => (
+  const rows = deletedDeviceTypes?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
       <td>{row.name}</td>
@@ -93,7 +115,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
         sx={{ height: 500 }}
         onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
       >
-        <Table sx={{ minWidth: 700 }}>
+        <Table>
           <thead
             className={cx(classes.header, { [classes.scrolled]: scrolled })}
           >
