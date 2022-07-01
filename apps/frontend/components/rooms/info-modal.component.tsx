@@ -25,7 +25,7 @@ import dayjs from 'dayjs';
 interface RoomInfoModalProps {
   isShown: boolean;
   toggleShown(): void;
-  toggleDisableRoomModalShown(): void;
+  toggleDisableModalShown(): void;
 }
 
 const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
@@ -46,7 +46,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
     <>
       <Modal
         title={<ModalHeaderTitle />}
-        size={dimension.width / 2}
+        size={dimension.width * 0.6}
         centered
         opened={props.isShown}
         onClose={() => props.toggleShown()}
@@ -115,6 +115,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
                 icon={<User />}
                 className={classes.textInput}
                 radius="md"
+                readOnly
                 id="room-createdby"
                 value={room.createdBy}
               />
@@ -135,6 +136,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
                 radius="md"
                 readOnly
                 value={dayjs(room.updatedAt).format('DD/MM/YYYY HH:mm:ss')}
+
               />
             </InputWrapper>
             <InputWrapper label="Updated by">
@@ -152,7 +154,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
 
         <div className={classes.modalFooter}>
           <Button
-            onClick={() => props.toggleDisableRoomModalShown()}
+            onClick={() => props.toggleDisableModalShown()}
             variant="outline"
             color={'red'}
             leftIcon={<Archive />}

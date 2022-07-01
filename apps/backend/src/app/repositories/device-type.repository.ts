@@ -97,8 +97,8 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   }
 
   updateById(
-    deviceTypeId: string,
     accountId: string,
+    deviceTypeId: string,
     payload: RoomTypeUpdateRequestPayload
   ): Promise<UpdateResult> {
     return this.createQueryBuilder('device_type')

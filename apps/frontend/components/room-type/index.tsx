@@ -11,6 +11,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fetchRoomTypeById,
+  fetchRoomTypeNames,
   fetchRoomTypes,
 } from '../../redux/features/room-type';
 import {
@@ -33,7 +34,9 @@ import { updateRoomTypeById } from '../../redux/features/room-type/thunk/update-
 import { InputUpdateProps } from '../actions/models/input-update-props.model';
 import DeleteModal from './delete-modal.component';
 import AdminLayout from '../layout/admin.layout';
-import RestoreDeletedModal from './restore-deleted.modal.component'
+import RestoreDeletedModal from './restore-deleted.modal.component';
+import { RoomType } from '../../models/room-type.model';
+import { PaginationResponse } from '../../models/pagination-response.payload';
 
 const AddRoomTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -60,10 +63,11 @@ const UpdateRoomTypeValidation = Yup.object().shape({
 const ManageRoomType: React.FC<any> = () => {
   const styles = useStyles();
   const roomTypes = useAppSelector((state) => state.roomType.roomTypes);
+  const [roomTypeNames, setRoomTypeNames] = useState([]);
   const [pagination, setPagination] = useState<PaginationParams>(
     defaultPaginationParams
   );
-
+  
   const [debounceSearchValue] = useDebouncedValue(pagination.search, 400);
 
   const dispatch = useAppDispatch();
@@ -79,6 +83,15 @@ const ManageRoomType: React.FC<any> = () => {
     pagination,
     dispatch,
   ]);
+
+  useEffect(() => {
+    dispatch(fetchRoomTypeNames())
+    .unwrap()
+    .then((roomTypes) =>
+      setRoomTypeNames(roomTypes)
+    );
+  }, []);
+
   const toggleSortDirection = () => {
     setPagination({
       ...pagination,
@@ -115,7 +128,6 @@ const ManageRoomType: React.FC<any> = () => {
   const [isInfoShown, setInfoShown] = useState<boolean>(false);
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
-  const [isDisableShown, setDisableShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
   const [isRestoreDeletedShown, setRestoreDeletedShown] =
     useState<boolean>(false);
@@ -334,7 +346,6 @@ const ManageRoomType: React.FC<any> = () => {
             fields={infoFields}
             toggleShown={() => setInfoShown(!isInfoShown)}
             isShown={isInfoShown}
-            toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
           />
 
           <UpdateModal
@@ -350,6 +361,7 @@ const ManageRoomType: React.FC<any> = () => {
             isShown={isDeleteShown}
             toggleShown={() => setDeleteShown(!isDeleteShown)}
             pagination={pagination}
+            roomTypes={roomTypeNames}
           />
         </>
       ) : null}

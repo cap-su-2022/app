@@ -16,7 +16,6 @@ export const updateRoomById = createAsyncThunk<any, UpdateRoomPayload, {
   rejectValue: UpdateRoomRejectValue
 }>('room/update-by-id', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
-  console.log(payload.payload);
   try {
     const response = await axios.put(`/api/rooms/update/${payload.id}`, payload.payload);
     return await response.data;

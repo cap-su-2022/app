@@ -74,6 +74,32 @@ export class RoomTypeController {
     });
   }
 
+  @Get('name')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got disabled room types',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get disabled room types',
+    description: 'Get disabled room types',
+  })
+  getRoomTypeNames() {
+    return this.service.getRoomTypeNames();
+  }
+
   @Get(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
@@ -134,34 +160,34 @@ export class RoomTypeController {
     );
   }
 
-  @Put('disable/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully fetched disabled room type by id',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @ApiOperation({
-    summary: 'Get disabled room type by id',
-    description: 'Get disabled room type by id',
-  })
-  disableRoomTypeById(
-    @Param('id') id: string,
-    @User() keycloakUser: KeycloakUserInstance
-  ) {
-    return this.service.disableRoomTypeById(keycloakUser.account_id, id);
-  }
+  // @Put('disable/:id')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully fetched disabled room type by id',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Request params for roles is not validated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalidated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // @ApiOperation({
+  //   summary: 'Get disabled room type by id',
+  //   description: 'Get disabled room type by id',
+  // })
+  // disableRoomTypeById(
+  //   @Param('id') id: string,
+  //   @User() keycloakUser: KeycloakUserInstance
+  // ) {
+  //   return this.service.disableRoomTypeById(keycloakUser.account_id, id);
+  // }
 
   @Get('disabled')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)

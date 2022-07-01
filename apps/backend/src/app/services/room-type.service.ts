@@ -23,6 +23,15 @@ export class RoomTypeService {
     }
   }
 
+  getRoomTypeNames() {
+    try {
+      return this.repository.findRoomTypeName();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async getRoomTypeById(id: string): Promise<RoomType> {
     try {
       return await this.repository.findById(id);
@@ -51,14 +60,19 @@ export class RoomTypeService {
     }
   }
 
-  async disableRoomTypeById(accountId: string, id: string) {
-    try {
-      return await this.repository.disableById(accountId, id);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async disableRoomTypeById(accountId: string, id: string): Promise<any> {
+  //   try {
+  //     const result = await this.repository.disableById(accountId, id);
+  //     if (result.affected < 1) {
+  //       throw new BadRequestException(
+  //         "Room doesn't exist with the provided id"
+  //       );
+  //     }
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
   getDisabledRoomTypes(search: string) {
     try {

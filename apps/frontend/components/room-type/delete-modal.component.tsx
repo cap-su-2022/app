@@ -1,22 +1,50 @@
-import React from 'react';
-import { Button, createStyles, Modal, Text } from '@mantine/core';
-import { Archive, ScanEye, Trash, X } from 'tabler-icons-react';
+import React, { useEffect, useState } from 'react';
+import {
+  Button,
+  createStyles,
+  Modal,
+  Select,
+  Table,
+  Text,
+} from '@mantine/core';
+import {
+  Check,
+  InfoCircle,
+  Pencil,
+  ScanEye,
+  Trash,
+  X,
+} from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fetchDeletedRoomTypes, fetchRoomTypes } from '../../redux/features/room-type/';
+import {
+  fetchDeletedRoomTypes,
+  fetchRoomTypes,
+} from '../../redux/features/room-type/';
 import { deleteRoomTypeById } from '../../redux/features/room-type/';
 import { PaginationParams } from '../../models/pagination-params.model';
-// import { fetchDeletedRoomTypes } from '../../redux/features/room-type';
+import Th from '../../components/table/th.table.component';
+import { fetchRoomsByRoomType } from '../../redux/features/room/thunk/fetch-rooms-by-room-type';
+import { Formik, Field, Form } from 'formik';
+import { Room } from '../../models/room.model';
+import { showNotification } from '@mantine/notifications';
+import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
 
 interface DeleteModalProps {
   isShown: boolean;
   toggleShown(): void;
   pagination: PaginationParams;
+  roomTypes: any[];
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const { classes } = useStyles();
-  const selectedRoomTypeId = useAppSelector((state) => state.roomType.roomType.id);
+  const selectedRoomTypeId = useAppSelector(
+    (state) => state.roomType.roomType.id
+  );
+  const [roomType, setRoomType] = useState<string>('');
+  const [isShownListRoom, setShownListRoom] = useState(false);
+  const [listRoom, setListRoom] = useState([]);
 
   const dispatch = useAppDispatch();
 
@@ -28,6 +56,156 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
     });
   };
 
+  useEffect(() => {
+    if (selectedRoomTypeId) {
+      dispatch(fetchRoomsByRoomType(selectedRoomTypeId))
+        .unwrap()
+        .then((response) => setListRoom(response));
+    }
+  }, [dispatch, selectedRoomTypeId]);
+
+  useEffect(() => {
+    setShownListRoom(false);
+  }, [selectedRoomTypeId]);
+
+  const handleUpdateType = (room, roomTypeId: string) => {
+    dispatch(
+      updateRoomById({
+        id: room.id,
+        payload: {
+          ...room,
+          type: roomTypeId,
+        },
+      })
+    )
+      .unwrap()
+      .catch((e) =>
+        showNotification({
+          id: 'load-data',
+          color: 'red',
+          title: 'Error while updating library room',
+          message: e.message ?? 'Failed to update library room',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'load-data',
+          color: 'teal',
+          title: 'Library room was updated',
+          message: 'Library room was successfully updated',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      // .then(() => props.toggleShown())
+      .then(() =>
+        dispatch(fetchRoomsByRoomType(selectedRoomTypeId))
+          .unwrap()
+          .then((response) => setListRoom(response))
+      );
+  };
+
+  const ListRoomByRoomType = () => {
+    const rows =
+      listRoom && listRoom.length > 0
+        ? listRoom.map((row, index) => (
+            <Formik
+              key={row.id}
+              initialValues={{
+                id: row.id,
+                type: row.type,
+              }}
+              onSubmit={async (values) => {
+                await new Promise((r) => setTimeout(r, 500));
+                alert(JSON.stringify(values, null, 2));
+              }}
+            >
+              <tr key={row.id}>
+                <td>{index + 1}</td>
+                <td>{row.name}</td>
+                <td>
+                  <Select
+                    name="type"
+                    id="room-type"
+                    onChange={(e) => setRoomType(e)}
+                    searchable
+                    value={roomType || row.type}
+                    data={props.roomTypes}
+                    required
+                  />
+                </td>
+                <td className={classes.actionButtonContainer}>
+                  <Button
+                    variant="outline"
+                    color="green"
+                    disabled={
+                      roomType === row.type || roomType === '' ? true : false
+                    }
+                    onClick={() => handleUpdateType(row, roomType)}
+                  >
+                    Save
+                  </Button>
+                </td>
+              </tr>
+            </Formik>
+          ))
+        : null;
+    return listRoom && listRoom.length > 0 ? (
+      <Table
+        horizontalSpacing="md"
+        verticalSpacing="xs"
+        sx={{ tableLayout: 'fixed' }}
+      >
+        <thead>
+          <tr>
+            <Th
+              style={{
+                width: '60px',
+              }}
+              sorted={null}
+              reversed={null}
+              onSort={null}
+            >
+              STT
+            </Th>
+
+            <Th sorted={null} reversed={null} onSort={null}>
+              Name
+            </Th>
+
+            <Th sorted={null} reversed={null} onSort={null}>
+              Type
+            </Th>
+
+            <Th
+              style={{
+                width: '100px',
+              }}
+              sorted={null}
+              reversed={null}
+              onSort={null}
+            >
+              Actions
+            </Th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </Table>
+    ) : (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '20px 0px',
+        }}
+      >
+        <h1>Dont have any room with this type</h1>
+      </div>
+    );
+  };
+
   const ModalHeaderTitle: React.FC = () => {
     return <Text className={classes.modalTitle}>Are you sure?</Text>;
   };
@@ -36,42 +214,56 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
     <Modal
       closeOnClickOutside={true}
       centered
-      zIndex={2000}
+      zIndex={100}
       title={<ModalHeaderTitle />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}
+      size={isShownListRoom && listRoom.length > 0 ? '70%' : null}
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          Deleting this room type will <b>also delete rooms of this room type</b>. And
-          make that rooms unusable even if it has been booked before. Users who
-          booked this room will receive a notification about this and that
-          associated booking will also be cancelled!
+          Deleting this room type will{' '}
+          <b>also delete rooms of this room type</b>. And make that rooms
+          unusable even if it has been booked before. Users who booked this room
+          will receive a notification about this and that associated booking
+          will also be cancelled!
         </Text>
         <div className={classes.modalFooter}>
+          {listRoom.length > 0 ? (
+            <Button
+              leftIcon={<ScanEye />}
+              style={{ backgroundColor: 'blue', width: '60%', margin: 10 }}
+              onClick={() => setShownListRoom(!isShownListRoom)}
+            >
+              List room with this type
+            </Button>
+          ) : null}
+
+          <Button
+            color="red"
+            leftIcon={<Trash />}
+            onClick={() => handleDeleteRoom()}
+            style={{
+              width: '60%',
+              margin: 10,
+            }}
+          >
+            Delete this type
+          </Button>
           <Button
             onClick={() => props.toggleShown()}
             leftIcon={<X />}
             style={{
               backgroundColor: FPT_ORANGE_COLOR,
+              width: '60%',
+              margin: 10,
             }}
           >
             Cancel
           </Button>
-          <Button
-            color="red"
-            leftIcon={<Trash />}
-            onClick={() => handleDeleteRoom()}
-          >
-            Delete this type
-          </Button>
-          <div style={{ textAlign: 'center', width: '100%', marginTop: 10 }}>
-            <Button leftIcon={<ScanEye />} style={{ backgroundColor: 'blue' }}>
-              View list room with this type
-            </Button>
-          </div>
         </div>
       </div>
+      {isShownListRoom && listRoom.length > 0 ? <ListRoomByRoomType /> : null}
     </Modal>
   );
 };
@@ -89,9 +281,15 @@ const useStyles = createStyles({
   },
   modalFooter: {
     display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 20,
+  },
+  actionButtonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 

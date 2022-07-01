@@ -71,6 +71,22 @@ export class RoomsRepository extends Repository<Rooms> {
       .getRawMany<Rooms>();
   }
 
+  getRoomsByRoomType(roomTypeId: string) {
+    console.log("AAAAAAAAAAAAAA: ", roomTypeId)
+
+    return this.createQueryBuilder(`rooms`)
+      .select('rooms.id', 'id')
+      .addSelect('rooms.name', 'name')
+      .addSelect('rooms.type', 'type')
+      .addSelect('rt.name', 'roomTypeName')
+      .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
+      .where(`rooms.deleted_at IS NULL`)
+      .andWhere(`rooms.disabled_at IS NULL`)
+      .andWhere('rooms.type = :type', { type: roomTypeId })
+
+      .getRawMany<Rooms>();
+  }
+
   searchRoom(payload: RoomsPaginationParams) {
     const query = this.createQueryBuilder('r')
       .innerJoin(Accounts, 'a', 'r.created_by = a.id')
