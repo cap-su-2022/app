@@ -44,16 +44,38 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   );
   const [roomType, setRoomType] = useState<string>('');
   const [isShownListRoom, setShownListRoom] = useState(false);
+
   const [listRoom, setListRoom] = useState([]);
 
   const dispatch = useAppDispatch();
 
   const handleDeleteRoom = () => {
-    dispatch(deleteRoomTypeById(selectedRoomTypeId)).then(() => {
-      props.toggleShown();
-      dispatch(fetchRoomTypes(props.pagination));
-      dispatch(fetchDeletedRoomTypes());
-    });
+    dispatch(deleteRoomTypeById(selectedRoomTypeId))
+      .catch((e) =>
+        showNotification({
+          id: 'delete-data',
+          color: 'red',
+          title: 'Error while delete room type',
+          message: e.message ?? 'Failed to delete room type',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'delete-data',
+          color: 'teal',
+          title: 'Room type was deleted',
+          message: 'Room type was successfully deleted',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .then(() => {
+        props.toggleShown();
+        dispatch(fetchRoomTypes(props.pagination));
+        dispatch(fetchDeletedRoomTypes());
+      });
   };
 
   useEffect(() => {
@@ -65,9 +87,17 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   }, [dispatch, selectedRoomTypeId]);
 
   useEffect(() => {
-    setShownListRoom(false);
-  }, [selectedRoomTypeId]);
+    if (!props.isShown) {
+      setShownListRoom(false);
+    }
+  }, [props.isShown]);
 
+  useEffect(() => {
+    if (!isShownListRoom) {
+      setRoomType('');
+    }
+  }, [isShownListRoom]);
+  
   const handleUpdateType = (room, roomTypeId: string) => {
     dispatch(
       updateRoomById({
@@ -111,45 +141,33 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
     const rows =
       listRoom && listRoom.length > 0
         ? listRoom.map((row, index) => (
-            <Formik
-              key={row.id}
-              initialValues={{
-                id: row.id,
-                type: row.type,
-              }}
-              onSubmit={async (values) => {
-                await new Promise((r) => setTimeout(r, 500));
-                alert(JSON.stringify(values, null, 2));
-              }}
-            >
-              <tr key={row.id}>
-                <td>{index + 1}</td>
-                <td>{row.name}</td>
-                <td>
-                  <Select
-                    name="type"
-                    id="room-type"
-                    onChange={(e) => setRoomType(e)}
-                    searchable
-                    value={roomType || row.type}
-                    data={props.roomTypes}
-                    required
-                  />
-                </td>
-                <td className={classes.actionButtonContainer}>
-                  <Button
-                    variant="outline"
-                    color="green"
-                    disabled={
-                      roomType === row.type || roomType === '' ? true : false
-                    }
-                    onClick={() => handleUpdateType(row, roomType)}
-                  >
-                    Save
-                  </Button>
-                </td>
-              </tr>
-            </Formik>
+            <tr key={row.id}>
+              <td>{index + 1}</td>
+              <td>{row.name}</td>
+              <td>
+                <Select
+                  name="type"
+                  id="room-type"
+                  onChange={(e) => setRoomType(e)}
+                  searchable
+                  value={roomType || row.type}
+                  data={props.roomTypes}
+                  required
+                />
+              </td>
+              <td className={classes.actionButtonContainer}>
+                <Button
+                  variant="outline"
+                  color="green"
+                  disabled={
+                    roomType === row.type || roomType === '' ? true : false
+                  }
+                  onClick={() => handleUpdateType(row, roomType)}
+                >
+                  Save
+                </Button>
+              </td>
+            </tr>
           ))
         : null;
     return listRoom && listRoom.length > 0 ? (

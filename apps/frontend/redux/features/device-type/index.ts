@@ -6,3 +6,4 @@ export * from './thunk/delete-device-type-by-id.thunk';
 export * from './thunk/restore-delete-device-type-by-id.thunk';
 export * from './thunk/permanently-delete-device-type-by-id.thunk';
 export * from './thunk/update-device-type-by-id.thunk';
+export * from './thunk/fetch-deleted-device-types'

@@ -51,7 +51,7 @@ const UpdateModal: React.FC<UpdateModalProps> = (props) => {
                   error={props.formik.errors[field.id]}
                   inputtype={field.inputtype}
                   data={field.data}
-                  value={props.formik.values[field.id]}
+                  value={props.formik.values[field.id] || ""}
                 />
               </InputWrapper>
             ))}

@@ -95,7 +95,6 @@ export class RoomTypeService {
   async restoreDeletedRoomTypeById(accountId: string, id: string) {
     try {
       const isExisted = this.repository.existsById(id);
-      console.log("BBBBBBBBBBBBBBBBBBBB: " + accountId + "  " + id);
       if (!isExisted) {
         throw new BadRequestException(
           'Room type does not exist with the provided id'

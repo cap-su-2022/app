@@ -24,6 +24,16 @@ export const addDeviceType = createAsyncThunk<
     });
     return await response.data;
   } catch (e) {
+    if (e.response.data.message.includes('duplicate')) {
+      return thunkAPI.rejectWithValue({
+        message:
+          'There already exists a device type with the this name. Try with another name.',
+      });
+    } else if (e.response.status === 401 || e.response.status === 403) {
+      return thunkAPI.rejectWithValue({
+        message: 'Access token is invalid',
+      });
+    }
     return thunkAPI.rejectWithValue({
       message: e.response.data.message,
     });
