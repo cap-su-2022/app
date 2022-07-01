@@ -23,7 +23,9 @@ export const doChangePassword = createAsyncThunk<
     const response = await axios.put(
       `${API_URL}/accounts/update/change-password`,
       {
+        username: payload.username,
         password: payload.password,
+        newPassword: payload.newPassword
       },
       {
         headers: {

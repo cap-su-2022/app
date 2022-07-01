@@ -1,3 +1,5 @@
 export interface ChangePasswordRequestModel {
-  password: string
+  username: string;
+  password: string;
+  newPassword: string;
 }
