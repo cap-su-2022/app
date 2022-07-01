@@ -171,6 +171,29 @@ export class RoomsController {
     return this.service.getDeletedRooms(search);
   }
 
+  
+  @Get('by-room-type')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched deleted rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getRoomsByRoomType(@Query('type') roomTypeId= ''): Promise<Rooms[]> {
+    return this.service.getRoomsByRoomType(roomTypeId);
+  }
+
   @Put('restore-deleted/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({

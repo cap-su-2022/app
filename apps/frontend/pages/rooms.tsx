@@ -28,12 +28,12 @@ import RestoreDeletedRoomModal from '../components/rooms/restore-deleted.modal.c
 import { RoomParams } from '../models/pagination-params/room-params.model';
 import { FormikValues, useFormik } from 'formik';
 import Header from '../components/common/header.component';
-import InfoModal from '../components/actions/modal/info-modal.component';
+import RoomInfoModal from '../components/rooms/info-modal.component';
 import UpdateModal from '../components/rooms/update-modal.component';
 import { InputTypes } from '../components/actions/models/input-type.constant';
 import { InputUpdateProps } from '../components/actions/models/input-update-props.model';
 import { updateRoomById } from '../redux/features/room/thunk/update-room-by-id';
-import { fetchRoomTypes } from '../redux/features/room-type';
+import { fetchRoomTypeNames } from '../redux/features/room-type';
 
 import AddModal from '../components/actions/modal/add-modal.component';
 import * as Yup from 'yup';
@@ -65,7 +65,7 @@ const defaultPagination = {
 function RoomsManagement(props: any) {
   const { classes } = useStyles();
   const rooms = useAppSelector((state) => state.room.rooms);
-  const [roomTypes, setRoomTypes] = useState([]);
+  const [roomTypeNames, setRoomTypeNames] = useState([]);
   const [pagination, setPagination] = useState<RoomParams>(defaultPagination);
   const [debounceSearchValue] = useDebouncedValue(pagination.name, 400);
   const dispatch = useAppDispatch();
@@ -86,15 +86,11 @@ function RoomsManagement(props: any) {
   ]);
 
   useEffect(() => {
-    dispatch(fetchRoomTypes({ limit: 9999, page: 1 })).then((response) => {
-      const paload = response.payload as PaginationResponse<RoomType>;
-      const items = paload.items;
-      const tmp = items.map((item) => ({
-        value: item.id,
-        label: item.name,
-      }));
-      setRoomTypes(tmp);
-    });
+    dispatch(fetchRoomTypeNames())
+    .unwrap()
+    .then((roomTypes) =>
+      setRoomTypeNames(roomTypes)
+    );
   }, []);
 
   const toggleSortDirection = () => {
@@ -324,9 +320,9 @@ function RoomsManagement(props: any) {
               page={pagination.page}
               itemsPerPage={pagination.limit}
             />
-            <InfoModal
-              header="Room Information"
-              fields={infoFields}
+            <RoomInfoModal
+              // header="Room Information"
+              // fields={infoFields}
               toggleShown={() => setInfoShown(!isInfoShown)}
               isShown={isInfoShown}
               toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
@@ -348,7 +344,7 @@ function RoomsManagement(props: any) {
               isShown={isUpdateShown}
               toggleShown={() => setUpdateShown(!isUpdateShown)}
               pagination={pagination}
-              roomTypes={roomTypes}
+              roomTypes={roomTypeNames}
             />
           </>
         ) : (
@@ -359,7 +355,7 @@ function RoomsManagement(props: any) {
           isShown={isAddShown}
           pagination={pagination}
           toggleShown={() => handleAddModalClose()}
-          roomTypes={roomTypes}
+          roomTypes={roomTypeNames}
         />
         {rooms.meta ? (
           <TableFooter

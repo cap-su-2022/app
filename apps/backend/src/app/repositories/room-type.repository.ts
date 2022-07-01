@@ -30,6 +30,15 @@ export class RoomTypeRepository extends Repository<RoomType> {
     });
   }
 
+  findRoomTypeName(): Promise<RoomType[]> {
+    return this.createQueryBuilder('rt')
+      .select('rt.id', 'id')
+      .addSelect('rt.name', 'name')
+      .andWhere('rt.disabled_at IS NULL')
+      .andWhere("rt.deleted_at IS NULL")
+      .getRawMany<RoomType>();
+  }
+
   async findById(id: string): Promise<RoomType> {
     return this.createQueryBuilder('rt')
       .select('rt.id', 'id')
@@ -91,7 +100,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .useTransaction(true)
       .execute();
   }
-  
+
   deleteById(accountId: string, id: string) {
     return this.createQueryBuilder('room_type')
       .update({
@@ -140,11 +149,15 @@ export class RoomTypeRepository extends Repository<RoomType> {
     );
   }
 
-  disableById(accountId: string, id: string) {
-    return this.createQueryBuilder('rt')
-      .update({})
-      .where('rt.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-  }
+  // disableById(accountId: string, id: string) {
+  //   return this.createQueryBuilder('room_type')
+  //     .update({
+  //       disabledBy: accountId,
+  //       disabledAt: new Date(),
+  //     })
+  //     .where('room_type.id = :id', { id: id })
+  //     .useTransaction(true)
+
+  //     .execute();
+  // }
 }

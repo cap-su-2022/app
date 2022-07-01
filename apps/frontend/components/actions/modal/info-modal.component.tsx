@@ -8,13 +8,11 @@ import {
 } from '@mantine/core';
 import { PencilOff, X } from 'tabler-icons-react';
 import { InputInfoProps } from '../models/input-info-props.model';
-import moment from 'moment';
 
 interface InfoModalProps {
   header: React.ReactNode;
   isShown: boolean;
   toggleShown(): void;
-  toggleDisableModalShown(): void,
   fields: InputInfoProps[];
 }
 
@@ -54,10 +52,6 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
           ))}
         </div>
         <div className={classes.footer}>
-          <Button leftIcon={<PencilOff />} onClick={() => props.toggleDisableModalShown()} color="red">
-            Disable
-          </Button>
-
           <Button leftIcon={<X />} color="orange" onClick={() => props.toggleShown()}>
             Close
           </Button>
@@ -75,24 +69,16 @@ const useStyles = createStyles({
     justifyContent: 'space-between',
   },
   inner: {
-    display: 'grid',
-    gridTemplateColumns: 'auto auto',
+    display: 'flex',
+    flexDirection: 'column',
   },
   inputWrapper: {
     margin: 10,
-    '&:first-of-type': {
-      gridColumnStart: 1,
-      gridColumnEnd: 3,
-    },
-    '&:last-of-type': {
-      gridColumnStart: 1,
-      gridColumnEnd: 3,
-    },
   },
   footer: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     marginTop: 20,
   },
 });

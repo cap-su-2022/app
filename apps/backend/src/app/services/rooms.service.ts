@@ -90,6 +90,17 @@ export class RoomsService {
     }
   }
 
+  async getRoomsByRoomType(roomTypeId: string): Promise<Rooms[]> {
+    try {
+      return await this.repository.getRoomsByRoomType(roomTypeId);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        'An error occurred while getting rooms by type ' + roomTypeId
+      );
+    }
+  }
+
   getAllWithoutPagination(): Promise<Rooms[]> {
     try {
       return this.repository
