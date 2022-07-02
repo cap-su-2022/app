@@ -18,6 +18,7 @@ import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-i
 import dayjs from 'dayjs';
 import { useDebouncedValue } from '@mantine/hooks';
 import { RoomParams } from '../../models/pagination-params/room-params.model';
+import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
 
 interface RestoreDisabledRoomModalProps {
   isShown: boolean;
@@ -35,7 +36,6 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
   const [search, setSearch] = useState<string>('');
 
   const [searchDebounced] = useDebouncedValue<string>(search, 400);
-  console.log(disabledRooms)
 
   useEffect(() => {
     dispatch(fetchDisabledRooms(search));
@@ -64,6 +64,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
           .then((disabledRooms) =>
             disabledRooms.length < 1 ? props.toggleShown() : null
           )
+          .then(() => {dispatch(fetchDeletedRooms(''))})
       );
   };
 

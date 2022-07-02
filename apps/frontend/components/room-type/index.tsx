@@ -40,6 +40,7 @@ import RestoreDeletedModal from './restore-deleted.modal.component';
 import { RoomType } from '../../models/room-type.model';
 import { PaginationResponse } from '../../models/pagination-response.payload';
 import { showNotification } from '@mantine/notifications';
+import dayjs from 'dayjs';
 
 const AddRoomTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -193,24 +194,52 @@ const ManageRoomType: React.FC<any> = () => {
 
   const infoFields = [
     {
-      label: 'Id',
+      label: 'Room Type Id',
       id: 'id',
       name: 'id',
       value: roomType.id,
       readOnly: true,
     },
     {
-      label: 'Name',
+      label: 'Room Type Name',
       id: 'name',
       name: 'name',
       value: roomType.name,
       readOnly: true,
     },
     {
-      label: 'Description',
+      label: 'Room Type Description',
       id: 'description',
       name: 'description',
       value: roomType.description,
+      readOnly: true,
+    },
+    {
+      label: 'Create at',
+      id: 'createAt',
+      name: 'createAt',
+      value: dayjs(roomType.createdAt).format('HH:mm DD/MM/YYYY'),
+      readOnly: true,
+    },
+    {
+      label: 'Create By',
+      id: 'createBy',
+      name: 'createBy',
+      value: roomType.createdBy,
+      readOnly: true,
+    },
+    {
+      label: 'Update At',
+      id: 'updateAt',
+      name: 'updateAt',
+      value:dayjs(roomType.updatedAt).format('HH:mm DD/MM/YYYY'),
+      readOnly: true,
+    },
+    {
+      label: 'Update By',
+      id: 'updateBy',
+      name: 'updateBy',
+      value: roomType.updatedBy,
       readOnly: true,
     },
   ];

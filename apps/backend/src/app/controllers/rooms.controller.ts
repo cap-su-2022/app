@@ -273,7 +273,7 @@ export class RoomsController {
     @Param() payload: { id: string },
     @Body() body: UpdateRoomRequest
   ) {
-    return this.service.updateById(payload.id, body);
+    return this.service.updateById(user.account_id, payload.id, body);
   }
 
   @Put('disable/:id')

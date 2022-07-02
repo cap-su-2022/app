@@ -1,13 +1,13 @@
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Roles } from '../models/role.entity';
+import { Roless } from '../models/role.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { Accounts } from '../models';
 import { IPaginationMeta, paginateRaw } from 'nestjs-typeorm-paginate';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { PaginationParams } from '../controllers/pagination.model';
 
-@CustomRepository(Roles)
-export class RolesRepository extends Repository<Roles> {
+@CustomRepository(Roless)
+export class RolesRepository extends Repository<Roless> {
   async existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('r')
       .select('COUNT(1)', 'count')
@@ -18,21 +18,23 @@ export class RolesRepository extends Repository<Roles> {
 
   async findByPagination(
     pagination: PaginationParams
-  ): Promise<Pagination<Roles>> {
+  ): Promise<Pagination<Roless>> {
     const query = this.createQueryBuilder('r')
       .select('r.id', 'id')
       .addSelect('r.name', 'name')
       .addSelect('r.description', 'description')
       .where('r.deleted_at IS NULL')
-      .andWhere('r.name LIKE :search', { search: `%${pagination.search}%` })
+      .andWhere('r.name ILIKE :search', {
+        search: `%${pagination.search.trim()}%`,
+      })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
-    return paginateRaw<Roles, IPaginationMeta>(query, {
+    return paginateRaw<Roless, IPaginationMeta>(query, {
       limit: pagination.limit,
       page: pagination.page,
     });
   }
 
-  findById(id: string): Promise<Roles> {
+  findById(id: string): Promise<Roless> {
     return this.createQueryBuilder('r')
       .select('r.id', 'id')
       .addSelect('r.name', 'name')
@@ -45,28 +47,45 @@ export class RolesRepository extends Repository<Roles> {
       .innerJoin(Accounts, 'aa', 'aa.id = r.updated_by')
       .where('r.id = :id', { id: id })
       .andWhere('r.deleted_at IS NULL')
-      .getRawOne<Roles>();
+      .getRawOne<Roless>();
   }
 
-  updateById(accountId: string, payload: any): Promise<UpdateResult> {
-    return this.createQueryBuilder('r')
-      .update({
-        name: payload.name,
+  updateById(id: string, accountId: string, payload: any) {
+    return this.save(
+      {
+        id: id,
+        name: payload.name.trim(),
         description: payload.description,
-        updatedAt: new Date(),
         updatedBy: accountId,
-      })
-      .useTransaction(true)
-      .execute();
+        updatedAt: new Date(),
+      },
+      {
+        transaction: true,
+      }
+    );
   }
 
   deleteById(accountId: string, id: string): Promise<UpdateResult> {
-    return this.createQueryBuilder('r')
+    return this.createQueryBuilder('role')
       .update({
         deletedAt: new Date(),
         deletedBy: accountId,
       })
+      .where('role.id = :id', { id: id })
       .useTransaction(true)
       .execute();
+  }
+
+  getDeletedRoles(search: string): Promise<Roless[]> {
+    return this.createQueryBuilder('role')
+      .select('role.id', 'id')
+      .addSelect('role.name', 'name')
+      .addSelect('role.deleted_at', 'deletedAt')
+      .addSelect('a.username', 'deletedBy')
+      .innerJoin(Accounts, 'a', 'a.id = role.deleted_by')
+      .where('role.name LIKE :search', { search: `%${search.trim()}%` })
+      .andWhere('role.deleted_at IS NOT NULL')
+      .orderBy('role.deleted_at', 'DESC')
+      .getRawMany<Roless>();
   }
 }

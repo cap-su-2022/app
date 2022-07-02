@@ -18,43 +18,43 @@ import {
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
-  fetchDeletedDeviceTypes,
-  fetchDeviceTypes,
-} from '../../redux/features/device-type/';
-import { deleteDeviceTypeById } from '../../redux/features/device-type/';
+  fetchDeletedRoles,
+  deleteRoleById,
+  fetchRoles,
+} from '../../redux/features/role';
 import { PaginationParams } from '../../models/pagination-params.model';
 import Th from '../../components/table/th.table.component';
 // import { fetchRoomsByRoomType } from '../../redux/features/room/thunk/fetch-rooms-by-room-type';
-import { showNotification } from '@mantine/notifications';
 // import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
+import { showNotification } from '@mantine/notifications';
 
 interface DeleteModalProps {
   isShown: boolean;
   toggleShown(): void;
   pagination: PaginationParams;
-  // roomTypes: any[];
+  // Roles: any[];
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const { classes } = useStyles();
-  const selectedRoomTypeId = useAppSelector(
-    (state) => state.deviceType.deviceType.id
+  const selectedRoleId = useAppSelector(
+    (state) => state.role.role.id
   );
-  const [roomType, setRoomType] = useState<string>('');
+  const [role, setRole] = useState<string>('');
   const [isShownListRoom, setShownListRoom] = useState(false);
 
-  const [listRoom, setListRoom] = useState([]);
+  const [listAccount, setListAccount] = useState([]);
 
   const dispatch = useAppDispatch();
 
   const handleDeleteRoom = () => {
-    dispatch(deleteDeviceTypeById(selectedRoomTypeId))
+    dispatch(deleteRoleById(selectedRoleId))
       .catch((e) =>
         showNotification({
           id: 'delete-data',
           color: 'red',
-          title: 'Error while delete room type',
-          message: e.message ?? 'Failed to delete room type',
+          title: 'Error while delete role',
+          message: e.message ?? 'Failed to delete role',
           icon: <X />,
           autoClose: 3000,
         })
@@ -63,16 +63,16 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
         showNotification({
           id: 'delete-data',
           color: 'teal',
-          title: 'Room type was updated',
-          message: 'Room type was successfully updated',
+          title: 'Role was deleted',
+          message: 'Role was successfully deleted',
           icon: <Check />,
           autoClose: 3000,
         })
       )
       .then(() => {
         props.toggleShown();
-        dispatch(fetchDeviceTypes(props.pagination));
-        dispatch(fetchDeletedDeviceTypes());
+        dispatch(fetchRoles(props.pagination));
+        dispatch(fetchDeletedRoles());
       });
   };
 
@@ -90,6 +90,12 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
     }
   }, [props.isShown]);
 
+  // useEffect(() => {
+  //   if (!isShownListRoom) {
+  //     setRoomType('');
+  //   }
+  // }, [isShownListRoom]);
+  
   // const handleUpdateType = (room, roomTypeId: string) => {
   //   dispatch(
   //     updateRoomById({
@@ -228,17 +234,18 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       title={<ModalHeaderTitle />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}
-      size={isShownListRoom && listRoom.length > 0 ? '70%' : null}
+      size={isShownListRoom && listAccount.length > 0 ? '70%' : null}
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          Deleting this device type will{' '}
-          <b>also delete devices of this device type</b>. And make that devices
-          unusable even if it has been booked before. Users who booked this
-          device will receive a notification about this!
+          Deleting this room type will{' '}
+          <b>also delete rooms of this room type</b>. And make that rooms
+          unusable even if it has been booked before. Users who booked this room
+          will receive a notification about this and that associated booking
+          will also be cancelled!
         </Text>
         <div className={classes.modalFooter}>
-          {listRoom.length > 0 ? (
+          {listAccount.length > 0 ? (
             <Button
               leftIcon={<ScanEye />}
               style={{ backgroundColor: 'blue', width: '60%', margin: 10 }}
@@ -272,7 +279,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           </Button>
         </div>
       </div>
-      {/* {isShownListRoom && listRoom.length > 0 ? <ListRoomByRoomType /> : null} */}
+      {/* {isShownListRoom && listAccount.length > 0 ? <ListRoomByRoomType /> : null} */}
     </Modal>
   );
 };
@@ -287,7 +294,6 @@ const useStyles = createStyles({
   },
   modalBody: {
     margin: 10,
-    textAlign: 'justify'
   },
   modalFooter: {
     display: 'flex',

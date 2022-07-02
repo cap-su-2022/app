@@ -37,6 +37,7 @@ import { InputUpdateProps } from '../components/actions/models/input-update-prop
 import RestoreDeletedModal from '../components/device-type/restore-deleted.modal.component';
 import DeleteModal from '../components/device-type/delete-modal.component';
 import { showNotification } from '@mantine/notifications';
+import dayjs from 'dayjs';
 
 const AddDeviceTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -200,6 +201,34 @@ const ManageDeviceType: React.FC<any> = () => {
       id: 'description',
       name: 'description',
       value: deviceType.description,
+      readOnly: true,
+    },
+    {
+      label: 'Create at',
+      id: 'createAt',
+      name: 'createAt',
+      value: dayjs(deviceType.createdAt).format('HH:mm DD/MM/YYYY'),
+      readOnly: true,
+    },
+    {
+      label: 'Create By',
+      id: 'createBy',
+      name: 'createBy',
+      value: deviceType.createdBy,
+      readOnly: true,
+    },
+    {
+      label: 'Update At',
+      id: 'updateAt',
+      name: 'updateAt',
+      value:dayjs(deviceType.updatedAt).format('HH:mm DD/MM/YYYY'),
+      readOnly: true,
+    },
+    {
+      label: 'Update By',
+      id: 'updateBy',
+      name: 'updateBy',
+      value: deviceType.updatedBy,
       readOnly: true,
     },
   ];

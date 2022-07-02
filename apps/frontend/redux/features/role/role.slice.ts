@@ -3,16 +3,20 @@ import { PaginationResponse } from '../../../models/pagination-response.payload'
 import { fetchRoles } from './thunk/fetch-roles.thunk';
 import { fetchRoleById } from './thunk/fetch-role-by-id.thunk';
 import { Role } from '../../../models/role.model';
+import { fetchDeletedRoles } from './thunk/fetch-deleted-role.thunk';
 
 interface InitialState {
   roles: PaginationResponse<Role>;
   role: Role;
+  deletedRoles: Role[];
 
 }
 
 const initialState: InitialState = {
   roles: {} as PaginationResponse<Role>,
   role: {} as Role,
+  deletedRoles: [],
+
 };
 
 export const roleSlice = createSlice({
@@ -25,6 +29,9 @@ export const roleSlice = createSlice({
     });
     builder.addCase(fetchRoleById.fulfilled, (state, { payload }) => {
       state.role = payload;
+    });
+    builder.addCase(fetchDeletedRoles.fulfilled, (state, { payload }) => {
+      state.deletedRoles = payload;
     });
   },
 });

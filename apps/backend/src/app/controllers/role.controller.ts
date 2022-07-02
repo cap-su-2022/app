@@ -29,6 +29,7 @@ import {
 import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
+import { Roless } from '../models/role.entity';
 
 @Controller('/v1/roles')
 @ApiBearerAuth()
@@ -124,9 +125,9 @@ export class RoleController {
   updateRoleById(
     @Body() body,
     @User() user: KeycloakUserInstance,
-    @Param('id') payload: { id: string }
+    @Param('id') id: string,
   ) {
-    return this.service.updateRoleById(user.account_id, payload.id, body);
+    return this.service.updateRoleById(user.account_id, body, id);
   }
 
   @ApiResponse({
@@ -183,5 +184,31 @@ export class RoleController {
     @Param('id') id: string
   ) {
     return this.service.deleteRoleById(keycloakUser.account_id, id);
+  }
+
+  @Get('deleted')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Retrieving a list of deleted role',
+    description: 'Retrieving a list of deleted role',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully retrieving a list of deleted role',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while retrieving a list of deleted role',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getDeletedRoles(@Query('search') search: string) {
+    return this.service.getDeletedRoles(search);
   }
 }

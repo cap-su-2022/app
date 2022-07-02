@@ -1,6 +1,9 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { PaginationParams } from '../controllers/pagination.model';
 import { RolesRepository } from '../repositories/roles.repository';
+import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
+import { Roless } from '../models/role.entity';
+
 
 @Injectable()
 export class RoleService {
@@ -39,10 +42,19 @@ export class RoleService {
     }
   }
 
+  async getDeletedRoles(search: string): Promise<Roless[]> {
+    try {
+      return await this.repository.getDeletedRoles(search);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException('Error while disabling this device');
+    }
+  }
+
   addRole(body: any, accountId: string) {
     return this.repository.save(
       {
-        name: body.name,
+        name: body.name.trim(),
         description: body.description,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -55,8 +67,23 @@ export class RoleService {
     );
   }
 
-  updateRoleById(account_id: string, id: string, body: any) {
-    throw new Error('Method not implemented.');
+  async updateRoleById(
+    accountId: string,
+    updatePayload: RoomTypeUpdateRequestPayload,
+    id: string
+  ) {
+    try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Role does not found with the provided id'
+        );
+      }
+      return await this.repository.updateById(id, accountId, updatePayload);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 
   getRolesByPagination(payload: PaginationParams) {

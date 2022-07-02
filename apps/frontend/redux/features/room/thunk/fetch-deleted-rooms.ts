@@ -7,13 +7,13 @@ interface RejectValue {
   message: string;
 }
 
-export const fetchDeletedRooms = createAsyncThunk<Room[], void, {
+export const fetchDeletedRooms = createAsyncThunk<Room[], string, {
   rejectValue: RejectValue
-}>('room/fetch-deleted', async (any, thunkAPI) => {
+}>('room/fetch-deleted', async (payload = "", thunkAPI)=> {
   thunkAPI.dispatch(toggleSpinnerOn());
 
   try {
-    const response = await axios.get(`/api/rooms/deleted`);
+    const response = await axios.get(`/api/rooms/deleted?search=${payload}`);
     return await response.data;
   } catch ({response}) {
     if (response.status === 401 || response.status === 403) {

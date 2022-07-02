@@ -52,7 +52,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .innerJoin(RoomType, 'rt', 'rooms.type = rt.id')
       .where(`rooms.deleted_at IS NULL`)
       .andWhere(`rooms.disabled_at IS NOT NULL`)
-      .andWhere('rooms.name LIKE :search', { search: `%${search}%` })
+      .andWhere('rooms.name ILIKE :search', { search: `%${search.trim()}%` })
       .getRawMany<Rooms>();
   }
 
@@ -67,13 +67,11 @@ export class RoomsRepository extends Repository<Rooms> {
       .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
       .where(`rooms.deleted_at IS NOT NULL`)
       .andWhere(`rooms.disabled_at IS NULL`)
-      .andWhere('rooms.name LIKE :name', { name: `%${search}%` })
+      .andWhere('rooms.name ILIKE :name', { name: `%${search.trim()}%` })
       .getRawMany<Rooms>();
   }
 
   getRoomsByRoomType(roomTypeId: string) {
-    console.log("AAAAAAAAAAAAAA: ", roomTypeId)
-
     return this.createQueryBuilder(`rooms`)
       .select('rooms.id', 'id')
       .addSelect('rooms.name', 'name')
@@ -101,7 +99,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('aa.username', 'updatedBy')
       .innerJoin(RoomType, 'rt', 'rt.id = r.type')
       .where('LOWER(r.name) LIKE LOWER(:search)', {
-        search: `%${payload.search}%`,
+        search: `%${payload.search.trim()}%`,
       })
       .andWhere(`r.deleted_at IS NULL`)
       .andWhere(`r.disabled_at IS NULL`)

@@ -20,7 +20,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .addSelect('rt.name', 'name')
       .where('rt.deleted_at IS NULL')
       .andWhere('LOWER(rt.name) ILIKE :search', {
-        search: `%${pagination.search}%`,
+        search: `%${pagination.search.trim()}%`,
       })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
 
@@ -116,7 +116,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
     return this.createQueryBuilder('rt')
       .select('rt.id', 'id')
       .addSelect('rt.name', 'name')
-      .where('rt.name LIKE :search', { search: search })
+      .where('rt.name LIKE :search', { search: search.trim() })
       .andWhere('rt.disabled_at IS NOT NULL')
       .getRawMany<RoomType>();
   }
@@ -128,7 +128,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .addSelect('rt.deleted_at', 'deletedAt')
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'a.id = rt.deleted_by')
-      .where('rt.name LIKE :search', { search: `%${search}%` })
+      .where('rt.name LIKE :search', { search: `%${search.trim()}%` })
       .andWhere('rt.deleted_at IS NOT NULL')
       .orderBy('rt.deleted_at', 'DESC')
       .getRawMany<RoomType>();
@@ -142,7 +142,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
     return this.save(
       {
         id: roomTypeId,
-        name: payload.name,
+        name: payload.name.trim(),
         description: payload.description,
         updatedBy: accountId,
         updatedAt: new Date(),

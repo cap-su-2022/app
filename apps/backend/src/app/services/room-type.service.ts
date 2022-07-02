@@ -132,7 +132,7 @@ export class RoomTypeService {
     try {
       return await this.repository.save({
         createdBy: accountId,
-        name: addRoomType.name,
+        name: addRoomType.name.trim(),
         description: addRoomType.description,
         createdAt: new Date(),
         updatedBy: accountId,
