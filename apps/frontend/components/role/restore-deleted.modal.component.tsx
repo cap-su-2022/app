@@ -6,52 +6,42 @@ import {
   Modal,
   Text,
   Button,
-  InputWrapper,
-  TextInput,
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { RotateClockwise, Search } from 'tabler-icons-react';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import { restoreDeletedRoom } from '../../redux/features/room/thunk/restore-deleted.thunk';
-import { RoomParams } from '../../models/pagination-params/room-params.model';
+import { RotateClockwise } from 'tabler-icons-react';
+import { fetchRoles, fetchDeletedRoles, restoreDeletedRoleById } from '../../redux/features/role';
+import { PaginationParams } from '../../models/pagination-params.model';
 import dayjs from 'dayjs';
-import { useDebouncedValue } from '@mantine/hooks';
 
-interface RestoreDeletedRoomModalProps {
+interface RestoreDeletedModalProps {
   isShown: boolean;
   toggleShown(): void;
-  pagination: RoomParams;
+  pagination: PaginationParams;
 }
 
-const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
+const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   props
 ) => {
   const { classes, cx } = useStyles();
-  const deletedRooms = useAppSelector((state) => state.room.deletedRooms);
+  const deletedRoles = useAppSelector((state) => state.role.deletedRoles);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
-  const [search, setSearch] = useState<string>('');
-  const [searchDebounced] = useDebouncedValue<string>(search, 400);
-
-
 
   useEffect(() => {
-    dispatch(fetchDeletedRooms(search));
-  }, [searchDebounced]);
+    dispatch(fetchDeletedRoles());
+  }, []);
 
-  const handleRestoreDeletedRoom = (id: string) => {
-    dispatch(restoreDeletedRoom(id))
+  const handleRestoreDeletedRole = (id: string) => {
+    dispatch(restoreDeletedRoleById(id))
       .unwrap()
-      .then(() => dispatch(fetchDeletedRooms('')))
-      .then(() => dispatch(fetchRooms(props.pagination)));
+      .then(() => dispatch(fetchDeletedRoles()))
+      .then(() => dispatch(fetchRoles(props.pagination)));
   };
-  const rows = deletedRooms?.map((row, index) => (
+  const rows = deletedRoles?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
       <td>{row.name}</td>
-      <td>{row.roomTypeName}</td>
-      <td>{dayjs(row.updatedAt).format('HH:mm DD/MM/YYYY')}</td>
+      <td>{  dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.deletedBy}</td>
       <td
         style={{
@@ -60,7 +50,7 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
         }}
       >
         <Button
-          onClick={() => handleRestoreDeletedRoom(row.id)}
+          onClick={() => handleRestoreDeletedRole(row.id)}
           style={{
             margin: 5,
           }}
@@ -82,7 +72,7 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
           fontSize: 22,
         }}
       >
-        Restore Deleted Rooms
+        Restore Deleted Room Type
       </Text>
     );
   };
@@ -97,12 +87,6 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
       closeOnClickOutside={true}
       closeOnEscape={false}
     >
-      <InputWrapper label="Search">
-        <TextInput
-          onChange={(e) => setSearch(e.target.value)}
-          icon={<Search />}
-        />
-      </InputWrapper>
       <ScrollArea
         sx={{ height: 500 }}
         onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
@@ -114,9 +98,8 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
             <tr>
               <th>STT</th>
               <th>Name</th>
-              <th>Type</th>
-              <th>Delete At</th>
-              <th>Delete By</th>
+              <th>Deleted At</th>
+              <th>Deleted By</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -154,4 +137,4 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default RestoreDeletedRoomModal;
+export default RestoreDeletedModal;

@@ -1,19 +1,20 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
 import axios from "axios";
-import {Room} from "../../../../models/room.model";
+import {RoomBooking} from "../../../../models/room-booking.model";
 
 interface RejectValue {
   message: string;
 }
 
-export const fetchRoomsByRoomType = createAsyncThunk<Room[], string, {
+export const fetchRequestByRoomId = createAsyncThunk<RoomBooking[], string, {
   rejectValue: RejectValue
-}>('room/by-room-type', async (roomTypeId, thunkAPI) => {
+}>('room-booking/by-room', async (roomId, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
 
   try {
-    const response = await axios.get(`/api/rooms/by-room-type?type=${roomTypeId}`);
+    console.log("ROOM TYPE ID: ", roomId)
+    const response = await axios.get(`/api/booking-room/by-room-id?room-id=${roomId}`);
     return await response.data;
   } catch ({response}) {
     if (response.status === 401 || response.status === 403) {

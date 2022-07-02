@@ -12,7 +12,7 @@ import { DevicesService } from './devices.service';
 import { AccountsService } from './accounts.service';
 import { ChooseBookingRoomFilterPayload } from '../payload/request/choose-booking-room-filter.payload';
 import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
-import { Devices } from '../models';
+import { BookingRequest, Devices } from '../models';
 
 @Injectable()
 export class BookingRoomService {
@@ -55,6 +55,17 @@ export class BookingRoomService {
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException('Error while getting booking rooms');
+    }
+  }
+
+  async getRequestBookingByRoomId(roomId: string): Promise<BookingRequest[]> {
+    try {
+      return await this.repository.getRequestBookingByRoomId(roomId);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        'An error occurred while getting rooms by type ' + roomId
+      );
     }
   }
 

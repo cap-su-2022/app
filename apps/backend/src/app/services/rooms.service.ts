@@ -114,7 +114,7 @@ export class RoomsService {
     }
   }
 
-  async updateById(id: string, body: UpdateRoomRequest): Promise<void> {
+  async updateById(accountId:string, id: string, body: UpdateRoomRequest): Promise<void> {
     let room;
 
     try {
@@ -140,8 +140,9 @@ export class RoomsService {
       await this.repository.save(
         {
           ...room,
-          name: body.name,
+          name: body.name.trim(),
           description: body.description,
+          updatedBy: accountId,
           type: body.type,
         },
         {

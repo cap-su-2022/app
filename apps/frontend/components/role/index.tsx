@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, createStyles } from '@mantine/core';
 import Header from '../common/header.component';
-import { BuildingWarehouse, Plus } from 'tabler-icons-react';
+import { ArchiveOff, BuildingWarehouse, Plus } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fetchRoleById,
@@ -26,9 +26,12 @@ import { InputTypes } from '../actions/models/input-type.constant';
 import UpdateModal from '../actions/modal/update-modal.component';
 import { InputUpdateProps } from '../actions/models/input-update-props.model';
 import AdminLayout from '../layout/admin.layout';
+import RestoreDeletedModal from '../role/restore-deleted.modal.component';
+import DeleteModal from '../role/delete-modal.component';
 
 const AddRoleValidation = Yup.object().shape({
   name: Yup.string()
+    .trim()
     .min(1, 'Minimum role name is 1 character ')
     .max(100, 'Maximum role name is 100 characters.')
     .required('Role name is required'),
@@ -40,6 +43,7 @@ const AddRoleValidation = Yup.object().shape({
 
 const UpdateRoleValidation = Yup.object().shape({
   name: Yup.string()
+    .trim()
     .min(1, 'Minimum role name is 1 character')
     .max(100, 'Maximum role name is 100 characters.')
     .required('Role name is required'),
@@ -56,6 +60,8 @@ const ManageRole: React.FC<any> = () => {
   );
 
   const [debounceSearchValue] = useDebouncedValue(pagination.search, 400);
+  const [isRestoreDeletedShown, setRestoreDeletedShown] =
+    useState<boolean>(false);
 
   const dispatch = useAppDispatch();
 
@@ -116,13 +122,23 @@ const ManageRole: React.FC<any> = () => {
 
   const ActionsFilter: React.FC = () => {
     return (
-      <Button
-        leftIcon={<Plus />}
-        color="green"
-        onClick={() => setAddShown(!isAddShown)}
-      >
-        Add
-      </Button>
+      <div>
+        <Button
+          leftIcon={<Plus />}
+          color="green"
+          onClick={() => setAddShown(!isAddShown)}
+          style={{ marginRight: 10 }}
+        >
+          Add
+        </Button>
+        <Button
+          variant="outline"
+          color="red"
+          onClick={() => setRestoreDeletedShown(true)}
+        >
+          <ArchiveOff />
+        </Button>
+      </div>
     );
   };
 
@@ -141,6 +157,7 @@ const ManageRole: React.FC<any> = () => {
     },
     delete: (id) => {
       setId(id);
+      handleFetchById(id)
       setDeleteShown(!isDeleteShown);
     },
   };
@@ -275,12 +292,17 @@ const ManageRole: React.FC<any> = () => {
   });
   return (
     <AdminLayout>
-      <Header title="Booking Reason" icon={<BuildingWarehouse size={50} />} />
+      <Header title="Role Manager" icon={<BuildingWarehouse size={50} />} />
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter />}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
+      />
+      <RestoreDeletedModal
+        isShown={isRestoreDeletedShown}
+        toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
+        pagination={pagination}
       />
       {roles.items ? (
         <>
@@ -305,6 +327,13 @@ const ManageRole: React.FC<any> = () => {
             header="Update current role"
             isShown={isUpdateShown}
             toggleShown={() => setUpdateShown(!isUpdateShown)}
+          />
+
+          <DeleteModal
+            isShown={isDeleteShown}
+            toggleShown={() => setDeleteShown(!isDeleteShown)}
+            pagination={pagination}
+            // roomTypes={roomTypeNames}
           />
         </>
       ) : null}

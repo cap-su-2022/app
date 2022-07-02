@@ -17,7 +17,7 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .addSelect('dt.name', 'name')
       .where('dt.deleted_at IS NULL')
       .andWhere('LOWER(dt.name) LIKE LOWER(:search)', {
-        search: `%${pagination.search}%`,
+        search: `%${pagination.search.trim()}%`,
       })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
 
@@ -88,14 +88,13 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   }
 
   findDeletedByPagination(search: string): Promise<DeviceType[]> {
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     return this.createQueryBuilder('device_type')
       .select('device_type.id', 'id')
       .addSelect('device_type.name', 'name')
       .addSelect('device_type.deleted_at', 'deletedAt')
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'a.id = device_type.deleted_by')
-      .where('device_type.name LIKE :search', { search: `%${search}%` })
+      .where('device_type.name LIKE :search', { search: `%${search.trim()}%` })
       .andWhere('device_type.deleted_at IS NOT NULL')
       .orderBy('device_type.deleted_at', 'DESC')
       .getRawMany<DeviceType>();
@@ -121,7 +120,7 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   ): Promise<UpdateResult> {
     return this.createQueryBuilder('device_type')
       .update({
-        name: payload.name,
+        name: payload.name.trim(),
         description: payload.description,
         updatedAt: new Date(),
         updatedBy: accountId,
@@ -141,7 +140,7 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   ): Promise<DeviceType> {
     return this.save<DeviceType>(
       {
-        name: payload.name,
+        name: payload.name.trim(),
         description: payload.description,
         createdBy: accountId,
         createdAt: new Date(),

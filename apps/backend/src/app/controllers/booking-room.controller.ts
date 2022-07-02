@@ -29,6 +29,7 @@ import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
+import { BookingRequest } from '../models';
 
 @Controller('/v1/booking-room')
 @ApiTags('Booking Room')
@@ -59,6 +60,28 @@ export class BookingRoomController {
       user.account_id,
       payload.id
     );
+  }
+
+  @Get('by-room-id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched deleted rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getRequestBookingByRoomId(@Query('room-id') roomId= ''): Promise<BookingRequest[]> {
+    return this.service.getRequestBookingByRoomId(roomId);
   }
 
   @Put('current-booking/cancel/:id')

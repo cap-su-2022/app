@@ -46,7 +46,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
     <>
       <Modal
         title={<ModalHeaderTitle />}
-        size={dimension.width * 0.6}
+        size="lg"
         centered
         opened={props.isShown}
         onClose={() => props.toggleShown()}
@@ -107,7 +107,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
                 className={classes.textInput}
                 radius="md"
                 readOnly
-                value={dayjs(room.createdAt).format('DD/MM/YYYY HH:mm:ss')}
+                value={dayjs(room.createdAt).format('HH:mm DD/MM/YYYY')}
               />
             </InputWrapper>
             <InputWrapper label="Created by">
@@ -135,7 +135,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
                 className={classes.textInput}
                 radius="md"
                 readOnly
-                value={dayjs(room.updatedAt).format('DD/MM/YYYY HH:mm:ss')}
+                value={dayjs(room.updatedAt).format('HH:mm DD/MM/YYYY')}
 
               />
             </InputWrapper>

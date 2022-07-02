@@ -6,7 +6,7 @@ import {
   Modal,
   TextInput,
 } from '@mantine/core';
-import { PencilOff, X } from 'tabler-icons-react';
+import { CalendarStats, ClipboardText, FileDescription, Id, PencilOff, User, X } from 'tabler-icons-react';
 import { InputInfoProps } from '../models/input-info-props.model';
 
 interface InfoModalProps {
@@ -45,6 +45,11 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
               <TextInput
                 id={field.id}
                 name={field.name}
+                icon={(field.id === 'id' ? <Id /> :
+                      field.id === 'name'? <ClipboardText /> : 
+                      field.id === 'description'? <FileDescription /> :
+                      (field.id === 'createAt' || field.id === 'updateAt')? <CalendarStats /> :
+                      (field.id === 'createBy' || field.id === 'updateBy')? <User /> : null)}
                 defaultValue={field.value}
                 readOnly={field.readOnly}
               />
@@ -52,7 +57,11 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
           ))}
         </div>
         <div className={classes.footer}>
-          <Button leftIcon={<X />} color="orange" onClick={() => props.toggleShown()}>
+          <Button
+            leftIcon={<X />}
+            color="orange"
+            onClick={() => props.toggleShown()}
+          >
             Close
           </Button>
         </div>
@@ -69,11 +78,24 @@ const useStyles = createStyles({
     justifyContent: 'space-between',
   },
   inner: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: 'grid',
+    gridTemplateColumns: 'auto auto',
+    columnGap: 50,
   },
   inputWrapper: {
     margin: 10,
+    '&:nth-child(1)': {
+      gridColumnStart: 1,
+      gridColumnEnd: 3,
+    },
+    '&:nth-child(2)': {
+      gridColumnStart: 1,
+      gridColumnEnd: 3,
+    },
+    '&:nth-child(3)': {
+      gridColumnStart: 1,
+      gridColumnEnd: 3,
+    },
   },
   footer: {
     display: 'flex',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, createStyles, InputWrapper, Modal } from '@mantine/core';
 import { useAppDispatch } from '../../../redux/hooks';
-import { Pencil } from 'tabler-icons-react';
+import { CalendarStats, ClipboardText, FileDescription, Id, Pencil, User } from 'tabler-icons-react';
 import { FormikProps, FormikProvider } from 'formik';
 import { InputUpdateProps } from '../models/input-update-props.model';
 import InputType from '../common/input-type.component';
@@ -47,6 +47,9 @@ const UpdateModal: React.FC<UpdateModalProps> = (props) => {
                   readOnly={field.readOnly}
                   id={field.id}
                   name={field.name}
+                  icon={(field.id === 'id' ? <Id /> :
+                      field.id === 'name'? <ClipboardText /> : 
+                      field.id === 'description'? <FileDescription /> : null)}
                   onChange={props.formik.handleChange}
                   error={props.formik.errors[field.id]}
                   inputtype={field.inputtype}

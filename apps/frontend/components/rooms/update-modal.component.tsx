@@ -38,11 +38,12 @@ interface UpdateModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
   pagination: RoomParams;
-  roomTypes: any[],
+  roomTypes: any[];
 }
 
 const UpdateRoomValidation = Yup.object().shape({
   name: Yup.string()
+    .trim()
     .min(2, 'Room name must be at least 2 characters')
     .max(100, 'Room name can only maximum at 100 characters')
     .required('Room name is required'),
@@ -64,8 +65,6 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
   useEffect(() => {
     setRoomType(room.roomTypeId);
   }, [room.roomTypeId]);
-
-
 
   const handleUpdateSubmit = async (values) => {
     dispatch(
@@ -204,10 +203,10 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 label="Room Description"
               >
                 <Textarea
-                  id="room-descriptio"
+                  id="room-description"
                   name="description"
                   icon={<FileDescription />}
-                  error={formik.errors.name}
+                  error={formik.errors.description}
                   onChange={formik.handleChange}
                   radius="md"
                   value={formik.values.description}
@@ -253,7 +252,7 @@ const useStyles = createStyles({
   },
   modalFooter: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     margin: 10,
   },
   modalInputDate: {

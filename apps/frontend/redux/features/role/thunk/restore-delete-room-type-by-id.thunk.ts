@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
 
-export const deleteRoleById = createAsyncThunk<
+export const restoreDeletedRoomTypeById = createAsyncThunk<
   void,
   string,
   {
@@ -10,11 +10,12 @@ export const deleteRoleById = createAsyncThunk<
       message: string;
     };
   }
->('role/delete-by-id', async (payload, thunkAPI) => {
+>('room-type/restore-deleted-by-id', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    console.log("ID DELETE", payload);
-    const response = await axios.delete(`api/roles/${payload}`);
+    const response = await axios.put(
+      `api/room-type/restore-deleted/${payload}`
+    );
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

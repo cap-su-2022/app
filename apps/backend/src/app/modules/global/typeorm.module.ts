@@ -12,7 +12,7 @@ import {
   UsersWarningFlag,
   UsersWarningFlagHistory,
 } from '../../models';
-import { Roles } from '../../models/role.entity';
+import { Roless } from '../../models/role.entity';
 import { RoomType } from '../../models/room-type.entity';
 import { DeviceType } from '../../models/device-type.entity';
 import { BookingReason } from '../../models/booking-reason.entity';
@@ -38,7 +38,7 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       UsersOTP,
       UsersWarningFlag,
       UsersWarningFlagHistory,
-      Roles,
+      Roless,
       RoomType,
       DeviceType,
       BookingReason,
