@@ -47,6 +47,32 @@ export class DeviceTypeController {
     return this.service.getDeviceTypeById(id);
   }
 
+  @Get('name')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got disabled device types',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get disabled device types',
+    description: 'Get disabled device types',
+  })
+  getDeviceTypeNames() {
+    return this.service.getDeviceTypeNames();
+  }
+
   @Post()
   addNewDeviceType(
     @User() user: KeycloakUserInstance,

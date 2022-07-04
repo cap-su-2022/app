@@ -24,24 +24,23 @@ import {
 } from '../../redux/features/role';
 import { PaginationParams } from '../../models/pagination-params.model';
 import Th from '../../components/table/th.table.component';
-// import { fetchRoomsByRoomType } from '../../redux/features/room/thunk/fetch-rooms-by-room-type';
+import { fetchAccountByRole } from '../../redux/features/account/thunk/fetch-accounts-by-role'
 // import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
 import { showNotification } from '@mantine/notifications';
+import { updateAccountById } from '../../redux/features/account/thunk/update-by-id';
 
 interface DeleteModalProps {
   isShown: boolean;
   toggleShown(): void;
   pagination: PaginationParams;
-  // Roles: any[];
+  roles: any[];
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const { classes } = useStyles();
-  const selectedRoleId = useAppSelector(
-    (state) => state.role.role.id
-  );
+  const selectedRoleId = useAppSelector((state) => state.role.role.id);
   const [role, setRole] = useState<string>('');
-  const [isShownListRoom, setShownListRoom] = useState(false);
+  const [isShownListAccount, setShownListAccount] = useState(false);
 
   const [listAccount, setListAccount] = useState([]);
 
@@ -76,151 +75,151 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       });
   };
 
-  // useEffect(() => {
-  //   if (selectedRoomTypeId) {
-  //     dispatch(fetchRoomsByRoomType(selectedRoomTypeId))
-  //       .unwrap()
-  //       .then((response) => setListRoom(response));
-  //   }
-  // }, [dispatch, selectedRoomTypeId]);
+  useEffect(() => {
+    if (selectedRoleId) {
+      dispatch(fetchAccountByRole(selectedRoleId))
+        .unwrap()
+        .then((response) => setListAccount(response));
+    }
+  }, [dispatch, selectedRoleId]);
 
   useEffect(() => {
     if (!props.isShown) {
-      setShownListRoom(false);
+      setShownListAccount(false);
     }
   }, [props.isShown]);
 
-  // useEffect(() => {
-  //   if (!isShownListRoom) {
-  //     setRoomType('');
-  //   }
-  // }, [isShownListRoom]);
-  
-  // const handleUpdateType = (room, roomTypeId: string) => {
-  //   dispatch(
-  //     updateRoomById({
-  //       id: room.id,
-  //       payload: {
-  //         ...room,
-  //         type: roomTypeId,
-  //       },
-  //     })
-  //   )
-  //     .unwrap()
-  //     .catch((e) =>
-  //       showNotification({
-  //         id: 'load-data',
-  //         color: 'red',
-  //         title: 'Error while updating library room',
-  //         message: e.message ?? 'Failed to update library room',
-  //         icon: <X />,
-  //         autoClose: 3000,
-  //       })
-  //     )
-  //     .then(() =>
-  //       showNotification({
-  //         id: 'load-data',
-  //         color: 'teal',
-  //         title: 'Library room was updated',
-  //         message: 'Library room was successfully updated',
-  //         icon: <Check />,
-  //         autoClose: 3000,
-  //       })
-  //     )
-  //     // .then(() => props.toggleShown())
-  //     .then(() =>
-  //       dispatch(fetchRoomsByRoomType(selectedRoomTypeId))
-  //         .unwrap()
-  //         .then((response) => setListRoom(response))
-  //     );
-  // };
+  useEffect(() => {
+    if (!isShownListAccount) {
+      setRole('');
+    }
+  }, [isShownListAccount]);
 
-  // const ListRoomByRoomType = () => {
-  //   const rows =
-  //     listRoom && listRoom.length > 0
-  //       ? listRoom.map((row, index) => (
-  //           <tr key={row.id}>
-  //             <td>{index + 1}</td>
-  //             <td>{row.name}</td>
-  //             <td>
-  //               <Select
-  //                 name="type"
-  //                 id="room-type"
-  //                 onChange={(e) => setRoomType(e)}
-  //                 searchable
-  //                 value={roomType || row.type}
-  //                 data={props.roomTypes}
-  //                 required
-  //               />
-  //             </td>
-  //             <td className={classes.actionButtonContainer}>
-  //               <Button
-  //                 variant="outline"
-  //                 color="green"
-  //                 disabled={
-  //                   roomType === row.type || roomType === '' ? true : false
-  //                 }
-  //                 onClick={() => handleUpdateType(row, roomType)}
-  //               >
-  //                 Save
-  //               </Button>
-  //             </td>
-  //           </tr>
-  //         ))
-  //       : null;
-  //   return listRoom && listRoom.length > 0 ? (
-  //     <Table
-  //       horizontalSpacing="md"
-  //       verticalSpacing="xs"
-  //       sx={{ tableLayout: 'fixed' }}
-  //     >
-  //       <thead>
-  //         <tr>
-  //           <Th
-  //             style={{
-  //               width: '60px',
-  //             }}
-  //             sorted={null}
-  //             reversed={null}
-  //             onSort={null}
-  //           >
-  //             STT
-  //           </Th>
+  const handleUpdateAccount = (account, roleId: string) => {
+    dispatch(
+      updateAccountById({
+        id: account.id,
+        payload: {
+          ...account,
+          roleId: roleId,
+        },
+      })
+    )
+      .unwrap()
+      .catch((e) =>
+        showNotification({
+          id: 'load-data',
+          color: 'red',
+          title: 'Error while updating library room',
+          message: e.message ?? 'Failed to update library room',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'load-data',
+          color: 'teal',
+          title: 'Library room was updated',
+          message: 'Library room was successfully updated',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      // .then(() => props.toggleShown())
+      .then(() =>
+        dispatch(fetchAccountByRole(selectedRoleId))
+          .unwrap()
+          .then((response) => setListAccount(response))
+      );
+  };
 
-  //           <Th sorted={null} reversed={null} onSort={null}>
-  //             Name
-  //           </Th>
+  const ListAccountByRoleId = () => {
+    const rows =
+      listAccount && listAccount.length > 0
+        ? listAccount.map((row, index) => (
+            <tr key={row.id}>
+              <td>{index + 1}</td>
+              <td>{row.fullname}</td>
+              <td>
+                <Select
+                  name="role"
+                  id="role"
+                  onChange={(e) => setRole(e)}
+                  searchable
+                  value={role || row.roleId}
+                  data={props.roles}
+                  required
+                />
+              </td>
+              <td className={classes.actionButtonContainer}>
+                <Button
+                  variant="outline"
+                  color="green"
+                  disabled={
+                    role === row.roleId || role === '' ? true : false
+                  }
+                  onClick={() => handleUpdateAccount(row, role)}
+                >
+                  Save
+                </Button>
+              </td>
+            </tr>
+          ))
+        : null;
+    return listAccount && listAccount.length > 0 ? (
+      <Table
+        horizontalSpacing="md"
+        verticalSpacing="xs"
+        sx={{ tableLayout: 'fixed' }}
+      >
+        <thead>
+          <tr>
+            <Th
+              style={{
+                width: '60px',
+              }}
+              sorted={null}
+              reversed={null}
+              onSort={null}
+            >
+              STT
+            </Th>
 
-  //           <Th sorted={null} reversed={null} onSort={null}>
-  //             Type
-  //           </Th>
+            <Th sorted={null} reversed={null} onSort={null}>
+              Full name
+            </Th>
 
-  //           <Th
-  //             style={{
-  //               width: '100px',
-  //             }}
-  //             sorted={null}
-  //             reversed={null}
-  //             onSort={null}
-  //           >
-  //             Actions
-  //           </Th>
-  //         </tr>
-  //       </thead>
-  //       <tbody>{rows}</tbody>
-  //     </Table>
-  //   ) : (
-  //     <div
-  //       style={{
-  //         display: 'flex',
-  //         justifyContent: 'center',
-  //         padding: '20px 0px',
-  //       }}
-  //     >
-  //       <h1>Dont have any room with this type</h1>
-  //     </div>
-  //   );
-  // };
+            <Th sorted={null} reversed={null} onSort={null}>
+              Type
+            </Th>
+
+            <Th
+              style={{
+                width: '100px',
+              }}
+              sorted={null}
+              reversed={null}
+              onSort={null}
+            >
+              Actions
+            </Th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </Table>
+    ) : (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '20px 0px',
+        }}
+      >
+        <h1>Dont have any room with this type</h1>
+      </div>
+    );
+  };
 
   const ModalHeaderTitle: React.FC = () => {
     return <Text className={classes.modalTitle}>Are you sure?</Text>;
@@ -234,22 +233,19 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       title={<ModalHeaderTitle />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}
-      size={isShownListRoom && listAccount.length > 0 ? '70%' : null}
+      size={isShownListAccount && listAccount.length > 0 ? '70%' : null}
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          Deleting this room type will{' '}
-          <b>also delete rooms of this room type</b>. And make that rooms
-          unusable even if it has been booked before. Users who booked this room
-          will receive a notification about this and that associated booking
-          will also be cancelled!
+          Deleting this role will also delete all members belonging to this
+          role. Are you sure you want to delete it?
         </Text>
         <div className={classes.modalFooter}>
           {listAccount.length > 0 ? (
             <Button
               leftIcon={<ScanEye />}
               style={{ backgroundColor: 'blue', width: '60%', margin: 10 }}
-              onClick={() => setShownListRoom(!isShownListRoom)}
+              onClick={() => setShownListAccount(!isShownListAccount)}
             >
               List room with this type
             </Button>
@@ -279,7 +275,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           </Button>
         </div>
       </div>
-      {/* {isShownListRoom && listAccount.length > 0 ? <ListRoomByRoomType /> : null} */}
+      {isShownListAccount && listAccount.length > 0 ? <ListAccountByRoleId /> : null}
     </Modal>
   );
 };

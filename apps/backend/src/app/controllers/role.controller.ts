@@ -210,4 +210,30 @@ export class RoleController {
   getDeletedRoles(@Query('search') search: string) {
     return this.service.getDeletedRoles(search);
   }
+
+  @Put('restore-deleted/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Restore the deleted role by id',
+    description: 'Restore the deleted role by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully restored the deleted role',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while restoring the deleted the role',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  restoreDeletedRoomById(@Param() payload: { id: string }) {
+    return this.service.handleRestoreDeletedRoleById(payload.id);
+  }
 }

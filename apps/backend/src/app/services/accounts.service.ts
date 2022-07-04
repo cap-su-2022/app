@@ -63,6 +63,17 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     return Promise.resolve([]);
   }
 
+  async getAccountsByRoleId(roleId: string): Promise<Accounts[]> {
+    try {
+      return await this.repository.getAccountsByRoleId(roleId);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        'An error occurred while getting rooms by type ' + roleId
+      );
+    }
+  }
+
   deleteById(id: string): Promise<void> {
     return Promise.resolve(undefined);
   }

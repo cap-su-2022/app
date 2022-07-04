@@ -89,7 +89,7 @@ export class AuthenticationService {
         email: user.email,
         phone: user.phone,
         googleId: user.googleId,
-        role: user.role,
+        role: user.roleId,
         fullname: user.fullname,
         avatar: user.avatar,
       };
@@ -142,7 +142,7 @@ export class AuthenticationService {
       email: user.email,
       phone: user.phone,
       googleId: user.googleId,
-      role: user.role,
+      role: user.roleId,
       fullname: user.fullname,
       avatar: user.avatar,
     };

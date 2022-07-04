@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
@@ -90,6 +91,28 @@ export class DevicesController {
   })
   getDeviceById(@Param() id: string) {
     return this.service.findById(id);
+  }
+
+  @Get('by-device-type')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched deleted rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getRoomsByRoomType(@Query('type') deviceTypeId= ''): Promise<Devices[]> {
+    return this.service.getDevicesByDeviceType(deviceTypeId);
   }
 
   @Post()
@@ -249,10 +272,10 @@ export class DevicesController {
   })
   updateDeviceById(
     @User() user: KeycloakUserInstance,
-    @Param() id: string,
+    @Param() payload: { id: string },
     @Body() body: UpdateDeviceRequest
   ) {
-    return this.service.updateById(body, id);
+    return this.service.updateById(user.account_id, payload.id, body);
   }
 
   @Put('disable/:id')

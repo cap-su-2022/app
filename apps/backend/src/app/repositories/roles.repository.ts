@@ -42,7 +42,7 @@ export class RolesRepository extends Repository<Roles> {
       .addSelect('r.created_at', 'createdAt')
       .addSelect('r.updated_at', 'updatedAt')
       .addSelect('a.username', 'createdBy')
-      .addSelect('aa.username', 'updatedAt')
+      .addSelect('aa.username', 'updatedBy')
       .innerJoin(Accounts, 'a', 'a.id = r.created_by')
       .innerJoin(Accounts, 'aa', 'aa.id = r.updated_by')
       .where('r.id = :id', { id: id })
@@ -87,5 +87,15 @@ export class RolesRepository extends Repository<Roles> {
       .andWhere('role.deleted_at IS NOT NULL')
       .orderBy('role.deleted_at', 'DESC')
       .getRawMany<Roles>();
+  }
+
+  restoreDeletedRoleById(id: string): Promise<UpdateResult> {
+    return this.createQueryBuilder('role')
+      .update({
+        deletedAt: null,
+        deletedBy: null,
+      })
+      .where('role.id = :id', { id: id })
+      .execute();
   }
 }

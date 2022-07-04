@@ -42,6 +42,22 @@ export class RoleService {
     }
   }
 
+  async handleRestoreDeletedRoleById(id: string) {
+    try {
+      const result = await this.repository.restoreDeletedRoleById(id);
+      if (result.affected < 1) {
+        throw new BadRequestException(
+          "Role doesn't exist with the provided id"
+        );
+      }
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        'Error occurred while restore the delete status of this role'
+      );
+    }
+  }
+
   async getDeletedRoles(search: string): Promise<Roles[]> {
     try {
       return await this.repository.getDeletedRoles(search);

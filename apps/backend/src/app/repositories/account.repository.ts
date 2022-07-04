@@ -76,6 +76,21 @@ export class AccountRepository extends Repository<Accounts> {
       .execute();
   }
 
+  getAccountsByRoleId(roleId: string) {
+    return this.createQueryBuilder(`account`)
+      .select('account.id', 'id')
+      .addSelect('account.username', 'username')
+      .addSelect('account.fullname', 'fullname')
+      .addSelect('account.role_id', 'roleId')
+      .addSelect('r.name', 'roleName')
+      .innerJoin(Roles, 'r', 'r.id = account.role_id')
+      .where(`account.deleted_at IS NULL`)
+      .andWhere(`account.disabled_at IS NULL`)
+      .andWhere('account.role_id = :role', { role: roleId })
+
+      .getRawMany<Accounts>();
+  }
+
   async getSize(): Promise<number> {
     const result = await this.createQueryBuilder(`accounts`)
       .select(`COUNT(id)`, 'size')
@@ -188,10 +203,12 @@ export class AccountRepository extends Repository<Accounts> {
   }
 
   updatePartially(body: any, account: Accounts): Promise<Accounts> {
+    console.log("BBBBBBBBB", body);
+    console.log("AAAAAAAAAAA", account)
     return this.save(
       {
-        ...body,
         ...account,
+        ...body,
       },
       {
         transaction: true,
