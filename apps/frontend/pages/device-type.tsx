@@ -385,6 +385,7 @@ const ManageDeviceType: React.FC<any> = () => {
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter />}
+        actionsLeft={null}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
       />

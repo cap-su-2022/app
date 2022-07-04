@@ -84,15 +84,15 @@ const useStyles = createStyles({
   },
   inputWrapper: {
     margin: 10,
-    '&:nth-child(1)': {
+    '&:nth-of-type(1)': {
       gridColumnStart: 1,
       gridColumnEnd: 3,
     },
-    '&:nth-child(2)': {
+    '&:nth-of-type(2)': {
       gridColumnStart: 1,
       gridColumnEnd: 3,
     },
-    '&:nth-child(3)': {
+    '&:nth-of-type(3)': {
       gridColumnStart: 1,
       gridColumnEnd: 3,
     },

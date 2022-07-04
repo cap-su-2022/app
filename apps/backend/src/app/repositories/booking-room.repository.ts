@@ -15,6 +15,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   }
 
   findByPaginationPayload(payload: GetBookingRoomsPaginationPayload) {
+    console.log("TIME CHECK OUT: ", payload.checkOutAt)
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.time_checkin', 'checkInAt')
       .addSelect('booking_request.time_checkout', 'checkOutAt')
@@ -26,7 +27,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.booked_at', 'bookedAt')
       .addSelect('booking_request.id', 'id')
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
-      .where('r.name LIKE :roomName', {
+      .where('r.name ILIKE :roomName', {
         roomName: `%${payload.search}%`,
       })
       .andWhere('booking_request.time_checkin >= :timeCheckIn', {
@@ -34,6 +35,9 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       })
       .andWhere('booking_request.time_checkout <= :timeCheckOut', {
         timeCheckOut: payload.checkOutAt,
+      })
+      .andWhere('booking_request.status LIKE :status', {
+        status: `%${payload.status}%`,
       })
       .orderBy(payload.sort, payload.dir as 'ASC' | 'DESC');
     if (payload.reasonType && payload.reasonType !== '') {
@@ -146,11 +150,12 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('br.updated_at', 'updatedAt')
       .addSelect('br.reason_type', 'reasonType')
       .addSelect('br.description', 'description')
-      .addSelect('br.updated_by', 'updatedBy')
       .addSelect('br.checkin_at', 'checkinAt')
       .addSelect('br.checkout_at', 'checkoutAt')
+      .addSelect('aa.username', 'updatedBy')
       .innerJoin(Rooms, 'r', 'r.id = br.room_id')
       .innerJoin(Accounts, 'a', 'a.id = br.requested_by')
+      .leftJoin(Accounts, 'aa', 'aa.id = br.updated_by')
       .where('br.id = :id', { id: id })
       .getRawOne<BookingRequest>();
   }

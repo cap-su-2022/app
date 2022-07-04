@@ -25,13 +25,13 @@ interface RowData {
   booked_at: string;
 }
 
-interface ThProps {
-  children: React.ReactNode;
-  reversed: boolean;
-  sorted: boolean;
-  style?: CSSProperties;
-  onSort(): void;
-}
+// interface ThProps {
+//   children: React.ReactNode;
+//   reversed: boolean;
+//   sorted: boolean;
+//   style?: CSSProperties;
+//   onSort(): void;
+// }
 
 // function Th({ style, children, reversed, sorted, onSort }: ThProps) {
 //   const { classes } = useStyles();
@@ -87,14 +87,11 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
       <td>
         {row.status === 'BOOKING' ? (
           <div className={classes.bookingDisplay}>{row.status}</div>
-        ) : null}
-        {row.status === 'BOOKED' ? (
+        ) : row.status === 'BOOKED' ? (
           <div className={classes.bookedDisplay}>{row.status}</div>
-        ) : null}
-        {row.status === 'CHECKED IN' ? (
+        ) : row.status === 'CHECKED IN' ? (
           <div className={classes.processingDisplay}>{row.status}</div>
-        ) : null}
-        {row.status === 'CANCELLED' ? (
+        ) : row.status === 'CANCELLED' ? (
           <div className={classes.canceledDisplay}>{row.status}</div>
         ) : null}
       </td>

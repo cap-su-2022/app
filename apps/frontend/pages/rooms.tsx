@@ -17,8 +17,6 @@ import NoDataFound from '../components/no-data-found';
 import TableHeader from '../components/actions/table-header.component';
 import { TableBody } from '../components/rooms/table-body.component';
 import TableFooter from '../components/actions/table-footer.component';
-import RoomUpdateModal from '../components/rooms/update-modal.component';
-import RoomsHeader from '../components/rooms/header.component';
 import DisableRoomModal from '../components/rooms/disable-modal.component';
 import DeleteRoomModal from '../components/rooms/delete-modal.component';
 import AddRoomModal from '../components/rooms/add-modal.component';
@@ -293,6 +291,7 @@ function RoomsManagement(props: any) {
           icon={<BuildingWarehouse size={50} />}
         />
         <TableHeader
+          actionsLeft={null}
           handleResetFilter={() => handleResetFilter()}
           actions={<ActionsFilter />}
           setSearch={(val) => handleSearchValue(val)}

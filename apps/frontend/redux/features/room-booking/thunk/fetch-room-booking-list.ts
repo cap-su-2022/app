@@ -26,6 +26,7 @@ export const fetchRoomBookings = createAsyncThunk<
         checkOutAt: payload.checkOutAt,
         sort: payload.sort,
         dir: payload.dir,
+        status: payload.status,
       },
     });
     return await response.data;
