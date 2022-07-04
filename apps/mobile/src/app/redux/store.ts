@@ -7,6 +7,7 @@ import { deviceReducer } from "./features/devices/slice";
 import { authReducer } from "./features/auth/slice";
 import { accountReducer } from "./features/account/slice";
 import {roomReducer} from "./features/room/slice";
+import {slotReducer} from "./features/slot/slot.slice";
 
 const combinedReducer = combineReducers({
   user: userReducer,
@@ -17,6 +18,7 @@ const combinedReducer = combineReducers({
   auth: authReducer,
   account: accountReducer,
   room: roomReducer,
+  slot: slotReducer,
 });
 const reducer = (state: ReturnType<typeof combinedReducer>, action: AnyAction) => {
 

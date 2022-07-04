@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { PaginationParams } from '../controllers/pagination.model';
 import { RolesRepository } from '../repositories/roles.repository';
 import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
-import { Roless } from '../models/role.entity';
+import { Roles } from '../models/role.entity';
 
 
 @Injectable()
@@ -42,7 +42,7 @@ export class RoleService {
     }
   }
 
-  async getDeletedRoles(search: string): Promise<Roless[]> {
+  async getDeletedRoles(search: string): Promise<Roles[]> {
     try {
       return await this.repository.getDeletedRoles(search);
     } catch (e) {

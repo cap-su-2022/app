@@ -12,8 +12,12 @@ export class SlotService {
 
   async getAllByPagination(
     params: PaginationParams
-  ): Promise<Pagination<Slot>> {
+  ): Promise<Pagination<Slot> | Slot[]> {
     try {
+      if (!params) {
+        console.log('ass');
+        return this.repository.findAll();
+      }
       return await this.repository.findByPagination(params);
     } catch (e) {
       this.logger.error(e.message);
@@ -28,5 +32,9 @@ export class SlotService {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
+  }
+
+  getAll(): Promise<Slot[]> {
+    return this.repository.findAll();
   }
 }

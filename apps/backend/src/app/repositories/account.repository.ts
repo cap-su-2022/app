@@ -7,6 +7,7 @@ import {
   paginateRaw,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import {Roles} from "../models/role.entity";
 
 @CustomRepository(Accounts)
 export class AccountRepository extends Repository<Accounts> {
@@ -55,9 +56,10 @@ export class AccountRepository extends Repository<Accounts> {
         'accounts.email',
         'accounts.fullname',
         'accounts.phone',
-        'accounts.role',
         'accounts.avatar',
       ])
+      .addSelect('r.name', 'role')
+      .innerJoin(Roles, 'r', 'r.id = accounts.role_id')
       .where('accounts.keycloak_id = :keycloakId', { keycloakId: keycloakId })
       .andWhere('accounts.disabled_at IS NULL')
       .andWhere('accounts.deleted_at IS NULL')
@@ -199,7 +201,8 @@ export class AccountRepository extends Repository<Accounts> {
 
   findRoleByKeycloakId(keycloakId: string): Promise<string> {
     return this.createQueryBuilder('accounts')
-      .select('accounts.role', 'role')
+      .select('r.name', 'role')
+      .innerJoin(Roles, 'r', 'r.id = accounts.role_id')
       .where('accounts.keycloak_id = :keycloakId', { keycloakId: keycloakId })
       .getRawOne()
       .then((data) => data?.role);
@@ -215,10 +218,11 @@ export class AccountRepository extends Repository<Accounts> {
         'a.phone',
         'a.created_at',
         'a.updated_at',
-        'a.role',
         'a.fullname',
         'a.avatar',
       ])
+      .addSelect('r.name', 'role')
+      .innerJoin(Roles, 'r', 'a.role_id = r.id')
       .where('a.keycloak_id = :keycloakId', { keycloakId })
       .andWhere('a.disabled_at IS NULL')
       .andWhere('a.deleted_at IS NULL')

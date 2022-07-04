@@ -1,13 +1,13 @@
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Roless } from '../models/role.entity';
+import { Roles } from '../models/role.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { Accounts } from '../models';
 import { IPaginationMeta, paginateRaw } from 'nestjs-typeorm-paginate';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { PaginationParams } from '../controllers/pagination.model';
 
-@CustomRepository(Roless)
-export class RolesRepository extends Repository<Roless> {
+@CustomRepository(Roles)
+export class RolesRepository extends Repository<Roles> {
   async existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('r')
       .select('COUNT(1)', 'count')
@@ -18,7 +18,7 @@ export class RolesRepository extends Repository<Roless> {
 
   async findByPagination(
     pagination: PaginationParams
-  ): Promise<Pagination<Roless>> {
+  ): Promise<Pagination<Roles>> {
     const query = this.createQueryBuilder('r')
       .select('r.id', 'id')
       .addSelect('r.name', 'name')
@@ -28,13 +28,13 @@ export class RolesRepository extends Repository<Roless> {
         search: `%${pagination.search.trim()}%`,
       })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
-    return paginateRaw<Roless, IPaginationMeta>(query, {
+    return paginateRaw<Roles, IPaginationMeta>(query, {
       limit: pagination.limit,
       page: pagination.page,
     });
   }
 
-  findById(id: string): Promise<Roless> {
+  findById(id: string): Promise<Roles> {
     return this.createQueryBuilder('r')
       .select('r.id', 'id')
       .addSelect('r.name', 'name')
@@ -47,7 +47,7 @@ export class RolesRepository extends Repository<Roless> {
       .innerJoin(Accounts, 'aa', 'aa.id = r.updated_by')
       .where('r.id = :id', { id: id })
       .andWhere('r.deleted_at IS NULL')
-      .getRawOne<Roless>();
+      .getRawOne<Roles>();
   }
 
   updateById(id: string, accountId: string, payload: any) {
@@ -76,7 +76,7 @@ export class RolesRepository extends Repository<Roless> {
       .execute();
   }
 
-  getDeletedRoles(search: string): Promise<Roless[]> {
+  getDeletedRoles(search: string): Promise<Roles[]> {
     return this.createQueryBuilder('role')
       .select('role.id', 'id')
       .addSelect('role.name', 'name')
@@ -86,6 +86,6 @@ export class RolesRepository extends Repository<Roless> {
       .where('role.name LIKE :search', { search: `%${search.trim()}%` })
       .andWhere('role.deleted_at IS NOT NULL')
       .orderBy('role.deleted_at', 'DESC')
-      .getRawMany<Roless>();
+      .getRawMany<Roles>();
   }
 }

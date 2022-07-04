@@ -41,4 +41,13 @@ export class SlotRepository extends Repository<Slot> {
       .andWhere('s.id = :id', { id: id })
       .getRawOne<Slot>();
   }
+
+  findAll(): Promise<Slot[]> {
+    return this.find({
+      where: {
+        deletedAt: null,
+        deletedBy: null
+      }
+    });
+  }
 }

@@ -27,9 +27,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
-import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
-import { Roless } from '../models/role.entity';
+import {Roles} from "../decorators/role.decorator";
 
 @Controller('/v1/roles')
 @ApiBearerAuth()
