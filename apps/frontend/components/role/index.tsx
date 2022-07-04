@@ -157,7 +157,7 @@ const ManageRole: React.FC<any> = () => {
     },
     delete: (id) => {
       setId(id);
-      handleFetchById(id)
+      handleFetchById(id);
       setDeleteShown(!isDeleteShown);
     },
   };
@@ -294,6 +294,7 @@ const ManageRole: React.FC<any> = () => {
     <AdminLayout>
       <Header title="Role Manager" icon={<BuildingWarehouse size={50} />} />
       <TableHeader
+        actionsLeft={null}
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter />}
         setSearch={(val) => handleSearchValue(val)}

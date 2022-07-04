@@ -7,6 +7,7 @@ import Filter from './drawer/filter.drawer';
 
 interface TableHeaderProps {
   handleResetFilter(): void;
+  actionsLeft: React.ReactNode;
   actions: React.ReactNode;
   setSearch(val: string): void;
   search: string;
@@ -23,30 +24,34 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
 
   return (
     <div className={classes.container}>
-      <div className={classes.actionLeftDiv}>
-        <InputWrapper label="Search">
-          <TextInput
-            placeholder="Search by name..."
-            mb="md"
-            icon={<Search size={14} />}
-            value={props.search}
-            onChange={handleSearchChange}
-          />
-        </InputWrapper>
+      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <div className={classes.leftNav}>
+          <div className={classes.leftNav}>
+            <InputWrapper label="Search">
+              <TextInput
+                placeholder="Search by name..."
+                mb="md"
+                icon={<Search size={14} />}
+                value={props.search}
+                onChange={handleSearchChange}
+              />
+            </InputWrapper>
 
-        <div className={classes.actions}>
-          <Button
-            onClick={() => props.handleResetFilter()}
-            color="orange"
-            variant="outline"
-          >
-            <RotateClockwise color={FPT_ORANGE_COLOR} />
-          </Button>
+            <div className={classes.actions}>
+              <Button
+                onClick={() => props.handleResetFilter()}
+                color="orange"
+                variant="outline"
+                style={{ marginRight: 10 }}
+              >
+                <RotateClockwise color={FPT_ORANGE_COLOR} />
+              </Button>
+            </div>
+          </div>
         </div>
+        <div className={classes.actions}>{props.actionsLeft}</div>
       </div>
-      <div className={classes.actionRightDiv}>
-        {props.actions}
-      </div>
+      <div className={classes.actionRightDiv}>{props.actions}</div>
       <Filter
         isShown={isFilterShown}
         toggleShown={() => setFilterShown(!isFilterShown)}
@@ -60,7 +65,7 @@ const useStyles = createStyles((theme) => {
     container: {
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
     },
     actions: {
       display: 'flex',
@@ -68,13 +73,13 @@ const useStyles = createStyles((theme) => {
       marginTop: 10,
       marginLeft: 10,
     },
-    actionLeftDiv: {
+    leftNav: {
       display: 'flex',
     },
-    actionRightDiv:{
+    actionRightDiv: {
       display: 'flex',
       alignItems: 'center',
-    }
+    },
   };
 });
 

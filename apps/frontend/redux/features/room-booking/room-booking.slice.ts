@@ -10,11 +10,13 @@ import { PaginationResponse } from '../../../models/pagination-response.payload'
 interface InitialState {
   roomBookings: PaginationResponse<RoomBooking>;
   roomBooking: RoomBooking;
+
 }
 
 const initialState: InitialState = {
   roomBookings: {} as PaginationResponse<RoomBooking>,
   roomBooking: {} as RoomBooking,
+
 };
 
 export const roomBookingSlice = createSlice({

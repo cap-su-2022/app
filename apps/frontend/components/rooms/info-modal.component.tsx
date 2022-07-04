@@ -8,7 +8,6 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core';
-import { useWindowDimensions } from '../../hooks/use-window-dimensions';
 import {
   Archive,
   CalendarStats,
@@ -19,7 +18,7 @@ import {
   User,
   X,
 } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
 
 interface RoomInfoModalProps {
@@ -31,8 +30,6 @@ interface RoomInfoModalProps {
 const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
   const { classes } = useStyles();
   const room = useAppSelector((state) => state.room.room);
-  const dispatch = useAppDispatch();
-  const dimension = useWindowDimensions();
 
   useEffect(() => {
     console.log(room);

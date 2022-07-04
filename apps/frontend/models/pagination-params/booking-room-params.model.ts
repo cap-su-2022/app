@@ -8,6 +8,7 @@ export interface BookingRequestParams {
   checkOutAt?: string;
   dir?: string;
   sort?: string;
+  status?: string;
 }
 
 export const defaultPaginationParams: BookingRequestParams = {
@@ -20,4 +21,5 @@ export const defaultPaginationParams: BookingRequestParams = {
   checkOutAt: '',
   dir: 'ASC',
   sort: 'roomName',
+  status: '',
 };
