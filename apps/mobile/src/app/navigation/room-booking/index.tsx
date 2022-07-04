@@ -7,7 +7,6 @@ import { StatusBar, StyleSheet, Text, TouchableOpacity } from "react-native";
 import RoomBooking1 from "../../screens/booking/room-booking-1";
 import { HeartIcon, XIcon } from "react-native-heroicons/outline";
 import RoomBookingNow from "../../screens/booking/room-booking-now";
-import RoomBookingLater from "../../screens/booking/room-booking-later";
 import { BLACK, PINK } from "@app/constants";
 import { RoomBooking3 } from "../../screens/booking/room-booking-3";
 import { RoomBookingSuccess } from "../../screens/booking/room-booking-success";
@@ -18,6 +17,7 @@ import RoomBookingChooseRoom from "../../screens/booking/room-booking-choose-roo
 import ChooseRoomItemDetail from "../../screens/booking/ChooseRoom/choose-room-item-detail";
 import AlreadyBookDetail from "../../screens/booking/AlreadyBook/Detail";
 import RoomBookingAlreadyBook from "../../screens/booking/checkin/room-booking-already-book";
+import ScheduleRoomBooking from "../../screens/booking/schedule-booking";
 
 const RoomBookingNavigator: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
@@ -54,7 +54,7 @@ const RoomBookingNavigator: React.FC = () => {
           headerShown: false
         }} component={RoomBookingFail} />
         <StackScreen name={"ROOM_BOOKING_NOW"} component={RoomBookingNow} />
-        <StackScreen name={"ROOM_BOOKING_LATER"} component={RoomBookingLater} />
+        <StackScreen name={"ROOM_BOOKING_LATER"} component={ScheduleRoomBooking} />
         <StackScreen name="ROOM_BOOKING_CHOOSE_ROOM" component={RoomBookingChooseRoom}/>
         <StackScreen name="ROOM_BOOKING_VIEW_ROOM_DETAIL" component={ChooseRoomItemDetail}/>
         <StackScreen name="ROOM_BOOKING_ALREADY_BOOKED_DETAIL" component={AlreadyBookDetail}/>

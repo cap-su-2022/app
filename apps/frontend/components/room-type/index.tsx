@@ -395,6 +395,7 @@ const ManageRoomType: React.FC<any> = () => {
       <Header title="Room Type" icon={<BuildingWarehouse size={50} />} />
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
+        actionsLeft={null}
         actions={<ActionsFilter />}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}

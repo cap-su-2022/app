@@ -1,7 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
-import { RoomType } from '../../../../models/room-type.model';
 
 export const fetchRoomTypeNames = createAsyncThunk<
 any[],

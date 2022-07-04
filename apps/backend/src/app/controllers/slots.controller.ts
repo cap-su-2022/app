@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {Controller, Get, Optional, Param, Query} from '@nestjs/common';
 import { SlotService } from '../services/slot.service';
 import { PaginationParams } from './pagination.model';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
+import {Slot} from "../models/slot.entity";
 
 @Controller('/v1/slots')
 export class SlotController {
@@ -10,7 +11,7 @@ export class SlotController {
 
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  getAllSlotsByPagination(@Query() params: PaginationParams) {
+  getAllSlotsByPagination(@Optional() @Query() params?: PaginationParams) {
     return this.service.getAllByPagination(params);
   }
 
@@ -19,4 +20,5 @@ export class SlotController {
   getSlotById(@Param('id') id: string) {
     return this.service.getById(id);
   }
+
 }

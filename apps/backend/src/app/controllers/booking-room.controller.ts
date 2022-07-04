@@ -84,7 +84,7 @@ export class BookingRoomController {
     return this.service.getRequestBookingByRoomId(roomId);
   }
 
-  @Put('current-booking/cancel/:id')
+  @Put('cancel/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   cancelRoomBookingById(
     @User() user: KeycloakUserInstance,
@@ -113,6 +113,7 @@ export class BookingRoomController {
     @Query('reasonType', new DefaultValuePipe('')) reasonType: string,
     @Query('checkInAt', new DefaultValuePipe('')) checkInAt: string,
     @Query('checkOutAt', new DefaultValuePipe('')) checkOutAt: string,
+    @Query('status', new DefaultValuePipe('')) status: string,
     @Query('dir', new DefaultValuePipe('ASC')) dir: string
   ) {
     return this.service.getAllBookingRoomsPagination({
@@ -124,6 +125,7 @@ export class BookingRoomController {
       sort: sort,
       limit: limit,
       reasonType: reasonType,
+      status: status,
     } as GetBookingRoomsPaginationPayload);
   }
 

@@ -8,6 +8,7 @@ import {
   paginateRaw,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { DeviceType } from '../models/device-type.entity';
 
 @CustomRepository(Devices)
 export class DevicesRepository extends Repository<Devices> {
@@ -20,6 +21,14 @@ export class DevicesRepository extends Repository<Devices> {
         size: number;
       }>();
     return result.size;
+  }
+
+  async isExistedByName(name: string): Promise<boolean> {
+    return this.createQueryBuilder('devices')
+      .select('COUNT(devices.name)')
+      .where('devices.name = :name', { name })
+      .getRawOne()
+      .then((data) => data['count'] > 0);
   }
 
   searchDevices(
@@ -38,6 +47,20 @@ export class DevicesRepository extends Repository<Devices> {
       limit: payload.limit,
       page: payload.page,
     });
+  }
+
+  getDevicesByDeviceType(deviceTypeId: string) {
+    return this.createQueryBuilder(`device`)
+      .select('device.id', 'id')
+      .addSelect('device.name', 'name')
+      .addSelect('device.device_type_id', 'type')
+      .addSelect('dt.name', 'deviceTypeName')
+      .innerJoin(DeviceType, 'dt', 'dt.id = device.device_type_id')
+      .where(`device.deleted_at IS NULL`)
+      .andWhere(`device.disabled_at IS NULL`)
+      .andWhere('device.device_type_id = :type', { type: deviceTypeId })
+
+      .getRawMany<Devices>();
   }
 
   deleteDeviceById(accountId: string, id: string): Promise<UpdateResult> {
@@ -119,17 +142,6 @@ export class DevicesRepository extends Repository<Devices> {
     });
   }
 
-  updateById(origin: Devices, body: UpdateDeviceRequest, id: string) {
-    return this.save(
-      {
-        ...origin,
-        ...body,
-      },
-      {
-        transaction: true,
-      }
-    );
-  }
 
   findDeviceListByBookingRoomRequest(name: string, type: string, sort: string) {
     return this.createQueryBuilder('devices')

@@ -11,7 +11,9 @@ export interface RoomBooking {
   bookedAt: string;
   checkInAt: string;
   checkOutAt: string;
-  updateAt: string;
+  updatedAt: string;
+  updatedBy: string;
+  cancelledBy: string;
   reasonType: string;
   description: string;
 }

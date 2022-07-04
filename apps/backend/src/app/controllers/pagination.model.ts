@@ -25,6 +25,7 @@ export class PaginationParams {
   })
   search = '';
 
+  @IsOptional()
   @IsInt({
     message: 'Page number must be integer',
   })
@@ -37,6 +38,7 @@ export class PaginationParams {
   })
   page: number;
 
+  @IsOptional()
   @IsInt({
     message: 'Items per page must be integer',
   })
@@ -52,11 +54,13 @@ export class PaginationParams {
   })
   limit: number;
 
+  @IsOptional()
   @ContainsMany(['ASC', 'DESC'], {
     message: 'Direction must be ASC or DESC',
   })
   dir: string;
 
+  @IsOptional()
   @IsNotEmpty({
     message: 'Sorting field must not be empty',
   })

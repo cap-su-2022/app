@@ -10,6 +10,7 @@ import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted
 import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-room';
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
+import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
 
 interface DeleteRoomModalProps {
   isShown: boolean;
@@ -30,6 +31,9 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
       props.toggleShown();
       dispatch(fetchRooms(props.pagination));
       dispatch(fetchDeletedRooms(''));
+      listRequest.map((request) => (
+        dispatch(cancelBooking(request.id))
+      ))
     });
   };
 
@@ -40,6 +44,12 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
         .then((response) => setListRequest(response));
     }
   }, [dispatch, selectedRoomId]);
+
+  useEffect(() => {
+    if (!props.isShown) {
+      setShownListRequest(false);
+    }
+  }, [props.isShown]);
 
   const ListRequestByRoomId = () => {
     const rows =
@@ -54,18 +64,6 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
               <td>
                 {dayjs(row.timeCheckout).format('HH:mm DD/MM/YYYY')}
               </td>
-              {/* <td className={classes.actionButtonContainer}>
-                <Button
-                  variant="outline"
-                  color="green"
-                  disabled={
-                    roomType === row.type || roomType === '' ? true : false
-                  }
-                  onClick={() => handleUpdateType(row, roomType)}
-                >
-                  Save
-                </Button>
-              </td> */}
             </tr>
           ))
         : null;
@@ -133,7 +131,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
   return (
     <Modal
       closeOnClickOutside={true}
-      size={isShownListRequest && listRequest.length > 0 ? '70%' : null}
+      size={isShownListRequest && listRequest.length > 0 ? '50%' : null}
       centered
       zIndex={2000}
       title={<ModalHeaderTitle />}
@@ -169,7 +167,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
               margin: 10,
             }}
           >
-            Delete this type
+            Delete this room
           </Button>
           <Button
             onClick={() => props.toggleShown()}

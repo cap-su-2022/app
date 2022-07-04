@@ -24,37 +24,38 @@ import {
 import { deleteDeviceTypeById } from '../../redux/features/device-type/';
 import { PaginationParams } from '../../models/pagination-params.model';
 import Th from '../../components/table/th.table.component';
-// import { fetchRoomsByRoomType } from '../../redux/features/room/thunk/fetch-rooms-by-room-type';
+import { fetchDevicesByDeviceType } from '../../redux/features/devices/thunk/fetch-devices-by-device-type';
 import { showNotification } from '@mantine/notifications';
-// import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
+import { updateDeviceById } from '../../redux/features/devices/thunk/update-by-id';
 
 interface DeleteModalProps {
   isShown: boolean;
   toggleShown(): void;
   pagination: PaginationParams;
-  // roomTypes: any[];
+  deviceTypes: any[];
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const { classes } = useStyles();
-  const selectedRoomTypeId = useAppSelector(
+  const selectedDeviceTypeId = useAppSelector(
     (state) => state.deviceType.deviceType.id
   );
-  const [roomType, setRoomType] = useState<string>('');
-  const [isShownListRoom, setShownListRoom] = useState(false);
+  const [deviceType, setDeviceType] = useState<string>('');
+  const [isShownListDevice, setShownListDevice] = useState(false);
 
-  const [listRoom, setListRoom] = useState([]);
+  const [listDevice, setListDevice] = useState([]);
+  console.log(listDevice)
 
   const dispatch = useAppDispatch();
 
-  const handleDeleteRoom = () => {
-    dispatch(deleteDeviceTypeById(selectedRoomTypeId))
+  const handleDeleteDeviceType = () => {
+    dispatch(deleteDeviceTypeById(selectedDeviceTypeId))
       .catch((e) =>
         showNotification({
           id: 'delete-data',
           color: 'red',
-          title: 'Error while delete room type',
-          message: e.message ?? 'Failed to delete room type',
+          title: 'Error while delete device type',
+          message: e.message ?? 'Failed to delete device type',
           icon: <X />,
           autoClose: 3000,
         })
@@ -63,8 +64,8 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
         showNotification({
           id: 'delete-data',
           color: 'teal',
-          title: 'Room type was updated',
-          message: 'Room type was successfully updated',
+          title: 'Device type was updated',
+          message: 'Device type was successfully updated',
           icon: <Check />,
           autoClose: 3000,
         })
@@ -76,145 +77,146 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       });
   };
 
-  // useEffect(() => {
-  //   if (selectedRoomTypeId) {
-  //     dispatch(fetchRoomsByRoomType(selectedRoomTypeId))
-  //       .unwrap()
-  //       .then((response) => setListRoom(response));
-  //   }
-  // }, [dispatch, selectedRoomTypeId]);
+  useEffect(() => {
+    if (selectedDeviceTypeId) {
+      dispatch(fetchDevicesByDeviceType(selectedDeviceTypeId))
+        .unwrap()
+        .then((response) => setListDevice(response));
+    }
+  }, [dispatch, selectedDeviceTypeId]);
 
   useEffect(() => {
     if (!props.isShown) {
-      setShownListRoom(false);
+      setShownListDevice(false);
     }
   }, [props.isShown]);
 
-  // const handleUpdateType = (room, roomTypeId: string) => {
-  //   dispatch(
-  //     updateRoomById({
-  //       id: room.id,
-  //       payload: {
-  //         ...room,
-  //         type: roomTypeId,
-  //       },
-  //     })
-  //   )
-  //     .unwrap()
-  //     .catch((e) =>
-  //       showNotification({
-  //         id: 'load-data',
-  //         color: 'red',
-  //         title: 'Error while updating library room',
-  //         message: e.message ?? 'Failed to update library room',
-  //         icon: <X />,
-  //         autoClose: 3000,
-  //       })
-  //     )
-  //     .then(() =>
-  //       showNotification({
-  //         id: 'load-data',
-  //         color: 'teal',
-  //         title: 'Library room was updated',
-  //         message: 'Library room was successfully updated',
-  //         icon: <Check />,
-  //         autoClose: 3000,
-  //       })
-  //     )
-  //     // .then(() => props.toggleShown())
-  //     .then(() =>
-  //       dispatch(fetchRoomsByRoomType(selectedRoomTypeId))
-  //         .unwrap()
-  //         .then((response) => setListRoom(response))
-  //     );
-  // };
+  const handleUpdateType = (device, deviceTypeId: string) => {
+    console.log("FFFFFFFFF: ", deviceTypeId)
+    dispatch(
+      updateDeviceById({
+        id: device.id,
+        payload: {
+          ...device,
+          type: deviceTypeId,
+        },
+      })
+    )
+      .unwrap()
+      .catch((e) =>
+        showNotification({
+          id: 'load-data',
+          color: 'red',
+          title: 'Error while updating library device',
+          message: e.message ?? 'Failed to update library device',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'load-data',
+          color: 'teal',
+          title: 'Library device was updated',
+          message: 'Library device was successfully updated',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      // .then(() => props.toggleShown())
+      .then(() =>
+        dispatch(fetchDevicesByDeviceType(selectedDeviceTypeId))
+          .unwrap()
+          .then((response) => setListDevice(response))
+      );
+  };
 
-  // const ListRoomByRoomType = () => {
-  //   const rows =
-  //     listRoom && listRoom.length > 0
-  //       ? listRoom.map((row, index) => (
-  //           <tr key={row.id}>
-  //             <td>{index + 1}</td>
-  //             <td>{row.name}</td>
-  //             <td>
-  //               <Select
-  //                 name="type"
-  //                 id="room-type"
-  //                 onChange={(e) => setRoomType(e)}
-  //                 searchable
-  //                 value={roomType || row.type}
-  //                 data={props.roomTypes}
-  //                 required
-  //               />
-  //             </td>
-  //             <td className={classes.actionButtonContainer}>
-  //               <Button
-  //                 variant="outline"
-  //                 color="green"
-  //                 disabled={
-  //                   roomType === row.type || roomType === '' ? true : false
-  //                 }
-  //                 onClick={() => handleUpdateType(row, roomType)}
-  //               >
-  //                 Save
-  //               </Button>
-  //             </td>
-  //           </tr>
-  //         ))
-  //       : null;
-  //   return listRoom && listRoom.length > 0 ? (
-  //     <Table
-  //       horizontalSpacing="md"
-  //       verticalSpacing="xs"
-  //       sx={{ tableLayout: 'fixed' }}
-  //     >
-  //       <thead>
-  //         <tr>
-  //           <Th
-  //             style={{
-  //               width: '60px',
-  //             }}
-  //             sorted={null}
-  //             reversed={null}
-  //             onSort={null}
-  //           >
-  //             STT
-  //           </Th>
+  const ListDeviceByDeviceType = () => {
+    const rows =
+      listDevice && listDevice.length > 0
+        ? listDevice.map((row, index) => (
+            <tr key={row.id}>
+              <td>{index + 1}</td>
+              <td>{row.name}</td>
+              <td>
+                <Select
+                  name="type"
+                  id="device-type"
+                  onChange={(e) => setDeviceType(e)}
+                  searchable
+                  value={deviceType || row.type}
+                  data={props.deviceTypes}
+                  required
+                />
+              </td>
+              <td className={classes.actionButtonContainer}>
+                <Button
+                  variant="outline"
+                  color="green"
+                  disabled={
+                    deviceType === row.type || deviceType === '' ? true : false
+                  }
+                  onClick={() => handleUpdateType(row, deviceType)}
+                >
+                  Save
+                </Button>
+              </td>
+            </tr>
+          ))
+        : null;
+    return listDevice && listDevice.length > 0 ? (
+      <Table
+        horizontalSpacing="md"
+        verticalSpacing="xs"
+        sx={{ tableLayout: 'fixed' }}
+      >
+        <thead>
+          <tr>
+            <Th
+              style={{
+                width: '60px',
+              }}
+              sorted={null}
+              reversed={null}
+              onSort={null}
+            >
+              STT
+            </Th>
 
-  //           <Th sorted={null} reversed={null} onSort={null}>
-  //             Name
-  //           </Th>
+            <Th sorted={null} reversed={null} onSort={null}>
+              Name
+            </Th>
 
-  //           <Th sorted={null} reversed={null} onSort={null}>
-  //             Type
-  //           </Th>
+            <Th sorted={null} reversed={null} onSort={null}>
+              Type
+            </Th>
 
-  //           <Th
-  //             style={{
-  //               width: '100px',
-  //             }}
-  //             sorted={null}
-  //             reversed={null}
-  //             onSort={null}
-  //           >
-  //             Actions
-  //           </Th>
-  //         </tr>
-  //       </thead>
-  //       <tbody>{rows}</tbody>
-  //     </Table>
-  //   ) : (
-  //     <div
-  //       style={{
-  //         display: 'flex',
-  //         justifyContent: 'center',
-  //         padding: '20px 0px',
-  //       }}
-  //     >
-  //       <h1>Dont have any room with this type</h1>
-  //     </div>
-  //   );
-  // };
+            <Th
+              style={{
+                width: '100px',
+              }}
+              sorted={null}
+              reversed={null}
+              onSort={null}
+            >
+              Actions
+            </Th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </Table>
+    ) : (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '20px 0px',
+        }}
+      >
+        <h1>Dont have any device with this type</h1>
+      </div>
+    );
+  };
 
   const ModalHeaderTitle: React.FC = () => {
     return <Text className={classes.modalTitle}>Are you sure?</Text>;
@@ -228,7 +230,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       title={<ModalHeaderTitle />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}
-      size={isShownListRoom && listRoom.length > 0 ? '70%' : null}
+      size={isShownListDevice && listDevice.length > 0 ? '70%' : null}
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
@@ -238,20 +240,20 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           device will receive a notification about this!
         </Text>
         <div className={classes.modalFooter}>
-          {listRoom.length > 0 ? (
+          {listDevice.length > 0 ? (
             <Button
               leftIcon={<ScanEye />}
               style={{ backgroundColor: 'blue', width: '60%', margin: 10 }}
-              onClick={() => setShownListRoom(!isShownListRoom)}
+              onClick={() => setShownListDevice(!isShownListDevice)}
             >
-              List room with this type
+              List device with this type
             </Button>
           ) : null}
 
           <Button
             color="red"
             leftIcon={<Trash />}
-            onClick={() => handleDeleteRoom()}
+            onClick={() => handleDeleteDeviceType()}
             style={{
               width: '60%',
               margin: 10,
@@ -272,7 +274,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           </Button>
         </div>
       </div>
-      {/* {isShownListRoom && listRoom.length > 0 ? <ListRoomByRoomType /> : null} */}
+      {isShownListDevice && listDevice.length > 0 ? <ListDeviceByDeviceType /> : null}
     </Modal>
   );
 };

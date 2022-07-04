@@ -1162,7 +1162,11 @@ let BookingRoomController = BookingRoomController_1 = class BookingRoomControlle
     getRoomsName() {
         return this.service.getRoomsName();
     }
+<<<<<<< HEAD
     getAllBookingRoomsPagination(search, sort, limit, page, reasonType, checkInAt, checkOutAt, dir) {
+=======
+    getAllBookingRoomsPagination(search, sort, limit, page, reasonType, checkInAt, checkOutAt, status, dir) {
+>>>>>>> origin/develop
         return this.service.getAllBookingRoomsPagination({
             checkOutAt: checkOutAt,
             checkInAt: checkInAt,
@@ -1172,6 +1176,10 @@ let BookingRoomController = BookingRoomController_1 = class BookingRoomControlle
             sort: sort,
             limit: limit,
             reasonType: reasonType,
+<<<<<<< HEAD
+=======
+            status: status,
+>>>>>>> origin/develop
         });
     }
     getBookingRooms(search, sorting, slot) {
@@ -1250,7 +1258,11 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
 ], BookingRoomController.prototype, "getRequestBookingByRoomId", null);
 tslib_1.__decorate([
+<<<<<<< HEAD
     (0, common_1.Put)('current-booking/cancel/:id'),
+=======
+    (0, common_1.Put)('cancel/:id'),
+>>>>>>> origin/develop
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
     tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__param(1, (0, common_1.Param)()),
@@ -1280,9 +1292,16 @@ tslib_1.__decorate([
     tslib_1.__param(4, (0, common_1.Query)('reasonType', new common_1.DefaultValuePipe(''))),
     tslib_1.__param(5, (0, common_1.Query)('checkInAt', new common_1.DefaultValuePipe(''))),
     tslib_1.__param(6, (0, common_1.Query)('checkOutAt', new common_1.DefaultValuePipe(''))),
+<<<<<<< HEAD
     tslib_1.__param(7, (0, common_1.Query)('dir', new common_1.DefaultValuePipe('ASC'))),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [String, String, Number, Number, String, String, String, String]),
+=======
+    tslib_1.__param(7, (0, common_1.Query)('status', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(8, (0, common_1.Query)('dir', new common_1.DefaultValuePipe('ASC'))),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String, String, Number, Number, String, String, String, String, String]),
+>>>>>>> origin/develop
     tslib_1.__metadata("design:returntype", void 0)
 ], BookingRoomController.prototype, "getAllBookingRoomsPagination", null);
 tslib_1.__decorate([
@@ -2127,6 +2146,10 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", Object)
 ], PaginationParams.prototype, "search", void 0);
 tslib_1.__decorate([
+<<<<<<< HEAD
+=======
+    (0, class_validator_1.IsOptional)(),
+>>>>>>> origin/develop
     (0, class_validator_1.IsInt)({
         message: 'Page number must be integer',
     }),
@@ -2140,6 +2163,10 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", Number)
 ], PaginationParams.prototype, "page", void 0);
 tslib_1.__decorate([
+<<<<<<< HEAD
+=======
+    (0, class_validator_1.IsOptional)(),
+>>>>>>> origin/develop
     (0, class_validator_1.IsInt)({
         message: 'Items per page must be integer',
     }),
@@ -2156,12 +2183,20 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", Number)
 ], PaginationParams.prototype, "limit", void 0);
 tslib_1.__decorate([
+<<<<<<< HEAD
+=======
+    (0, class_validator_1.IsOptional)(),
+>>>>>>> origin/develop
     (0, contains_many_validator_1.ContainsMany)(['ASC', 'DESC'], {
         message: 'Direction must be ASC or DESC',
     }),
     tslib_1.__metadata("design:type", String)
 ], PaginationParams.prototype, "dir", void 0);
 tslib_1.__decorate([
+<<<<<<< HEAD
+=======
+    (0, class_validator_1.IsOptional)(),
+>>>>>>> origin/develop
     (0, class_validator_1.IsNotEmpty)({
         message: 'Sorting field must not be empty',
     }),
@@ -2189,8 +2224,13 @@ const keycloak_user_1 = __webpack_require__("./apps/backend/src/app/dto/keycloak
 const role_service_1 = __webpack_require__("./apps/backend/src/app/services/role.service.ts");
 const swagger_1 = __webpack_require__("@nestjs/swagger");
 const path_logger_interceptor_1 = __webpack_require__("./apps/backend/src/app/interceptors/path-logger.interceptor.ts");
+<<<<<<< HEAD
 const role_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/role.decorator.ts");
 const roles_enum_1 = __webpack_require__("./apps/backend/src/app/enum/roles.enum.ts");
+=======
+const roles_enum_1 = __webpack_require__("./apps/backend/src/app/enum/roles.enum.ts");
+const role_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/role.decorator.ts");
+>>>>>>> origin/develop
 let RoleController = RoleController_1 = class RoleController {
     constructor(service) {
         this.service = service;
@@ -3220,6 +3260,10 @@ let SlotController = class SlotController {
 tslib_1.__decorate([
     (0, common_1.Get)(),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+<<<<<<< HEAD
+=======
+    tslib_1.__param(0, (0, common_1.Optional)()),
+>>>>>>> origin/develop
     tslib_1.__param(0, (0, common_1.Query)()),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof pagination_model_1.PaginationParams !== "undefined" && pagination_model_1.PaginationParams) === "function" ? _a : Object]),
@@ -4301,36 +4345,60 @@ tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/room-typ
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+<<<<<<< HEAD
 exports.Roless = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const typeorm_1 = __webpack_require__("typeorm");
 const base_entity_1 = __webpack_require__("./apps/backend/src/app/models/base/base.entity.ts");
 let Roless = class Roless extends base_entity_1.BaseEntity {
+=======
+exports.Roles = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_1 = __webpack_require__("typeorm");
+const base_entity_1 = __webpack_require__("./apps/backend/src/app/models/base/base.entity.ts");
+let Roles = class Roles extends base_entity_1.BaseEntity {
+>>>>>>> origin/develop
 };
 tslib_1.__decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)('uuid', {
         name: 'id',
     }),
     tslib_1.__metadata("design:type", String)
+<<<<<<< HEAD
 ], Roless.prototype, "id", void 0);
+=======
+], Roles.prototype, "id", void 0);
+>>>>>>> origin/develop
 tslib_1.__decorate([
     (0, typeorm_1.Column)({
         name: 'name',
         type: 'varchar',
     }),
     tslib_1.__metadata("design:type", String)
+<<<<<<< HEAD
 ], Roless.prototype, "name", void 0);
+=======
+], Roles.prototype, "name", void 0);
+>>>>>>> origin/develop
 tslib_1.__decorate([
     (0, typeorm_1.Column)({
         name: 'description',
         type: 'varchar',
     }),
     tslib_1.__metadata("design:type", String)
+<<<<<<< HEAD
 ], Roless.prototype, "description", void 0);
 Roless = tslib_1.__decorate([
     (0, typeorm_1.Entity)('role')
 ], Roless);
 exports.Roless = Roless;
+=======
+], Roles.prototype, "description", void 0);
+Roles = tslib_1.__decorate([
+    (0, typeorm_1.Entity)('role')
+], Roles);
+exports.Roles = Roles;
+>>>>>>> origin/develop
 
 
 /***/ }),
@@ -5192,7 +5260,11 @@ const config_1 = __webpack_require__("@nestjs/config");
 const constants_1 = __webpack_require__("./libs/constants/src/index.ts");
 const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
 const role_entity_1 = __webpack_require__("./apps/backend/src/app/models/role.entity.ts");
+<<<<<<< HEAD
 const room_type_entity_1 = __webpack_require__("./apps/backend/src/app/models/room-type.entity.ts");
+=======
+const models_2 = __webpack_require__("./apps/backend/src/app/models/index.ts");
+>>>>>>> origin/develop
 const device_type_entity_1 = __webpack_require__("./apps/backend/src/app/models/device-type.entity.ts");
 const booking_reason_entity_1 = __webpack_require__("./apps/backend/src/app/models/booking-reason.entity.ts");
 const slot_entity_1 = __webpack_require__("./apps/backend/src/app/models/slot.entity.ts");
@@ -5216,8 +5288,13 @@ const GlobalTypeOrmModule = typeorm_1.TypeOrmModule.forRootAsync({
             models_1.UsersOTP,
             models_1.UsersWarningFlag,
             models_1.UsersWarningFlagHistory,
+<<<<<<< HEAD
             role_entity_1.Roless,
             room_type_entity_1.RoomType,
+=======
+            role_entity_1.Roles,
+            models_2.RoomType,
+>>>>>>> origin/develop
             device_type_entity_1.DeviceType,
             booking_reason_entity_1.BookingReason,
             slot_entity_1.Slot,
@@ -5937,6 +6014,10 @@ const typeorm_1 = __webpack_require__("typeorm");
 const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
 const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/typeorm-ex.decorator.ts");
 const nestjs_typeorm_paginate_1 = __webpack_require__("nestjs-typeorm-paginate");
+<<<<<<< HEAD
+=======
+const role_entity_1 = __webpack_require__("./apps/backend/src/app/models/role.entity.ts");
+>>>>>>> origin/develop
 let AccountRepository = class AccountRepository extends typeorm_1.Repository {
     findKeycloakIdByGoogleId(googleId) {
         return this.createQueryBuilder('accounts')
@@ -5981,9 +6062,16 @@ let AccountRepository = class AccountRepository extends typeorm_1.Repository {
             'accounts.email',
             'accounts.fullname',
             'accounts.phone',
+<<<<<<< HEAD
             'accounts.role',
             'accounts.avatar',
         ])
+=======
+            'accounts.avatar',
+        ])
+            .addSelect('r.name', 'role')
+            .innerJoin(role_entity_1.Roles, 'r', 'r.id = accounts.role_id')
+>>>>>>> origin/develop
             .where('accounts.keycloak_id = :keycloakId', { keycloakId: keycloakId })
             .andWhere('accounts.disabled_at IS NULL')
             .andWhere('accounts.deleted_at IS NULL')
@@ -6107,7 +6195,12 @@ let AccountRepository = class AccountRepository extends typeorm_1.Repository {
     }
     findRoleByKeycloakId(keycloakId) {
         return this.createQueryBuilder('accounts')
+<<<<<<< HEAD
             .select('accounts.role', 'role')
+=======
+            .select('r.name', 'role')
+            .innerJoin(role_entity_1.Roles, 'r', 'r.id = accounts.role_id')
+>>>>>>> origin/develop
             .where('accounts.keycloak_id = :keycloakId', { keycloakId: keycloakId })
             .getRawOne()
             .then((data) => data === null || data === void 0 ? void 0 : data.role);
@@ -6123,10 +6216,18 @@ let AccountRepository = class AccountRepository extends typeorm_1.Repository {
                 'a.phone',
                 'a.created_at',
                 'a.updated_at',
+<<<<<<< HEAD
                 'a.role',
                 'a.fullname',
                 'a.avatar',
             ])
+=======
+                'a.fullname',
+                'a.avatar',
+            ])
+                .addSelect('r.name', 'role')
+                .innerJoin(role_entity_1.Roles, 'r', 'a.role_id = r.id')
+>>>>>>> origin/develop
                 .where('a.keycloak_id = :keycloakId', { keycloakId })
                 .andWhere('a.disabled_at IS NULL')
                 .andWhere('a.deleted_at IS NULL')
@@ -6318,6 +6419,10 @@ let BookingRoomRepository = class BookingRoomRepository extends typeorm_1.Reposi
         });
     }
     findByPaginationPayload(payload) {
+<<<<<<< HEAD
+=======
+        console.log("TIME CHECK OUT: ", payload.checkOutAt);
+>>>>>>> origin/develop
         const query = this.createQueryBuilder('booking_request')
             .select('booking_request.time_checkin', 'checkInAt')
             .addSelect('booking_request.time_checkout', 'checkOutAt')
@@ -6329,7 +6434,11 @@ let BookingRoomRepository = class BookingRoomRepository extends typeorm_1.Reposi
             .addSelect('booking_request.booked_at', 'bookedAt')
             .addSelect('booking_request.id', 'id')
             .innerJoin(models_1.Rooms, 'r', 'r.id = booking_request.room_id')
+<<<<<<< HEAD
             .where('r.name LIKE :roomName', {
+=======
+            .where('r.name ILIKE :roomName', {
+>>>>>>> origin/develop
             roomName: `%${payload.search}%`,
         })
             .andWhere('booking_request.time_checkin >= :timeCheckIn', {
@@ -6338,6 +6447,12 @@ let BookingRoomRepository = class BookingRoomRepository extends typeorm_1.Reposi
             .andWhere('booking_request.time_checkout <= :timeCheckOut', {
             timeCheckOut: payload.checkOutAt,
         })
+<<<<<<< HEAD
+=======
+            .andWhere('booking_request.status LIKE :status', {
+            status: `%${payload.status}%`,
+        })
+>>>>>>> origin/develop
             .orderBy(payload.sort, payload.dir);
         if (payload.reasonType && payload.reasonType !== '') {
             query.andWhere('booking_request.reason_type = :reason', {
@@ -6441,11 +6556,20 @@ let BookingRoomRepository = class BookingRoomRepository extends typeorm_1.Reposi
                 .addSelect('br.updated_at', 'updatedAt')
                 .addSelect('br.reason_type', 'reasonType')
                 .addSelect('br.description', 'description')
+<<<<<<< HEAD
                 .addSelect('br.updated_by', 'updatedBy')
                 .addSelect('br.checkin_at', 'checkinAt')
                 .addSelect('br.checkout_at', 'checkoutAt')
                 .innerJoin(models_1.Rooms, 'r', 'r.id = br.room_id')
                 .innerJoin(models_1.Accounts, 'a', 'a.id = br.requested_by')
+=======
+                .addSelect('br.checkin_at', 'checkinAt')
+                .addSelect('br.checkout_at', 'checkoutAt')
+                .addSelect('aa.username', 'updatedBy')
+                .innerJoin(models_1.Rooms, 'r', 'r.id = br.room_id')
+                .innerJoin(models_1.Accounts, 'a', 'a.id = br.requested_by')
+                .leftJoin(models_1.Accounts, 'aa', 'aa.id = br.updated_by')
+>>>>>>> origin/develop
                 .where('br.id = :id', { id: id })
                 .getRawOne();
         });
@@ -6882,7 +7006,11 @@ let RolesRepository = class RolesRepository extends typeorm_1.Repository {
     }
 };
 RolesRepository = tslib_1.__decorate([
+<<<<<<< HEAD
     (0, typeorm_ex_decorator_1.CustomRepository)(role_entity_1.Roless)
+=======
+    (0, typeorm_ex_decorator_1.CustomRepository)(role_entity_1.Roles)
+>>>>>>> origin/develop
 ], RolesRepository);
 exports.RolesRepository = RolesRepository;
 
@@ -7358,6 +7486,17 @@ let SlotRepository = class SlotRepository extends typeorm_1.Repository {
                 .getRawOne();
         });
     }
+<<<<<<< HEAD
+=======
+    findAll() {
+        return this.find({
+            where: {
+                deletedAt: null,
+                deletedBy: null
+            }
+        });
+    }
+>>>>>>> origin/develop
 };
 SlotRepository = tslib_1.__decorate([
     (0, typeorm_ex_decorator_1.CustomRepository)(slot_entity_1.Slot)
@@ -9240,7 +9379,11 @@ let RoomsService = RoomsService_1 = class RoomsService {
                 if (isExisted) {
                     throw new common_1.BadRequestException('This room is already existed');
                 }
+<<<<<<< HEAD
                 const addedRoom = yield this.repository.save(Object.assign({ createdBy: user.account_id, updatedBy: user.account_id }, room), {
+=======
+                const addedRoom = yield this.repository.save(Object.assign({ createdBy: user.account_id, disabledBy: user.account_id, disabledAt: new Date() }, room), {
+>>>>>>> origin/develop
                     transaction: true,
                 });
                 return addedRoom;
@@ -9452,6 +9595,13 @@ let SlotService = SlotService_1 = class SlotService {
     getAllByPagination(params) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
+<<<<<<< HEAD
+=======
+                if (!params) {
+                    console.log('ass');
+                    return this.repository.findAll();
+                }
+>>>>>>> origin/develop
                 return yield this.repository.findByPagination(params);
             }
             catch (e) {
@@ -9471,6 +9621,12 @@ let SlotService = SlotService_1 = class SlotService {
             }
         });
     }
+<<<<<<< HEAD
+=======
+    getAll() {
+        return this.repository.findAll();
+    }
+>>>>>>> origin/develop
 };
 SlotService = SlotService_1 = tslib_1.__decorate([
     (0, common_1.Injectable)(),
@@ -9658,7 +9814,7 @@ exports.UsersWarningFlagService = UsersWarningFlagService;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ContainsMany = void 0;
 const common_1 = __webpack_require__("@nestjs/common");
-const ContainsMany = (domains, options) => 
+const ContainsMany = (domains, options) =>
 // eslint-disable-next-line @typescript-eslint/ban-types
 (target, propertyKey) => {
     let value;
@@ -10332,7 +10488,7 @@ module.exports = require("path");
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -10346,14 +10502,14 @@ module.exports = require("path");
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.

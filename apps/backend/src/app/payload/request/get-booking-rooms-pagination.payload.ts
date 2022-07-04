@@ -4,4 +4,5 @@ export interface GetBookingRoomsPaginationPayload extends PaginationParams {
   reasonType: string;
   checkInAt: string;
   checkOutAt: string;
+  status: string;
 }

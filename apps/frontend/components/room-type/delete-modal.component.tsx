@@ -46,10 +46,11 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const [isShownListRoom, setShownListRoom] = useState(false);
 
   const [listRoom, setListRoom] = useState([]);
+  console.log(listRoom)
 
   const dispatch = useAppDispatch();
 
-  const handleDeleteRoom = () => {
+  const handleDeleteRoomType = () => {
     dispatch(deleteRoomTypeById(selectedRoomTypeId))
       .catch((e) =>
         showNotification({
@@ -236,7 +237,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       title={<ModalHeaderTitle />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}
-      size={isShownListRoom && listRoom.length > 0 ? '70%' : null}
+      size={isShownListRoom && listRoom.length > 0 ? '50%' : null}
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
@@ -260,7 +261,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           <Button
             color="red"
             leftIcon={<Trash />}
-            onClick={() => handleDeleteRoom()}
+            onClick={() => handleDeleteRoomType()}
             style={{
               width: '60%',
               margin: 10,

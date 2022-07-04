@@ -14,7 +14,6 @@ import { useWindowDimensions } from '../../hooks/use-window-dimensions';
 import {
   Check,
   ClipboardText,
-  Cross,
   FileDescription,
   Plus,
   X,
@@ -25,8 +24,8 @@ import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
 import { addRoom } from '../../redux/features/room/thunk/add-room';
 import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
-import { LIBRARY_ROOM_TYPE } from '../../constants/library-room-type.model';
 import { RoomParams } from '../../models/pagination-params/room-params.model';
+import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
 
 interface AddRoomModalProps {
   isShown: boolean;
@@ -88,6 +87,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
         dispatch(fetchRooms(props.pagination)).finally(() =>
           formik.resetForm()
         );
+        dispatch(fetchDisabledRooms(''))
       });
   };
 
@@ -121,6 +121,21 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
     props.toggleShown();
     formik.resetForm();
   };
+
+  const handleAddAction = () => {
+    if (roomType === '') {
+      showNotification({
+        id: 'load-data',
+        color: 'red',
+        title: 'Error while adding library room',
+        message: 'Please select the type that exists',
+        icon: <X />,
+        autoClose: 3000,
+      });
+    } else {
+      formik.submitForm()
+    }
+  }
 
   return (
     <>
@@ -208,7 +223,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
               <Button
                 color="green"
                 disabled={isAddDisabled}
-                onClick={() => formik.submitForm()}
+                onClick={() => handleAddAction()}
                 leftIcon={<Plus />}
               >
                 Add

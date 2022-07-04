@@ -30,7 +30,6 @@ export class RolesGuard implements CanActivate {
     const accountRole = await this.accountsService.getAccountRoleByKeycloakId(
       keycloakUser.sub
     );
-
     return requiredRoles.some((role) => accountRole === role);
   }
 }

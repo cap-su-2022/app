@@ -28,6 +28,7 @@ import { InputUpdateProps } from '../actions/models/input-update-props.model';
 import AdminLayout from '../layout/admin.layout';
 import RestoreDeletedModal from '../role/restore-deleted.modal.component';
 import DeleteModal from '../role/delete-modal.component';
+import dayjs from 'dayjs';
 
 const AddRoleValidation = Yup.object().shape({
   name: Yup.string()
@@ -62,8 +63,19 @@ const ManageRole: React.FC<any> = () => {
   const [debounceSearchValue] = useDebouncedValue(pagination.search, 400);
   const [isRestoreDeletedShown, setRestoreDeletedShown] =
     useState<boolean>(false);
+  const [roleNames, setRoleNames] = useState([]);
 
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (roles.items) {
+      const tmp = roles.items.map((row, index) => ({
+        value: row.id,
+        label: row.name,
+      }));
+      setRoleNames(tmp);
+    }
+  }, [roles]);
 
   useEffect(() => {
     dispatch(fetchRoles(pagination));
@@ -157,7 +169,7 @@ const ManageRole: React.FC<any> = () => {
     },
     delete: (id) => {
       setId(id);
-      handleFetchById(id)
+      handleFetchById(id);
       setDeleteShown(!isDeleteShown);
     },
   };
@@ -182,6 +194,34 @@ const ManageRole: React.FC<any> = () => {
       id: 'description',
       name: 'description',
       value: role.description,
+      readOnly: true,
+    },
+    {
+      label: 'Create at',
+      id: 'createAt',
+      name: 'createAt',
+      value: dayjs(role.createdAt).format('HH:mm DD/MM/YYYY'),
+      readOnly: true,
+    },
+    {
+      label: 'Create By',
+      id: 'createBy',
+      name: 'createBy',
+      value: role.createdBy,
+      readOnly: true,
+    },
+    {
+      label: 'Update At',
+      id: 'updateAt',
+      name: 'updateAt',
+      value: dayjs(role.updatedAt).format('HH:mm DD/MM/YYYY'),
+      readOnly: true,
+    },
+    {
+      label: 'Update By',
+      id: 'updateBy',
+      name: 'updateBy',
+      value: role.updatedBy,
       readOnly: true,
     },
   ];
@@ -294,6 +334,7 @@ const ManageRole: React.FC<any> = () => {
     <AdminLayout>
       <Header title="Role Manager" icon={<BuildingWarehouse size={50} />} />
       <TableHeader
+        actionsLeft={null}
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter />}
         setSearch={(val) => handleSearchValue(val)}
@@ -333,7 +374,7 @@ const ManageRole: React.FC<any> = () => {
             isShown={isDeleteShown}
             toggleShown={() => setDeleteShown(!isDeleteShown)}
             pagination={pagination}
-            // roomTypes={roomTypeNames}
+            roles={roleNames}
           />
         </>
       ) : null}

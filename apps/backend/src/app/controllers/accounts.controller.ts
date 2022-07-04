@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
   UsePipes,
@@ -315,6 +316,28 @@ export class AccountsController {
     return this.service.getAccountByKeycloakId(payload.id);
   }
 
+  @Get('by-role')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched deleted rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getRoomsByRoomType(@Query('role') roleId= ''): Promise<Accounts[]> {
+    return this.service.getAccountsByRoleId(roleId);
+  }
+
   @Get('disabled')
   @ApiOperation({
     summary: 'Get a list of disabled accounts',
@@ -387,7 +410,7 @@ export class AccountsController {
   })
   updateAccountById(
     @User() user: KeycloakUserInstance,
-    @Param() id: string,
+    @Param() payload: { id: string },
     @Body()
     body: {
       phone: string;
@@ -395,7 +418,7 @@ export class AccountsController {
       description: string;
     }
   ) {
-    return this.service.updateById(body, id);
+    return this.service.updateById(body, payload.id);
   }
 
   @Put('update-profile')

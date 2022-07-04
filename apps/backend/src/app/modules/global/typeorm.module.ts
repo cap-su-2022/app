@@ -12,8 +12,8 @@ import {
   UsersWarningFlag,
   UsersWarningFlagHistory,
 } from '../../models';
-import { Roless } from '../../models/role.entity';
-import { RoomType } from '../../models/room-type.entity';
+import { Roles } from '../../models/role.entity';
+import { RoomType } from '../../models';
 import { DeviceType } from '../../models/device-type.entity';
 import { BookingReason } from '../../models/booking-reason.entity';
 import { Slot } from '../../models/slot.entity';
@@ -38,7 +38,7 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       UsersOTP,
       UsersWarningFlag,
       UsersWarningFlagHistory,
-      Roless,
+      Roles,
       RoomType,
       DeviceType,
       BookingReason,

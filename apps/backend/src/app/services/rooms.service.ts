@@ -27,7 +27,8 @@ export class RoomsService {
       const addedRoom = await this.repository.save(
         {
           createdBy: user.account_id,
-          updatedBy: user.account_id,
+          disabledBy: user.account_id,
+          disabledAt: new Date(),
           ...room,
         },
         {
@@ -114,7 +115,11 @@ export class RoomsService {
     }
   }
 
-  async updateById(accountId:string, id: string, body: UpdateRoomRequest): Promise<void> {
+  async updateById(
+    accountId: string,
+    id: string,
+    body: UpdateRoomRequest
+  ): Promise<void> {
     let room;
 
     try {
