@@ -5,6 +5,7 @@ import { AddDeviceRequest, UpdateDeviceRequest } from '@app/models';
 import { DevicesRequestPayload } from '../payload/request/devices.payload';
 import { Devices } from '../models';
 import { Direction } from '../models/search-pagination.payload';
+import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
 
 @Injectable()
 export class DevicesService {
@@ -20,6 +21,7 @@ export class DevicesService {
       throw new BadRequestException('Error while creating a new device');
     }
   }
+  
 
   addAll(models: any[]): Promise<any[]> {
     return Promise.resolve([]);
@@ -51,18 +53,57 @@ export class DevicesService {
         throw new BadRequestException('One or more parameters is invalid');
       });
   }
-
-  async updateById(body: UpdateDeviceRequest, id: string): Promise<Devices> {
+  async getDevicesByDeviceType(deviceTypeId: string): Promise<Devices[]> {
     try {
-      const device = await this.repository.findOneOrFail({
+      return await this.repository.getDevicesByDeviceType(deviceTypeId);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        'An error occurred while getting rooms by type ' + deviceTypeId
+      );
+    }
+  }
+
+  async updateById(
+    accountId: string,
+    id: string,
+    body: UpdateDeviceRequest
+  ): Promise<void> {
+    let device;
+    try {
+      device = await this.repository.findOneOrFail({
         where: {
           id: id,
         },
       });
-      return await this.repository.updateById(device, body, id);
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException('Error while updating the device');
+      throw new BadRequestException("Device doesn't exist with the provided id");
+    }
+    if (device.name !== body.name) {
+      const isExisted = await this.repository.isExistedByName(body.name);
+      if (isExisted) {
+        throw new BadRequestException(
+          'The device name you want to use is duplicated!'
+        );
+      }
+    }
+    try {
+      await this.repository.save(
+        {
+          ...device,
+          name: body.name.trim(),
+          description: body.description,
+          updatedBy: accountId,
+          deviceTypeId: body.type,
+        },
+        {
+          transaction: true,
+        }
+      );
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException('Error occurred while updating this room');
     }
   }
 

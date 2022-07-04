@@ -25,6 +25,15 @@ export class DeviceTypeService {
     }
   }
 
+  getDeviceTypeNames() {
+    try {
+      return this.repository.findDeviceTypeName();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async updateDeviceTypeById(
     accountId: string,
     id: string,

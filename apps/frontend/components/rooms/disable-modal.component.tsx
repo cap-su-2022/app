@@ -118,7 +118,7 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
 
   return (
     <Modal
-      closeOnClickOutside={false}
+      closeOnClickOutside={true}
       centered
       zIndex={200}
       title={<ModalHeaderTitle/>}

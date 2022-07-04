@@ -75,13 +75,13 @@ export class Accounts extends BaseEntityWithDisabled {
   description?: string;
 
   @Column({
-    name: 'role',
+    name: 'role_id',
     type: 'varchar',
     length: '36',
     nullable: false,
     comment: 'Role of the associated user.',
   })
-  role?: string;
+  roleId?: string;
 
   @Column({
     name: 'avatar',

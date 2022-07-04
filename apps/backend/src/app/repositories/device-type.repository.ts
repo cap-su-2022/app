@@ -43,6 +43,14 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .getRawOne<DeviceType>();
   }
 
+  findDeviceTypeName(): Promise<RoomType[]> {
+    return this.createQueryBuilder('dt')
+      .select('dt.id', 'id')
+      .addSelect('dt.name', 'name')
+      .andWhere("dt.deleted_at IS NULL")
+      .getRawMany<RoomType>();
+  }
+
   async deleteByIdAndAccountId(
     accountId: string,
     id: string
