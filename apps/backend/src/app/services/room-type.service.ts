@@ -1,9 +1,8 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { PaginationParams } from '../controllers/pagination.model';
 import { RoomTypeRepository } from '../repositories/room-type.repository';
-import { RoomTypeAddRequestPayload } from '../payload/request/room-type-add.request.payload';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 import { RoomType } from '../models/room-type.entity';
-import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
 import { Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
@@ -49,7 +48,7 @@ export class RoomTypeService {
 
   async updateRoomTypeById(
     accountId: string,
-    updatePayload: RoomTypeUpdateRequestPayload,
+    updatePayload: MasterDataAddRequestPayload,
     id: string
   ) {
     try {
@@ -140,7 +139,7 @@ export class RoomTypeService {
 
   async addRoomType(
     accountId: string,
-    addRoomType: RoomTypeAddRequestPayload
+    addRoomType: MasterDataAddRequestPayload
   ): Promise<RoomType> {
     try {
       return await this.repository.save({

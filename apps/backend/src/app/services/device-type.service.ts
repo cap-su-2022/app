@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { DeviceTypeRepository } from '../repositories/device-type.repository';
 import { PaginationParams } from '../controllers/pagination.model';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 
 @Injectable()
 export class DeviceTypeService {
@@ -18,7 +19,13 @@ export class DeviceTypeService {
 
   async getDeviceTypeById(id: string) {
     try {
-      return await this.repository.findById(id);
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException(
+          'This room is already deleted or disabled'
+        );
+      }
+      return data;
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);
@@ -37,9 +44,15 @@ export class DeviceTypeService {
   async updateDeviceTypeById(
     accountId: string,
     id: string,
-    payload: { name: string; description: string }
+    payload: MasterDataAddRequestPayload
   ) {
     try {
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException(
+          'This room is already deleted or disabled'
+        );
+      }
       return await this.repository.updateById(accountId, id, payload);
     } catch (e) {
       this.logger.error(e);

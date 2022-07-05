@@ -22,8 +22,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RoomTypeService } from '../services/room-type.service';
-import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
-import { RoomTypeAddRequestPayload } from '../payload/request/room-type-add.request.payload';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 import { User } from '../decorators/keycloak-user.decorator';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
@@ -141,7 +140,7 @@ export class RoomTypeController {
     description: 'Update room type by id',
   })
   updateRoomTypeById(
-    @Body() updatePayload: RoomTypeUpdateRequestPayload,
+    @Body() updatePayload: MasterDataAddRequestPayload,
     @Param('id') id: string,
     @User() keycloakUser: KeycloakUserInstance
   ) {
@@ -348,11 +347,8 @@ export class RoomTypeController {
   })
   addRoomType(
     @User() keycloakUser: KeycloakUserInstance,
-    @Body() addRoomType: RoomTypeAddRequestPayload
+    @Body() addRoomType: MasterDataAddRequestPayload
   ) {
-    if(addRoomType.name.length === 0){
-      throw new BadRequestException('Name of room type cann not be empty');
-    }
     return this.service.addRoomType(keycloakUser.account_id, addRoomType);
   }
 }
