@@ -3,7 +3,7 @@ import { DevicesRepository } from '../repositories/devices.repository';
 import { DevicesResponsePayload } from '../payload/response/devices.payload';
 import { AddDeviceRequest, UpdateDeviceRequest } from '@app/models';
 import { DevicesRequestPayload } from '../payload/request/devices.payload';
-import { Devices } from '../models';
+import { Devices, Rooms } from '../models';
 import { Direction } from '../models/search-pagination.payload';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 
@@ -14,6 +14,16 @@ export class DevicesService {
   constructor(private readonly repository: DevicesRepository) {}
 
   async add(payload: AddDeviceRequest): Promise<Devices> {
+    const isExisted = await this.repository.isExistedByName(payload.name);
+    if (isExisted) {
+      throw new BadRequestException('Phone name is duplicated!');
+    }
+    if (
+      payload.name.trim().length < 1 ||
+      payload.description.trim().length < 1
+    ) {
+      throw new BadRequestException('All fields must be filled in!');
+    }
     try {
       return await this.repository.createNewDevice(payload);
     } catch (e) {
@@ -21,7 +31,6 @@ export class DevicesService {
       throw new BadRequestException('Error while creating a new device');
     }
   }
-
 
   addAll(models: any[]): Promise<any[]> {
     return Promise.resolve([]);
@@ -70,6 +79,9 @@ export class DevicesService {
     body: UpdateDeviceRequest
   ): Promise<void> {
     let device;
+    if (body.name.length < 1 || body.description.length < 1) {
+      throw new BadRequestException('Fields cannot be left blank!');
+    }
     try {
       device = await this.repository.findOneOrFail({
         where: {
@@ -78,7 +90,9 @@ export class DevicesService {
       });
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException("Device doesn't exist with the provided id");
+      throw new BadRequestException(
+        "Device doesn't exist with the provided id"
+      );
     }
     if (device.name !== body.name) {
       const isExisted = await this.repository.isExistedByName(body.name);
@@ -109,14 +123,20 @@ export class DevicesService {
 
   async findById(id: string): Promise<Devices> {
     try {
-      return await this.repository.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
+      const isExisted = await this.repository.isExistedById(id);
+      if (!isExisted) {
+        throw new BadRequestException('Device does not found with the id');
+      }
+      const result = await this.repository.findById(id);
+      if (!result) {
+        throw new BadRequestException('Device does not found with the id');
+      }
+      return result;
     } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException('Error while retrieving device');
+      this.logger.error(e);
+      throw new BadRequestException(
+        e.message ?? 'An error occurred while retrieving this Device'
+      );
     }
   }
 
@@ -135,6 +155,19 @@ export class DevicesService {
 
   async handleRestoreDisabledDeviceById(id: string): Promise<void> {
     try {
+      const device = await this.repository.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+      if (
+        device.disabledBy == null &&
+        device.disabledAt == null &&
+        device.disabledBy == null &&
+        device.disabledAt == null
+      ) {
+        throw new BadRequestException('This device is active!');
+      }
       const isDeleted = await this.repository.checkIfDeviceIsDeletedById(id);
       if (isDeleted) {
         throw new BadRequestException('Not found with provided id');
@@ -148,6 +181,19 @@ export class DevicesService {
 
   async handleRestoreDeviceById(id: string): Promise<void> {
     try {
+      const device = await this.repository.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+      if (
+        device.disabledBy == null &&
+        device.disabledAt == null &&
+        device.disabledBy == null &&
+        device.disabledAt == null
+      ) {
+        throw new BadRequestException('This device is active!');
+      }
       const isDeleted = await this.repository.checkIfDeviceIsDeletedById(id);
       if (!isDeleted) {
         throw new BadRequestException('Not found with provided id');

@@ -26,7 +26,7 @@ import { DevicesValidation } from '../pipes/validation/devices.validation';
 import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
-import { Devices } from '../models';
+import {Devices, Rooms} from '../models';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { User } from '../decorators/keycloak-user.decorator';
 
@@ -89,8 +89,8 @@ export class DevicesController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getDeviceById(@Param() id: string) {
-    return this.service.findById(id);
+  getDeviceById(@Param() payload: { id: string }): Promise<Devices> {
+    return this.service.findById(payload.id);
   }
 
   @Get('by-device-type')

@@ -1,5 +1,5 @@
-import { Repository, UpdateResult } from 'typeorm';
-import { Devices } from '../models';
+import {FindOneOptions, Repository, UpdateResult} from 'typeorm';
+import {Accounts, Devices, Rooms, RoomType} from '../models';
 import { RepositoryPaginationPayload } from '../models/search-pagination.payload';
 import { AddDeviceRequest, UpdateDeviceRequest } from '@app/models';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
@@ -91,6 +91,8 @@ export class DevicesRepository extends Repository<Devices> {
   }
 
   disableById(id: string): Promise<UpdateResult> {
+    console.log('id ne dcm')
+    console.log(id)
     return this.createQueryBuilder('devices')
       .update({
         disabledAt: new Date(),
@@ -151,5 +153,34 @@ export class DevicesRepository extends Repository<Devices> {
       .andWhere('devices.name LIKE :name', { name: `%${name}%` })
       .orderBy('devices.name', sort as 'ASC' | 'DESC')
       .getMany();
+  }
+
+  async findById(id: string): Promise<Devices> {
+
+    return this.createQueryBuilder('devices')
+      .select('devices.id', 'id')
+      .addSelect('devices.name', 'name')
+      .addSelect('devices.description', 'description')
+      .addSelect('devices.created_at', 'createdAt')
+      .addSelect('devices.updated_at', 'updatedAt')
+      .addSelect('devices.created_by', 'createdBy')
+      .addSelect('devices.updated_by', 'updatedBy')
+      .addSelect('devices.disabled_at', 'disableAt')
+      .addSelect('devices.deleted_at', 'deletedAt')
+      .addSelect('devices.disabled_by', 'disabledBy')
+      .addSelect('devices.deleted_by', 'deletedBy')
+      .addSelect('devices.device_type_id', 'devicesTypeId')
+      .where('devices.disabled_at IS NULL')
+      .andWhere('devices.deleted_at IS NULL')
+      .andWhere('devices.id = :deviceId', { deviceId: id })
+      .getRawOne<Devices>();
+  }
+
+  async isExistedById(id: string): Promise<boolean> {
+    return this.createQueryBuilder('devices')
+      .select('COUNT(devices.name)')
+      .where('devices.id = :id', {id} )
+      .getRawOne()
+      .then((data) => data['count'] > 0);
   }
 }
