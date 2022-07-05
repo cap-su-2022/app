@@ -5,7 +5,7 @@ import { AddDeviceRequest, UpdateDeviceRequest } from '@app/models';
 import { DevicesRequestPayload } from '../payload/request/devices.payload';
 import { Devices } from '../models';
 import { Direction } from '../models/search-pagination.payload';
-import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 
 @Injectable()
 export class DevicesService {
@@ -21,7 +21,7 @@ export class DevicesService {
       throw new BadRequestException('Error while creating a new device');
     }
   }
-  
+
 
   addAll(models: any[]): Promise<any[]> {
     return Promise.resolve([]);

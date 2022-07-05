@@ -1,9 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   DefaultValuePipe,
   Delete,
   Get,
+  HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
@@ -14,12 +16,13 @@ import {
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { DeviceType } from '../models/device-type.entity';
 import { DeviceTypeService } from '../services/device-type.service';
-import { PaginationParams } from './pagination.model';
 import { User } from '../decorators/keycloak-user.decorator';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { PaginationParams } from './pagination.model';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 
 @Controller('/v1/device-type')
 export class DeviceTypeController {
@@ -27,22 +30,33 @@ export class DeviceTypeController {
 
   @Get()
   getAllDeviceTypes(
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query('dir', new DefaultValuePipe('ASC')) dir: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('sort', new DefaultValuePipe('name')) sort: string,
-    @Query('search', new DefaultValuePipe('')) search: string
+    @Query() payload: PaginationParams
   ): Promise<Pagination<DeviceType>> {
-    return this.service.getAllDeviceTypes({
-      limit,
-      dir,
-      page,
-      sort,
-      search,
-    } as PaginationParams);
+    return this.service.getAllDeviceTypes(payload as PaginationParams);
   }
 
   @Get(':id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched device type by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get device type by id',
+    description: 'Get device type by id',
+  })
   getDeviceTypeById(@Param('id') id: string): Promise<DeviceType> {
     return this.service.getDeviceTypeById(id);
   }
@@ -74,9 +88,31 @@ export class DeviceTypeController {
   }
 
   @Post()
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Add room type',
+    description: 'Add room type',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully added room type',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   addNewDeviceType(
     @User() user: KeycloakUserInstance,
-    @Body() payload: { name: string; description: string }
+    @Body() payload: MasterDataAddRequestPayload
   ) {
     return this.service.addNewDeviceType(user.account_id, payload);
   }
@@ -84,7 +120,7 @@ export class DeviceTypeController {
   @Put(':id')
   updateDeviceTypeById(
     @Param('id') id: string,
-    @Body() payload: { name: string; description: string },
+    @Body() payload: MasterDataAddRequestPayload,
     @User() user: KeycloakUserInstance
   ) {
     return this.service.updateDeviceTypeById(user.account_id, id, payload);

@@ -3,12 +3,13 @@ import { Repository, UpdateResult } from 'typeorm';
 import { RoomType } from '../models/room-type.entity';
 import { PaginationParams } from '../controllers/pagination.model';
 import { Accounts } from '../models';
-import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
+
 import {
   IPaginationMeta,
   paginateRaw,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 
 @CustomRepository(RoomType)
 export class RoomTypeRepository extends Repository<RoomType> {
@@ -136,7 +137,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
   updateById(
     roomTypeId: string,
     accountId: string,
-    payload: RoomTypeUpdateRequestPayload
+    payload: MasterDataAddRequestPayload
   ) {
     return this.save(
       {

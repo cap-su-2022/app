@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { PaginationParams } from '../controllers/pagination.model';
 import { RolesRepository } from '../repositories/roles.repository';
-import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 import { Roles } from '../models/role.entity';
 
 
@@ -85,7 +85,7 @@ export class RoleService {
 
   async updateRoleById(
     accountId: string,
-    updatePayload: RoomTypeUpdateRequestPayload,
+    updatePayload: MasterDataAddRequestPayload,
     id: string
   ) {
     try {
