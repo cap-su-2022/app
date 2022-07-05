@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   DefaultValuePipe,
@@ -28,6 +29,7 @@ import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
+import { PaginationParams } from './pagination.model';
 
 @Controller('/v1/room-type')
 @ApiBearerAuth()
@@ -37,6 +39,8 @@ export class RoomTypeController {
   constructor(private readonly service: RoomTypeService) {}
 
   @Get()
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully fetched room types by pagination',
@@ -58,20 +62,8 @@ export class RoomTypeController {
     description: 'Get room type by pagination',
   })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  getRoomTypes(
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query('dir', new DefaultValuePipe('ASC')) dir: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('sort', new DefaultValuePipe('name')) sort: string,
-    @Query('search', new DefaultValuePipe('')) search: string
-  ) {
-    return this.service.getRoomTypesWithPagination({
-      limit,
-      dir,
-      sort,
-      search,
-      page,
-    });
+  getRoomTypes(@Query() payload: PaginationParams) {
+    return this.service.getRoomTypesWithPagination(payload);
   }
 
   @Get('name')
@@ -358,6 +350,9 @@ export class RoomTypeController {
     @User() keycloakUser: KeycloakUserInstance,
     @Body() addRoomType: RoomTypeAddRequestPayload
   ) {
+    if(addRoomType.name.length === 0){
+      throw new BadRequestException('Name of room type cann not be empty');
+    }
     return this.service.addRoomType(keycloakUser.account_id, addRoomType);
   }
 }

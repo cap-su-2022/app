@@ -15,6 +15,7 @@ import { BookingReason } from '../models/booking-reason.entity';
 import { BookingReasonHist } from '../models/booking-reason-hist.entity';
 import { BookingReasonRepository } from '../repositories/booking-reason.repository';
 import { BookingReasonHistRepository } from '../repositories/booking-reason-hist.repository';
+import { KeycloakService } from '../services';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { BookingReasonHistRepository } from '../repositories/booking-reason-hist
     ]),
   ],
   controllers: [BookingReasonController],
-  providers: [BookingReasonService, BookingReasonHistService],
+  providers: [BookingReasonService, BookingReasonHistService, KeycloakService],
   exports: [BookingReasonService, BookingReasonHistService],
 })
 export class BookingReasonModule {}

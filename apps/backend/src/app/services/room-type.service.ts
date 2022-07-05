@@ -4,7 +4,7 @@ import { RoomTypeRepository } from '../repositories/room-type.repository';
 import { RoomTypeAddRequestPayload } from '../payload/request/room-type-add.request.payload';
 import { RoomType } from '../models/room-type.entity';
 import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
-import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
+import { Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class RoomTypeService {
@@ -34,7 +34,13 @@ export class RoomTypeService {
 
   async getRoomTypeById(id: string): Promise<RoomType> {
     try {
-      return await this.repository.findById(id);
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException(
+          'This room is already deleted or disabled'
+        );
+      }
+      return data;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -116,9 +122,16 @@ export class RoomTypeService {
     }
   }
 
-  deleteRoomTypeById(accountId: string, id: string) {
+  async deleteRoomTypeById(accountId: string, id: string) {
     try {
-      return this.repository.deleteById(accountId, id);
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException(
+          'This room is already deleted or disabled'
+        );
+      } else {
+        return this.repository.deleteById(accountId, id);
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
