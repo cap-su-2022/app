@@ -4,7 +4,7 @@ import axios from 'axios';
 import { defaultPaginationParams } from '../../../../models/pagination-params.model';
 import { fetchBookingReasons } from './fetch-booking-reasons.thunk';
 
-export const updateRoleById = createAsyncThunk<
+export const updateBookingReasonById = createAsyncThunk<
   void,
   {
     id?: string;

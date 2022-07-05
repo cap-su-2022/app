@@ -203,8 +203,6 @@ export class AccountRepository extends Repository<Accounts> {
   }
 
   updatePartially(body: any, account: Accounts): Promise<Accounts> {
-    console.log("BBBBBBBBB", body);
-    console.log("AAAAAAAAAAA", account)
     return this.save(
       {
         ...account,
