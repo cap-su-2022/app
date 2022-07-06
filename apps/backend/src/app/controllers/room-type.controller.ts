@@ -322,6 +322,34 @@ export class RoomTypeController {
     return this.service.deleteRoomTypeById(keycloakUser.account_id, id);
   }
 
+  @Delete('permanent/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully permanent deleted room type by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for permanent delete room type is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Permanently delete room type by id',
+    description: 'Permanently delete room type by id',
+  })
+  permanentDeleteRoomTypeById(
+    @Param('id') id: string,
+  ) {
+    return this.service.permanentDeleteRoomTypeById(id);
+  }
+
   @Post()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @HttpCode(HttpStatus.OK)

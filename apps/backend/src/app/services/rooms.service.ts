@@ -24,19 +24,36 @@ export class RoomsService {
         throw new BadRequestException('This room is already existed');
       }
 
-      const addedRoom = await this.repository.save(
-        {
-          createdBy: user.account_id,
-          disabledBy: user.account_id,
-          disabledAt: new Date(),
-          ...room,
-        },
-        {
-          transaction: true,
-        }
-      );
+      if (room.isDisabled) {
+        const addedRoom = await this.repository.save(
+          {
+            createdBy: user.account_id,
+            updatedAt: new Date(),
+            disabledBy: user.account_id,
+            disabledAt: new Date(),
+            ...room,
+          },
+          {
+            transaction: true,
+          }
+        );
 
-      return addedRoom;
+        return addedRoom;
+      } else {
+        const addedRoom = await this.repository.save(
+          {
+            createdBy: user.account_id,
+            updatedAt: new Date(),
+            updatedBy: user.account_id,
+            ...room,
+          },
+          {
+            transaction: true,
+          }
+        );
+
+        return addedRoom;
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(

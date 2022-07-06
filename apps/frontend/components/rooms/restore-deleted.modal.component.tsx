@@ -17,6 +17,7 @@ import { restoreDeletedRoom } from '../../redux/features/room/thunk/restore-dele
 import { RoomParams } from '../../models/pagination-params/room-params.model';
 import dayjs from 'dayjs';
 import { useDebouncedValue } from '@mantine/hooks';
+import NoDataFound from '../no-data-found';
 
 interface RestoreDeletedRoomModalProps {
   isShown: boolean;
@@ -33,8 +34,6 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
   const [scrolled, setScrolled] = useState(false);
   const [search, setSearch] = useState<string>('');
   const [searchDebounced] = useDebouncedValue<string>(search, 400);
-
-
 
   useEffect(() => {
     dispatch(fetchDeletedRooms(search));
@@ -92,37 +91,43 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
       opened={props.isShown}
       onClose={() => props.toggleShown()}
       centered
-      size="85%"
+      size="70%"
       title={<ModalHeaderTitle />}
       closeOnClickOutside={true}
       closeOnEscape={false}
     >
-      <InputWrapper label="Search">
-        <TextInput
-          onChange={(e) => setSearch(e.target.value)}
-          icon={<Search />}
-        />
-      </InputWrapper>
-      <ScrollArea
-        sx={{ height: 500 }}
-        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
-      >
-        <Table sx={{ minWidth: 700 }}>
-          <thead
-            className={cx(classes.header, { [classes.scrolled]: scrolled })}
+      {deletedRooms.length > 0 ? (
+        <>
+          <InputWrapper label="Search">
+            <TextInput
+              onChange={(e) => setSearch(e.target.value)}
+              icon={<Search />}
+            />
+          </InputWrapper>
+          <ScrollArea
+            sx={{ height: 500 }}
+            onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
           >
-            <tr>
-              <th>STT</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Delete At</th>
-              <th>Delete By</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </ScrollArea>
+            <Table sx={{ minWidth: 700 }}>
+              <thead
+                className={cx(classes.header, { [classes.scrolled]: scrolled })}
+              >
+                <tr>
+                  <th>STT</th>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Delete At</th>
+                  <th>Delete By</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>{rows}</tbody>
+            </Table>
+          </ScrollArea>
+        </>
+      ) : (
+        <NoDataFound />
+      )}
     </Modal>
   );
 };
