@@ -139,6 +139,9 @@ export class BookingReasonRepository extends Repository<BookingReason> {
         createdAt: new Date(),
         updatedBy: accountId,
         updatedAt: new Date(),
+      },
+      {
+        transaction: true,
       });
     } catch (e) {
       throw new BadRequestException(e.message);

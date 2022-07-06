@@ -41,6 +41,7 @@ import { RoomType } from '../../models/room-type.model';
 import { PaginationResponse } from '../../models/pagination-response.payload';
 import { showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
+import NoDataFound from '../no-data-found';
 
 const AddRoomTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -437,7 +438,7 @@ const ManageRoomType: React.FC<any> = () => {
             roomTypes={roomTypeNames}
           />
         </>
-      ) : null}
+      ) : <NoDataFound />}
       <AddModal
         header="Add new room type"
         isShown={isAddShown}

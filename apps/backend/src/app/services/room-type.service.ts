@@ -137,6 +137,23 @@ export class RoomTypeService {
     }
   }
 
+  async permanentDeleteRoomTypeById(id: string) {
+    try {
+      const data = await this.repository.findById(id);
+      console.log("DATA NE: ", data)
+      if (data !== undefined) {
+        throw new BadRequestException(
+          'Please delete this type after permanently delete'
+        );
+      } else {
+        return this.repository.permanantDeleteById(id);
+      }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async addRoomType(
     accountId: string,
     addRoomType: MasterDataAddRequestPayload

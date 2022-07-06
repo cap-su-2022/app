@@ -112,6 +112,14 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .execute();
   }
 
+  permanantDeleteById(id: string) {
+    return this.createQueryBuilder('room_type')
+      .delete()
+      .where('room_type.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
+  }
+
   findDisabledByPagination(search: string): Promise<RoomType[]> {
     return this.createQueryBuilder('rt')
       .select('rt.id', 'id')
