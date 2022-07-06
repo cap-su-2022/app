@@ -9,16 +9,18 @@ import ConfigModule from './global/config.module';
 import { HttpModule } from '@nestjs/axios';
 import { AccountRepository } from '../repositories';
 import { AccountsModule } from './accounts.module';
+import { RoomTypeHistService } from '../services/room-type-hist.service';
+import { RoomTypeHistRepository } from '../repositories/room-type-hist.repository';
 
 @Module({
   imports: [
     ConfigModule,
     HttpModule,
     AccountsModule,
-    TypeOrmExModule.forCustomRepository([RoomTypeRepository]),
+    TypeOrmExModule.forCustomRepository([RoomTypeRepository, RoomTypeHistRepository]),
   ],
-  exports: [RoomTypeService],
   controllers: [RoomTypeController],
-  providers: [RoomTypeService, KeycloakService],
+  exports: [RoomTypeService, RoomTypeHistService],
+  providers: [RoomTypeService, KeycloakService, RoomTypeHistService],
 })
 export class RoomTypeModule {}

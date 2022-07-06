@@ -126,14 +126,14 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
       closeOnClickOutside={true}
       closeOnEscape={false}
     >
+      <InputWrapper label="Search">
+        <TextInput
+          onChange={(e) => setSearch(e.target.value)}
+          icon={<Search />}
+        />
+      </InputWrapper>
       {disabledRooms.length > 0 ? (
         <>
-          <InputWrapper label="Search">
-            <TextInput
-              onChange={(e) => setSearch(e.target.value)}
-              icon={<Search />}
-            />
-          </InputWrapper>
           <ScrollArea
             sx={{ height: 500 }}
             onScrollPositionChange={({ y }) => setScrolled(y !== 0)}

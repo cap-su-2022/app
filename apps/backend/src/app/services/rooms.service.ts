@@ -10,12 +10,16 @@ import { Direction } from '../models/search-pagination.payload';
 import { ChooseBookingRoomFilterPayload } from '../payload/request/choose-booking-room-filter.payload';
 import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
 import { RoomsPaginationParams } from '../controllers/rooms-pagination.model';
+import { RoomHistService } from './room-hist.service';
 
 @Injectable()
 export class RoomsService {
   private readonly logger = new Logger(RoomsService.name);
 
-  constructor(private readonly repository: RoomsRepository) {}
+  constructor(
+    private readonly repository: RoomsRepository,
+    private readonly histService: RoomHistService
+  ) {}
 
   async add(user: KeycloakUserInstance, room: AddRoomRequest): Promise<Rooms> {
     try {
@@ -37,7 +41,7 @@ export class RoomsService {
             transaction: true,
           }
         );
-
+        await this.histService.createNew(addedRoom);
         return addedRoom;
       } else {
         const addedRoom = await this.repository.save(
@@ -52,6 +56,7 @@ export class RoomsService {
           }
         );
 
+        await this.histService.createNew(addedRoom);
         return addedRoom;
       }
     } catch (e) {
@@ -157,9 +162,13 @@ export class RoomsService {
         );
       }
     }
+    const data = await this.repository.findById(id);
+    if (data === undefined) {
+      throw new BadRequestException('This room is already deleted or disabled');
+    }
 
     try {
-      await this.repository.save(
+      const roomUpdated = await this.repository.save(
         {
           ...room,
           name: body.name.trim(),
@@ -171,6 +180,9 @@ export class RoomsService {
           transaction: true,
         }
       );
+
+      await this.histService.createNew(roomUpdated);
+      return roomUpdated;
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException('Error occurred while updating this room');
@@ -178,32 +190,25 @@ export class RoomsService {
   }
 
   async disableById(accountId: string, id: string): Promise<any> {
+    const data = await this.repository.findById(id);
+    if (data === undefined) {
+      throw new BadRequestException('This room is already deleted or disabled');
+    }
     try {
+      console.log('AAAAAAAAAAa: ', data);
       const result = await this.repository.disableById(accountId, id);
       if (result.affected < 1) {
         throw new BadRequestException(
           "Room doesn't exist with the provided id"
         );
+      } else {
+        const room = await this.repository.get(id);
+        await this.histService.createNew(room);
+        return room;
       }
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException('Error occurred while disabling this room');
-    }
-  }
-
-  async handleRestoreDeletedRoomById(id: string) {
-    try {
-      const result = await this.repository.restoreDeletedRoomById(id);
-      if (result.affected < 1) {
-        throw new BadRequestException(
-          "Room doesn't exist with the provided id"
-        );
-      }
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(
-        'Error occurred while restore the delete status of this room'
-      );
     }
   }
 
@@ -214,11 +219,35 @@ export class RoomsService {
         throw new BadRequestException(
           "Room doesn't exist with the provided id"
         );
+      } else {
+        const room = await this.repository.get(id);
+        await this.histService.createNew(room);
+        return room;
       }
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
         'Error occurred while restore the disabled status of this room'
+      );
+    }
+  }
+
+  async handleRestoreDeletedRoomById(id: string) {
+    try {
+      const result = await this.repository.restoreDeletedRoomById(id);
+      if (result.affected < 1) {
+        throw new BadRequestException(
+          "Room doesn't exist with the provided id"
+        );
+      } else {
+        const room = await this.repository.get(id);
+        await this.histService.createNew(room);
+        return room;
+      }
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        'Error occurred while restore the delete status of this room'
       );
     }
   }
@@ -230,6 +259,10 @@ export class RoomsService {
         throw new BadRequestException(
           "Room doesn't exist with the provided id"
         );
+      } else {
+        const room = await this.repository.get(id);
+        await this.histService.createNew(room);
+        return room;
       }
     } catch (e) {
       this.logger.error(e);

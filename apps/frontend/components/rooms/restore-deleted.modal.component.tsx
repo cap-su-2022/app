@@ -30,6 +30,7 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
 ) => {
   const { classes, cx } = useStyles();
   const deletedRooms = useAppSelector((state) => state.room.deletedRooms);
+  console.log(deletedRooms)
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
   const [search, setSearch] = useState<string>('');
@@ -96,14 +97,14 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
       closeOnClickOutside={true}
       closeOnEscape={false}
     >
+      <InputWrapper label="Search">
+        <TextInput
+          onChange={(e) => setSearch(e.target.value)}
+          icon={<Search />}
+        />
+      </InputWrapper>
       {deletedRooms.length > 0 ? (
         <>
-          <InputWrapper label="Search">
-            <TextInput
-              onChange={(e) => setSearch(e.target.value)}
-              icon={<Search />}
-            />
-          </InputWrapper>
           <ScrollArea
             sx={{ height: 500 }}
             onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
