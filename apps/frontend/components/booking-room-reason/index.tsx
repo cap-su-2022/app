@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, createStyles } from '@mantine/core';
 import Header from '../common/header.component';
-import { BuildingWarehouse, Plus } from 'tabler-icons-react';
+import { ArchiveOff, BuildingWarehouse, Plus } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fetchBookingReasonById,
@@ -26,6 +26,9 @@ import { InputTypes } from '../actions/models/input-type.constant';
 import UpdateModal from '../actions/modal/update-modal.component';
 import { InputUpdateProps } from '../actions/models/input-update-props.model';
 import AdminLayout from '../layout/admin.layout';
+import dayjs from 'dayjs';
+import RestoreDeletedModal from './restore-deleted.modal.component';
+import DeleteModal from './delete-modal.component';
 
 const AddBookingReasonValidation = Yup.object().shape({
   name: Yup.string()
@@ -40,6 +43,7 @@ const AddBookingReasonValidation = Yup.object().shape({
 
 const UpdateBookingReasonValidation = Yup.object().shape({
   name: Yup.string()
+    .trim()
     .min(1, 'Minimum booking reason is 1 character')
     .max(100, 'Maximum booking reason is 100 characters.')
     .required('Booking reason name is required'),
@@ -53,10 +57,13 @@ const ManageBookingReason: React.FC<any> = () => {
   const bookingReasons = useAppSelector(
     (state) => state.bookingReason.bookingReasons
   );
-  console.log(bookingReasons)
+
   const [pagination, setPagination] = useState<PaginationParams>(
     defaultPaginationParams
   );
+
+  const [isRestoreDeletedShown, setRestoreDeletedShown] =
+    useState<boolean>(false);
 
   const [debounceSearchValue] = useDebouncedValue(pagination.search, 400);
 
@@ -121,13 +128,23 @@ const ManageBookingReason: React.FC<any> = () => {
 
   const ActionsFilter: React.FC = () => {
     return (
-      <Button
-        leftIcon={<Plus />}
-        color="green"
-        onClick={() => setAddShown(!isAddShown)}
-      >
-        Add
-      </Button>
+      <div>
+        <Button
+          leftIcon={<Plus />}
+          color="green"
+          onClick={() => setAddShown(!isAddShown)}
+          style={{ marginRight: 10 }}
+        >
+          Add
+        </Button>
+        <Button
+          variant="outline"
+          color="red"
+          onClick={() => setRestoreDeletedShown(true)}
+        >
+          <ArchiveOff />
+        </Button>
+      </div>
     );
   };
 
@@ -146,6 +163,7 @@ const ManageBookingReason: React.FC<any> = () => {
     },
     delete: (id) => {
       setId(id);
+      handleFetchById(id)
       setDeleteShown(!isDeleteShown);
     },
   };
@@ -170,6 +188,34 @@ const ManageBookingReason: React.FC<any> = () => {
       id: 'description',
       name: 'description',
       value: bookingReason.description,
+      readOnly: true,
+    },
+    {
+      label: 'Create at',
+      id: 'createAt',
+      name: 'createAt',
+      value: dayjs(bookingReason.createdAt).format('HH:mm DD/MM/YYYY'),
+      readOnly: true,
+    },
+    {
+      label: 'Create By',
+      id: 'createBy',
+      name: 'createBy',
+      value: bookingReason.createdBy,
+      readOnly: true,
+    },
+    {
+      label: 'Update At',
+      id: 'updateAt',
+      name: 'updateAt',
+      value: dayjs(bookingReason.updatedAt).format('HH:mm DD/MM/YYYY'),
+      readOnly: true,
+    },
+    {
+      label: 'Update By',
+      id: 'updateBy',
+      name: 'updateBy',
+      value: bookingReason.updatedBy,
       readOnly: true,
     },
   ];
@@ -279,8 +325,6 @@ const ManageBookingReason: React.FC<any> = () => {
     enableReinitialize: true,
     onSubmit: (e) => handleAddSubmit(e),
   });
-  console.log(bookingReasons.items)
-  console.log('ahuhu')
   return (
     <AdminLayout>
       <Header title="Booking Reason" icon={<BuildingWarehouse size={50} />} />
@@ -289,6 +333,13 @@ const ManageBookingReason: React.FC<any> = () => {
         actions={<ActionsFilter />}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
+        actionsLeft={null}
+      />
+
+      <RestoreDeletedModal
+        isShown={isRestoreDeletedShown}
+        toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
+        pagination={pagination}
       />
       {bookingReasons.items ? (
         <>
@@ -313,6 +364,12 @@ const ManageBookingReason: React.FC<any> = () => {
             header="Update current booking reason"
             isShown={isUpdateShown}
             toggleShown={() => setUpdateShown(!isUpdateShown)}
+          />
+
+          <DeleteModal
+            isShown={isDeleteShown}
+            toggleShown={() => setDeleteShown(!isDeleteShown)}
+            pagination={pagination}
           />
         </>
       ) : null}

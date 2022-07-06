@@ -5,7 +5,7 @@ import { PaginationParams } from '../controllers/pagination.model';
 import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
 import { RoomType } from '../models/room-type.entity';
 import { Accounts } from '../models';
-import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 
 @CustomRepository(DeviceType)
 export class DeviceTypeRepository extends Repository<DeviceType> {
@@ -124,18 +124,20 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   updateById(
     accountId: string,
     deviceTypeId: string,
-    payload: RoomTypeUpdateRequestPayload
-  ): Promise<UpdateResult> {
-    return this.createQueryBuilder('device_type')
-      .update({
+    payload: MasterDataAddRequestPayload
+  ) {
+    return this.save(
+      {
+        id: deviceTypeId,
         name: payload.name.trim(),
         description: payload.description,
-        updatedAt: new Date(),
         updatedBy: accountId,
-      })
-      .where('device_type.id = :id', { id: deviceTypeId })
-      .useTransaction(true)
-      .execute();
+        updatedAt: new Date(),
+      },
+      {
+        transaction: true,
+      }
+    );
   }
 
   async permanentlyDeleteById(id: string) {

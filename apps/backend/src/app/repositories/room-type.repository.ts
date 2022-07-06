@@ -3,12 +3,13 @@ import { Repository, UpdateResult } from 'typeorm';
 import { RoomType } from '../models/room-type.entity';
 import { PaginationParams } from '../controllers/pagination.model';
 import { Accounts } from '../models';
-import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
+
 import {
   IPaginationMeta,
   paginateRaw,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 
 @CustomRepository(RoomType)
 export class RoomTypeRepository extends Repository<RoomType> {
@@ -23,7 +24,6 @@ export class RoomTypeRepository extends Repository<RoomType> {
         search: `%${pagination.search.trim()}%`,
       })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
-
     return paginateRaw<RoomType>(query, {
       page: pagination.page,
       limit: pagination.limit,
@@ -112,6 +112,14 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .execute();
   }
 
+  permanantDeleteById(id: string) {
+    return this.createQueryBuilder('room_type')
+      .delete()
+      .where('room_type.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
+  }
+
   findDisabledByPagination(search: string): Promise<RoomType[]> {
     return this.createQueryBuilder('rt')
       .select('rt.id', 'id')
@@ -128,7 +136,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .addSelect('rt.deleted_at', 'deletedAt')
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'a.id = rt.deleted_by')
-      .where('rt.name LIKE :search', { search: `%${search.trim()}%` })
+      .where('rt.name ILIKE :search', { search: `%${search.trim()}%` })
       .andWhere('rt.deleted_at IS NOT NULL')
       .orderBy('rt.deleted_at', 'DESC')
       .getRawMany<RoomType>();
@@ -137,7 +145,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
   updateById(
     roomTypeId: string,
     accountId: string,
-    payload: RoomTypeUpdateRequestPayload
+    payload: MasterDataAddRequestPayload
   ) {
     return this.save(
       {

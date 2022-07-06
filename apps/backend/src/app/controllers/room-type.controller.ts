@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   DefaultValuePipe,
@@ -21,13 +22,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RoomTypeService } from '../services/room-type.service';
-import { RoomTypeUpdateRequestPayload } from '../payload/request/room-type-update.request.payload';
-import { RoomTypeAddRequestPayload } from '../payload/request/room-type-add.request.payload';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 import { User } from '../decorators/keycloak-user.decorator';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
+import { PaginationParams } from './pagination.model';
 
 @Controller('/v1/room-type')
 @ApiBearerAuth()
@@ -37,6 +38,8 @@ export class RoomTypeController {
   constructor(private readonly service: RoomTypeService) {}
 
   @Get()
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully fetched room types by pagination',
@@ -58,20 +61,8 @@ export class RoomTypeController {
     description: 'Get room type by pagination',
   })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  getRoomTypes(
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query('dir', new DefaultValuePipe('ASC')) dir: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('sort', new DefaultValuePipe('name')) sort: string,
-    @Query('search', new DefaultValuePipe('')) search: string
-  ) {
-    return this.service.getRoomTypesWithPagination({
-      limit,
-      dir,
-      sort,
-      search,
-      page,
-    });
+  getRoomTypes(@Query() payload: PaginationParams) {
+    return this.service.getRoomTypesWithPagination(payload);
   }
 
   @Get('name')
@@ -149,7 +140,7 @@ export class RoomTypeController {
     description: 'Update room type by id',
   })
   updateRoomTypeById(
-    @Body() updatePayload: RoomTypeUpdateRequestPayload,
+    @Body() updatePayload: MasterDataAddRequestPayload,
     @Param('id') id: string,
     @User() keycloakUser: KeycloakUserInstance
   ) {
@@ -331,6 +322,34 @@ export class RoomTypeController {
     return this.service.deleteRoomTypeById(keycloakUser.account_id, id);
   }
 
+  @Delete('permanent/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully permanent deleted room type by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for permanent delete room type is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Permanently delete room type by id',
+    description: 'Permanently delete room type by id',
+  })
+  permanentDeleteRoomTypeById(
+    @Param('id') id: string,
+  ) {
+    return this.service.permanentDeleteRoomTypeById(id);
+  }
+
   @Post()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @HttpCode(HttpStatus.OK)
@@ -356,7 +375,7 @@ export class RoomTypeController {
   })
   addRoomType(
     @User() keycloakUser: KeycloakUserInstance,
-    @Body() addRoomType: RoomTypeAddRequestPayload
+    @Body() addRoomType: MasterDataAddRequestPayload
   ) {
     return this.service.addRoomType(keycloakUser.account_id, addRoomType);
   }
