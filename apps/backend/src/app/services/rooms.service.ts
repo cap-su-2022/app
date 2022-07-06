@@ -162,6 +162,10 @@ export class RoomsService {
         );
       }
     }
+    const data = await this.repository.findById(id);
+    if (data === undefined) {
+      throw new BadRequestException('This room is already deleted or disabled');
+    }
 
     try {
       const roomUpdated = await this.repository.save(
@@ -186,14 +190,19 @@ export class RoomsService {
   }
 
   async disableById(accountId: string, id: string): Promise<any> {
+    const data = await this.repository.findById(id);
+    if (data === undefined) {
+      throw new BadRequestException('This room is already deleted or disabled');
+    }
     try {
+      console.log('AAAAAAAAAAa: ', data);
       const result = await this.repository.disableById(accountId, id);
       if (result.affected < 1) {
         throw new BadRequestException(
           "Room doesn't exist with the provided id"
         );
       } else {
-        const room = await this.repository.get(id)
+        const room = await this.repository.get(id);
         await this.histService.createNew(room);
         return room;
       }
@@ -210,8 +219,8 @@ export class RoomsService {
         throw new BadRequestException(
           "Room doesn't exist with the provided id"
         );
-      }else {
-        const room = await this.repository.get(id)
+      } else {
+        const room = await this.repository.get(id);
         await this.histService.createNew(room);
         return room;
       }
@@ -231,7 +240,7 @@ export class RoomsService {
           "Room doesn't exist with the provided id"
         );
       } else {
-        const room = await this.repository.get(id)
+        const room = await this.repository.get(id);
         await this.histService.createNew(room);
         return room;
       }
@@ -251,7 +260,7 @@ export class RoomsService {
           "Room doesn't exist with the provided id"
         );
       } else {
-        const room = await this.repository.get(id)
+        const room = await this.repository.get(id);
         await this.histService.createNew(room);
         return room;
       }
