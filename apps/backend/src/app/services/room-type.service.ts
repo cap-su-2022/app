@@ -126,7 +126,7 @@ export class RoomTypeService {
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This room is already deleted or disabled'
+          'This room type is already deleted or disabled'
         );
       } else {
         return this.repository.deleteById(accountId, id);
@@ -143,7 +143,7 @@ export class RoomTypeService {
       console.log("DATA NE: ", data)
       if (data !== undefined) {
         throw new BadRequestException(
-          'Please delete this type after permanently delete'
+          'Please delete this room type after permanently delete'
         );
       } else {
         return this.repository.permanantDeleteById(id);
