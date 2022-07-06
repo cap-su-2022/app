@@ -96,41 +96,6 @@ export class BookingReasonRepository extends Repository<BookingReason> {
     accountId: string,
     payload: BookingReason
   ): Promise<BookingReason> {
-    return this.save(
-      {
-        createdAt: new Date(),
-        createdBy: accountId,
-        name: payload.name,
-        description: payload.description,
-      },
-      {
-        transaction: true,
-      }
-    );
-  }
-
-  async updateById(
-    accountId: string,
-    payload: BookingReason
-  ): Promise<BookingReason> {
-    return this.save(
-      {
-        updatedAt: new Date(),
-        updatedBy: accountId,
-        name: payload.name,
-        id: payload.id,
-        description: payload.description,
-      },
-      {
-        transaction: true,
-      }
-    );
-  }
-
-  async addNew(
-    accountId: string,
-    payload: { name: string; description: string }
-  ): Promise<BookingReason> {
     try {
       return await this.save({
         createdBy: accountId,
@@ -147,4 +112,24 @@ export class BookingReasonRepository extends Repository<BookingReason> {
       throw new BadRequestException(e.message);
     }
   }
+
+  async updateById(
+    accountId: string,
+    payload: BookingReason,
+    id: string
+  ): Promise<BookingReason> {
+    return await this.save(
+      {
+        id: id,
+        updatedAt: new Date(),
+        updatedBy: accountId,
+        name: payload.name,
+        description: payload.description,
+      },
+      {
+        transaction: true,
+      }
+    );
+  }
+
 }

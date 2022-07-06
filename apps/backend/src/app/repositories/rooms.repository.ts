@@ -201,6 +201,24 @@ export class RoomsRepository extends Repository<Rooms> {
       .getRawOne<Rooms>();
   }
 
+  async get(id: string): Promise<Rooms> {
+    return this.createQueryBuilder('rooms')
+      .select('rooms.id', 'id')
+      .addSelect('rooms.name', 'name')
+      .addSelect('rooms.type', 'type')
+      .addSelect('rooms.created_at', 'createdAt')
+      .addSelect('rooms.created_by', 'createdBy')
+      .addSelect('rooms.updated_at', 'updatedAt')
+      .addSelect('rooms.updated_by', 'updatedBy')
+      .addSelect('rooms.disabled_at', 'disabledAt')
+      .addSelect('rooms.disabled_by', 'disabledBy')
+      .addSelect('rooms.deleted_at', 'deletedAt')
+      .addSelect('rooms.deleted_by', 'deletedBy')
+      .addSelect('rooms.description', 'description')
+      .andWhere('rooms.id = :roomId', { roomId: id })
+      .getRawOne<Rooms>();
+  }
+
   filterByNameAndType(payload: ChooseBookingRoomFilterPayload) {
     return this.createQueryBuilder('rooms')
       .select('rooms.id', 'id')

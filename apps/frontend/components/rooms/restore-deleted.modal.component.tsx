@@ -105,7 +105,7 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
             />
           </InputWrapper>
           <ScrollArea
-            sx={{ height: 500 }}
+            sx={{ height: 0 }}
             onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
           >
             <Table sx={{ minWidth: 700 }}>

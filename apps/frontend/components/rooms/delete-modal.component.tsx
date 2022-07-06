@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Button, createStyles, Modal, Select, Table, Text } from '@mantine/core';
+import {
+  Button,
+  createStyles,
+  Modal,
+  ScrollArea,
+  Select,
+  Table,
+  Text,
+} from '@mantine/core';
 import { Archive, ScanEye, Trash, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -19,10 +27,11 @@ interface DeleteRoomModalProps {
 }
 
 const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
-  const { classes } = useStyles();
+  const { classes, cx } = useStyles();
   const selectedRoomId = useAppSelector((state) => state.room.room.id);
   const [listRequest, setListRequest] = useState([]);
   const [isShownListRequest, setShownListRequest] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -31,9 +40,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
       props.toggleShown();
       dispatch(fetchRooms(props.pagination));
       dispatch(fetchDeletedRooms(''));
-      listRequest.map((request) => (
-        dispatch(cancelBooking(request.id))
-      ))
+      listRequest.map((request) => dispatch(cancelBooking(request.id)));
     });
   };
 
@@ -58,46 +65,47 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
             <tr key={row.id}>
               <td>{index + 1}</td>
               <td>{row.requestedBy}</td>
-              <td>
-                {dayjs(row.timeCheckin).format('HH:mm DD/MM/YYYY')}
-              </td>
-              <td>
-                {dayjs(row.timeCheckout).format('HH:mm DD/MM/YYYY')}
-              </td>
+              <td>{dayjs(row.timeCheckin).format('HH:mm DD/MM/YYYY')}</td>
+              <td>{dayjs(row.timeCheckout).format('HH:mm DD/MM/YYYY')}</td>
             </tr>
           ))
         : null;
     return listRequest && listRequest.length > 0 ? (
-      <Table
-        horizontalSpacing="md"
-        verticalSpacing="xs"
-        sx={{ tableLayout: 'fixed' }}
+      <ScrollArea
+        sx={{ height: 200 }}
       >
-        <thead>
-          <tr>
-            <Th
-              style={{
-                width: '60px',
-              }}
-              sorted={null}
-              reversed={null}
-              onSort={null}
-            >
-              STT
-            </Th>
+        <Table
+          horizontalSpacing="md"
+          verticalSpacing="xs"
+          sx={{ tableLayout: 'fixed' }}
+        >
+          <thead
+            className={cx(classes.header, { [classes.scrolled]: scrolled })}
+          >
+            <tr>
+              <Th
+                style={{
+                  width: '60px',
+                }}
+                sorted={null}
+                reversed={null}
+                onSort={null}
+              >
+                STT
+              </Th>
 
-            <Th sorted={null} reversed={null} onSort={null}>
-              Request By
-            </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Request By
+              </Th>
 
-            <Th sorted={null} reversed={null} onSort={null}>
-              Time start
-            </Th>
-            <Th sorted={null} reversed={null} onSort={null}>
-              Time end
-            </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Time start
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Time end
+              </Th>
 
-            {/* <Th
+              {/* <Th
               style={{
                 width: '100px',
               }}
@@ -107,10 +115,11 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
             >
               Actions
             </Th> */}
-          </tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </Table>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </Table>
+      </ScrollArea>
     ) : (
       <div
         style={{
@@ -182,13 +191,14 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
           </Button>
         </div>
       </div>
-      {isShownListRequest && listRequest.length > 0 ? <ListRequestByRoomId/> : null}
-
+      {isShownListRequest && listRequest.length > 0 ? (
+        <ListRequestByRoomId />
+      ) : null}
     </Modal>
   );
 };
 
-const useStyles = createStyles({
+const useStyles = createStyles((theme) => ({
   modalTitle: {
     fontWeight: 600,
     fontSize: 22,
@@ -211,6 +221,30 @@ const useStyles = createStyles({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-});
+  header: {
+    position: 'sticky',
+    top: 0,
+    backgroundColor:
+      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+    transition: 'box-shadow 150ms ease',
+
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderBottom: `1px solid ${
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[3]
+          : theme.colors.gray[2]
+      }`,
+    },
+  },
+
+  scrolled: {
+    boxShadow: theme.shadows.sm,
+  },
+}));
 
 export default DeleteRoomModal;

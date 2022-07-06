@@ -45,17 +45,6 @@ export class BookingReasonService {
     }
   }
 
-  async addNewBookingReason(
-    accountId: string,
-    payload: { name: string; description: string }
-  ) {
-    try {
-      return await this.repository.addNew(accountId, payload);
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(e.message);
-    }
-  }
 
   async createNewBookingReason(
     accountId: string,
@@ -88,7 +77,9 @@ export class BookingReasonService {
           'Room type does not found with the provided id'
         );
       }
-      return await this.repository.updateById(accountId, updatePayload);
+      const bookingReason = await this.repository.updateById(accountId, updatePayload, id);
+      await this.histService.createNew(bookingReason);
+      return bookingReason;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

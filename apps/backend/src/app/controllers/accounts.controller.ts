@@ -334,7 +334,7 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getRoomsByRoomType(@Query('role') roleId= ''): Promise<Accounts[]> {
+  getAccountsByRoleId(@Query('role') roleId= ''): Promise<Accounts[]> {
     return this.service.getAccountsByRoleId(roleId);
   }
 
