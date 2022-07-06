@@ -90,13 +90,11 @@ export class DevicesRepository extends Repository<Devices> {
       .then((data) => (data ? data['disabled_at'] : true));
   }
 
-  disableById(id: string): Promise<UpdateResult> {
-    console.log('id ne dcm')
-    console.log(id)
-    return this.createQueryBuilder('devices')
+  disableById(accountId: string, id: string) {
+    return this.createQueryBuilder('rooms')
       .update({
+        disabledBy: accountId,
         disabledAt: new Date(),
-        disabledBy: '',
       })
       .where('devices.id = :id', { id: id })
       .useTransaction(true)

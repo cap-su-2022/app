@@ -140,13 +140,13 @@ export class DevicesService {
     }
   }
 
-  async disableById(id: string): Promise<void> {
+  async disableById(accountId: string, id: string): Promise<void> {
     try {
       const isDeleted = await this.repository.checkIfDeviceIsDeletedById(id);
       if (isDeleted) {
         throw new BadRequestException('Not found with provided id');
       }
-      await this.repository.disableById(id);
+      await this.repository.disableById(accountId, id);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException('Error while disabling this device');

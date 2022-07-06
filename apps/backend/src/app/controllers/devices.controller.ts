@@ -300,11 +300,8 @@ export class DevicesController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  disableDeviceById(
-    @User() user: KeycloakUserInstance,
-    @Param() payload: { id: string }
-  ) {
-    return this.service.disableById(payload.id);
+  disableDeviceById(@User() user: KeycloakUserInstance, @Param('id') id: string) {
+    return this.service.disableById(user.account_id, id);
   }
 
   @Delete(':id')
