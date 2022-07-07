@@ -46,37 +46,48 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const [isShownListRoom, setShownListRoom] = useState(false);
 
   const [listRoom, setListRoom] = useState([]);
-  console.log(listRoom)
 
   const dispatch = useAppDispatch();
 
   const handleDeleteRoomType = () => {
-    dispatch(deleteRoomTypeById(selectedRoomTypeId))
-      .catch((e) =>
-        showNotification({
-          id: 'delete-data',
-          color: 'red',
-          title: 'Error while delete room type',
-          message: e.message ?? 'Failed to delete room type',
-          icon: <X />,
-          autoClose: 3000,
-        })
-      )
-      .then(() =>
-        showNotification({
-          id: 'delete-data',
-          color: 'teal',
-          title: 'Room type was deleted',
-          message: 'Room type was successfully deleted',
-          icon: <Check />,
-          autoClose: 3000,
-        })
-      )
-      .then(() => {
-        props.toggleShown();
-        dispatch(fetchRoomTypes(props.pagination));
-        dispatch(fetchDeletedRoomTypes());
+    if (listRoom.length > 0) {
+      showNotification({
+        id: 'delete-data',
+        color: 'red',
+        title: 'Error while delete room type',
+        message:
+          'There are still rooms of this type, please change the type of those rooms before deleting type',
+        icon: <X />,
+        autoClose: 3000,
       });
+    } else {
+      dispatch(deleteRoomTypeById(selectedRoomTypeId))
+        .catch((e) =>
+          showNotification({
+            id: 'delete-data',
+            color: 'red',
+            title: 'Error while delete room type',
+            message: e.message ?? 'Failed to delete room type',
+            icon: <X />,
+            autoClose: 3000,
+          })
+        )
+        .then(() =>
+          showNotification({
+            id: 'delete-data',
+            color: 'teal',
+            title: 'Room type was deleted',
+            message: 'Room type was successfully deleted',
+            icon: <Check />,
+            autoClose: 3000,
+          })
+        )
+        .then(() => {
+          props.toggleShown();
+          dispatch(fetchRoomTypes(props.pagination));
+          dispatch(fetchDeletedRoomTypes());
+        });
+    }
   };
 
   useEffect(() => {
@@ -98,7 +109,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       setRoomType('');
     }
   }, [isShownListRoom]);
-  
+
   const handleUpdateType = (room, roomTypeId: string) => {
     dispatch(
       updateRoomById({

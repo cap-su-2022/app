@@ -67,7 +67,7 @@ export class BookingReasonController {
     @User() user: KeycloakUserInstance,
     @Body() payload: { name: string; description: string }
   ) {
-    return this.service.addNewBookingReason(user.account_id, payload);
+    return this.service.createNewBookingReason(user.account_id, payload);
   }
 
   @Get(':id')

@@ -11,6 +11,9 @@ import {
   UsersOTP,
   UsersWarningFlag,
   UsersWarningFlagHistory,
+  BookingReasonHist,
+  RoomHist,
+  RoomTypeHist,
 } from '../../models';
 import { Roles } from '../../models/role.entity';
 import { RoomType } from '../../models';
@@ -43,6 +46,9 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       DeviceType,
       BookingReason,
       Slot,
+      BookingReasonHist,
+      RoomHist,
+      RoomTypeHist,
     ],
     synchronize: configService.get<boolean>(
       Environment.db.postgres.synchronize

@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
-import {Button, createStyles, Modal, Table, Text} from "@mantine/core";
-import {Archive, ScanEye, X} from "tabler-icons-react";
-import {FPT_ORANGE_COLOR} from "@app/constants";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {disableRoomById} from "../../redux/features/room/thunk/disable-room-by-id";
-import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
-import { RoomParams } from "../../models/pagination-params/room-params.model";
-import { fetchDisabledRooms } from "../../redux/features/room/thunk/fetch-disabled-rooms";
-import { cancelBooking } from "../../redux/features/room-booking/thunk/cancel-booking";
+import React, { useEffect, useState } from 'react';
+import { Button, createStyles, Modal, ScrollArea, Table, Text } from '@mantine/core';
+import { Archive, ScanEye, X } from 'tabler-icons-react';
+import { FPT_ORANGE_COLOR } from '@app/constants';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { disableRoomById } from '../../redux/features/room/thunk/disable-room-by-id';
+import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
+import { RoomParams } from '../../models/pagination-params/room-params.model';
+import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
+import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
 import Th from '../table/th.table.component';
-import dayjs from "dayjs";
-import { fetchRequestByRoomId } from "../../redux/features/room-booking/thunk/fetch-room-booking-by-room";
-
+import dayjs from 'dayjs';
+import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-room';
 
 interface DisableRoomModalProps {
   isShown: boolean;
@@ -20,8 +19,7 @@ interface DisableRoomModalProps {
   pagination: RoomParams;
 }
 const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
-
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   const selectedRoomId = useAppSelector((state) => state.room.room.id);
   const [listRequest, setListRequest] = useState([]);
   const [isShownListRequest, setShownListRequest] = useState(false);
@@ -29,17 +27,14 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const handleDisableSelectedRoom = () => {
-    dispatch(disableRoomById(selectedRoomId))
-      .then(() => {
-        props.toggleShown();
-        props.toggleInforModalShown();
-        dispatch(fetchDisabledRooms(''))
-        dispatch(fetchRooms(props.pagination));
-        listRequest.map((request) => (
-          dispatch(cancelBooking(request.id))
-        ))
-      })
-  }
+    dispatch(disableRoomById(selectedRoomId)).then(() => {
+      props.toggleShown();
+      props.toggleInforModalShown();
+      dispatch(fetchDisabledRooms(''));
+      dispatch(fetchRooms(props.pagination));
+      listRequest.map((request) => dispatch(cancelBooking(request.id)));
+    });
+  };
   useEffect(() => {
     if (selectedRoomId) {
       dispatch(fetchRequestByRoomId(selectedRoomId))
@@ -55,48 +50,46 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
             <tr key={row.id}>
               <td>{index + 1}</td>
               <td>{row.requestedBy}</td>
-              <td>
-                {dayjs(row.timeCheckin).format('HH:mm DD/MM/YYYY')}
-              </td>
-              <td>
-                {dayjs(row.timeCheckout).format('HH:mm DD/MM/YYYY')}
-              </td>
+              <td>{dayjs(row.timeCheckin).format('HH:mm DD/MM/YYYY')}</td>
+              <td>{dayjs(row.timeCheckout).format('HH:mm DD/MM/YYYY')}</td>
             </tr>
           ))
         : null;
     return listRequest && listRequest.length > 0 ? (
-      <Table
-        horizontalSpacing="md"
-        verticalSpacing="xs"
-        sx={{ tableLayout: 'fixed' }}
-      >
-        <thead>
-          <tr>
-            <Th
-              style={{
-                width: '60px',
-              }}
-              sorted={null}
-              reversed={null}
-              onSort={null}
-            >
-              STT
-            </Th>
+      <ScrollArea sx={{ height: 200 }}>
+        <Table
+          horizontalSpacing="md"
+          verticalSpacing="xs"
+          sx={{ tableLayout: 'fixed' }}
+        >
+          <thead className={classes.header}>
+            <tr>
+              <Th
+                style={{
+                  width: '60px',
+                }}
+                sorted={null}
+                reversed={null}
+                onSort={null}
+              >
+                STT
+              </Th>
 
-            <Th sorted={null} reversed={null} onSort={null}>
-              Request By
-            </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Request By
+              </Th>
 
-            <Th sorted={null} reversed={null} onSort={null}>
-              Time start
-            </Th>
-            <Th sorted={null} reversed={null} onSort={null}>
-              Time end
-            </Th>
-          </tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </Table>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Time start
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Time end
+              </Th>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </Table>
+      </ScrollArea>
     ) : (
       <div
         style={{
@@ -111,9 +104,7 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
   };
 
   const ModalHeaderTitle: React.FC = () => {
-    return (
-      <Text className={classes.modalTitle}>Are you sure?</Text>
-    )
+    return <Text className={classes.modalTitle}>Are you sure?</Text>;
   };
 
   return (
@@ -121,14 +112,17 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
       closeOnClickOutside={true}
       centered
       zIndex={200}
-      title={<ModalHeaderTitle/>}
+      title={<ModalHeaderTitle />}
+      size={isShownListRequest && listRequest.length > 0 ? '50%' : null}
       opened={props.isShown}
-      onClose={() => props.toggleShown()}>
+      onClose={() => props.toggleShown()}
+    >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          Disable this will make this room <b>unusable</b> even it has been booked before.
-          <b> Users who booked this room</b> will receive the notification about this and that associated booking will
-          also be <b>cancelled</b>!
+          Disable this will make this room <b>unusable</b> even it has been
+          booked before.
+          <b> Users who booked this room</b> will receive the notification about
+          this and that associated booking will also be <b>cancelled</b>!
         </Text>
         <div className={classes.modalFooter}>
           {listRequest.length > 0 ? (
@@ -165,22 +159,23 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
           </Button>
         </div>
       </div>
-      {isShownListRequest && listRequest.length > 0 ? <ListRequestByRoomId/> : null}
+      {isShownListRequest && listRequest.length > 0 ? (
+        <ListRequestByRoomId />
+      ) : null}
     </Modal>
-
   );
 };
 
-const useStyles = createStyles({
+const useStyles = createStyles((theme) => ({
   modalTitle: {
     fontWeight: 600,
     fontSize: 22,
   },
   modalContainer: {
-    margin: 10
+    margin: 10,
   },
   modalBody: {
-    margin: 10
+    margin: 10,
   },
   modalFooter: {
     display: 'flex',
@@ -189,6 +184,26 @@ const useStyles = createStyles({
     alignItems: 'center',
     marginTop: 20,
   },
-});
+  header: {
+    position: 'sticky',
+    top: 0,
+    backgroundColor:
+      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+    transition: 'box-shadow 150ms ease',
+
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderBottom: `1px solid ${
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[3]
+          : theme.colors.gray[2]
+      }`,
+    },
+  },
+}));
 
 export default DisableRoomModal;

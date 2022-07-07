@@ -8,4 +8,7 @@ export * from "./users-warning-flag.entity";
 export * from "./users-warning-flag.hist.entity";
 export * from "./rooms.entity";
 export * from "./room-type.entity"
+export * from "./booking-reason-hist.entity"
+export * from "./room-hist.entity"
+export * from "./room-type-hist.entity"
 

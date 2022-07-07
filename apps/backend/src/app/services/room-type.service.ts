@@ -4,12 +4,16 @@ import { RoomTypeRepository } from '../repositories/room-type.repository';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 import { RoomType } from '../models/room-type.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
+import { RoomTypeHistService } from './room-type-hist.service';
 
 @Injectable()
 export class RoomTypeService {
   private readonly logger = new Logger(RoomTypeService.name);
 
-  constructor(private readonly repository: RoomTypeRepository) {}
+  constructor(
+    private readonly repository: RoomTypeRepository,
+    private readonly histService: RoomTypeHistService
+  ) {}
 
   async getRoomTypesWithPagination(
     pagination: PaginationParams
@@ -58,7 +62,19 @@ export class RoomTypeService {
           'Room type does not found with the provided id'
         );
       }
-      return await this.repository.updateById(id, accountId, updatePayload);
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException(
+          'This room is already deleted or disabled'
+        );
+      }
+      const roomType = await this.repository.updateById(
+        id,
+        accountId,
+        updatePayload
+      );
+      await this.histService.createNew(roomType);
+      return roomType;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -79,18 +95,22 @@ export class RoomTypeService {
   //   }
   // }
 
-  getDisabledRoomTypes(search: string) {
-    try {
-      return this.repository.findDisabledByPagination(search);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async getDisabledRoomTypes(search: string) {
+  //   try {
+  //     const roomTypePagination = await this.repository.findDisabledByPagination(search);
+  //     console.log("AAAAAAAAAAAAA", roomTypePagination)
+  //     // await this.histService.createNew(roomTypePagination);
+  //     return roomTypePagination;
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
-  getDeletedRoomTypes(search: string) {
+  async getDeletedRoomTypes(search: string) {
     try {
-      return this.repository.findDeletedByPagination(search);
+      const roomType = await this.repository.findDeletedByPagination(search);
+      return roomType;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -105,31 +125,60 @@ export class RoomTypeService {
           'Room type does not exist with the provided id'
         );
       }
-      return await this.repository.restoreDeletedById(accountId, id);
+      const data = await this.repository.findById(id);
+      if (data !== undefined) {
+        throw new BadRequestException(
+          'This room type ID is now active. Cannot restore it'
+        );
+      }
+      const roomType = await this.repository.restoreDeletedById(accountId, id);
+      await this.histService.createNew(roomType);
+      return roomType;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
 
-  async restoreDisabledRoomTypeById(accountId: string, id: string) {
-    try {
-      return await this.repository.restoreDisabledById(accountId, id);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async restoreDisabledRoomTypeById(accountId: string, id: string) {
+  //   try {
+  //     const roomType = await this.repository.restoreDisabledById(accountId, id);
+  //     // await this.histService.createNew(roomType);
+  //     return roomType;
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
   async deleteRoomTypeById(accountId: string, id: string) {
     try {
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This room is already deleted or disabled'
+          'This room type is already deleted or disabled'
         );
       } else {
-        return this.repository.deleteById(accountId, id);
+        const roomType = await this.repository.deleteById(accountId, id);
+        await this.histService.createNew(roomType);
+        return roomType;
+      }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async permanentDeleteRoomTypeById(id: string) {
+    try {
+      const data = await this.repository.findById(id);
+      if (data !== undefined) {
+        throw new BadRequestException(
+          'Please delete this room type after permanently delete'
+        );
+      } else {
+        await this.histService.deleteAllHist(id);
+        return this.repository.permanantDeleteById(id);
       }
     } catch (e) {
       this.logger.error(e.message);
@@ -142,7 +191,7 @@ export class RoomTypeService {
     addRoomType: MasterDataAddRequestPayload
   ): Promise<RoomType> {
     try {
-      return await this.repository.save({
+      const roomType = await this.repository.save({
         createdBy: accountId,
         name: addRoomType.name.trim(),
         description: addRoomType.description,
@@ -150,6 +199,9 @@ export class RoomTypeService {
         updatedBy: accountId,
         updatedAt: new Date(),
       });
+
+      await this.histService.createNew(roomType);
+      return roomType;
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);

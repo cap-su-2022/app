@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import { useDebouncedValue } from '@mantine/hooks';
 import { RoomParams } from '../../models/pagination-params/room-params.model';
 import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
+import NoDataFound from '../no-data-found';
 
 interface RestoreDisabledRoomModalProps {
   isShown: boolean;
@@ -64,7 +65,9 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
           .then((disabledRooms) =>
             disabledRooms.length < 1 ? props.toggleShown() : null
           )
-          .then(() => {dispatch(fetchDeletedRooms(''))})
+          .then(() => {
+            dispatch(fetchDeletedRooms(''));
+          })
       );
   };
 
@@ -104,7 +107,6 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
           Delete
         </Button>
       </td>
-
     </tr>
   ));
 
@@ -119,7 +121,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
       opened={props.isShown}
       onClose={() => props.toggleShown()}
       centered
-      size="85%"
+      size="70%"
       title={<ModalHeaderTitle />}
       closeOnClickOutside={true}
       closeOnEscape={false}
@@ -130,28 +132,36 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
           icon={<Search />}
         />
       </InputWrapper>
-      <ScrollArea
-        sx={{ height: 500 }}
-        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
-      >
-        <div>
-          <Table sx={{ minWidth: 700 }}>
-            <thead
-              className={cx(classes.header, { [classes.scrolled]: scrolled })}
-            >
-              <tr>
-                <th>STT</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Disabled at</th>
-                <th>Disabled by</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>{rows}</tbody>
-          </Table>
-        </div>
-      </ScrollArea>
+      {disabledRooms.length > 0 ? (
+        <>
+          <ScrollArea
+            sx={{ height: 500 }}
+            onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+          >
+            <div>
+              <Table sx={{ minWidth: 700 }}>
+                <thead
+                  className={cx(classes.header, {
+                    [classes.scrolled]: scrolled,
+                  })}
+                >
+                  <tr>
+                    <th>STT</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Disabled at</th>
+                    <th>Disabled by</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>{rows}</tbody>
+              </Table>
+            </div>
+          </ScrollArea>
+        </>
+      ) : (
+        <NoDataFound />
+      )}
     </Modal>
   );
 };
