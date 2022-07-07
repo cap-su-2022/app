@@ -3,13 +3,16 @@ import { PaginationParams } from '../controllers/pagination.model';
 import { RolesRepository } from '../repositories/roles.repository';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 import { Roles } from '../models/role.entity';
-
+import { RoleHistService } from './role-hist.service';
 
 @Injectable()
 export class RoleService {
   private readonly logger = new Logger(RoleService.name);
 
-  constructor(private readonly repository: RolesRepository) {}
+  constructor(
+    private readonly repository: RolesRepository,
+    private readonly histService: RoleHistService
+  ) {}
 
   async getRoleById(id: string) {
     try {
@@ -35,6 +38,10 @@ export class RoleService {
       const result = await this.repository.deleteById(accountId, id);
       if (result.affected < 1) {
         throw new BadRequestException('Could not delete role by id');
+      } else {
+        const role = await this.repository.get(id)
+        await this.histService.createNew(role);
+        return role;
       }
     } catch (e) {
       this.logger.error(e.message);
@@ -49,6 +56,10 @@ export class RoleService {
         throw new BadRequestException(
           "Role doesn't exist with the provided id"
         );
+      } else {
+        const role = await this.repository.get(id)
+        await this.histService.createNew(role);
+        return role;
       }
     } catch (e) {
       this.logger.error(e);
@@ -67,8 +78,8 @@ export class RoleService {
     }
   }
 
-  addRole(body: any, accountId: string) {
-    return this.repository.save(
+  async addRole(body: any, accountId: string) {
+    const role = await this.repository.save(
       {
         name: body.name.trim(),
         description: body.description,
@@ -81,6 +92,8 @@ export class RoleService {
         transaction: true,
       }
     );
+    await this.histService.createNew(role);
+    return role;
   }
 
   async updateRoleById(
@@ -95,7 +108,13 @@ export class RoleService {
           'Role does not found with the provided id'
         );
       }
-      return await this.repository.updateById(id, accountId, updatePayload);
+      const role = await this.repository.updateById(
+        id,
+        accountId,
+        updatePayload
+      );
+      await this.histService.createNew(role);
+      return role;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -104,5 +123,22 @@ export class RoleService {
 
   getRolesByPagination(payload: PaginationParams) {
     return this.repository.findByPagination(payload);
+  }
+
+  async permanentDeleteRoleById(id: string) {
+    try {
+      const data = await this.repository.findById(id);
+      if (data !== undefined) {
+        throw new BadRequestException(
+          'Please delete this role after permanently delete'
+        );
+      } else {
+        await this.histService.deleteAllHist(id);
+        return this.repository.permanentlyDeleteById(id);
+      }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 }

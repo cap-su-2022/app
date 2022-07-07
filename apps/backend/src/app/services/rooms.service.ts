@@ -16,6 +16,14 @@ export class RoomsService {
     private readonly histService: RoomHistService
   ) {}
 
+  async getAll(request: RoomsPaginationParams) {
+    try{
+      return await this.repository.searchRoom(request);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException('One or more parameters is invalid')
+  }}
+
   async add(user: KeycloakUserInstance, room: AddRoomRequest): Promise<Rooms> {
     try {
       const isExisted = await this.repository.isExistedByName(room.name);
@@ -78,10 +86,6 @@ export class RoomsService {
         e.message ?? 'An error occurred while retrieving this room'
       );
     }
-  }
-
-  async getAll(request: RoomsPaginationParams) {
-    return await this.repository.searchRoom(request);
   }
 
   async getDeletedRooms(search: string): Promise<Rooms[]> {
@@ -195,10 +199,6 @@ export class RoomsService {
       throw new BadRequestException('This room is already deleted or disabled');
     }
     try {
-      const rooms = await this.repository.findDisabledRooms('');
-      if (rooms.findIndex((room) => room.id === id) !== -1) {
-        throw new BadRequestException('Room already disable!');
-      }
       const result = await this.repository.disableById(accountId, id);
       if (result.affected < 1) {
         throw new BadRequestException(
@@ -229,6 +229,10 @@ export class RoomsService {
         room.disabledAt == null
       ) {
         throw new BadRequestException('This room is active!');
+      }
+      const isDeleted = await this.repository.checkIfRoomIsDeletedById(id);
+      if (isDeleted) {
+        throw new BadRequestException('Not found with provided id');
       }
       const result = await this.repository.restoreDeletedRoomById(id);
       if (result.affected < 1) {

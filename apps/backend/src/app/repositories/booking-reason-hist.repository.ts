@@ -13,4 +13,12 @@ export class BookingReasonHistRepository extends Repository<BookingReasonHist> {
       ...payload,
     });
   }
+
+  async deleteAllHist(id: string) {
+    return await this.createQueryBuilder('booking_reason_hist')
+      .delete()
+      .where('booking_reason_hist.booking_reason_id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
+  }
 }

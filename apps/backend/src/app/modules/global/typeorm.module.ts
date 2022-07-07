@@ -5,7 +5,7 @@ import {
   Accounts,
   BookingRequest,
   Devices,
-  DevicesHist,
+  DeviceHist,
   Rooms,
   RoomWishlist,
   UsersOTP,
@@ -21,6 +21,7 @@ import { RoomType } from '../../models';
 import { DeviceType } from '../../models/device-type.entity';
 import { BookingReason } from '../../models/booking-reason.entity';
 import { Slot } from '../../models/slot.entity';
+import { RoleHist } from '../../models/role-hist.entity';
 
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
@@ -39,7 +40,7 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       RoomTypeHist,
       Devices,
       DeviceType,
-      DevicesHist,
+      DeviceHist,
       DeviceTypeHist,
       BookingRequest,
       RoomWishlist,
@@ -47,6 +48,7 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       UsersWarningFlag,
       UsersWarningFlagHistory,
       Roles,
+      RoleHist,
       BookingReason,
       Slot,
       BookingReasonHist,

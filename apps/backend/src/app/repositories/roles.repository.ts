@@ -50,6 +50,22 @@ export class RolesRepository extends Repository<Roles> {
       .getRawOne<Roles>();
   }
 
+  async get(id: string): Promise<Roles> {
+    return this.createQueryBuilder('roles')
+      .select('roles.id', 'id')
+      .addSelect('roles.name', 'name')
+      .addSelect('roles.description', 'description')
+      .addSelect('roles.created_by', 'createdBy')
+      .addSelect('roles.created_at', 'createdAt')
+      .addSelect('roles.updated_by', 'updatedBy')
+      .addSelect('roles.updated_at', 'updatedAt')
+      .addSelect('roles.deleted_by', 'deletedBy')
+      .addSelect('roles.deleted_at', 'deletedAt')
+
+      .where('roles.id = :id', { id: id })
+      .getRawOne<Roles>();
+  }
+
   updateById(id: string, accountId: string, payload: any) {
     return this.save(
       {
@@ -96,6 +112,14 @@ export class RolesRepository extends Repository<Roles> {
         deletedBy: null,
       })
       .where('role.id = :id', { id: id })
+      .execute();
+  }
+
+  permanentlyDeleteById(id: string) {
+    return this.createQueryBuilder('role')
+      .delete()
+      .where('role.id = :id', { id: id })
+      .useTransaction(true)
       .execute();
   }
 }

@@ -51,6 +51,7 @@ export class BookingReasonRepository extends Repository<BookingReason> {
       .leftJoin(Accounts, 'aa', 'aa.id = br.updated_by')
       .leftJoin(Accounts, 'aaa', 'aaa.id = br.deleted_by')
       .where('br.id = :id', { id: id })
+      .andWhere('br.deleted_at IS NULL')
       .getRawOne<BookingReason>();
   }
 
@@ -67,22 +68,40 @@ export class BookingReasonRepository extends Repository<BookingReason> {
       .getRawMany<BookingReason>();
   }
 
-  async restoreDeletedById(
-    accountId: string,
-    id: string
-  ): Promise<UpdateResult> {
-    return this.createQueryBuilder('br')
+  async get(id: string): Promise<BookingReason> {
+    return this.createQueryBuilder('booking-reason')
+      .select('booking-reason.id', 'id')
+      .addSelect('booking-reason.name', 'name')
+      .addSelect('booking-reason.description', 'description')
+      .addSelect('booking-reason.created_by', 'createdBy')
+      .addSelect('booking-reason.created_at', 'createdAt')
+      .addSelect('booking-reason.updated_by', 'updatedBy')
+      .addSelect('booking-reason.updated_at', 'updatedAt')
+      .addSelect('booking-reason.deleted_by', 'deletedBy')
+      .addSelect('booking-reason.deleted_at', 'deletedAt')
+
+      .where('booking-reason.id = :id', { id: id })
+      .getRawOne<BookingReason>();
+  }
+
+  async restoreDeletedById(accountId: string, id: string) {
+    const isRestored = await this.createQueryBuilder('booking_reason')
       .update({
         deletedBy: null,
         deletedAt: null,
+        updatedBy: accountId,
+        updatedAt: new Date(),
       })
-      .where('br.id = :id', { id: id })
+      .where('booking_reason.id = :id', { id: id })
       .useTransaction(true)
       .execute();
+    if (isRestored.affected > 0) {
+      return this.get(id);
+    }
   }
 
-  async deleteById(accountId: string, id: string): Promise<UpdateResult> {
-    return this.createQueryBuilder('booking_reason')
+  async deleteById(accountId: string, id: string){
+    const isDeleted = await this.createQueryBuilder('booking_reason')
       .update({
         deletedBy: accountId,
         deletedAt: new Date(),
@@ -90,6 +109,9 @@ export class BookingReasonRepository extends Repository<BookingReason> {
       .where('booking_reason.id = :id', { id: id })
       .useTransaction(true)
       .execute();
+      if (isDeleted.affected > 0) {
+        return this.get(id);
+      }
   }
 
   async createNew(
@@ -131,5 +153,11 @@ export class BookingReasonRepository extends Repository<BookingReason> {
       }
     );
   }
-
+  async permanentlyDeleteById(id: string) {
+    return this.createQueryBuilder('booking_reason')
+      .delete()
+      .where('booking_reason.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
+  }
 }

@@ -3,20 +3,33 @@ import { DevicesRepository } from '../repositories/devices.repository';
 import { DevicesResponsePayload } from '../payload/response/devices.payload';
 import { AddDeviceRequest, UpdateDeviceRequest } from '@app/models';
 import { DevicesRequestPayload } from '../payload/request/devices.payload';
-import { Devices, Rooms } from '../models';
+import { Devices } from '../models';
 import { Direction } from '../models/search-pagination.payload';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
+import { DeviceHistService } from './devices-hist.service';
 
 @Injectable()
 export class DevicesService {
   private readonly logger = new Logger(DevicesService.name);
 
-  constructor(private readonly repository: DevicesRepository) {}
+  constructor(
+    private readonly repository: DevicesRepository,
+    private readonly histService: DeviceHistService
+  ) {}
 
-  async add(payload: AddDeviceRequest): Promise<Devices> {
+  async getAll(request: DevicesRequestPayload) {
+    try {
+      return await this.repository.searchDevices(request);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException('One or more parameters is invalid');
+    }
+  }
+
+  async add(payload: AddDeviceRequest, userId: string): Promise<Devices> {
     const isExisted = await this.repository.isExistedByName(payload.name);
     if (isExisted) {
-      throw new BadRequestException('Phone name is duplicated!');
+      throw new BadRequestException('Device name is duplicated!');
     }
     if (
       payload.name.trim().length < 1 ||
@@ -25,7 +38,9 @@ export class DevicesService {
       throw new BadRequestException('All fields must be filled in!');
     }
     try {
-      return await this.repository.createNewDevice(payload);
+      const deviceAdded = await this.repository.createNewDevice(payload, userId);
+      await this.histService.createNew(deviceAdded);
+      return deviceAdded;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException('Error while creating a new device');
@@ -36,32 +51,6 @@ export class DevicesService {
     return Promise.resolve([]);
   }
 
-  async deleteById(accountId: string, id: string): Promise<void> {
-    try {
-      const isDeleted = await this.repository.checkIfDeviceIsDeletedById(id);
-      if (isDeleted) {
-        throw new BadRequestException('Not found with provided id');
-      }
-      await this.repository.deleteDeviceById(accountId, id);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException('Error while deleting the device with id');
-    }
-  }
-
-  async getAll(request: DevicesRequestPayload) {
-    return await this.repository
-      .searchDevices({
-        search: request.search,
-        page: request.page,
-        limit: request.limit,
-        direction: request.sort as Direction[],
-      })
-      .catch((e) => {
-        this.logger.error(e);
-        throw new BadRequestException('One or more parameters is invalid');
-      });
-  }
   async getDevicesByDeviceType(deviceTypeId: string): Promise<Devices[]> {
     try {
       return await this.repository.getDevicesByDeviceType(deviceTypeId);
@@ -103,7 +92,7 @@ export class DevicesService {
       }
     }
     try {
-      await this.repository.save(
+      const deviceUpdated = await this.repository.save(
         {
           ...device,
           name: body.name.trim(),
@@ -115,9 +104,14 @@ export class DevicesService {
           transaction: true,
         }
       );
+
+      await this.histService.createNew(deviceUpdated);
+      return deviceUpdated;
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('Error occurred while updating this room');
+      throw new BadRequestException(
+        'Error occurred while updating this device'
+      );
     }
   }
 
@@ -140,20 +134,25 @@ export class DevicesService {
     }
   }
 
-  async disableById(accountId: string, id: string): Promise<void> {
+  async disableById(accountId: string, id: string) {
     try {
-      const isDeleted = await this.repository.checkIfDeviceIsDeletedById(id);
-      if (isDeleted) {
-        throw new BadRequestException('Not found with provided id');
+      const result = await this.repository.disableById(accountId, id);
+      if (result.affected < 1) {
+        throw new BadRequestException(
+          "Device doesn't exist with the provided id"
+        );
+      } else {
+        const room = await this.repository.get(id);
+        await this.histService.createNew(room);
+        return room;
       }
-      await this.repository.disableById(accountId, id);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException('Error while disabling this device');
     }
   }
 
-  async handleRestoreDisabledDeviceById(id: string): Promise<void> {
+  async handleRestoreDisabledDeviceById(id: string) {
     try {
       const device = await this.repository.findOneOrFail({
         where: {
@@ -163,8 +162,8 @@ export class DevicesService {
       if (
         device.disabledBy == null &&
         device.disabledAt == null &&
-        device.disabledBy == null &&
-        device.disabledAt == null
+        device.deletedBy == null &&
+        device.deletedAt == null
       ) {
         throw new BadRequestException('This device is active!');
       }
@@ -172,14 +171,23 @@ export class DevicesService {
       if (isDeleted) {
         throw new BadRequestException('Not found with provided id');
       }
-      await this.repository.restoreDisabledDeviceById(id);
+      const result = await this.repository.restoreDisabledDeviceById(id);
+      if (result.affected < 1) {
+        throw new BadRequestException(
+          "Device doesn't exist with the provided id"
+        );
+      } else {
+        const device = await this.repository.get(id);
+        await this.histService.createNew(device);
+        return device;
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException('Error while disabling this device');
     }
   }
 
-  async handleRestoreDeviceById(id: string): Promise<void> {
+  async handleRestoreDeviceById(id: string) {
     try {
       const device = await this.repository.findOneOrFail({
         where: {
@@ -187,10 +195,10 @@ export class DevicesService {
         },
       });
       if (
-        device.disabledBy == null &&
-        device.disabledAt == null &&
-        device.disabledBy == null &&
-        device.disabledAt == null
+        device.disabledBy === null &&
+        device.disabledAt === null &&
+        device.deletedBy === null &&
+        device.deletedAt === null
       ) {
         throw new BadRequestException('This device is active!');
       }
@@ -198,16 +206,16 @@ export class DevicesService {
       if (!isDeleted) {
         throw new BadRequestException('Not found with provided id');
       }
-      await this.repository.restoreDeletedDeviceById(id);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException('Error while disabling this device');
-    }
-  }
-
-  async getDeletedDevices(): Promise<Devices[]> {
-    try {
-      return await this.repository.getDeletedDevices();
+      const result = await this.repository.restoreDeletedDeviceById(id);
+      if (result.affected < 1) {
+        throw new BadRequestException(
+          "Device doesn't exist with the provided id"
+        );
+      } else {
+        const device = await this.repository.get(id);
+        await this.histService.createNew(device);
+        return device;
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException('Error while disabling this device');
@@ -230,5 +238,36 @@ export class DevicesService {
     }
 
     return this.repository.findDeviceListByBookingRoomRequest(name, type, sort);
+  }
+
+  async deleteById(accountId: string, id: string) {
+    const isDeleted = await this.repository.checkIfDeviceIsDeletedById(id);
+    if (isDeleted) {
+      throw new BadRequestException('This device already deleted!');
+    }
+    try {
+      const result = await this.repository.deleteById(accountId, id);
+      if (result.affected < 1) {
+        throw new BadRequestException(
+          "Device doesn't exist with the provided id"
+        );
+      } else {
+        const device = await this.repository.get(id);
+        await this.histService.createNew(device);
+        return device;
+      }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException('Error while deleting the device with id');
+    }
+  }
+
+  async getDeletedDevices(): Promise<Devices[]> {
+    try {
+      return await this.repository.getDeletedDevices();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException('Error while disabling this device');
+    }
   }
 }

@@ -6,7 +6,6 @@ import { BookingReason } from '../models/booking-reason.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { BookingReasonUpdateRequestPayload } from '../payload/request/booking-reason.request.payload';
 
-
 @Injectable()
 export class BookingReasonService {
   private readonly logger = new Logger(BookingReasonService.name);
@@ -16,22 +15,13 @@ export class BookingReasonService {
     private readonly histService: BookingReasonHistService
   ) {}
 
-  async getRoomTypesWithPagination(
+  async getBookingReasonTypesWithPagination(
     pagination: PaginationParams
   ): Promise<Pagination<BookingReason>> {
     try {
       return await this.repository.findByPagination(pagination);
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
-
-  async deleteBookingReasonById(accountId: string, id: string) {
-    try {
-      return await this.repository.deleteById(accountId, id);
-    } catch (e) {
-      this.logger.error(e);
       throw new BadRequestException(e.message);
     }
   }
@@ -45,7 +35,6 @@ export class BookingReasonService {
     }
   }
 
-
   async createNewBookingReason(
     accountId: string,
     payload: BookingReason
@@ -57,7 +46,6 @@ export class BookingReasonService {
       });
 
       await this.histService.createNew(bookingReason);
-
       return bookingReason;
     } catch (e) {
       this.logger.error(e.message);
@@ -77,7 +65,11 @@ export class BookingReasonService {
           'Room type does not found with the provided id'
         );
       }
-      const bookingReason = await this.repository.updateById(accountId, updatePayload, id);
+      const bookingReason = await this.repository.updateById(
+        accountId,
+        updatePayload,
+        id
+      );
       await this.histService.createNew(bookingReason);
       return bookingReason;
     } catch (e) {
@@ -89,6 +81,61 @@ export class BookingReasonService {
   async getBookingReasonById(id: string): Promise<BookingReason> {
     try {
       return await this.repository.findById(id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async deleteBookingReasonById(accountId: string, id: string) {
+    try {
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException('This reason already deleted!');
+      }
+      const reason = await this.repository.deleteById(accountId, id);
+      await this.histService.createNew(reason);
+      return reason;
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async restoreDeletedReasonById(accountId: string, id: string) {
+    try {
+      const isExisted = this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Reason does not exist with the provided id'
+        );
+      }
+      const data = await this.repository.findById(id);
+      if (data !== undefined) {
+        throw new BadRequestException(
+          'This reason ID is now active. Cannot restore'
+        );
+      }
+      const reason = await this.repository.restoreDeletedById(accountId, id);
+      await this.histService.createNew(reason);
+      return reason;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async permanentlyDeleteReasonById(id: string) {
+    try {
+      const data = await this.repository.findById(id);
+      if (data !== undefined) {
+        throw new BadRequestException(
+          'Please delete this type after permanently delete'
+        );
+      } else {
+        await this.histService.deleteAllHist(id);
+        return this.repository.permanentlyDeleteById(id);
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
