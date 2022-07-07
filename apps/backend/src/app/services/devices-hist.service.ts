@@ -1,40 +1,12 @@
 import {Injectable} from "@nestjs/common";
-import { BaseService } from "./base.service";
-import { DevicesHistRepository } from "../repositories";
+import { DeviceHistRepository } from "../repositories";
+import { Devices, DeviceHist } from "../models";
 
 @Injectable()
-export class DevicesHistService implements BaseService<any, any, any> {
+export class DeviceHistService {
+    constructor(private readonly repository: DeviceHistRepository) {}
 
-  constructor(private readonly repository: DevicesHistRepository) {
-
+  async createNew(device: Devices): Promise<DeviceHist> {
+    return this.repository.createNew(device);
   }
-
-  add(model: any): Promise<any> {
-    return Promise.resolve(undefined);
-  }
-
-  addAll(models: any[]): Promise<any[]> {
-    return Promise.resolve([]);
-  }
-
-  deleteById(id: any): Promise<void> {
-    return Promise.resolve(undefined);
-  }
-
-  getAll(): Promise<any[]> {
-    return Promise.resolve([]);
-  }
-
-  getAllByPagination(): Promise<any[]> {
-    return Promise.resolve([]);
-  }
-
-  getById(id: any): Promise<any> {
-    return Promise.resolve(undefined);
-  }
-
-  updateById(model: any, id: any): Promise<any> {
-    return Promise.resolve(undefined);
-  }
-
 }

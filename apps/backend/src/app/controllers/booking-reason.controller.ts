@@ -46,14 +46,14 @@ export class BookingReasonController {
     description: 'Get room type by pagination',
   })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  getRoomTypes(
+  getBookingReasonTypes(
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Query('dir', new DefaultValuePipe('ASC')) dir: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('sort', new DefaultValuePipe('name')) sort: string,
     @Query('search', new DefaultValuePipe('')) search: string
   ) {
-    return this.service.getRoomTypesWithPagination({
+    return this.service.getBookingReasonTypesWithPagination({
       limit,
       dir,
       sort,
@@ -92,7 +92,7 @@ export class BookingReasonController {
     summary: 'Get booking-reason by id',
     description: 'Get booking-reason by id',
   })
-  getRoomTypeById(@Param('id') id: string) {
+  getBookingReasonById(@Param('id') id: string) {
     return this.service.getBookingReasonById(id);
   }
 
@@ -118,7 +118,7 @@ export class BookingReasonController {
     summary: 'Update booking-reason by id',
     description: 'Update booking-reason by id',
   })
-  updateRoomTypeById(
+  updateBookingReasonById(
     @Body() updatePayload: BookingReasonUpdateRequestPayload,
     @Param('id') id: string,
     @User() keycloakUser: KeycloakUserInstance
@@ -162,5 +162,61 @@ export class BookingReasonController {
   })
   getDeletedBookingReasons(@Query('search') search: string) {
     return this.service.getDeletedReasons(search);
+  }
+
+  @Put('restore-deleted/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully restored deleted booking reason by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for deleted booking reason type is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Successfully restored deleted booking reason type by id',
+    description: 'Successfully restored deleted booking reason type by id',
+  })
+  restoreDeletedReasonById(
+    @Param('id') id: string,
+    @User() keycloakUser: KeycloakUserInstance
+  ) {
+    return this.service.restoreDeletedReasonById(keycloakUser.account_id, id);
+  }
+
+  @Delete('permanent/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully permanent deleted room type by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description:
+      'Request params for permanent delete room type is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Permanently delete room type by id',
+    description: 'Permanently delete room type by id',
+  })
+  permanentlyDeleteReasonById(@Param('id') id: string) {
+    return this.service.permanentlyDeleteReasonById(id);
   }
 }

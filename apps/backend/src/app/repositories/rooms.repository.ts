@@ -41,6 +41,14 @@ export class RoomsRepository extends Repository<Rooms> {
       .then((data) => data['count'] > 0);
   }
 
+  async checkIfRoomIsDeletedById(id: string): Promise<boolean> {
+    return this.createQueryBuilder('rooms')
+      .select('rooms.deleted_at')
+      .where('rooms.id = :id', { id: id })
+      .getRawOne<boolean>()
+      .then((data) => (data ? data['deleted_at'] : true));
+  }
+
   findDisabledRooms(search: string) {
     return this.createQueryBuilder('rooms')
       .select('rooms.id', 'id')

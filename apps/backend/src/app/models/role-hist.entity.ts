@@ -1,18 +1,18 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { BaseEntity, BaseEntityWithDisabled } from './base/base.entity';
+import { BaseEntity } from './base/base.entity';
 
-@Entity('device_hist')
-export class DeviceHist extends BaseEntityWithDisabled {
+@Entity('role_hist')
+export class RoleHist extends BaseEntity {
   @PrimaryGeneratedColumn('uuid', {
     name: 'id',
   })
   id?: string;
 
   @Column({
-    name: 'device_id',
+    name: 'role_id',
     type: 'uuid',
   })
-  deviceId?: string;
+  roleId?: string;
 
   @Column({
     name: 'name',

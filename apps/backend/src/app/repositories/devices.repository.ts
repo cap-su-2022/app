@@ -1,5 +1,5 @@
-import {FindOneOptions, Repository, UpdateResult} from 'typeorm';
-import {Accounts, Devices, Rooms, RoomType} from '../models';
+import { FindOneOptions, Repository, UpdateResult } from 'typeorm';
+import { Accounts, Devices, Rooms, RoomType } from '../models';
 import { RepositoryPaginationPayload } from '../models/search-pagination.payload';
 import { AddDeviceRequest, UpdateDeviceRequest } from '@app/models';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
@@ -9,6 +9,7 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { DeviceType } from '../models/device-type.entity';
+import { DevicesRequestPayload } from '../payload/request/devices.payload';
 
 @CustomRepository(Devices)
 export class DevicesRepository extends Repository<Devices> {
@@ -32,7 +33,7 @@ export class DevicesRepository extends Repository<Devices> {
   }
 
   searchDevices(
-    payload: RepositoryPaginationPayload
+    payload: DevicesRequestPayload
   ): Promise<Pagination<Devices, IPaginationMeta>> {
     const query = this.createQueryBuilder(`devices`)
       // qb.where(`rooms.name LIKE :name`, {name: `%${payload.search}%`});
@@ -63,7 +64,25 @@ export class DevicesRepository extends Repository<Devices> {
       .getRawMany<Devices>();
   }
 
-  deleteDeviceById(accountId: string, id: string): Promise<UpdateResult> {
+  async get(id: string): Promise<Devices> {
+    return this.createQueryBuilder('devices')
+      .select('devices.id', 'id')
+      .addSelect('devices.name', 'name')
+      .addSelect('device_type_id', 'type')
+      .addSelect('devices.created_at', 'createdAt')
+      .addSelect('devices.created_by', 'createdBy')
+      .addSelect('devices.updated_at', 'updatedAt')
+      .addSelect('devices.updated_by', 'updatedBy')
+      .addSelect('devices.disabled_at', 'disabledAt')
+      .addSelect('devices.disabled_by', 'disabledBy')
+      .addSelect('devices.deleted_at', 'deletedAt')
+      .addSelect('devices.deleted_by', 'deletedBy')
+      .addSelect('devices.description', 'description')
+      .andWhere('devices.id = :deviceId', { deviceId: id })
+      .getRawOne<Devices>();
+  }
+
+  deleteById(accountId: string, id: string): Promise<UpdateResult> {
     return this.createQueryBuilder('devices')
       .update({
         deletedAt: new Date(),
@@ -136,12 +155,14 @@ export class DevicesRepository extends Repository<Devices> {
       .getMany();
   }
 
-  createNewDevice(payload: AddDeviceRequest): Promise<Devices> {
-    return this.save(payload, {
-      transaction: true,
-    });
+  createNewDevice(payload: AddDeviceRequest, userId: string): Promise<Devices> {
+    return this.save(
+      { ...payload, createdBy: userId },
+      {
+        transaction: true,
+      }
+    );
   }
-
 
   findDeviceListByBookingRoomRequest(name: string, type: string, sort: string) {
     return this.createQueryBuilder('devices')
@@ -154,7 +175,6 @@ export class DevicesRepository extends Repository<Devices> {
   }
 
   async findById(id: string): Promise<Devices> {
-
     return this.createQueryBuilder('devices')
       .select('devices.id', 'id')
       .addSelect('devices.name', 'name')
@@ -177,7 +197,7 @@ export class DevicesRepository extends Repository<Devices> {
   async isExistedById(id: string): Promise<boolean> {
     return this.createQueryBuilder('devices')
       .select('COUNT(devices.name)')
-      .where('devices.id = :id', {id} )
+      .where('devices.id = :id', { id })
       .getRawOne()
       .then((data) => data['count'] > 0);
   }

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { DevicesController } from '../controllers';
-import { EquipmentsHistoryController } from '../controllers';
+// import { EquipmentsHistoryController } from '../controllers';
 import { DevicesService } from '../services';
-import { DevicesHistService } from '../services';
+import { DeviceHistService } from '../services';
 import { DevicesRepository } from '../repositories';
-import { DevicesHistRepository } from '../repositories';
+import { DeviceHistRepository } from '../repositories';
 import { KeycloakService } from '../services';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
@@ -18,11 +18,11 @@ import { AccountsModule } from './accounts.module';
     AccountsModule,
     TypeOrmExModule.forCustomRepository([
       DevicesRepository,
-      DevicesHistRepository,
+      DeviceHistRepository,
     ]),
   ],
-  controllers: [DevicesController, EquipmentsHistoryController],
-  providers: [DevicesService, DevicesHistService, KeycloakService],
+  controllers: [DevicesController],
+  providers: [DevicesService, DeviceHistService, KeycloakService],
   exports: [DevicesService],
 })
 export class DevicesModule {}

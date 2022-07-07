@@ -8,10 +8,13 @@ import {
   Button,
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { RotateClockwise } from 'tabler-icons-react';
+import { Ban, Check, RotateClockwise, X } from 'tabler-icons-react';
 import { fetchRoles, fetchDeletedRoles, restoreDeletedRoleById } from '../../redux/features/role';
 import { PaginationParams } from '../../models/pagination-params.model';
 import dayjs from 'dayjs';
+import PermanentDeleteModal from '../actions/modal/permanant-delete-modal.component';
+import { showNotification } from '@mantine/notifications';
+import { permanentlyDeleteRoleById } from '../../redux/features/role/thunk/permanently-delete-role-by-id.thunk';
 
 interface RestoreDeletedModalProps {
   isShown: boolean;
@@ -26,10 +29,49 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   const deletedRoles = useAppSelector((state) => state.role.deletedRoles);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
+  const [isPermanentDeleteShown, setPermanentDeleteShown] = useState(false);
+  const [id, setId] = useState('');
 
   useEffect(() => {
     dispatch(fetchDeletedRoles());
   }, []);
+
+  const handelPermanetDeleteButton = (id) => {
+    setId(id);
+    setPermanentDeleteShown(true);
+  };
+
+  const handelPermanetDeleteButtonOut = () => {
+    setId('');
+    setPermanentDeleteShown(false);
+  };
+
+  const handlePermanentDeleted = (id: string) => {
+    dispatch(permanentlyDeleteRoleById(id))
+      .unwrap()
+      .then(() => dispatch(fetchDeletedRoles()))
+      .then(() =>
+        showNotification({
+          id: 'delete-booking-reason',
+          color: 'teal',
+          title: 'Reason was permanent deleted',
+          message: 'Reason was successfully permanent deleted',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .catch((e) => {
+        showNotification({
+          id: 'delete-booking-reason',
+          color: 'red',
+          title: 'Error while permanent deleted reason',
+          message: `${e.message}`,
+          icon: <X />,
+          autoClose: 3000,
+        });
+      });
+    setPermanentDeleteShown(false);
+  };
 
   const handleRestoreDeletedRole = (id: string) => {
     dispatch(restoreDeletedRoleById(id))
@@ -60,6 +102,18 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
         >
           Restore
         </Button>
+
+        <Button
+          onClick={() => handelPermanetDeleteButton(row.id)}
+          style={{
+            margin: 5,
+          }}
+          variant="outline"
+          color="red"
+          leftIcon={<Ban />}
+        >
+          Permanat Delete
+        </Button>
       </td>
     </tr>
   ));
@@ -78,6 +132,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   };
 
   return (
+    <>
     <Modal
       opened={props.isShown}
       onClose={() => props.toggleShown()}
@@ -107,6 +162,12 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
         </Table>
       </ScrollArea>
     </Modal>
+    <PermanentDeleteModal
+        handleSubmit={() => handlePermanentDeleted(id)}
+        isShown={isPermanentDeleteShown}
+        toggleShown={() => handelPermanetDeleteButtonOut()}
+      />
+    </>
   );
 };
 

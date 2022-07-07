@@ -236,4 +236,31 @@ export class RoleController {
   restoreDeletedRoomById(@Param() payload: { id: string }) {
     return this.service.handleRestoreDeletedRoleById(payload.id);
   }
+
+  @Delete('permanent/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully permanent deleted role by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description:
+      'Request params for permanent delete role is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Permanently delete role by id',
+    description: 'Permanently delete role by id',
+  })
+  permanentDeleteRoleById(@Param('id') id: string) {
+    return this.service.permanentDeleteRoleById(id);
+  }
 }

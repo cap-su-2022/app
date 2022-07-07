@@ -10,4 +10,8 @@ export class BookingReasonHistService {
   async createNew(bookingReason: BookingReason): Promise<BookingReasonHist> {
     return this.repository.createNew(bookingReason);
   }
+
+  async deleteAllHist(id: string) {
+    return this.repository.deleteAllHist(id);
+   }
 }

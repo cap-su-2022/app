@@ -241,7 +241,7 @@ export class DeviceTypeController {
     summary: 'Successfully restored deleted device type by id',
     description: 'Successfully restored deleted device type by id',
   })
-  restoreDeletedRoomTypeById(
+  restoreDeletedTypeById(
     @Param('id') id: string,
     @User() keycloakUser: KeycloakUserInstance
   ) {

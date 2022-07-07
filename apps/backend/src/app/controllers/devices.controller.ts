@@ -62,9 +62,9 @@ export class DevicesController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   createNewDevice(
     @User() user: KeycloakUserInstance,
-    @Body() room: AddDeviceRequest
+    @Body() device: AddDeviceRequest
   ) {
-    return this.service.add(room);
+    return this.service.add(device, user.account_id);
   }
 
   @Get('find/:id')
