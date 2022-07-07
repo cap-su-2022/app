@@ -8,11 +8,19 @@ import {
   Button,
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { Check, RotateClockwise, X } from 'tabler-icons-react';
+import {Ban, Check, RotateClockwise, X} from 'tabler-icons-react';
+import {
+  restoreDeletedDeviceTypeById,
+  permanentlyDeleteDeviceTypeById,
+  fetchDeletedDeviceTypes,
+  fetchDeviceTypes,
+} from '../../redux/features/device-type';
 import { PaginationParams } from '../../models/pagination-params.model';
 import dayjs from 'dayjs';
-import { fetchDeletedDeviceTypes, fetchDeviceTypes, restoreDeletedDeviceTypeById } from '../../redux/features/device-type';
 import { showNotification } from '@mantine/notifications';
+import PermanentDeleteModal from '../actions/modal/permanant-delete-modal.component';
+import NoDataFound from "../no-data-found";
+
 
 interface RestoreDeletedModalProps {
   isShown: boolean;
@@ -27,6 +35,8 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   const deletedDeviceTypes = useAppSelector((state) => state.deviceType.deletedDeviceTypes);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
+  const [isPermanentDeleteShown, setPermanentDeleteShown] = useState(false);
+  const [id, setId] = useState('');
 
   useEffect(() => {
     dispatch(fetchDeletedDeviceTypes());
@@ -61,6 +71,43 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
         dispatch(fetchDeviceTypes(props.pagination));
       })
   };
+
+  const handelPermanentDeleteButton = (id) => {
+    setId(id);
+    setPermanentDeleteShown(true);
+  };
+
+  const handelPermanentDeleteButtonOut = () => {
+    setId('');
+    setPermanentDeleteShown(false);
+  };
+
+  const handlePermanentDeleted = (id: string) => {
+    dispatch(permanentlyDeleteDeviceTypeById(id))
+      .unwrap()
+      .then(() => dispatch(fetchDeletedDeviceTypes()))
+      .then(() =>
+        showNotification({
+          id: 'delete-device-type',
+          color: 'teal',
+          title: 'Device type was permanent deleted',
+          message: 'Device type was successfully permanent deleted',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .catch((e) => {
+        showNotification({
+          id: 'delete-device-type',
+          color: 'red',
+          title: 'Error while permanent deleted device type',
+          message: `${e.message}`,
+          icon: <X/>,
+          autoClose: 3000,
+        });
+      });
+    setPermanentDeleteShown(false);
+  };
   const rows = deletedDeviceTypes?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
@@ -84,6 +131,17 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
         >
           Restore
         </Button>
+        <Button
+          onClick={() => handelPermanentDeleteButton(row.id)}
+          style={{
+            margin: 5,
+          }}
+          variant="outline"
+          color="red"
+          leftIcon={<Ban />}
+        >
+          Permanat Delete
+        </Button>
       </td>
     </tr>
   ));
@@ -102,23 +160,25 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   };
 
   return (
-    <Modal
+    <div>
+      <Modal
       opened={props.isShown}
       onClose={() => props.toggleShown()}
       centered
       size="85%"
-      title={<ModalHeaderTitle />}
+      title={<ModalHeaderTitle/>}
       closeOnClickOutside={true}
       closeOnEscape={false}
     >
-      <ScrollArea
-        sx={{ height: 500 }}
-        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
-      >
-        <Table>
-          <thead
-            className={cx(classes.header, { [classes.scrolled]: scrolled })}
-          >
+      {deletedDeviceTypes.length > 0 ? (
+        <ScrollArea
+          sx={{height: 500}}
+          onScrollPositionChange={({y}) => setScrolled(y !== 0)}
+        >
+          <Table>
+            <thead
+              className={cx(classes.header, {[classes.scrolled]: scrolled})}
+            >
             <tr>
               <th>STT</th>
               <th>Name</th>
@@ -126,11 +186,18 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
               <th>Deleted By</th>
               <th>Action</th>
             </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </ScrollArea>
+            </thead>
+            <tbody>{rows}</tbody>
+          </Table>
+        </ScrollArea>
+      ) : <NoDataFound/>}
     </Modal>
+      <PermanentDeleteModal
+        handleSubmit={() => handlePermanentDeleted(id)}
+        isShown={isPermanentDeleteShown}
+        toggleShown={() => handelPermanentDeleteButtonOut()}
+      />
+    </div>
   );
 };
 

@@ -68,12 +68,12 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
       });
   };
 
-  const handelPermanetDeleteButton = (id) => {
+  const handelPermanentDeleteButton = (id) => {
     setId(id);
     setPermanentDeleteShown(true);
   };
 
-  const handelPermanetDeleteButtonOut = () => {
+  const handelPermanentDeleteButtonOut = () => {
     setId('');
     setPermanentDeleteShown(false);
   };
@@ -129,7 +129,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
         </Button>
 
         <Button
-          onClick={() => handelPermanetDeleteButton(row.id)}
+          onClick={() => handelPermanentDeleteButton(row.id)}
           style={{
             margin: 5,
           }}
@@ -193,7 +193,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
       <PermanentDeleteModal
         handleSubmit={() => handlePermanentDeleted(id)}
         isShown={isPermanentDeleteShown}
-        toggleShown={() => handelPermanetDeleteButtonOut()}
+        toggleShown={() => handelPermanentDeleteButtonOut()}
       />
     </div>
   );
