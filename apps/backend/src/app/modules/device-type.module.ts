@@ -7,16 +7,18 @@ import { AccountsModule } from './accounts.module';
 import ConfigModule from './global/config.module';
 import { HttpModule } from '@nestjs/axios';
 import { KeycloakService } from '../services';
+import { DeviceTypeHistRepository } from '../repositories/device-type-hist.repository';
+import { DeviceTypeHistService } from '../services/device-type-hist.service';
 
 @Module({
   imports: [
     ConfigModule,
     HttpModule,
     AccountsModule,
-    TypeOrmExModule.forCustomRepository([DeviceTypeRepository]),
+    TypeOrmExModule.forCustomRepository([DeviceTypeRepository, DeviceTypeHistRepository]),
   ],
   controllers: [DeviceTypeController],
-  exports: [DeviceTypeService],
-  providers: [DeviceTypeService, KeycloakService],
+  exports: [DeviceTypeService, DeviceTypeHistService],
+  providers: [DeviceTypeService, KeycloakService, DeviceTypeHistService],
 })
 export class DeviceTypeModule {}

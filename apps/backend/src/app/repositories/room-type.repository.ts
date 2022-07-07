@@ -10,9 +10,12 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
+import { BadRequestException, Logger } from '@nestjs/common';
+import { DeviceTypeService } from '../services/device-type.service';
 
 @CustomRepository(RoomType)
 export class RoomTypeRepository extends Repository<RoomType> {
+  private readonly logger = new Logger(DeviceTypeService.name);
   findRoomTypesByPagination(
     pagination: PaginationParams
   ): Promise<Pagination<RoomType>> {
@@ -66,9 +69,48 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .addSelect('rt.updated_at', 'updatedAt')
       .addSelect('rt.deleted_by', 'deletedBy')
       .addSelect('rt.deleted_at', 'deletedAt')
-      
+
       .where('rt.id = :id', { id: id })
       .getRawOne<RoomType>();
+  }
+
+  async addNew(
+    accountId: string,
+    payload: { name: string; description: string }
+  ): Promise<RoomType> {
+    try {
+      const roomType = await this.save({
+        createdBy: accountId,
+        name: payload.name.trim(),
+        description: payload.description,
+        createdAt: new Date(),
+        updatedBy: accountId,
+        updatedAt: new Date(),
+      });
+      return roomType;
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  updateById(
+    roomTypeId: string,
+    accountId: string,
+    payload: MasterDataAddRequestPayload
+  ) {
+    return this.save(
+      {
+        id: roomTypeId,
+        name: payload.name.trim(),
+        description: payload.description,
+        updatedBy: accountId,
+        updatedAt: new Date(),
+      },
+      {
+        transaction: true,
+      }
+    );
   }
 
   async deleteByIdAndAccountId(
@@ -93,19 +135,8 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .then((data) => data?.count > 0);
   }
 
-  // restoreDisabledById(accountId: string, id: string) {
-  //   return this.createQueryBuilder('rt')
-  //     .update({
-  //       updatedAt: new Date(),
-  //       updatedBy: accountId,
-  //     })
-  //     .where('rt.id = :id', { id: id })
-  //     .useTransaction(true)
-  //     .execute();
-  // }
-
   async restoreDeletedById(accountId: string, id: string){
-    const roomRestored = await this.createQueryBuilder('room_type')
+    const isRestored = await this.createQueryBuilder('room_type')
       .update({
         updatedAt: new Date(),
         updatedBy: accountId,
@@ -115,13 +146,13 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .where('room_type.id = :id', { id: id })
       .useTransaction(true)
       .execute();
-      if(roomRestored.affected > 0){
+      if(isRestored.affected > 0){
         return this.get(id)
-      }  
+      }
   }
 
   async deleteById(accountId: string, id: string) {
-   const roomDeleted = await this.createQueryBuilder('room_type')
+   const isDeleted = await this.createQueryBuilder('room_type')
       .update({
         deletedAt: new Date(),
         deletedBy: accountId,
@@ -129,12 +160,12 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .where('room_type.id = :id', { id: id })
       .useTransaction(true)
       .execute();
-    if(roomDeleted.affected > 0){
+    if(isDeleted.affected > 0){
       return this.get(id)
-    }  
+    }
   }
 
-  permanantDeleteById(id: string) {
+  permanentlyDeleteById(id: string) {
     return this.createQueryBuilder('room_type')
       .delete()
       .where('room_type.id = :id', { id: id })
@@ -142,14 +173,6 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .execute();
   }
 
-  // findDisabledByPagination(search: string): Promise<RoomType[]> {
-  //   return this.createQueryBuilder('rt')
-  //     .select('rt.id', 'id')
-  //     .addSelect('rt.name', 'name')
-  //     .where('rt.name LIKE :search', { search: search.trim() })
-  //     .andWhere('rt.disabled_at IS NOT NULL')
-  //     .getRawMany<RoomType>();
-  // }
 
   findDeletedByPagination(search: string): Promise<RoomType[]> {
     return this.createQueryBuilder('rt')
@@ -164,34 +187,4 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .getRawMany<RoomType>();
   }
 
-  updateById(
-    roomTypeId: string,
-    accountId: string,
-    payload: MasterDataAddRequestPayload
-  ) {
-    return this.save(
-      {
-        id: roomTypeId,
-        name: payload.name.trim(),
-        description: payload.description,
-        updatedBy: accountId,
-        updatedAt: new Date(),
-      },
-      {
-        transaction: true,
-      }
-    );
-  }
-
-  // disableById(accountId: string, id: string) {
-  //   return this.createQueryBuilder('room_type')
-  //     .update({
-  //       disabledBy: accountId,
-  //       disabledAt: new Date(),
-  //     })
-  //     .where('room_type.id = :id', { id: id })
-  //     .useTransaction(true)
-
-  //     .execute();
-  // }
 }

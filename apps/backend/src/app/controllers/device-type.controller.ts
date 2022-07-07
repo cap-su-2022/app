@@ -29,10 +29,52 @@ export class DeviceTypeController {
   constructor(private readonly service: DeviceTypeService) {}
 
   @Get()
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got get all device types',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get all device types',
+    description: 'Get all device types',
+  })
   getAllDeviceTypes(
     @Query() payload: PaginationParams
   ): Promise<Pagination<DeviceType>> {
     return this.service.getAllDeviceTypes(payload as PaginationParams);
+  }
+
+  @Get('name')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got disabled room types',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get disabled room types',
+    description: 'Get disabled room types',
+  })
+  getDeviceTypeNames() {
+    return this.service.getDeviceTypeNames();
   }
 
   @Get(':id')
@@ -59,32 +101,6 @@ export class DeviceTypeController {
   })
   getDeviceTypeById(@Param('id') id: string): Promise<DeviceType> {
     return this.service.getDeviceTypeById(id);
-  }
-
-  @Get('name')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully got disabled device types',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @ApiOperation({
-    summary: 'Get disabled device types',
-    description: 'Get disabled device types',
-  })
-  getDeviceTypeNames() {
-    return this.service.getDeviceTypeNames();
   }
 
   @Post()
@@ -118,6 +134,27 @@ export class DeviceTypeController {
   }
 
   @Put(':id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully updated device type by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Update device type by id',
+    description: 'Update device type by id',
+  })
   updateDeviceTypeById(
     @Param('id') id: string,
     @Body() payload: MasterDataAddRequestPayload,
@@ -127,16 +164,32 @@ export class DeviceTypeController {
   }
 
   @Delete(':id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully deleted device types',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Deleted device types',
+    description: 'Deleted device types',
+  })
   deleteDeviceTypeById(
     @Param('id') id: string,
     @User() user: KeycloakUserInstance
   ) {
     return this.service.deleteDeviceTypeById(user.account_id, id);
-  }
-
-  @Delete('permanent/:id')
-  permanentlyDeleteDeviceTypeById(@Param('id') id: string) {
-    return this.service.permanentlyDeleteDeviceTypeById(id);
   }
 
   @Get('deleted')
@@ -165,15 +218,16 @@ export class DeviceTypeController {
     return this.service.getDeletedDeviceTypes(search);
   }
 
+
   @Put('restore-deleted/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully restored deleted room by id',
+    description: 'Successfully restored deleted device by id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for deleted room type is not validated',
+    description: 'Request params for deleted device type is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -184,13 +238,40 @@ export class DeviceTypeController {
     description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: 'Successfully restored deleted room type by id',
-    description: 'Successfully restored deleted room type by id',
+    summary: 'Successfully restored deleted device type by id',
+    description: 'Successfully restored deleted device type by id',
   })
   restoreDeletedRoomTypeById(
     @Param('id') id: string,
     @User() keycloakUser: KeycloakUserInstance
   ) {
-    return this.service.restoreDeletedRoomTypeById(keycloakUser.account_id, id);
+    return this.service.restoreDeletedDeviceTypeById(keycloakUser.account_id, id);
+  }
+
+  @Delete('permanent/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully permanent deleted device type by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description:
+      'Request params for permanent delete device type is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Permanently delete device type by id',
+    description: 'Permanently delete device type by id',
+  })
+  permanentlyDeleteDeviceTypeById(@Param('id') id: string) {
+    return this.service.permanentlyDeleteDeviceTypeById(id);
   }
 }
