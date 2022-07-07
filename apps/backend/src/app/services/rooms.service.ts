@@ -1,14 +1,9 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { AddRoomRequest, UpdateRoomRequest } from '@app/models';
-import { UpdateResult } from 'typeorm';
 import { Rooms } from '../models';
 import { RoomsRepository } from '../repositories';
-import { RoomsRequestPayload } from '../payload/request/rooms.payload';
-import { RoomsResponsePayload } from '../payload/response/rooms.payload';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { Direction } from '../models/search-pagination.payload';
 import { ChooseBookingRoomFilterPayload } from '../payload/request/choose-booking-room-filter.payload';
-import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
 import { RoomsPaginationParams } from '../controllers/rooms-pagination.model';
 import { RoomHistService } from './room-hist.service';
 
@@ -27,7 +22,6 @@ export class RoomsService {
       if (isExisted) {
         throw new BadRequestException('This room is already existed');
       }
-
       if (room.isDisabled) {
         const addedRoom = await this.repository.save(
           {
@@ -103,8 +97,7 @@ export class RoomsService {
 
   async getDisabledRooms(search: string): Promise<Rooms[]> {
     try {
-      const data = await this.repository.findDisabledRooms(search);
-      return data;
+      return await this.repository.findDisabledRooms(search);
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
@@ -143,7 +136,13 @@ export class RoomsService {
     body: UpdateRoomRequest
   ): Promise<void> {
     let room;
-
+    if (
+      body.name.length < 1 ||
+      body.type.length < 1 ||
+      body.description.length < 1
+    ) {
+      throw new BadRequestException('Fields cannot be left blank!');
+    }
     try {
       room = await this.repository.findOneOrFail({
         where: {
@@ -154,6 +153,7 @@ export class RoomsService {
       this.logger.error(e.message);
       throw new BadRequestException("Room doesn't exist with the provided id");
     }
+
     if (room.name !== body.name) {
       const isExisted = await this.repository.isExistedByName(body.name);
       if (isExisted) {
@@ -195,7 +195,10 @@ export class RoomsService {
       throw new BadRequestException('This room is already deleted or disabled');
     }
     try {
-      console.log('AAAAAAAAAAa: ', data);
+      const rooms = await this.repository.findDisabledRooms('');
+      if (rooms.findIndex((room) => room.id === id) !== -1) {
+        throw new BadRequestException('Room already disable!');
+      }
       const result = await this.repository.disableById(accountId, id);
       if (result.affected < 1) {
         throw new BadRequestException(
@@ -214,7 +217,20 @@ export class RoomsService {
 
   async handleRestoreDisabledRoomById(id: string) {
     try {
-      const result = await this.repository.restoreDisabledRoomById(id);
+      const room = await this.repository.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+      if (
+        room.deletedBy == null &&
+        room.deletedAt == null &&
+        room.disabledBy == null &&
+        room.disabledAt == null
+      ) {
+        throw new BadRequestException('This room is active!');
+      }
+      const result = await this.repository.restoreDeletedRoomById(id);
       if (result.affected < 1) {
         throw new BadRequestException(
           "Room doesn't exist with the provided id"
@@ -234,7 +250,20 @@ export class RoomsService {
 
   async handleRestoreDeletedRoomById(id: string) {
     try {
-      const result = await this.repository.restoreDeletedRoomById(id);
+      const room = await this.repository.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+      if (
+        room.disabledBy == null &&
+        room.disabledAt == null &&
+        room.disabledBy == null &&
+        room.disabledAt == null
+      ) {
+        throw new BadRequestException('This room is active!');
+      }
+      const result = await this.repository.restoreDisabledRoomById(id);
       if (result.affected < 1) {
         throw new BadRequestException(
           "Room doesn't exist with the provided id"
@@ -254,6 +283,10 @@ export class RoomsService {
 
   async deleteById(accountId: string, id: string) {
     try {
+      const rooms = await this.repository.findDisabledRooms('');
+      if (rooms.findIndex((room) => room.id === id) !== -1) {
+        throw new BadRequestException('Room already deleted!');
+      }
       const result = await this.repository.deleteById(accountId, id);
       if (result.affected < 1) {
         throw new BadRequestException(
