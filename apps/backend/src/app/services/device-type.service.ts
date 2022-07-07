@@ -26,7 +26,7 @@ export class DeviceTypeService {
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This room is already deleted or disabled'
+          'This device type is already deleted or disabled'
         );
       }
       return data;
@@ -74,7 +74,7 @@ export class DeviceTypeService {
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This device is already deleted or disabled'
+          'This device type is already deleted or disabled'
         );
       }
       const deviceType = await this.repository.updateById(accountId, id, payload);
