@@ -26,15 +26,6 @@ export class RoomTypeService {
     }
   }
 
-  getRoomTypeNames() {
-    try {
-      return this.repository.findRoomTypeName();
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
-
   async getRoomTypeById(id: string): Promise<RoomType> {
     try {
       const data = await this.repository.findById(id);
@@ -46,6 +37,29 @@ export class RoomTypeService {
       return data;
     } catch (e) {
       this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  getRoomTypeNames() {
+    try {
+      return this.repository.findRoomTypeName();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async addRoomType(
+    accountId: string,
+    addRoomType: MasterDataAddRequestPayload
+  ): Promise<RoomType> {
+    try {
+      const roomType = await this.repository.addNew(accountId, addRoomType);
+      await this.histService.createNew(roomType);
+      return roomType;
+    } catch (e) {
+      this.logger.error(e);
       throw new BadRequestException(e.message);
     }
   }
@@ -68,11 +82,7 @@ export class RoomTypeService {
           'This room is already deleted or disabled'
         );
       }
-      const roomType = await this.repository.updateById(
-        id,
-        accountId,
-        updatePayload
-      );
+      const roomType = await this.repository.updateById(accountId, id, updatePayload);
       await this.histService.createNew(roomType);
       return roomType;
     } catch (e) {
@@ -81,31 +91,23 @@ export class RoomTypeService {
     }
   }
 
-  // async disableRoomTypeById(accountId: string, id: string): Promise<any> {
-  //   try {
-  //     const result = await this.repository.disableById(accountId, id);
-  //     if (result.affected < 1) {
-  //       throw new BadRequestException(
-  //         "Room doesn't exist with the provided id"
-  //       );
-  //     }
-  //   } catch (e) {
-  //     this.logger.error(e.message);
-  //     throw new BadRequestException(e.message);
-  //   }
-  // }
-
-  // async getDisabledRoomTypes(search: string) {
-  //   try {
-  //     const roomTypePagination = await this.repository.findDisabledByPagination(search);
-  //     console.log("AAAAAAAAAAAAA", roomTypePagination)
-  //     // await this.histService.createNew(roomTypePagination);
-  //     return roomTypePagination;
-  //   } catch (e) {
-  //     this.logger.error(e.message);
-  //     throw new BadRequestException(e.message);
-  //   }
-  // }
+  async deleteRoomTypeById(accountId: string, id: string) {
+    try {
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException(
+          'This room is already deleted or disabled'
+        );
+      } else {
+        const roomType = await this.repository.deleteById(accountId, id);
+        await this.histService.createNew(roomType);
+        return roomType;
+      }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
 
   async getDeletedRoomTypes(search: string) {
     try {
@@ -140,35 +142,6 @@ export class RoomTypeService {
     }
   }
 
-  // async restoreDisabledRoomTypeById(accountId: string, id: string) {
-  //   try {
-  //     const roomType = await this.repository.restoreDisabledById(accountId, id);
-  //     // await this.histService.createNew(roomType);
-  //     return roomType;
-  //   } catch (e) {
-  //     this.logger.error(e.message);
-  //     throw new BadRequestException(e.message);
-  //   }
-  // }
-
-  async deleteRoomTypeById(accountId: string, id: string) {
-    try {
-      const data = await this.repository.findById(id);
-      if (data === undefined) {
-        throw new BadRequestException(
-          'This room type is already deleted or disabled'
-        );
-      } else {
-        const roomType = await this.repository.deleteById(accountId, id);
-        await this.histService.createNew(roomType);
-        return roomType;
-      }
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
-
   async permanentDeleteRoomTypeById(id: string) {
     try {
       const data = await this.repository.findById(id);
@@ -178,32 +151,10 @@ export class RoomTypeService {
         );
       } else {
         await this.histService.deleteAllHist(id);
-        return this.repository.permanantDeleteById(id);
+        return this.repository.permanentlyDeleteById(id);
       }
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
-
-  async addRoomType(
-    accountId: string,
-    addRoomType: MasterDataAddRequestPayload
-  ): Promise<RoomType> {
-    try {
-      const roomType = await this.repository.save({
-        createdBy: accountId,
-        name: addRoomType.name.trim(),
-        description: addRoomType.description,
-        createdAt: new Date(),
-        updatedBy: accountId,
-        updatedAt: new Date(),
-      });
-
-      await this.histService.createNew(roomType);
-      return roomType;
-    } catch (e) {
-      this.logger.error(e);
       throw new BadRequestException(e.message);
     }
   }

@@ -43,12 +43,45 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .getRawOne<DeviceType>();
   }
 
-  findDeviceTypeName(): Promise<RoomType[]> {
+  findDeviceTypeName(): Promise<DeviceType[]> {
     return this.createQueryBuilder('dt')
       .select('dt.id', 'id')
       .addSelect('dt.name', 'name')
-      .andWhere("dt.deleted_at IS NULL")
-      .getRawMany<RoomType>();
+      .andWhere('dt.deleted_at IS NULL')
+      .getRawMany<DeviceType>();
+  }
+
+  async get(id: string): Promise<DeviceType> {
+    return this.createQueryBuilder('dt')
+      .select('dt.id', 'id')
+      .addSelect('dt.name', 'name')
+      .addSelect('dt.description', 'description')
+      .addSelect('dt.created_by', 'createdBy')
+      .addSelect('dt.created_at', 'createdAt')
+      .addSelect('dt.updated_by', 'updatedBy')
+      .addSelect('dt.updated_at', 'updatedAt')
+      .addSelect('dt.deleted_by', 'deletedBy')
+      .addSelect('dt.deleted_at', 'deletedAt')
+
+      .where('dt.id = :id', { id: id })
+      .getRawOne<DeviceType>();
+  }
+
+  async addNew(
+    accountId: string,
+    payload: { name: string; description: string }
+  ): Promise<DeviceType> {
+    return this.save<DeviceType>(
+      {
+        name: payload.name.trim(),
+        description: payload.description,
+        createdBy: accountId,
+        createdAt: new Date(),
+      },
+      {
+        transaction: true,
+      }
+    );
   }
 
   async deleteByIdAndAccountId(
@@ -84,8 +117,8 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .execute();
   }
 
-  deleteById(accountId: string, id: string) {
-    return this.createQueryBuilder('device_type')
+  async deleteById(accountId: string, id: string) {
+    const isDeleted = await this.createQueryBuilder('device_type')
       .update({
         deletedAt: new Date(),
         deletedBy: accountId,
@@ -93,6 +126,9 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .where('device_type.id = :id', { id: id })
       .useTransaction(true)
       .execute();
+    if (isDeleted.affected > 0) {
+      return this.get(id);
+    }
   }
 
   findDeletedByPagination(search: string): Promise<DeviceType[]> {
@@ -108,8 +144,8 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .getRawMany<DeviceType>();
   }
 
-  restoreDeletedById(accountId: string, id: string): Promise<UpdateResult> {
-    return this.createQueryBuilder('device_type')
+  async restoreDeletedById(accountId: string, id: string) {
+    const isRestored = await this.createQueryBuilder('device_type')
       .update({
         updatedAt: new Date(),
         updatedBy: accountId,
@@ -119,6 +155,9 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .where('device_type.id = :id', { id: id })
       .useTransaction(true)
       .execute();
+    if (isRestored.affected > 0) {
+      return this.get(id);
+    }
   }
 
   updateById(
@@ -141,23 +180,10 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   }
 
   async permanentlyDeleteById(id: string) {
-    return Promise.resolve(undefined);
-  }
-
-  async addNew(
-    accountId: string,
-    payload: { name: string; description: string }
-  ): Promise<DeviceType> {
-    return this.save<DeviceType>(
-      {
-        name: payload.name.trim(),
-        description: payload.description,
-        createdBy: accountId,
-        createdAt: new Date(),
-      },
-      {
-        transaction: true,
-      }
-    );
+    return this.createQueryBuilder('device_type')
+      .delete()
+      .where('device_type.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
   }
 }
