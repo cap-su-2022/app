@@ -26,9 +26,18 @@ export class BookingReasonService {
     }
   }
 
-  getDeletedReasons(search: string) {
+  getBookingReasonNames() {
     try {
-      return this.repository.findDeletedByPagination(search);
+      return this.repository.findBookingReasonName();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getBookingReasonById(id: string): Promise<BookingReason> {
+    try {
+      return await this.repository.findById(id);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -78,15 +87,6 @@ export class BookingReasonService {
     }
   }
 
-  async getBookingReasonById(id: string): Promise<BookingReason> {
-    try {
-      return await this.repository.findById(id);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
-
   async deleteBookingReasonById(accountId: string, id: string) {
     try {
       const data = await this.repository.findById(id);
@@ -98,6 +98,15 @@ export class BookingReasonService {
       return reason;
     } catch (e) {
       this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  getDeletedReasons(search: string) {
+    try {
+      return this.repository.findDeletedByPagination(search);
+    } catch (e) {
+      this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }

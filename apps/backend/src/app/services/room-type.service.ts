@@ -28,6 +28,15 @@ export class RoomTypeService {
     }
   }
 
+  getRoomTypeNames() {
+    try {
+      return this.repository.findRoomTypeName();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async getRoomTypeById(id: string): Promise<RoomType> {
     try {
       const data = await this.repository.findById(id);
@@ -37,15 +46,6 @@ export class RoomTypeService {
         );
       }
       return data;
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
-
-  getRoomTypeNames() {
-    try {
-      return this.repository.findRoomTypeName();
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

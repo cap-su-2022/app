@@ -1,14 +1,21 @@
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
 import { DeviceType } from '../models/device-type.entity';
 import { PaginationParams } from '../controllers/pagination.model';
 import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
-import { RoomType } from '../models/room-type.entity';
 import { Accounts } from '../models';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 
 @CustomRepository(DeviceType)
 export class DeviceTypeRepository extends Repository<DeviceType> {
+  existsById(id: string): Promise<boolean> {
+    return this.createQueryBuilder('rt')
+      .select('COUNT(1)', 'count')
+      .where('rt.id = :id', { id: id })
+      .getRawOne()
+      .then((data) => data?.count > 0);
+  }
+
   findByPagination(
     pagination: PaginationParams
   ): Promise<Pagination<DeviceType>> {
@@ -21,10 +28,18 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
 
-    return paginateRaw<RoomType>(query, {
+    return paginateRaw<DeviceType>(query, {
       page: pagination.page,
       limit: pagination.limit,
     });
+  }
+
+  findDeviceTypeName(): Promise<DeviceType[]> {
+    return this.createQueryBuilder('dt')
+      .select('dt.id', 'id')
+      .addSelect('dt.name', 'name')
+      .andWhere('dt.deleted_at IS NULL')
+      .getRawMany<DeviceType>();
   }
 
   async findById(id: string): Promise<DeviceType> {
@@ -40,30 +55,6 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .leftJoin(Accounts, 'aa', 'aa.id = dt.updated_by')
       .where('dt.id = :id', { id: id })
       .andWhere('dt.deleted_at IS NULL')
-      .getRawOne<DeviceType>();
-  }
-
-  findDeviceTypeName(): Promise<DeviceType[]> {
-    return this.createQueryBuilder('dt')
-      .select('dt.id', 'id')
-      .addSelect('dt.name', 'name')
-      .andWhere('dt.deleted_at IS NULL')
-      .getRawMany<DeviceType>();
-  }
-
-  async get(id: string): Promise<DeviceType> {
-    return this.createQueryBuilder('dt')
-      .select('dt.id', 'id')
-      .addSelect('dt.name', 'name')
-      .addSelect('dt.description', 'description')
-      .addSelect('dt.created_by', 'createdBy')
-      .addSelect('dt.created_at', 'createdAt')
-      .addSelect('dt.updated_by', 'updatedBy')
-      .addSelect('dt.updated_at', 'updatedAt')
-      .addSelect('dt.deleted_by', 'deletedBy')
-      .addSelect('dt.deleted_at', 'deletedAt')
-
-      .where('dt.id = :id', { id: id })
       .getRawOne<DeviceType>();
   }
 
@@ -84,37 +75,23 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
     );
   }
 
-  async deleteByIdAndAccountId(
+  updateById(
     accountId: string,
-    id: string
-  ): Promise<UpdateResult> {
-    return this.createQueryBuilder('rt')
-      .update({
-        deletedAt: new Date(),
-        deletedBy: accountId,
-      })
-      .where('rt.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-  }
-
-  existsById(id: string): Promise<boolean> {
-    return this.createQueryBuilder('rt')
-      .select('COUNT(1)', 'count')
-      .where('rt.id = :id', { id: id })
-      .getRawOne()
-      .then((data) => data?.count > 0);
-  }
-
-  restoreDisabledById(accountId: string, id: string) {
-    return this.createQueryBuilder('rt')
-      .update({
-        updatedAt: new Date(),
+    deviceTypeId: string,
+    payload: MasterDataAddRequestPayload
+  ) {
+    return this.save(
+      {
+        id: deviceTypeId,
+        name: payload.name.trim(),
+        description: payload.description,
         updatedBy: accountId,
-      })
-      .where('rt.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
+        updatedAt: new Date(),
+      },
+      {
+        transaction: true,
+      }
+    );
   }
 
   async deleteById(accountId: string, id: string) {
@@ -127,7 +104,11 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .useTransaction(true)
       .execute();
     if (isDeleted.affected > 0) {
-      return this.get(id);
+      return this.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
     }
   }
 
@@ -156,27 +137,12 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .useTransaction(true)
       .execute();
     if (isRestored.affected > 0) {
-      return this.get(id);
+      return this.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
     }
-  }
-
-  updateById(
-    accountId: string,
-    deviceTypeId: string,
-    payload: MasterDataAddRequestPayload
-  ) {
-    return this.save(
-      {
-        id: deviceTypeId,
-        name: payload.name.trim(),
-        description: payload.description,
-        updatedBy: accountId,
-        updatedAt: new Date(),
-      },
-      {
-        transaction: true,
-      }
-    );
   }
 
   async permanentlyDeleteById(id: string) {
@@ -186,4 +152,45 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .useTransaction(true)
       .execute();
   }
+
+  // async deleteByIdAndAccountId(
+  //   accountId: string,
+  //   id: string
+  // ): Promise<UpdateResult> {
+  //   return this.createQueryBuilder('rt')
+  //     .update({
+  //       deletedAt: new Date(),
+  //       deletedBy: accountId,
+  //     })
+  //     .where('rt.id = :id', { id: id })
+  //     .useTransaction(true)
+  //     .execute();
+  // }
+
+  // restoreDisabledById(accountId: string, id: string) {
+  //   return this.createQueryBuilder('rt')
+  //     .update({
+  //       updatedAt: new Date(),
+  //       updatedBy: accountId,
+  //     })
+  //     .where('rt.id = :id', { id: id })
+  //     .useTransaction(true)
+  //     .execute();
+  // }
+
+    // async get(id: string): Promise<DeviceType> {
+  //   return this.createQueryBuilder('dt')
+  //     .select('dt.id', 'id')
+  //     .addSelect('dt.name', 'name')
+  //     .addSelect('dt.description', 'description')
+  //     .addSelect('dt.created_by', 'createdBy')
+  //     .addSelect('dt.created_at', 'createdAt')
+  //     .addSelect('dt.updated_by', 'updatedBy')
+  //     .addSelect('dt.updated_at', 'updatedAt')
+  //     .addSelect('dt.deleted_by', 'deletedBy')
+  //     .addSelect('dt.deleted_at', 'deletedAt')
+
+  //     .where('dt.id = :id', { id: id })
+  //     .getRawOne<DeviceType>();
+  // }
 }
