@@ -1,3 +1,4 @@
+import { UpdateAccountRequest } from './../../../../../libs/models/src/lib/request/update-account-request.dto';
 import {
   BadRequestException,
   HttpException,
@@ -17,22 +18,19 @@ import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { Direction } from '../models/search-pagination.payload';
 import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
 import { randomUUID } from 'crypto';
+import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
+import { AccountHistService } from './account-hist.service';
 
 @Injectable()
-export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
+export class AccountsService{
   private readonly logger = new Logger(AccountsService.name);
 
   constructor(
     private readonly cloudinaryService: CloudinaryService,
     private readonly keycloakService: KeycloakService,
-    private readonly repository: AccountRepository
-  ) {
-    super();
-  }
-
-  getAll(): Promise<Accounts[]> {
-    return null;
-  }
+    private readonly repository: AccountRepository,
+    private readonly histService: AccountHistService,
+  ) {}
 
   getUserIdByKeycloakId(keycloakId: string): Promise<string> {
     return this.repository.findIdByKeycloakId(keycloakId);
@@ -78,27 +76,53 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     return Promise.resolve(undefined);
   }
 
-  async getAllByPagination(request: UsersRequestPayload) {
+  async getAll(request: AccountsPaginationParams) {
     try {
-      return await this.repository.search({
-        search: request.search,
-        page: request.page,
-        limit: request.limit,
-        direction: request.sort as Direction[],
-      });
+      return await this.repository.searchAccount(request);
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('One or more parameters are invalid');
+      throw new BadRequestException('One or more parameters is invalid');
     }
   }
 
-  async updateById(body: UpdateDeviceRequest, id: string): Promise<Accounts> {
+  async updateById(
+    accountId: string,
+    id: string,
+    body: UpdateAccountRequest
+  ) {
+    let account;
+    // if (
+    //   body.fullname.length < 1 ||
+    //   body.email.length < 1 ||
+    //   body.description.length < 1
+    // ) {
+    //   throw new BadRequestException('Fields cannot be left blank!');
+    // }
     try {
-      const account = await this.repository.findById(id);
-      return await this.repository.updatePartially(body, account);
+      account = await this.repository.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException("Account doesn't exist with the provided id");
+    }
+
+    const data = await this.repository.findById(id);
+    if (data === undefined) {
+      throw new BadRequestException('This account is already deleted or disabled');
+    }
+
+    try {
+      const accountAdded = await this.repository.updatePartially(body, account, accountId);
+      await this.histService.createNew(accountAdded);
+      return accountAdded;
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('Account does not exist');
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while updating this room'
+      );
     }
   }
 
@@ -111,18 +135,67 @@ export class AccountsService extends BaseService<UsersDTO, Accounts, string> {
     }
   }
 
-  async disableById(id: string): Promise<void> {
+  async disableById(accountId: string, id: string): Promise<any> {
+    const data = await this.repository.findById(id);
+    if (data === undefined) {
+      throw new BadRequestException('This account is already deleted or disabled');
+    }
     try {
-      await this.repository.disableAccountById(id);
+      const result = await this.repository.disableById(accountId, id);
+      if (result.affected < 1) {
+        throw new BadRequestException(
+          "Account doesn't exist with the provided id"
+        );
+      } else {
+        const account = await this.repository.findOneOrFail({
+          where: {
+            id: id,
+          },
+        });;
+        await this.histService.createNew(account);
+        return account;
+      }
     } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException('Error while disabling account');
+      this.logger.error(e);
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while disabling this room'
+      );
     }
   }
 
   async handleRestoreDisabledAccountById(id: string) {
     try {
-      return await this.repository.restoreDisabledAccountById(id);
+      const account = await this.repository.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+      if (
+        account.deletedBy == null &&
+        account.deletedAt == null &&
+        account.disabledBy == null &&
+        account.disabledAt == null
+      ) {
+        throw new BadRequestException('This account is active!');
+      }
+      const isDeleted = await this.repository.checkIfAccountIsDeletedById(id);
+      if (isDeleted) {
+        throw new BadRequestException('Not found with provided id');
+      }
+      const result = await this.repository.restoreDisabledAccountById(id);
+      if (result.affected < 1) {
+        throw new BadRequestException(
+          "Account doesn't exist with the provided id"
+        );
+      } else {
+        const account = await this.repository.findOneOrFail({
+          where: {
+            id: id,
+          },
+        });;
+        await this.histService.createNew(account);
+        return account;
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException('Error while restoring disabled account');

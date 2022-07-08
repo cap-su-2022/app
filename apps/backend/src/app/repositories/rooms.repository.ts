@@ -80,6 +80,7 @@ export class RoomsRepository extends Repository<Rooms> {
   }
 
   getRoomsByRoomType(roomTypeId: string) {
+    console.log("AAAAAAA: ", roomTypeId)
     return this.createQueryBuilder(`rooms`)
       .select('rooms.id', 'id')
       .addSelect('rooms.name', 'name')

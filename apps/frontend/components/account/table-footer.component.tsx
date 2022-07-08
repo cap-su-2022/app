@@ -1,7 +1,7 @@
 import React from "react";
 import {createStyles, Pagination} from "@mantine/core";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {changePageIndex} from "../../redux/features/user/user.slice";
+import {changePageIndex} from "../../redux/features/user/account.slice";
 
 const TableFooter: React.FC = () => {
   const {classes} = useStyles();

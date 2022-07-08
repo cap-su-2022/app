@@ -1,4 +1,9 @@
-export interface User {
+export interface Account {
+  roleId: string;
+  disabledBy: string;
+  disabledAt: string;
+  updatedBy: string;
+  createdBy: string;
   stt: number;
   id: string;
   keycloakId: string;

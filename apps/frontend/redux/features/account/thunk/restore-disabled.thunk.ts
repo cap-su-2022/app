@@ -4,14 +4,14 @@ import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
 
 
 
-export const restoreDisabledRoom = createAsyncThunk<any, any, {
+export const restoreDisabledAccount = createAsyncThunk<any, any, {
   rejectValue: {
     message: string
   }
-}>('room/restore-disabled-room', async (id: string, thunkAPI) => {
+}>('account/restore-disabled-room', async (id: string, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.put(`/api/rooms/restore-disabled/${id}`);
+    const response = await axios.put(`/api/accounts/restore-disabled/${id}`);
     return await response.data;
   } catch ({response}) {
     return thunkAPI.rejectWithValue({

@@ -5,6 +5,7 @@ import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.
 import { RoomType } from '../models/room-type.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { RoomTypeHistService } from './room-type-hist.service';
+import { RoomsService } from './rooms.service';
 
 @Injectable()
 export class RoomTypeService {
@@ -12,6 +13,7 @@ export class RoomTypeService {
 
   constructor(
     private readonly repository: RoomTypeRepository,
+    private readonly roomService: RoomsService,
     private readonly histService: RoomTypeHistService
   ) {}
 
@@ -96,7 +98,11 @@ export class RoomTypeService {
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This room is already deleted or disabled'
+          'This room type is already deleted or disabled'
+        );
+      } else if (this.roomService.getRoomsByRoomType(id) !== undefined) {
+        throw new BadRequestException(
+          'There are still rooms of this type, please change the type of those rooms before deleting type'
         );
       } else {
         const roomType = await this.repository.deleteById(accountId, id);

@@ -64,7 +64,18 @@ export class BookingRoomService {
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
-        'An error occurred while getting rooms by type ' + roomId
+        'An error occurred while getting request by room id ' + roomId
+      );
+    }
+  }
+
+  async getRequestBookingByAccountId(accountId: string): Promise<BookingRequest[]> {
+    try {
+      return await this.repository.getRequestBookingByAccountId(accountId);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        'An error occurred while getting request by account id ' + accountId
       );
     }
   }

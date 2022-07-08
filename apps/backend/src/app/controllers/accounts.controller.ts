@@ -1,3 +1,4 @@
+import { UpdateAccountRequest } from './../../../../../libs/models/src/lib/request/update-account-request.dto';
 import {
   Body,
   Controller,
@@ -36,6 +37,7 @@ import { FastifyFileInterceptor } from '../interceptors/fastify-file.interceptor
 import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
 import { diskStorage } from 'multer';
 import { imageFileFilter } from '../validators/utils/file-upload.util';
+import { AccountsPaginationParams } from './accounts-pagination.model';
 
 class UploadProfileRequest {
   fullname: string;
@@ -153,7 +155,7 @@ class AccountCreationResponse {
 export class AccountsController {
   constructor(private readonly service: AccountsService) {}
 
-  @Post()
+  @Get()
   @UsePipes(new UsersValidation())
   @HttpCode(HttpStatus.OK)
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -178,8 +180,8 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-  getAll(@Body() payload: UsersRequestPayload) {
-    return this.service.getAllByPagination(payload);
+  getAll(@Query() payload: AccountsPaginationParams) {
+    return this.service.getAll(payload);
   }
 
   @ApiOperation({
@@ -236,6 +238,7 @@ export class AccountsController {
     return this.service.add(room);
   }
 
+  @Get('find/:id')
   @ApiOperation({
     summary: 'Retrieve account information by id',
     description: 'Get account information by id',
@@ -256,12 +259,12 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-  @Get('find/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getAccountById(@Param() payload: { id: string }) {
     return this.service.getById(payload.id);
   }
 
+  @Get('my-profile')
   @ApiOperation({
     summary: 'Retrieve current profile information',
     description: 'Get profile information',
@@ -282,7 +285,6 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-  @Get('my-profile')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getCurrentProfileInformation(
     @User() user: KeycloakUserInstance
@@ -338,6 +340,32 @@ export class AccountsController {
     return this.service.getAccountsByRoleId(roleId);
   }
 
+  @Put('disable/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Disable account by id',
+    description: 'Disable account by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully disabled the account',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while disabling the account',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  disableAccountById(@User() user: KeycloakUserInstance, @Param('id') id: string) {
+    return this.service.disableById(user.account_id, id);
+  }
+
   @Get('disabled')
   @ApiOperation({
     summary: 'Get a list of disabled accounts',
@@ -354,6 +382,32 @@ export class AccountsController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getDisabledAccounts() {
     return this.service.getDisabledAccounts();
+  }
+
+  @Put('restore-disabled/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Restore the disabled account by id',
+    description: 'Restore the disabled account by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully restored the disabled account',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while restoring the disabled the account',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  restoreDisabledAccountById(@Param() payload: { id: string }) {
+    return this.service.handleRestoreDisabledAccountById(payload.id);
   }
 
   @Get('deleted')
@@ -384,7 +438,7 @@ export class AccountsController {
     return this.service.handleRestoreAccountById(payload.id);
   }
 
-  @Put('restore-disabled/:id')
+  @Put('update/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -394,31 +448,12 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-  restoreDisabledAccountById(@Param() payload: { id: string }) {
-    return this.service.handleRestoreDisabledAccountById(payload.id);
-  }
-
-  @Put('update/id/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Not enough privileges',
-  })
-  updateAccountById(
+  updateRoomById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string },
-    @Body()
-    body: {
-      phone: string;
-      fullname: string;
-      description: string;
-    }
+    @Body() body: UpdateAccountRequest
   ) {
-    return this.service.updateById(body, payload.id);
+    return this.service.updateById(user.account_id, payload.id, body);
   }
 
   @Put('update-profile')
@@ -436,23 +471,6 @@ export class AccountsController {
     @Body() payload: UploadProfileRequest
   ) {
     return this.service.updateMyProfile(user, payload);
-  }
-
-  @Put('disable/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Not enough privileges',
-  })
-  disableAccountById(
-    @User() user: KeycloakUserInstance,
-    @Param() payload: { id: string }
-  ) {
-    return this.service.disableById(payload.id);
   }
 
   @Delete(':id')

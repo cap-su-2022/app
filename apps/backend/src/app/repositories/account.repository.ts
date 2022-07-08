@@ -7,10 +7,20 @@ import {
   paginateRaw,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import {Roles} from "../models/role.entity";
+import { Roles } from '../models/role.entity';
+import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
 
 @CustomRepository(Accounts)
 export class AccountRepository extends Repository<Accounts> {
+
+  async checkIfAccountIsDeletedById(id: string): Promise<boolean> {
+    return this.createQueryBuilder('accounts')
+      .select('accounts.deleted_at')
+      .where('accounts.id = :id', { id: id })
+      .getRawOne<boolean>()
+      .then((data) => (data ? data['deleted_at'] : true));
+  }
+
   findKeycloakIdByGoogleId(googleId: string): Promise<string> {
     return this.createQueryBuilder('accounts')
       .select('accounts.keycloak_id', 'keycloakId')
@@ -44,6 +54,38 @@ export class AccountRepository extends Repository<Accounts> {
       .andWhere('accounts.disabled_at IS NULL')
       .andWhere('accounts.deleted_at IS NULL')
       .getOneOrFail();
+  }
+
+  searchAccount(payload: AccountsPaginationParams) {
+    const query = this.createQueryBuilder('account')
+      .select('account.id', 'id')
+      .addSelect('account.username', 'username')
+      .addSelect('account.description', 'description')
+      .addSelect('account.fullname', 'fullname')
+      .addSelect('account.createdAt', 'createdAt')
+      .addSelect('account.updatedAt', 'updatedAt')
+      .addSelect('account.email', 'email')
+      .addSelect('role.name', 'role')
+      .addSelect('a.username', 'createdBy')
+      .addSelect('aa.username', 'updatedBy')
+      .leftJoin(Accounts, 'a', 'a.id = account.created_by')
+      .leftJoin(Accounts, 'aa', 'aa.id = account.updated_by')
+      .innerJoin(Roles, 'role', 'role.id = account.role_id')
+      .where('LOWER(account.fullname) ILIKE LOWER(:search)', {
+        search: `%${payload.search.trim()}%`,
+      })
+      .andWhere('account.deleted_at IS NULL')
+      .andWhere('account.disabled_at IS NULL')
+      .orderBy(payload.sort, payload.dir as 'ASC' | 'DESC');
+    if (payload.role && payload.role !== '') {
+      query.andWhere('role.name = :role', {
+        role: payload.role,
+      });
+    }
+    return paginateRaw<Accounts>(query, {
+      limit: payload.limit,
+      page: payload.page,
+    });
   }
 
   findByKeycloakId(keycloakId: string): Promise<Accounts> {
@@ -194,19 +236,37 @@ export class AccountRepository extends Repository<Accounts> {
       .execute();
   }
 
-  findById(id: string): Promise<Accounts> {
-    return this.findOneOrFail({
-      where: {
-        id: id,
-      },
-    });
+  async findById(id: string): Promise<Accounts> {
+    return this.createQueryBuilder('account')
+      .select('account.id', 'id')
+      .addSelect('account.username', 'username')
+      .addSelect('account.description', 'description')
+      .addSelect('account.fullname', 'fullname')
+      .addSelect('account.createdAt', 'createdAt')
+      .addSelect('account.updatedAt', 'updatedAt')
+      .addSelect('account.role_id', 'roleId')
+      .addSelect('account.email', 'email')
+      .addSelect('role.name', 'role')
+      .addSelect('a.username', 'createdBy')
+      .addSelect('aa.username', 'updatedBy')
+      .leftJoin(Accounts, 'a', 'a.id = account.created_by')
+      .leftJoin(Accounts, 'aa', 'aa.id = account.updated_by')
+      .innerJoin(Roles, 'role', 'role.id = account.role_id')
+      .where('account.disabled_at IS NULL')
+      .andWhere('account.deleted_at IS NULL')
+      .andWhere('account.id = :accountId', { accountId: id })
+      .getRawOne<Accounts>();
   }
 
-  updatePartially(body: any, account: Accounts): Promise<Accounts> {
+  updatePartially(body: any, account: Accounts, accountId: string): Promise<Accounts> {
     return this.save(
       {
         ...account,
-        ...body,
+        fullname: body.fullname,
+        phone: body.phone,
+        description: body.description,
+        updatedBy: accountId,
+        role: body.role,
       },
       {
         transaction: true,
@@ -259,6 +319,18 @@ export class AccountRepository extends Repository<Accounts> {
       .andWhere('accounts.deleted_at IS NULL')
       .getRawMany<{ username: string }>()
       .then((data) => data.map((acc) => acc.username));
+  }
+
+  disableById(accountId: string, id: string) {
+    return this.createQueryBuilder('accounts')
+      .update({
+        disabledBy: accountId,
+        disabledAt: new Date(),
+      })
+      .where('accounts.id = :id', { id: id })
+      .useTransaction(true)
+
+      .execute();
   }
 
   existsById(id: string): Promise<boolean> {

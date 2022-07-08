@@ -24,7 +24,7 @@ import {
 } from '../../redux/features/role';
 import { PaginationParams } from '../../models/pagination-params.model';
 import Th from '../../components/table/th.table.component';
-import { fetchAccountByRole } from '../../redux/features/account/thunk/fetch-accounts-by-role'
+import { fetchAccountByRole } from '../../redux/features/account/thunk/fetch-accounts-by-role';
 // import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
 import { showNotification } from '@mantine/notifications';
 import { updateAccountById } from '../../redux/features/account/thunk/update-by-id';
@@ -46,33 +46,45 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
 
   const dispatch = useAppDispatch();
 
-  const handleDeleteRoom = () => {
-    dispatch(deleteRoleById(selectedRoleId))
-      .catch((e) =>
-        showNotification({
-          id: 'delete-data',
-          color: 'red',
-          title: 'Error while delete role',
-          message: e.message ?? 'Failed to delete role',
-          icon: <X />,
-          autoClose: 3000,
-        })
-      )
-      .then(() =>
-        showNotification({
-          id: 'delete-data',
-          color: 'teal',
-          title: 'Role was deleted',
-          message: 'Role was successfully deleted',
-          icon: <Check />,
-          autoClose: 3000,
-        })
-      )
-      .then(() => {
-        props.toggleShown();
-        dispatch(fetchRoles(props.pagination));
-        dispatch(fetchDeletedRoles());
+  const handleDeleteRole = () => {
+    if (listAccount.length > 0) {
+      showNotification({
+        id: 'delete-data',
+        color: 'red',
+        title: 'Error while delete role',
+        message:
+          'There are still account of this type, please change the type of those accounts before deleting role',
+        icon: <X />,
+        autoClose: 3000,
       });
+    } else {
+      dispatch(deleteRoleById(selectedRoleId))
+        .catch((e) =>
+          showNotification({
+            id: 'delete-data',
+            color: 'red',
+            title: 'Error while delete role',
+            message: e.message ?? 'Failed to delete role',
+            icon: <X />,
+            autoClose: 3000,
+          })
+        )
+        .then(() =>
+          showNotification({
+            id: 'delete-data',
+            color: 'teal',
+            title: 'Role was deleted',
+            message: 'Role was successfully deleted',
+            icon: <Check />,
+            autoClose: 3000,
+          })
+        )
+        .then(() => {
+          props.toggleShown();
+          dispatch(fetchRoles(props.pagination));
+          dispatch(fetchDeletedRoles());
+        });
+    }
   };
 
   useEffect(() => {
@@ -110,8 +122,8 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
         showNotification({
           id: 'load-data',
           color: 'red',
-          title: 'Error while updating library room',
-          message: e.message ?? 'Failed to update library room',
+          title: 'Error while updating role',
+          message: e.message ?? 'Failed to update role',
           icon: <X />,
           autoClose: 3000,
         })
@@ -120,8 +132,8 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
         showNotification({
           id: 'load-data',
           color: 'teal',
-          title: 'Library room was updated',
-          message: 'Library room was successfully updated',
+          title: 'Role was updated',
+          message: 'Role was successfully updated',
           icon: <Check />,
           autoClose: 3000,
         })
@@ -156,9 +168,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
                 <Button
                   variant="outline"
                   color="green"
-                  disabled={
-                    role === row.roleId || role === '' ? true : false
-                  }
+                  disabled={role === row.roleId || role === '' ? true : false}
                   onClick={() => handleUpdateAccount(row, role)}
                 >
                   Save
@@ -216,7 +226,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           padding: '20px 0px',
         }}
       >
-        <h1>Dont have any room with this type</h1>
+        <h1>Dont have any account with this role</h1>
       </div>
     );
   };
@@ -244,30 +254,30 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           {listAccount.length > 0 ? (
             <Button
               leftIcon={<ScanEye />}
-              style={{ backgroundColor: 'blue', width: '60%', margin: 10 }}
+              style={{ backgroundColor: 'blue', width: '65%', margin: 10 }}
               onClick={() => setShownListAccount(!isShownListAccount)}
             >
-              List room with this type
+              List account with this role
             </Button>
           ) : null}
 
           <Button
             color="red"
             leftIcon={<Trash />}
-            onClick={() => handleDeleteRoom()}
+            onClick={() => handleDeleteRole()}
             style={{
-              width: '60%',
+              width: '65%',
               margin: 10,
             }}
           >
-            Delete this type
+            Delete this role
           </Button>
           <Button
             onClick={() => props.toggleShown()}
             leftIcon={<X />}
             style={{
               backgroundColor: FPT_ORANGE_COLOR,
-              width: '60%',
+              width: '65%',
               margin: 10,
             }}
           >
@@ -275,7 +285,9 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           </Button>
         </div>
       </div>
-      {isShownListAccount && listAccount.length > 0 ? <ListAccountByRoleId /> : null}
+      {isShownListAccount && listAccount.length > 0 ? (
+        <ListAccountByRoleId />
+      ) : null}
     </Modal>
   );
 };

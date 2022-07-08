@@ -114,6 +114,23 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .orderBy('booking_request.time_checkin', 'ASC')
       .getRawMany<BookingRequest>();
   }
+
+  getRequestBookingByAccountId(accountId: string) {
+    return this.createQueryBuilder(`booking_request`)
+      .select('booking_request.id', 'id')
+      .addSelect('r.name', 'roomName')
+      .addSelect('a.username', 'requestedBy')
+      .addSelect('booking_request.time_checkin', 'timeCheckin')
+      .addSelect('booking_request.time_checkout', 'timeCheckout')
+
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
+      .where(`booking_request.status = :status`, { status: "BOOKING"})
+      .andWhere('booking_request.requested_by = :account_id', { account_id: accountId })
+      .orderBy('booking_request.time_checkin', 'ASC')
+      .getRawMany<BookingRequest>();
+  }
+
   cancelRoomBookingById(accountId: string, id: string): Promise<UpdateResult> {
     return this.createQueryBuilder('booking_request')
       .update({
