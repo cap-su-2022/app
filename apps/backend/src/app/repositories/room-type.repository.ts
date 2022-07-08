@@ -16,6 +16,14 @@ import { DeviceTypeService } from '../services/device-type.service';
 @CustomRepository(RoomType)
 export class RoomTypeRepository extends Repository<RoomType> {
   private readonly logger = new Logger(DeviceTypeService.name);
+  existsById(id: string): Promise<boolean> {
+    return this.createQueryBuilder('rt')
+      .select('COUNT(1)', 'count')
+      .where('rt.id = :id', { id: id })
+      .getRawOne()
+      .then((data) => data?.count > 0);
+  }
+
   findRoomTypesByPagination(
     pagination: PaginationParams
   ): Promise<Pagination<RoomType>> {
@@ -38,7 +46,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .select('rt.id', 'id')
       .addSelect('rt.name', 'name')
       .andWhere('rt.disabled_at IS NULL')
-      .andWhere("rt.deleted_at IS NULL")
+      .andWhere('rt.deleted_at IS NULL')
       .getRawMany<RoomType>();
   }
 
@@ -58,21 +66,21 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .getRawOne<RoomType>();
   }
 
-  async get(id: string): Promise<RoomType> {
-    return this.createQueryBuilder('rt')
-      .select('rt.id', 'id')
-      .addSelect('rt.name', 'name')
-      .addSelect('rt.description', 'description')
-      .addSelect('rt.created_by', 'createdBy')
-      .addSelect('rt.created_at', 'createdAt')
-      .addSelect('rt.updated_by', 'updatedBy')
-      .addSelect('rt.updated_at', 'updatedAt')
-      .addSelect('rt.deleted_by', 'deletedBy')
-      .addSelect('rt.deleted_at', 'deletedAt')
+  // async get(id: string): Promise<RoomType> {
+  //   return this.createQueryBuilder('rt')
+  //     .select('rt.id', 'id')
+  //     .addSelect('rt.name', 'name')
+  //     .addSelect('rt.description', 'description')
+  //     .addSelect('rt.created_by', 'createdBy')
+  //     .addSelect('rt.created_at', 'createdAt')
+  //     .addSelect('rt.updated_by', 'updatedBy')
+  //     .addSelect('rt.updated_at', 'updatedAt')
+  //     .addSelect('rt.deleted_by', 'deletedBy')
+  //     .addSelect('rt.deleted_at', 'deletedAt')
 
-      .where('rt.id = :id', { id: id })
-      .getRawOne<RoomType>();
-  }
+  //     .where('rt.id = :id', { id: id })
+  //     .getRawOne<RoomType>();
+  // }
 
   async addNew(
     accountId: string,
@@ -80,12 +88,10 @@ export class RoomTypeRepository extends Repository<RoomType> {
   ): Promise<RoomType> {
     try {
       const roomType = await this.save({
-        createdBy: accountId,
         name: payload.name.trim(),
         description: payload.description,
+        createdBy: accountId,
         createdAt: new Date(),
-        updatedBy: accountId,
-        updatedAt: new Date(),
       });
       return roomType;
     } catch (e) {
@@ -113,46 +119,8 @@ export class RoomTypeRepository extends Repository<RoomType> {
     );
   }
 
-  async deleteByIdAndAccountId(
-    accountId: string,
-    id: string
-  ): Promise<UpdateResult> {
-    return this.createQueryBuilder('rt')
-      .update({
-        deletedAt: new Date(),
-        deletedBy: accountId,
-      })
-      .where('rt.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-  }
-
-  existsById(id: string): Promise<boolean> {
-    return this.createQueryBuilder('rt')
-      .select('COUNT(1)', 'count')
-      .where('rt.id = :id', { id: id })
-      .getRawOne()
-      .then((data) => data?.count > 0);
-  }
-
-  async restoreDeletedById(accountId: string, id: string){
-    const isRestored = await this.createQueryBuilder('room_type')
-      .update({
-        updatedAt: new Date(),
-        updatedBy: accountId,
-        deletedAt: null,
-        deletedBy: null,
-      })
-      .where('room_type.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-      if(isRestored.affected > 0){
-        return this.get(id)
-      }
-  }
-
   async deleteById(accountId: string, id: string) {
-   const isDeleted = await this.createQueryBuilder('room_type')
+    const isDeleted = await this.createQueryBuilder('room_type')
       .update({
         deletedAt: new Date(),
         deletedBy: accountId,
@@ -160,19 +128,14 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .where('room_type.id = :id', { id: id })
       .useTransaction(true)
       .execute();
-    if(isDeleted.affected > 0){
-      return this.get(id)
+    if (isDeleted.affected > 0) {
+      return this.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
     }
   }
-
-  permanentlyDeleteById(id: string) {
-    return this.createQueryBuilder('room_type')
-      .delete()
-      .where('room_type.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-  }
-
 
   findDeletedByPagination(search: string): Promise<RoomType[]> {
     return this.createQueryBuilder('rt')
@@ -187,4 +150,31 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .getRawMany<RoomType>();
   }
 
+  async restoreDeletedById(accountId: string, id: string) {
+    const isRestored = await this.createQueryBuilder('room_type')
+      .update({
+        updatedAt: new Date(),
+        updatedBy: accountId,
+        deletedAt: null,
+        deletedBy: null,
+      })
+      .where('room_type.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
+    if (isRestored.affected > 0) {
+      return this.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+    }
+  }
+
+  permanentlyDeleteById(id: string) {
+    return this.createQueryBuilder('room_type')
+      .delete()
+      .where('room_type.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
+  }
 }

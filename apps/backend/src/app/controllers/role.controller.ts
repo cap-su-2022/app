@@ -28,7 +28,7 @@ import {
 } from '@nestjs/swagger';
 import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
 import { Role } from '../enum/roles.enum';
-import {Roles} from "../decorators/role.decorator";
+import { Roles } from '../decorators/role.decorator';
 
 @Controller('/v1/roles')
 @ApiBearerAuth()
@@ -73,7 +73,29 @@ export class RoleController {
     } as PaginationParams);
   }
 
+  @Get('name')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully get role name',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get role name',
+    description: 'Get role name',
+  })
+  getRoleNames() {
+    return this.service.getRoleNames();
+  }
+
   @Get(':id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Get role by id',
     description: 'Get role by id',
@@ -94,30 +116,35 @@ export class RoleController {
     status: HttpStatus.OK,
     description: 'Successfully fetched role by id',
   })
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getRoleById(@Param('id') id: string) {
     return this.service.getRoleById(id);
   }
 
-  @Get('name')
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully get role name',
-  })
+  @Post()
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Request payload for role is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  @ApiOperation({
-    summary: 'Get role name',
-    description: 'Get role name',
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully added role',
   })
-  getRoleNames() {
-    return this.service.getRoleNames();
+  @ApiOperation({
+    summary: 'Add role',
+    description: 'Add role',
+  })
+  addRole(@Body() body, @User() user: KeycloakUserInstance) {
+    return this.service.addRole(body, user.account_id);
   }
 
   @Put(':id')
@@ -145,36 +172,9 @@ export class RoleController {
   updateRoleById(
     @Body() body,
     @User() user: KeycloakUserInstance,
-    @Param('id') id: string,
+    @Param('id') id: string
   ) {
     return this.service.updateRoleById(user.account_id, body, id);
-  }
-
-  @Post()
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Request payload for role is not validated',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully added role',
-  })
-  @ApiOperation({
-    summary: 'Add role',
-    description: 'Add role',
-  })
-  @HttpCode(HttpStatus.OK)
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  addRole(@Body() body, @User() user: KeycloakUserInstance) {
-    return this.service.addRole(body, user.account_id);
   }
 
   @Delete(':id')
@@ -254,8 +254,14 @@ export class RoleController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  restoreDeletedRoomById(@Param() payload: { id: string }) {
-    return this.service.handleRestoreDeletedRoleById(payload.id);
+  restoreDeletedRoleById(
+    @Param() payload: { id: string },
+    @User() keycloakUser: KeycloakUserInstance
+  ) {
+    return this.service.handleRestoreDeletedRoleById(
+      keycloakUser.account_id,
+      payload.id
+    );
   }
 
   @Delete('permanent/:id')
@@ -266,8 +272,7 @@ export class RoleController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description:
-      'Request params for permanent delete role is not validated',
+    description: 'Request params for permanent delete role is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,

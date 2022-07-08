@@ -16,15 +16,11 @@ export class RoleService {
     private readonly histService: RoleHistService
   ) {}
 
-  async getRoleById(id: string) {
+  getRolesByPagination(payload: PaginationParams) {
     try {
-      const isExisted = await this.repository.existsById(id);
-      if (!isExisted) {
-        throw new BadRequestException('Could not find role with provided id.');
-      }
-      return await this.repository.findById(id);
+      return this.repository.findByPagination(payload);
     } catch (e) {
-      this.logger.error(e.message);
+      this.logger.error(e);
       throw new BadRequestException(e.message);
     }
   }
@@ -38,49 +34,76 @@ export class RoleService {
     }
   }
 
-  async deleteRoleById(accountId: string, id: string) {
+  async getRoleById(id: string) {
     try {
-      const isExisted = await this.repository.existsById(id);
-      if (!isExisted) {
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
         throw new BadRequestException(
-          'Role does not found with the existed id'
-        );
-      } else if (this.accountService.getAccountsByRoleId(id) !== undefined) {
-        throw new BadRequestException(
-          'There are still account of this type, please change the type of those accounts before deleting role'
+          'This device type is already deleted or disabled'
         );
       }
-      const result = await this.repository.deleteById(accountId, id);
-      if (result.affected < 1) {
-        throw new BadRequestException('Could not delete role by id');
-      } else {
-        const role = await this.repository.get(id)
-        await this.histService.createNew(role);
-        return role;
-      }
+      return data;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
 
-  async handleRestoreDeletedRoleById(id: string) {
+  async addRole(
+    body: { name: string; description: string },
+    accountId: string
+  ) {
+    const role = await this.repository.addNew(accountId, body);
+    await this.histService.createNew(role);
+    return role;
+  }
+
+  async updateRoleById(
+    accountId: string,
+    payload: MasterDataAddRequestPayload,
+    id: string
+  ) {
     try {
-      const result = await this.repository.restoreDeletedRoleById(id);
-      if (result.affected < 1) {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
         throw new BadRequestException(
-          "Role doesn't exist with the provided id"
+          'Role does not found with the provided id'
+        );
+      }
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException(
+          'This device type is already deleted or disabled'
+        );
+      }
+      const role = await this.repository.updateById(id, accountId, payload);
+      await this.histService.createNew(role);
+      return role;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async deleteRoleById(accountId: string, id: string) {
+    try {
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException(
+          'This room is already deleted or disabled'
+        );
+      } else if (this.accountService.getAccountsByRoleId(id) !== undefined) {
+        throw new BadRequestException(
+          'There are still account of this type, please change the type of those accounts before deleting role'
         );
       } else {
-        const role = await this.repository.get(id)
+        const role = await this.repository.deleteById(accountId, id);
         await this.histService.createNew(role);
         return role;
       }
     } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(
-        'Error occurred while restore the delete status of this role'
-      );
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
     }
   }
 
@@ -93,51 +116,29 @@ export class RoleService {
     }
   }
 
-  async addRole(body: any, accountId: string) {
-    const role = await this.repository.save(
-      {
-        name: body.name.trim(),
-        description: body.description,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        createdBy: accountId,
-        updatedBy: accountId,
-      },
-      {
-        transaction: true,
-      }
-    );
-    await this.histService.createNew(role);
-    return role;
-  }
-
-  async updateRoleById(
-    accountId: string,
-    updatePayload: MasterDataAddRequestPayload,
-    id: string
-  ) {
+  async handleRestoreDeletedRoleById(accountId: string, id: string) {
     try {
-      const isExisted = await this.repository.existsById(id);
+      const isExisted = this.repository.existsById(id);
       if (!isExisted) {
         throw new BadRequestException(
-          'Role does not found with the provided id'
+          'Role does not exist with the provided id'
         );
       }
-      const role = await this.repository.updateById(
-        id,
-        accountId,
-        updatePayload
-      );
+      const data = await this.repository.findById(id);
+      if (data !== undefined) {
+        throw new BadRequestException(
+          'This Role ID is now active. Cannot restore it'
+        );
+      }
+      const role = await this.repository.restoreDeletedById(accountId, id);
       await this.histService.createNew(role);
       return role;
     } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
+      this.logger.error(e);
+      throw new BadRequestException(
+        'Error occurred while restore the delete status of this role'
+      );
     }
-  }
-
-  getRolesByPagination(payload: PaginationParams) {
-    return this.repository.findByPagination(payload);
   }
 
   async permanentDeleteRoleById(id: string) {

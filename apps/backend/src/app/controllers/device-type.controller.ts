@@ -59,7 +59,7 @@ export class DeviceTypeController {
   @Get('name')
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully got disabled room types',
+    description: 'Successfully got device type name',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -70,8 +70,8 @@ export class DeviceTypeController {
     description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: 'Get disabled room types',
-    description: 'Get disabled room types',
+    summary: 'Get device type name',
+    description: 'Get device type name',
   })
   getDeviceTypeNames() {
     return this.service.getDeviceTypeNames();
@@ -107,12 +107,12 @@ export class DeviceTypeController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Add room type',
-    description: 'Add room type',
+    summary: 'Add device type',
+    description: 'Add device type',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully added room type',
+    description: 'Successfully added device type',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,

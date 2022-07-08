@@ -151,7 +151,7 @@ export class AccountsService{
           where: {
             id: id,
           },
-        });;
+        });
         await this.histService.createNew(account);
         return account;
       }

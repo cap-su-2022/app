@@ -3,6 +3,7 @@ import { DeviceTypeRepository } from '../repositories/device-type.repository';
 import { PaginationParams } from '../controllers/pagination.model';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 import { DeviceTypeHistService } from './device-type-hist.service';
+import { DevicesService } from './devices.service';
 
 @Injectable()
 export class DeviceTypeService {
@@ -10,6 +11,7 @@ export class DeviceTypeService {
 
   constructor(
     private readonly repository: DeviceTypeRepository,
+    private readonly deviceService: DevicesService,
     private readonly histService: DeviceTypeHistService
   ) {}
   async getAllDeviceTypes(param: PaginationParams) {
@@ -17,6 +19,15 @@ export class DeviceTypeService {
       return await this.repository.findByPagination(param);
     } catch (e) {
       this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  getDeviceTypeNames() {
+    try {
+      return this.repository.findDeviceTypeName();
+    } catch (e) {
+      this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
@@ -32,15 +43,6 @@ export class DeviceTypeService {
       return data;
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException(e.message);
-    }
-  }
-
-  getDeviceTypeNames() {
-    try {
-      return this.repository.findDeviceTypeName();
-    } catch (e) {
-      this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
@@ -92,6 +94,10 @@ export class DeviceTypeService {
       if (data === undefined) {
         throw new BadRequestException(
           'This room is already deleted or disabled'
+        );
+      } else if (this.deviceService.getDevicesByDeviceType(id) !== undefined) {
+        throw new BadRequestException(
+          'There are still device of this type, please change the type of those devices before deleting type'
         );
       } else {
         const deviceType = await this.repository.deleteById(accountId, id);

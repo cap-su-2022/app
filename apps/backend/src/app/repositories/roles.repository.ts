@@ -34,6 +34,14 @@ export class RolesRepository extends Repository<Roles> {
     });
   }
 
+  findRoleName(): Promise<Roles[]> {
+    return this.createQueryBuilder('roles')
+      .select('roles.id', 'id')
+      .addSelect('roles.name', 'name')
+      .andWhere("roles.deleted_at IS NULL")
+      .getRawMany<Roles>();
+  }
+
   findById(id: string): Promise<Roles> {
     return this.createQueryBuilder('r')
       .select('r.id', 'id')
@@ -50,28 +58,37 @@ export class RolesRepository extends Repository<Roles> {
       .getRawOne<Roles>();
   }
 
-  findRoleName(): Promise<Roles[]> {
-    return this.createQueryBuilder('roles')
-      .select('roles.id', 'id')
-      .addSelect('roles.name', 'name')
-      .andWhere("roles.deleted_at IS NULL")
-      .getRawMany<Roles>();
-  }
+  // async get(id: string): Promise<Roles> {
+  //   return this.createQueryBuilder('roles')
+  //     .select('roles.id', 'id')
+  //     .addSelect('roles.name', 'name')
+  //     .addSelect('roles.description', 'description')
+  //     .addSelect('roles.created_by', 'createdBy')
+  //     .addSelect('roles.created_at', 'createdAt')
+  //     .addSelect('roles.updated_by', 'updatedBy')
+  //     .addSelect('roles.updated_at', 'updatedAt')
+  //     .addSelect('roles.deleted_by', 'deletedBy')
+  //     .addSelect('roles.deleted_at', 'deletedAt')
 
-  async get(id: string): Promise<Roles> {
-    return this.createQueryBuilder('roles')
-      .select('roles.id', 'id')
-      .addSelect('roles.name', 'name')
-      .addSelect('roles.description', 'description')
-      .addSelect('roles.created_by', 'createdBy')
-      .addSelect('roles.created_at', 'createdAt')
-      .addSelect('roles.updated_by', 'updatedBy')
-      .addSelect('roles.updated_at', 'updatedAt')
-      .addSelect('roles.deleted_by', 'deletedBy')
-      .addSelect('roles.deleted_at', 'deletedAt')
+  //     .where('roles.id = :id', { id: id })
+  //     .getRawOne<Roles>();
+  // }
 
-      .where('roles.id = :id', { id: id })
-      .getRawOne<Roles>();
+  async addNew(
+    accountId: string,
+    payload: { name: string; description: string }
+  ): Promise<Roles> {
+    return this.save<Roles>(
+      {
+        name: payload.name.trim(),
+        description: payload.description,
+        createdBy: accountId,
+        createdAt: new Date(),
+      },
+      {
+        transaction: true,
+      }
+    );
   }
 
   updateById(id: string, accountId: string, payload: any) {
@@ -89,8 +106,8 @@ export class RolesRepository extends Repository<Roles> {
     );
   }
 
-  deleteById(accountId: string, id: string): Promise<UpdateResult> {
-    return this.createQueryBuilder('role')
+  async deleteById(accountId: string, id: string){
+    const isDeleted = await this.createQueryBuilder('role')
       .update({
         deletedAt: new Date(),
         deletedBy: accountId,
@@ -98,6 +115,13 @@ export class RolesRepository extends Repository<Roles> {
       .where('role.id = :id', { id: id })
       .useTransaction(true)
       .execute();
+    if (isDeleted.affected > 0) {
+      return this.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+    }
   }
 
   getDeletedRoles(search: string): Promise<Roles[]> {
@@ -113,15 +137,25 @@ export class RolesRepository extends Repository<Roles> {
       .getRawMany<Roles>();
   }
 
-  restoreDeletedRoleById(id: string): Promise<UpdateResult> {
-    return this.createQueryBuilder('role')
+  async restoreDeletedById(accountId: string, id: string){
+    const isRestored = await this.createQueryBuilder('role')
       .update({
+        updatedAt: new Date(),
+        updatedBy: accountId,
         deletedAt: null,
         deletedBy: null,
       })
       .where('role.id = :id', { id: id })
+      .useTransaction(true)
       .execute();
+    if (isRestored.affected > 0) {
+      return this.findOneOrFail({
+        where: {
+          id: id,
+        },
+      })
   }
+}
 
   permanentlyDeleteById(id: string) {
     return this.createQueryBuilder('role')
