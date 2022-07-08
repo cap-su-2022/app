@@ -5,10 +5,16 @@ import {addDevice} from "./thunk/add.thunk";
 import {fetchDeviceById} from "./thunk/fetch-by-id.thunk";
 import {disableDeviceById} from "./thunk/disable-by-id";
 import {deleteDeviceById} from "./thunk/delete-by-id";
+import { fetchDeletedDevices } from "./thunk/fetch-deleted.thunk";
+import { fetchDisabledDevices } from "./thunk/fetch-disabled.thunk";
+import { PaginationResponse } from '../../../models/pagination-response.payload';
+import { restoreDisabledDevice } from "./thunk/restore-disabled.thunk";
+import { restoreDeletedDevice } from "./thunk/restore-deleted.thunk";
+import { updateDeviceById } from "./thunk/update-by-id";
 
 interface DevicesState {
-  selectedDevice: Device;
-  devices: Device[];
+  device: Device;
+  devices: PaginationResponse<Device>;
   disabledDevices: Device[];
   deletedDevices: Device[];
 
@@ -21,10 +27,10 @@ interface DevicesState {
 }
 
 const devicesInitialState: DevicesState = {
-  devices: [],
+  devices: {} as PaginationResponse<Device>,
   disabledDevices: [],
   deletedDevices: [],
-  selectedDevice: {} as Device,
+  device: {} as Device,
 
   totalPage: 1,
   size: 3,
@@ -42,27 +48,63 @@ const devicesSlice = createSlice({
     },
   },
   extraReducers: builder =>  {
-    builder.addCase(fetchDevices.fulfilled, (state, {payload}) => {
-      state.devices = payload.data.map((d, index) => {
-        d.stt = index + 1 + ((payload.currentPage - 1) * state.size);
-        return d;
-      });;
-      state.currentPage = payload.currentPage;
-      state.totalPage = payload.totalPage;
+    builder.addCase(fetchDeviceById.fulfilled, (state, { payload }) => {
+      state.device = payload;
     });
-    builder.addCase(addDevice.fulfilled, (state, {payload}) => {
-      return;
+    builder.addCase(fetchDeviceById.rejected, (state, {payload}) => {
+
     });
-    builder.addCase(fetchDeviceById.fulfilled, (state, {payload}) => {
-      state.selectedDevice = payload;
+
+    builder.addCase(disableDeviceById.pending, (state) => {
+
     });
+
     builder.addCase(disableDeviceById.fulfilled, (state, {payload}) => {
+
+    });
+
+    builder.addCase(disableDeviceById.rejected, (state, {payload}) => {
+
+    });
+
+    builder.addCase(fetchDevices.fulfilled, (state, { payload }) => {
+      state.devices = payload;
+    });
+
+    builder.addCase(fetchDevices.rejected, (state, {payload}) => {
+
+    });
+
+    builder.addCase(updateDeviceById.fulfilled, (state, {payload}) => {
+
+    });
+
+    builder.addCase(addDevice.fulfilled, (state, {payload}) => {
+
+    });
+
+    builder.addCase(addDevice.rejected, (state, {payload}) => {
+
+    });
+
+    builder.addCase(fetchDisabledDevices.fulfilled, (state, {payload}) => {
+        state.disabledDevices = payload;
+    });
+    builder.addCase(fetchDeletedDevices.fulfilled, (state, {payload}) => {
+      state.deletedDevices = payload;
+    });
+    builder.addCase(restoreDisabledDevice.fulfilled, (state, {payload}) => {
       return;
+
+    });
+    builder.addCase(restoreDeletedDevice.fulfilled, (state, {payload}) => {
+      return;
+
     });
     builder.addCase(deleteDeviceById.fulfilled, (state, {payload}) => {
       return;
     });
-  },
+  }
 });
 
 export const devicesReducer = devicesSlice.reducer;

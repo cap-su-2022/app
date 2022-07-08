@@ -29,6 +29,7 @@ import { Role } from '../enum/roles.enum';
 import {Devices, Rooms} from '../models';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { User } from '../decorators/keycloak-user.decorator';
+import { DevicesPaginationParams } from './devices-pagination.model';
 
 @Controller('/v1/devices')
 @ApiBearerAuth()
@@ -65,6 +66,34 @@ export class DevicesController {
     @Body() device: AddDeviceRequest
   ) {
     return this.service.add(device, user.account_id);
+  }
+
+  @Get()
+  @UsePipes(new DevicesValidation())
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched devices',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Not enough privileges to access this endpoint',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getDevices(@Query() payload: DevicesPaginationParams) {
+    return this.service.getAll(payload);
   }
 
   @Get('find/:id')
@@ -113,35 +142,6 @@ export class DevicesController {
   })
   getRoomsByRoomType(@Query('type') deviceTypeId= ''): Promise<Devices[]> {
     return this.service.getDevicesByDeviceType(deviceTypeId);
-  }
-
-  @Post()
-  @UsePipes(new DevicesValidation())
-  @HttpCode(HttpStatus.OK)
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Retrieving a list of devices',
-    description:
-      'Retrieving a list of devices with provided pagination payload',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully retrieving a list of devices',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while retrieving a list of devices',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getDevices(@Body() request: DevicesRequestPayload) {
-    return this.service.getAll(request);
   }
 
   @Get('disabled')

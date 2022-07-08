@@ -17,14 +17,14 @@ import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabl
 import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-id';
 import dayjs from 'dayjs';
 import { useDebouncedValue } from '@mantine/hooks';
-import { RoomParams } from '../../models/pagination-params/room-params.model';
+import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
 import NoDataFound from '../no-data-found';
 
 interface RestoreDisabledRoomModalProps {
   isShown: boolean;
   toggleShown(): void;
-  pagination: RoomParams;
+  pagination: PagingParams;
 }
 
 const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (

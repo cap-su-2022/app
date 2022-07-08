@@ -24,13 +24,13 @@ import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
 import { addRoom } from '../../redux/features/room/thunk/add-room';
 import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
-import { RoomParams } from '../../models/pagination-params/room-params.model';
+import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
 
 interface AddRoomModalProps {
   isShown: boolean;
   toggleShown(): void;
-  pagination: RoomParams;
+  pagination: PagingParams;
   roomTypes: any[];
 }
 

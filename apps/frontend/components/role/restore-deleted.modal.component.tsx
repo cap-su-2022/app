@@ -9,12 +9,17 @@ import {
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { Ban, Check, RotateClockwise, X } from 'tabler-icons-react';
-import { fetchRoles, fetchDeletedRoles, restoreDeletedRoleById } from '../../redux/features/role';
+import {
+  fetchRoles,
+  fetchDeletedRoles,
+  restoreDeletedRoleById,
+} from '../../redux/features/role';
 import { PaginationParams } from '../../models/pagination-params.model';
 import dayjs from 'dayjs';
 import PermanentDeleteModal from '../actions/modal/permanant-delete-modal.component';
 import { showNotification } from '@mantine/notifications';
 import { permanentlyDeleteRoleById } from '../../redux/features/role/thunk/permanently-delete-role-by-id.thunk';
+import NoDataFound from '../no-data-found';
 
 interface RestoreDeletedModalProps {
   isShown: boolean;
@@ -22,9 +27,7 @@ interface RestoreDeletedModalProps {
   pagination: PaginationParams;
 }
 
-const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
-  props
-) => {
+const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
   const { classes, cx } = useStyles();
   const deletedRoles = useAppSelector((state) => state.role.deletedRoles);
   const dispatch = useAppDispatch();
@@ -83,7 +86,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
     <tr key={row.id}>
       <td>{index + 1}</td>
       <td>{row.name}</td>
-      <td>{  dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
+      <td>{dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.deletedBy}</td>
       <td
         style={{
@@ -133,36 +136,44 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
 
   return (
     <>
-    <Modal
-      opened={props.isShown}
-      onClose={() => props.toggleShown()}
-      centered
-      size="85%"
-      title={<ModalHeaderTitle />}
-      closeOnClickOutside={true}
-      closeOnEscape={false}
-    >
-      <ScrollArea
-        sx={{ height: 500 }}
-        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+      <Modal
+        opened={props.isShown}
+        onClose={() => props.toggleShown()}
+        centered
+        size="85%"
+        title={<ModalHeaderTitle />}
+        closeOnClickOutside={true}
+        closeOnEscape={false}
       >
-        <Table sx={{ minWidth: 700 }}>
-          <thead
-            className={cx(classes.header, { [classes.scrolled]: scrolled })}
-          >
-            <tr>
-              <th>STT</th>
-              <th>Name</th>
-              <th>Deleted At</th>
-              <th>Deleted By</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </ScrollArea>
-    </Modal>
-    <PermanentDeleteModal
+        {deletedRoles.length > 0 ? (
+          <>
+            <ScrollArea
+              sx={{ height: 500 }}
+              onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+            >
+              <Table sx={{ minWidth: 700 }}>
+                <thead
+                  className={cx(classes.header, {
+                    [classes.scrolled]: scrolled,
+                  })}
+                >
+                  <tr>
+                    <th>STT</th>
+                    <th>Name</th>
+                    <th>Deleted At</th>
+                    <th>Deleted By</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>{rows}</tbody>
+              </Table>
+            </ScrollArea>
+          </>
+        ) : (
+          <NoDataFound />
+        )}
+      </Modal>
+      <PermanentDeleteModal
         handleSubmit={() => handlePermanentDeleted(id)}
         isShown={isPermanentDeleteShown}
         toggleShown={() => handelPermanetDeleteButtonOut()}

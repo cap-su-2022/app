@@ -234,7 +234,7 @@ export class RoomsService {
       if (isDeleted) {
         throw new BadRequestException('Not found with provided id');
       }
-      const result = await this.repository.restoreDeletedRoomById(id);
+      const result = await this.repository.restoreDisabledRoomById(id);
       if (result.affected < 1) {
         throw new BadRequestException(
           "Room doesn't exist with the provided id"
@@ -262,12 +262,12 @@ export class RoomsService {
       if (
         room.disabledBy == null &&
         room.disabledAt == null &&
-        room.disabledBy == null &&
-        room.disabledAt == null
+        room.deletedBy == null &&
+        room.deletedAt == null
       ) {
         throw new BadRequestException('This room is active!');
       }
-      const result = await this.repository.restoreDisabledRoomById(id);
+      const result = await this.repository.restoreDeletedRoomById(id);
       if (result.affected < 1) {
         throw new BadRequestException(
           "Room doesn't exist with the provided id"
@@ -287,7 +287,7 @@ export class RoomsService {
 
   async deleteById(accountId: string, id: string) {
     try {
-      const rooms = await this.repository.findDisabledRooms('');
+      const rooms = await this.repository.findDeletedRooms('');
       if (rooms.findIndex((room) => room.id === id) !== -1) {
         throw new BadRequestException('Room already deleted!');
       }

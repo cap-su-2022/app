@@ -14,7 +14,7 @@ import { RotateClockwise, Search } from 'tabler-icons-react';
 import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
 import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
 import { restoreDeletedRoom } from '../../redux/features/room/thunk/restore-deleted.thunk';
-import { RoomParams } from '../../models/pagination-params/room-params.model';
+import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import dayjs from 'dayjs';
 import { useDebouncedValue } from '@mantine/hooks';
 import NoDataFound from '../no-data-found';
@@ -22,7 +22,7 @@ import NoDataFound from '../no-data-found';
 interface RestoreDeletedRoomModalProps {
   isShown: boolean;
   toggleShown(): void;
-  pagination: RoomParams;
+  pagination: PagingParams;
 }
 
 const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (

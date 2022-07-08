@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import { Room } from '../../../../models/room.model';
 import { RootState } from '../../../store';
-import { RoomParams } from '../../../../models/pagination-params/room-params.model';
+import { PagingParams } from '../../../../models/pagination-params/paging-params.model';
 import { PaginationResponse } from '../../../../models/pagination-response.payload';
 
 
@@ -13,7 +13,7 @@ interface FetchRoomsRejectPayload {
 
 export const fetchRooms = createAsyncThunk<
   PaginationResponse<Room>,
-  RoomParams,
+  PagingParams,
   {
     rejectValue: FetchRoomsRejectPayload;
   }

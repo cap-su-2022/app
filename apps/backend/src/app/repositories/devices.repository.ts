@@ -10,6 +10,7 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { DeviceType } from '../models/device-type.entity';
 import { DevicesRequestPayload } from '../payload/request/devices.payload';
+import { DevicesPaginationParams } from '../controllers/devices-pagination.model';
 
 @CustomRepository(Devices)
 export class DevicesRepository extends Repository<Devices> {
@@ -32,19 +33,31 @@ export class DevicesRepository extends Repository<Devices> {
       .then((data) => data['count'] > 0);
   }
 
-  searchDevices(
-    payload: DevicesRequestPayload
-  ): Promise<Pagination<Devices, IPaginationMeta>> {
-    const query = this.createQueryBuilder(`devices`)
-      // qb.where(`rooms.name LIKE :name`, {name: `%${payload.search}%`});
-      //  qb.orWhere(`rooms.description LIKE :description`, {description: `%${payload.search}%`})
-      .where(`devices.disabled_at IS NULL`)
-      .andWhere(`devices.deleted_at IS NULL`)
-      .orWhere(`devices.name = :name`, { name: `%${payload.search}%` })
-      .orWhere(`devices.description = :description`, {
-        description: `%${payload.search}%`,
+  searchDevices(payload: DevicesPaginationParams) {
+    const query = this.createQueryBuilder('d')
+      .select('d.id', 'id')
+      .addSelect('d.name', 'name')
+      .addSelect('d.description', 'description')
+      .addSelect('d.createdAt', 'createdAt')
+      .addSelect('d.updatedAt', 'updatedAt')
+      .addSelect('a.username', 'createdBy')
+      .addSelect('aa.username', 'updatedBy')
+      .addSelect('dt.name', 'type')
+      .innerJoin(Accounts, 'a', 'd.created_by = a.id')
+      .innerJoin(Accounts, 'aa', 'd.updated_by = aa.id')
+      .innerJoin(DeviceType, 'dt', 'dt.id = d.device_type_id')
+      .where('LOWER(d.name) ILIKE LOWER(:search)', {
+        search: `%${payload.search.trim()}%`,
+      })
+      .andWhere(`d.deleted_at IS NULL`)
+      .andWhere(`d.disabled_at IS NULL`)
+      .orderBy(payload.sort, payload.dir as 'ASC' | 'DESC');
+    if (payload.deviceType && payload.deviceType !== '') {
+      query.andWhere('dt.name = :deviceTypeName', {
+        deviceTypeName: payload.deviceType,
       });
-    return paginateRaw<Devices, IPaginationMeta>(query, {
+    }
+    return paginateRaw<Devices>(query, {
       limit: payload.limit,
       page: payload.page,
     });
