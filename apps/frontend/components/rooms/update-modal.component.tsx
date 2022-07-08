@@ -35,8 +35,6 @@ import { RoomType } from '../../models/room-type.model';
 interface UpdateModalProps {
   isShown: boolean;
   toggleShown(): void;
-  formik: FormikProps<any>;
-  handleSubmit(): void;
   pagination: PagingParams;
   roomTypes: any[];
 }
@@ -125,7 +123,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
     } else {
       setUpdateDisabled(false);
     }
-  }, [formik.values.name, formik.values.description]);
+  }, [formik.values.name, formik.values.description, formik.initialValues.name, formik.initialValues.description]);
 
   const ModalHeaderTitle: React.FC = () => {
     return (
@@ -215,15 +213,6 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
             </div>
 
             <div className={classes.modalFooter}>
-              {/* <Button
-                onClick={() => props.toggleDeleteModalShown()}
-                variant="outline"
-                color={"red"}
-                leftIcon={<Trash/>}
-              >
-                Delete this room
-              </Button> */}
-
               <Button
                 color="green"
                 disabled={isUpdateDisabled}

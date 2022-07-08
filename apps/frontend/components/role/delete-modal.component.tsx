@@ -27,7 +27,7 @@ import Th from '../../components/table/th.table.component';
 import { fetchAccountByRole } from '../../redux/features/account/thunk/fetch-accounts-by-role';
 // import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
 import { showNotification } from '@mantine/notifications';
-import { updateAccountById } from '../../redux/features/account/thunk/update-by-id';
+import { updateAccountById } from '../../redux/features/account/thunk/update-account-by-id';
 
 interface DeleteModalProps {
   isShown: boolean;
