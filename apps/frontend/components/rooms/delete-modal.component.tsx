@@ -13,7 +13,7 @@ import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
 import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-id';
-import { RoomParams } from '../../models/pagination-params/room-params.model';
+import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
 import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-room';
 import Th from '../table/th.table.component';
@@ -23,7 +23,7 @@ import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-bo
 interface DeleteRoomModalProps {
   isShown: boolean;
   toggleShown(): void;
-  pagination: RoomParams;
+  pagination: PagingParams;
 }
 
 const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {

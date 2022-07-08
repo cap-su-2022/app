@@ -4,7 +4,7 @@ import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
 
 
 
-export const restoreDisabledRoom = createAsyncThunk<any, any, {
+export const restoreDisabledDevice = createAsyncThunk<any, any, {
   rejectValue: {
     message: string
   }

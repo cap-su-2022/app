@@ -1,41 +1,39 @@
-import {createAsyncThunk} from "@reduxjs/toolkit";
-import {Device} from "../../../../models/device.model";
-import axios from "axios";
-import {Room} from "../../../../models/room.model";
-import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
-import {RootState} from "../../../store";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
+import { PagingParams } from '../../../../models/pagination-params/paging-params.model';
+import { PaginationResponse } from '../../../../models/pagination-response.payload';
+import { Device } from '../../../../models/device.model';
 
-interface FetchDevicesSuccessResponse {
-  data: Device[],
-  currentPage: number;
-  totalPage: number;
-  size: number;
-}
 
-interface RejectPayload {
+interface FetchDevicesRejectPayload {
   message: string;
 }
 
-
-export const fetchDevices = createAsyncThunk<FetchDevicesSuccessResponse, void, {
-  rejectValue: RejectPayload
-}>('device/fetch-devices', async (payload, thunkAPI) => {
+export const fetchDevices = createAsyncThunk<
+  PaginationResponse<Device>,
+  PagingParams,
+  {
+    rejectValue: FetchDevicesRejectPayload;
+  }
+>('device/fetch-devices', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
-  const state = thunkAPI.getState() as RootState;
   try {
-    const response = await axios.post(`api/devices`, {
-      search: state.device.textSearch,
-      page: state.device.currentPage,
-      size: state.device.size,
-      sort: state.device.direction
+    const response = await axios.get(`api/devices`, {
+      params: {
+        page: payload.page,
+        search: payload.search,
+        dir: payload.dir,
+        limit: payload.limit,
+        sort: payload.sort,
+      },
     });
-
-    return await response.data as FetchDevicesSuccessResponse;
-  } catch ({response}) {
+    return await response.data;
+  } catch ({ response }) {
     if (response.status === 401 || response.status === 403) {
       return thunkAPI.rejectWithValue({
-        message: 'Access token is invalid'
-      })
+        message: 'Access token is invalid',
+      });
     }
   } finally {
     thunkAPI.dispatch(toggleSpinnerOff());

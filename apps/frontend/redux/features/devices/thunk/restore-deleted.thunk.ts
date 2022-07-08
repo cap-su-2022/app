@@ -2,7 +2,7 @@ import {createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
 import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
 
-export const restoreDeletedRoom = createAsyncThunk<any, any, {
+export const restoreDeletedDevice = createAsyncThunk<any, any, {
   rejectValue: {
     message: string
   }

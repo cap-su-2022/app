@@ -95,8 +95,8 @@ export class RoomTypeRepository extends Repository<RoomType> {
   }
 
   updateById(
-    roomTypeId: string,
     accountId: string,
+    roomTypeId: string,
     payload: MasterDataAddRequestPayload
   ) {
     return this.save(

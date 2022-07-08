@@ -5,7 +5,7 @@ import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { disableRoomById } from '../../redux/features/room/thunk/disable-room-by-id';
 import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { RoomParams } from '../../models/pagination-params/room-params.model';
+import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
 import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
 import Th from '../table/th.table.component';
@@ -16,7 +16,7 @@ interface DisableRoomModalProps {
   isShown: boolean;
   toggleShown(): void;
   toggleInforModalShown(): void;
-  pagination: RoomParams;
+  pagination: PagingParams;
 }
 const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
   const { classes } = useStyles();

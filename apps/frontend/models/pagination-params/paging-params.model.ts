@@ -1,4 +1,4 @@
-export interface RoomParams {
+export interface PagingParams {
   page?: number;
   limit?: number;
   name?: string;
@@ -8,7 +8,7 @@ export interface RoomParams {
   sort?: string;
 }
 
-export const defaultPaginationParams: RoomParams = {
+export const defaultPaginationParams: PagingParams = {
   page: 1,
   limit: 5,
   name: '',

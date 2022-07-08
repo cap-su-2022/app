@@ -7,7 +7,7 @@ interface RejectValue {
   message: string;
 }
 
-export const fetchDeletedThunk = createAsyncThunk<Room[], void, {
+export const fetchDeletedDevices = createAsyncThunk<Room[], void, {
   rejectValue: RejectValue
 }>('device/fetch-deleted', async (any, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());

@@ -7,6 +7,7 @@ import { Devices } from '../models';
 import { Direction } from '../models/search-pagination.payload';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 import { DeviceHistService } from './devices-hist.service';
+import { DevicesPaginationParams } from '../controllers/devices-pagination.model';
 
 @Injectable()
 export class DevicesService {
@@ -17,9 +18,11 @@ export class DevicesService {
     private readonly histService: DeviceHistService
   ) {}
 
-  async getAll(request: DevicesRequestPayload) {
+  async getAll(request: DevicesPaginationParams) {
     try {
-      return await this.repository.searchDevices(request);
+      const result = await this.repository.searchDevices(request);
+      console.log("AAAAAAAAA: ",result);
+      return result
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException('One or more parameters is invalid');

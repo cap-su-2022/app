@@ -27,7 +27,7 @@ import { LIBRARY_ROOM_TYPE } from '../../constants/library-room-type.model';
 import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
 import { InputUpdateProps } from '../../components/actions/models/input-update-props.model';
-import { RoomParams } from '../../models/pagination-params/room-params.model';
+import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import { fetchRoomTypes } from '../../redux/features/room-type';
 import { PaginationResponse } from '../../models/pagination-response.payload';
 import { RoomType } from '../../models/room-type.model';
@@ -37,7 +37,7 @@ interface UpdateModalProps {
   toggleShown(): void;
   formik: FormikProps<any>;
   handleSubmit(): void;
-  pagination: RoomParams;
+  pagination: PagingParams;
   roomTypes: any[];
 }
 
