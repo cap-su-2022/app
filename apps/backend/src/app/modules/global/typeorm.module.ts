@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Environment } from '@app/constants';
 import {
   Accounts,
+  AccountHist,
   BookingRequest,
   Devices,
   DeviceHist,
@@ -34,6 +35,7 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
     database: configService.get<string>(Environment.db.postgres.database),
     entities: [
       Accounts,
+      AccountHist,
       Rooms,
       RoomHist,
       RoomType,

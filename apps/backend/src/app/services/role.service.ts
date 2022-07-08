@@ -4,6 +4,7 @@ import { RolesRepository } from '../repositories/roles.repository';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 import { Roles } from '../models/role.entity';
 import { RoleHistService } from './role-hist.service';
+import { AccountsService } from './accounts.service';
 
 @Injectable()
 export class RoleService {
@@ -11,6 +12,7 @@ export class RoleService {
 
   constructor(
     private readonly repository: RolesRepository,
+    private readonly accountService: AccountsService,
     private readonly histService: RoleHistService
   ) {}
 
@@ -27,12 +29,25 @@ export class RoleService {
     }
   }
 
+  getRoleNames() {
+    try {
+      return this.repository.findRoleName();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async deleteRoleById(accountId: string, id: string) {
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
         throw new BadRequestException(
           'Role does not found with the existed id'
+        );
+      } else if (this.accountService.getAccountsByRoleId(id) !== undefined) {
+        throw new BadRequestException(
+          'There are still account of this type, please change the type of those accounts before deleting role'
         );
       }
       const result = await this.repository.deleteById(accountId, id);

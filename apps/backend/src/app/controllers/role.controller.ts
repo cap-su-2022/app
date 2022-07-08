@@ -99,6 +99,27 @@ export class RoleController {
     return this.service.getRoleById(id);
   }
 
+  @Get('name')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully get role name',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get role name',
+    description: 'Get role name',
+  })
+  getRoleNames() {
+    return this.service.getRoleNames();
+  }
+
   @Put(':id')
   @ApiOperation({
     summary: 'Update role by id',
@@ -129,6 +150,7 @@ export class RoleController {
     return this.service.updateRoleById(user.account_id, body, id);
   }
 
+  @Post()
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Request payload for role is not validated',
@@ -150,7 +172,6 @@ export class RoleController {
     description: 'Add role',
   })
   @HttpCode(HttpStatus.OK)
-  @Post()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   addRole(@Body() body, @User() user: KeycloakUserInstance) {
     return this.service.addRole(body, user.account_id);

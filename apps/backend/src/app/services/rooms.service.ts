@@ -17,12 +17,13 @@ export class RoomsService {
   ) {}
 
   async getAll(request: RoomsPaginationParams) {
-    try{
+    try {
       return await this.repository.searchRoom(request);
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('One or more parameters is invalid')
-  }}
+      throw new BadRequestException('One or more parameters is invalid');
+    }
+  }
 
   async add(user: KeycloakUserInstance, room: AddRoomRequest): Promise<Rooms> {
     try {
@@ -94,7 +95,7 @@ export class RoomsService {
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
-        'An error occurred while getting deleted rooms'
+        e.message ?? 'An error occurred while getting deleted rooms'
       );
     }
   }
@@ -105,7 +106,7 @@ export class RoomsService {
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
-        'An error occurred while getting disabled rooms'
+        e.message ?? 'An error occurred while getting disabled rooms'
       );
     }
   }
@@ -116,7 +117,8 @@ export class RoomsService {
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
-        'An error occurred while getting rooms by type ' + roomTypeId
+        e.message ??
+          'An error occurred while getting rooms by type ' + roomTypeId
       );
     }
   }
@@ -130,7 +132,9 @@ export class RoomsService {
         .getMany();
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('An error occurred while adding this room');
+      throw new BadRequestException(
+        e.message ?? 'An error occurred while adding this room'
+      );
     }
   }
 
@@ -189,7 +193,9 @@ export class RoomsService {
       return roomUpdated;
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('Error occurred while updating this room');
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while updating this room'
+      );
     }
   }
 
@@ -211,7 +217,9 @@ export class RoomsService {
       }
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('Error occurred while disabling this room');
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while disabling this room'
+      );
     }
   }
 
@@ -247,7 +255,8 @@ export class RoomsService {
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
-        'Error occurred while restore the disabled status of this room'
+        e.message ??
+          'Error occurred while restore the disabled status of this room'
       );
     }
   }
@@ -280,7 +289,8 @@ export class RoomsService {
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
-        'Error occurred while restore the delete status of this room'
+        e.message ??
+          'Error occurred while restore the delete status of this room'
       );
     }
   }
@@ -303,7 +313,9 @@ export class RoomsService {
       }
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('Error occurred while deleting this room');
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while deleting this room'
+      );
     }
   }
 

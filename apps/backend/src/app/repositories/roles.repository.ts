@@ -50,6 +50,14 @@ export class RolesRepository extends Repository<Roles> {
       .getRawOne<Roles>();
   }
 
+  findRoleName(): Promise<Roles[]> {
+    return this.createQueryBuilder('roles')
+      .select('roles.id', 'id')
+      .addSelect('roles.name', 'name')
+      .andWhere("roles.deleted_at IS NULL")
+      .getRawMany<Roles>();
+  }
+
   async get(id: string): Promise<Roles> {
     return this.createQueryBuilder('roles')
       .select('roles.id', 'id')

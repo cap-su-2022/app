@@ -8,12 +8,12 @@ import {
 import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 import logger from 'redux-logger';
 import spinnerSlice from './features/spinner/slice';
-import { authReducer } from './features/user/auth.slice';
+import { authReducer } from './features/account/auth.slice';
 import { roomReducer } from './features/room/room.slice';
 import { roomBookingReducer } from './features/room-booking/room-booking.slice';
 import { systemReducer } from './features/system/system.slice';
 import { devicesReducer } from './features/devices/devices.slice';
-import { usersReducer } from './features/user/user.slice';
+import { accountReducer } from './features/account/account.slice';
 import { roomTypeReducer } from './features/room-type';
 import { deviceTypeReducer } from './features/device-type';
 import { roleReducer } from './features/role';
@@ -29,7 +29,7 @@ const combinedReducer = combineReducers({
   device: devicesReducer,
   roomBooking: roomBookingReducer,
   system: systemReducer,
-  user: usersReducer,
+  account: accountReducer,
   roomType: roomTypeReducer,
   deviceType: deviceTypeReducer,
   role: roleReducer,

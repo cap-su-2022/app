@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, createStyles, Modal, Text} from "@mantine/core";
 import {AlertCircle} from "tabler-icons-react";
-import {resetLoginFailedStatus} from "../../redux/features/user/auth.slice";
+import {resetLoginFailedStatus} from "../../redux/features/account/auth.slice";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {FPT_ORANGE_COLOR} from "@app/constants";
 
