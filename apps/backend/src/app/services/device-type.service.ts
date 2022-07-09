@@ -91,11 +91,12 @@ export class DeviceTypeService {
   async deleteDeviceTypeById(accountId: string, id: string) {
     try {
       const data = await this.repository.findById(id);
+      const listDeviceOfThisType = await this.deviceService.getDevicesByDeviceType(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This room is already deleted or disabled'
+          'This type is already deleted or disabled'
         );
-      } else if (this.deviceService.getDevicesByDeviceType(id) !== undefined) {
+      } else if ( listDeviceOfThisType !== undefined && listDeviceOfThisType.length > 0) {
         throw new BadRequestException(
           'There are still device of this type, please change the type of those devices before deleting type'
         );

@@ -24,7 +24,6 @@ export class AddRoomRequest {
     type: String,
     example: "New library room"
   })
-  @MinLength(1)
   @MaxLength(500)
   @IsString()
   description?: string;

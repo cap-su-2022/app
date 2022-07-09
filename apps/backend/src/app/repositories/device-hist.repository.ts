@@ -9,6 +9,7 @@ export class DeviceHistRepository extends Repository<DeviceHist> {
     delete payload.id
     return this.save({
       deviceId: deviceId,
+      type: payload.type,
       ...payload,
     });
   }

@@ -17,7 +17,7 @@ import NoDataFound from '../../components/no-data-found';
 import TableHeader from '../../components/actions/table-header.component';
 import { TableBody } from '../../components/rooms/table-body.component';
 import TableFooter from '../../components/actions/table-footer.component';
-import DisableRoomModal from '../../components/rooms/disable-modal.component';
+import DisableDeviceModal from '../../components/devices/disable-modal.component';
 import DeleteRoomModal from '../../components/rooms/delete-modal.component';
 import AddRoomModal from '../../components/rooms/add-modal.component';
 import DownloadModal from '../../components/rooms/download-modal.compnent';
@@ -27,7 +27,7 @@ import { PagingParams } from '../../models/pagination-params/paging-params.model
 import { FormikValues, useFormik } from 'formik';
 import Header from '../../components/common/header.component';
 import RoomInfoModal from '../../components/rooms/info-modal.component';
-import UpdateModal from '../../components/rooms/update-modal.component';
+import UpdateModal from '../../components/devices/update-modal.component';
 import { InputTypes } from '../../components/actions/models/input-type.constant';
 import { InputUpdateProps } from '../../components/actions/models/input-update-props.model';
 import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
@@ -39,8 +39,14 @@ import dayjs from 'dayjs';
 import { RoomType } from '../../models/room-type.model';
 import { PaginationResponse } from '../../models/pagination-response.payload';
 import { fetchDevices } from '../../redux/features/devices/thunk/fetch-devices.thunk';
+import { fetchDeviceById } from '../../redux/features/devices/thunk/fetch-by-id.thunk';
 import { fetchDeviceTypeNames } from '../../redux/features/devices/thunk/fetch-device-type-names.thunk';
 import { updateDeviceById } from '../../redux/features/devices/thunk/update-by-id';
+import DeviceInfoModal from './info-modal.component';
+import RestoreDisabledDeviceModal from './restore-disabled.modal.component';
+import DeleteDeviceModal from './delete-modal.component';
+import RestoreDeletedDeviceModal from './restore-deleted.modal.component';
+import AddDeviceModal from './add-modal.component';
 
 const UpdateDeviceValidation = Yup.object().shape({
   name: Yup.string()
@@ -126,7 +132,7 @@ function DevicesManagement(props: any) {
   };
 
   const handleFetchById = (idVal) => {
-    return dispatch(getRoomById(idVal));
+    return dispatch(fetchDeviceById(idVal));
   };
 
   const [id, setId] = useState<string>('');
@@ -290,7 +296,7 @@ function DevicesManagement(props: any) {
     <>
       <AdminLayout>
         <Header
-          title="Rooms Management"
+          title="Devices Management"
           icon={<BuildingWarehouse size={50} />}
         />
         <TableHeader
@@ -301,12 +307,12 @@ function DevicesManagement(props: any) {
           search={pagination.search}
         />
 
-        <RestoreDisabledRoomModal
+        <RestoreDisabledDeviceModal
           isShown={isRestoreDisabledShown}
           toggleShown={() => setRestoreDisabledShown(!isRestoreDisabledShown)}
           pagination={pagination}
         />
-        <RestoreDeletedRoomModal
+        <RestoreDeletedDeviceModal
           isShown={isRestoreDeletedShown}
           toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
           pagination={pagination}
@@ -321,42 +327,42 @@ function DevicesManagement(props: any) {
               page={pagination.page}
               itemsPerPage={pagination.limit}
             />
-            <RoomInfoModal
+            <DeviceInfoModal
               // header="Room Information"
               // fields={infoFields}
               toggleShown={() => setInfoShown(!isInfoShown)}
               isShown={isInfoShown}
               toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
             />
-            <DisableRoomModal
+            <DisableDeviceModal
               isShown={isDisableShown}
               toggleShown={() => setDisableShown(!isDisableShown)}
               toggleInforModalShown={() => setInfoShown(!isInfoShown)}
               pagination={pagination}
             />
-            <DeleteRoomModal
+            <DeleteDeviceModal
               isShown={isDeleteShown}
               toggleShown={() => setDeleteShown(!isDeleteShown)}
               pagination={pagination}
             />
             <UpdateModal
-              formik={updateFormik}
-              handleSubmit={() => updateFormik.handleSubmit()}
+              // formik={updateFormik}
+              // handleSubmit={() => updateFormik.handleSubmit()}
               isShown={isUpdateShown}
               toggleShown={() => setUpdateShown(!isUpdateShown)}
               pagination={pagination}
-              roomTypes={deviceTypeNames}
+              deviceTypes={deviceTypeNames}
             />
           </>
         ) : (
           <NoDataFound />
         )}
 
-        <AddRoomModal
+        <AddDeviceModal
           isShown={isAddShown}
           pagination={pagination}
           toggleShown={() => handleAddModalClose()}
-          roomTypes={deviceTypeNames}
+          deviceTypes={deviceTypeNames}
         />
         {devices.meta ? (
           <TableFooter

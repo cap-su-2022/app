@@ -8,10 +8,10 @@ export const restoreDisabledDevice = createAsyncThunk<any, any, {
   rejectValue: {
     message: string
   }
-}>('room/restore-disabled-room', async (id: string, thunkAPI) => {
+}>('device/restore-disabled-room', async (id: string, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.put(`/api/rooms/restore-disabled/${id}`);
+    const response = await axios.put(`/api/devices/restore-disabled/${id}`);
     return await response.data;
   } catch ({response}) {
     return thunkAPI.rejectWithValue({

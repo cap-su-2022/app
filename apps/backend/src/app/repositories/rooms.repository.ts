@@ -136,11 +136,13 @@ export class RoomsRepository extends Repository<Rooms> {
       .execute();
   }
 
-  restoreDisabledRoomById(id: string): Promise<UpdateResult> {
+  restoreDisabledRoomById(accountId: string,id: string): Promise<UpdateResult> {
     return this.createQueryBuilder('rooms')
       .update({
         disabledAt: null,
         disabledBy: null,
+        updatedBy: accountId,
+        updatedAt: new Date(),
       })
       .where('rooms.id = :id', { id: id })
       .useTransaction(true)

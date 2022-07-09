@@ -7,13 +7,13 @@ interface RejectValue {
   message: string;
 }
 
-export const fetchDisabledDevices = createAsyncThunk<Room[], void, {
+export const fetchDisabledDevices = createAsyncThunk<Room[], string, {
   rejectValue: RejectValue
-}>('device/fetch-disabled', async (any, thunkAPI) => {
+}>('device/fetch-disabled', async (payload = "", thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
 
   try {
-    const response = await axios.get(`/api/devices/disabled`);
+    const response = await axios.get(`/api/devices/disabled?search=${payload}`);
     return await response.data;
   } catch ({response}) {
     if (response.status === 401 || response.status === 403) {

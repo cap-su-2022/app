@@ -21,7 +21,6 @@ export class DevicesService {
   async getAll(request: DevicesPaginationParams) {
     try {
       const result = await this.repository.searchDevices(request);
-      console.log("AAAAAAAAA: ",result);
       return result
     } catch (e) {
       this.logger.error(e);
@@ -35,10 +34,9 @@ export class DevicesService {
       throw new BadRequestException('Device name is duplicated!');
     }
     if (
-      payload.name.trim().length < 1 ||
-      payload.description.trim().length < 1
+      payload.name.trim().length < 1
     ) {
-      throw new BadRequestException('All fields must be filled in!');
+      throw new BadRequestException('Name fields must be filled in!');
     }
     try {
       const deviceAdded = await this.repository.createNewDevice(payload, userId);
@@ -225,9 +223,9 @@ export class DevicesService {
     }
   }
 
-  async getDisabledDevices(): Promise<Devices[]> {
+  async getDisabledDevices(search: string): Promise<Devices[]> {
     try {
-      return await this.repository.getDisabledDevices();
+      return await this.repository.getDisabledDevices(search);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException('Error while disabling this device');
@@ -265,9 +263,9 @@ export class DevicesService {
     }
   }
 
-  async getDeletedDevices(): Promise<Devices[]> {
+  async getDeletedDevices(search: string): Promise<Devices[]> {
     try {
-      return await this.repository.getDeletedDevices();
+      return await this.repository.getDeletedDevices(search);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException('Error while disabling this device');

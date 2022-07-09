@@ -96,11 +96,12 @@ export class RoomTypeService {
   async deleteRoomTypeById(accountId: string, id: string) {
     try {
       const data = await this.repository.findById(id);
+      const listRoomOfThisType = await this.roomService.getRoomsByRoomType(id)
       if (data === undefined) {
         throw new BadRequestException(
           'This room type is already deleted or disabled'
         );
-      } else if (this.roomService.getRoomsByRoomType(id) !== undefined) {
+      } else if (listRoomOfThisType !== undefined && listRoomOfThisType.length > 0 ) {
         throw new BadRequestException(
           'There are still rooms of this type, please change the type of those rooms before deleting type'
         );

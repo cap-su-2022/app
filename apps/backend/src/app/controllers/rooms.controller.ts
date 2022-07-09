@@ -171,7 +171,6 @@ export class RoomsController {
     return this.service.getDeletedRooms(search);
   }
 
-  
   @Get('by-room-type')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
@@ -190,7 +189,7 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getRoomsByRoomType(@Query('type') roomTypeId= ''): Promise<Rooms[]> {
+  getRoomsByRoomType(@Query('type') roomTypeId = ''): Promise<Rooms[]> {
     return this.service.getRoomsByRoomType(roomTypeId);
   }
 
@@ -242,8 +241,11 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  restoreDisabledRoomById(@Param() payload: { id: string }) {
-    return this.service.handleRestoreDisabledRoomById(payload.id);
+  restoreDisabledRoomById(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string }
+  ) {
+    return this.service.handleRestoreDisabledRoomById(user.account_id, payload.id);
   }
 
   @Put('update/:id')

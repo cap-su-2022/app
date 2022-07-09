@@ -40,12 +40,12 @@ export class DevicesRepository extends Repository<Devices> {
       .addSelect('d.description', 'description')
       .addSelect('d.createdAt', 'createdAt')
       .addSelect('d.updatedAt', 'updatedAt')
-      .addSelect('a.username', 'createdBy')
-      .addSelect('aa.username', 'updatedBy')
+      // .addSelect('a.username', 'createdBy')
+      // .addSelect('aa.username', 'updatedBy')
       .addSelect('dt.name', 'type')
-      .innerJoin(Accounts, 'a', 'd.created_by = a.id')
-      .innerJoin(Accounts, 'aa', 'd.updated_by = aa.id')
-      .innerJoin(DeviceType, 'dt', 'dt.id = d.device_type_id')
+      // .innerJoin(Accounts, 'a', 'd.created_by = a.id')
+      // .innerJoin(Accounts, 'aa', 'd.updated_by = aa.id')
+      .innerJoin(DeviceType, 'dt', 'dt.id = d.type')
       .where('LOWER(d.name) ILIKE LOWER(:search)', {
         search: `%${payload.search.trim()}%`,
       })
@@ -67,12 +67,12 @@ export class DevicesRepository extends Repository<Devices> {
     return this.createQueryBuilder(`device`)
       .select('device.id', 'id')
       .addSelect('device.name', 'name')
-      .addSelect('device.device_type_id', 'type')
+      .addSelect('device.type', 'type')
       .addSelect('dt.name', 'deviceTypeName')
-      .innerJoin(DeviceType, 'dt', 'dt.id = device.device_type_id')
+      .innerJoin(DeviceType, 'dt', 'dt.id = device.type')
       .where(`device.deleted_at IS NULL`)
       .andWhere(`device.disabled_at IS NULL`)
-      .andWhere('device.device_type_id = :type', { type: deviceTypeId })
+      .andWhere('device.type = :type', { type: deviceTypeId })
 
       .getRawMany<Devices>();
   }
@@ -81,7 +81,7 @@ export class DevicesRepository extends Repository<Devices> {
     return this.createQueryBuilder('devices')
       .select('devices.id', 'id')
       .addSelect('devices.name', 'name')
-      .addSelect('device_type_id', 'type')
+      .addSelect('type', 'type')
       .addSelect('devices.created_at', 'createdAt')
       .addSelect('devices.created_by', 'createdBy')
       .addSelect('devices.updated_at', 'updatedAt')
@@ -136,8 +136,8 @@ export class DevicesRepository extends Repository<Devices> {
   restoreDisabledDeviceById(id: string): Promise<UpdateResult> {
     return this.createQueryBuilder('devices')
       .update({
-        deletedAt: null,
-        deletedBy: null,
+        disabledAt: null,
+        disabledBy: null,
       })
       .where('devices.id = :id', { id: id })
       .useTransaction(true)
@@ -155,22 +155,43 @@ export class DevicesRepository extends Repository<Devices> {
       .execute();
   }
 
-  getDeletedDevices(): Promise<Devices[]> {
-    return this.createQueryBuilder('devices')
-      .andWhere(`devices.deleted_at IS NOT NULL`)
-      .getMany();
+  getDeletedDevices(search: string) {
+    return this.createQueryBuilder(`devices`)
+      .select('devices.id', 'id')
+      .addSelect('devices.name', 'name')
+      .addSelect('devices.deleted_at', 'deletedAt')
+      .addSelect('a.username', 'deletedBy')
+      .addSelect('dt.name', 'deviceTypeName')
+      .innerJoin(Accounts, 'a', 'devices.deleted_by = a.id')
+      .innerJoin(DeviceType, 'dt', 'dt.id = devices.type')
+      .where(`devices.deleted_at IS NOT NULL`)
+      .andWhere(`devices.disabled_at IS NULL`)
+      .andWhere('devices.name ILIKE :name', { name: `%${search.trim()}%` })
+      .getRawMany<Devices>();
   }
 
-  getDisabledDevices(): Promise<Devices[]> {
+  getDisabledDevices(search: string) {
     return this.createQueryBuilder('devices')
-      .where(`devices.disabled_at IS NOT NULL`)
-      .andWhere(`devices.deleted_at IS NULL`)
-      .getMany();
+      .select('devices.id', 'id')
+      .addSelect('devices.name', 'name')
+      .addSelect('devices.disabled_at', 'disabledAt')
+      .addSelect('a.username', 'disabledBy')
+      .addSelect('dt.name', 'roomTypeName')
+      .innerJoin(Accounts, 'a', 'devices.disabled_by = a.id')
+      .innerJoin(DeviceType, 'dt', 'devices.type = dt.id')
+      .where(`devices.deleted_at IS NULL`)
+      .andWhere(`devices.disabled_at IS NOT NULL`)
+      .andWhere('devices.name ILIKE :search', { search: `%${search.trim()}%` })
+      .getRawMany<Rooms>();
   }
 
   createNewDevice(payload: AddDeviceRequest, userId: string): Promise<Devices> {
     return this.save(
-      { ...payload, createdBy: userId },
+      { name: payload.name.trim(),
+        description: payload.description,
+        type: payload.type,
+        createdBy: userId,
+        createdAt: new Date(), },
       {
         transaction: true,
       }
@@ -194,13 +215,19 @@ export class DevicesRepository extends Repository<Devices> {
       .addSelect('devices.description', 'description')
       .addSelect('devices.created_at', 'createdAt')
       .addSelect('devices.updated_at', 'updatedAt')
-      .addSelect('devices.created_by', 'createdBy')
-      .addSelect('devices.updated_by', 'updatedBy')
+      // .addSelect('devices.created_by', 'createdBy')
+      // .addSelect('devices.updated_by', 'updatedBy')
       .addSelect('devices.disabled_at', 'disableAt')
       .addSelect('devices.deleted_at', 'deletedAt')
       .addSelect('devices.disabled_by', 'disabledBy')
       .addSelect('devices.deleted_by', 'deletedBy')
-      .addSelect('devices.device_type_id', 'devicesTypeId')
+      .addSelect('devices.type', 'deviceTypeId')
+      .addSelect('dt.name', 'deviceTypeName')
+      .addSelect('a.username', 'createdBy')
+      .addSelect('aa.username', 'updatedBy')
+      .innerJoin(Accounts, 'a', 'devices.created_by = a.id')
+      .leftJoin(Accounts, 'aa', 'devices.updated_by = aa.id')
+      .innerJoin(DeviceType, 'dt', 'dt.id = devices.type')
       .where('devices.disabled_at IS NULL')
       .andWhere('devices.deleted_at IS NULL')
       .andWhere('devices.id = :deviceId', { deviceId: id })

@@ -1,140 +1,243 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   createStyles,
+  InputWrapper,
   Modal,
+  Select,
   Switch,
   Text,
   Textarea,
   TextInput,
-} from "@mantine/core";
-import {useWindowDimensions} from "../../hooks/use-window-dimensions";
+} from '@mantine/core';
+import { useWindowDimensions } from '../../hooks/use-window-dimensions';
 import {
+  Check,
   ClipboardText,
   FileDescription,
   Plus,
-  X
-} from "tabler-icons-react";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {Form, FormikProvider, useFormik} from "formik";
-import {fetchDevices} from "../../redux/features/devices/thunk/fetch-devices.thunk";
-import {addDevice} from "../../redux/features/devices/thunk/add.thunk";
+  X,
+} from 'tabler-icons-react';
+import { useAppDispatch } from '../../redux/hooks';
+import { Form, FormikProvider, useFormik } from 'formik';
+import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
+import { addRoom } from '../../redux/features/room/thunk/add-room';
+import * as Yup from 'yup';
+import { showNotification } from '@mantine/notifications';
+import { PagingParams } from '../../models/pagination-params/paging-params.model';
+import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
+import { addDevice } from '../../redux/features/devices/thunk/add.thunk';
+import { fetchDevices } from '../../redux/features/devices/thunk/fetch-devices.thunk';
+import { fetchDisabledDevices } from '../../redux/features/devices/thunk/fetch-disabled.thunk';
 
 interface AddDeviceModalProps {
   isShown: boolean;
   toggleShown(): void;
+  pagination: PagingParams;
+  deviceTypes: any[];
 }
 
-const AddDeviceModal: React.FC<AddDeviceModalProps> = (props) => {
-  const {classes} = useStyles();
+const AddDeviceValidation = Yup.object().shape({
+  name: Yup.string()
+    .trim()
+    .min(1, 'Device name must have at least 1 character.')
+    .max(100, 'Device name can only have at most 100 characters.')
+    .required('Device name is required!'),
+  description: Yup.string().max(
+    500,
+    'Device description only have at most 500 characters'
+  ),
+});
 
-  const [isUpdateDisabled, setUpdateDisabled] = useState<boolean>(false);
+const AddDeviceModal: React.FC<AddDeviceModalProps> = (props) => {
+  const { classes } = useStyles();
+  const [isAddDisabled, setAddDisabled] = useState<boolean>(false);
+  const [deviceType, setDeviceType] = useState<string>('');
 
   const dispatch = useAppDispatch();
   const dimension = useWindowDimensions();
 
-  const handleUpdateSubmit = async (values) => {
-    dispatch(addDevice(values))
+  const handleAddSubmit = async (values) => {
+    dispatch(
+      addDevice({
+        ...values,
+        type: deviceType,
+      })
+    )
+      .unwrap()
+      .catch((e) =>
+        showNotification({
+          id: 'load-data',
+          color: 'red',
+          title: 'Error while adding device',
+          message: e.message ?? 'Failed to add device',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'load-data',
+          color: 'teal',
+          title: 'Device was added',
+          message: 'Device was successfully added to the system',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
       .then(() => {
         props.toggleShown();
-        dispatch(fetchDevices());
-        });
-  }
+        dispatch(fetchDevices(props.pagination)).finally(() =>
+          formik.resetForm()
+        );
+        dispatch(fetchDisabledDevices(''))
+      });
+  };
 
   const formik = useFormik({
     initialValues: {
       name: '',
       description: '',
-      disabled: false,
+      type: 'Library Device',
     },
-    onSubmit: (values) => handleUpdateSubmit(values),
+    onSubmit: (values) => handleAddSubmit(values),
+    validationSchema: AddDeviceValidation,
   });
 
   useEffect(() => {
-    if (formik.initialValues.name === formik.values.name
-    && formik.initialValues.description === formik.values.description) {
-      setUpdateDisabled(true);
+    if (
+      formik.initialValues.name === formik.values.name &&
+      formik.initialValues.description === formik.values.description
+    ) {
+      setAddDisabled(true);
     } else {
-      setUpdateDisabled(false);
+      setAddDisabled(false);
     }
   }, [formik.values.name, formik.values.description]);
 
   const ModalHeaderTitle: React.FC = () => {
-    return (
-      <Text className={classes.modalHeaderTitle}>Add new device</Text>
-    )
+    return <Text className={classes.modalHeaderTitle}>Add new device</Text>;
   };
+
+  const handleCancelAddModal = () => {
+    props.toggleShown();
+    formik.resetForm();
+  };
+
+  const handleAddAction = () => {
+    if (deviceType === '') {
+      showNotification({
+        id: 'load-data',
+        color: 'red',
+        title: 'Error while adding library device',
+        message: 'Please select the type that exists',
+        icon: <X />,
+        autoClose: 3000,
+      });
+    } else {
+      formik.submitForm()
+    }
+  }
 
   return (
     <>
-      <Modal title={<ModalHeaderTitle/>}
-             size={dimension.width / 2}
-             centered
-             opened={props.isShown}
-             onClose={() => props.toggleShown()}>
+      <Modal
+        title={<ModalHeaderTitle />}
+        size={dimension.width / 2}
+        centered
+        opened={props.isShown}
+        onClose={() => props.toggleShown()}
+      >
         <FormikProvider value={formik}>
           <Form onSubmit={formik.handleSubmit}>
             <div className={classes.modalBody}>
-              <TextInput icon={<ClipboardText/>}
-                         id="device-name"
-                         name="name"
-                         onChange={formik.handleChange}
-                         className={classes.textInput}
-                         radius="md"
-                         label="Room name"
-                         value={formik.values.name}/>
-              <Textarea icon={<FileDescription/>}
-                        className={classes.textInput}
-                        id="device-description"
-                        name="description"
-                        onChange={formik.handleChange}
-                        radius="md"
-                        label="Room description"
-                        value={formik.values.description}/>
-              <Switch label="Make this device disabled"
-                      style={{
-                        marginTop: 20
-                      }}
-                      onChange={formik.handleChange}
-                      size="lg"
-                      checked={formik.values.disabled}
-                      name="disabled"
-                      id="device-disabled"
-              />
+              <InputWrapper
+                required
+                label="Device name"
+                description="Device name must be unique. Maximum length is 100 characters"
+              >
+                <TextInput
+                  icon={<ClipboardText />}
+                  id="device-name"
+                  name="name"
+                  error={formik.errors.name}
+                  onChange={formik.handleChange}
+                  className={classes.textInput}
+                  radius="md"
+                  value={formik.values.name}
+                />
+              </InputWrapper>
+              <InputWrapper
+                label="Device description"
+                description="(Optional) Maximum length is 500 characters."
+              >
+                <Textarea
+                  icon={<FileDescription />}
+                  className={classes.textInput}
+                  id="device-description"
+                  name="description"
+                  error={formik.errors.description}
+                  onChange={formik.handleChange}
+                  radius="md"
+                  value={formik.values.description}
+                />
+              </InputWrapper>
+              <InputWrapper
+                required
+                label="Device type"
+                description="Device type is to define device separately"
+              >
+                <Select
+                  name="type"
+                  id="device-type"
+                  onChange={(e) => setDeviceType(e)}
+                  searchable
+                  value={deviceType}
+                  data={props.deviceTypes}
+                />
+              </InputWrapper>
             </div>
+
             <div className={classes.modalFooter}>
               <Button
-                onClick={() => props.toggleShown()}
+                onClick={() => handleCancelAddModal()}
                 variant="outline"
-                color={"red"}
-                leftIcon={<X/>}>Cancel</Button>
-              <Button color="green"
-                      disabled={isUpdateDisabled}
-                      onClick={() => formik.submitForm()}
-                      leftIcon={<Plus/>}>Add
+                color={'red'}
+                leftIcon={<X />}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                color="green"
+                disabled={isAddDisabled}
+                onClick={() => handleAddAction()}
+                leftIcon={<Plus />}
+              >
+                Add
               </Button>
             </div>
           </Form>
         </FormikProvider>
       </Modal>
     </>
-  )
+  );
 };
 
 const useStyles = createStyles({
   modalHeaderTitle: {
     fontWeight: 600,
-    fontSize: 22
+    fontSize: 22,
   },
   modalBody: {
     display: 'flex',
     flexDirection: 'column',
-    margin: 20
+    margin: 20,
   },
   modalFooter: {
     display: 'flex',
     justifyContent: 'space-between',
-    margin: 10
+    margin: 10,
   },
   modalInputDate: {
     display: 'flex',
@@ -142,8 +245,8 @@ const useStyles = createStyles({
     alignItems: 'center',
   },
   textInput: {
-    marginTop: 10
-  }
+    marginTop: 10,
+  },
 });
 
 export default AddDeviceModal;

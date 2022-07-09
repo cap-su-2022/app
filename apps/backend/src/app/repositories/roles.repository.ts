@@ -52,7 +52,7 @@ export class RolesRepository extends Repository<Roles> {
       .addSelect('a.username', 'createdBy')
       .addSelect('aa.username', 'updatedBy')
       .innerJoin(Accounts, 'a', 'a.id = r.created_by')
-      .innerJoin(Accounts, 'aa', 'aa.id = r.updated_by')
+      .leftJoin(Accounts, 'aa', 'aa.id = r.updated_by')
       .where('r.id = :id', { id: id })
       .andWhere('r.deleted_at IS NULL')
       .getRawOne<Roles>();

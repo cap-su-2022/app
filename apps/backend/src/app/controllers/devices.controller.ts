@@ -166,8 +166,8 @@ export class DevicesController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getDisableDevices(): Promise<Devices[]> {
-    return this.service.getDisabledDevices();
+  getDisableDevices(@Query('search') search = ''): Promise<Devices[]> {
+    return this.service.getDisabledDevices(search);
   }
 
   @Get('deleted')
@@ -192,8 +192,8 @@ export class DevicesController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getDeletedDevices(): Promise<Devices[]> {
-    return this.service.getDeletedDevices();
+  getDeletedDevices(@Query('search') search = ''): Promise<Devices[]> {
+    return this.service.getDeletedDevices(search);
   }
 
   @Put('restore-deleted/:id')

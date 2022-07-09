@@ -44,37 +44,50 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const [isShownListDevice, setShownListDevice] = useState(false);
 
   const [listDevice, setListDevice] = useState([]);
-  console.log(listDevice)
+  console.log(listDevice);
 
   const dispatch = useAppDispatch();
 
   const handleDeleteDeviceType = () => {
-    dispatch(deleteDeviceTypeById(selectedDeviceTypeId))
-      .catch((e) =>
-        showNotification({
-          id: 'delete-data',
-          color: 'red',
-          title: 'Error while delete device type',
-          message: e.message ?? 'Failed to delete device type',
-          icon: <X />,
-          autoClose: 3000,
-        })
-      )
-      .then(() =>
-        showNotification({
-          id: 'delete-data',
-          color: 'teal',
-          title: 'Device type was updated',
-          message: 'Device type was successfully updated',
-          icon: <Check />,
-          autoClose: 3000,
-        })
-      )
-      .then(() => {
-        props.toggleShown();
-        dispatch(fetchDeviceTypes(props.pagination));
-        dispatch(fetchDeletedDeviceTypes());
+    if (listDevice.length > 0) {
+      showNotification({
+        id: 'delete-data',
+        color: 'red',
+        title: 'Error while delete device type',
+        message:
+          'There are still devices of this type, please change the type of those devices before deleting type',
+        icon: <X />,
+        autoClose: 3000,
       });
+    } else {
+      dispatch(deleteDeviceTypeById(selectedDeviceTypeId))
+        .unwrap()
+        .then(() =>
+          showNotification({
+            id: 'delete-data',
+            color: 'teal',
+            title: 'Device type was deleted',
+            message: 'Device type was successfully deleted',
+            icon: <Check />,
+            autoClose: 3000,
+          })
+        )
+        .then(() => {
+          props.toggleShown();
+          dispatch(fetchDeviceTypes(props.pagination));
+          dispatch(fetchDeletedDeviceTypes());
+        })
+        .catch((e) =>
+          showNotification({
+            id: 'delete-data',
+            color: 'red',
+            title: 'Error while delete device type',
+            message: e.message ?? 'Failed to delete device type',
+            icon: <X />,
+            autoClose: 3000,
+          })
+        );
+    }
   };
 
   useEffect(() => {
@@ -92,7 +105,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   }, [props.isShown]);
 
   const handleUpdateType = (device, deviceTypeId: string) => {
-    console.log("FFFFFFFFF: ", deviceTypeId)
+    console.log('FFFFFFFFF: ', deviceTypeId);
     dispatch(
       updateDeviceById({
         id: device.id,
@@ -274,7 +287,9 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           </Button>
         </div>
       </div>
-      {isShownListDevice && listDevice.length > 0 ? <ListDeviceByDeviceType /> : null}
+      {isShownListDevice && listDevice.length > 0 ? (
+        <ListDeviceByDeviceType />
+      ) : null}
     </Modal>
   );
 };
@@ -289,7 +304,7 @@ const useStyles = createStyles({
   },
   modalBody: {
     margin: 10,
-    textAlign: 'justify'
+    textAlign: 'justify',
   },
   modalFooter: {
     display: 'flex',
