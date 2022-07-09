@@ -5,7 +5,6 @@ import axios from "axios";
 interface AddPayload {
   name: string;
   description: string;
-  isDisabled: boolean;
 }
 
 interface RejectValue {

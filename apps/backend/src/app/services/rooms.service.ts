@@ -223,7 +223,7 @@ export class RoomsService {
     }
   }
 
-  async handleRestoreDisabledRoomById(id: string) {
+  async handleRestoreDisabledRoomById(accountId: string,id: string) {
     try {
       const room = await this.repository.findOneOrFail({
         where: {
@@ -242,7 +242,7 @@ export class RoomsService {
       if (isDeleted) {
         throw new BadRequestException('Not found with provided id');
       }
-      const result = await this.repository.restoreDisabledRoomById(id);
+      const result = await this.repository.restoreDisabledRoomById(accountId, id);
       if (result.affected < 1) {
         throw new BadRequestException(
           "Room doesn't exist with the provided id"

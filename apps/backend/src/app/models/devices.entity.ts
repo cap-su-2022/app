@@ -30,12 +30,12 @@ export class Devices extends BaseEntityWithDisabled {
   description?: string;
 
   @Column({
-    name: 'device_type_id',
+    name: 'type',
     nullable: false,
     unique: false,
     length: 250,
     type: 'varchar',
     comment: 'Equipments description',
   })
-  deviceTypeId?: string;
+  type?: string;
 }

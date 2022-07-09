@@ -230,7 +230,7 @@ const ManageDeviceType: React.FC<any> = () => {
       label: 'Update At',
       id: 'updateAt',
       name: 'updateAt',
-      value:dayjs(deviceType.updatedAt).format('HH:mm DD/MM/YYYY'),
+      value: dayjs(deviceType.updatedAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
     },
     {

@@ -15,12 +15,15 @@ export const deleteDeviceTypeById = createAsyncThunk<
   try {
     const response = await axios.delete(`api/device-type/${payload}`);
     return await response.data;
-  } catch ({response}) {
-    if (response.status === 401 || response.status === 403) {
+  } catch (e) {
+    if (e.response.status === 401 || e.response.status === 403) {
       return thunkAPI.rejectWithValue({
-        message: 'Access token is invalid'
-      })
+        message: 'Access token is invalid',
+      });
     }
+    return thunkAPI.rejectWithValue({
+      message: e.response.data.message,
+    });
   } finally {
     thunkAPI.dispatch(toggleSpinnerOff());
   }

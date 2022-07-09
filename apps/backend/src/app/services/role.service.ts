@@ -39,7 +39,7 @@ export class RoleService {
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This device type is already deleted or disabled'
+          'This role is already deleted or disabled'
         );
       }
       return data;
@@ -88,11 +88,12 @@ export class RoleService {
   async deleteRoleById(accountId: string, id: string) {
     try {
       const data = await this.repository.findById(id);
+      const lisyAccountOfThisRole = await this.accountService.getAccountsByRoleId(id)
       if (data === undefined) {
         throw new BadRequestException(
           'This room is already deleted or disabled'
         );
-      } else if (this.accountService.getAccountsByRoleId(id) !== undefined) {
+      } else if (lisyAccountOfThisRole !== undefined && lisyAccountOfThisRole.length > 0) {
         throw new BadRequestException(
           'There are still account of this type, please change the type of those accounts before deleting role'
         );

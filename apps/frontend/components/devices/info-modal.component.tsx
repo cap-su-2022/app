@@ -1,69 +1,144 @@
-import React from "react";
-import {Button, createStyles, InputWrapper, Modal, Text, Textarea, TextInput, useMantineTheme} from "@mantine/core";
-import {useWindowDimensions} from "../../hooks/use-window-dimensions";
-import {Archive, CalendarStats, ClipboardText, Clock, FileDescription, Id, X} from "tabler-icons-react";
-import {convertDateToLocalDateString} from "../../utils/date.util";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import React, { useEffect } from 'react';
+import {
+  Button,
+  createStyles,
+  InputWrapper,
+  Modal,
+  Text,
+  Textarea,
+  TextInput,
+} from '@mantine/core';
+import {
+  Archive,
+  CalendarStats,
+  ClipboardText,
+  Clock,
+  FileDescription,
+  Id,
+  User,
+  X,
+} from 'tabler-icons-react';
+import { useAppSelector } from '../../redux/hooks';
+import dayjs from 'dayjs';
 
-interface InfoModalProps {
+interface DeviceInfoModalProps {
   isShown: boolean;
   toggleShown(): void;
   toggleDisableModalShown(): void;
 }
 
-const InfoModal: React.FC<InfoModalProps> = (props) => {
-  const {classes} = useStyles();
-  const device = useAppSelector((state) => state.device.selectedDevice);
-  const dispatch = useAppDispatch();
-  const dimension = useWindowDimensions();
+const DeviceInfoModal: React.FC<DeviceInfoModalProps> = (props) => {
+  const { classes } = useStyles();
+  const device = useAppSelector((state) => state.device.device);
 
   const ModalHeaderTitle: React.FC = () => {
-    return (
-      <Text className={classes.modalHeaderTitle}>
-        Device Information
-      </Text>
-    )
+    return <Text className={classes.modalHeaderTitle}>Device Information</Text>;
   };
 
   return (
     <>
-      <Modal title={<ModalHeaderTitle/>}
-             size={dimension.width / 2}
-             centered
-             opened={props.isShown}
-             onClose={() => props.toggleShown()}>
+      <Modal
+        title={<ModalHeaderTitle />}
+        size="lg"
+        centered
+        opened={props.isShown}
+        onClose={() => props.toggleShown()}
+      >
         <div className={classes.modalBody}>
-          <TextInput icon={<Id/>}
-                     className={classes.textInput}
-                     radius="md"
-                     label="Device ID"
-                     readOnly value={device.id}/>
-          <TextInput icon={<ClipboardText/>}
-                     className={classes.textInput}
-                     radius="md"
-                     label="Device name"
-                     readOnly value={device.name}/>
-          <Textarea icon={<FileDescription/>}
-                     className={classes.textInput}
-                     radius="md"
-                     label="Device description"
-                     readOnly value={device.description}/>
-          <div className={classes.modalInputDate}>
-            <TextInput icon={<Clock/>}
-                       className={classes.textInput}
-                       radius="md"
-                       label="Created At"
-                       readOnly
-                       value={convertDateToLocalDateString(new Date(device.createdAt))}/>
-            <InputWrapper id="device-updatedat"
-                          label="Updated At"
-                          description="The date that the device information was updated">
-              <TextInput id="device-updatedat"
-                         icon={<CalendarStats/>}
-                         className={classes.textInput}
-                         radius="md"
-                         readOnly
-                         value={convertDateToLocalDateString(new Date(device.createdAt))}
+          <InputWrapper label="Device ID" description="Unique ID of the device">
+            <TextInput
+              icon={<Id />}
+              className={classes.textInput}
+              radius="md"
+              readOnly
+              value={device.id}
+            />
+          </InputWrapper>
+          <InputWrapper label="Device name" description="Unique device name">
+            <TextInput
+              icon={<ClipboardText />}
+              className={classes.textInput}
+              radius="md"
+              readOnly
+              value={device.name}
+            />
+          </InputWrapper>
+          <InputWrapper
+            label="Device type"
+            description="Type of library in separated"
+          >
+            <TextInput
+              icon={<ClipboardText />}
+              className={classes.textInput}
+              radius="md"
+              readOnly
+              value={device.deviceTypeName}
+            />
+          </InputWrapper>
+          <InputWrapper
+            label="Device description"
+            description="Additional information of the device"
+          >
+            <Textarea
+              icon={<FileDescription />}
+              className={classes.textInput}
+              radius="md"
+              readOnly
+              value={device.description}
+            />
+          </InputWrapper>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <InputWrapper label="Created at">
+              <TextInput
+                icon={<Clock />}
+                className={classes.textInput}
+                radius="md"
+                readOnly
+                value={dayjs(device.createdAt).format('HH:mm DD/MM/YYYY')}
+              />
+            </InputWrapper>
+            <InputWrapper label="Created by">
+              <TextInput
+                icon={<User />}
+                className={classes.textInput}
+                radius="md"
+                readOnly
+                id="device-createdby"
+                value={device.createdBy}
+              />
+            </InputWrapper>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <InputWrapper label="Updated at">
+              <TextInput
+                id="device-updatedat"
+                icon={<CalendarStats />}
+                className={classes.textInput}
+                radius="md"
+                readOnly
+                value={dayjs(device.updatedAt).format('HH:mm DD/MM/YYYY')}
+              />
+            </InputWrapper>
+            <InputWrapper label="Updated by">
+              <TextInput
+                id="device-updatedby"
+                icon={<User />}
+                className={classes.textInput}
+                radius="md"
+                readOnly
+                value={device.updatedBy}
               />
             </InputWrapper>
           </div>
@@ -73,37 +148,35 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
           <Button
             onClick={() => props.toggleDisableModalShown()}
             variant="outline"
-            color={"red"}
-            leftIcon={<Archive/>}
+            color={'red'}
+            leftIcon={<Archive />}
           >
             Disable this device
           </Button>
 
-          <Button onClick={() => props.toggleShown()}
-                  leftIcon={<X/>}
-          >
+          <Button onClick={() => props.toggleShown()} leftIcon={<X />}>
             Close
           </Button>
         </div>
       </Modal>
     </>
-  )
+  );
 };
 
 const useStyles = createStyles({
   modalHeaderTitle: {
     fontWeight: 600,
-    fontSize: 22
+    fontSize: 22,
   },
   modalBody: {
     display: 'flex',
     flexDirection: 'column',
-    margin: 20
+    margin: 20,
   },
   modalFooter: {
     display: 'flex',
     justifyContent: 'space-between',
-    margin: 10
+    margin: 10,
   },
   modalInputDate: {
     display: 'flex',
@@ -111,8 +184,8 @@ const useStyles = createStyles({
     alignItems: 'center',
   },
   textInput: {
-    marginTop: 10
-  }
+    marginTop: 10,
+  },
 });
 
-export default InfoModal;
+export default DeviceInfoModal;

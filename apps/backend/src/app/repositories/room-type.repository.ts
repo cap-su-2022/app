@@ -60,7 +60,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .addSelect('aa.username', 'updatedBy')
       .addSelect('rt.updated_at', 'updatedAt')
       .innerJoin(Accounts, 'a', 'a.id = rt.created_by')
-      .innerJoin(Accounts, 'aa', 'aa.id = rt.updated_by')
+      .leftJoin(Accounts, 'aa', 'aa.id = rt.updated_by')
       .where('rt.id = :id', { id: id })
       .andWhere('rt.deleted_at IS NULL')
       .getRawOne<RoomType>();

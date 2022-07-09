@@ -22,6 +22,12 @@ export class DeviceHist extends BaseEntityWithDisabled {
   name?: string;
 
   @Column({
+    name: 'type',
+    type: 'uuid',
+  })
+  type?: string;
+
+  @Column({
     name: 'description',
     type: 'varchar',
     length: 500,
