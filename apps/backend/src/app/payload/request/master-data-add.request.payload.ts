@@ -5,7 +5,7 @@ import { Transform, TransformFnParams } from 'class-transformer';
 export class MasterDataAddRequestPayload extends PaginationParams {
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsNotEmpty({
-    message: 'Name of type can not be empty',
+    message: 'Name can not be empty',
   })
   name: string;
 

@@ -35,6 +35,7 @@ import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { Max, Min } from 'class-validator';
 import { PaginationParams } from './pagination.model';
 import { RoomsPaginationParams } from './rooms-pagination.model';
+import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
 
 @Controller('/v1/rooms')
 @ApiBearerAuth()
@@ -42,62 +43,6 @@ import { RoomsPaginationParams } from './rooms-pagination.model';
 @UseInterceptors(new PathLoggerInterceptor(RoomsController.name))
 export class RoomsController {
   constructor(private readonly service: RoomsService) {}
-
-  @ApiOperation({
-    summary: 'Create a new library room',
-    description: 'Create new library room with the provided payload',
-  })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Successfully created a new library room',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Request payload for libary room is not validated',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @Post('add')
-  @UsePipes(new AddRoomValidation())
-  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
-  addRoom(
-    @User() user: KeycloakUserInstance,
-    @Body() room: AddRoomRequest
-  ): Promise<Rooms> {
-    return this.service.add(user, room);
-  }
-
-  @Get('find/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Retrieving the library room by id',
-    description: 'Retrieving the library room by provided id',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully retrieved the library room',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while retrieving the library room',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getRoomById(@Param() payload: { id: string }): Promise<Rooms> {
-    return this.service.findById(payload.id);
-  }
 
   @Get()
   @UsePipes(new RoomsValidation())
@@ -127,50 +72,6 @@ export class RoomsController {
     return this.service.getAll(payload);
   }
 
-  @Get('disabled')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'One or more payload parameters are invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully fetched disabled rooms',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getDisableRooms(@Query('search') search = ''): Promise<Rooms[]> {
-    return this.service.getDisabledRooms(search);
-  }
-
-  @Get('deleted')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'One or more payload parameters are invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully fetched deleted rooms',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getDeletedRooms(@Query('search') search = ''): Promise<Rooms[]> {
-    return this.service.getDeletedRooms(search);
-  }
-
   @Get('by-room-type')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
@@ -193,19 +94,19 @@ export class RoomsController {
     return this.service.getRoomsByRoomType(roomTypeId);
   }
 
-  @Put('restore-deleted/:id')
+  @Get('find/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Restore the deleted library room by id',
-    description: 'Restore the deleted library room by provided id',
+    summary: 'Retrieving the library room by id',
+    description: 'Retrieving the library room by provided id',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully restored the deleted library room',
+    description: 'Successfully retrieved the library room',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Error while restoring the deleted the library room',
+    description: 'Error while retrieving the library room',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -215,37 +116,38 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  restoreDeletedRoomById(@Param() payload: { id: string }) {
-    return this.service.handleRestoreDeletedRoomById(payload.id);
+  getRoomById(@Param() payload: { id: string }): Promise<Rooms> {
+    return this.service.findById(payload.id);
   }
 
-  @Put('restore-disabled/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Post('add')
+  @UsePipes(new AddRoomValidation())
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Restore the disabled library room by id',
-    description: 'Restore the disabled library room by provided id',
+    summary: 'Create a new library room',
+    description: 'Create new library room with the provided payload',
   })
   @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully restored the disabled library room',
+    status: HttpStatus.CREATED,
+    description: 'Successfully created a new library room',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Error while restoring the disabled the library room',
+    description: 'Request payload for libary room is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  restoreDisabledRoomById(
+  addRoom(
     @User() user: KeycloakUserInstance,
-    @Param() payload: { id: string }
-  ) {
-    return this.service.handleRestoreDisabledRoomById(user.account_id, payload.id);
+    @Body() room: DataAddRequestPayload
+  ): Promise<Rooms> {
+    return this.service.add(user, room);
   }
 
   @Put('update/:id')
@@ -273,7 +175,7 @@ export class RoomsController {
   updateRoomById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string },
-    @Body() body: UpdateRoomRequest
+    @Body() body: DataAddRequestPayload
   ) {
     return this.service.updateById(user.account_id, payload.id, body);
   }
@@ -304,6 +206,60 @@ export class RoomsController {
     return this.service.disableById(user.account_id, id);
   }
 
+  @Get('disabled')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched disabled rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getDisableRooms(@Query('search') search = ''): Promise<Rooms[]> {
+    return this.service.getDisabledRooms(search);
+  }
+
+  @Put('restore-disabled/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Restore the disabled library room by id',
+    description: 'Restore the disabled library room by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully restored the disabled library room',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while restoring the disabled the library room',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  restoreDisabledRoomById(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string }
+  ) {
+    return this.service.handleRestoreDisabledRoomById(
+      user.account_id,
+      payload.id
+    );
+  }
+
   @Delete(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
@@ -331,5 +287,59 @@ export class RoomsController {
     @Param() payload: { id: string }
   ) {
     return this.service.deleteById(user.account_id, payload.id);
+  }
+
+  @Get('deleted')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched deleted rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getDeletedRooms(@Query('search') search = ''): Promise<Rooms[]> {
+    return this.service.getDeletedRooms(search);
+  }
+
+  @Put('restore-deleted/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Restore the deleted library room by id',
+    description: 'Restore the deleted library room by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully restored the deleted library room',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while restoring the deleted the library room',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  restoreDeletedRoomById(
+    @Param() payload: { id: string },
+    @User() user: KeycloakUserInstance
+  ) {
+    return this.service.handleRestoreDeletedRoomById(
+      user.account_id,
+      payload.id
+    );
   }
 }

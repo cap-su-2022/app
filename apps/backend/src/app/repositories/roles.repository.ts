@@ -91,9 +91,15 @@ export class RolesRepository extends Repository<Roles> {
     );
   }
 
-  updateById(id: string, accountId: string, payload: any) {
+  async updateById(id: string, accountId: string, payload: any) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: id,
+      }
+    })
     return this.save(
       {
+        ...oldData,
         id: id,
         name: payload.name.trim(),
         description: payload.description,
@@ -111,6 +117,8 @@ export class RolesRepository extends Repository<Roles> {
       .update({
         deletedAt: new Date(),
         deletedBy: accountId,
+        updatedAt: new Date(),
+        updatedBy: accountId,
       })
       .where('role.id = :id', { id: id })
       .useTransaction(true)

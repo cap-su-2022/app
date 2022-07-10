@@ -5,18 +5,20 @@ import { DeviceType, DeviceTypeHist } from '../models';
 @CustomRepository(DeviceTypeHist)
 export class DeviceTypeHistRepository extends Repository<any> {
   async createNew(payload: DeviceType): Promise<DeviceTypeHist> {
-    const type = payload.id;
+    const deviceTypeId = payload.id;
     delete payload.id;
-    return this.save({
-      type: type,
+    const data = await this.save({
+      deviceTypeId: deviceTypeId,
       ...payload,
     });
+    console.log("AAAAAAAAAAAA: ", data);
+    return data;
   }
 
   async deleteAllHist(id: string) {
     return await this.createQueryBuilder('device_type_hist')
       .delete()
-      .where('device_type_hist.type = :id', { id: id })
+      .where('device_type_hist.device_type_id = :id', { id: id })
       .useTransaction(true)
       .execute();
   }

@@ -34,11 +34,15 @@ export class DeviceTypeService {
 
   async getDeviceTypeById(id: string) {
     try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Device type does not found with the provided id'
+        );
+      }
       const data = await this.repository.findById(id);
       if (data === undefined) {
-        throw new BadRequestException(
-          'This device type is already deleted or disabled'
-        );
+        throw new BadRequestException('This device type is already deleted');
       }
       return data;
     } catch (e) {
@@ -76,10 +80,14 @@ export class DeviceTypeService {
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This device type is already deleted or disabled'
+          'This device type is already deleted'
         );
       }
-      const deviceType = await this.repository.updateById(accountId, id, payload);
+      const deviceType = await this.repository.updateById(
+        accountId,
+        id,
+        payload
+      );
       await this.histService.createNew(deviceType);
       return deviceType;
     } catch (e) {
@@ -90,13 +98,25 @@ export class DeviceTypeService {
 
   async deleteDeviceTypeById(accountId: string, id: string) {
     try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Device type does not found with the provided id'
+        );
+      }
       const data = await this.repository.findById(id);
-      const listDeviceOfThisType = await this.deviceService.getDevicesByDeviceType(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This type is already deleted or disabled'
+          'This type is already deleted'
         );
-      } else if ( listDeviceOfThisType !== undefined && listDeviceOfThisType.length > 0) {
+      }
+      const listDeviceOfThisType =
+        await this.deviceService.getDevicesByDeviceType(id);
+
+      if (
+        listDeviceOfThisType !== undefined &&
+        listDeviceOfThisType.length > 0
+      ) {
         throw new BadRequestException(
           'There are still device of this type, please change the type of those devices before deleting type'
         );
@@ -122,10 +142,10 @@ export class DeviceTypeService {
 
   async restoreDeletedDeviceTypeById(accountId: string, id: string) {
     try {
-      const isExisted = this.repository.existsById(id);
+      const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
         throw new BadRequestException(
-          'Device type does not exist with the provided id'
+          'Device type does not found with the provided id'
         );
       }
       const data = await this.repository.findById(id);
@@ -134,7 +154,10 @@ export class DeviceTypeService {
           'This device type ID is now active. Cannot restore it'
         );
       }
-      const deviceType = await this.repository.restoreDeletedById(accountId, id);
+      const deviceType = await this.repository.restoreDeletedById(
+        accountId,
+        id
+      );
       await this.histService.createNew(deviceType);
       return deviceType;
     } catch (e) {
@@ -145,6 +168,12 @@ export class DeviceTypeService {
 
   async permanentlyDeleteDeviceTypeById(id: string) {
     try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Device type does not found with the provided id'
+        );
+      }
       const data = await this.repository.findById(id);
       if (data !== undefined) {
         throw new BadRequestException(

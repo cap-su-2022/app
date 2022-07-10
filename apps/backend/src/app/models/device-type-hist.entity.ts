@@ -9,6 +9,12 @@ export class DeviceTypeHist extends BaseEntity {
   id?: string;
 
   @Column({
+    name: 'device_type_id',
+    type: 'uuid',
+  })
+  deviceTypeId?: string;
+
+  @Column({
     name: 'name',
     type: 'varchar',
     length: 100,

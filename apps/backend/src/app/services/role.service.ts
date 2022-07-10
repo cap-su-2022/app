@@ -36,10 +36,16 @@ export class RoleService {
 
   async getRoleById(id: string) {
     try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Role does not found with the provided id'
+        );
+      }
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This role is already deleted or disabled'
+          'This role is already deleted'
         );
       }
       return data;
@@ -91,7 +97,7 @@ export class RoleService {
       const lisyAccountOfThisRole = await this.accountService.getAccountsByRoleId(id)
       if (data === undefined) {
         throw new BadRequestException(
-          'This room is already deleted or disabled'
+          'This room is already deleted'
         );
       } else if (lisyAccountOfThisRole !== undefined && lisyAccountOfThisRole.length > 0) {
         throw new BadRequestException(
@@ -137,7 +143,7 @@ export class RoleService {
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
-        'Error occurred while restore the delete status of this role'
+        e.message ?? 'Error occurred while restore the delete status of this role'
       );
     }
   }
