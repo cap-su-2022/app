@@ -100,13 +100,19 @@ export class RoomTypeRepository extends Repository<RoomType> {
     }
   }
 
-  updateById(
+  async updateById(
     accountId: string,
     roomTypeId: string,
     payload: MasterDataAddRequestPayload
   ) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: roomTypeId,
+      }
+    })
     return this.save(
       {
+        ...oldData,
         id: roomTypeId,
         name: payload.name.trim(),
         description: payload.description,

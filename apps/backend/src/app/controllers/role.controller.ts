@@ -29,6 +29,7 @@ import {
 import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
 import { Role } from '../enum/roles.enum';
 import { Roles } from '../decorators/role.decorator';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 
 @Controller('/v1/roles')
 @ApiBearerAuth()
@@ -143,7 +144,10 @@ export class RoleController {
     summary: 'Add role',
     description: 'Add role',
   })
-  addRole(@Body() body, @User() user: KeycloakUserInstance) {
+  addRole(
+    @Body() body: MasterDataAddRequestPayload,
+    @User() user: KeycloakUserInstance
+  ) {
     return this.service.addRole(body, user.account_id);
   }
 
@@ -170,7 +174,7 @@ export class RoleController {
   })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   updateRoleById(
-    @Body() body,
+    @Body() body: MasterDataAddRequestPayload,
     @User() user: KeycloakUserInstance,
     @Param('id') id: string
   ) {

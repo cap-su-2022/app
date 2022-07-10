@@ -75,13 +75,19 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
     );
   }
 
-  updateById(
+  async updateById(
     accountId: string,
     deviceTypeId: string,
     payload: MasterDataAddRequestPayload
   ) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: deviceTypeId,
+      }
+    })
     return this.save(
       {
+        ...oldData,
         id: deviceTypeId,
         name: payload.name.trim(),
         description: payload.description,

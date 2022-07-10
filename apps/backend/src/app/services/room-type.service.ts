@@ -39,10 +39,16 @@ export class RoomTypeService {
 
   async getRoomTypeById(id: string): Promise<RoomType> {
     try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Room type does not found with the provided id'
+        );
+      }
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This room is already deleted or disabled'
+          'This room is already deleted'
         );
       }
       return data;
@@ -81,10 +87,14 @@ export class RoomTypeService {
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This room is already deleted or disabled'
+          'This room is already deleted'
         );
       }
-      const roomType = await this.repository.updateById(accountId, id, updatePayload);
+      const roomType = await this.repository.updateById(
+        accountId,
+        id,
+        updatePayload
+      );
       await this.histService.createNew(roomType);
       return roomType;
     } catch (e) {
@@ -95,13 +105,22 @@ export class RoomTypeService {
 
   async deleteRoomTypeById(accountId: string, id: string) {
     try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Room type does not found with the provided id'
+        );
+      }
       const data = await this.repository.findById(id);
-      const listRoomOfThisType = await this.roomService.getRoomsByRoomType(id)
+      const listRoomOfThisType = await this.roomService.getRoomsByRoomType(id);
       if (data === undefined) {
         throw new BadRequestException(
           'This room type is already deleted or disabled'
         );
-      } else if (listRoomOfThisType !== undefined && listRoomOfThisType.length > 0 ) {
+      } else if (
+        listRoomOfThisType !== undefined &&
+        listRoomOfThisType.length > 0
+      ) {
         throw new BadRequestException(
           'There are still rooms of this type, please change the type of those rooms before deleting type'
         );
@@ -128,10 +147,10 @@ export class RoomTypeService {
 
   async restoreDeletedRoomTypeById(accountId: string, id: string) {
     try {
-      const isExisted = this.repository.existsById(id);
+      const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
         throw new BadRequestException(
-          'Room type does not exist with the provided id'
+          'Room type does not found with the provided id'
         );
       }
       const data = await this.repository.findById(id);
@@ -151,6 +170,12 @@ export class RoomTypeService {
 
   async permanentDeleteRoomTypeById(id: string) {
     try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Room type does not found with the provided id'
+        );
+      }
       const data = await this.repository.findById(id);
       if (data !== undefined) {
         throw new BadRequestException(
