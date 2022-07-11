@@ -41,7 +41,7 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
     dispatch(disableAccountById(selectedAccountId)).then(() => {
       props.toggleShown();
       props.toggleInforModalShown();
-      dispatch(fetchDisabledAccounts());
+      dispatch(fetchDisabledAccounts(''));
       dispatch(fetchAccounts(props.pagination));
       listRequest.map((request) => dispatch(cancelBooking(request.id)));
     });

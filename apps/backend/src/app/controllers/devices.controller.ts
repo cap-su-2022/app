@@ -26,7 +26,7 @@ import { DevicesValidation } from '../pipes/validation/devices.validation';
 import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
-import { Devices, Rooms } from '../models';
+import { Devices} from '../models';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { User } from '../decorators/keycloak-user.decorator';
 import { DevicesPaginationParams } from './devices-pagination.model';
@@ -100,13 +100,13 @@ export class DevicesController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully fetched deleted rooms',
+    description: 'Successfully fetched deleted devices',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getRoomsByRoomType(@Query('type') deviceTypeId = ''): Promise<Devices[]> {
+  getDevicesByDeviceType(@Query('type') deviceTypeId = ''): Promise<Devices[]> {
     return this.service.getDevicesByDeviceType(deviceTypeId);
   }
 

@@ -27,6 +27,7 @@ export class DataAddRequestPayload extends PaginationParams {
     example: 'New entity',
   })
   @MaxLength(500)
+  @IsOptional()
   @IsString()
   description?: string;
 

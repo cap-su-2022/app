@@ -36,6 +36,9 @@ import { fetchAccountById } from '../../redux/features/account/thunk/fetch-by-id
 import RestoreDisabledModal from './restore-disabled.modal.component';
 import AccountUpdateModal from './update-modal.component';
 import { updateAccountById } from '../../redux/features/account/thunk/update-account-by-id';
+import AddAccountModal from './add-modal.component';
+import RestoreDeletedModal from './restore-deleted.modal.component';
+import DeleteModal from './delete-modal.component';
 
 const UpdateAccountValidation = Yup.object().shape({
   name: Yup.string()
@@ -43,10 +46,7 @@ const UpdateAccountValidation = Yup.object().shape({
     .min(1, 'Minimum name is 1 character')
     .max(100, 'Maximum name is 100 characters.')
     .required('Name is required'),
-  description: Yup.string().max(
-    500,
-    'Maximum description is 500 characters'
-  ),
+  description: Yup.string().max(500, 'Maximum description is 500 characters'),
 });
 
 const defaultPagination = {
@@ -191,65 +191,6 @@ function AccountsManagement(props: any) {
     },
   };
 
-//   const infoFields = [
-//     {
-//       label: 'Id',
-//       id: 'id',
-//       name: 'id',
-//       value: room.id,
-//       readOnly: true,
-//     },
-//     {
-//       label: 'Name',
-//       id: 'name',
-//       name: 'name',
-//       value: room.name,
-//       readOnly: true,
-//     },
-//     {
-//       label: 'Type',
-//       id: 'type',
-//       name: 'type',
-//       value: room.roomTypeName,
-//       readOnly: true,
-//     },
-//     {
-//       label: 'Create By',
-//       id: 'createdBy',
-//       name: 'createdBy',
-//       value: room.createdBy,
-//       readOnly: true,
-//     },
-//     {
-//       label: 'Create At',
-//       id: 'createdAt',
-//       name: 'createdAt',
-//       value: dayjs(room.createdAt).format('HH:mm DD/MM/YYYY'),
-//       readOnly: true,
-//     },
-//     {
-//       label: 'Update By',
-//       id: 'updatedBy',
-//       name: 'updatedBy',
-//       value: room.updatedBy,
-//       readOnly: true,
-//     },
-//     {
-//       label: 'Update At',
-//       id: 'updatedAt',
-//       name: 'updatedAt',
-//       value: dayjs(room.updatedAt).format('HH:mm DD/MM/YYYY'),
-//       readOnly: true,
-//     },
-//     {
-//       label: 'Description',
-//       id: 'description',
-//       name: 'description',
-//       value: room.description,
-//       readOnly: true,
-//     },
-//   ];
-
   const handleAddModalClose = () => {
     setAddShown(!isAddShown);
   };
@@ -301,7 +242,7 @@ function AccountsManagement(props: any) {
           toggleShown={() => setRestoreDisabledShown(!isRestoreDisabledShown)}
           pagination={pagination}
         />
-        <RestoreDeletedRoomModal
+        <RestoreDeletedModal
           isShown={isRestoreDeletedShown}
           toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
           pagination={pagination}
@@ -329,7 +270,7 @@ function AccountsManagement(props: any) {
               toggleInforModalShown={() => setInfoShown(!isInfoShown)}
               pagination={pagination}
             />
-            <DeleteRoomModal
+            <DeleteModal
               isShown={isDeleteShown}
               toggleShown={() => setDeleteShown(!isDeleteShown)}
               pagination={pagination}
@@ -347,11 +288,11 @@ function AccountsManagement(props: any) {
           <NoDataFound />
         )}
 
-        <AddRoomModal
+        <AddAccountModal
           isShown={isAddShown}
           pagination={pagination}
           toggleShown={() => handleAddModalClose()}
-          roomTypes={roleNames}
+          listRole={roleNames}
         />
         {accounts.meta ? (
           <TableFooter

@@ -11,19 +11,15 @@ import {
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { RotateClockwise, Search, Trash } from 'tabler-icons-react';
-import { restoreDisabledRoom } from '../../redux/features/room/thunk/restore-disabled.thunk';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
-import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-id';
 import dayjs from 'dayjs';
 import { useDebouncedValue } from '@mantine/hooks';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
 import NoDataFound from '../no-data-found';
 import { fetchDisabledAccounts } from '../../redux/features/account/thunk/fetch-disabled.thunk';
 import { restoreDisabledAccount } from '../../redux/features/account/thunk/restore-disabled.thunk';
 import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 import { deleteAccountById } from '../../redux/features/account/thunk/delete-by-id';
+import { fetchDeletedAccounts } from '../../redux/features/account/thunk/fetch-deleted.thunk';
 
 interface RestoreDisabledModalProps {
   isShown: boolean;
@@ -62,15 +58,15 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
   const handleDeleteAccount = (id: string) => {
     dispatch(deleteAccountById(id))
       .unwrap()
-      .then(() => dispatch(fetchRooms(props.pagination)))
+      .then(() => dispatch(fetchAccounts(props.pagination)))
       .then(() =>
-        dispatch(fetchDisabledRooms(search))
+        dispatch(fetchDisabledAccounts(search))
           .unwrap()
-          .then((disabledRooms) =>
-            disabledRooms.length < 1 ? props.toggleShown() : null
+          .then((disabledAccounts) =>
+            disabledAccounts.length < 1 ? props.toggleShown() : null
           )
           .then(() => {
-            dispatch(fetchDeletedRooms(''));
+            dispatch(fetchDeletedAccounts(''));
           })
       );
   };
@@ -116,7 +112,7 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
 
   const ModalHeaderTitle: React.FC = () => {
     return (
-      <Text className={classes.modalHeaderTitle}>Restore Disabled Rooms</Text>
+      <Text className={classes.modalHeaderTitle}>Restore Disabled Accounts</Text>
     );
   };
 
@@ -151,8 +147,8 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
                 >
                   <tr>
                     <th>STT</th>
-                    <th>Name</th>
-                    <th>Type</th>
+                    <th>Username</th>
+                    <th>Fullname</th>
                     <th>Disabled at</th>
                     <th>Disabled by</th>
                     <th>Action</th>

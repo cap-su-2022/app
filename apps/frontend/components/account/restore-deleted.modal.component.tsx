@@ -1,41 +1,73 @@
-import React, { useState } from 'react';
-import {createStyles, Table, ScrollArea, Modal, Text, Button} from '@mantine/core';
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {RotateClockwise} from "tabler-icons-react";
-import {fetchRooms} from "../../redux/features/room/thunk/fetch-rooms";
-import {fetchDeletedRooms} from "../../redux/features/room/thunk/fetch-deleted-rooms";
-import {restoreDeletedRoom} from "../../redux/features/room/thunk/restore-deleted.thunk";
+import React, { useEffect, useState } from 'react';
+import {
+  createStyles,
+  Table,
+  ScrollArea,
+  Modal,
+  Text,
+  Button,
+  InputWrapper,
+  TextInput,
+} from '@mantine/core';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { RotateClockwise, Search } from 'tabler-icons-react';
+import { PagingParams } from '../../models/pagination-params/paging-params.model';
+import dayjs from 'dayjs';
+import { useDebouncedValue } from '@mantine/hooks';
+import NoDataFound from '../no-data-found';
+import { fetchDeletedAccounts } from '../../redux/features/account/thunk/fetch-deleted.thunk';
+import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
+import { restoreDeletedAccount } from '../../redux/features/account/thunk/restore-deleted.thunk';
 
 interface RestoreDeletedModalProps {
   isShown: boolean;
   toggleShown(): void;
+  pagination: PagingParams;
 }
 
-const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
+const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
+  props
+) => {
   const { classes, cx } = useStyles();
-  const deletedRooms = useAppSelector((state) => state.room.deletedRooms);
+  const deletedAccounts = useAppSelector((state) => state.account.deletedAccounts);
+  console.log(deletedAccounts)
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
+  const [search, setSearch] = useState<string>('');
+  const [searchDebounced] = useDebouncedValue<string>(search, 400);
 
-  const handleRestoreDeletedRoom = (id: string) => {
-    dispatch(restoreDeletedRoom(id)).unwrap()
-      .then(() => dispatch(fetchDeletedRooms()))
-      .then(() => dispatch(fetchRooms()));
-  }
-  const rows = deletedRooms?.map((row, index) => (
+  useEffect(() => {
+    dispatch(fetchDeletedAccounts(search));
+  }, [searchDebounced]);
+
+  const handleRestoreDeletedAccount = (id: string) => {
+    dispatch(restoreDeletedAccount(id))
+      .unwrap()
+      .then(() => dispatch(fetchDeletedAccounts('')))
+      .then(() => dispatch(fetchAccounts(props.pagination)));
+  };
+  const rows = deletedAccounts?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
-      <td>{row.id}</td>
-      <td>{row.name}</td>
-      <td>{new Date(row.updatedAt).toLocaleDateString() + ' ' + new Date(row.updatedAt).toLocaleTimeString()}</td>
-      <td style={{
-        display: 'flex',
-        flexDirection: 'column',
-
-      }}>
-        <Button onClick={() => handleRestoreDeletedRoom(row.id)} style={{
-          margin: 5
-        }} variant="outline" color="green" leftIcon={<RotateClockwise/>}>
+      <td>{row.username}</td>
+      <td>{row.fullname}</td>
+      <td>{dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
+      <td>{row.deletedBy}</td>
+      <td
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <Button
+          onClick={() => handleRestoreDeletedAccount(row.id)}
+          style={{
+            margin: 5,
+          }}
+          variant="outline"
+          color="green"
+          leftIcon={<RotateClockwise />}
+        >
           Restore
         </Button>
       </td>
@@ -44,44 +76,69 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
 
   const ModalHeaderTitle: React.FC = () => {
     return (
-      <Text style={{
-        fontWeight: '600',
-        fontSize: 22
-      }}>Restore Deleted Rooms</Text>
-    )
+      <Text
+        style={{
+          fontWeight: '600',
+          fontSize: 22,
+        }}
+      >
+        Restore Deleted Accounts
+      </Text>
+    );
   };
 
   return (
-    <Modal opened={props.isShown}
-           onClose={() => props.toggleShown()}
-           centered
-           size="85%"
-    title={<ModalHeaderTitle/>}
-    closeOnClickOutside={false}
-    closeOnEscape={false}>
-      <ScrollArea sx={{ height: 300 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
-        <Table sx={{ minWidth: 700 }}>
-          <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
-          <tr>
-            <th>STT</th>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Updated At</th>
-            <th>Action</th>
-          </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </ScrollArea>
+    <Modal
+      opened={props.isShown}
+      onClose={() => props.toggleShown()}
+      centered
+      size="70%"
+      title={<ModalHeaderTitle />}
+      closeOnClickOutside={true}
+      closeOnEscape={false}
+    >
+      <InputWrapper label="Search">
+        <TextInput
+          onChange={(e) => setSearch(e.target.value)}
+          icon={<Search />}
+        />
+      </InputWrapper>
+      {deletedAccounts.length > 0 ? (
+        <>
+          <ScrollArea
+            sx={{ height: 500 }}
+            onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+          >
+            <Table sx={{ minWidth: 700 }}>
+              <thead
+                className={cx(classes.header, { [classes.scrolled]: scrolled })}
+              >
+                <tr>
+                  <th>STT</th>
+                  <th>Username</th>
+                  <th>Fullname</th>
+                  <th>Delete At</th>
+                  <th>Delete By</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>{rows}</tbody>
+            </Table>
+          </ScrollArea>
+        </>
+      ) : (
+        <NoDataFound />
+      )}
     </Modal>
   );
-}
+};
 
 const useStyles = createStyles((theme) => ({
   header: {
     position: 'sticky',
     top: 0,
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+    backgroundColor:
+      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
     transition: 'box-shadow 150ms ease',
 
     '&::after': {
@@ -91,7 +148,9 @@ const useStyles = createStyles((theme) => ({
       right: 0,
       bottom: 0,
       borderBottom: `1px solid ${
-        theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[3]
+          : theme.colors.gray[2]
       }`,
     },
   },

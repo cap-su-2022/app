@@ -163,21 +163,6 @@ export class RoomsRepository extends Repository<Rooms> {
       .getRawMany<Rooms>();
   }
 
-  findDeletedRooms(search: string) {
-    return this.createQueryBuilder(`rooms`)
-      .select('rooms.id', 'id')
-      .addSelect('rooms.name', 'name')
-      .addSelect('rooms.deleted_at', 'deletedAt')
-      .addSelect('a.username', 'deletedBy')
-      .addSelect('rt.name', 'roomTypeName')
-      .innerJoin(Accounts, 'a', 'rooms.deleted_by = a.id')
-      .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
-      .where(`rooms.deleted_at IS NOT NULL`)
-      .andWhere(`rooms.disabled_at IS NULL`)
-      .andWhere('rooms.name ILIKE :name', { name: `%${search.trim()}%` })
-      .getRawMany<Rooms>();
-  }
-
   getRoomsByRoomType(roomTypeId: string) {
     console.log('AAAAAAA: ', roomTypeId);
     return this.createQueryBuilder(`rooms`)
@@ -279,6 +264,21 @@ export class RoomsRepository extends Repository<Rooms> {
         },
       });
     }
+  }
+
+  findDeletedRooms(search: string) {
+    return this.createQueryBuilder(`rooms`)
+      .select('rooms.id', 'id')
+      .addSelect('rooms.name', 'name')
+      .addSelect('rooms.deleted_at', 'deletedAt')
+      .addSelect('a.username', 'deletedBy')
+      .addSelect('rt.name', 'roomTypeName')
+      .innerJoin(Accounts, 'a', 'rooms.deleted_by = a.id')
+      .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
+      .where(`rooms.deleted_at IS NOT NULL`)
+      .andWhere(`rooms.disabled_at IS NULL`)
+      .andWhere('rooms.name ILIKE :name', { name: `%${search.trim()}%` })
+      .getRawMany<Rooms>();
   }
 
   async restoreDeletedRoomById(accountId: string, id: string){

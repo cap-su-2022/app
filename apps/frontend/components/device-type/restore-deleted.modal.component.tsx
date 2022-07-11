@@ -6,9 +6,11 @@ import {
   Modal,
   Text,
   Button,
+  InputWrapper,
+  TextInput,
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {Ban, Check, RotateClockwise, X} from 'tabler-icons-react';
+import {Ban, Check, RotateClockwise, Search, X} from 'tabler-icons-react';
 import {
   restoreDeletedDeviceTypeById,
   permanentlyDeleteDeviceTypeById,
@@ -20,6 +22,7 @@ import dayjs from 'dayjs';
 import { showNotification } from '@mantine/notifications';
 import PermanentDeleteModal from '../actions/modal/permanant-delete-modal.component';
 import NoDataFound from "../no-data-found";
+import { useDebouncedValue } from '@mantine/hooks';
 
 
 interface RestoreDeletedModalProps {
@@ -37,10 +40,13 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   const [scrolled, setScrolled] = useState(false);
   const [isPermanentDeleteShown, setPermanentDeleteShown] = useState(false);
   const [id, setId] = useState('');
+  const [search, setSearch] = useState<string>('');
+  const [searchDebounced] = useDebouncedValue<string>(search, 400);
 
   useEffect(() => {
-    dispatch(fetchDeletedDeviceTypes());
-  }, []);
+    dispatch(fetchDeletedDeviceTypes(search));
+  }, [searchDebounced]);
+
 
   const handleRestoreDeletedRoomType = (id: string) => {
     dispatch(restoreDeletedDeviceTypeById(id))
@@ -67,7 +73,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
       )
       .then(() => {
         props.toggleShown();
-        dispatch(fetchDeletedDeviceTypes());
+        dispatch(fetchDeletedDeviceTypes(''));
         dispatch(fetchDeviceTypes(props.pagination));
       })
   };
@@ -85,7 +91,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   const handlePermanentDeleted = (id: string) => {
     dispatch(permanentlyDeleteDeviceTypeById(id))
       .unwrap()
-      .then(() => dispatch(fetchDeletedDeviceTypes()))
+      .then(() => dispatch(fetchDeletedDeviceTypes('')))
       .then(() =>
         showNotification({
           id: 'delete-device-type',
@@ -165,11 +171,17 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
       opened={props.isShown}
       onClose={() => props.toggleShown()}
       centered
-      size="85%"
+      size="70%"
       title={<ModalHeaderTitle/>}
       closeOnClickOutside={true}
       closeOnEscape={false}
     >
+      <InputWrapper label="Search">
+        <TextInput
+          onChange={(e) => setSearch(e.target.value)}
+          icon={<Search />}
+        />
+      </InputWrapper>
       {deletedDeviceTypes.length > 0 ? (
         <ScrollArea
           sx={{height: 500}}

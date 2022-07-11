@@ -9,9 +9,17 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { Roles } from '../models/role.entity';
 import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
+import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
 
 @CustomRepository(Accounts)
 export class AccountRepository extends Repository<Accounts> {
+  existsById(id: string): Promise<boolean> {
+    return this.createQueryBuilder('accounts')
+      .select('COUNT(1)', 'count')
+      .where('accounts.id = :id', { id: id })
+      .getRawOne()
+      .then((data) => data['count'] > 0);
+  }
 
   async checkIfAccountIsDeletedById(id: string): Promise<boolean> {
     return this.createQueryBuilder('accounts')
@@ -19,6 +27,14 @@ export class AccountRepository extends Repository<Accounts> {
       .where('accounts.id = :id', { id: id })
       .getRawOne<boolean>()
       .then((data) => (data ? data['deleted_at'] : true));
+  }
+
+  async checkIfAccountIsDisabledById(id: string): Promise<boolean> {
+    return this.createQueryBuilder('accounts')
+      .select('accounts.disabled_at')
+      .where('accounts.id = :id', { id: id })
+      .getRawOne<boolean>()
+      .then((data) => (data ? data['disabled_at'] : true));
   }
 
   findKeycloakIdByGoogleId(googleId: string): Promise<string> {
@@ -29,6 +45,14 @@ export class AccountRepository extends Repository<Accounts> {
       .then((data) => data?.keycloakId);
   }
 
+  async isExistedByUsername(username: string): Promise<boolean> {
+    return this.createQueryBuilder('accounts')
+      .select('COUNT(accounts.username)')
+      .where('accounts.username = :username', { username })
+      .getRawOne()
+      .then((data) => data['count'] > 0);
+  }
+
   async checkIfUserAlreadyHasAvatar(id: string): Promise<boolean> {
     const data = await this.createQueryBuilder('accounts')
       .select('COUNT(accounts.avatar)')
@@ -37,15 +61,24 @@ export class AccountRepository extends Repository<Accounts> {
     return data.length > 0;
   }
 
-  addAvatarURLById(avatarUrl: string, id: string) {
+  findByKeycloakId(keycloakId: string): Promise<Accounts> {
     return this.createQueryBuilder('accounts')
-      .update()
-      .set({
-        avatar: avatarUrl,
-      })
-      .where('accounts.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
+      .select([
+        'accounts.id',
+        'accounts.keycloak_id',
+        'accounts.google_id',
+        'accounts.username',
+        'accounts.email',
+        'accounts.fullname',
+        'accounts.phone',
+        'accounts.avatar',
+      ])
+      .addSelect('r.name', 'role')
+      .innerJoin(Roles, 'r', 'r.id = accounts.role_id')
+      .where('accounts.keycloak_id = :keycloakId', { keycloakId: keycloakId })
+      .andWhere('accounts.disabled_at IS NULL')
+      .andWhere('accounts.deleted_at IS NULL')
+      .getOneOrFail();
   }
 
   findByGoogleId(googleId: string): Promise<Accounts> {
@@ -88,36 +121,6 @@ export class AccountRepository extends Repository<Accounts> {
     });
   }
 
-  findByKeycloakId(keycloakId: string): Promise<Accounts> {
-    return this.createQueryBuilder('accounts')
-      .select([
-        'accounts.id',
-        'accounts.keycloak_id',
-        'accounts.google_id',
-        'accounts.username',
-        'accounts.email',
-        'accounts.fullname',
-        'accounts.phone',
-        'accounts.avatar',
-      ])
-      .addSelect('r.name', 'role')
-      .innerJoin(Roles, 'r', 'r.id = accounts.role_id')
-      .where('accounts.keycloak_id = :keycloakId', { keycloakId: keycloakId })
-      .andWhere('accounts.disabled_at IS NULL')
-      .andWhere('accounts.deleted_at IS NULL')
-      .getOneOrFail();
-  }
-
-  updateGoogleIdByEmail(userGoogleId: string, email: string) {
-    return this.createQueryBuilder('accounts')
-      .update({
-        googleId: userGoogleId,
-      })
-      .where('accounts.email = :email', { email: email })
-      .useTransaction(true)
-      .execute();
-  }
-
   getAccountsByRoleId(roleId: string) {
     return this.createQueryBuilder(`account`)
       .select('account.id', 'id')
@@ -144,27 +147,27 @@ export class AccountRepository extends Repository<Accounts> {
     return result.size;
   }
 
-  search(
-    payload: RepositoryPaginationPayload
-  ): Promise<Pagination<Accounts, IPaginationMeta>> {
-    const query = this.createQueryBuilder(`accounts`)
-      .where(`accounts.name LIKE :name`, { name: `%${payload.search}%` })
-      .orWhere(`accounts.description LIKE :description`, {
-        description: `%${payload.search}%`,
-      })
-      .andWhere('accounts.disabled_at IS NULL')
-      .andWhere('accounts.deleted_at IS NULL')
-      .orWhere(`accounts.username = :username`, {
-        username: `%${payload.search}%`,
-      })
-      .orWhere(`accounts.description = :description`, {
-        description: `%${payload.search}%`,
-      });
-    return paginateRaw<Accounts>(query, {
-      page: payload.page,
-      limit: payload.limit,
-    });
-  }
+  // search(
+  //   payload: RepositoryPaginationPayload
+  // ): Promise<Pagination<Accounts, IPaginationMeta>> {
+  //   const query = this.createQueryBuilder(`accounts`)
+  //     .where(`accounts.name LIKE :name`, { name: `%${payload.search}%` })
+  //     .orWhere(`accounts.description LIKE :description`, {
+  //       description: `%${payload.search}%`,
+  //     })
+  //     .andWhere('accounts.disabled_at IS NULL')
+  //     .andWhere('accounts.deleted_at IS NULL')
+  //     .orWhere(`accounts.username = :username`, {
+  //       username: `%${payload.search}%`,
+  //     })
+  //     .orWhere(`accounts.description = :description`, {
+  //       description: `%${payload.search}%`,
+  //     });
+  //   return paginateRaw<Accounts>(query, {
+  //     page: payload.page,
+  //     limit: payload.limit,
+  //   });
+  // }
 
   findIdByKeycloakId(keycloakId: string): Promise<string> {
     return this.createQueryBuilder('accounts')
@@ -190,50 +193,203 @@ export class AccountRepository extends Repository<Accounts> {
       .then((data) => (data ? data['avatar'] : undefined));
   }
 
-  restoreDisabledAccountById(id: string) {
+  addAvatarURLById(avatarUrl: string, id: string) {
     return this.createQueryBuilder('accounts')
-      .update({
-        disabledBy: null,
-        disabledAt: null,
+      .update()
+      .set({
+        avatar: avatarUrl,
       })
       .where('accounts.id = :id', { id: id })
       .useTransaction(true)
       .execute();
   }
 
-  findDisabledAccounts(): Promise<Accounts[]> {
-    return this.createQueryBuilder('accounts')
-      .andWhere('accounts.disabled_at IS NOT NULL')
-      .andWhere('accounts.deleted_at IS NULL')
-      .getMany();
+  createNewAccount(
+    payload: AccountAddRequestPayload,
+    userId: string
+  ): Promise<Accounts> {
+    if (payload.isDisabled) {
+      return this.save(
+        {
+          username: payload.username,
+          fullname: payload.fullname,
+          email: payload.email,
+          phone: payload.phone,
+          roleId: payload.roleId,
+          description: payload.description,
+          createdBy: userId,
+          createdAt: new Date(),
+          disabledBy: userId,
+          disabledAt: new Date(),
+        },
+        {
+          transaction: true,
+        }
+      );
+    } else {
+      return this.save(
+        {
+          username: payload.username,
+          fullname: payload.fullname,
+          email: payload.email,
+          phone: payload.phone,
+          roleId: payload.roleId,
+          description: payload.description,
+          createdBy: userId,
+          createdAt: new Date(),
+        },
+        {
+          transaction: true,
+        }
+      );
+    }
   }
 
-  findDeletedAccounts(): Promise<Accounts[]> {
-    return this.createQueryBuilder('accounts')
-      .where('accounts.deleted_at IS NOT NULL')
-      .getMany();
+  updatePartially(
+    body: AccountAddRequestPayload,
+    account: Accounts,
+    accountId: string
+  ): Promise<Accounts> {
+    return this.save(
+      {
+        ...account,
+        fullname: body.fullname,
+        email: body.email,
+        phone: body.phone,
+        description: body.description,
+        updatedBy: accountId,
+        roleId: body.roleId,
+      },
+      {
+        transaction: true,
+      }
+    );
   }
 
-  async restoreAccountById(id: string): Promise<UpdateResult> {
+  updateGoogleIdByEmail(userGoogleId: string, email: string) {
     return this.createQueryBuilder('accounts')
+      .update({
+        googleId: userGoogleId,
+      })
+      .where('accounts.email = :email', { email: email })
+      .useTransaction(true)
+      .execute();
+  }
+
+  async disableById(accountId: string, id: string) {
+    const isDisabled = await this.createQueryBuilder('account')
+      .update({
+        disabledBy: accountId,
+        disabledAt: new Date(),
+      })
+      .where('account.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
+    if (isDisabled.affected > 0) {
+      return this.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+    }
+  }
+
+  findDisabledAccounts(search: string): Promise<Accounts[]> {
+    return this.createQueryBuilder('account')
+      .select('account.id', 'id')
+      .addSelect('account.username', 'username')
+      .addSelect('account.fullname', 'fullname')
+      .addSelect('account.description', 'description')
+      .addSelect('account.role_id', 'roleId')
+      .addSelect('account.email', 'email')
+      .addSelect('account.phone', 'phone')
+      .addSelect('account.disabledAt', 'disabledAt')
+      .addSelect('a.username', 'disabledBy')
+      .leftJoin(Accounts, 'a', 'a.id = account.disabled_by')
+      .andWhere('account.disabled_at IS NOT NULL')
+      .andWhere('account.deleted_at IS NULL')
+      .andWhere('account.username ILIKE :name', { name: `%${search.trim()}%` })
+
+      .getRawMany<Accounts>();
+  }
+
+  async restoreDisabledAccountById(accountId: string, id: string) {
+    const isRestored = await this.createQueryBuilder('accounts')
+      .update({
+        disabledAt: null,
+        disabledBy: null,
+        updatedBy: accountId,
+        updatedAt: new Date(),
+      })
+      .where('accounts.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
+    if (isRestored.affected > 0) {
+      return this.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+    }
+  }
+
+  async deleteById(accountId: string, id: string) {
+    const isDeleted = await this.createQueryBuilder('accounts')
+      .update({
+        deletedAt: new Date(),
+        deletedBy: accountId,
+        disabledAt: null,
+        disabledBy: null,
+      })
+      .where('accounts.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
+    if (isDeleted.affected > 0) {
+      return this.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+    }
+  }
+
+  findDeletedAccounts(search: string): Promise<Accounts[]> {
+    return (
+      this.createQueryBuilder('account')
+        .select('account.id', 'id')
+        .addSelect('account.username', 'username')
+        .addSelect('account.fullname', 'fullname')
+        .addSelect('account.description', 'description')
+        .addSelect('account.role_id', 'roleId')
+        .addSelect('account.email', 'email')
+        .addSelect('account.phone', 'phone')
+        .addSelect('account.deletedAt', 'deletedAt')
+        .addSelect('a.username', 'deletedBy')
+        .leftJoin(Accounts, 'a', 'a.id = account.deleted_by')
+        .andWhere('account.deleted_at IS NOT NULL')
+        .andWhere('account.username ILIKE :name', { name: `%${search.trim()}%` })
+        // .andWhere('account.deleted_at IS NULL')
+        .getRawMany<Accounts>()
+    );
+  }
+
+  async restoreDeletedAccountById(accountId: string, id: string) {
+    const isRestored = await this.createQueryBuilder('accounts')
       .update({
         deletedAt: null,
         deletedBy: null,
+        updatedAt: new Date(),
+        updatedBy: accountId,
       })
       .where('accounts.id = :id', { id: id })
-      .useTransaction(true)
       .execute();
-  }
-
-  disableAccountById(id: string): Promise<UpdateResult> {
-    return this.createQueryBuilder('accounts')
-      .update({
-        disabledAt: new Date(),
-        disabledBy: '',
-      })
-      .where('accounts.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
+    if (isRestored.affected > 0) {
+      return this.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+    }
   }
 
   async findById(id: string): Promise<Accounts> {
@@ -246,6 +402,7 @@ export class AccountRepository extends Repository<Accounts> {
       .addSelect('account.updatedAt', 'updatedAt')
       .addSelect('account.role_id', 'roleId')
       .addSelect('account.email', 'email')
+      .addSelect('account.phone', 'phone')
       .addSelect('role.name', 'role')
       .addSelect('a.username', 'createdBy')
       .addSelect('aa.username', 'updatedBy')
@@ -256,22 +413,6 @@ export class AccountRepository extends Repository<Accounts> {
       .andWhere('account.deleted_at IS NULL')
       .andWhere('account.id = :accountId', { accountId: id })
       .getRawOne<Accounts>();
-  }
-
-  updatePartially(body: any, account: Accounts, accountId: string): Promise<Accounts> {
-    return this.save(
-      {
-        ...account,
-        fullname: body.fullname,
-        phone: body.phone,
-        description: body.description,
-        updatedBy: accountId,
-        role: body.role,
-      },
-      {
-        transaction: true,
-      }
-    );
   }
 
   findRoleByKeycloakId(keycloakId: string): Promise<string> {
@@ -319,25 +460,5 @@ export class AccountRepository extends Repository<Accounts> {
       .andWhere('accounts.deleted_at IS NULL')
       .getRawMany<{ username: string }>()
       .then((data) => data.map((acc) => acc.username));
-  }
-
-  disableById(accountId: string, id: string) {
-    return this.createQueryBuilder('accounts')
-      .update({
-        disabledBy: accountId,
-        disabledAt: new Date(),
-      })
-      .where('accounts.id = :id', { id: id })
-      .useTransaction(true)
-
-      .execute();
-  }
-
-  existsById(id: string): Promise<boolean> {
-    return this.createQueryBuilder('accounts')
-      .select('COUNT(1)', 'count')
-      .where('accounts.id = :id', { id: id })
-      .getRawOne()
-      .then((data) => data['count'] > 0);
   }
 }

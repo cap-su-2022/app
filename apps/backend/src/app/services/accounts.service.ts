@@ -1,4 +1,3 @@
-import { UpdateAccountRequest } from './../../../../../libs/models/src/lib/request/update-account-request.dto';
 import {
   BadRequestException,
   HttpException,
@@ -20,17 +19,37 @@ import { ChangeProfilePasswordRequest } from '../payload/request/change-password
 import { randomUUID } from 'crypto';
 import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
 import { AccountHistService } from './account-hist.service';
+import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
 
 @Injectable()
-export class AccountsService{
+export class AccountsService {
   private readonly logger = new Logger(AccountsService.name);
 
   constructor(
     private readonly cloudinaryService: CloudinaryService,
     private readonly keycloakService: KeycloakService,
     private readonly repository: AccountRepository,
-    private readonly histService: AccountHistService,
+    private readonly histService: AccountHistService
   ) {}
+
+  async getAll(request: AccountsPaginationParams) {
+    try {
+      return await this.repository.searchAccount(request);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException('One or more parameters is invalid');
+    }
+  }
+
+  async getById(id: string): Promise<Accounts> {
+    try {
+      const account = await this.repository.findById(id);
+      return account;
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException('Account does not exist');
+    }
+  }
 
   getUserIdByKeycloakId(keycloakId: string): Promise<string> {
     return this.repository.findIdByKeycloakId(keycloakId);
@@ -45,15 +64,45 @@ export class AccountsService{
     }
   }
 
-  async add(model: UsersDTO): Promise<Accounts> {
+  async getAccountsByRoleId(roleId: string): Promise<Accounts[]> {
     try {
-      const entity: Partial<Accounts> = {
-        ...model,
-      };
-      return this.repository.save(entity);
+      return await this.repository.getAccountsByRoleId(roleId);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        'An error occurred while getting accounts by type ' + roleId
+      );
+    }
+  }
+
+  async add(
+    payload: AccountAddRequestPayload,
+    userId: string
+  ): Promise<Accounts> {
+    const isExisted = await this.repository.isExistedByUsername(
+      payload.username
+    );
+    if (isExisted) {
+      throw new BadRequestException('Username is duplicated!');
+    }
+    try {
+      const accountAdded = await this.repository.createNewAccount(
+        payload,
+        userId
+      );
+      await this.histService.createNew(accountAdded);
+      return accountAdded;
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException('Error while adding new account');
+      if (
+        e.message.includes('constraint') &&
+        e.message.includes('devices_device_type_id_fk')
+      ) {
+        throw new BadRequestException(
+          'There is no device type with the provided id'
+        );
+      }
+      throw new BadRequestException('Error while creating a new device');
     }
   }
 
@@ -61,43 +110,12 @@ export class AccountsService{
     return Promise.resolve([]);
   }
 
-  async getAccountsByRoleId(roleId: string): Promise<Accounts[]> {
-    try {
-      return await this.repository.getAccountsByRoleId(roleId);
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(
-        'An error occurred while getting rooms by type ' + roleId
-      );
-    }
-  }
-
-  deleteById(id: string): Promise<void> {
-    return Promise.resolve(undefined);
-  }
-
-  async getAll(request: AccountsPaginationParams) {
-    try {
-      return await this.repository.searchAccount(request);
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException('One or more parameters is invalid');
-    }
-  }
-
   async updateById(
     accountId: string,
     id: string,
-    body: UpdateAccountRequest
+    body: AccountAddRequestPayload
   ) {
     let account;
-    // if (
-    //   body.fullname.length < 1 ||
-    //   body.email.length < 1 ||
-    //   body.description.length < 1
-    // ) {
-    //   throw new BadRequestException('Fields cannot be left blank!');
-    // }
     try {
       account = await this.repository.findOneOrFail({
         where: {
@@ -106,126 +124,159 @@ export class AccountsService{
       });
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException("Account doesn't exist with the provided id");
+      throw new BadRequestException(
+        "Account doesn't exist with the provided id"
+      );
     }
 
     const data = await this.repository.findById(id);
     if (data === undefined) {
-      throw new BadRequestException('This account is already deleted or disabled');
+      throw new BadRequestException(
+        'This account is already deleted or disabled'
+      );
     }
 
     try {
-      const accountAdded = await this.repository.updatePartially(body, account, accountId);
-      await this.histService.createNew(accountAdded);
-      return accountAdded;
+      const accountUpdated = await this.repository.updatePartially(
+        body,
+        account,
+        accountId
+      );
+      await this.histService.createNew(accountUpdated);
+      return accountUpdated;
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
-        e.message ?? 'Error occurred while updating this room'
+        e.message ?? 'Error occurred while updating this account'
       );
-    }
-  }
-
-  async getById(id: string): Promise<Accounts> {
-    try {
-      return await this.repository.findById(id);
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException('Account does not exist');
     }
   }
 
   async disableById(accountId: string, id: string): Promise<any> {
-    const data = await this.repository.findById(id);
-    if (data === undefined) {
-      throw new BadRequestException('This account is already deleted or disabled');
+    const isExisted = await this.repository.existsById(id);
+    if (!isExisted) {
+      throw new BadRequestException(
+        'Account does not found with the provided id'
+      );
+    }
+    const isDisabled = await this.repository.checkIfAccountIsDisabledById(id);
+    if (isDisabled) {
+      throw new BadRequestException('This account is already disabled');
+    }
+    const isDeleted = await this.repository.checkIfAccountIsDeletedById(id);
+    if (isDeleted) {
+      throw new BadRequestException(
+        'This account is already deleted, can not disable'
+      );
     }
     try {
-      const result = await this.repository.disableById(accountId, id);
-      if (result.affected < 1) {
-        throw new BadRequestException(
-          "Account doesn't exist with the provided id"
-        );
-      } else {
-        const account = await this.repository.findOneOrFail({
-          where: {
-            id: id,
-          },
-        });
-        await this.histService.createNew(account);
-        return account;
-      }
+      const account = await this.repository.disableById(accountId, id);
+      await this.histService.createNew(account);
+      return account;
     } catch (e) {
-      this.logger.error(e);
       throw new BadRequestException(
-        e.message ?? 'Error occurred while disabling this room'
+        e.message ?? 'Error occurred while disable this account'
       );
     }
   }
 
-  async handleRestoreDisabledAccountById(id: string) {
+  async getDisabledAccounts(search: string): Promise<Accounts[]> {
     try {
-      const account = await this.repository.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
-      if (
-        account.deletedBy == null &&
-        account.deletedAt == null &&
-        account.disabledBy == null &&
-        account.disabledAt == null
-      ) {
-        throw new BadRequestException('This account is active!');
-      }
-      const isDeleted = await this.repository.checkIfAccountIsDeletedById(id);
-      if (isDeleted) {
-        throw new BadRequestException('Not found with provided id');
-      }
-      const result = await this.repository.restoreDisabledAccountById(id);
-      if (result.affected < 1) {
-        throw new BadRequestException(
-          "Account doesn't exist with the provided id"
-        );
-      } else {
-        const account = await this.repository.findOneOrFail({
-          where: {
-            id: id,
-          },
-        });;
-        await this.histService.createNew(account);
-        return account;
-      }
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException('Error while restoring disabled account');
-    }
-  }
-
-  async handleRestoreAccountById(id: string): Promise<void> {
-    try {
-      await this.repository.restoreAccountById(id);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException('Error while getting deleted accounts');
-    }
-  }
-
-  async getDeletedAccounts(): Promise<Accounts[]> {
-    try {
-      return await this.repository.findDeletedAccounts();
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException('Error while getting deleted accounts');
-    }
-  }
-
-  async getDisabledAccounts(): Promise<Accounts[]> {
-    try {
-      return await this.repository.findDisabledAccounts();
+      return await this.repository.findDisabledAccounts(search);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException('Error while getting disabled accounts');
+    }
+  }
+
+  async handleRestoreDisabledAccountById(accountId: string, id: string) {
+    try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Account does not found with the provided id'
+        );
+      }
+      const isDeleted = await this.repository.checkIfAccountIsDeletedById(id);
+      if (isDeleted) {
+        throw new BadRequestException('This account is already deleted');
+      }
+      const isDisabled = await this.repository.checkIfAccountIsDisabledById(id);
+      if (!isDisabled) {
+        throw new BadRequestException(
+          'This account ID is now active. Cannot restore it'
+        );
+      }
+      const account = await this.repository.restoreDisabledAccountById(accountId, id);
+      await this.histService.createNew(account);
+      return account;
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        e.message ??
+          'Error occurred while restore the disabled status of this account'
+      );
+    }
+  }
+
+  async deleteById(accountId: string, id: string) {
+    try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Account does not found with the provided id'
+        );
+      }
+      const isDeleted = await this.repository.checkIfAccountIsDeletedById(id);
+      if (isDeleted) {
+        throw new BadRequestException('This account is already deleted');
+      }
+      const device = await this.repository.deleteById(accountId, id);
+      await this.histService.createNew(device);
+      return device;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getDeletedAccounts(search: string): Promise<Accounts[]> {
+    try {
+      return await this.repository.findDeletedAccounts(search);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException('Error while getting deleted accounts');
+    }
+  }
+
+  async handleRestoreDeletedAccountById(accountId: string, id: string) {
+    try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Account does not found with the provided id'
+        );
+      }
+      const isDisabled = await this.repository.checkIfAccountIsDisabledById(id);
+      if (isDisabled) {
+        throw new BadRequestException('This account is already disabled');
+      }
+      const isDeleted = await this.repository.checkIfAccountIsDeletedById(id);
+      if (!isDeleted) {
+        throw new BadRequestException(
+          'This account ID is now active. Cannot restore it'
+        );
+      }
+
+      const account = await this.repository.restoreDeletedAccountById(
+        accountId,
+        id
+      );
+      await this.histService.createNew(account);
+      return account;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
     }
   }
 
@@ -303,14 +354,14 @@ export class AccountsService{
     }
   }
 
-  async getUsernameByAccountId(id: string): Promise<string> {
-    try {
-      return await this.repository.findUsernameById(id);
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async getUsernameByAccountId(id: string): Promise<string> {
+  //   try {
+  //     return await this.repository.findUsernameById(id);
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
   async updateMyProfile(
     keycloakUser: KeycloakUserInstance,

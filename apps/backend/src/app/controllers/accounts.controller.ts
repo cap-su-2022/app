@@ -1,4 +1,3 @@
-import { UpdateAccountRequest } from './../../../../../libs/models/src/lib/request/update-account-request.dto';
 import {
   Body,
   Controller,
@@ -38,107 +37,12 @@ import { ChangeProfilePasswordRequest } from '../payload/request/change-password
 import { diskStorage } from 'multer';
 import { imageFileFilter } from '../validators/utils/file-upload.util';
 import { AccountsPaginationParams } from './accounts-pagination.model';
+import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
 
 class UploadProfileRequest {
   fullname: string;
   phone: string;
   description: string;
-}
-
-class CreateUserRequest {
-  @ApiProperty({
-    name: 'username',
-    description: 'Username of the account is used for logging into the system',
-    required: true,
-    type: String,
-    title: 'username',
-    example: 'account01',
-    minLength: 3,
-    maxLength: 100,
-  })
-  username: string;
-
-  @ApiProperty({
-    name: 'fullname',
-    description: 'Fullname of the account',
-    minLength: 2,
-    maxLength: 200,
-    required: true,
-    title: 'fullname',
-    type: String,
-    example: 'Adios',
-  })
-  fullname: string;
-
-  @ApiProperty({
-    name: 'phone',
-    description: 'Phone number of the account',
-    minLength: 10,
-    maxLength: 10,
-    required: true,
-    type: String,
-    title: 'phone',
-    example: '0123456789',
-  })
-  phone: string;
-
-  @ApiProperty({
-    name: 'email',
-    description: 'E-mail address of the account',
-    minLength: 10,
-    maxLength: 10,
-    required: true,
-    type: String,
-    title: 'phone',
-    example: 'account01@fpt.edu.vn',
-  })
-  email: string;
-
-  @ApiProperty({
-    name: 'phone',
-    description: 'Phone number of the account',
-    minLength: 10,
-    maxLength: 10,
-    required: true,
-    type: String,
-    title: 'phone',
-    example: '0123456789',
-  })
-  description: string;
-
-  @ApiProperty({
-    name: 'role',
-    description: 'Role of the account',
-    required: true,
-    type: String,
-    title: 'role',
-    example: Role.APP_STAFF,
-    enum: Role,
-    enumName: 'role',
-  })
-  role: string;
-
-  @ApiProperty({
-    name: 'avatar',
-    description: 'Avatar of the account',
-    required: true,
-    type: String,
-    title: 'avatar',
-    example: 'http://google.com/',
-    minLength: 1,
-    maxLength: 256,
-  })
-  avatar: string;
-
-  @ApiProperty({
-    name: 'is_disabled',
-    description: 'Disable status of the account',
-    required: true,
-    type: Boolean,
-    title: 'is_disabled',
-    example: false,
-  })
-  is_disabled: boolean;
 }
 
 @Controller('v1/accounts')
@@ -188,11 +92,56 @@ export class AccountsController {
     return this.service.syncUsersFromKeycloak();
   }
 
-  // @ApiOperation({
-  //   summary: 'Create a new account',
-  //   description: 'Create a new account with the provided payload',
-  // })
-  // @ApiResponse({
+  @Get('find/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Retrieve account information by id',
+    description: 'Get account information by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully retrieved the account information',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while retrieving account information by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getAccountById(@Param() payload: { id: string }) {
+    return this.service.getById(payload.id);
+  }
+
+  @Post('add')
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Create a new account',
+    description: 'Create a new account with the provided payload',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully created a new device',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request payload for user is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  //   @ApiResponse({
   //   status: HttpStatus.OK,
   //   description: 'Successfully created a new user',
   //   type: Accounts,
@@ -212,54 +161,11 @@ export class AccountsController {
   //     ],
   //   },
   // })
-  // @ApiResponse({
-  //   status: HttpStatus.BAD_REQUEST,
-  //   description: 'Request payload for user is not validated',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.UNAUTHORIZED,
-  //   description: 'Access token is invalidated',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.FORBIDDEN,
-  //   description: 'Invalid role',
-  // })
-
-
-  @Post('add')
-  @HttpCode(HttpStatus.OK)
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   createNewUser(
     @User() user: KeycloakUserInstance,
-    @Body() account: CreateUserRequest
+    @Body() account: AccountAddRequestPayload
   ): Promise<Accounts> {
-    return this.service.add(account);
-  }
-
-  @Get('find/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Retrieve account information by id',
-    description: 'Get account information by id',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully retrieved the account information',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while retrieving account information by id',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Not enough privileges',
-  })
-  getAccountById(@Param() payload: { id: string }) {
-    return this.service.getById(payload.id);
+    return this.service.add(account, user.account_id);
   }
 
   @Get('my-profile')
@@ -381,8 +287,8 @@ export class AccountsController {
     description: 'Not enough privileges',
   })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  getDisabledAccounts() {
-    return this.service.getDisabledAccounts();
+  getDisabledAccounts(@Query('search') search = '') {
+    return this.service.getDisabledAccounts(search);
   }
 
   @Put('restore-disabled/:id')
@@ -407,8 +313,14 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  restoreDisabledAccountById(@Param() payload: { id: string }) {
-    return this.service.handleRestoreDisabledAccountById(payload.id);
+  restoreDisabledAccountById(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string }
+  ) {
+    return this.service.handleRestoreDisabledAccountById(
+      user.account_id,
+      payload.id
+    );
   }
 
   @Get('deleted')
@@ -421,8 +333,8 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-  getDeletedAccounts() {
-    return this.service.getDeletedAccounts();
+  getDeletedAccounts(@Query('search') search = '') {
+    return this.service.getDeletedAccounts(search);
   }
 
   @Put('restore-deleted/:id')
@@ -435,8 +347,14 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-  restoreDeletedUserById(@Param() payload: { id: string }) {
-    return this.service.handleRestoreAccountById(payload.id);
+  restoreDeletedUserById(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string }
+  ) {
+    return this.service.handleRestoreDeletedAccountById(
+      user.account_id,
+      payload.id
+    );
   }
 
   @Put('update/:id')
@@ -449,10 +367,10 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-  updateRoomById(
+  updateAccountById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string },
-    @Body() body: UpdateAccountRequest
+    @Body() body: AccountAddRequestPayload
   ) {
     return this.service.updateById(user.account_id, payload.id, body);
   }
@@ -488,7 +406,7 @@ export class AccountsController {
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string }
   ) {
-    return this.service.deleteById(payload.id);
+    return this.service.deleteById(user.account_id, payload.id);
   }
 
   @Put('update/upload-avatar/:id')
