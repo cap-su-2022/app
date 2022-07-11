@@ -6,9 +6,11 @@ import {
   Modal,
   Text,
   Button,
+  InputWrapper,
+  TextInput,
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { Ban, Check, RotateClockwise, X } from 'tabler-icons-react';
+import { Ban, Check, RotateClockwise, Search, X } from 'tabler-icons-react';
 import {
   restoreDeletedRoomTypeById,
   permanentlyDeleteRoomTypeById,
@@ -20,6 +22,7 @@ import dayjs from 'dayjs';
 import PermanentDeleteModal from '../actions/modal/permanant-delete-modal.component';
 import { showNotification } from '@mantine/notifications';
 import NoDataFound from '../no-data-found';
+import { useDebouncedValue } from '@mantine/hooks';
 
 interface RestoreDeletedModalProps {
   isShown: boolean;
@@ -36,15 +39,17 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
   const [scrolled, setScrolled] = useState(false);
   const [isPermanentDeleteShown, setPermanentDeleteShown] = useState(false);
   const [id, setId] = useState('');
+  const [search, setSearch] = useState<string>('');
+  const [searchDebounced] = useDebouncedValue<string>(search, 400);
 
   useEffect(() => {
-    dispatch(fetchDeletedRoomTypes());
-  }, []);
+    dispatch(fetchDeletedRoomTypes(search));
+  }, [searchDebounced]);
 
   const handleRestoreDeletedRoomType = (id: string) => {
     dispatch(restoreDeletedRoomTypeById(id))
       .unwrap()
-      .then(() => dispatch(fetchDeletedRoomTypes()))
+      .then(() => dispatch(fetchDeletedRoomTypes('')))
       .then(() => dispatch(fetchRoomTypes(props.pagination)))
       .then(() =>
         showNotification({
@@ -81,7 +86,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
   const handlePermanentDeleted = (id: string) => {
     dispatch(permanentlyDeleteRoomTypeById(id))
       .unwrap()
-      .then(() => dispatch(fetchDeletedRoomTypes()))
+      .then(() => dispatch(fetchDeletedRoomTypes('')))
       .then(() =>
         showNotification({
           id: 'delete-room-type',
@@ -167,6 +172,12 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
         closeOnClickOutside={true}
         closeOnEscape={false}
       >
+        <InputWrapper label="Search">
+        <TextInput
+          onChange={(e) => setSearch(e.target.value)}
+          icon={<Search />}
+        />
+      </InputWrapper>
         {deletedRoomTypes.length > 0 ?  (
         <ScrollArea
           sx={{ height: 500 }}

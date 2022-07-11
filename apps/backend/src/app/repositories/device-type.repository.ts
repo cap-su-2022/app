@@ -125,7 +125,7 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .addSelect('device_type.deleted_at', 'deletedAt')
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'a.id = device_type.deleted_by')
-      .where('device_type.name LIKE :search', { search: `%${search.trim()}%` })
+      .where('device_type.name ILIKE :search', { search: `%${search.trim()}%` })
       .andWhere('device_type.deleted_at IS NOT NULL')
       .orderBy('device_type.deleted_at', 'DESC')
       .getRawMany<DeviceType>();

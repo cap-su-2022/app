@@ -139,7 +139,7 @@ export class RolesRepository extends Repository<Roles> {
       .addSelect('role.deleted_at', 'deletedAt')
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'a.id = role.deleted_by')
-      .where('role.name LIKE :search', { search: `%${search.trim()}%` })
+      .where('role.name ILIKE :search', { search: `%${search.trim()}%` })
       .andWhere('role.deleted_at IS NOT NULL')
       .orderBy('role.deleted_at', 'DESC')
       .getRawMany<Roles>();

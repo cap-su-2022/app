@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import {
   Button,
@@ -16,21 +17,13 @@ import {
   FileDescription,
   Id,
   Pencil,
-  Trash,
   X,
 } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { Form, FormikProvider, useFormik, FormikProps } from 'formik';
-import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { LIBRARY_ROOM_TYPE } from '../../constants/library-room-type.model';
 import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
-import { InputUpdateProps } from '../../components/actions/models/input-update-props.model';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchRoomTypes } from '../../redux/features/room-type';
-import { PaginationResponse } from '../../models/pagination-response.payload';
-import { RoomType } from '../../models/room-type.model';
 import { updateAccountById } from '../../redux/features/account/thunk/update-account-by-id';
 import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 
@@ -103,13 +96,17 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
       .then(() => dispatch(fetchAccounts(props.pagination)))
       .finally(() => {
         formik.resetForm();
+        setRole(account.roleId)
       });
   };
 
   const formik = useFormik({
     initialValues: {
       id: account.id,
+      username: account.username,
       fullname: account.fullname,
+      email: account.email,
+      phone: account.phone,
       description: account.description,
       roleId: account.role,
     },
@@ -128,16 +125,14 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
     } else {
       setUpdateDisabled(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    formik.values.description,
-    formik.values.fullname,
-    formik.values.roleId,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formik.values.description, formik.values.fullname, formik.values.roleId]);
 
   const ModalHeaderTitle: React.FC = () => {
     return (
-      <Text className={classes.modalHeaderTitle}>Update Account Information</Text>
+      <Text className={classes.modalHeaderTitle}>
+        Update Account Information
+      </Text>
     );
   };
 
@@ -172,25 +167,60 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   value={formik.values.id}
                 />
               </InputWrapper>
-              <InputWrapper
-                required
-                label="Fullname"
-              >
-                <TextInput
-                  icon={<ClipboardText />}
-                  id="fullname"
-                  name="fullname"
-                  error={formik.errors.fullname}
-                  onChange={formik.handleChange}
-                  className={classes.textInput}
-                  radius="md"
-                  value={formik.values.fullname}
-                />
-              </InputWrapper>
+              <div className={classes.displayGrid}>
+                <InputWrapper required label="Username">
+                  <TextInput
+                    icon={<Id />}
+                    disabled
+                    id="username"
+                    name="username"
+                    className={classes.textInput}
+                    radius="md"
+                    readOnly
+                    value={formik.values.username}
+                  />
+                </InputWrapper>
+                <InputWrapper required label="Fullname">
+                  <TextInput
+                    icon={<ClipboardText />}
+                    id="fullname"
+                    name="fullname"
+                    error={formik.errors.fullname}
+                    onChange={formik.handleChange}
+                    className={classes.textInput}
+                    radius="md"
+                    value={formik.values.fullname}
+                  />
+                </InputWrapper>
+                <InputWrapper required label="Email">
+                  <TextInput
+                    icon={<ClipboardText />}
+                    id="email"
+                    name="email"
+                    error={formik.errors.email}
+                    onChange={formik.handleChange}
+                    className={classes.textInput}
+                    radius="md"
+                    value={formik.values.email}
+                  />
+                </InputWrapper>
+
+                <InputWrapper required label="Phone">
+                  <TextInput
+                    icon={<ClipboardText />}
+                    id="phone"
+                    name="phone"
+                    error={formik.errors.phone}
+                    onChange={formik.handleChange}
+                    className={classes.textInput}
+                    radius="md"
+                    value={formik.values.phone}
+                  />
+                </InputWrapper>
+              </div>
               <InputWrapper
                 required
                 label="Role"
-                description="Separate libray room type"
               >
                 <Select
                   onChange={(e) => {
@@ -199,8 +229,8 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   }}
                   searchable
                   defaultChecked={true}
-                  name="type"
-                  id="room-type"
+                  name="role"
+                  id="role"
                   data={props.role}
                   value={role}
                 />
@@ -216,21 +246,12 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   error={formik.errors.description}
                   onChange={formik.handleChange}
                   radius="md"
-                  value={formik.values.description}
+                  value={formik.values.description || undefined}
                 />
               </InputWrapper>
             </div>
 
             <div className={classes.modalFooter}>
-              {/* <Button
-                onClick={() => props.toggleDeleteModalShown()}
-                variant="outline"
-                color={"red"}
-                leftIcon={<Trash/>}
-              >
-                Delete this room
-              </Button> */}
-
               <Button
                 color="green"
                 disabled={isUpdateDisabled}
@@ -266,6 +287,12 @@ const useStyles = createStyles({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  displayGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'auto auto',
+    alignItems: 'center',
+    columnGap: '20px',
   },
   textInput: {
     marginTop: 10,

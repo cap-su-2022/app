@@ -3,5 +3,5 @@ export class UpdateAccountRequest {
   fullname?: string;
   email?: string;
   description?: string;
-  role?: string;
+  roleId?: string;
 }

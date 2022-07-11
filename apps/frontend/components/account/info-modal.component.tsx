@@ -76,28 +76,43 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
               readOnly
               value={user.fullname}
             />
+            <TextInput
+              icon={<ClipboardText />}
+              className={classes.textInput}
+              radius="md"
+              label="Email"
+              readOnly
+              value={user.email}
+            />
+            <TextInput
+              icon={<ClipboardText />}
+              className={classes.textInput}
+              radius="md"
+              label="Phone"
+              readOnly
+              value={user.phone}
+            />
           </div>
 
           <TextInput
             icon={<ClipboardText />}
             className={classes.textInput}
             radius="md"
-            label="Email"
+            label="Role"
             readOnly
-            value={user.email}
+            value={user.role}
           />
           <Textarea
             icon={<FileDescription />}
             className={classes.textInput}
             radius="md"
-            label="Device description"
+            label="Description"
             readOnly
             value={user.description || undefined}
           />
           <div className={classes.displayGrid}>
             <TextInput
               id="createdAt"
-
               icon={<Clock />}
               className={classes.textInput}
               radius="md"

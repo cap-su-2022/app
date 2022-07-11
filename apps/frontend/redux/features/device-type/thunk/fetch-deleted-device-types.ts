@@ -7,13 +7,13 @@ interface RejectValue {
   message: string;
 }
 
-export const fetchDeletedDeviceTypes = createAsyncThunk<RoomType[], void, {
+export const fetchDeletedDeviceTypes = createAsyncThunk<RoomType[], string, {
   rejectValue: RejectValue
-}>('room-type/fetch-deleted', async (any, thunkAPI) => {
+}>('room-type/fetch-deleted', async (payload = "", thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
 
   try {
-    const response = await axios.get(`/api/device-type/deleted?search=`);
+    const response = await axios.get(`/api/device-type/deleted?search=${payload}`);
     return await response.data;
   } catch ({response}) {
     if (response.status === 401 || response.status === 403) {

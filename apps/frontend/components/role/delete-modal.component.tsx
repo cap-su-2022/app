@@ -243,7 +243,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       title={<ModalHeaderTitle />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}
-      size={isShownListAccount && listAccount.length > 0 ? '70%' : null}
+      size={isShownListAccount && listAccount.length > 0 ? '50%' : null}
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>

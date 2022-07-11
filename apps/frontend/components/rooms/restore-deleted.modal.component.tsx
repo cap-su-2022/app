@@ -51,7 +51,7 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
       <td>{index + 1}</td>
       <td>{row.name}</td>
       <td>{row.roomTypeName}</td>
-      <td>{dayjs(row.updatedAt).format('HH:mm DD/MM/YYYY')}</td>
+      <td>{dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.deletedBy}</td>
       <td
         style={{

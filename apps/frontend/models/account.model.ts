@@ -1,4 +1,6 @@
 export interface Account {
+  deletedBy: string;
+  deletedAt: string;
   roleId: string;
   disabledBy: string;
   disabledAt: string;

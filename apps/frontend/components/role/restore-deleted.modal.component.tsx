@@ -6,9 +6,11 @@ import {
   Modal,
   Text,
   Button,
+  InputWrapper,
+  TextInput,
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { Ban, Check, RotateClockwise, X } from 'tabler-icons-react';
+import { Ban, Check, RotateClockwise, Search, X } from 'tabler-icons-react';
 import {
   fetchRoles,
   fetchDeletedRoles,
@@ -20,6 +22,7 @@ import PermanentDeleteModal from '../actions/modal/permanant-delete-modal.compon
 import { showNotification } from '@mantine/notifications';
 import { permanentlyDeleteRoleById } from '../../redux/features/role/thunk/permanently-delete-role-by-id.thunk';
 import NoDataFound from '../no-data-found';
+import { useDebouncedValue } from '@mantine/hooks';
 
 interface RestoreDeletedModalProps {
   isShown: boolean;
@@ -34,10 +37,12 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
   const [scrolled, setScrolled] = useState(false);
   const [isPermanentDeleteShown, setPermanentDeleteShown] = useState(false);
   const [id, setId] = useState('');
+  const [search, setSearch] = useState<string>('');
+  const [searchDebounced] = useDebouncedValue<string>(search, 400);
 
   useEffect(() => {
-    dispatch(fetchDeletedRoles());
-  }, []);
+    dispatch(fetchDeletedRoles(search));
+  }, [searchDebounced]);
 
   const handelPermanetDeleteButton = (id) => {
     setId(id);
@@ -52,7 +57,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
   const handlePermanentDeleted = (id: string) => {
     dispatch(permanentlyDeleteRoleById(id))
       .unwrap()
-      .then(() => dispatch(fetchDeletedRoles()))
+      .then(() => dispatch(fetchDeletedRoles('')))
       .then(() =>
         showNotification({
           id: 'delete-booking-reason',
@@ -79,7 +84,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
   const handleRestoreDeletedRole = (id: string) => {
     dispatch(restoreDeletedRoleById(id))
       .unwrap()
-      .then(() => dispatch(fetchDeletedRoles()))
+      .then(() => dispatch(fetchDeletedRoles('')))
       .then(() => dispatch(fetchRoles(props.pagination)));
   };
   const rows = deletedRoles?.map((row, index) => (
@@ -145,6 +150,12 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
         closeOnClickOutside={true}
         closeOnEscape={false}
       >
+        <InputWrapper label="Search">
+        <TextInput
+          onChange={(e) => setSearch(e.target.value)}
+          icon={<Search />}
+        />
+      </InputWrapper>
         {deletedRoles.length > 0 ? (
           <>
             <ScrollArea
