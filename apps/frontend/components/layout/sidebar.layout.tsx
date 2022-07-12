@@ -32,7 +32,8 @@ const data = [
   { link: '/device-type', label: 'Device Type', icon: DeviceTablet },
   { link: '/role', label: 'Role', icon: BarrierBlock },
   { link: '/accounts', label: 'Accounts', icon: Users },
-  { link: '/feedbacks', label: 'Feedback', icon: Messages },
+  { link: '/feedback-type', label: 'Feedback Type', icon: MessageCode },
+  { link: '/feedbacks', label: 'Feedback', icon: BrandHipchat },
   { link: '/notifications', label: 'Notification', icon: Bell },
   { link: '/booking-room', label: 'Booking Room', icon: Ticket },
   {
@@ -40,8 +41,7 @@ const data = [
     label: 'Booking Reason',
     icon: DeviceMobileMessage,
   },
-  { link: '/feedback', label: 'Feedback', icon: BrandHipchat },
-  { link: '/feedback-type', label: 'Feedback Type', icon: MessageCode },
+  // { link: '/feedback', label: 'Feedback', icon:  BrandHipchat},
   { link: '/slot', label: 'Slot', icon: Clock2 },
 ];
 

@@ -20,16 +20,10 @@ import {
   X,
 } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { Form, FormikProvider, useFormik, FormikProps } from 'formik';
-import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { LIBRARY_ROOM_TYPE } from '../../constants/library-room-type.model';
+import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
-import { InputUpdateProps } from '../../components/actions/models/input-update-props.model';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { PaginationResponse } from '../../models/pagination-response.payload';
-import { RoomType } from '../../models/room-type.model';
 import { updateDeviceById } from '../../redux/features/devices/thunk/update-by-id';
 import { fetchDevices } from '../../redux/features/devices/thunk/fetch-devices.thunk';
 
@@ -128,7 +122,7 @@ const DeviceUpdateModal: React.FC<UpdateModalProps> = (props) => {
 
   const ModalHeaderTitle: React.FC = () => {
     return (
-      <Text className={classes.modalHeaderTitle}>Update Room Information</Text>
+      <Text className={classes.modalHeaderTitle}>Update Device Information</Text>
     );
   };
 
