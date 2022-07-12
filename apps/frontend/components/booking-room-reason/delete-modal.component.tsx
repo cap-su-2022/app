@@ -78,10 +78,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          Deleting this device type will{' '}
-          <b>also delete devices of this device type</b>. And make that devices
-          unusable even if it has been booked before. Users who booked this
-          device will receive a notification about this!
+          Cy chỉnh chổ này giúp mình frontend/components/booking-room-reason/delete-modal
         </Text>
         <div className={classes.modalFooter}>
           
@@ -94,7 +91,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
               margin: 10,
             }}
           >
-            Delete this type
+            Delete this reason
           </Button>
           <Button
             onClick={() => props.toggleShown()}

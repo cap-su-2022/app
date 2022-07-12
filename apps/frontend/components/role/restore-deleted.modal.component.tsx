@@ -134,7 +134,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           fontSize: 22,
         }}
       >
-        Restore Deleted Room Type
+        Restore Deleted Role
       </Text>
     );
   };

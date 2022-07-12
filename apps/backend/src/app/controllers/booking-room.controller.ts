@@ -136,11 +136,11 @@ export class BookingRoomController {
   }
 
 
-  // @Get('rooms')
-  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  // getChoosingBookingRooms(@Query('filter') filter: string) {
-  //   return this.service.getChoosingBookingRooms(filter);
-  // }
+  @Get('rooms')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  getChoosingBookingRooms(@Query('filter') filter: string) {
+    return this.service.getChoosingBookingRooms(filter);
+  }
 
   // @Get('current-booking-list')
   // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)

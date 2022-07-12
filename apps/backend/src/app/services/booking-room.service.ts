@@ -13,6 +13,7 @@ import { AccountsService } from './accounts.service';
 import { ChooseBookingRoomFilterPayload } from '../payload/request/choose-booking-room-filter.payload';
 import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
 import { BookingRequest, Devices } from '../models';
+import { RoomTypeService } from './room-type.service';
 
 @Injectable()
 export class BookingRoomService {
@@ -20,6 +21,7 @@ export class BookingRoomService {
 
   constructor(
     private readonly roomService: RoomsService,
+    private readonly roomTypeService: RoomTypeService,
     private readonly deviceService: DevicesService,
     private readonly roomWishlistService: RoomWishlistService,
     private readonly repository: BookingRoomRepository,
@@ -142,7 +144,7 @@ export class BookingRoomService {
     return this.roomService.getRoomsName();
   }
 
-  getChoosingBookingRooms(filter: string) {
+  async getChoosingBookingRooms(filter: string) {
     try {
       const payload = filter
         ? (JSON.parse(filter) as ChooseBookingRoomFilterPayload)
@@ -152,11 +154,16 @@ export class BookingRoomService {
               sort: 'ASC',
             },
             roomType: {
-              name: '',
+              name: 'e6f085ec',
               sort: 'ASC',
             },
           } as ChooseBookingRoomFilterPayload);
-
+      if(payload.roomType.name.length > 0){
+        const isExisted = await this.roomTypeService.existsById(payload.roomType.name)
+        if(!isExisted){
+          throw new BadRequestException("Room type does not exist with provided id");
+        }
+      }    
       return this.roomService.getRoomsFilterByNameAndType(payload);
     } catch (e) {
       this.logger.error(e.message);

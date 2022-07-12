@@ -48,7 +48,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   }, [searchDebounced]);
 
 
-  const handleRestoreDeletedRoomType = (id: string) => {
+  const handleRestoreDeletedDeviceType = (id: string) => {
     dispatch(restoreDeletedDeviceTypeById(id))
       .unwrap()
       .catch((e) =>
@@ -127,7 +127,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
         }}
       >
         <Button
-          onClick={() => handleRestoreDeletedRoomType(row.id)}
+          onClick={() => handleRestoreDeletedDeviceType(row.id)}
           style={{
             margin: 5,
           }}
@@ -160,7 +160,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
           fontSize: 22,
         }}
       >
-        Restore Deleted Room Type
+        Restore Deleted Device Type
       </Text>
     );
   };

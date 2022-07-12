@@ -164,7 +164,6 @@ export class RoomsRepository extends Repository<Rooms> {
   }
 
   getRoomsByRoomType(roomTypeId: string) {
-    console.log('AAAAAAA: ', roomTypeId);
     return this.createQueryBuilder(`rooms`)
       .select('rooms.id', 'id')
       .addSelect('rooms.name', 'name')
@@ -313,16 +312,19 @@ export class RoomsRepository extends Repository<Rooms> {
   }
 
   filterByNameAndType(payload: ChooseBookingRoomFilterPayload) {
-    return this.createQueryBuilder('rooms')
+    const query = this.createQueryBuilder('rooms')
       .select('rooms.id', 'id')
       .addSelect('rooms.name', 'name')
       .addSelect('rooms.type', 'type')
       .where('rooms.disabled_at IS NULL')
       .andWhere('rooms.deleted_at IS NULL')
-      .andWhere('rooms.type LIKE :type', { type: `%${payload.roomType.name}%` })
-      .andWhere('rooms.name LIKE :name', { name: `%${payload.roomName.name}%` })
+      .andWhere('rooms.name ILIKE :name', { name: `%${payload.roomName.name}%` })
       .orderBy('rooms.name', payload.roomName.sort)
       .addOrderBy('rooms.type', payload.roomType.sort)
-      .getRawMany<Rooms>();
+      if(payload.roomType.name.length > 0){
+        query.andWhere('rooms.type = :type', { type: payload.roomType.name })
+      
+      }
+      return query.getRawMany<Rooms>();
   }
 }

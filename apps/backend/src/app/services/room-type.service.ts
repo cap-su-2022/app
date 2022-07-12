@@ -17,6 +17,10 @@ export class RoomTypeService {
     private readonly histService: RoomTypeHistService
   ) {}
 
+  async existsById(id: string): Promise<boolean> {
+    return await this.repository.existsById(id)
+  }
+
   async getRoomTypesWithPagination(
     pagination: PaginationParams
   ): Promise<Pagination<RoomType>> {
