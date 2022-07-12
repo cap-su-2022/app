@@ -20,7 +20,6 @@ interface RoomBookingState {
   addRoomBooking: AddRoomBookingPayload,
   currentBookingRooms: CurrentBookingRoom[],
   currentBookingRoom: CurrentBookingRoom,
-
 }
 
 interface BookingDevice {
@@ -29,6 +28,8 @@ interface BookingDevice {
 }
 
 interface AddRoomBookingPayload {
+  fromDay: string;
+  toDay: string;
   fromSlot: string;
   toSlot: string;
   roomId: string;
@@ -49,13 +50,28 @@ const roomBookingSlice = createSlice({
   name: 'room-booking',
   initialState: initialState,
   reducers: {
+    saveStartDay(state, {payload}) {
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        fromDay: payload.fromDay,
+      }
+    },
+    saveEndDay(state, {payload}) {
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        toDay: payload.toDay,
+      }
+    },
     step1ScheduleRoomBooking(state, {payload}) {
       console.log(payload)
       state.addRoomBooking = {
         ...state.addRoomBooking,
+        fromDay: payload.fromDay,
+        toDay: payload.toDay,
         fromSlot: payload.fromSlot,
         toSlot: payload.toSlot,
       }
+      console.log(state.addRoomBooking)
     },
     step2ScheduleRoomBooking(state, {payload}) {
       state.addRoomBooking = {
@@ -103,4 +119,4 @@ const roomBookingSlice = createSlice({
 
 export const roomBookingReducer = roomBookingSlice.reducer;
 
-export const {step1ScheduleRoomBooking, step2ScheduleRoomBooking, step3ScheduleRoomBooking} = roomBookingSlice.actions;
+export const {step1ScheduleRoomBooking, step2ScheduleRoomBooking, step3ScheduleRoomBooking, saveStartDay, saveEndDay} = roomBookingSlice.actions;
