@@ -15,11 +15,13 @@ import {
 } from 'react-native-heroicons/outline';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { saveStartDay } from '../../../redux/features/room-booking/slice';
+import {useAppSelector} from "../../../hooks/use-app-selector.hook";
 
 const StartDayCalendar: React.FC<any> = (props) => {
   const dispatch = useAppDispatch();
   const [dayStart, setDayStart] = useState<string>('');
   const currentDate = new Date().toJSON().slice(0, 10);
+  const today = useAppSelector((state) => state.roomBooking.today);
 
   const handleDayPress = (day) => {
     setDayStart(day.dateString);
@@ -31,6 +33,7 @@ const StartDayCalendar: React.FC<any> = (props) => {
       <View style={styles.container}>
         <Calendar
           initialDate={currentDate}
+          minDate={today}
           onDayPress={(day) => handleDayPress(day)}
           markedDates={{
             [dayStart]: {

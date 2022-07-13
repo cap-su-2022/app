@@ -12,6 +12,7 @@ interface ChooseRoomItemProps {
   item: ChoosingBookingRoom;
   roomId: string;
   setRoomId(val: string): void;
+  setRoomName(val: string): void;
 }
 const ChooseRoomItem: React.FC<ChooseRoomItemProps> = (props) => {
 
@@ -19,7 +20,6 @@ const ChooseRoomItem: React.FC<ChooseRoomItemProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const handleViewRoomDetail = (id: string) => {
-    console.log(id);
     dispatch(fetchRoomById({
       roomId: id
     })).unwrap().then((e) => {
@@ -29,7 +29,10 @@ const ChooseRoomItem: React.FC<ChooseRoomItemProps> = (props) => {
 
   return (
     <TouchableOpacity
-      onPress={() => props.setRoomId(props.item.id)}
+      onPress={() => {
+        props.setRoomId(props.item.id)
+        props.setRoomName(props.item.name)
+      }}
       style={[styles.container, (props.roomId === props.item.id) ? {
         borderWidth: 2,
         borderColor: FPT_ORANGE_COLOR
@@ -39,11 +42,11 @@ const ChooseRoomItem: React.FC<ChooseRoomItemProps> = (props) => {
           <LibraryIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 18}/>
         </View>
         <View style={styles.roomInfoContainer}>
-          <Text style={styles.roomInfoTitle}>
-            Room {props.item.name}
+          <Text style={styles.roomInfoTitle} numberOfLines={1}>
+            Room {props.item.name.length < 15 ? `${props.item.name}` : `${props.item.name.substring(0, 15)}...`}
           </Text>
-          <Text style={styles.roomInfoType}>
-            Room type: {props.item.type}
+          <Text style={styles.roomInfoType} numberOfLines={1}>
+            Room type: {props.item.type.length < 15 ? `${props.item.type}` : `${props.item.type.substring(0, 15)}...`}
           </Text>
         </View>
       </View>
@@ -53,7 +56,7 @@ const ChooseRoomItem: React.FC<ChooseRoomItemProps> = (props) => {
           style={styles.roomViewMoreButton}>
           <InformationCircleIcon color={WHITE} size={deviceWidth / 23}/>
           <Text style={styles.roomViewMoreButtonText}>
-            View more
+            View Detail
           </Text>
         </TouchableOpacity>
       </View>
