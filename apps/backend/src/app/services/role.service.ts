@@ -44,9 +44,7 @@ export class RoleService {
       }
       const data = await this.repository.findById(id);
       if (data === undefined) {
-        throw new BadRequestException(
-          'This role is already deleted'
-        );
+        throw new BadRequestException('This role is already deleted');
       }
       return data;
     } catch (e) {
@@ -58,10 +56,15 @@ export class RoleService {
   async addRole(
     body: { name: string; description: string },
     accountId: string
-  )  {
-    const role = await this.repository.addNew(accountId, body);
-    await this.histService.createNew(role);
-    return role;
+  ) {
+    const isExisted = await this.repository.isExistedByName(body.name);
+    if (isExisted) {
+      throw new BadRequestException('Role name is duplicated!');
+    } else {
+      const role = await this.repository.addNew(accountId, body);
+      await this.histService.createNew(role);
+      return role;
+    }
   }
 
   async updateRoleById(
@@ -94,12 +97,14 @@ export class RoleService {
   async deleteRoleById(accountId: string, id: string) {
     try {
       const data = await this.repository.findById(id);
-      const lisyAccountOfThisRole = await this.accountService.getAccountsByRoleId(id)
+      const lisyAccountOfThisRole =
+        await this.accountService.getAccountsByRoleId(id);
       if (data === undefined) {
-        throw new BadRequestException(
-          'This role is already deleted'
-        );
-      } else if (lisyAccountOfThisRole !== undefined && lisyAccountOfThisRole.length > 0) {
+        throw new BadRequestException('This role is already deleted');
+      } else if (
+        lisyAccountOfThisRole !== undefined &&
+        lisyAccountOfThisRole.length > 0
+      ) {
         throw new BadRequestException(
           'There are still account of this type, please change the type of those accounts before deleting role'
         );
@@ -125,7 +130,7 @@ export class RoleService {
 
   async handleRestoreDeletedRoleById(accountId: string, id: string) {
     try {
-      const isExisted = this.repository.existsById(id);
+      const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
         throw new BadRequestException(
           'Role does not exist with the provided id'
@@ -143,7 +148,8 @@ export class RoleService {
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
-        e.message ?? 'Error occurred while restore the delete status of this role'
+        e.message ??
+          'Error occurred while restore the delete status of this role'
       );
     }
   }
