@@ -58,7 +58,7 @@ export class RoleService {
   async addRole(
     body: { name: string; description: string },
     accountId: string
-  ) {
+  )  {
     const role = await this.repository.addNew(accountId, body);
     await this.histService.createNew(role);
     return role;
@@ -79,7 +79,7 @@ export class RoleService {
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException(
-          'This device type is already deleted or disabled'
+          'This role is already deleted or disabled'
         );
       }
       const role = await this.repository.updateById(id, accountId, payload);
@@ -97,7 +97,7 @@ export class RoleService {
       const lisyAccountOfThisRole = await this.accountService.getAccountsByRoleId(id)
       if (data === undefined) {
         throw new BadRequestException(
-          'This room is already deleted'
+          'This role is already deleted'
         );
       } else if (lisyAccountOfThisRole !== undefined && lisyAccountOfThisRole.length > 0) {
         throw new BadRequestException(
@@ -119,7 +119,7 @@ export class RoleService {
       return await this.repository.getDeletedRoles(search);
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException('Error while disabling this device');
+      throw new BadRequestException('Error while delete this role');
     }
   }
 
