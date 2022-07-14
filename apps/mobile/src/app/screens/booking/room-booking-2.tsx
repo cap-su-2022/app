@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   ListRenderItemInfo,
   SafeAreaView,
@@ -23,7 +23,8 @@ import {
   CheckIcon,
   ChevronDoubleLeftIcon,
   ChevronRightIcon,
-  DeviceMobileIcon, ExclamationCircleIcon,
+  DeviceMobileIcon,
+  ExclamationCircleIcon,
 } from 'react-native-heroicons/outline';
 import { fetchBookingRoomDevices } from '../../redux/features/room-booking/thunk/fetch-booking-room-devices.thunk';
 import DelayInput from 'react-native-debounce-input';
@@ -34,7 +35,8 @@ import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
 import { Device } from '../../redux/models/device.model';
 import { step3ScheduleRoomBooking } from '../../redux/features/room-booking/slice';
-import AlertModal from "../../components/modals/alert-modal.component";
+import AlertModal from '../../components/modals/alert-modal.component';
+import { LOCAL_STORAGE } from '../../utils/local-storage';
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
@@ -43,12 +45,12 @@ const RoomBooking2: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const [deviceIds, setDeviceIds] = useState<string[]>([]);
-
-  console.log(deviceIds);
+  const [deviceNames, setDeviceNames] = useState<string[]>([]);
 
   const [search, setSearch] = useState<string>('');
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
+  console.log(deviceNames);
 
   useEffect(() => {
     dispatch(
@@ -63,10 +65,15 @@ const RoomBooking2: React.FC = () => {
     if (deviceIds.length < 1) {
       setErrorModalShown(true);
     } else {
-      navigate.navigate("ROOM_BOOKING_3")
-      dispatch(step3ScheduleRoomBooking({ devices: deviceIds }));
+      navigate.navigate('ROOM_BOOKING_3');
+      dispatch(
+        step3ScheduleRoomBooking({
+          devices: deviceIds,
+          deviceNames: deviceNames,
+        })
+      );
     }
-  }
+  };
 
   const Filtering: React.FC = () => {
     return (
@@ -99,11 +106,16 @@ const RoomBooking2: React.FC = () => {
   }> = (props) => {
     return (
       <TouchableOpacity
-        onPress={() =>
+        onPress={() => {
           deviceIds.filter((id) => id === props.device.id)[0]
             ? setDeviceIds(deviceIds.filter((id) => id !== props.device.id))
-            : setDeviceIds([...deviceIds, props.device.id])
-        }
+            : setDeviceIds([...deviceIds, props.device.id]);
+          deviceNames.filter((name) => name === props.device.name)[0]
+            ? setDeviceNames(
+                deviceIds.filter((name) => name !== props.device.name)
+              )
+            : setDeviceNames([...deviceNames, props.device.name]);
+        }}
         style={[
           styles.selectCircleButton,
           deviceIds.filter((id) => id === props.device.id)[0]
@@ -281,24 +293,33 @@ const RoomBooking2: React.FC = () => {
         width={deviceWidth / 1.3}
         toggleShown={() => setErrorModalShown(!isErrorModalShown)}
       >
-        <View style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-around',
-          alignItems: 'center',
-          flex: 1
-        }}>
-          <View style={{
+        <View
+          style={{
             display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-around',
             alignItems: 'center',
-          }}>
-            <ExclamationCircleIcon size={deviceWidth / 8} color={FPT_ORANGE_COLOR}/>
-            <Text style={{
-              color: BLACK,
-              fontWeight: '500',
-              fontSize: deviceWidth / 23,
-              textAlign: 'center'
-            }}>
+            flex: 1,
+          }}
+        >
+          <View
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <ExclamationCircleIcon
+              size={deviceWidth / 8}
+              color={FPT_ORANGE_COLOR}
+            />
+            <Text
+              style={{
+                color: BLACK,
+                fontWeight: '500',
+                fontSize: deviceWidth / 23,
+                textAlign: 'center',
+              }}
+            >
               Please choose device(s) before going to the next step
             </Text>
           </View>
@@ -310,14 +331,17 @@ const RoomBooking2: React.FC = () => {
               height: 40,
               width: deviceWidth / 1.7,
               backgroundColor: FPT_ORANGE_COLOR,
-              borderRadius: 8
+              borderRadius: 8,
             }}
-            onPress={() => setErrorModalShown(false)}>
-            <Text style={{
-              color: WHITE,
-              fontSize: deviceWidth / 23,
-              fontWeight: '600'
-            }}>
+            onPress={() => setErrorModalShown(false)}
+          >
+            <Text
+              style={{
+                color: WHITE,
+                fontSize: deviceWidth / 23,
+                fontWeight: '600',
+              }}
+            >
               I understand
             </Text>
           </TouchableOpacity>

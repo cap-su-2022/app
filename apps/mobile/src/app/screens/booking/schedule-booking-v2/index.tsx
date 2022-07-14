@@ -63,14 +63,20 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
         label: slot.name,
       };
     });
+    console.log(slotSelections)
     setSlotSelections(slotSelections);
     handleSetSlotStart(slotSelections[0].value);
     handleSetSlotEnd(slotSelections[0].value);
   };
 
   const handleNextStep = () => {
+    const slotStartName = slotSelections.find(slot => slot.value === slotStart)
+    const slotEndName = slotSelections.find(slot => slot.value === slotEnd)
+console.log(slotStartName, slotEndName, 'dcmm')
     dispatch(
       step1ScheduleRoomBooking({
+        fromSlotName: slotStartName.label,
+        toSlotName: slotEndName.label,
         fromDay: fromDay,
         toDay: toDay,
         fromSlot: slotStart,
