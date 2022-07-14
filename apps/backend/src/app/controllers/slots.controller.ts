@@ -15,6 +15,12 @@ export class SlotController {
     return this.service.getAllByPagination(params);
   }
 
+  @Get('name')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  getRoomNames() {
+    return this.service.getSlotNames();
+  }
+
   @Get(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getSlotById(@Param('id') id: string) {

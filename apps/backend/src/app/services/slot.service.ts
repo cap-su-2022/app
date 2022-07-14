@@ -25,6 +25,15 @@ export class SlotService {
     }
   }
 
+  async getSlotNames() {
+    try {
+      return await this.repository.findSlotNames();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async getById(id: string) {
     try {
       return await this.repository.findById(id);
