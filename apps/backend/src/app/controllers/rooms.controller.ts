@@ -94,6 +94,27 @@ export class RoomsController {
     return this.service.getRoomsByRoomType(roomTypeId);
   }
 
+  @Get('name')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully get role name',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get room name',
+    description: 'Get room name',
+  })
+  getRoomNames() {
+    return this.service.getRoomNames();
+  }
+
   @Get('find/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({

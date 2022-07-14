@@ -62,16 +62,6 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
       })
     )
       .unwrap()
-      .catch((e) =>
-        showNotification({
-          id: 'load-data',
-          color: 'red',
-          title: 'Error while adding library room',
-          message: e.message ?? 'Failed to add library room',
-          icon: <X />,
-          autoClose: 3000,
-        })
-      )
       .then(() =>
         showNotification({
           id: 'load-data',
@@ -88,7 +78,17 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
           formik.resetForm()
         );
         dispatch(fetchDisabledRooms(''))
-      });
+      })
+      .catch((e) =>
+      showNotification({
+        id: 'load-data',
+        color: 'red',
+        title: 'Error while adding library room',
+        message: e.message ?? 'Failed to add library room',
+        icon: <X />,
+        autoClose: 3000,
+      })
+    )
   };
 
   const formik = useFormik({

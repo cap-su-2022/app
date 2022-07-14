@@ -16,6 +16,14 @@ export class RolesRepository extends Repository<Roles> {
       .then((data) => data?.count > 0);
   }
 
+  async isExistedByName(name: string): Promise<boolean> {
+    return this.createQueryBuilder('rooms')
+      .select('COUNT(rooms.name)')
+      .where('rooms.name = :name', { name })
+      .getRawOne()
+      .then((data) => data['count'] > 0);
+  }
+
   async findByPagination(
     pagination: PaginationParams
   ): Promise<Pagination<Roles>> {

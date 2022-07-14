@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, createStyles } from '@mantine/core';
 import Header from '../common/header.component';
-import { ArchiveOff, BuildingWarehouse, Plus } from 'tabler-icons-react';
+import { ArchiveOff, BuildingWarehouse, Check, Plus, X } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fetchRoleById,
@@ -29,6 +29,7 @@ import AdminLayout from '../layout/admin.layout';
 import RestoreDeletedModal from '../role/restore-deleted.modal.component';
 import DeleteModal from '../role/delete-modal.component';
 import dayjs from 'dayjs';
+import { showNotification } from '@mantine/notifications';
 
 const AddRoleValidation = Yup.object().shape({
   name: Yup.string()
@@ -290,7 +291,27 @@ const ManageRole: React.FC<any> = () => {
       })
     )
       .unwrap()
-      .then((e) => handleAddModalClose());
+      .then(() =>
+        showNotification({
+          id: 'add-role',
+          color: 'teal',
+          title: 'Role was added',
+          message: 'Role was successfully added to the system',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .then((e) => handleAddModalClose())
+      .catch((e) =>
+        showNotification({
+          id: 'add-role',
+          color: 'red',
+          title: 'Error while adding role',
+          message: e.message ?? 'Failed to add role',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
   };
 
   const handleUpdateSubmit = (values: FormikValues) => {

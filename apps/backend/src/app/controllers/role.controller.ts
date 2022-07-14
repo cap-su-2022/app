@@ -30,6 +30,7 @@ import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
 import { Role } from '../enum/roles.enum';
 import { Roles } from '../decorators/role.decorator';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
+import { RoomsPaginationParams } from './rooms-pagination.model';
 
 @Controller('/v1/roles')
 @ApiBearerAuth()
@@ -60,18 +61,8 @@ export class RoleController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getRolesByPagination(
-    @Query('search', new DefaultValuePipe('')) search: string,
-    @Query('dir', new DefaultValuePipe('ASC')) dir: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number
-  ) {
-    return this.service.getRolesByPagination({
-      dir,
-      page,
-      search,
-      limit,
-    } as PaginationParams);
+  getRolesByPagination(@Query() payload: PaginationParams) {
+    return this.service.getRolesByPagination(payload);
   }
 
   @Get('name')

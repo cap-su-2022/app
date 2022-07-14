@@ -65,16 +65,6 @@ const AddDeviceModal: React.FC<AddDeviceModalProps> = (props) => {
       })
     )
       .unwrap()
-      .catch((e) =>
-        showNotification({
-          id: 'load-data',
-          color: 'red',
-          title: 'Error while adding device',
-          message: e.message ?? 'Failed to add device',
-          icon: <X />,
-          autoClose: 3000,
-        })
-      )
       .then(() =>
         showNotification({
           id: 'load-data',
@@ -90,8 +80,18 @@ const AddDeviceModal: React.FC<AddDeviceModalProps> = (props) => {
         dispatch(fetchDevices(props.pagination)).finally(() =>
           formik.resetForm()
         );
-        dispatch(fetchDisabledDevices(''))
-      });
+        dispatch(fetchDisabledDevices(''));
+      })
+      .catch((e) =>
+        showNotification({
+          id: 'load-data',
+          color: 'red',
+          title: 'Error while adding device',
+          message: e.message ?? 'Failed to add device',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      );
   };
 
   const formik = useFormik({
@@ -135,9 +135,9 @@ const AddDeviceModal: React.FC<AddDeviceModalProps> = (props) => {
         autoClose: 3000,
       });
     } else {
-      formik.submitForm()
+      formik.submitForm();
     }
-  }
+  };
 
   return (
     <>

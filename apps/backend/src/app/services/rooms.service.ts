@@ -26,7 +26,7 @@ export class RoomsService {
     }
   }
 
-  async getRoomsName() {
+  async getRoomNames() {
     try {
       return await this.repository.findRoomNames();
     } catch (e) {
