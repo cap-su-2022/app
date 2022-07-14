@@ -15,14 +15,15 @@ import CancelRequestModal from '../../components/booking-room/cancel-request.com
 import { useBooleanToggle, useDebouncedValue } from '@mantine/hooks';
 import Header from '../../components/common/header.component';
 import RequestInfoModal from '../../components/booking-room/info-modal.component';
+import SendBookingModal from './option-booking-modal.component';
 
 const defaultPagination = {
   limit: 5,
   page: 1,
   search: '',
   reasonType: '',
-  checkInAt: '2022-01-01T06:48:05.100Z',
-  checkOutAt: '2022-07-27T06:48:05.100Z',
+  checkInAt: '',
+  checkOutAt: '',
   sort: 'name',
   dir: 'ASC',
   status: '',
@@ -245,18 +246,9 @@ const BookingRoom = () => {
         <NoDataFound />
       )}
 
-      <div>
-        {isAddShown ? (
-          <Modal
-            size={'70%'}
-            opened={isAddShown}
-            title={<ModalHeaderTitle />}
-            onClose={() => setAddShown(false)}
-          >
-            <NewBookingRequestComponent />
-          </Modal>
-        ) : null}
-      </div>
+      <SendBookingModal  
+        toggleShown={() => setAddShown(!isAddShown)}
+        isShown={isAddShown} />
     </AdminLayout>
   );
 };

@@ -24,6 +24,17 @@ export class SlotRepository extends Repository<Slot> {
     });
   }
 
+  async findSlotNames(): Promise<Slot[]> {
+    return this.createQueryBuilder('slots')
+      .select('slots.name', 'name')
+      .addSelect('slots.id', 'id')
+      .addSelect('slots.slot_num', 'slotNum')
+      .where('slots.deleted_by IS NULL')
+      .andWhere('slots.deleted_at IS NULL')
+      .orderBy('slot_num', 'ASC')
+      .getRawMany<Slot>();
+  }
+
   async findById(id: string): Promise<Slot> {
     return this.createQueryBuilder('s')
       .select('s.id', 'id')

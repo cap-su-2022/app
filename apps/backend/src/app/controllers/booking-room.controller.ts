@@ -43,7 +43,7 @@ export class BookingRoomController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getAllBookingRoomsPagination(
     @Query('search', new DefaultValuePipe('')) search: string,
-    @Query('sort', new DefaultValuePipe('booked_at')) sort: string,
+    @Query('sort', new DefaultValuePipe('requested_at')) sort: string,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('reasonType', new DefaultValuePipe('')) reasonType: string,
@@ -65,6 +65,18 @@ export class BookingRoomController {
     } as GetBookingRoomsPaginationPayload);
   }
 
+  @Get('list-booking-by-room-in-week')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  getBookingByRoomInWeek(
+    @Query('roomId', new DefaultValuePipe('')) roomId: string,
+    @Query('date', new DefaultValuePipe('')) date: string
+  ) {
+    return this.service.getBookingByRoomInWeek({
+      roomId: roomId,
+      date: date,
+    });
+  }
+
   @Get('by-room-id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
@@ -83,7 +95,9 @@ export class BookingRoomController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getRequestBookingByRoomId(@Query('room-id') roomId= ''): Promise<BookingRequest[]> {
+  getRequestBookingByRoomId(
+    @Query('room-id') roomId = ''
+  ): Promise<BookingRequest[]> {
     return this.service.getRequestBookingByRoomId(roomId);
   }
 
@@ -105,7 +119,9 @@ export class BookingRoomController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getRequestBookingByAccountId(@Query('account-id') accountId= ''): Promise<BookingRequest[]> {
+  getRequestBookingByAccountId(
+    @Query('account-id') accountId = ''
+  ): Promise<BookingRequest[]> {
     return this.service.getRequestBookingByAccountId(accountId);
   }
 
@@ -134,7 +150,6 @@ export class BookingRoomController {
   getBookingRoomById(@Param('id') id: string) {
     return this.service.getBookingRoomById(id);
   }
-
 
   @Get('rooms')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -201,7 +216,6 @@ export class BookingRoomController {
     });
   }
 
-
   @Put('cancel/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   cancelRoomBookingById(
@@ -218,7 +232,7 @@ export class BookingRoomController {
 
   @Get('rooms-name')
   getRoomsName() {
-    return this.service.getRoomsName();
+    return this.service.getRoomNames();
   }
 
   @Get('devices')
