@@ -45,7 +45,6 @@ export class RoomTypeRepository extends Repository<RoomType> {
     return this.createQueryBuilder('rt')
       .select('rt.id', 'id')
       .addSelect('rt.name', 'name')
-      .andWhere('rt.disabled_at IS NULL')
       .andWhere('rt.deleted_at IS NULL')
       .getRawMany<RoomType>();
   }
