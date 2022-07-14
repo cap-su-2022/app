@@ -140,8 +140,8 @@ export class BookingRoomService {
     return this.accountService.getUsernameList();
   }
 
-  getRoomsName(): Promise<Devices[]> {
-    return this.roomService.getRoomsName();
+  getRoomNames(): Promise<Devices[]> {
+    return this.roomService.getRoomNames();
   }
 
   async getChoosingBookingRooms(filter: string) {
@@ -163,7 +163,7 @@ export class BookingRoomService {
         if(!isExisted){
           throw new BadRequestException("Room type does not exist with provided id");
         }
-      }    
+      }
       return this.roomService.getRoomsFilterByNameAndType(payload);
     } catch (e) {
       this.logger.error(e.message);
@@ -174,6 +174,15 @@ export class BookingRoomService {
   getAllBookingRoomsPagination(payload: GetBookingRoomsPaginationPayload) {
     try {
       return this.repository.findByPaginationPayload(payload);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  getBookingByRoomInWeek(payload:{roomId:string, date:string}) {
+    try {
+      return this.repository.getBookingByRoomInWeek(payload);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
