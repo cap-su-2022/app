@@ -15,12 +15,14 @@ import {
 } from 'react-native-heroicons/outline';
 import {saveEndDay} from "../../../redux/features/room-booking/slice";
 import {useAppDispatch} from "../../../hooks/use-app-dispatch.hook";
+import {useAppSelector} from "../../../hooks/use-app-selector.hook";
 
 
 const EndDayCalendar: React.FC<any> = (props) => {
   const [dayEnd, setDayEnd] = useState<string>('');
   const currentDate = new Date().toJSON().slice(0, 10);
   const dispatch = useAppDispatch();
+
 
   const handleDayPress = (day) => {
     setDayEnd(day.dateString)

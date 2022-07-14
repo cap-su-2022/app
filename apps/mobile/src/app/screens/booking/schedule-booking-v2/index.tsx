@@ -14,7 +14,10 @@ import SelectSlots from './select-slot';
 import { fetchAllSlots } from '../../../redux/features/slot';
 import { Slot } from '../../../redux/models/slot.model';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
-import { step1ScheduleRoomBooking } from '../../../redux/features/room-booking/slice';
+import {
+  saveToday,
+  step1ScheduleRoomBooking,
+} from '../../../redux/features/room-booking/slice';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 
 const ScheduleRoomBookingLater: React.FC<any> = (props) => {
@@ -22,7 +25,6 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
   const dispatch = useAppDispatch();
 
   const Today = new Date().toJSON().slice(0, 10);
-
   const [slotSelections, setSlotSelections] = useState([]);
   const [slotStart, setSlotStart] = useState<string>();
   const [slotEnd, setSlotEnd] = useState<string>();
@@ -39,10 +41,20 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
       .then((val) => {
         transformSlotsToSlotPicker(val);
       });
+    dispatch(saveToday(Today));
     return () => {
       setSlotSelections([]);
     };
   }, []);
+
+  useEffect(() => {
+    if (slotEnd < slotStart) {
+      setSlotEnd(slotStart);
+    }
+    if (slotStart > slotEnd) {
+      setSlotStart(slotEnd);
+    }
+  }, [slotStart, slotEnd]);
 
   const transformSlotsToSlotPicker = (val: Slot[]) => {
     const slotSelections = val.map((slot, index) => {
