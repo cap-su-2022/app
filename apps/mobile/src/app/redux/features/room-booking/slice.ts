@@ -32,9 +32,13 @@ interface AddRoomBookingPayload {
   fromDay: string;
   toDay: string;
   fromSlot: string;
+  fromSlotName: string;
+  toSlotName: string
   toSlot: string;
   roomId: string;
+  roomName: string;
   devices: BookingDevice[];
+  deviceNames: string[];
 }
 
 const initialState: RoomBookingState = {
@@ -53,7 +57,6 @@ const roomBookingSlice = createSlice({
   initialState: initialState,
   reducers: {
     saveToday(state, { payload }) {
-      console.log('payload cua t ne: ', payload)
       state.today = payload;
     },
     saveStartDay(state, { payload }) {
@@ -69,26 +72,28 @@ const roomBookingSlice = createSlice({
       };
     },
     step1ScheduleRoomBooking(state, { payload }) {
-      console.log(payload);
       state.addRoomBooking = {
         ...state.addRoomBooking,
+        fromSlotName: payload.fromSlotName,
+        toSlotName: payload.toSlotName,
         fromDay: payload.fromDay,
         toDay: payload.toDay,
         fromSlot: payload.fromSlot,
         toSlot: payload.toSlot,
       };
-      console.log(state.addRoomBooking);
     },
     step2ScheduleRoomBooking(state, { payload }) {
       state.addRoomBooking = {
         ...state.addRoomBooking,
         roomId: payload.roomId,
+        roomName: payload.roomName
       };
     },
     step3ScheduleRoomBooking(state, { payload }) {
       state.addRoomBooking = {
         ...state.addRoomBooking,
         devices: payload.devices,
+        deviceNames: payload.deviceNames
       };
     },
   },

@@ -54,7 +54,12 @@ const ChooseRoomBookingFooter: React.FC<ChooseRoomBookingFooterProps> = (
     if (props.roomId === undefined) {
       setErrorModalShown(true);
     } else {
-      dispatch(step2ScheduleRoomBooking({ roomId: props.roomId }));
+      dispatch(
+        step2ScheduleRoomBooking({
+          roomId: props.roomId,
+          roomName: props.roomName,
+        })
+      );
       navigate.navigate('ROOM_BOOKING_2');
     }
   };
