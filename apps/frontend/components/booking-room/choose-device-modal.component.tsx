@@ -1,295 +1,263 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  ActionIcon,
   Button,
   createStyles,
-  InputWrapper,
-  Modal,
+  Group,
+  NumberInput,
+  NumberInputHandlers,
+  ScrollArea,
   Select,
-  Table,
-  Text,
   Textarea,
-  TextInput,
 } from '@mantine/core';
-import { useWindowDimensions } from '../../hooks/use-window-dimensions';
-import {
-  Alarm,
-  Archive,
-  BuildingWarehouse,
-  CalendarStats,
-  ChevronsRight,
-  ClipboardText,
-  Clock,
-  FileDescription,
-  Id,
-  User,
-  X,
-} from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import dayjs from 'dayjs';
-import autoAnimate from '@formkit/auto-animate';
+import { Plus, X } from 'tabler-icons-react';
 import { FormikProps } from 'formik';
-import { DatePicker } from '@mantine/dates';
 import { showNotification } from '@mantine/notifications';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
-interface ChooseSlotModalProps {
+interface ChooseDeviceModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
-  handleBackChooseRoom(): void;
-  roomNames: any[];
-  slotNames: any[];
-  listBooking: any[];
+  handleBackChooseSlot(): void;
+  deviceNames: any[];
+  reasonNames: any[];
 }
-const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
+const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   const { classes } = useStyles();
-  const [slotNames, setSlotName] = useState<any[]>(props.slotNames);
+  const [value, setValue] = useState(0);
+  const [device, setDevice] = useState('');
+  const [deviceNames, setDeviceNames] = useState<any[]>(props.deviceNames);
+  const [choosedDevice, setChoosedDevice] = useState<any[]>([]);
+  console.log('Deviices: ', deviceNames);
+  console.log('Deviices choose: ', choosedDevice);
+  const [parent] = useAutoAnimate();
+  const handlers = useRef<NumberInputHandlers>();
 
-  const handleNextStep = () => {
-    if (
-      props.formik.values.bookDate === null ||
-      props.formik.values.slotStartId === null ||
-      props.formik.values.slotEndId === null
-    ) {
+  useEffect(() => {
+    if (device) {
+      setValue(1);
+    } else {
+      setValue(0);
+    }
+  }, [device]);
+
+  const add = () => {
+    if (value === 0) {
       showNotification({
         id: 'miss-data',
         color: 'red',
-        title: 'Miss some filed',
-        message: 'Please choose day, slot start, slot end before to next step',
+        title: 'Quantity missed',
+        message: 'Please choose quantity of device you want to use',
+        icon: <X />,
+        autoClose: 3000,
+      });
+    } else if (!device) {
+      showNotification({
+        id: 'miss-data',
+        color: 'red',
+        title: 'Device missed',
+        message: 'Please choose device you want to use',
         icon: <X />,
         autoClose: 3000,
       });
     } else {
-      props.handleSubmit();
-      // setShowChooseRoom(false);
-      // setShowBowChooseSlot(true);
+      if (deviceNames.length) {
+        for (let i = 0; i < deviceNames.length; i++) {
+          if (deviceNames[i].value === device) {
+            setChoosedDevice((choosedDevice) => [
+              ...choosedDevice,
+              { ...deviceNames[i], quantity: value },
+            ]);
+            setDevice('');
+            setValue(0);
+            break;
+          }
+        }
+        const deviceNamesUpdated = deviceNames.filter(
+          (deviceName) => deviceName.value !== device
+        );
+        setDeviceNames(deviceNamesUpdated);
+      } else {
+        showNotification({
+          id: 'miss-data',
+          color: 'red',
+          title: 'Out of device!',
+          message: 'Dont have any device to choose',
+          icon: <X />,
+          autoClose: 3000,
+        });
+        alert('Out of device!');
+      }
     }
   };
 
-  useEffect(() => {
-    props.formik.values.slotStartId = null;
-    props.formik.values.slotEndId = null;
-    if (props.formik.values.bookDate) {
-      const curr = new Date();
-      const choosedDay = new Date(props.formik.values.bookDate).getDate();
+  const remove = (item) => {
+    for (let i = 0; i < choosedDevice.length; i++) {
+      if (choosedDevice[i].value === item) {
+        console.log('RUN HERE');
 
-      const result = slotNames.map((slot, indexSlot) => {
-        let isFree = true;
-        let isOverSlot = false;
-
-        props.listBooking.map((request) => {
-          if (request.checkinDate === choosedDay) {
-            return request.checkinDate === choosedDay &&
-              request.slotIn <= slot.slotNum &&
-              request.slotOut >= slot.slotNum
-              ? (isFree = false)
-              : null;
-          }
-          if (choosedDay === curr.getDate() - curr.getDay() + 6) {
-            if (indexSlot > 2) {
-              isOverSlot = true;
-            }
-          }
-        });
-
-        if (!isOverSlot) {
-          if (isFree) {
-            return {
-              ...slot,
-              disabled: false,
-            };
-          } else {
-            return {
-              ...slot,
-              disabled: true,
-            };
-          }
-        } else {
-          return {
-            ...slot,
-            disabled: true,
-          };
-        }
-      });
-      setSlotName(result);
-    } else {
-      const result = slotNames.map((slot) => {
-        return { ...slot, disabled: true };
-      });
-      setSlotName(result);
+        setDeviceNames((devicename) => [
+          ...devicename,
+          { value: choosedDevice[i].value, label: choosedDevice[i].label },
+        ]);
+        break;
+      }
     }
-  }, [props.formik.values.bookDate]);
-
-  const curr = new Date(); // get current date
-  // console.log(curr.getDate())
-  // const curr = new Date(currTest.getTime() + 7 * 24 * 60 * 60 * 1000); // get current date
-  const sun = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-  // const mon = sun + 1; // last day is the first day + 6
-  // const tue = sun + 2; // last day is the first day + 6
-  // const wed = sun + 3; // last day is the first day + 6
-  // const thu = sun + 4; // last day is the first day + 6
-  // const fri = sun + 5; // last day is the first day + 6
-  // const sat = sun + 6; // last day is the first day + 6
-  const days = [
-    // curr.getDate() - curr.getDay(),
-    sun + 1,
-    sun + 2,
-    sun + 3,
-    sun + 4,
-    sun + 5,
-    sun + 6,
-  ];
-
-  const rows = slotNames.map((slot, indexSlot) => {
-    let isFree = true;
-    let isPassed = false;
-    let isOverSlot = false;
-    return (
-      <tr key={slot.value}>
-        <td>Slot {indexSlot + 1}</td>
-        {days.map((day, index) => {
-          isFree = true;
-          isPassed = false;
-          isOverSlot = false;
-          return (
-            <>
-              <td key={index}>
-                {props.listBooking.length > 0
-                  ? props.listBooking.map((request) => {
-                      if (
-                        // request.checkinSlot === request.checkoutSlot &&
-                        request.checkinDate === day
-                      ) {
-                        return request.checkinDate === day &&
-                          request.slotIn <= slot.slotNum &&
-                          request.slotOut >= slot.slotNum
-                          ? (isFree = false)
-                          : null;
-                      }
-                      if (day < curr.getDate()) {
-                        isPassed = true;
-                      }
-                      if (day === curr.getDate() - curr.getDay() + 6) {
-                        if (indexSlot > 2) {
-                          isOverSlot = true;
-                        }
-                      }
-                      // if (
-                      //   slotInThisDayBeBooked === day &&
-                      //   slotBeBooked !== slot.value
-                      // ) {
-                      //   isFree = false;
-                      // }
-                    })
-                  : day < curr.getDate()
-                  ? (isPassed = true)
-                  : null}
-                {!isOverSlot ? (
-                  isFree ? (
-                    isPassed ? (
-                      <div className={classes.dayPassed}></div>
-                    ) : (
-                      <div className={classes.slotFree}></div>
-                    )
-                  ) : (
-                    <div className={classes.slotBooked}></div>
-                  )
-                ) : null}
-              </td>
-            </>
-          );
-        })}
-      </tr>
+    const chooesdDeviceUpdated = choosedDevice.filter(
+      (device) => device.value !== item
     );
-  });
+    setChoosedDevice(chooesdDeviceUpdated);
+  };
+
+  // const test = () => {
+  //   console.log("Device", device)
+  //   console.log("Quantity", value)
+  // }
+
+  const handleNextStep = () => {
+    props.formik.setFieldValue('listDevice', choosedDevice);
+    if (props.formik.values.bookingReasonId) {
+      props.handleSubmit();
+    } else {
+      showNotification({
+        id: 'miss-data',
+        color: 'red',
+        title: 'Reason missed',
+        message: 'Please choose a reason',
+        icon: <X />,
+        autoClose: 3000,
+      });
+    }
+    // setShowChooseRoom(false);
+    // setShowBowChooseSlot(true);
+  };
+
+  const handleKeypress = (e) => {
+    //it triggers by pressing the enter key
+    if (e.which === 13) {
+      add();
+    }
+  };
 
   return (
     <div>
-      <div className={classes.divInfor}>
-        <div className={classes.divHeader}>
-          <h3 style={{ margin: 0 }}>Choose time to book</h3>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <p>This week</p>
-        </div>
-        <Table>
-          <thead>
-            <tr>
-              <th className={classes.thDiv}></th>
-              {/* <th className={classes.thDiv}>CN</th> */}
-              <th className={classes.thDiv}>T2</th>
-              <th className={classes.thDiv}>T3</th>
-              <th className={classes.thDiv}>T4</th>
-              <th className={classes.thDiv}>T5</th>
-              <th className={classes.thDiv}>T6</th>
-              <th className={classes.thDiv}>T7</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'center',
-          marginBottom: 20,
-        }}
-      >
-        <DatePicker
-          id="bookDate"
-          style={{ width: '200px', marginRight: 20, marginTop: 10 }}
-          label="Book date"
-          placeholder="Select date"
-          radius="md"
-          required
-          inputFormat="DD/MM/YYYY"
-          value={props.formik.values.bookDate}
-          minDate={dayjs(new Date()).toDate()}
-          maxDate={dayjs(new Date()).add(3, 'weeks').toDate()}
-          // onChange={(date) => setbookDate(date)}
-          onChange={(date) => {
-            props.formik.setFieldValue('bookDate', date);
-          }}
-          excludeDate={(date) => date.getDay() === 0 || date.getDay() === 7}
-        />
+      <ScrollArea style={{ height: 480 }}>
+        <div className={classes.divInfor}>
+          <div className={classes.divHeader}>
+            <h3 style={{ margin: 0 }}>Choose device</h3>
+          </div>
+          <div className={classes.displayFex}>
+            <Select
+              id="device"
+              name="device"
+              label="Select device"
+              required
+              onChange={setDevice}
+              value={device}
+              transition="pop-top-left"
+              transitionDuration={80}
+              transitionTimingFunction="ease"
+              dropdownPosition="bottom"
+              radius="md"
+              data={deviceNames}
+              searchable={true}
+              className={classes.selectComponent}
+              onKeyPress={handleKeypress}
+            />
+            <Group spacing={5} className={classes.groupComponent}>
+              <ActionIcon
+                size={35}
+                variant="default"
+                onClick={() => handlers.current.decrement()}
+              >
+                –
+              </ActionIcon>
 
-        <Select
-          id="slotStartId"
-          style={{ marginRight: 20, width: '140px' }}
-          label="From slot"
-          required
-          transition="pop-top-left"
-          transitionDuration={80}
-          transitionTimingFunction="ease"
-          dropdownPosition="top"
-          radius="md"
-          data={slotNames}
-          onChange={props.formik.handleChange('slotStartId')}
-          value={props.formik.values.slotStartId}
-        />
-        <ChevronsRight
-          size={28}
-          strokeWidth={2}
-          color={'black'}
-          style={{ marginRight: 20 }}
-        />
-        <Select
-          id="slotEndId"
-          style={{ width: '140px' }}
-          label="To slot"
-          required
-          transition="pop-top-left"
-          transitionDuration={80}
-          transitionTimingFunction="ease"
-          dropdownPosition="top"
-          radius="md"
-          data={slotNames}
-          onChange={props.formik.handleChange('slotEndId')}
-          value={props.formik.values.slotEndId}
-        />
-      </div>
+              <NumberInput
+                hideControls
+                value={value}
+                onChange={(val) => setValue(val)}
+                handlersRef={handlers}
+                max={10}
+                min={0}
+                step={1}
+                styles={{ input: { width: 54, textAlign: 'center' } }}
+              />
+
+              <ActionIcon
+                size={35}
+                variant="default"
+                onClick={() => handlers.current.increment()}
+              >
+                +
+              </ActionIcon>
+            </Group>
+            <Button
+              radius="md"
+              className={classes.buttonComponent}
+              onClick={() => add()}
+            >
+              <Plus />
+            </Button>
+          </div>
+          <div ref={parent} style={{ width: '300px' }}>
+            {choosedDevice
+              ? choosedDevice.map((item) => (
+                  <div key={item.value} className={classes.item}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <div style={{ margin: ' 0 10px' }}>{item.quantity}</div>
+                      <div>{item.label}</div>
+                    </div>
+                    <Button
+                      variant="subtle"
+                      color="red"
+                      size="xs"
+                      onClick={() => remove(item.value)}
+                    >
+                      <X color="red" size={20} strokeWidth={2.5} />
+                    </Button>
+                  </div>
+                ))
+              : null}
+          </div>
+          <div>
+            <div className={classes.divHeader}>
+              <h3 style={{ margin: 0 }}>Choose reason</h3>
+            </div>
+            <div className={classes.displayFex}>
+              <Select
+                id="bookingReasonId"
+                name="bookingReasonId"
+                label="Select season"
+                required
+                onChange={props.formik.handleChange('bookingReasonId')}
+                value={props.formik.values.bookingReasonId}
+                transition="pop-top-left"
+                transitionDuration={80}
+                transitionTimingFunction="ease"
+                dropdownPosition="bottom"
+                radius="md"
+                data={props.reasonNames}
+                searchable={true}
+                className={classes.selectComponent}
+                style={{ width: 400 }}
+              />
+            </div>
+            <Textarea
+              placeholder="A few notes about your booking request this time"
+              label="Description"
+              minRows={4}
+              maxRows={4}
+              onChange={props.formik.handleChange('description')}
+              value={props.formik.values.description}
+            />
+          </div>
+        </div>
+      </ScrollArea>
+
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Button
-          onClick={() => props.handleBackChooseRoom()}
+          onClick={() => props.handleBackChooseSlot()}
           // leftIcon={<Pencil />}
           color="green"
         >
@@ -312,41 +280,44 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
 
 const useStyles = createStyles({
   divInfor: {
-    backgroundColor: '#dcd9d4',
-    paddingBottom: 10,
+    backgroundColor: '#f0f0f0',
+    padding: 20,
+    paddingTop: 10,
     borderRadius: 10,
     marginBottom: 10,
+    minHeight: 470,
   },
   divHeader: {
     display: 'flex',
     justifyContent: 'center',
-    paddingTop: '10px',
-    marginTop: '20px',
+    padding: '10px 0 20px 0',
   },
-  thDiv: {
-    '@textAlign': 'center!important',
+  displayFex: {
+    display: 'flex',
+    alignItems: 'end',
+    marginBottom: 20,
   },
-  dayPassed: {
-    backgroundColor: '#a6a6a6',
-    height: 20,
-    width: '50px',
-    margin: 0,
-    borderRadius: 5,
+  selectComponent: {
+    width: '200px',
+    marginRight: 10,
   },
-  slotFree: {
-    backgroundColor: '#6bce6b',
-    height: 20,
-    width: '50px',
-    margin: 0,
-    borderRadius: 5,
+  groupComponent: {
+    marginRight: 10,
   },
-  slotBooked: {
-    backgroundColor: '#fd6262',
-    height: 20,
-    width: '50px',
-    margin: 0,
-    borderRadius: 5,
+  buttonComponent: {
+    marginRight: 10,
+    backgroundColor: 'red',
+  },
+  item: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '0.5em',
+    backgroundColor: 'white',
+    marginBottom: '0.5em',
+    borderRadius: '0.5em',
+    boxShadow: '0 0 0.5em rgba(0, 0, 0, 0.1)',
+    fontSize: '0.875em',
   },
 });
 
-export default ChooseSlotModal;
+export default ChooseDeviceModal;

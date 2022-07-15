@@ -14,6 +14,8 @@ import { ChooseBookingRoomFilterPayload } from '../payload/request/choose-bookin
 import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
 import { BookingRequest, Devices } from '../models';
 import { RoomTypeService } from './room-type.service';
+import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.request.payload';
+import { BookingRequestHistService } from './booking-room-hist.service';
 
 @Injectable()
 export class BookingRoomService {
@@ -25,7 +27,8 @@ export class BookingRoomService {
     private readonly deviceService: DevicesService,
     private readonly roomWishlistService: RoomWishlistService,
     private readonly repository: BookingRoomRepository,
-    private readonly accountService: AccountsService
+    private readonly accountService: AccountsService,
+    private readonly histService: BookingRequestHistService
   ) {}
 
   async getBookingRooms(
@@ -71,7 +74,9 @@ export class BookingRoomService {
     }
   }
 
-  async getRequestBookingByAccountId(accountId: string): Promise<BookingRequest[]> {
+  async getRequestBookingByAccountId(
+    accountId: string
+  ): Promise<BookingRequest[]> {
     try {
       return await this.repository.getRequestBookingByAccountId(accountId);
     } catch (e) {
@@ -158,10 +163,14 @@ export class BookingRoomService {
               sort: 'ASC',
             },
           } as ChooseBookingRoomFilterPayload);
-      if(payload.roomType.name.length > 0){
-        const isExisted = await this.roomTypeService.existsById(payload.roomType.name)
-        if(!isExisted){
-          throw new BadRequestException("Room type does not exist with provided id");
+      if (payload.roomType.name.length > 0) {
+        const isExisted = await this.roomTypeService.existsById(
+          payload.roomType.name
+        );
+        if (!isExisted) {
+          throw new BadRequestException(
+            'Room type does not exist with provided id'
+          );
         }
       }
       return this.roomService.getRoomsFilterByNameAndType(payload);
@@ -180,7 +189,7 @@ export class BookingRoomService {
     }
   }
 
-  getBookingByRoomInWeek(payload:{roomId:string, date:string}) {
+  getBookingByRoomInWeek(payload: { roomId: string; date: string }) {
     try {
       return this.repository.getBookingByRoomInWeek(payload);
     } catch (e) {
@@ -227,6 +236,87 @@ export class BookingRoomService {
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
+    }
+  }
+
+  async addNewRequest(
+    payload: BookingRequestAddRequestPayload,
+    userId: string
+  ): Promise<BookingRequest> {
+    try {
+      console.log('AAAAAAAAa: ', payload);
+
+      const deviceAdded = await this.repository.createNewRequest(
+        payload,
+        userId
+      );
+      // await this.histService.createNew(deviceAdded);
+      return deviceAdded;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(
+        e.message || 'Error while creating a new device'
+      );
+    }
+  }
+
+  async acceptById(accountId: string, id: string) {
+    const isExisted = await this.repository.existsById(id);
+    if (!isExisted) {
+      throw new BadRequestException(
+        'Request does not found with the provided id'
+      );
+    }
+    const isAccepted = await this.repository.isAcceptById(id);
+    if (isAccepted) {
+      throw new BadRequestException('Request already accepted!');
+    }
+
+    const isCancelled = await this.repository.isCancelledById(id);
+    if (isCancelled) {
+      throw new BadRequestException('Request already cancelled!');
+    }
+
+    try {
+      const requestAccepted = await this.repository.acceptById(accountId, id);
+      console.log(requestAccepted);
+      // await this.histService.createNew(requestAccepted);
+      return requestAccepted;
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while accept request'
+      );
+    }
+  }
+
+  async rejectById(accountId: string, id: string) {
+    const isExisted = await this.repository.existsById(id);
+    if (!isExisted) {
+      throw new BadRequestException(
+        'Request does not found with the provided id'
+      );
+    }
+    const isAccepted = await this.repository.isAcceptById(id);
+    if (isAccepted) {
+      throw new BadRequestException('Request already accepted!');
+    }
+
+    const isCancelled = await this.repository.isCancelledById(id);
+    if (isCancelled) {
+      throw new BadRequestException('Request already cancelled!');
+    }
+
+    try {
+      const requestAccepted = await this.repository.rejectById(accountId, id);
+      console.log(requestAccepted);
+      // await this.histService.createNew(requestAccepted);
+      return requestAccepted;
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while reject request'
+      );
     }
   }
 }

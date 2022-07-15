@@ -38,7 +38,7 @@ import RestoreDeletedModal from '../../components/device-type/restore-deleted.mo
 import DeleteModal from '../../components/device-type/delete-modal.component';
 import { showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
-import { fetchDeviceTypeNames } from '../../redux/features/devices/thunk/fetch-device-type-names.thunk';
+import { fetchDeviceTypeNames } from '../../redux/features/device-type/thunk/fetch-device-type-names.thunk';
 
 const AddDeviceTypeValidation = Yup.object().shape({
   name: Yup.string()

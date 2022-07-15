@@ -37,12 +37,15 @@ import { fetchListBookingByRoomInWeek } from '../../redux/features/room-booking/
 import { DatePicker } from '@mantine/dates';
 import ChooseSlotModal from './choose-slot-modal.component';
 import { showNotification } from '@mantine/notifications';
+import ChooseDeviceModal from './choose-device-modal.component';
 
 interface ChooseRoomModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
   roomNames: any[];
   slotNames: any[];
+  deviceNames: any[];
+  reasonNames: any[];
 }
 
 const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
@@ -66,7 +69,7 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
   useEffect(() => {
     const curr = new Date();
     const sat = curr.getDate() - curr.getDay() + 6;
-    const choosedDay = new Date(props.formik.values.bookDate);
+    const choosedDay = new Date(props.formik.values.checkinDate);
     if (slotNames !== undefined) {
       if (
         choosedDay.getDate() === sat ||
@@ -95,7 +98,7 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
         setSlotName(result);
       }
     }
-  }, [props.formik.values.bookDate]);
+  }, [props.formik.values.checkinDate]);
 
   const [listBooking, setListBooking] = useState([]);
   useEffect(() => {
@@ -144,6 +147,11 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
   const handleBackChooseRoom = () => {
     setShowChooseRoom(true);
     setShowChooseSlot(false);
+  };
+
+  const handleBackChooseSlot = () => {
+    setShowChooseSlot(true);
+    setShowChooseDevice(false);
   };
 
   const ChooseRoom: React.FC = () => {
@@ -240,7 +248,16 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
           listBooking={listBooking}
         />
       )}
-      {showChooseDevice && <div>Ahihihihiii</div>}
+      {showChooseDevice && (
+        <ChooseDeviceModal
+          formik={props.formik}
+          handleSubmit={props.handleSubmit}
+          handleBackChooseSlot={handleBackChooseSlot}
+          // handleNextChooseDevice={handleNextChooseDevice}
+          deviceNames={props.deviceNames}
+          reasonNames={props.reasonNames}
+        />
+      )}
     </>
   );
 };
@@ -256,7 +273,7 @@ const useStyles = createStyles({
     margin: 10,
   },
   divInfor: {
-    backgroundColor: '#dcd9d4',
+    backgroundColor: '#f0f0f0',
     paddingBottom: 10,
     borderRadius: 10,
     marginBottom: 10,

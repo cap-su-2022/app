@@ -14,6 +14,7 @@ import {
   Archive,
   BuildingWarehouse,
   CalendarStats,
+  Check,
   ClipboardText,
   Clock,
   FileDescription,
@@ -29,6 +30,10 @@ import ChooseSlotModal from './choose-slot-modal.component';
 import { useFormik } from 'formik';
 import { fetchRoomNames } from '../../redux/features/room/thunk/fetch-room-names.thunk';
 import { fetchSlotNames } from '../../redux/features/slot/thunk/fetch-slot-names.thunk';
+import { fetchDeviceNames } from '../../redux/features/devices/thunk/fetch-device-names.thunk';
+import { fetchReasonNames } from '../../redux/features/booking-reason/thunk/fetch-booking-reason-names.thunk';
+import { addNewRequest } from '../../redux/features/room-booking/thunk/add-new-request-booking';
+import { showNotification } from '@mantine/notifications';
 
 interface SendBookingModalProps {
   isShown: boolean;
@@ -51,6 +56,20 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
     dispatch(fetchSlotNames())
       .unwrap()
       .then((slotNames) => setSlotNames(slotNames));
+  }, []);
+
+  const [deviceNames, setDeviceNames] = useState([]);
+  useEffect(() => {
+    dispatch(fetchDeviceNames())
+      .unwrap()
+      .then((deviceNames) => setDeviceNames(deviceNames));
+  }, []);
+
+  const [reasonNames, setReasonNames] = useState([]);
+  useEffect(() => {
+    dispatch(fetchReasonNames())
+      .unwrap()
+      .then((ReasonNames) => setReasonNames(ReasonNames));
   }, []);
 
   const ModalHeaderTitle: React.FC = () => {
@@ -85,17 +104,45 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
     };
 
     const handleSubmit = (value) => {
-      console.log(value);
+      dispatch(addNewRequest(value))
+        .unwrap()
+        .then(() =>
+          showNotification({
+            id: 'add-reuqest',
+            color: 'teal',
+            title: 'Your request was sended',
+            message: 'You request was successfully sended',
+            icon: <Check />,
+            autoClose: 3000,
+          })
+        )
+        // .then(() => {
+        //   props.toggleShown();
+        //   dispatch(fetchDeviceTypes(props.pagination));
+        //   dispatch(fetchDeletedDeviceTypes());
+        // })
+        .catch((e) =>
+          showNotification({
+            id: 'add-reuqest',
+            color: 'red',
+            title: 'Error while send request',
+            message: e.message ?? 'Failed to send request',
+            icon: <X />,
+            autoClose: 3000,
+          })
+        );
     };
   
     const formik = useFormik({
       // validationSchema: UpdateRoomTypeValidation,
       initialValues: {
         roomId: '',
-        slotStartId: '',
-        slotEndId: '',
-        bookDate: null,
+        checkinDate: null,
+        checkinSlot: '',
+        checkoutSlot: '',
+        bookingReasonId: '',
         listDevice: [],
+        description: '',
       },
       enableReinitialize: true,
       onSubmit: (e) => handleSubmit(e),
@@ -134,6 +181,8 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
               handleSubmit={() => formik.handleSubmit()}
               roomNames={roomNames}
               slotNames={slotNames}
+              deviceNames={deviceNames}
+              reasonNames={reasonNames}
             />
           )}
         </div>
@@ -155,23 +204,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
         onClose={() => props.toggleShown()}
       >
         <div>
-          {/* <Button
-            style={{ marginRight: 10 }}
-            onClick={() => setShowBookingByRoom(!isShowBookByRoom)}
-            leftIcon={<BuildingWarehouse />}
-          >
-            Book by room
-          </Button> */}
           <Dropdown />
-          {/* <Button
-            onClick={() => setShowBookingBySlot(!isShowBookBySlot)}
-            leftIcon={<Alarm />}
-          >
-            Book by slot
-          </Button> */}
-          {/* <Button onClick={() => props.toggleShown()} leftIcon={<X />}>
-          Close
-        </Button> */}
         </div>
       </Modal>
     </>
