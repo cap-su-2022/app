@@ -1,7 +1,8 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
+
 @Entity("booking_request")
-export class BookingRequest {
+export class BookingRequest{
   @PrimaryGeneratedColumn("uuid", {
     name: "id",
     comment: "ID of the Booking Request"
@@ -13,20 +14,6 @@ export class BookingRequest {
     nullable: false,
   })
   roomId?: string;
-
-  @Column({
-    name: "time_checkin",
-    nullable: false,
-    type: "timestamptz"
-  })
-  timeCheckIn?: Date;
-
-  @Column({
-    name: "time_checkout",
-    nullable: false,
-    type: "timestamptz"
-  })
-  timeCheckOut?: Date;
 
   @Column({
     name: "requested_by",
@@ -49,30 +36,78 @@ export class BookingRequest {
   status?: string;
 
   @Column({
-    name: "booked_at",
+    name: 'updated_by',
     nullable: false,
-    type: "timestamptz"
+    default: false,
+    type: 'uuid',
   })
-  bookedAt?: Date;
+  updatedBy?: string;
 
   @Column({
-    name: "checkin_at",
-    nullable: false,
-    type: "timestamptz"
+    name: "booking_reason_id",
+    nullable: false
   })
-  checkedInAt?: Date;
+  bookingReasonId?: string;
 
   @Column({
-    name: "checkout_at",
-    nullable: false,
-    type: "timestamptz"
+    name: "cancelled_by",
+    type: "uuid",
   })
-  checkedOutAt?: Date;
+  cancelledBy?: string;
 
   @Column({
-    name: "updated_at",
+    name: "cancelled_at",
+    nullable: false,
+    type: "timestamptz",
+    default: () => "CURRENT_TIMESTAMP"
+  })
+  cancelledAt?: Date;
+
+  @Column({
+    name: "checkin_slot",
+    nullable: false,
+  })
+  checkinSlot?: string;
+
+  @Column({
+    name: "checkout_slot",
+    nullable: false,
+  })
+  checkoutSlot?: string;
+
+  @Column({
+    name: "checkin_date",
     nullable: false,
     type: "timestamptz"
   })
-  updatedAt?: string;
+  checkinDate?: Date;
+
+  // @Column({
+  //   name: "checkout_date",
+  //   nullable: false,
+  //   type: "timestamptz"
+  // })
+  // checkoutDate?: Date;
+
+  @Column({
+    name: "checkedin_at",
+    nullable: false,
+    type: "timestamptz"
+  })
+  checkedinAt?: Date;
+
+  @Column({
+    name: "checkedout_at",
+    nullable: false,
+    type: "timestamptz"
+  })
+  checkedoutAt?: Date;
+
+  @Column({
+    name: 'description',
+    type: 'varchar',
+    length: 500,
+  })
+  description?: string;
+
 }

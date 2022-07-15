@@ -5,6 +5,7 @@ import { BookingRoomStatus } from '../enum/booking-room-status.enum';
 import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
 import { IPaginationMeta, paginateRaw } from 'nestjs-typeorm-paginate';
 import { Slot } from '../models/slot.entity';
+import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.request.payload';
 
 @CustomRepository(BookingRequest)
 export class BookingRoomRepository extends Repository<BookingRequest> {
@@ -18,7 +19,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   findByPaginationPayload(payload: GetBookingRoomsPaginationPayload) {
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.checkin_Date', 'checkinDate')
-      .addSelect('booking_request.checkout_Date', 'checkoutDate')
       .addSelect('booking_request.room_id', 'roomId')
       .addSelect('r.name', 'roomName')
       .addSelect('r.description', 'roomDescription')
@@ -49,11 +49,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         checkinDate: payload.checkinDate,
       });
     }
-    if (payload.checkoutDate && payload.checkoutDate !== '') {
-      query.andWhere('booking_request.checkout_date >= :checkoutDate', {
-        checkoutDate: payload.checkoutDate,
-      });
-    }
     if (payload.reasonType && payload.reasonType !== '') {
       query.andWhere('booking_request.booking_reason_id = :reason', {
         reason: payload.reasonType,
@@ -69,21 +64,28 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     const curr = new Date(payload.date); // get current date
     const firstDay = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
     const lastDay = firstDay + 6; // last day is the first day + 6
-    const sunday = new Date(curr.setDate(firstDay))
-    const satuday = new Date(curr.setDate(lastDay))
-    console.log("SUNNNNN: ",sunday)
-    console.log("SATTTTT: ",satuday)
+    const sunday = new Date(curr.setDate(firstDay));
+    const satuday = new Date(curr.setDate(lastDay));
+    console.log('SUNNNNN: ', sunday);
+    console.log('SATTTTT: ', satuday);
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('booking_request.checkin_Date', 'checkinDate')
+      .addSelect('booking_request.room_id', 'roomId')
+      .addSelect('booking_request.status', 'status')
       .addSelect('booking_request.checkin_slot', 'checkinSlot')
       .addSelect('booking_request.checkout_slot', 'checkoutSlot')
       .addSelect('slot_in.slot_num', 'slotIn')
       .addSelect('slot_out.slot_num', 'slotOut')
       .innerJoin(Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
-      .innerJoin(Slot, 'slot_out', 'slot_out.id = booking_request.checkout_slot')
-      .andWhere('booking_request.room_id = :roomId', {roomId: payload.roomId})
-      .andWhere('booking_request.status LIKE \'BOOKING\'')
+      .innerJoin(
+        Slot,
+        'slot_out',
+        'slot_out.id = booking_request.checkout_slot'
+      )
+      .andWhere('booking_request.room_id = :roomId', { roomId: payload.roomId })
+      .andWhere("(booking_request.status = 'PENDING' OR booking_request.status = 'BOOKED')")
+      // .andWhere("booking_request.status LIKE 'PENDING'");
     if (payload.date && payload.date !== '') {
       query.andWhere('booking_request.checkin_date >= :sunday', {
         sunday: sunday,
@@ -104,7 +106,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   ): Promise<BookingRequest[]> {
     return this.createQueryBuilder('booking_request')
       .select('booking_request.checkin_date', 'checkinDate')
-      .addSelect('booking_request.checkout_date', 'checkoutDate')
       .addSelect('booking_request.requested_at', 'bookedAt')
       .addSelect('booking_request.status', 'status')
       .addSelect('r.name', 'roomName')
@@ -124,7 +125,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .select('booking_request.id', 'id')
       .addSelect('booking_request.status', 'status')
       .addSelect('booking_request.checkin_Date', 'checkinDate')
-      .addSelect('booking_request.checkout_Date', 'checkoutDate')
       .addSelect('booking_request.booking_reason_id', 'reasonType')
       .addSelect('booking_request.description', 'description')
       .addSelect('booking_request.requested_at', 'requestedAt')
@@ -149,7 +149,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('r.name', 'roomName')
       .addSelect('a.username', 'requestedBy')
       .addSelect('booking_request.checkin_Date', 'checkinDate')
-      .addSelect('booking_request.checkout_Date', 'checkoutDate')
 
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
@@ -165,7 +164,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('r.name', 'roomName')
       .addSelect('a.username', 'requestedBy')
       .addSelect('booking_request.checkin_Date', 'checkinDate')
-      .addSelect('booking_request.checkout_Date', 'checkoutDate')
 
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
@@ -198,6 +196,24 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .then((data) => data?.count > 0);
   }
 
+  isAcceptById(id: string): Promise<boolean> {
+    return this.createQueryBuilder('booking_request')
+      .select('COUNT(1)', 'count')
+      .where('booking_request.id = :id', { id: id })
+      .andWhere("booking_request.status = 'BOOKED'")
+      .getRawOne<{ count: number }>()
+      .then((data) => data?.count > 0);
+  }
+
+  isCancelledById(id: string): Promise<boolean> {
+    return this.createQueryBuilder('booking_request')
+      .select('COUNT(1)', 'count')
+      .where('booking_request.id = :id', { id: id })
+      .andWhere("booking_request.status = 'CANCELLED'")
+      .getRawOne<{ count: number }>()
+      .then((data) => data?.count > 0);
+  }
+
   async findById(id: string): Promise<BookingRequest> {
     return this.createQueryBuilder('br')
       .select('br.id', 'id')
@@ -206,7 +222,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('r.description', 'roomDescription')
       .addSelect('a.username', 'requestedBy')
       .addSelect('br.checkin_Date', 'checkinDate')
-      .addSelect('br.checkout_Date', 'checkoutDate')
       .addSelect('br.status', 'status')
       .addSelect('br.requested_at', 'requestedAt')
       .addSelect('br.requested_at', 'bookedAt')
@@ -222,4 +237,71 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .where('br.id = :id', { id: id })
       .getRawOne<BookingRequest>();
   }
+
+  createNewRequest(payload: BookingRequestAddRequestPayload, userId: string) {
+    if (!payload.checkoutDate || payload.checkoutDate === payload.checkinDate) {
+      return this.save(
+        {
+          roomId: payload.roomId,
+          requestedBy: userId,
+          requestedAt: new Date(),
+          checkinDate: payload.checkinDate,
+          checkoutDate: payload.checkoutDate,
+          checkinSlot: payload.checkinSlot,
+          checkoutSlot: payload.checkoutSlot,
+          status: 'PENDING',
+          description: payload.description,
+          bookingReasonId: payload.bookingReasonId,
+        },
+        {
+          transaction: true,
+        }
+      );
+    }
+  }
+
+  async acceptById(
+    accountId: string,
+    roomId: string,
+  ) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: roomId,
+      },
+    });
+    return this.save(
+      {
+        ...oldData,
+        status: "BOOKED",
+        updatedBy: accountId,
+        updatedAt: new Date(),
+      },
+      {
+        transaction: true,
+      }
+    );
+  }
+
+  async rejectById(
+    accountId: string,
+    roomId: string,
+  ) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: roomId,
+      },
+    });
+    return this.save(
+      {
+        ...oldData,
+        status: "CANCELLED",
+        updatedBy: accountId,
+        updatedAt: new Date(),
+      },
+      {
+        transaction: true,
+      }
+    );
+  }
+
 }

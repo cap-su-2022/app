@@ -85,12 +85,14 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
       <td>{row.roomName}</td>
       <td>{moment(row.bookedAt).format('HH:MM DD/MM/YYYY')}</td>
       <td>
-        {row.status === 'BOOKING' ? (
-          <div className={classes.bookingDisplay}>{row.status}</div>
-        ) : row.status === 'BOOKED' ? (
+        {row.status === 'PENDING' ? (
+          <div className={classes.pandingDisplay}>{row.status}</div>
+        ): row.status === 'BOOKED' ? (
           <div className={classes.bookedDisplay}>{row.status}</div>
-        ) : row.status === 'CHECKED IN' ? (
-          <div className={classes.processingDisplay}>{row.status}</div>
+        ) : row.status === 'CHECKED_OUT' ? (
+          <div className={classes.checkedOutDisplay}>{row.status}</div>
+        ) : row.status === 'CHECKED_IN' ? (
+          <div className={classes.checkedInDisplay}>{row.status}</div>
         ) : row.status === 'CANCELLED' ? (
           <div className={classes.canceledDisplay}>{row.status}</div>
         ) : null}
@@ -202,7 +204,7 @@ const useStyles = createStyles((theme) => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  bookingDisplay: {
+  pandingDisplay: {
     color: '#228be6',
     textAlign: 'center',
     borderRadius: 50,
@@ -210,7 +212,7 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: '#0000ff1c',
     fontWeight: 600,
   },
-  bookedDisplay: {
+  checkedOutDisplay: {
     color: '#fd7e14',
     textAlign: 'center',
     borderRadius: 50,
@@ -226,12 +228,20 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: '#ff00001c',
     fontWeight: 600,
   },
-  processingDisplay: {
+  bookedDisplay: {
     color: '#40c057',
     textAlign: 'center',
     borderRadius: 50,
     width: 100,
     backgroundColor: '#00800024',
+    fontWeight: 600,
+  },
+  checkedInDisplay: {
+    color: '#fd7e14',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#fd7e1430',
     fontWeight: 600,
   },
 }));

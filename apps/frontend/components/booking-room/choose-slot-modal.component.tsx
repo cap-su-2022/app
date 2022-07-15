@@ -46,9 +46,9 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
 
   const handleNextStep = () => {
     if (
-      props.formik.values.bookDate === null ||
-      props.formik.values.slotStartId === null ||
-      props.formik.values.slotEndId === null
+      props.formik.values.checkinDate === null ||
+      props.formik.values.checkinSlot === null ||
+      props.formik.values.checkoutSlot === null
     ) {
       showNotification({
         id: 'miss-data',
@@ -59,16 +59,16 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
         autoClose: 3000,
       });
     } else {
-      props.handleNextChooseDevice()
+      props.handleNextChooseDevice();
     }
   };
 
   useEffect(() => {
-    props.formik.values.slotStartId = null;
-    props.formik.values.slotEndId = null;
-    if (props.formik.values.bookDate) {
+    props.formik.values.checkinSlot = null;
+    props.formik.values.checkoutSlot = null;
+    if (props.formik.values.checkinDate) {
       const curr = new Date();
-      const choosedDay = new Date(props.formik.values.bookDate).getDate();
+      const choosedDay = new Date(props.formik.values.checkinDate).getDate();
 
       const result = slotNames.map((slot, indexSlot) => {
         let isFree = true;
@@ -115,7 +115,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       });
       setSlotName(result);
     }
-  }, [props.formik.values.bookDate]);
+  }, [props.formik.values.checkinDate]);
 
   const curr = new Date(); // get current date
   // console.log(curr.getDate())
@@ -138,14 +138,16 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   ];
 
   const rows = slotNames.map((slot, indexSlot) => {
-    let isFree = true;
+    let isBooked = false;
+    let isPending = false;
     let isPassed = false;
     let isOverSlot = false;
     return (
       <tr key={slot.value}>
         <td>Slot {indexSlot + 1}</td>
         {days.map((day, index) => {
-          isFree = true;
+          isBooked = false;
+          isPending = false;
           isPassed = false;
           isOverSlot = false;
           return (
@@ -160,7 +162,9 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
                         return request.checkinDate === day &&
                           request.slotIn <= slot.slotNum &&
                           request.slotOut >= slot.slotNum
-                          ? (isFree = false)
+                          ? request.status === 'BOOKED'
+                            ? (isBooked = true)
+                            : (isPending = true)
                           : null;
                       }
                       if (day < curr.getDate()) {
@@ -182,8 +186,10 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
                   ? (isPassed = true)
                   : null}
                 {!isOverSlot ? (
-                  isFree ? (
-                    isPassed ? (
+                  !isBooked ? (
+                    isPending ? (
+                      <div className={classes.slotPending}></div>
+                    ) : isPassed ? (
                       <div className={classes.dayPassed}></div>
                     ) : (
                       <div className={classes.slotFree}></div>
@@ -199,7 +205,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       </tr>
     );
   });
-  
+
   return (
     <div>
       <div className={classes.divInfor}>
@@ -234,25 +240,25 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
         }}
       >
         <DatePicker
-          id="bookDate"
+          id="checkinDate"
           style={{ width: '200px', marginRight: 20, marginTop: 10 }}
           label="Book date"
           placeholder="Select date"
           radius="md"
           required
           inputFormat="DD/MM/YYYY"
-          value={props.formik.values.bookDate}
+          value={props.formik.values.checkinDate}
           minDate={dayjs(new Date()).toDate()}
           maxDate={dayjs(new Date()).add(3, 'weeks').toDate()}
           // onChange={(date) => setbookDate(date)}
           onChange={(date) => {
-            props.formik.setFieldValue('bookDate', date);
+            props.formik.setFieldValue('checkinDate', date);
           }}
           excludeDate={(date) => date.getDay() === 0 || date.getDay() === 7}
         />
 
         <Select
-          id="slotStartId"
+          id="checkinSlot"
           style={{ marginRight: 20, width: '140px' }}
           label="From slot"
           required
@@ -262,8 +268,8 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           dropdownPosition="top"
           radius="md"
           data={slotNames}
-          onChange={props.formik.handleChange('slotStartId')}
-          value={props.formik.values.slotStartId}
+          onChange={props.formik.handleChange('checkinSlot')}
+          value={props.formik.values.checkinSlot}
         />
         <ChevronsRight
           size={28}
@@ -272,7 +278,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           style={{ marginRight: 20 }}
         />
         <Select
-          id="slotEndId"
+          id="checkoutSlot"
           style={{ width: '140px' }}
           label="To slot"
           required
@@ -282,8 +288,8 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           dropdownPosition="top"
           radius="md"
           data={slotNames}
-          onChange={props.formik.handleChange('slotEndId')}
-          value={props.formik.values.slotEndId}
+          onChange={props.formik.handleChange('checkoutSlot')}
+          value={props.formik.values.checkoutSlot}
         />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -327,7 +333,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
 
 const useStyles = createStyles({
   divInfor: {
-    backgroundColor: '#dcd9d4',
+    backgroundColor: '#f0f0f0',
     paddingBottom: 10,
     borderRadius: 10,
     marginBottom: 10,
@@ -350,6 +356,13 @@ const useStyles = createStyles({
   },
   slotFree: {
     backgroundColor: '#6bce6b',
+    height: 20,
+    width: '50px',
+    margin: 0,
+    borderRadius: 5,
+  },
+  slotPending: {
+    backgroundColor: '#7373d0',
     height: 20,
     width: '50px',
     margin: 0,

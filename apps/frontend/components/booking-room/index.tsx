@@ -148,16 +148,25 @@ const BookingRoom = () => {
           <Button
             variant="outline"
             color="blue"
-            onClick={() => handleChangeStatus('BOOKING')}
+            onClick={() => handleChangeStatus('PENDING')}
             style={{ marginRight: 10 }}
             size="xs"
           >
-            Booking
+            Pending
           </Button>
           <Button
             variant="outline"
             color="green"
-            onClick={() => handleChangeStatus('CHECKED IN')}
+            onClick={() => handleChangeStatus('BOOKED')}
+            style={{ marginRight: 10 }}
+            size="xs"
+          >
+             Booked
+          </Button>
+          <Button
+            variant="outline"
+            color="orange"
+            onClick={() => handleChangeStatus('CHECKED_IN')}
             style={{ marginRight: 10 }}
             size="xs"
           >
@@ -165,21 +174,12 @@ const BookingRoom = () => {
           </Button>
           <Button
             variant="outline"
-            color="orange"
-            onClick={() => handleChangeStatus('BOOKED')}
-            style={{ marginRight: 10 }}
-            size="xs"
-          >
-            Booked
-          </Button>
-          <Button
-            variant="outline"
             color="violet"
-            onClick={() => handleChangeStatus('WAITING')}
+            onClick={() => handleChangeStatus('CHECKED_OUT')}
             style={{ marginRight: 10 }}
             size="xs"
           >
-            Waiting
+            Checked out
           </Button>
           <Button
             variant="outline"
@@ -189,15 +189,6 @@ const BookingRoom = () => {
             size="xs"
           >
             Cancelled
-          </Button>
-          <Button
-            variant="outline"
-            color="red"
-            onClick={() => handleChangeStatus('REJECTED')}
-            style={{ marginRight: 10 }}
-            size="xs"
-          >
-            Rejected
           </Button>
         </div>
       </>
