@@ -31,6 +31,7 @@ import { Role } from '../enum/roles.enum';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
 import { BookingRequest } from '../models';
+import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.request.payload';
 
 @Controller('/v1/booking-room')
 @ApiTags('Booking Room')
@@ -43,7 +44,7 @@ export class BookingRoomController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getAllBookingRoomsPagination(
     @Query('search', new DefaultValuePipe('')) search: string,
-    @Query('sort', new DefaultValuePipe('booked_at')) sort: string,
+    @Query('sort', new DefaultValuePipe('requested_at')) sort: string,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('reasonType', new DefaultValuePipe('')) reasonType: string,
@@ -65,6 +66,18 @@ export class BookingRoomController {
     } as GetBookingRoomsPaginationPayload);
   }
 
+  @Get('list-booking-by-room-in-week')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  getBookingByRoomInWeek(
+    @Query('roomId', new DefaultValuePipe('')) roomId: string,
+    @Query('date', new DefaultValuePipe('')) date: string
+  ) {
+    return this.service.getBookingByRoomInWeek({
+      roomId: roomId,
+      date: date,
+    });
+  }
+
   @Get('by-room-id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
@@ -83,7 +96,9 @@ export class BookingRoomController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getRequestBookingByRoomId(@Query('room-id') roomId= ''): Promise<BookingRequest[]> {
+  getRequestBookingByRoomId(
+    @Query('room-id') roomId = ''
+  ): Promise<BookingRequest[]> {
     return this.service.getRequestBookingByRoomId(roomId);
   }
 
@@ -105,7 +120,9 @@ export class BookingRoomController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getRequestBookingByAccountId(@Query('account-id') accountId= ''): Promise<BookingRequest[]> {
+  getRequestBookingByAccountId(
+    @Query('account-id') accountId = ''
+  ): Promise<BookingRequest[]> {
     return this.service.getRequestBookingByAccountId(accountId);
   }
 
@@ -134,7 +151,6 @@ export class BookingRoomController {
   getBookingRoomById(@Param('id') id: string) {
     return this.service.getBookingRoomById(id);
   }
-
 
   @Get('rooms')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -201,6 +217,93 @@ export class BookingRoomController {
     });
   }
 
+  @Post('new-request')
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Create a new request',
+    description: 'Create new request with the provided payload',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully created a new request',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request payload for request is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  addNewRequest(
+    @User() user: KeycloakUserInstance,
+    @Body() request: BookingRequestAddRequestPayload
+  ) {
+    return this.service.addNewRequest(request, user.account_id);
+  }
+
+  @Put('accept/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Accept request by id',
+    description: 'Accept request by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully accept the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while accept the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  acceptRequestById(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string },
+  ) {
+    return this.service.acceptById(user.account_id, payload.id);
+  }
+
+  @Put('reject/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Reject request by id',
+    description: 'Reject request by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully reject the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while reject the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  rejectRequestById(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string },
+  ) {
+    return this.service.rejectById(user.account_id, payload.id);
+  }
 
   @Put('cancel/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -218,7 +321,7 @@ export class BookingRoomController {
 
   @Get('rooms-name')
   getRoomsName() {
-    return this.service.getRoomsName();
+    return this.service.getRoomNames();
   }
 
   @Get('devices')

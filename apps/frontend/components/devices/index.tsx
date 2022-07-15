@@ -40,7 +40,7 @@ import { RoomType } from '../../models/room-type.model';
 import { PaginationResponse } from '../../models/pagination-response.payload';
 import { fetchDevices } from '../../redux/features/devices/thunk/fetch-devices.thunk';
 import { fetchDeviceById } from '../../redux/features/devices/thunk/fetch-by-id.thunk';
-import { fetchDeviceTypeNames } from '../../redux/features/devices/thunk/fetch-device-type-names.thunk';
+import { fetchDeviceTypeNames } from '../../redux/features/device-type/thunk/fetch-device-type-names.thunk';
 import { updateDeviceById } from '../../redux/features/devices/thunk/update-by-id';
 import DeviceInfoModal from './info-modal.component';
 import RestoreDisabledDeviceModal from './restore-disabled.modal.component';

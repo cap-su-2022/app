@@ -75,7 +75,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
         .then(() => {
           props.toggleShown();
           dispatch(fetchDeviceTypes(props.pagination));
-          dispatch(fetchDeletedDeviceTypes());
+          dispatch(fetchDeletedDeviceTypes(''));
         })
         .catch((e) =>
           showNotification({
