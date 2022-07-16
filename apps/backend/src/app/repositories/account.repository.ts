@@ -21,6 +21,16 @@ export class AccountRepository extends Repository<Accounts> {
       .then((data) => data['count'] > 0);
   }
 
+  async getRoleOfAccount(id: string): Promise<{ role_name: string}> {
+    return this.createQueryBuilder('account')
+      .select('role.name')
+      .innerJoin(Roles, 'role', 'role.id = account.role_id')
+      .where('account.disabled_at IS NULL')
+      .andWhere('account.deleted_at IS NULL')
+      .andWhere('account.id = :accountId', { accountId: id })
+      .getRawOne();
+  }
+
   async checkIfAccountIsDeletedById(id: string): Promise<boolean> {
     return this.createQueryBuilder('accounts')
       .select('accounts.deleted_at')

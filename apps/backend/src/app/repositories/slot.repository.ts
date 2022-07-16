@@ -24,11 +24,20 @@ export class SlotRepository extends Repository<Slot> {
     });
   }
 
+  async getNumOfSlot(id: string): Promise<{ slotNum: number;}> {
+    return this.createQueryBuilder('slot')
+      .select('slot.slot_num', "slotNum")
+      .where('slot.id = :slotId', { slotId: id })
+      .getRawOne();
+  }
+
   async findSlotNames(): Promise<Slot[]> {
     return this.createQueryBuilder('slots')
       .select('slots.name', 'name')
       .addSelect('slots.id', 'id')
       .addSelect('slots.slot_num', 'slotNum')
+      .addSelect('slots.time_start', 'timeStart')
+      .addSelect('slots.time_end', 'timeEnd')
       .where('slots.deleted_by IS NULL')
       .andWhere('slots.deleted_at IS NULL')
       .orderBy('slot_num', 'ASC')

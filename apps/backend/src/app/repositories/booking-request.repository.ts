@@ -6,6 +6,8 @@ import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking
 import { IPaginationMeta, paginateRaw } from 'nestjs-typeorm-paginate';
 import { Slot } from '../models/slot.entity';
 import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.request.payload';
+import { BookingReason } from '../models/booking-reason.entity';
+import { BadRequestException } from '@nestjs/common';
 
 @CustomRepository(BookingRequest)
 export class BookingRoomRepository extends Repository<BookingRequest> {
@@ -25,6 +27,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.booking_reason_id', 'reasonType')
       .addSelect('booking_request.status', 'status')
       .addSelect('booking_request.requested_at', 'bookedAt')
+      .addSelect('booking_request.checkin_date', 'checkinDate')
       .addSelect('booking_request.id', 'id')
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
       .where('r.name ILIKE :roomName', {
@@ -84,8 +87,10 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         'slot_out.id = booking_request.checkout_slot'
       )
       .andWhere('booking_request.room_id = :roomId', { roomId: payload.roomId })
-      .andWhere("(booking_request.status = 'PENDING' OR booking_request.status = 'BOOKED')")
-      // .andWhere("booking_request.status LIKE 'PENDING'");
+      .andWhere(
+        "(booking_request.status = 'PENDING' OR booking_request.status = 'BOOKED')"
+      );
+    // .andWhere("booking_request.status LIKE 'PENDING'");
     if (payload.date && payload.date !== '') {
       query.andWhere('booking_request.checkin_date >= :sunday', {
         sunday: sunday,
@@ -95,6 +100,27 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       });
     }
     return query.getRawMany<BookingRequest>();
+  }
+
+  getBookingPendingAndBookedByDay(
+    date: string
+  ): Promise<{ id: string; slotIn: number; slotOut: number, status: string }[]> {
+    const query = this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('slot_in.slot_num', 'slotIn')
+      .addSelect('slot_out.slot_num', 'slotOut')
+      .addSelect('booking_request.status', 'status')
+      .innerJoin(Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
+      .innerJoin(
+        Slot,
+        'slot_out',
+        'slot_out.id = booking_request.checkout_slot'
+      )
+      .where('booking_request.checkinDate = :checkinDate', {
+        checkinDate: date,
+      })
+      .andWhere("(booking_request.status = 'PENDING' OR booking_request.status = 'BOOKED')");
+    return query.getRawMany<{ id: string; slotIn: number; slotOut: number, status: string }>();
   }
 
   getTotalRowCount(): Promise<number> {
@@ -175,19 +201,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getRawMany<BookingRequest>();
   }
 
-  cancelRoomBookingById(accountId: string, id: string): Promise<UpdateResult> {
-    return this.createQueryBuilder('booking_request')
-      .update({
-        status: 'CANCELLED',
-      })
-      .where('booking_request.id = :id', { id: id })
-      .andWhere('booking_request.requested_by = :accountId', {
-        accountId: accountId,
-      })
-      .useTransaction(true)
-      .execute();
-  }
-
   existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('booking_request')
       .select('COUNT(1)', 'count')
@@ -220,25 +233,81 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('r.id', 'roomId')
       .addSelect('r.name', 'roomName')
       .addSelect('r.description', 'roomDescription')
-      .addSelect('a.username', 'requestedBy')
       .addSelect('br.checkin_Date', 'checkinDate')
       .addSelect('br.status', 'status')
-      .addSelect('br.requested_at', 'requestedAt')
-      .addSelect('br.requested_at', 'bookedAt')
-      .addSelect('br.updated_at', 'updatedAt')
       .addSelect('br.booking_reason_id', 'reasonType')
       .addSelect('br.description', 'description')
       .addSelect('br.checkedin_at', 'checkinAt')
-      .addSelect('br.checkout_at', 'checkoutAt')
+      .addSelect('bkr.name', 'reason')
+      .addSelect('br.cancelled_at', 'cancelledAt')
+      .addSelect('br.requested_at', 'requestedAt')
+      .addSelect('br.updated_at', 'updatedAt')
+      .addSelect('a.username', 'requestedBy')
       .addSelect('aa.username', 'updatedBy')
+      .addSelect('aaa.username', 'cancelledBy')
+      .addSelect('s.name', 'checkinSlot')
+      .addSelect('ss.name', 'checkoutSlot')
       .innerJoin(Rooms, 'r', 'r.id = br.room_id')
       .innerJoin(Accounts, 'a', 'a.id = br.requested_by')
       .leftJoin(Accounts, 'aa', 'aa.id = br.updated_by')
+      .leftJoin(Accounts, 'aaa', 'aaa.id = br.cancelled_by')
+      .leftJoin(Slot, 's', 's.id = br.checkin_slot')
+      .leftJoin(Slot, 'ss', 'ss.id = br.checkout_slot')
+      .innerJoin(BookingReason, 'bkr', 'bkr.id = br.booking_reason_id')
       .where('br.id = :id', { id: id })
       .getRawOne<BookingRequest>();
   }
 
-  createNewRequest(payload: BookingRequestAddRequestPayload, userId: string) {
+  async createNewRequest(
+    payload: BookingRequestAddRequestPayload,
+    userId: string,
+    status: string
+  ) {
+    return this.save(
+      {
+        roomId: payload.roomId,
+        requestedBy: userId,
+        requestedAt: new Date(),
+        checkinDate: payload.checkinDate,
+        checkoutDate: payload.checkoutDate,
+        checkinSlot: payload.checkinSlot,
+        checkoutSlot: payload.checkoutSlot,
+        status: status,
+        description: payload.description,
+        bookingReasonId: payload.bookingReasonId,
+      },
+      {
+        transaction: true,
+      }
+    );
+  }
+
+  async cancelRoomBookingById(accountId: string, id: string) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: id,
+      },
+    });
+    if (oldData.requestedBy === accountId) {
+      return this.save(
+        {
+          ...oldData,
+          status: 'CANCELLED',
+          updatedBy: accountId,
+          updatedAt: new Date(),
+        },
+        {
+          transaction: true,
+        }
+      );
+    } else {
+      throw new BadRequestException(
+        "You are not allowed to cancel someone else's request"
+      );
+    }
+  }
+
+  createNewBooking(payload: BookingRequestAddRequestPayload, userId: string) {
     if (!payload.checkoutDate || payload.checkoutDate === payload.checkinDate) {
       return this.save(
         {
@@ -249,7 +318,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
           checkoutDate: payload.checkoutDate,
           checkinSlot: payload.checkinSlot,
           checkoutSlot: payload.checkoutSlot,
-          status: 'PENDING',
+          status: 'BOOKED',
           description: payload.description,
           bookingReasonId: payload.bookingReasonId,
         },
@@ -260,10 +329,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     }
   }
 
-  async acceptById(
-    accountId: string,
-    roomId: string,
-  ) {
+  async acceptById(accountId: string, roomId: string) {
     const oldData = await this.findOneOrFail({
       where: {
         id: roomId,
@@ -272,7 +338,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     return this.save(
       {
         ...oldData,
-        status: "BOOKED",
+        status: 'BOOKED',
         updatedBy: accountId,
         updatedAt: new Date(),
       },
@@ -282,10 +348,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     );
   }
 
-  async rejectById(
-    accountId: string,
-    roomId: string,
-  ) {
+  async rejectById(accountId: string, roomId: string) {
     const oldData = await this.findOneOrFail({
       where: {
         id: roomId,
@@ -294,7 +357,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     return this.save(
       {
         ...oldData,
-        status: "CANCELLED",
+        status: 'CANCELLED',
         updatedBy: accountId,
         updatedAt: new Date(),
       },
@@ -303,5 +366,4 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       }
     );
   }
-
 }

@@ -67,7 +67,7 @@ export class BookingRoomController {
   }
 
   @Get('list-booking-by-room-in-week')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getBookingByRoomInWeek(
     @Query('roomId', new DefaultValuePipe('')) roomId: string,
     @Query('date', new DefaultValuePipe('')) date: string
@@ -219,7 +219,7 @@ export class BookingRoomController {
 
   @Post('new-request')
   @HttpCode(HttpStatus.OK)
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Create a new request',
     description: 'Create new request with the provided payload',

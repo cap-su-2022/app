@@ -13,6 +13,7 @@ import { AccountsModule } from './accounts.module';
 import { RoomTypeModule } from './room-type.module';
 import { BookingRequestHistService } from '../services/booking-room-hist.service';
 import { BookingRequestHistRepository } from '../repositories/booking-request-hist.repository';
+import { SlotModule } from './slot.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { BookingRequestHistRepository } from '../repositories/booking-request-hi
     RoomsModule,
     AccountsModule,
     RoomTypeModule,
+    SlotModule,
 
     TypeOrmExModule.forCustomRepository([
       BookingRoomRepository,

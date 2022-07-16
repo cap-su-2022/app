@@ -16,7 +16,7 @@ export class SlotController {
   }
 
   @Get('name')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getRoomNames() {
     return this.service.getSlotNames();
   }

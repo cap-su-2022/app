@@ -16,6 +16,8 @@ import {
   Archive,
   BuildingWarehouse,
   CalendarStats,
+  ChevronLeft,
+  ChevronRight,
   ChevronsRight,
   ClipboardText,
   Clock,
@@ -30,6 +32,7 @@ import autoAnimate from '@formkit/auto-animate';
 import { FormikProps } from 'formik';
 import { DatePicker } from '@mantine/dates';
 import { showNotification } from '@mantine/notifications';
+import { fetchListBookingByRoomInWeek } from '../../redux/features/room-booking/thunk/fetch-list-booking-by-room-in-week.thunk';
 
 interface ChooseSlotModalProps {
   formik: FormikProps<any>;
@@ -43,7 +46,16 @@ interface ChooseSlotModalProps {
 const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const { classes } = useStyles();
   const [slotNames, setSlotName] = useState<any[]>(props.slotNames);
+  const dispatch = useAppDispatch();
+  const [dayShowShecule, setDayShowShecule] = useState(
+    new Date(dayjs(new Date()).format('YYYY-MM-DD'))
+  ); // get current date
+  const curr = new Date();
+  const sun = dayShowShecule.getDate() - dayShowShecule.getDay(); // First day is the day of the month - the day of the week
+  const [days, setDays] = useState<any[]>();
+  const [listRequest, setListRequest] = useState(props.listBooking);
 
+  console.log('LISSSSS: ', listRequest);
   const handleNextStep = () => {
     if (
       props.formik.values.checkinDate === null ||
@@ -63,22 +75,63 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     }
   };
 
+  const toNextWeek = () => {
+    setDayShowShecule(
+      new Date(dayShowShecule.getTime() + 7 * 24 * 60 * 60 * 1000)
+    );
+  };
+
+  const toLastWeek = () => {
+    setDayShowShecule(
+      new Date(dayShowShecule.getTime() - 7 * 24 * 60 * 60 * 1000)
+    );
+  };
+
+  useEffect(() => {
+    if (props.formik.values.roomId !== '') {
+      dispatch(
+        fetchListBookingByRoomInWeek({
+          roomId: props.formik.values.roomId,
+          date: dayShowShecule.toUTCString(),
+        })
+      )
+        .unwrap()
+        .then((listBooking) =>
+          setListRequest(
+            listBooking.map((request) => {
+              return {
+                ...request,
+                checkinDate: new Date(request.checkinDate).getDate(),
+              };
+            })
+          )
+        );
+    }
+  }, [dayShowShecule, dispatch, props.formik.values.roomId]);
+
   useEffect(() => {
     props.formik.values.checkinSlot = null;
     props.formik.values.checkoutSlot = null;
     if (props.formik.values.checkinDate) {
       const curr = new Date();
+      const currTime = dayjs(curr).format('HH:mm:ss');
       const choosedDay = new Date(props.formik.values.checkinDate).getDate();
 
       const result = slotNames.map((slot, indexSlot) => {
         let isFree = true;
         let isOverSlot = false;
 
-        props.listBooking.map((request) => {
+        if (choosedDay === curr.getDate() && currTime > slot.timeStart) {
+          isFree = false;
+        }
+        listRequest.map((request) => {
+          console.log("request day: ",request.checkinDate)
+          console.log("choose day: ",choosedDay)
           if (request.checkinDate === choosedDay) {
             return request.checkinDate === choosedDay &&
               request.slotIn <= slot.slotNum &&
-              request.slotOut >= slot.slotNum
+              request.slotOut >= slot.slotNum &&
+              request.status === 'BOOKED'
               ? (isFree = false)
               : null;
           }
@@ -117,25 +170,16 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     }
   }, [props.formik.values.checkinDate]);
 
-  const curr = new Date(); // get current date
-  // console.log(curr.getDate())
-  // const curr = new Date(currTest.getTime() + 7 * 24 * 60 * 60 * 1000); // get current date
-  const sun = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-  // const mon = sun + 1; // last day is the first day + 6
-  // const tue = sun + 2; // last day is the first day + 6
-  // const wed = sun + 3; // last day is the first day + 6
-  // const thu = sun + 4; // last day is the first day + 6
-  // const fri = sun + 5; // last day is the first day + 6
-  // const sat = sun + 6; // last day is the first day + 6
-  const days = [
-    // curr.getDate() - curr.getDay(),
-    sun + 1,
-    sun + 2,
-    sun + 3,
-    sun + 4,
-    sun + 5,
-    sun + 6,
-  ];
+  useEffect(() => {
+    const tmpArr = [];
+
+    for (let i = 0; i < 6; i++) {
+      const test = new Date(dayShowShecule);
+      tmpArr[i] = new Date(test.setDate(sun + i + 1));
+    }
+
+    setDays(tmpArr);
+  }, [dayShowShecule, sun]);
 
   const rows = slotNames.map((slot, indexSlot) => {
     let isBooked = false;
@@ -145,63 +189,74 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     return (
       <tr key={slot.value}>
         <td>Slot {indexSlot + 1}</td>
-        {days.map((day, index) => {
-          isBooked = false;
-          isPending = false;
-          isPassed = false;
-          isOverSlot = false;
-          return (
-            <>
-              <td key={index}>
-                {props.listBooking.length > 0
-                  ? props.listBooking.map((request) => {
-                      if (
-                        // request.checkinSlot === request.checkoutSlot &&
-                        request.checkinDate === day
-                      ) {
-                        return request.checkinDate === day &&
-                          request.slotIn <= slot.slotNum &&
-                          request.slotOut >= slot.slotNum
-                          ? request.status === 'BOOKED'
-                            ? (isBooked = true)
-                            : (isPending = true)
-                          : null;
-                      }
-                      if (day < curr.getDate()) {
-                        isPassed = true;
-                      }
-                      if (day === curr.getDate() - curr.getDay() + 6) {
-                        if (indexSlot > 2) {
-                          isOverSlot = true;
-                        }
-                      }
-                      // if (
-                      //   slotInThisDayBeBooked === day &&
-                      //   slotBeBooked !== slot.value
-                      // ) {
-                      //   isFree = false;
-                      // }
-                    })
-                  : day < curr.getDate()
-                  ? (isPassed = true)
-                  : null}
-                {!isOverSlot ? (
-                  !isBooked ? (
-                    isPending ? (
-                      <div className={classes.slotPending}></div>
-                    ) : isPassed ? (
-                      <div className={classes.dayPassed}></div>
-                    ) : (
-                      <div className={classes.slotFree}></div>
-                    )
-                  ) : (
-                    <div className={classes.slotBooked}></div>
-                  )
-                ) : null}
-              </td>
-            </>
-          );
-        })}
+        {days
+          ? days.map((day, index) => {
+              isBooked = false;
+              isPending = false;
+              isPassed = false;
+              isOverSlot = false;
+              return (
+                <>
+                  <td key={indexSlot + '' + index}>
+                    {listRequest.length > 0
+                      ? listRequest.map((request) => {
+                          if (
+                            // request.checkinSlot === request.checkoutSlot &&
+                            request.checkinDate === day.getDate()
+                          ) {
+                            return request.checkinDate === day.getDate() &&
+                              request.slotIn <= slot.slotNum &&
+                              request.slotOut >= slot.slotNum
+                              ? request.status === 'BOOKED'
+                                ? (isBooked = true)
+                                : (isPending = true)
+                              : null;
+                          }
+                          if (day < curr) {
+                            isPassed = true;
+                          }
+                          if (
+                            day.getDay() ===
+                            curr.getDate() - curr.getDay() + 6
+                          ) {
+                            if (indexSlot > 2) {
+                              isOverSlot = true;
+                            }
+                          }
+                          // if (
+                          //   slotInThisDayBeBooked === day &&
+                          //   slotBeBooked !== slot.value
+                          // ) {
+                          //   isFree = false;
+                          // }
+                        })
+                      : day < curr
+                      ? (isPassed = true)
+                      : null}
+                    {!isOverSlot ? (
+                      !isPassed ? (
+                        isPending ? (
+                          <div className={classes.slotPending}>
+                            {day.getDate()}
+                          </div>
+                        ) : isBooked ? (
+                          <div className={classes.slotBooked}>
+                            {day.getDate()}
+                          </div>
+                        ) : (
+                          <div className={classes.slotFree}>
+                            {day.getDate()}
+                          </div>
+                        )
+                      ) : (
+                        <div className={classes.dayPassed}>{day.getDate()}</div>
+                      )
+                    ) : null}
+                  </td>
+                </>
+              );
+            })
+          : null}
       </tr>
     );
   });
@@ -213,23 +268,75 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           <h3 style={{ margin: 0 }}>Choose time to book</h3>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <p>This week</p>
+          <Button
+            onClick={() => toLastWeek()}
+            color="orange"
+            size="xs"
+            variant="subtle"
+          >
+            <ChevronLeft />
+          </Button>
+          {days ? (
+            <h4 style={{ display: 'flex', alignItems: 'center', margin: '0' }}>
+              {days[0].getDate() +
+                '/' +
+                days[0].getMonth() +
+                '  -  ' +
+                days[5].getDate() +
+                '/' +
+                days[5].getMonth()}
+            </h4>
+          ) : null}
+          <Button
+            onClick={() => toNextWeek()}
+            color="orange"
+            size="xs"
+            variant="subtle"
+          >
+            <ChevronRight />
+          </Button>
         </div>
         <Table>
           <thead>
             <tr>
               <th className={classes.thDiv}></th>
               {/* <th className={classes.thDiv}>CN</th> */}
-              <th className={classes.thDiv}>T2</th>
-              <th className={classes.thDiv}>T3</th>
-              <th className={classes.thDiv}>T4</th>
-              <th className={classes.thDiv}>T5</th>
-              <th className={classes.thDiv}>T6</th>
-              <th className={classes.thDiv}>T7</th>
+              <th className={classes.thDiv}>
+                <div>Mon</div>
+              </th>
+              <th className={classes.thDiv}>
+                <div>Tue</div>
+              </th>
+              <th className={classes.thDiv}>
+                <div>Wed</div>
+              </th>
+              <th className={classes.thDiv}>
+                <div>Thu</div>
+              </th>
+              <th className={classes.thDiv}>
+                <div>Fri</div>
+              </th>
+              <th className={classes.thDiv}>
+                <div>Sat</div>
+              </th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>
         </Table>
+      </div>
+      <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginRight: 30 }}>
+          <div className={classes.noteSlotBooked}>.</div>
+          <p>Slot was booked</p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', marginRight: 30 }}>
+          <div className={classes.noteSlotPending}>.</div>
+          <p>Slot have request pending</p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', marginRight: 30 }}>
+          <div className={classes.noteSlotFree}>.</div>
+          <p>Slot free</p>
+        </div>
       </div>
       <div
         style={{
@@ -347,33 +454,61 @@ const useStyles = createStyles({
   thDiv: {
     '@textAlign': 'center!important',
   },
+  tdDiv: {
+    margin: 'auto',
+  },
   dayPassed: {
     backgroundColor: '#a6a6a6',
     height: 20,
-    width: '50px',
-    margin: 0,
+    width: 50,
     borderRadius: 5,
+    margin: 'auto',
   },
   slotFree: {
     backgroundColor: '#6bce6b',
     height: 20,
-    width: '50px',
-    margin: 0,
+    width: 50,
     borderRadius: 5,
+    margin: 'auto',
   },
   slotPending: {
     backgroundColor: '#7373d0',
     height: 20,
-    width: '50px',
-    margin: 0,
+    width: 50,
     borderRadius: 5,
+    margin: 'auto',
   },
   slotBooked: {
     backgroundColor: '#fd6262',
     height: 20,
-    width: '50px',
+    width: 50,
+    borderRadius: 5,
+    margin: 'auto',
+  },
+  noteSlotBooked: {
+    backgroundColor: '#fd6262',
+    height: 15,
+    width: 30,
     margin: 0,
     borderRadius: 5,
+    marginRight: 5,
+    marginLeft: 20,
+  },
+  noteSlotPending: {
+    backgroundColor: '#7373d0',
+    height: 15,
+    width: 30,
+    margin: 0,
+    borderRadius: 5,
+    marginRight: 5,
+  },
+  noteSlotFree: {
+    backgroundColor: '#6bce6b',
+    height: 15,
+    width: 30,
+    margin: 0,
+    borderRadius: 5,
+    marginRight: 5,
   },
 });
 
