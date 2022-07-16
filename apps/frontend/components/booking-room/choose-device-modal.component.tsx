@@ -14,6 +14,7 @@ import { Plus, X } from 'tabler-icons-react';
 import { FormikProps } from 'formik';
 import { showNotification } from '@mantine/notifications';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import autoAnimate from '@formkit/auto-animate';
 
 interface ChooseDeviceModalProps {
   formik: FormikProps<any>;
@@ -32,6 +33,14 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   console.log('Deviices choose: ', choosedDevice);
   const [parent] = useAutoAnimate();
   const handlers = useRef<NumberInputHandlers>();
+
+  const [show, setShow] = useState(false);
+  const dropdown = useRef(null);
+
+  useEffect(() => {
+    parent.current && autoAnimate(dropdown.current);
+  }, [parent]);
+  const reveal = () => setShow(!show);
 
   useEffect(() => {
     if (device) {
@@ -142,64 +151,70 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   return (
     <div>
       <ScrollArea style={{ height: 480 }}>
-        <div className={classes.divInfor}>
+        <div className={classes.divInfor} ref={dropdown}>
           <div className={classes.divHeader}>
-            <h3 style={{ margin: 0 }}>Choose device</h3>
-          </div>
-          <div className={classes.displayFex}>
-            <Select
-              id="device"
-              name="device"
-              label="Select device"
-              required
-              onChange={setDevice}
-              value={device}
-              transition="pop-top-left"
-              transitionDuration={80}
-              transitionTimingFunction="ease"
-              dropdownPosition="bottom"
-              radius="md"
-              data={deviceNames}
-              searchable={true}
-              className={classes.selectComponent}
-              onKeyPress={handleKeypress}
-            />
-            <Group spacing={5} className={classes.groupComponent}>
-              <ActionIcon
-                size={35}
-                variant="default"
-                onClick={() => handlers.current.decrement()}
-              >
-                –
-              </ActionIcon>
-
-              <NumberInput
-                hideControls
-                value={value}
-                onChange={(val) => setValue(val)}
-                handlersRef={handlers}
-                max={10}
-                min={0}
-                step={1}
-                styles={{ input: { width: 54, textAlign: 'center' } }}
-              />
-
-              <ActionIcon
-                size={35}
-                variant="default"
-                onClick={() => handlers.current.increment()}
-              >
-                +
-              </ActionIcon>
-            </Group>
-            <Button
-              radius="md"
-              className={classes.buttonComponent}
-              onClick={() => add()}
+            <h3
+              className={classes.buttonChooseDevice}
+              onClick={reveal}
             >
-              <Plus />
-            </Button>
+              Choose devices
+            </h3>
           </div>
+          {show && (
+            <div className={classes.displayFex}>
+              <Select
+                id="device"
+                name="device"
+                label="Select device (optional)"
+                onChange={setDevice}
+                value={device}
+                transition="pop-top-left"
+                transitionDuration={80}
+                transitionTimingFunction="ease"
+                dropdownPosition="bottom"
+                radius="md"
+                data={deviceNames}
+                searchable={true}
+                className={classes.selectComponent}
+                onKeyPress={handleKeypress}
+              />
+              <Group spacing={5} className={classes.groupComponent}>
+                <ActionIcon
+                  size={35}
+                  variant="default"
+                  onClick={() => handlers.current.decrement()}
+                >
+                  –
+                </ActionIcon>
+
+                <NumberInput
+                  hideControls
+                  value={value}
+                  onChange={(val) => setValue(val)}
+                  handlersRef={handlers}
+                  max={10}
+                  min={0}
+                  step={1}
+                  styles={{ input: { width: 54, textAlign: 'center' } }}
+                />
+
+                <ActionIcon
+                  size={35}
+                  variant="default"
+                  onClick={() => handlers.current.increment()}
+                >
+                  +
+                </ActionIcon>
+              </Group>
+              <Button
+                radius="md"
+                className={classes.buttonComponent}
+                onClick={() => add()}
+              >
+                <Plus />
+              </Button>
+            </div>
+          )}
           <div ref={parent} style={{ width: '300px' }}>
             {choosedDevice
               ? choosedDevice.map((item) => (
@@ -286,6 +301,13 @@ const useStyles = createStyles({
     borderRadius: 10,
     marginBottom: 10,
     minHeight: 470,
+  },
+  buttonChooseDevice: {
+    margin: 0,
+    cursor: 'pointer',
+    border: '1px solid',
+    padding: '5px 20px',
+    borderRadius: 50,
   },
   divHeader: {
     display: 'flex',

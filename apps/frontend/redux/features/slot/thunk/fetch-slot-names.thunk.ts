@@ -16,11 +16,13 @@ export const fetchSlotNames = createAsyncThunk<
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
     const response = await axios.get('api/slots/name');
-    const result = await response.data.map((slot =>({
+    const result = await response.data.map((slot) => ({
       value: slot.id,
       label: slot.name,
-      slotNum: slot.slotNum
-    })))
+      slotNum: slot.slotNum,
+      timeStart: slot.timeStart,
+      timeEnd: slot.timeEnd,
+    }));
     return await result;
   } catch (e) {
     return thunkAPI.rejectWithValue({

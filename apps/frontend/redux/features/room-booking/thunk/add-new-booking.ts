@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 interface AddRequestPayload {
   roomId: string;
@@ -28,7 +29,7 @@ export const addNewRequest = createAsyncThunk<
   try {
     const response = await axios.post(`/api/booking-room/new-request`, {
       roomId: payload.roomId,
-      checkinDate: payload.checkinDate,
+      checkinDate: dayjs(payload.checkinDate).format('YYYY-MM-DD'),
       checkinSlot: payload.checkinSlot,
       checkoutSlot: payload.checkoutSlot,
       description: payload.description,

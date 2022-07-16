@@ -41,6 +41,16 @@ export class AccountsService {
     }
   }
 
+  async getRoleOfAccount(id: string) {
+    try {
+      const role = await this.repository.getRoleOfAccount(id);
+      return role
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException('One or more parameters is invalid');
+    }
+  }
+
   async getById(id: string): Promise<Accounts> {
     try {
       const account = await this.repository.findById(id);
