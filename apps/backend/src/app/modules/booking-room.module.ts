@@ -8,7 +8,6 @@ import { RoomWishlistModule } from './room-wishlist.module';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import { DevicesModule } from './devices.module';
 import { TasksService } from '../services/task.service';
-import { ScheduleModule } from '@nestjs/schedule';
 import { AccountsModule } from './accounts.module';
 import { RoomTypeModule } from './room-type.module';
 import { BookingRequestHistService } from '../services/booking-room-hist.service';

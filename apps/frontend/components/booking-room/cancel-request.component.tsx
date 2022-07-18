@@ -7,13 +7,13 @@ import {cancelBooking} from "../../redux/features/room-booking/thunk/cancel-book
 import { BookingRequestParams } from "../../models/pagination-params/booking-room-params.model";
 import { fetchRoomBookings } from "../../redux/features/room-booking/thunk/fetch-room-booking-list";
 
-interface DisableRoomModalProps {
+interface CancelRequestModalProps {
   isShown: boolean;
   toggleShown(): void;
   toggleInforModalShown(): void;
   pagination: BookingRequestParams;
 }
-const CancelRequestModal: React.FC<DisableRoomModalProps> = (props) => {
+const CancelRequestModal: React.FC<CancelRequestModalProps> = (props) => {
 
   const {classes} = useStyles();
   const selectedRequestId = useAppSelector((state) => state.roomBooking.roomBooking.id);
@@ -45,7 +45,7 @@ const CancelRequestModal: React.FC<DisableRoomModalProps> = (props) => {
       onClose={() => props.toggleShown()}>
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-        After canceling this request, we will send a notification to the person who booked this room.
+        After canceling this request, system will send a notification to the person who booked this room.
         </Text>
         <div className={classes.modalFooter}>
           <Button onClick={() => props.toggleShown()} leftIcon={<X/>} style={{
