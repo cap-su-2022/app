@@ -59,23 +59,27 @@
 		<dict>
 			<key>localhost</key>
 			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Needs your camera permission to scan QR code</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>YOUR TEXT</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
-	<key>NSCameraUsageDescription</key>
-  <string>YOUR TEXT</string>
-  <key>NSFaceIDUsageDescription</key>
-  <string>YOUR TEXT</string>
-  <key>NSPhotoLibraryUsageDescription</key>
-  <string>YOUR TEXT</string>
-  <key>NSPhotoLibraryAddUsageDescription</key>
-  <string>YOUR TEXT</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>YOUR TEXT</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>YOUR TEXT</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

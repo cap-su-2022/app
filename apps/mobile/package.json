@@ -50,6 +50,7 @@
     "firebase": "*",
     "next-redux-wrapper": "*",
     "redux-logger": "*",
-    "@react-native-picker/picker": "*"
+    "@react-native-picker/picker": "*",
+    "@formkit/auto-animate": "*"
   }
 }

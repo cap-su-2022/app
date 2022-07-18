@@ -1,20 +1,22 @@
-import SettingsScreen from "../screens/settings.screen";
-import EditProfile from "../screens/edit-profile.screen";
+import EditProfile from "../../screens/edit-profile.screen";
 import React, {useRef} from "react";
 import {StackNavigator, StackScreen} from '@app/utils';
 import {StyleSheet, Text, TouchableOpacity} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import EditDetailProfile from "../screens/edit-detail-profile.screen";
+import EditDetailProfile from "../../screens/edit-detail-profile.screen";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../redux/store";
+import {RootState} from "../../redux/store";
 import {FormikProps} from "formik";
-import HistoryNavigation from "./history/history.navigation";
+import HistoryNavigation from "../history/history.navigation";
 import { PencilIcon, XIcon } from "react-native-heroicons/solid";
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from "@app/constants";
-import { deviceWidth } from "../utils/device";
+import { deviceWidth } from "../../utils/device";
 import { SaveIcon } from "react-native-heroicons/outline";
-import ChangePasswordScreen from "../screens/change-password.screen";
+import ChangePasswordScreen from "../../screens/change-password.screen";
+import SettingsScreen from "../../screens/user";
+import {FEEDBACK_SCREEN} from "../../route";
+import FeedbackNavigator from "./feedback";
 
 const UserNavigator = () => {
 
@@ -53,6 +55,7 @@ const UserNavigator = () => {
           <XIcon color={BLACK}/>
         </TouchableOpacity>
       }} name="ChangePasswordProfile" component={ChangePasswordScreen}/>
+      <StackScreen name={FEEDBACK_SCREEN} component={FeedbackNavigator}/>
       <StackScreen name="EditUserProfile"
                    options={{
                      headerShown: true,

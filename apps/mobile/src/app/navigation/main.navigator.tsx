@@ -5,10 +5,10 @@ import {HomeRoute, QRScanRoute, UserNavigatorRoute} from "../utils/screen.naviga
 import {HomeIcon, UserIcon} from "react-native-heroicons/solid";
 import QRScan from "../screens/qr-scan.screen";
 import QRScanButton from "../components/buttons/QRScanButton";
-import UserNavigator from "./user.navigator";
 import {Platform} from "react-native";
 import { StackNavigator, StackScreen } from "@app/utils";
 import HomeNavigator from "./home";
+import UserNavigator from "./user";
 
 const MainNavigator = () => {
     return (

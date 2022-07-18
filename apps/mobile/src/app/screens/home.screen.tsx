@@ -7,57 +7,50 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
-} from "react-native";
-import Book from "../icons/book.svg";
-import ChevronRight from "../icons/chevron-right.svg";
-import Blog from "../icons/blog.svg";
-import YouTube from "../icons/youtube.svg";
-import Pointer from "../icons/pointer.svg";
-import Courses from "../icons/courses.svg";
-import VSCode from "../icons/vscode.svg";
-import NxCloud from "../icons/nx-cloud.svg";
-import GitHub from "../icons/github.svg";
-import Terminal from "../icons/terminal.svg";
-import Heart from "../icons/heart.svg";
-import React, { useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../redux/store";
-import Carousel, { Pagination } from "react-native-snap-carousel";
-import { ClipboardCheckIcon, ClipboardCopyIcon, ExclamationIcon } from "react-native-heroicons/outline";
-import { BLACK, FPT_ORANGE_COLOR, WHITE, YELLOW } from "@app/constants";
-import { deviceWidth } from "../utils/device";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { BellIcon } from "react-native-heroicons/solid";
-import { useAppNavigation } from "../hooks/use-app-navigation.hook";
-import { useAppDispatch } from "../hooks/use-app-dispatch.hook";
+  View,
+} from 'react-native';
+import React, { useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
+import Carousel, { Pagination } from 'react-native-snap-carousel';
+import {
+  ClipboardCheckIcon,
+  ClipboardCopyIcon,
+  ClipboardListIcon,
+  ExclamationIcon,
+} from 'react-native-heroicons/outline';
+import { BLACK, FPT_ORANGE_COLOR, WHITE, YELLOW } from '@app/constants';
+import { deviceWidth } from '../utils/device';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BellIcon } from 'react-native-heroicons/solid';
+import { useAppNavigation } from '../hooks/use-app-navigation.hook';
+import { useAppDispatch } from '../hooks/use-app-dispatch.hook';
 
 const items = [
   {
-    title: "Item 1",
-    text: "Text 1"
+    title: 'Item 1',
+    text: 'Text 1',
   },
   {
-    title: "Item 2",
-    text: "Text 2"
+    title: 'Item 2',
+    text: 'Text 2',
   },
   {
-    title:"Item 3",
-    text: "Text 3",
+    title: 'Item 3',
+    text: 'Text 3',
   },
   {
-    title:"Item 4",
-    text: "Text 4",
+    title: 'Item 4',
+    text: 'Text 4',
   },
   {
-    title:"Item 5",
-    text: "Text 5",
+    title: 'Item 5',
+    text: 'Text 5',
   },
 ];
 
 const HomeScreen: React.FC = () => {
-
   const user = useSelector((state: RootState) => state.user.user);
 
   const dispatch = useAppDispatch();
@@ -73,16 +66,19 @@ const HomeScreen: React.FC = () => {
 
   const carousel = useRef<Carousel<any>>();
 
-  const carouselItems = ({item, index}) => {
+  const carouselItems = ({ item, index }) => {
     return (
       <View>
-        <Image style={{
-          borderRadius: 8,
-          height: deviceWidth / 1.65,
-        }} source={require('../../../../../assets/library/tv3.jpeg')}/>
+        <Image
+          style={{
+            borderRadius: 8,
+            height: deviceWidth / 1.65,
+          }}
+          source={require('../../../../../assets/library/tv3.jpeg')}
+        />
       </View>
     );
-  }
+  };
 
   return (
     <SafeAreaView>
@@ -92,38 +88,42 @@ const HomeScreen: React.FC = () => {
         }}
         contentInsetAdjustmentBehavior="automatic"
       >
-        <View style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginLeft: 10,
-          marginRight: 10,
-          marginTop: 10,
-        }}>
-          <Text style={styles.textLg}>Hello {user.fullname}</Text>
-          <View style={{
-            width: 50,
-            height: 50,
-            borderRadius: 50,
-            backgroundColor: FPT_ORANGE_COLOR,
+        <View
+          style={{
             display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
-            <BellIcon color={WHITE}/>
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginLeft: 10,
+            marginRight: 10,
+            marginTop: 10,
+          }}
+        >
+          <Text style={styles.textLg}>Hello {user.fullname}</Text>
+          <View
+            style={{
+              width: 50,
+              height: 50,
+              borderRadius: 50,
+              backgroundColor: FPT_ORANGE_COLOR,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <BellIcon color={WHITE} />
           </View>
         </View>
         <View style={styles.section}>
           <View style={styles.hero}>
-              <Carousel
-                layout="stack"
-                ref={carousel}
-                data={items}
-                renderItem={carouselItems}
-                sliderWidth={sliderWidth}
-                itemWidth={itemWidth}
-              />
+            <Carousel
+              layout="stack"
+              ref={carousel}
+              data={items}
+              renderItem={carouselItems}
+              sliderWidth={sliderWidth}
+              itemWidth={itemWidth}
+            />
             <Pagination
               dotsLength={items.length}
               activeDotIndex={activeIndex}
@@ -133,69 +133,99 @@ const HomeScreen: React.FC = () => {
                 height: 10,
                 borderRadius: 5,
                 marginHorizontal: 8,
-                backgroundColor: 'rgba(255, 255, 255, 0.92)'
+                backgroundColor: 'rgba(255, 255, 255, 0.92)',
               }}
-              inactiveDotStyle={{
-                // Define styles for inactive dots here
-              }}
+              inactiveDotStyle={
+                {
+                  // Define styles for inactive dots here
+                }
+              }
               inactiveDotOpacity={0.4}
               inactiveDotScale={0.6}
             />
           </View>
           <View style={[styles.quickAccessContainer]}>
-            <Text style={[styles.quickAccessText]}>
-              Quick Access
-            </Text>
-            <View style={{
-              display: 'flex',
-              flexDirection: 'row',
-            }}>
+            <Text style={[styles.quickAccessText]}>Quick Access</Text>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+              }}
+            >
               <TouchableOpacity
                 style={[styles.quickAccessButton]}
                 onPress={() => {
-                navigate.navigate("ROOM_BOOKING")
-              }}>
-                <View style={{
-                  margin: 10,
-                }}>
-                  <ClipboardCopyIcon size={30} color={WHITE}/>
+                  navigate.navigate('ROOM_BOOKING');
+                }}
+              >
+                <View
+                  style={{
+                    margin: 10,
+                  }}
+                >
+                  <ClipboardCopyIcon size={deviceWidth / 13} color={WHITE} />
                   <Text style={styles.quickAccessButtonText}>
                     Request for room booking
                   </Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => {
-                navigate.navigate("ROOM_CHECKOUT");
-              }} style={[styles.quickAccessButton]}>
-                <View style={{
-                  margin: 10,
-                }}>
-                  <ClipboardCheckIcon size={30} color={WHITE}/>
+              <TouchableOpacity
+                onPress={() => {
+                  navigate.navigate('ROOM_CHECKOUT');
+                }}
+                style={[styles.quickAccessButton]}
+              >
+                <View
+                  style={{
+                    margin: 10,
+                  }}
+                >
+                  <ClipboardCheckIcon size={deviceWidth / 13} color={WHITE} />
                   <Text style={styles.quickAccessButtonText}>
                     Check-out booking room
                   </Text>
                 </View>
               </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.quickAccessButton]}
+                onPress={() => {
+                  navigate.navigate('TRACK_BOOKING_ROOM');
+                }}
+              >
+                <View
+                  style={{
+                    margin: 10,
+                  }}
+                >
+                  <ClipboardListIcon size={deviceWidth / 13} color={WHITE} />
+                  <Text style={styles.quickAccessButtonText}>
+                    Track for booking requests
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
-             <View style={{
-              display: 'flex',
-              position: 'absolute',
-              top: -10,
-              left: -10,
-              backgroundColor: YELLOW,
-              borderRadius: 50,
-              padding: 4,
-              borderWidth: 2,
-              borderColor: WHITE,
-            }}>
-              <ExclamationIcon color={WHITE}/>
+            <View
+              style={{
+                display: 'flex',
+                position: 'absolute',
+                top: -10,
+                left: -10,
+                backgroundColor: YELLOW,
+                borderRadius: 50,
+                padding: 4,
+                borderWidth: 2,
+                borderColor: WHITE,
+              }}
+            >
+              <ExclamationIcon color={WHITE} />
             </View>
           </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   quickAccessContainer: {
@@ -206,14 +236,14 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingRight: 5,
     paddingLeft: 5,
-    borderRadius: 8
+    borderRadius: 8,
   },
   quickAccessText: {
     color: BLACK,
     fontWeight: '600',
     fontSize: 22,
     marginTop: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   quickAccessButton: {
     height: 100,
@@ -230,10 +260,10 @@ const styles = StyleSheet.create({
   },
   slide: {
     width: 600,
-    height: 200
+    height: 200,
   },
   slideTitle: {
-    color: '#000'
+    color: '#000',
   },
   usernameInput: {
     width: 230,
@@ -241,7 +271,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, 1)',
     borderWidth: 0,
     backgroundColor: 'rgba(255, 255, 255, 255)',
-    borderRadius: 8
+    borderRadius: 8,
   },
   scrollView: {
     backgroundColor: WHITE,
@@ -347,7 +377,7 @@ const styles = StyleSheet.create({
   heroTitle2: {
     flex: 1,
     flexDirection: 'row',
-    marginTop: 9
+    marginTop: 9,
   },
   heroTitleText: {
     color: WHITE,
@@ -371,6 +401,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     justifyContent: 'center',
   },
-})
+});
 
 export default HomeScreen;
