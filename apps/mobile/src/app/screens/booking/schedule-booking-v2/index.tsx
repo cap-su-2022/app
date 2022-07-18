@@ -15,10 +15,12 @@ import { fetchAllSlots } from '../../../redux/features/slot';
 import { Slot } from '../../../redux/models/slot.model';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import {
+  saveStartDay,
   saveToday,
   step1ScheduleRoomBooking,
 } from '../../../redux/features/room-booking/slice';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
+
 
 const ScheduleRoomBookingLater: React.FC<any> = (props) => {
   const navigate = useAppNavigation();
@@ -42,6 +44,8 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
         transformSlotsToSlotPicker(val);
       });
     dispatch(saveToday(Today));
+    dispatch(saveStartDay(Today))
+
     return () => {
       setSlotSelections([]);
     };
@@ -72,7 +76,6 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
   const handleNextStep = () => {
     const slotStartName = slotSelections.find(slot => slot.value === slotStart)
     const slotEndName = slotSelections.find(slot => slot.value === slotEnd)
-console.log(slotStartName, slotEndName, 'dcmm')
     dispatch(
       step1ScheduleRoomBooking({
         fromSlotName: slotStartName.label,
@@ -84,7 +87,7 @@ console.log(slotStartName, slotEndName, 'dcmm')
       })
     );
     setTimeout(() => {
-      navigate.navigate('ROOM_BOOKING_CHOOSE_ROOM');
+      navigate.navigate('ROOM_BOOKING_CHOOSE_SLOT');
     }, 0);
   };
 
