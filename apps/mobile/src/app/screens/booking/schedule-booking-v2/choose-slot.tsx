@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CalendarProvider, WeekCalendar } from 'react-native-calendars';
 import {
-  FlatList,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -30,7 +29,6 @@ import { addToRoomBookingWishlist } from '../../../redux/features/room-booking/t
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 
-
 const ChooseSlot: React.FC<any> = (props) => {
   const fromDay = useAppSelector(
     (state) => state.roomBooking.addRoomBooking.fromDay
@@ -38,8 +36,16 @@ const ChooseSlot: React.FC<any> = (props) => {
   const toDay = useAppSelector(
     (state) => state.roomBooking.addRoomBooking.toDay
   );
-  const slotsFromState = useAppSelector((state) => state.slot.slot)
-  console.log('slot ne: ',slotsFromState)
+  const fromSlot = useAppSelector(
+    (state) => state.roomBooking.addRoomBooking.fromSlotNum
+  );
+  const toSLot = useAppSelector(
+    (state) => state.roomBooking.addRoomBooking.toSlotNum
+  );
+  console.log('fromSlot ne: ', fromSlot)
+  console.log('toSLot ne: ', toSLot)
+
+  const slotsFromState = useAppSelector((state) => state.slot.slots);
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
 
@@ -54,9 +60,21 @@ const ChooseSlot: React.FC<any> = (props) => {
 
   const convertRoomsAndSlotsInto1Array = () => {
     const myArrays = [];
-    for (let i = 0; i < rooms.length; i++) {
-      for (let j = 0; j < slots.length; j++) {
-        myArrays.push({ room: rooms[i], slot: slots[j] });
+    let multiSlotArray = [];
+    if (toSLot !== 1) {
+      multiSlotArray = slotsFromState.filter(
+        (slot) => slot.slotNum >= fromSlot && slot.slotNum <= toSLot
+      );
+      for (let i = 0; i < rooms.length; i++) {
+        for (let j = 0; j < multiSlotArray.length; j++) {
+          myArrays.push({ roomName: rooms[i], slot: multiSlotArray[j] });
+        }
+      }
+    }else {
+      for (let i = 0; i < rooms.length; i++) {
+        for (let j = 0; j < slotsFromState.length; j++) {
+          myArrays.push({ roomName: rooms[i], slot: slotsFromState[j] });
+        }
       }
     }
     return myArrays;
@@ -102,7 +120,8 @@ const ChooseSlot: React.FC<any> = (props) => {
                 }}
               >
                 {' '}
-                {/*Slot {item.slot} ({slo} - {endTime})*/}
+                Slot {item.slot.name} ({item.slot.timeStart} -{' '}
+                {item.slot.timeEnd})
               </Text>
             </Text>
           </View>
@@ -135,7 +154,10 @@ const ChooseSlot: React.FC<any> = (props) => {
   };
 
   const WeekAgendaScreen = () => (
-    <CalendarProvider date={selectedDay || fromDay || Today} style={{ marginBottom: -450}}>
+    <CalendarProvider
+      date={selectedDay || fromDay || Today}
+      style={{ marginBottom: -450 }}
+    >
       <WeekCalendar
         minDate={fromDay || Today}
         maxDate={toDay}
@@ -155,7 +177,8 @@ const ChooseSlot: React.FC<any> = (props) => {
           display: 'flex',
           flexGrow: 1,
           flex: 1,
-          flexDirection: 'column',}}
+          flexDirection: 'column',
+        }}
       >
         <WeekAgendaScreen />
 
@@ -164,7 +187,9 @@ const ChooseSlot: React.FC<any> = (props) => {
           getItemCount={(data) => data.length}
           getItem={(data, index) => data[index]}
           data={convertRoomsAndSlotsInto1Array()}
-          renderItem={(item) => <SlotAndRoom item={item} />}
+          renderItem={(item) => (
+            <SlotAndRoom key={item.index} item={item.item} />
+          )}
         />
       </View>
     </SafeAreaView>

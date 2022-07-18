@@ -37,10 +37,13 @@ interface AddRoomBookingPayload {
   fromSlotName: string;
   toSlotName: string;
   toSlot: string;
+  toSlotNum: number;
+  fromSlotNum: number;
   roomId: string;
   roomName: string;
   devices: BookingDevice[];
   deviceNames: string[];
+  isMultiSLot: boolean
 }
 
 const initialState: RoomBookingState = {
@@ -73,6 +76,30 @@ const roomBookingSlice = createSlice({
         ...state.addRoomBooking,
         toDay: payload.toDay,
       };
+    },
+    saveToSlot(state, { payload }){
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        toSlotName: payload.toSlotName
+      }
+    },
+    saveMultiSlot(state, {payload}){
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        isMultiSLot: payload.isMultiSLot
+      }
+    },
+    saveFromSlotNum(state, {payload}){
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        fromSlotNum: payload.fromSlotNum
+      }
+    },
+    saveToSlotNum(state, {payload}){
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        toSlotNum: payload.toSlotNum
+      }
     },
     step1ScheduleRoomBooking(state, { payload }) {
       state.addRoomBooking = {
@@ -152,4 +179,7 @@ export const {
   saveStartDay,
   saveEndDay,
   saveToday,
+  saveToSlot,
+  saveFromSlotNum,
+  saveToSlotNum
 } = roomBookingSlice.actions;
