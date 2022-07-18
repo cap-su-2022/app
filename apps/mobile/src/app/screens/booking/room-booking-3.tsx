@@ -60,6 +60,7 @@ export const RoomBooking3: React.FC = () => {
           {InfoDetail('From Slot:', roomBooking.fromSlotName)}
           {InfoDetail('To Slot:', roomBooking.toSlotName)}
           {InfoDetail('Room Name:', roomBooking.roomName)}
+          <Text>List Device</Text>
           <FlatList
             data={roomBooking.deviceNames}
             renderItem={(device) => Device(device)}

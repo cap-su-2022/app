@@ -22,6 +22,7 @@ import ScheduleRoomBookingLater from "../../screens/booking/schedule-booking-v2"
 import BookingCalendar from "../../screens/booking/schedule-booking-v2/choose-start-day";
 import StartDayCalendar from "../../screens/booking/schedule-booking-v2/choose-start-day";
 import EndDayCalendar from "../../screens/booking/schedule-booking-v2/choose-end-day";
+import ChooseSlot from "../../screens/booking/schedule-booking-v2/choose-slot";
 
 const RoomBookingNavigator: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
@@ -64,6 +65,7 @@ const RoomBookingNavigator: React.FC = () => {
         <StackScreen name="ROOM_BOOKING_ALREADY_BOOKED_DETAIL" component={AlreadyBookDetail}/>
         <StackScreen name="ROOM_BOOKING_CHOOSE_START_DAY" component={StartDayCalendar}/>
         <StackScreen name="ROOM_BOOKING_CHOOSE_END_DAY" component={EndDayCalendar}/>
+        <StackScreen name="ROOM_BOOKING_CHOOSE_SLOT" component={ChooseSlot}/>
         <StackScreen name={"ROOM_BOOKING_WISHLIST"} options={{
           headerShown: false
         }} component={RoomBookingWishlistNavigator} />
