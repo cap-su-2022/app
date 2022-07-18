@@ -3,4 +3,5 @@ export interface Slot {
   name: string;
   timeStart: string;
   timeEnd: string;
+  slotNum: number;
 }
