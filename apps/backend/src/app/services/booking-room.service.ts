@@ -95,6 +95,19 @@ export class BookingRoomService {
     }
   }
 
+  async getDevicesUseInRequest(
+    requestId: string
+  ): Promise<BookingRequest[]> {
+    try {
+      return await this.bookingRoomDeviceService.findByRequestId(requestId);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        'An error occurred while getting request by account id ' + requestId
+      );
+    }
+  }
+
   getWishlistBookingRooms(
     roomName: string,
     slotFrom: number,
@@ -282,6 +295,8 @@ export class BookingRoomService {
           ...requestInfo,
           listDevice: listDevice,
         };
+      } else {
+        throw new BadRequestException("Not found request with provided id");
       }
     } catch (e) {
       this.logger.error(e.message);
