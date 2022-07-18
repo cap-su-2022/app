@@ -56,5 +56,5 @@ export class BookingRequestAddRequestPayload extends PaginationParams {
 
   @IsOptional()
   @IsArray()
-  device: [];
+  listDevice: [];
 }

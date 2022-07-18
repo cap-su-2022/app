@@ -15,4 +15,5 @@ export * from "./devices-hist.entity"
 export * from "./device-type-hist.entity"
 export * from "./account-hist.entity"
 export * from "./booking-request-hist.entity"
+export * from "./booking-request-devices.entity"
 

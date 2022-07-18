@@ -78,6 +78,25 @@ export class BookingRoomController {
     });
   }
 
+  @Get('list-booking-with-same-slot')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  getBookingWithSameSlot(
+    @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
+    @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
+    @Query('roomId', new DefaultValuePipe('')) roomId: string,
+    @Query('requestId', new DefaultValuePipe('')) requestId: string,
+    @Query('date', new DefaultValuePipe('')) date: string,
+    @User() user: KeycloakUserInstance,
+  ) {
+    return this.service.getBookingWithSameSlot({
+      roomId: roomId,
+      requestId: requestId,
+      date: date,
+      checkinSlotId: checkinSlotId,
+      checkoutSlotId: checkoutSlotId,
+    });
+  }
+
   @Get('by-room-id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
@@ -271,7 +290,7 @@ export class BookingRoomController {
   })
   acceptRequestById(
     @User() user: KeycloakUserInstance,
-    @Param() payload: { id: string },
+    @Param() payload: { id: string }
   ) {
     return this.service.acceptById(user.account_id, payload.id);
   }
@@ -300,7 +319,7 @@ export class BookingRoomController {
   })
   rejectRequestById(
     @User() user: KeycloakUserInstance,
-    @Param() payload: { id: string },
+    @Param() payload: { id: string }
   ) {
     return this.service.rejectById(user.account_id, payload.id);
   }

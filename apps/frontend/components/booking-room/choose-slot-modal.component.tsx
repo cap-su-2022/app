@@ -88,6 +88,28 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   };
 
   useEffect(() => {
+    if (
+      props.formik.values.checkinSlot &&
+      props.formik.values.checkoutSlot
+    ) {
+      const slotIn = slotNames.find(
+        (slot) => slot.value === props.formik.values.checkinSlot
+      );
+      const slotOut = slotNames.find(
+        (slot) => slot.value === props.formik.values.checkoutSlot
+      );
+      if (slotIn.slotNum > slotOut.slotNum) {
+        const tmp = props.formik.values.checkinSlot;
+        props.formik.setFieldValue(
+          'checkinSlot',
+          props.formik.values.checkoutSlot
+        );
+        props.formik.setFieldValue('checkoutSlot', tmp);
+      }
+    }
+  }, [props.formik.values.checkinSlot, props.formik.values.checkoutSlot]);
+
+  useEffect(() => {
     if (props.formik.values.roomId !== '') {
       dispatch(
         fetchListBookingByRoomInWeek({
@@ -125,8 +147,6 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           isFree = false;
         }
         listRequest.map((request) => {
-          console.log("request day: ",request.checkinDate)
-          console.log("choose day: ",choosedDay)
           if (request.checkinDate === choosedDay) {
             return request.checkinDate === choosedDay &&
               request.slotIn <= slot.slotNum &&
@@ -273,11 +293,24 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
             color="orange"
             size="xs"
             variant="subtle"
+            disabled={
+              dayShowShecule.setHours(0, 0, 0, 0) == curr.setHours(0, 0, 0, 0)
+                ? true
+                : false
+            }
           >
             <ChevronLeft />
           </Button>
           {days ? (
-            <h4 style={{ display: 'flex', alignItems: 'center', margin: '0' }}>
+            <h4
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                margin: '0',
+                justifyContent: 'center',
+                width: 100,
+              }}
+            >
               {days[0].getDate() +
                 '/' +
                 days[0].getMonth() +
@@ -292,6 +325,17 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
             color="orange"
             size="xs"
             variant="subtle"
+            disabled={
+              dayShowShecule.setHours(0, 0, 0, 0) ==
+              new Date(curr.getTime() + 2 * 7 * 24 * 60 * 60 * 1000).setHours(
+                0,
+                0,
+                0,
+                0
+              )
+                ? true
+                : false
+            }
           >
             <ChevronRight />
           </Button>

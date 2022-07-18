@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   createStyles,
@@ -24,10 +24,26 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
 
+interface UserInfoModel {
+  avatar: string;
+  fullname: string;
+  role: string;
+  phone: string;
+  email: string;
+  username: string;
+  id: string;
+  googleId: string;
+  keycloakId: string;
+  effdate: string;
+  description: string;
+  img: File;
+}
+
 interface RequestInfoModalProps {
   isShown: boolean;
   toggleShown(): void;
   toggleCancelModalShown(): void;
+  toggleAcceptModalShown(): void
 }
 
 const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
@@ -35,6 +51,12 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
   const requestBooking = useAppSelector(
     (state) => state.roomBooking.roomBooking
   );
+
+  console.log(requestBooking);
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
 
   useEffect(() => {
     console.log(requestBooking);
@@ -53,7 +75,14 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
               {requestBooking.status}
             </div>
           ) : requestBooking.status === 'BOOKED' ? (
-            <div className={classes.bookedDisplay}>{requestBooking.status}</div>
+            <div style={{ display: 'flex' }}>
+              <div className={classes.bookedDisplay}>
+                {requestBooking.status}
+              </div>
+              <span className={classes.acceptedByDiv}>
+                Accept by <b>{requestBooking.acceptedBy || 'auto'}</b>
+              </span>
+            </div>
           ) : requestBooking.status === 'CHECKED_IN' ? (
             <div className={classes.checkedInDisplay}>
               {requestBooking.status}
@@ -63,8 +92,13 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
               {requestBooking.status}
             </div>
           ) : requestBooking.status === 'CANCELLED' ? (
-            <div className={classes.canceledDisplay}>
-              {requestBooking.status}
+            <div style={{ display: 'flex' }}>
+              <div className={classes.canceledDisplay}>
+                {requestBooking.status}
+              </div>
+              <span className={classes.cancelledByDiv}>
+                by <b>{requestBooking.cancelledBy}</b>
+              </span>
             </div>
           ) : null}
         </div>
@@ -169,22 +203,12 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
               value={requestBooking.description}
             />
           </InputWrapper>
-
-          {requestBooking.updatedBy ? (
-            <InputWrapper label="Cancel by" className={classes.inputWrapper}>
-              <TextInput
-                id="request-updatedby"
-                icon={<User />}
-                radius="md"
-                readOnly
-                value={requestBooking.updatedBy}
-              />
-            </InputWrapper>
-          ) : null}
         </div>
 
         <div className={classes.modalFooter}>
-          {requestBooking.status === 'PENDING' || requestBooking.status === 'BOOKED' ? (
+          {(requestBooking.status === 'PENDING' &&
+            userInfo.id === requestBooking.requestedById) ||
+          requestBooking.status === 'BOOKED' ? (
             <Button
               onClick={() => props.toggleCancelModalShown()}
               variant="outline"
@@ -193,12 +217,22 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
             >
               Cancel request
             </Button>
+          ) : requestBooking.status === 'PENDING' &&
+            userInfo.id !== requestBooking.requestedById ? (
+            <Button
+              onClick={() => props.toggleCancelModalShown()}
+              variant="outline"
+              color={'red'}
+              leftIcon={<Archive />}
+            >
+              Reject request
+            </Button>
           ) : (
             <div></div>
           )}
           {requestBooking.status === 'PENDING' ? (
             <Button
-              // onClick={() => props.toggleCancelModalShown()}
+              onClick={() => props.toggleAcceptModalShown()}
               variant="outline"
               color={'green'}
               leftIcon={<Check />}
@@ -264,6 +298,7 @@ const useStyles = createStyles({
     width: 100,
     backgroundColor: '#ff00001c',
     fontWeight: 600,
+    marginRight: 5,
   },
   bookedDisplay: {
     color: '#40c057',
@@ -272,6 +307,7 @@ const useStyles = createStyles({
     width: 100,
     backgroundColor: '#00800024',
     fontWeight: 600,
+    marginRight: 5,
   },
   checkedInDisplay: {
     color: '#fd7e14',
@@ -280,6 +316,19 @@ const useStyles = createStyles({
     width: 100,
     backgroundColor: '#fd7e1430',
     fontWeight: 600,
+  },
+  cancelledByDiv: {
+    backgroundColor: '#ffe3e3',
+    padding: '0 5px',
+    borderRadius: 10,
+    color: 'red',
+  },
+  acceptedByDiv: {
+    backgroundColor: '#00800024',
+    padding: '0 5px',
+    borderRadius: 10,
+    color: '#40c057',
+    fontSize: 15,
   },
 });
 

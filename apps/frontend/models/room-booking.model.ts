@@ -1,4 +1,9 @@
 export interface RoomBooking {
+  roomId: string;
+  checkinSlotId: string;
+  checkoutSlotId: string;
+  acceptedBy: string;
+  requestedById: string;
   checkinDate: string;
   checkoutSlot: string | number | readonly string[];
   checkinSlot: string | number | readonly string[];

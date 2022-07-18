@@ -105,7 +105,6 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   }, [props.isShown]);
 
   const handleUpdateType = (device, deviceTypeId: string) => {
-    console.log('FFFFFFFFF: ', deviceTypeId);
     dispatch(
       updateDeviceById({
         id: device.id,

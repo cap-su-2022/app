@@ -87,10 +87,11 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
       <td>{row.roomName}</td>
       <td>{dayjs(row.bookedAt).format('ddd DD-MM-YYYY, HH:mm ')}</td>
       <td>{dayjs(row.checkinDate).format('ddd DD-MM-YYYY')}</td>
+      <td>{row.requestedBy}</td>
       <td>
         {row.status === 'PENDING' ? (
           <div className={classes.pendingDisplay}>{row.status}</div>
-        ): row.status === 'BOOKED' ? (
+        ) : row.status === 'BOOKED' ? (
           <div className={classes.bookedDisplay}>{row.status}</div>
         ) : row.status === 'CHECKED_OUT' ? (
           <div className={classes.checkedOutDisplay}>{row.status}</div>
@@ -154,7 +155,11 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             Checkin Date
           </Th>
 
-          <Th sorted={null} reversed={reverseSortDirection} onSort={null}>
+          <Th sorted={null} reversed={null} onSort={null} style={{width: 120}}>
+            Request by
+          </Th>
+
+          <Th sorted={null} reversed={reverseSortDirection} onSort={null} style={{width: 120}}>
             Status
           </Th>
 

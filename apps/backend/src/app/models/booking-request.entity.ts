@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity } from "./base/base.entity";
 
 
 @Entity("booking_request")
@@ -36,14 +37,6 @@ export class BookingRequest{
   status?: string;
 
   @Column({
-    name: 'updated_by',
-    nullable: false,
-    default: false,
-    type: 'uuid',
-  })
-  updatedBy?: string;
-
-  @Column({
     name: "booking_reason_id",
     nullable: false
   })
@@ -64,6 +57,34 @@ export class BookingRequest{
   cancelledAt?: Date;
 
   @Column({
+    name: "updated_by",
+    type: "uuid",
+  })
+  updatedBy?: string;
+
+  @Column({
+    name: "updated_at",
+    nullable: false,
+    type: "timestamptz",
+    default: () => "CURRENT_TIMESTAMP"
+  })
+  updatedAt?: Date;
+
+  @Column({
+    name: "accepted_by",
+    type: "uuid",
+  })
+  acceptedBy?: string;
+
+  @Column({
+    name: "accepted_at",
+    nullable: false,
+    type: "timestamptz",
+    default: () => "CURRENT_TIMESTAMP"
+  })
+  acceptedAt?: Date;
+
+  @Column({
     name: "checkin_slot",
     nullable: false,
   })
@@ -78,9 +99,8 @@ export class BookingRequest{
   @Column({
     name: "checkin_date",
     nullable: false,
-    type: "timestamptz"
   })
-  checkinDate?: Date;
+  checkinDate?: string;
 
   // @Column({
   //   name: "checkout_date",
