@@ -1,6 +1,19 @@
 export interface BookingRoom {
-  stt: number;
+  id: string;
+  status: string;
+  description: string;
   roomId: string;
   roomName: string;
-  slot: number;
+  roomDescription: string;
+  requestedBy: string;
+  updatedBy: string;
+  checkinSlot: string;
+  checkoutSlot: string;
+  reason: string;
+  checkinDate: string;
+  checkoutDate: string;
+  reasonType: string;
+  checkinAt: string;
+  requestedAt: string;
+  requestedById: string;
 }

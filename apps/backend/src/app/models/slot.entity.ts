@@ -31,4 +31,11 @@ export class Slot extends BaseEntity {
     type: 'varchar',
   })
   description?: string;
+
+  @Column({
+    name: 'slot_num',
+    type: 'smallint',
+    unique: true,
+  })
+  slotNum?: number;
 }

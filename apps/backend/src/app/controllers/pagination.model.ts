@@ -23,7 +23,7 @@ export class PaginationParams {
   @MaxLength(100, {
     message: 'Maximum length for search is 100 characters',
   })
-  search = '';
+  search: string;
 
   @IsOptional()
   @IsInt({

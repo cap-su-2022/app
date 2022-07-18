@@ -17,6 +17,7 @@ export class SlotRepository extends Repository<Slot> {
       .andWhere('LOWER(s.name) LIKE LOWER(:search)', {
         search: `%${params.search}%`,
       })
+      .orderBy('s.slot_num', 'ASC')
       .orderBy(params.sort, params.dir as 'ASC' | 'DESC');
     return paginateRaw(query, {
       page: params.page,
@@ -24,9 +25,9 @@ export class SlotRepository extends Repository<Slot> {
     });
   }
 
-  async getNumOfSlot(id: string): Promise<{ slotNum: number;}> {
+  async getNumOfSlot(id: string): Promise<{ slotNum: number }> {
     return this.createQueryBuilder('slot')
-      .select('slot.slot_num', "slotNum")
+      .select('slot.slot_num', 'slotNum')
       .where('slot.id = :slotId', { slotId: id })
       .getRawOne();
   }
@@ -66,8 +67,11 @@ export class SlotRepository extends Repository<Slot> {
     return this.find({
       where: {
         deletedAt: null,
-        deletedBy: null
-      }
+        deletedBy: null,
+      },
+      order: {
+        ['slotNum']: 'ASC',
+      },
     });
   }
 }

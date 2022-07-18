@@ -20,6 +20,7 @@ import { SlotService } from './slot.service';
 import dayjs = require('dayjs');
 import { DataSource } from 'typeorm';
 import { BookingRoomDevicesService } from './booking-request-devices.service';
+import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
 
 @Injectable()
 export class BookingRoomService {
@@ -91,6 +92,17 @@ export class BookingRoomService {
       this.logger.error(e);
       throw new BadRequestException(
         'An error occurred while getting request by account id ' + accountId
+      );
+    }
+  }
+
+  async getDevicesUseInRequest(requestId: string): Promise<BookingRequest[]> {
+    try {
+      return await this.bookingRoomDeviceService.findByRequestId(requestId);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        'An error occurred while getting request by account id ' + requestId
       );
     }
   }
@@ -282,6 +294,8 @@ export class BookingRoomService {
           ...requestInfo,
           listDevice: listDevice,
         };
+      } else {
+        throw new BadRequestException('Not found request with provided id');
       }
     } catch (e) {
       this.logger.error(e.message);
@@ -500,5 +514,9 @@ export class BookingRoomService {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
     }
+  }
+
+  getAllBookingRoomsRequestsByFilter(filters: GetAllBookingRequestsFilter) {
+    return this.repository.findBookingRoomRequestsByFilter(filters);
   }
 }

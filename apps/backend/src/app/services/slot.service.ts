@@ -14,8 +14,7 @@ export class SlotService {
     params: PaginationParams
   ): Promise<Pagination<Slot> | Slot[]> {
     try {
-      if (!params) {
-        console.log('ass');
+      if (!params.search) {
         return this.repository.findAll();
       }
       return await this.repository.findByPagination(params);
@@ -37,7 +36,7 @@ export class SlotService {
   async getNumOfSlot(id: string) {
     try {
       const slot = await this.repository.getNumOfSlot(id);
-      return slot
+      return slot;
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException('One or more parameters is invalid');

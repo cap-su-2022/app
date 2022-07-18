@@ -8,14 +8,15 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { DocumentSearchIcon, LogoutIcon, UserCircleIcon } from "react-native-heroicons/outline";
+import {ChatAlt2Icon, DocumentSearchIcon, LogoutIcon, UserCircleIcon} from "react-native-heroicons/outline";
 import * as Icon from "react-native-heroicons/solid";
 import { BLACK, FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE } from "@app/constants";
-import { LOCAL_STORAGE, revokeUserSession } from "../utils/local-storage";
+import { LOCAL_STORAGE, revokeUserSession } from "../../utils/local-storage";
 import axios from "axios";
-import { API_URL } from "../constants/constant";
+import { API_URL } from "../../constants/constant";
 import { launchImageLibrary } from "react-native-image-picker";
-import { useAppNavigation } from "../hooks/use-app-navigation.hook";
+import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
+import {FEEDBACK_INITIAL_SCREEN, FEEDBACK_SCREEN} from "../../route";
 
 const SettingsScreen = () => {
   const scrollViewRef = useRef<null | ScrollView>(null);
@@ -143,6 +144,17 @@ const SettingsScreen = () => {
               <DocumentSearchIcon color={BLACK} />
             </View>
             <Text style={styles.logoutText}>History</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.logoutContainer}>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={() => navigate.navigate(FEEDBACK_SCREEN)}
+          >
+            <View style={styles.logoutIconContainer}>
+              <ChatAlt2Icon color={BLACK} />
+            </View>
+            <Text style={styles.logoutText}>Send Feedback</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.logoutContainer}>
