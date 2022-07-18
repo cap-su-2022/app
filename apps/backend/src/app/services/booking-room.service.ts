@@ -19,6 +19,7 @@ import { BookingRequestHistService } from './booking-room-hist.service';
 import { SlotService } from './slot.service';
 import dayjs = require('dayjs');
 import { DataSource } from 'typeorm';
+import { BookingRoomDevicesService } from './booking-request-devices.service';
 
 @Injectable()
 export class BookingRoomService {
@@ -33,6 +34,7 @@ export class BookingRoomService {
     private readonly repository: BookingRoomRepository,
     private readonly accountService: AccountsService,
     private readonly slotService: SlotService,
+    private readonly bookingRoomDeviceService: BookingRoomDevicesService,
 
     private readonly histService: BookingRequestHistService
   ) {}
@@ -271,7 +273,16 @@ export class BookingRoomService {
 
   async getBookingRoomById(id: string) {
     try {
-      return await this.repository.findById(id);
+      const requestInfo = await this.repository.findById(id);
+      if (requestInfo) {
+        const listDevice = await this.bookingRoomDeviceService.findByRequestId(
+          id
+        );
+        return {
+          ...requestInfo,
+          listDevice: listDevice,
+        };
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -323,7 +334,7 @@ export class BookingRoomService {
         });
       }
 
-      if(haveRequestBooked) {
+      if (haveRequestBooked) {
         throw new BadRequestException(
           'Already have request booked in this slot, try another slot'
         );
@@ -336,13 +347,18 @@ export class BookingRoomService {
         queryRunner
       );
 
+      await this.bookingRoomDeviceService.addDeviceToRequest(
+        request.id,
+        payload.listDevice,
+        queryRunner
+      );
+
       // await this.histService.createNew(request, queryRunner);
 
       await queryRunner.commitTransaction();
 
       return request;
     } catch (e) {
-      console.log("EEEEEEEEEEEEEEEE")
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);

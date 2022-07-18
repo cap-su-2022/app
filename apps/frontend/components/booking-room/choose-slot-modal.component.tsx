@@ -88,6 +88,28 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   };
 
   useEffect(() => {
+    if (
+      props.formik.values.checkinSlot &&
+      props.formik.values.checkoutSlot
+    ) {
+      const slotIn = slotNames.find(
+        (slot) => slot.value === props.formik.values.checkinSlot
+      );
+      const slotOut = slotNames.find(
+        (slot) => slot.value === props.formik.values.checkoutSlot
+      );
+      if (slotIn.slotNum > slotOut.slotNum) {
+        const tmp = props.formik.values.checkinSlot;
+        props.formik.setFieldValue(
+          'checkinSlot',
+          props.formik.values.checkoutSlot
+        );
+        props.formik.setFieldValue('checkoutSlot', tmp);
+      }
+    }
+  }, [props.formik.values.checkinSlot, props.formik.values.checkoutSlot]);
+
+  useEffect(() => {
     if (props.formik.values.roomId !== '') {
       dispatch(
         fetchListBookingByRoomInWeek({
@@ -125,8 +147,6 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           isFree = false;
         }
         listRequest.map((request) => {
-          console.log('request day: ', request.checkinDate);
-          console.log('choose day: ', choosedDay);
           if (request.checkinDate === choosedDay) {
             return request.checkinDate === choosedDay &&
               request.slotIn <= slot.slotNum &&
