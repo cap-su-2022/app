@@ -12,6 +12,8 @@ import { useWindowDimensions } from '../../hooks/use-window-dimensions';
 import {
   Archive,
   CalendarStats,
+  Check,
+  ChevronsRight,
   ClipboardText,
   Clock,
   FileDescription,
@@ -46,14 +48,18 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
         </Text>
 
         <div style={{ marginLeft: 10 }}>
-          {requestBooking.status === 'BOOKING' ? (
-            <div className={classes.bookingDisplay}>
+          {requestBooking.status === 'PENDING' ? (
+            <div className={classes.pendingDisplay}>
               {requestBooking.status}
             </div>
           ) : requestBooking.status === 'BOOKED' ? (
             <div className={classes.bookedDisplay}>{requestBooking.status}</div>
-          ) : requestBooking.status === 'CHECKED IN' ? (
-            <div className={classes.processingDisplay}>
+          ) : requestBooking.status === 'CHECKED_IN' ? (
+            <div className={classes.checkedInDisplay}>
+              {requestBooking.status}
+            </div>
+          ) : requestBooking.status === 'CHECKED_OUT' ? (
+            <div className={classes.checkedOutDisplay}>
               {requestBooking.status}
             </div>
           ) : requestBooking.status === 'CANCELLED' ? (
@@ -76,11 +82,7 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
         onClose={() => props.toggleShown()}
       >
         <div className={classes.modalBody}>
-          <InputWrapper
-            label="Request ID"
-            description="Unique ID of the request"
-            className={classes.inputWrapper}
-          >
+          <InputWrapper label="Request ID" className={classes.inputWrapper}>
             <TextInput
               icon={<Id />}
               radius="md"
@@ -88,11 +90,7 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
               value={requestBooking.id}
             />
           </InputWrapper>
-          <InputWrapper
-            label="Room name"
-            description="Room for request booking"
-            className={classes.inputWrapper}
-          >
+          <InputWrapper label="Room name" className={classes.inputWrapper}>
             <TextInput
               icon={<ClipboardText />}
               radius="md"
@@ -100,23 +98,45 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
               value={requestBooking.roomName}
             />
           </InputWrapper>
-
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}
-          >
-            <InputWrapper
-              label="Time check in"
-              className={classes.inputWrapper}
-            >
+          <div style={{ display: 'flex' }}>
+            <InputWrapper label="Day use" className={classes.inputWrapper}>
               <TextInput
                 icon={<ClipboardText />}
                 radius="md"
                 readOnly
-                value={dayjs(requestBooking.timeCheckin).format(
+                value={dayjs(requestBooking.checkinDate).format('DD/MM/YYYY')}
+              />
+            </InputWrapper>
+
+            <InputWrapper label="Slot in" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={requestBooking.checkinSlot}
+                style={{ width: 100 }}
+              />
+            </InputWrapper>
+            <div style={{ position: 'relative', top: '45px' }}>
+              <ChevronsRight size={28} strokeWidth={2} color={'black'} />
+            </div>
+            <InputWrapper label="Slot out" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={requestBooking.checkoutSlot}
+                style={{ width: 100 }}
+              />
+            </InputWrapper>
+          </div>
+          <div style={{ display: 'flex' }}>
+            <InputWrapper label="Request at" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={dayjs(requestBooking.requestedAt).format(
                   'HH:mm DD/MM/YYYY'
                 )}
               />
@@ -131,42 +151,40 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
               />
             </InputWrapper>
           </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}
-          >
-            <InputWrapper
-              label="Time check out"
-              className={classes.inputWrapper}
-            >
+
+          <InputWrapper label="Reason" className={classes.inputWrapper}>
+            <TextInput
+              icon={<ClipboardText />}
+              radius="md"
+              readOnly
+              value={requestBooking.reason}
+            />
+          </InputWrapper>
+
+          <InputWrapper label="Description" className={classes.inputWrapper}>
+            <Textarea
+              icon={<ClipboardText />}
+              radius="md"
+              readOnly
+              value={requestBooking.description}
+            />
+          </InputWrapper>
+
+          {requestBooking.updatedBy ? (
+            <InputWrapper label="Cancel by" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                id="request-updatedby"
+                icon={<User />}
                 radius="md"
                 readOnly
-                value={dayjs(requestBooking.timeCheckout).format(
-                  'HH:mm DD/MM/YYYY'
-                )}
+                value={requestBooking.updatedBy}
               />
             </InputWrapper>
-            {requestBooking.updatedBy ? (
-              <InputWrapper label="Cancel by" className={classes.inputWrapper}>
-                <TextInput
-                  id="request-updatedby"
-                  icon={<User />}
-                  radius="md"
-                  readOnly
-                  value={requestBooking.updatedBy}
-                />
-              </InputWrapper>
-            ) : null}
-          </div>
+          ) : null}
         </div>
 
         <div className={classes.modalFooter}>
-          {requestBooking.status === 'BOOKING' ? (
+          {requestBooking.status === 'PENDING' || requestBooking.status === 'BOOKED' ? (
             <Button
               onClick={() => props.toggleCancelModalShown()}
               variant="outline"
@@ -174,6 +192,18 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
               leftIcon={<Archive />}
             >
               Cancel request
+            </Button>
+          ) : (
+            <div></div>
+          )}
+          {requestBooking.status === 'PENDING' ? (
+            <Button
+              // onClick={() => props.toggleCancelModalShown()}
+              variant="outline"
+              color={'green'}
+              leftIcon={<Check />}
+            >
+              Accept request
             </Button>
           ) : (
             <div></div>
@@ -211,7 +241,7 @@ const useStyles = createStyles({
   inputWrapper: {
     margin: 10,
   },
-  bookingDisplay: {
+  pendingDisplay: {
     color: '#228be6',
     textAlign: 'center',
     borderRadius: 50,
@@ -219,7 +249,7 @@ const useStyles = createStyles({
     backgroundColor: '#0000ff1c',
     fontWeight: 600,
   },
-  bookedDisplay: {
+  checkedOutDisplay: {
     color: '#fd7e14',
     textAlign: 'center',
     borderRadius: 50,
@@ -235,12 +265,20 @@ const useStyles = createStyles({
     backgroundColor: '#ff00001c',
     fontWeight: 600,
   },
-  processingDisplay: {
+  bookedDisplay: {
     color: '#40c057',
     textAlign: 'center',
     borderRadius: 50,
     width: 100,
     backgroundColor: '#00800024',
+    fontWeight: 600,
+  },
+  checkedInDisplay: {
+    color: '#fd7e14',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#fd7e1430',
     fontWeight: 600,
   },
 });

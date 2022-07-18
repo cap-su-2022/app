@@ -32,12 +32,15 @@ import { fetchRoomNames } from '../../redux/features/room/thunk/fetch-room-names
 import { fetchSlotNames } from '../../redux/features/slot/thunk/fetch-slot-names.thunk';
 import { fetchDeviceNames } from '../../redux/features/devices/thunk/fetch-device-names.thunk';
 import { fetchReasonNames } from '../../redux/features/booking-reason/thunk/fetch-booking-reason-names.thunk';
-import { addNewRequest } from '../../redux/features/room-booking/thunk/add-new-request-booking';
+import { addNewRequest } from '../../redux/features/room-booking/thunk/add-new-booking';
 import { showNotification } from '@mantine/notifications';
+import { BookingRequestParams } from '../../models/pagination-params/booking-room-params.model';
+import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
 
 interface SendBookingModalProps {
   isShown: boolean;
   toggleShown(): void;
+  pagination: BookingRequestParams;
 }
 
 const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
@@ -116,11 +119,10 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
             autoClose: 3000,
           })
         )
-        // .then(() => {
-        //   props.toggleShown();
-        //   dispatch(fetchDeviceTypes(props.pagination));
-        //   dispatch(fetchDeletedDeviceTypes());
-        // })
+        .then(() => {
+          props.toggleShown();
+          dispatch(fetchRoomBookings(props.pagination));
+        })
         .catch((e) =>
           showNotification({
             id: 'add-reuqest',
@@ -202,6 +204,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
         centered
         opened={props.isShown}
         onClose={() => props.toggleShown()}
+        style={{ paddingTop: 10 }}
       >
         <div>
           <Dropdown />

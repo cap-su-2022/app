@@ -58,6 +58,36 @@ export class RoomsRepository extends Repository<Rooms> {
       .then((data) => data['count'] > 0);
   }
 
+  searchRoom(payload: RoomsPaginationParams) {
+    const query = this.createQueryBuilder('r')
+      .leftJoin(Accounts, 'a', 'r.created_by = a.id')
+      .leftJoin(Accounts, 'aa', 'r.updated_by = aa.id')
+      .select('r.id', 'id')
+      .addSelect('r.name', 'name')
+      .addSelect('r.description', 'description')
+      .addSelect('rt.name', 'type')
+      .addSelect('r.createdAt', 'createdAt')
+      .addSelect('r.updatedAt', 'updatedAt')
+      .addSelect('a.username', 'createdBy')
+      .addSelect('aa.username', 'updatedBy')
+      .innerJoin(RoomType, 'rt', 'rt.id = r.type')
+      .where('LOWER(r.name) LIKE LOWER(:search)', {
+        search: `%${payload.search.trim()}%`,
+      })
+      .andWhere(`r.deleted_at IS NULL`)
+      .andWhere(`r.disabled_at IS NULL`)
+      .orderBy(payload.sort, payload.dir as 'ASC' | 'DESC');
+    if (payload.roomType && payload.roomType !== '') {
+      query.andWhere('rt.name = :roomTypeName', {
+        roomTypeName: payload.roomType,
+      });
+    }
+    return paginateRaw<Rooms>(query, {
+      limit: payload.limit,
+      page: payload.page,
+    });
+  }
+
   async findRoomNames(): Promise<Devices[]> {
     return this.createQueryBuilder('rooms')
       .select('rooms.name', 'name')
@@ -78,8 +108,8 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('rooms.updated_at', 'updatedAt')
       .addSelect('aa.username', 'updatedBy')
       .addSelect('rooms.description', 'description')
-      .innerJoin(Accounts, 'a', 'rooms.created_by = a.id')
-      .innerJoin(Accounts, 'aa', 'rooms.updated_by = aa.id')
+      .leftJoin(Accounts, 'a', 'rooms.created_by = a.id')
+      .leftJoin(Accounts, 'aa', 'rooms.updated_by = aa.id')
       .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
       .where('rooms.disabled_at IS NULL')
       .andWhere('rooms.deleted_at IS NULL')
@@ -175,36 +205,6 @@ export class RoomsRepository extends Repository<Rooms> {
       .andWhere('rooms.type = :type', { type: roomTypeId })
 
       .getRawMany<Rooms>();
-  }
-
-  searchRoom(payload: RoomsPaginationParams) {
-    const query = this.createQueryBuilder('r')
-      .innerJoin(Accounts, 'a', 'r.created_by = a.id')
-      .innerJoin(Accounts, 'aa', 'r.updated_by = aa.id')
-      .select('r.id', 'id')
-      .addSelect('r.name', 'name')
-      .addSelect('r.description', 'description')
-      .addSelect('rt.name', 'type')
-      .addSelect('r.createdAt', 'createdAt')
-      .addSelect('r.updatedAt', 'updatedAt')
-      .addSelect('a.username', 'createdBy')
-      .addSelect('aa.username', 'updatedBy')
-      .innerJoin(RoomType, 'rt', 'rt.id = r.type')
-      .where('LOWER(r.name) LIKE LOWER(:search)', {
-        search: `%${payload.search.trim()}%`,
-      })
-      .andWhere(`r.deleted_at IS NULL`)
-      .andWhere(`r.disabled_at IS NULL`)
-      .orderBy(payload.sort, payload.dir as 'ASC' | 'DESC');
-    if (payload.roomType && payload.roomType !== '') {
-      query.andWhere('rt.name = :roomTypeName', {
-        roomTypeName: payload.roomType,
-      });
-    }
-    return paginateRaw<Rooms>(query, {
-      limit: payload.limit,
-      page: payload.page,
-    });
   }
 
   async disableById(accountId: string, id: string) {

@@ -1,4 +1,7 @@
 export interface RoomBooking {
+  checkinDate: string;
+  checkoutSlot: string | number | readonly string[];
+  checkinSlot: string | number | readonly string[];
   stt: number;
   id: string;
   roomid: string;
@@ -14,7 +17,7 @@ export interface RoomBooking {
   updatedAt: string;
   updatedBy: string;
   cancelledBy: string;
-  reasonType: string;
+  reason: string;
   description: string;
 }
 

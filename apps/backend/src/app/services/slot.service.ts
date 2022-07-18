@@ -34,6 +34,16 @@ export class SlotService {
     }
   }
 
+  async getNumOfSlot(id: string) {
+    try {
+      const slot = await this.repository.getNumOfSlot(id);
+      return slot
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException('One or more parameters is invalid');
+    }
+  }
+
   async getById(id: string) {
     try {
       return await this.repository.findById(id);

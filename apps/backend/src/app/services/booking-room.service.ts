@@ -16,6 +16,7 @@ import { BookingRequest, Devices } from '../models';
 import { RoomTypeService } from './room-type.service';
 import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.request.payload';
 import { BookingRequestHistService } from './booking-room-hist.service';
+import { SlotService } from './slot.service';
 
 @Injectable()
 export class BookingRoomService {
@@ -28,6 +29,7 @@ export class BookingRoomService {
     private readonly roomWishlistService: RoomWishlistService,
     private readonly repository: BookingRoomRepository,
     private readonly accountService: AccountsService,
+    private readonly slotService: SlotService,
     private readonly histService: BookingRequestHistService
   ) {}
 
@@ -244,14 +246,56 @@ export class BookingRoomService {
     userId: string
   ): Promise<BookingRequest> {
     try {
-      console.log('AAAAAAAAa: ', payload);
+      const role = await this.accountService.getRoleOfAccount(userId);
+      const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlot);
+      const slotOut = await this.slotService.getNumOfSlot(payload.checkoutSlot);
+      const listRequestPeningInDay =
+        await this.repository.getBookingPendingAndBookedByDay(
+          payload.checkinDate
+        );
 
-      const deviceAdded = await this.repository.createNewRequest(
+      let status = 'PENDING';
+      status = 'BOOKED';
+      if (listRequestPeningInDay.length > 0) {
+        for (let i = 0; i < listRequestPeningInDay.length; i++) {
+          if (listRequestPeningInDay[i].status === 'PENDING') {
+            if (
+              role.role_name === 'Librarian' ||
+              role.role_name === 'System Admin'
+            ) {
+              for (
+                let j = listRequestPeningInDay[i].slotIn;
+                j <= listRequestPeningInDay[i].slotOut;
+                j++
+              ) {
+                console.log('Slot of request pending', j);
+                if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+                  // j is slot of request pending
+                  this.cancelRoomBookingById(
+                    userId,
+                    listRequestPeningInDay[i].id
+                  );
+                  console.log('CANCEL: ', listRequestPeningInDay[i].id);
+                  break;
+                }
+              }
+            }
+          } else if (listRequestPeningInDay[i].status === 'BOOKED') {
+            throw new BadRequestException(
+              'Already have request booked in this slot, try another slot'
+            );
+          }
+        }
+      }
+
+      const request = await this.repository.createNewRequest(
         payload,
-        userId
+        userId,
+        status
       );
-      // await this.histService.createNew(deviceAdded);
-      return deviceAdded;
+
+      // await this.histService.createNew(request);
+      return request;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(

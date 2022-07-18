@@ -19,10 +19,12 @@ import {
 import NoDataFound from '../../components/no-data-found';
 import moment from 'moment';
 import Th from '../../components/table/th.table.component';
+import dayjs from 'dayjs';
 
 interface RowData {
   name: string;
-  booked_at: string;
+  requested_at: string;
+  checkin_date: string;
 }
 
 // interface ThProps {
@@ -83,10 +85,11 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
       <td>{row.roomName}</td>
-      <td>{moment(row.bookedAt).format('HH:MM DD/MM/YYYY')}</td>
+      <td>{dayjs(row.bookedAt).format('ddd DD-MM-YYYY, HH:mm ')}</td>
+      <td>{dayjs(row.checkinDate).format('ddd DD-MM-YYYY')}</td>
       <td>
         {row.status === 'PENDING' ? (
-          <div className={classes.pandingDisplay}>{row.status}</div>
+          <div className={classes.pendingDisplay}>{row.status}</div>
         ): row.status === 'BOOKED' ? (
           <div className={classes.bookedDisplay}>{row.status}</div>
         ) : row.status === 'CHECKED_OUT' ? (
@@ -136,11 +139,19 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           </Th>
 
           <Th
-            sorted={sortBy === 'booked_at'}
+            sorted={sortBy === 'checkin_date'}
             reversed={reverseSortDirection}
-            onSort={() => setSorting('booked_at')}
+            onSort={() => setSorting('checkin_date')}
           >
             Booked At
+          </Th>
+
+          <Th
+            sorted={sortBy === 'checkin_date'}
+            reversed={reverseSortDirection}
+            onSort={() => setSorting('checkin_date')}
+          >
+            Checkin Date
           </Th>
 
           <Th sorted={null} reversed={reverseSortDirection} onSort={null}>
@@ -204,7 +215,7 @@ const useStyles = createStyles((theme) => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  pandingDisplay: {
+  pendingDisplay: {
     color: '#228be6',
     textAlign: 'center',
     borderRadius: 50,

@@ -24,8 +24,8 @@ const defaultPagination = {
   reasonType: '',
   checkInAt: '',
   checkOutAt: '',
-  sort: 'name',
-  dir: 'ASC',
+  sort: 'checkin_date',
+  dir: 'DESC',
   status: '',
 };
 
@@ -239,7 +239,8 @@ const BookingRoom = () => {
 
       <SendBookingModal  
         toggleShown={() => setAddShown(!isAddShown)}
-        isShown={isAddShown} />
+        isShown={isAddShown}
+        pagination={pagination} />
     </AdminLayout>
   );
 };
