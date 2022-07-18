@@ -20,6 +20,7 @@ import { SlotService } from './slot.service';
 import dayjs = require('dayjs');
 import { DataSource } from 'typeorm';
 import { BookingRoomDevicesService } from './booking-request-devices.service';
+import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
 
 @Injectable()
 export class BookingRoomService {
@@ -95,9 +96,7 @@ export class BookingRoomService {
     }
   }
 
-  async getDevicesUseInRequest(
-    requestId: string
-  ): Promise<BookingRequest[]> {
+  async getDevicesUseInRequest(requestId: string): Promise<BookingRequest[]> {
     try {
       return await this.bookingRoomDeviceService.findByRequestId(requestId);
     } catch (e) {
@@ -296,7 +295,7 @@ export class BookingRoomService {
           listDevice: listDevice,
         };
       } else {
-        throw new BadRequestException("Not found request with provided id");
+        throw new BadRequestException('Not found request with provided id');
       }
     } catch (e) {
       this.logger.error(e.message);
@@ -515,5 +514,9 @@ export class BookingRoomService {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
     }
+  }
+
+  getAllBookingRoomsRequestsByFilter(filters: GetAllBookingRequestsFilter) {
+    return this.repository.findBookingRoomRequestsByFilter(filters);
   }
 }

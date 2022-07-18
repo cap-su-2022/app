@@ -1,6 +1,6 @@
 import { Entity } from 'typeorm';
 import { DataSource, QueryRunner, Repository, UpdateResult } from 'typeorm';
-import { Accounts, BookingRequest, Rooms } from '../models';
+import { Accounts, BookingRequest, Rooms, RoomType } from '../models';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
 import { BookingRoomStatus } from '../enum/booking-room-status.enum';
 import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
@@ -9,6 +9,7 @@ import { Slot } from '../models/slot.entity';
 import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.request.payload';
 import { BookingReason } from '../models/booking-reason.entity';
 import { BadRequestException } from '@nestjs/common';
+import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
 
 @CustomRepository(BookingRequest)
 export class BookingRoomRepository extends Repository<BookingRequest> {
@@ -446,5 +447,42 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         transaction: true,
       }
     );
+  }
+
+  findBookingRoomRequestsByFilter(
+    filters: GetAllBookingRequestsFilter
+  ): Promise<BookingRequest[]> {
+    const query = this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('r.name', 'roomName')
+      .addSelect('rt.name', 'roomType')
+      .addSelect('booking_request.checkin_date', 'checkinDate')
+      .addSelect('st.slot_num', 'slotStart')
+      .addSelect('se.slot_num', 'slotEnd')
+      .addSelect('booking_request.status', 'status')
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(RoomType, 'rt', 'rt.id = r.type')
+      .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
+      .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
+
+      .where('r.name LIKE :name', { name: `%${filters.roomName}%` })
+      .andWhere('booking_request.checkin_date >= :dateStart', {
+        dateStart: filters.dateStart,
+      })
+      .andWhere('booking_request.checkin_date <= :dateEnd', {
+        dateEnd: filters.dateEnd,
+      })
+      .andWhere('st.slot_num >= :slotStart', {
+        slotStart: filters.slotStart,
+      })
+      .andWhere('st.slot_num <= :slotEnd', {
+        slotEnd: filters.slotEnd,
+      });
+    if (filters.status) {
+      query.andWhere('booking_request.status IN (:...status)', {
+        status: JSON.parse(filters.status),
+      });
+    }
+    return query.getRawMany<BookingRequest>();
   }
 }

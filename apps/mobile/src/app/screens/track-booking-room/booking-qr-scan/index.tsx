@@ -25,8 +25,11 @@ const BookingQRScan: React.FC<any> = () => {
       dispatch(fetchRoomBookingById(qrData))
         .unwrap()
         .then((e) => {
-          console.log(e);
-          navigate.navigate('ACCEPT_ROOM_BOOKING');
+          if (navigate.getState().routeNames[0] === 'Home') {
+            navigate.navigate('QR_ACCEPT_BOOKING');
+          } else {
+            navigate.navigate('ACCEPT_ROOM_BOOKING');
+          }
         })
         .catch((e) => {
           console.error(e);

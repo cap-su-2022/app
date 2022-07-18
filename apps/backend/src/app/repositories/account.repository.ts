@@ -219,6 +219,11 @@ export class AccountRepository extends Repository<Accounts> {
     userId: string
   ): Promise<Accounts> {
     if (payload.isDisabled) {
+      this.createQueryBuilder('a').where((qb) => {
+        qb.where("booking_request.status = 'PENDING'").orWhere(
+          "booking_request.status = 'BOOKED'"
+        );
+      });
       return this.save(
         {
           username: payload.username,
@@ -377,7 +382,9 @@ export class AccountRepository extends Repository<Accounts> {
         .addSelect('a.username', 'deletedBy')
         .leftJoin(Accounts, 'a', 'a.id = account.deleted_by')
         .andWhere('account.deleted_at IS NOT NULL')
-        .andWhere('account.username ILIKE :name', { name: `%${search.trim()}%` })
+        .andWhere('account.username ILIKE :name', {
+          name: `%${search.trim()}%`,
+        })
         // .andWhere('account.deleted_at IS NULL')
         .getRawMany<Accounts>()
     );

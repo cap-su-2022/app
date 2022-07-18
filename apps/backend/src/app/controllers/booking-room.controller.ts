@@ -32,6 +32,7 @@ import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
 import { BookingRequest } from '../models';
 import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.request.payload';
+import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
 
 @Controller('/v1/booking-room')
 @ApiTags('Booking Room')
@@ -460,5 +461,12 @@ export class BookingRoomController {
       roomId: roomId,
       slot: slot,
     });
+  }
+
+  @Get('filter')
+  getAllBookingRoomRequestsByFilter(
+    @Query() filters: GetAllBookingRequestsFilter
+  ) {
+    return this.service.getAllBookingRoomsRequestsByFilter(filters);
   }
 }

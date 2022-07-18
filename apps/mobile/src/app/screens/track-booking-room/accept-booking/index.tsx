@@ -126,7 +126,7 @@ const AcceptBooking: React.FC<any> = () => {
                 <Text style={styles.valueText}>
                   {' '}
                   {bookingRoom.checkoutSlot} -{' '}
-                  {dayjs(new Date(bookingRoom.checkoutDate)).format(
+                  {dayjs(new Date(bookingRoom.checkinDate)).format(
                     'DD/MM/YYYY'
                   )}
                 </Text>
