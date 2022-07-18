@@ -38,6 +38,10 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   const dropdown = useRef(null);
 
   useEffect(() => {
+    props.formik.setFieldValue('bookingReasonId', props.reasonNames[0].value);
+  }, [])
+
+  useEffect(() => {
     parent.current && autoAnimate(dropdown.current);
   }, [parent]);
   const reveal = () => setShow(!show);

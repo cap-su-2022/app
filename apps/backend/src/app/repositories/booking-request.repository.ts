@@ -1,4 +1,5 @@
-import { Repository, UpdateResult } from 'typeorm';
+import { Entity } from 'typeorm';
+import { DataSource, QueryRunner, Repository, UpdateResult } from 'typeorm';
 import { Accounts, BookingRequest, Rooms } from '../models';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
 import { BookingRoomStatus } from '../enum/booking-room-status.enum';
@@ -27,9 +28,11 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.booking_reason_id', 'reasonType')
       .addSelect('booking_request.status', 'status')
       .addSelect('booking_request.requested_at', 'bookedAt')
+      .addSelect('a.username', 'requestedBy')
       .addSelect('booking_request.checkin_date', 'checkinDate')
       .addSelect('booking_request.id', 'id')
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
       .where('r.name ILIKE :roomName', {
         roomName: `%${payload.search}%`,
       })
@@ -102,9 +105,53 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     return query.getRawMany<BookingRequest>();
   }
 
+  getBookingPendingByRoomInDay(
+    roomId: string,
+    requestId: string,
+    date: string
+  ): Promise<
+    { id: string; slotIn: number; slotOut: number; status: string }[]
+  > {
+    const query = this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('slot_in.slot_num', 'slotIn')
+      .addSelect('slot_out.slot_num', 'slotOut')
+      .addSelect('slot_in.name', 'slotInName')
+      .addSelect('slot_out.name', 'slotOutName')
+      .addSelect('a.username', 'requestedBy')
+      .addSelect('r.name', 'reason')
+      .addSelect('booking_request.status', 'status')
+      .innerJoin(Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
+      .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
+      .innerJoin(BookingReason, 'r', 'r.id = booking_request.booking_reason_id')
+      .innerJoin(
+        Slot,
+        'slot_out',
+        'slot_out.id = booking_request.checkout_slot'
+      )
+      .where('booking_request.checkinDate = :checkinDate', {
+        checkinDate: date,
+      })
+      .andWhere('booking_request.room_id = :roomId', {
+        roomId: roomId,
+      })
+      .andWhere('booking_request.id != :id', {
+        id: requestId,
+      })
+      .andWhere("(booking_request.status = 'PENDING')");
+    return query.getRawMany<{
+      id: string;
+      slotIn: number;
+      slotOut: number;
+      status: string;
+    }>();
+  }
+
   getBookingPendingAndBookedByDay(
     date: string
-  ): Promise<{ id: string; slotIn: number; slotOut: number, status: string }[]> {
+  ): Promise<
+    { id: string; slotIn: number; slotOut: number; status: string }[]
+  > {
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('slot_in.slot_num', 'slotIn')
@@ -119,8 +166,15 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .where('booking_request.checkinDate = :checkinDate', {
         checkinDate: date,
       })
-      .andWhere("(booking_request.status = 'PENDING' OR booking_request.status = 'BOOKED')");
-    return query.getRawMany<{ id: string; slotIn: number; slotOut: number, status: string }>();
+      .andWhere(
+        "(booking_request.status = 'PENDING' OR booking_request.status = 'BOOKED')"
+      );
+    return query.getRawMany<{
+      id: string;
+      slotIn: number;
+      slotOut: number;
+      status: string;
+    }>();
   }
 
   getTotalRowCount(): Promise<number> {
@@ -239,18 +293,24 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('br.description', 'description')
       .addSelect('br.checkedin_at', 'checkinAt')
       .addSelect('bkr.name', 'reason')
-      .addSelect('br.cancelled_at', 'cancelledAt')
       .addSelect('br.requested_at', 'requestedAt')
-      .addSelect('br.updated_at', 'updatedAt')
+      .addSelect('br.requested_by', 'requestedById')
       .addSelect('a.username', 'requestedBy')
+      .addSelect('br.updated_at', 'updatedAt')
       .addSelect('aa.username', 'updatedBy')
+      .addSelect('br.cancelled_at', 'cancelledAt')
       .addSelect('aaa.username', 'cancelledBy')
+      .addSelect('aaaa.username', 'acceptedBy')
+      .addSelect('br.accepted_at', 'acceptedAt')
       .addSelect('s.name', 'checkinSlot')
       .addSelect('ss.name', 'checkoutSlot')
+      .addSelect('br.checkin_slot', 'checkinSlotId')
+      .addSelect('br.checkout_slot', 'checkoutSlotId')
       .innerJoin(Rooms, 'r', 'r.id = br.room_id')
       .innerJoin(Accounts, 'a', 'a.id = br.requested_by')
       .leftJoin(Accounts, 'aa', 'aa.id = br.updated_by')
       .leftJoin(Accounts, 'aaa', 'aaa.id = br.cancelled_by')
+      .leftJoin(Accounts, 'aaaa', 'aaaa.id = br.accepted_by')
       .leftJoin(Slot, 's', 's.id = br.checkin_slot')
       .leftJoin(Slot, 'ss', 'ss.id = br.checkout_slot')
       .innerJoin(BookingReason, 'bkr', 'bkr.id = br.booking_reason_id')
@@ -261,40 +321,47 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   async createNewRequest(
     payload: BookingRequestAddRequestPayload,
     userId: string,
-    status: string
+    status: string,
+    queryRunner: QueryRunner
   ) {
-    return this.save(
-      {
-        roomId: payload.roomId,
-        requestedBy: userId,
-        requestedAt: new Date(),
-        checkinDate: payload.checkinDate,
-        checkoutDate: payload.checkoutDate,
-        checkinSlot: payload.checkinSlot,
-        checkoutSlot: payload.checkoutSlot,
-        status: status,
-        description: payload.description,
-        bookingReasonId: payload.bookingReasonId,
-      },
-      {
-        transaction: true,
-      }
-    );
+    return await queryRunner.manager.save(BookingRequest, {
+      roomId: payload.roomId,
+      requestedBy: userId,
+      requestedAt: new Date(),
+      status: status,
+      bookingReasonId: payload.bookingReasonId,
+      description: payload.description,
+      checkinSlot: payload.checkinSlot,
+      checkoutSlot: payload.checkoutSlot,
+      checkinDate: payload.checkinDate,
+    });
   }
 
-  async cancelRoomBookingById(accountId: string, id: string) {
+  async cancelRoomBookingById(
+    accountId: string,
+    id: string,
+    role: string,
+    queryRunner: QueryRunner
+  ) {
     const oldData = await this.findOneOrFail({
       where: {
         id: id,
       },
     });
-    if (oldData.requestedBy === accountId) {
-      return this.save(
+    if (
+      oldData.requestedBy === accountId ||
+      role === 'Librarian' ||
+      role === 'System Admin'
+    ) {
+      return await queryRunner.manager.save(
+        BookingRequest,
         {
           ...oldData,
           status: 'CANCELLED',
           updatedBy: accountId,
           updatedAt: new Date(),
+          cancelledBy: accountId,
+          cancelledAt: new Date(),
         },
         {
           transaction: true,
@@ -307,40 +374,47 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     }
   }
 
-  createNewBooking(payload: BookingRequestAddRequestPayload, userId: string) {
-    if (!payload.checkoutDate || payload.checkoutDate === payload.checkinDate) {
-      return this.save(
-        {
-          roomId: payload.roomId,
-          requestedBy: userId,
-          requestedAt: new Date(),
-          checkinDate: payload.checkinDate,
-          checkoutDate: payload.checkoutDate,
-          checkinSlot: payload.checkinSlot,
-          checkoutSlot: payload.checkoutSlot,
-          status: 'BOOKED',
-          description: payload.description,
-          bookingReasonId: payload.bookingReasonId,
-        },
-        {
-          transaction: true,
-        }
-      );
-    }
-  }
+  // createNewBooking(payload: BookingRequestAddRequestPayload, userId: string) {
+  //   if (!payload.checkoutDate || payload.checkoutDate === payload.checkinDate) {
+  //     return this.save(
+  //       {
+  //         roomId: payload.roomId,
+  //         requestedBy: userId,
+  //         requestedAt: new Date(),
+  //         checkinDate: payload.checkinDate,
+  //         checkoutDate: payload.checkoutDate,
+  //         checkinSlot: payload.checkinSlot,
+  //         checkoutSlot: payload.checkoutSlot,
+  //         status: 'BOOKED',
+  //         description: payload.description,
+  //         bookingReasonId: payload.bookingReasonId,
+  //       },
+  //       {
+  //         transaction: true,
+  //       }
+  //     );
+  //   }
+  // }
 
-  async acceptById(accountId: string, roomId: string) {
+  async acceptById(
+    accountId: string,
+    roomId: string,
+    queryRunner: QueryRunner
+  ) {
     const oldData = await this.findOneOrFail({
       where: {
         id: roomId,
       },
     });
-    return this.save(
+    return await queryRunner.manager.save(
+      BookingRequest,
       {
         ...oldData,
         status: 'BOOKED',
         updatedBy: accountId,
         updatedAt: new Date(),
+        acceptedBy: accountId,
+        acceptedAt: new Date(),
       },
       {
         transaction: true,
@@ -348,18 +422,25 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     );
   }
 
-  async rejectById(accountId: string, roomId: string) {
+  async rejectById(
+    accountId: string,
+    roomId: string,
+    queryRunner: QueryRunner
+  ) {
     const oldData = await this.findOneOrFail({
       where: {
         id: roomId,
       },
     });
-    return this.save(
+    return await queryRunner.manager.save(
+      BookingRequest,
       {
         ...oldData,
         status: 'CANCELLED',
         updatedBy: accountId,
         updatedAt: new Date(),
+        cancelledBy: accountId,
+        cancelledAt: new Date(),
       },
       {
         transaction: true,

@@ -7,11 +7,16 @@ import { BookingReason } from '../models/booking-reason.entity';
 export class BookingReasonHistRepository extends Repository<BookingReasonHist> {
   async createNew(payload: BookingReason): Promise<BookingReasonHist> {
     const bookingReasonId = payload.id;
-    delete payload.id
-    return this.save({
-      bookingReasonId: bookingReasonId,
-      ...payload,
-    });
+    delete payload.id;
+    return this.save(
+      {
+        bookingReasonId: bookingReasonId,
+        ...payload,
+      },
+      {
+        transaction: true,
+      }
+    );
   }
 
   async deleteAllHist(id: string) {
