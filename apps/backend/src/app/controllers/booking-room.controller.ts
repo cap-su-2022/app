@@ -86,7 +86,7 @@ export class BookingRoomController {
     @Query('roomId', new DefaultValuePipe('')) roomId: string,
     @Query('requestId', new DefaultValuePipe('')) requestId: string,
     @Query('date', new DefaultValuePipe('')) date: string,
-    @User() user: KeycloakUserInstance,
+    @User() user: KeycloakUserInstance
   ) {
     return this.service.getBookingWithSameSlot({
       roomId: roomId,
@@ -143,6 +143,30 @@ export class BookingRoomController {
     @Query('account-id') accountId = ''
   ): Promise<BookingRequest[]> {
     return this.service.getRequestBookingByAccountId(accountId);
+  }
+
+  @Get('devices-use-in-request/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched device use in request',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getDevicesUseInRequest(
+    @Param('id') requestId: string
+  ): Promise<BookingRequest[]> {
+    return this.service.getDevicesUseInRequest(requestId);
   }
 
   @Get(':id')
