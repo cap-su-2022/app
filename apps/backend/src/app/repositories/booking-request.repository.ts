@@ -106,7 +106,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     return query.getRawMany<BookingRequest>();
   }
 
-  getBookingPendingByRoomInDay(
+  getRequestPendingOfRoomInDay(
     roomId: string,
     requestId: string,
     date: string
@@ -148,10 +148,46 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     }>();
   }
 
-  getBookingPendingAndBookedByDay(
+  getRequestBookedInDay(
     date: string
   ): Promise<
-    { id: string; slotIn: number; slotOut: number; status: string }[]
+    { id: string; roomId: string; slotIn: number; slotOut: number }[]
+  > {
+    return this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('booking_request.room_id', 'roomId')
+      .addSelect('slot_in.slot_num', 'slotIn')
+      .addSelect('slot_out.slot_num', 'slotOut')
+      .addSelect('slot_in.name', 'slotInName')
+      .addSelect('slot_out.name', 'slotOutName')
+      .innerJoin(Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
+      .innerJoin(
+        Slot,
+        'slot_out',
+        'slot_out.id = booking_request.checkout_slot'
+      )
+      .where('booking_request.checkinDate = :checkinDate', {
+        checkinDate: date,
+      })
+      .andWhere("(booking_request.status = 'BOOKED')")
+      .getRawMany<{
+        id: string;
+        roomId: string;
+        slotIn: number;
+        slotOut: number;
+      }>();
+  }
+
+  getBookingPendingAndBookedByDay(
+    date: string,
+    roomId: string
+  ): Promise<
+    {
+      id: string;
+      slotIn: number;
+      slotOut: number;
+      status: string;
+    }[]
   > {
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
@@ -166,6 +202,9 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       )
       .where('booking_request.checkinDate = :checkinDate', {
         checkinDate: date,
+      })
+      .where('booking_request.room_id = :roomId', {
+        roomId: roomId,
       })
       .andWhere(
         "(booking_request.status = 'PENDING' OR booking_request.status = 'BOOKED')"

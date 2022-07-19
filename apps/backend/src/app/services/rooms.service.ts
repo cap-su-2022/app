@@ -268,4 +268,8 @@ export class RoomsService {
   getRoomsFilterByNameAndType(payload: ChooseBookingRoomFilterPayload) {
     return this.repository.filterByNameAndType(payload);
   }
+
+  filterRoomFreeByRoomBooked(listIdRoomBooked: string[]) {
+    return this.repository.filterRoomFreeByRoomBooked(listIdRoomBooked)
+  }
 }

@@ -81,17 +81,30 @@ export class BookingRoomController {
 
   @Get('list-booking-with-same-slot')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  getBookingWithSameSlot(
+  getRequestWithSameSlot(
     @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
     @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
     @Query('roomId', new DefaultValuePipe('')) roomId: string,
     @Query('requestId', new DefaultValuePipe('')) requestId: string,
     @Query('date', new DefaultValuePipe('')) date: string,
-    @User() user: KeycloakUserInstance
   ) {
-    return this.service.getBookingWithSameSlot({
+    return this.service.getRequestOfRoomWithSameSlot({
       roomId: roomId,
       requestId: requestId,
+      date: date,
+      checkinSlotId: checkinSlotId,
+      checkoutSlotId: checkoutSlotId,
+    });
+  }
+
+  @Get('list-room-free-at-time')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  getRoomFreeAtTime(
+    @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
+    @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
+    @Query('date', new DefaultValuePipe('')) date: string,
+  ) {
+    return this.service.getRoomFreeAtTime({
       date: date,
       checkinSlotId: checkinSlotId,
       checkoutSlotId: checkoutSlotId,
