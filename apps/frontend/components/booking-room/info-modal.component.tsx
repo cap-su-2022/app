@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Button,
   createStyles,
@@ -23,6 +23,8 @@ import {
 } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
+import autoAnimate from '@formkit/auto-animate';
+import RequestInfoComponent from './info-component.component';
 
 interface UserInfoModel {
   avatar: string;
@@ -43,7 +45,7 @@ interface RequestInfoModalProps {
   isShown: boolean;
   toggleShown(): void;
   toggleCancelModalShown(): void;
-  toggleAcceptModalShown(): void
+  toggleAcceptModalShown(): void;
 }
 
 const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
@@ -51,6 +53,14 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
   const requestBooking = useAppSelector(
     (state) => state.roomBooking.roomBooking
   );
+  const [isShowListDevice, setShowListDevice] = useState(false);
+  const parent = useRef(null);
+
+  useEffect(() => {
+    parent.current && autoAnimate(parent.current);
+  }, [parent]);
+
+  const reveal = () => setShowListDevice(!isShowListDevice);
 
   console.log(requestBooking);
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
@@ -106,147 +116,29 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
     );
   };
 
+  const listDeviceDiv =
+    requestBooking.listDevice && requestBooking.listDevice.length > 0
+      ? requestBooking.listDevice.map((device) => (
+          <div key={device.id} className={classes.deviceRow}>
+            <p className={classes.col1}>{device.deviceName}</p>
+            <p className={classes.col2}>{device.deviceQuantity}</p>
+          </div>
+        ))
+      : null;
+
   return (
     <>
       <Modal
         title={<ModalHeaderTitle />}
-        size="lg"
+        size="auto"
         centered
         opened={props.isShown}
         onClose={() => props.toggleShown()}
       >
-        <div className={classes.modalBody}>
-          <InputWrapper label="Request ID" className={classes.inputWrapper}>
-            <TextInput
-              icon={<Id />}
-              radius="md"
-              readOnly
-              value={requestBooking.id}
-            />
-          </InputWrapper>
-          <InputWrapper label="Room name" className={classes.inputWrapper}>
-            <TextInput
-              icon={<ClipboardText />}
-              radius="md"
-              readOnly
-              value={requestBooking.roomName}
-            />
-          </InputWrapper>
-          <div style={{ display: 'flex' }}>
-            <InputWrapper label="Day use" className={classes.inputWrapper}>
-              <TextInput
-                icon={<ClipboardText />}
-                radius="md"
-                readOnly
-                value={dayjs(requestBooking.checkinDate).format('DD/MM/YYYY')}
-              />
-            </InputWrapper>
-
-            <InputWrapper label="Slot in" className={classes.inputWrapper}>
-              <TextInput
-                icon={<ClipboardText />}
-                radius="md"
-                readOnly
-                value={requestBooking.checkinSlot}
-                style={{ width: 100 }}
-              />
-            </InputWrapper>
-            <div style={{ position: 'relative', top: '45px' }}>
-              <ChevronsRight size={28} strokeWidth={2} color={'black'} />
-            </div>
-            <InputWrapper label="Slot out" className={classes.inputWrapper}>
-              <TextInput
-                icon={<ClipboardText />}
-                radius="md"
-                readOnly
-                value={requestBooking.checkoutSlot}
-                style={{ width: 100 }}
-              />
-            </InputWrapper>
-          </div>
-          <div style={{ display: 'flex' }}>
-            <InputWrapper label="Request at" className={classes.inputWrapper}>
-              <TextInput
-                icon={<ClipboardText />}
-                radius="md"
-                readOnly
-                value={dayjs(requestBooking.requestedAt).format(
-                  'HH:mm DD/MM/YYYY'
-                )}
-              />
-            </InputWrapper>
-
-            <InputWrapper label="Request by" className={classes.inputWrapper}>
-              <TextInput
-                icon={<ClipboardText />}
-                radius="md"
-                readOnly
-                value={requestBooking.requestedBy}
-              />
-            </InputWrapper>
-          </div>
-
-          <InputWrapper label="Reason" className={classes.inputWrapper}>
-            <TextInput
-              icon={<ClipboardText />}
-              radius="md"
-              readOnly
-              value={requestBooking.reason}
-            />
-          </InputWrapper>
-
-          <InputWrapper label="Description" className={classes.inputWrapper}>
-            <Textarea
-              icon={<ClipboardText />}
-              radius="md"
-              readOnly
-              value={requestBooking.description}
-            />
-          </InputWrapper>
-        </div>
-
-        <div className={classes.modalFooter}>
-          {(requestBooking.status === 'PENDING' &&
-            userInfo.id === requestBooking.requestedById) ||
-          requestBooking.status === 'BOOKED' ? (
-            <Button
-              onClick={() => props.toggleCancelModalShown()}
-              variant="outline"
-              color={'red'}
-              leftIcon={<Archive />}
-            >
-              Cancel request
-            </Button>
-          ) : requestBooking.status === 'PENDING' &&
-            userInfo.id !== requestBooking.requestedById ? (
-            <Button
-              onClick={() => props.toggleCancelModalShown()}
-              variant="outline"
-              color={'red'}
-              leftIcon={<Archive />}
-            >
-              Reject request
-            </Button>
-          ) : (
-            <div></div>
-          )}
-          {requestBooking.status === 'PENDING' ? (
-            <Button
-              onClick={() => props.toggleAcceptModalShown()}
-              variant="outline"
-              color={'green'}
-              leftIcon={<Check />}
-            >
-              Accept request
-            </Button>
-          ) : (
-            <div></div>
-          )}
-
-          <Button onClick={() => props.toggleShown()} leftIcon={<X />}>
-            Close
-          </Button>
-        </div>
+        <RequestInfoComponent
+          toggleCancelModalShown={props.toggleCancelModalShown}
+          toggleAcceptModalShown={props.toggleAcceptModalShown}
+        />
       </Modal>
     </>
   );
@@ -261,6 +153,7 @@ const useStyles = createStyles({
     display: 'flex',
     flexDirection: 'column',
     margin: 20,
+    width: 460,
   },
   modalFooter: {
     display: 'flex',
@@ -329,6 +222,22 @@ const useStyles = createStyles({
     borderRadius: 10,
     color: '#40c057',
     fontSize: 15,
+  },
+  deviceRow: {
+    borderRadius: '3px',
+    padding: '10px 15px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '15px',
+    backgroundColor: '#ffffff',
+    boxShadow: '0px 0px 9px 0px rgba(0,0,0,0.1)',
+    width: 200,
+  },
+  col1: {
+    flexBasis: '80%',
+  },
+  col2: {
+    flexBasis: '20%',
   },
 });
 

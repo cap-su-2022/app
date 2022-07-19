@@ -24,9 +24,9 @@ import {
 } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
-import ChooseRoomModal from './choose-room-modal.component';
+import ChooseRoomModal from './by-room-choose-room-modal.component';
 import autoAnimate from '@formkit/auto-animate';
-import ChooseSlotModal from './choose-slot-modal.component';
+import ChooseSlotModal from './by-room-choose-slot-modal.component';
 import { useFormik } from 'formik';
 import { fetchRoomNames } from '../../redux/features/room/thunk/fetch-room-names.thunk';
 import { fetchSlotNames } from '../../redux/features/slot/thunk/fetch-slot-names.thunk';
@@ -36,6 +36,7 @@ import { addNewRequest } from '../../redux/features/room-booking/thunk/add-new-b
 import { showNotification } from '@mantine/notifications';
 import { BookingRequestParams } from '../../models/pagination-params/booking-room-params.model';
 import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
+import BySlotChooseSlotModal from './by-slot-choose-slot-modal.component';
 
 interface SendBookingModalProps {
   isShown: boolean;
@@ -88,7 +89,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
     const [showChooseSlot, setShowChooseSlot] = useState(false);
     const parentChooseRoom = useRef(null);
     const parentChooseSlot = useRef(null);
-    
+
     useEffect(() => {
       parentChooseRoom.current && autoAnimate(parentChooseRoom.current);
     }, []);
@@ -98,10 +99,12 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
     }, []);
 
     const revealRoom = () => {
+      formik.resetForm();
       setShowChooseRoom(!showChooseRoom);
       setShowChooseSlot(false);
     };
     const revealSlot = () => {
+      formik.resetForm();
       setShowChooseSlot(!showChooseSlot);
       setShowChooseRoom(false);
     };
@@ -134,7 +137,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
           })
         );
     };
-  
+
     const formik = useFormik({
       // validationSchema: UpdateRoomTypeValidation,
       initialValues: {
@@ -190,7 +193,16 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
         </div>
 
         <div ref={parentChooseSlot}>
-          {/* {showChooseSlot && <ChooseSlotModal />} */}
+          {showChooseSlot && (
+            <BySlotChooseSlotModal
+              formik={formik}
+              handleSubmit={() => formik.handleSubmit()}
+              roomNames={roomNames}
+              slotNames={slotNames}
+              deviceNames={deviceNames}
+              reasonNames={reasonNames}
+            />
+          )}
         </div>
       </div>
     );
@@ -204,7 +216,6 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
         centered
         opened={props.isShown}
         onClose={() => props.toggleShown()}
-        style={{ paddingTop: 10 }}
       >
         <div>
           <Dropdown />

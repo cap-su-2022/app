@@ -1,4 +1,5 @@
 export interface RoomBooking {
+  listDevice: any[];
   roomId: string;
   checkinSlotId: string;
   checkoutSlotId: string;

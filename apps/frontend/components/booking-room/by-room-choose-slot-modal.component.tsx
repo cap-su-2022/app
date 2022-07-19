@@ -41,7 +41,6 @@ interface ChooseSlotModalProps {
   handleNextChooseDevice(): void;
   roomNames: any[];
   slotNames: any[];
-  listBooking: any[];
 }
 const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const { classes } = useStyles();
@@ -53,7 +52,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const curr = new Date();
   const sun = dayShowShecule.getDate() - dayShowShecule.getDay(); // First day is the day of the month - the day of the week
   const [days, setDays] = useState<any[]>();
-  const [listRequest, setListRequest] = useState(props.listBooking);
+  const [listRequest, setListRequest] = useState([]);
 
   console.log('LISSSSS: ', listRequest);
   const handleNextStep = () => {
@@ -232,7 +231,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
                                 : (isPending = true)
                               : null;
                           }
-                          if (day < curr) {
+                          if (day < curr.setHours(0, 0, 0, 0)) {
                             isPassed = true;
                           }
                           if (
@@ -343,25 +342,25 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
         <Table>
           <thead>
             <tr>
-              <th className={classes.thDiv}></th>
+              <th></th>
               {/* <th className={classes.thDiv}>CN</th> */}
-              <th className={classes.thDiv}>
-                <div>Mon</div>
+              <th>
+                <div className={classes.thDiv}>Mon</div>
               </th>
-              <th className={classes.thDiv}>
-                <div>Tue</div>
+              <th>
+                <div className={classes.thDiv}>Tue</div>
               </th>
-              <th className={classes.thDiv}>
-                <div>Wed</div>
+              <th>
+                <div className={classes.thDiv}>Wed</div>
               </th>
-              <th className={classes.thDiv}>
-                <div>Thu</div>
+              <th>
+                <div className={classes.thDiv}>Thu</div>
               </th>
-              <th className={classes.thDiv}>
-                <div>Fri</div>
+              <th>
+                <div className={classes.thDiv}>Fri</div>
               </th>
-              <th className={classes.thDiv}>
-                <div>Sat</div>
+              <th>
+                <div className={classes.thDiv}>Sat</div>
               </th>
             </tr>
           </thead>
@@ -464,22 +463,6 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       </div>
     </div>
   );
-  // return (
-  //   <>
-  //     {showChooseSlot && <ChooseSlot />}
-  //     {showChooseDevice && (
-  //       // <ChooseDeviceModal
-  //       //   formik={props.formik}
-  //       //   handleSubmit={props.handleSubmit}
-  //       //   handleBackChooseRoom={handleBackChooseRoom}
-  //       //   roomNames={props.roomNames}
-  //       //   slotNames={props.slotNames}
-  //       //   listBooking={listBooking}
-  //       // />
-  //       <div>Ahihihihihi</div>
-  //     )}
-  //   </>
-  // );
 };
 
 const useStyles = createStyles({
@@ -488,6 +471,7 @@ const useStyles = createStyles({
     paddingBottom: 10,
     borderRadius: 10,
     marginBottom: 10,
+    height: 400,
   },
   divHeader: {
     display: 'flex',
@@ -496,7 +480,7 @@ const useStyles = createStyles({
     marginTop: '20px',
   },
   thDiv: {
-    '@textAlign': 'center!important',
+    textAlign: 'center',
   },
   tdDiv: {
     margin: 'auto',

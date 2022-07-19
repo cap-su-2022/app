@@ -1,41 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import {
   Button,
-  Chip,
-  Chips,
   createStyles,
   InputWrapper,
-  Modal,
-  Radio,
-  RadioGroup,
   Select,
-  Table,
-  Text,
   Textarea,
   TextInput,
 } from '@mantine/core';
-import { useWindowDimensions } from '../../hooks/use-window-dimensions';
-import {
-  Alarm,
-  Archive,
-  BuildingWarehouse,
-  CalendarStats,
-  ChevronsRight,
-  ClipboardText,
-  Clock,
-  FileDescription,
-  Id,
-  User,
-  X,
-} from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import dayjs from 'dayjs';
-import autoAnimate from '@formkit/auto-animate';
+import { ClipboardText, FileDescription, X } from 'tabler-icons-react';
+import { useAppDispatch } from '../../redux/hooks';
 import { FormikProps } from 'formik';
 import { getRoomById } from '../../redux/features/room/thunk/get-room-by-id';
-import { fetchListBookingByRoomInWeek } from '../../redux/features/room-booking/thunk/fetch-list-booking-by-room-in-week.thunk';
-import { DatePicker } from '@mantine/dates';
-import ChooseSlotModal from './choose-slot-modal.component';
+import ChooseSlotModal from './by-room-choose-slot-modal.component';
 import { showNotification } from '@mantine/notifications';
 import ChooseDeviceModal from './choose-device-modal.component';
 
@@ -55,7 +31,6 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(false);
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
   const [slotNames, setSlotName] = useState<any[]>(props.slotNames);
-  const curr = new Date(); // get current date
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -99,29 +74,6 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
       }
     }
   }, [props.formik.values.checkinDate]);
-
-  const [listBooking, setListBooking] = useState([]);
-  useEffect(() => {
-    if (props.formik.values.roomId !== '') {
-      dispatch(
-        fetchListBookingByRoomInWeek({
-          roomId: props.formik.values.roomId,
-          date: curr.toUTCString(),
-        })
-      )
-        .unwrap()
-        .then((listBooking) =>
-          setListBooking(
-            listBooking.map((request) => {
-              return {
-                ...request,
-                checkinDate: new Date(request.checkinDate).getDate(),
-              };
-            })
-          )
-        );
-    }
-  }, [dispatch, props.formik.values.roomId]);
 
   const handleNextChooseSlot = () => {
     if (room === null) {
@@ -221,15 +173,6 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
             Next
           </Button>
         </div>
-        {/* <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-          <Button
-            onClick={() => props.handleSubmit()}
-            // leftIcon={<Pencil />}
-            color="green"
-          >
-            Test
-          </Button>
-        </div> */}
       </div>
     );
   };
@@ -245,7 +188,6 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
           handleNextChooseDevice={handleNextChooseDevice}
           roomNames={props.roomNames}
           slotNames={props.slotNames}
-          listBooking={listBooking}
         />
       )}
       {showChooseDevice && (
