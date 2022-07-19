@@ -12,6 +12,9 @@ import { CurrentBookingRoom } from '../../models/current-booking-room.model';
 import { fetchCurrentBookingRoomList } from './thunk/fetch-current-booking-list.thunk';
 import { fetchCurrentRoomBookingDetail } from './thunk/fetch-current-booking-detail.thunk';
 import { fetchRoomBookingById } from './thunk/fetch-room-booking-by-id.thunk';
+import { fetchBookingRoomsByFilters } from './thunk/fetch-booking-room-by-filters.thunk';
+import { BookingRoomsByFiltersResponse } from '../../models/booking-rooms-by-filters-response.model';
+import dayjs from 'dayjs';
 
 interface RoomBookingState {
   bookingRoom: BookingRoom;
@@ -23,6 +26,9 @@ interface RoomBookingState {
   currentBookingRooms: CurrentBookingRoom[];
   currentBookingRoom: CurrentBookingRoom;
   today: string;
+  filteredBookingRequests: BookingRoomsByFiltersResponse[];
+  globalDateStart: string;
+  globalDateEnd: string;
 }
 
 interface BookingDevice {
@@ -43,10 +49,13 @@ interface AddRoomBookingPayload {
   roomName: string;
   devices: BookingDevice[];
   deviceNames: string[];
-  isMultiSLot: boolean
+  isMultiSLot: boolean;
 }
 
 const initialState: RoomBookingState = {
+  globalDateStart: dayjs(new Date()).format('YYYY-MM-DD'),
+  globalDateEnd: dayjs(dayjs().endOf('year')).format('YYYY-MM-DD'),
+  filteredBookingRequests: [],
   bookingRoom: {} as BookingRoom,
   bookingRooms: [],
   wishlistBookingRooms: [],
@@ -77,29 +86,29 @@ const roomBookingSlice = createSlice({
         toDay: payload.toDay,
       };
     },
-    saveToSlot(state, { payload }){
+    saveToSlot(state, { payload }) {
       state.addRoomBooking = {
         ...state.addRoomBooking,
-        toSlotName: payload.toSlotName
-      }
+        toSlotName: payload.toSlotName,
+      };
     },
-    saveMultiSlot(state, {payload}){
+    saveMultiSlot(state, { payload }) {
       state.addRoomBooking = {
         ...state.addRoomBooking,
-        isMultiSLot: payload.isMultiSLot
-      }
+        isMultiSLot: payload.isMultiSLot,
+      };
     },
-    saveFromSlotNum(state, {payload}){
+    saveFromSlotNum(state, { payload }) {
       state.addRoomBooking = {
         ...state.addRoomBooking,
-        fromSlotNum: payload.fromSlotNum
-      }
+        fromSlotNum: payload.fromSlotNum,
+      };
     },
-    saveToSlotNum(state, {payload}){
+    saveToSlotNum(state, { payload }) {
       state.addRoomBooking = {
         ...state.addRoomBooking,
-        toSlotNum: payload.toSlotNum
-      }
+        toSlotNum: payload.toSlotNum,
+      };
     },
     step1ScheduleRoomBooking(state, { payload }) {
       state.addRoomBooking = {
@@ -126,21 +135,28 @@ const roomBookingSlice = createSlice({
         deviceNames: payload.deviceNames,
       };
     },
+    setGlobalDateStart(state, { payload }) {
+      state.globalDateStart = payload;
+    },
+    setGlobalDateEnd(state, { payload }) {
+      state.globalDateEnd = payload;
+    },
+    resetGlobalDateStart(state) {
+      state.globalDateStart = dayjs(new Date()).format('YYYY-MM-DD');
+    },
+    resetGlobalDateEnd(state) {
+      state.globalDateEnd = dayjs(dayjs().endOf('year')).format('YYYY-MM-DD');
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAllBookingRooms.fulfilled, (state, { payload }) => {
       state.bookingRooms = payload;
     });
-    builder.addCase(fetchAllBookingRooms.rejected, (state, { payload }) => {});
     builder.addCase(fetchAllWishlistRooms.fulfilled, (state, { payload }) => {
       state.wishlistBookingRooms = payload;
     });
     builder.addCase(
       addToRoomBookingWishlist.fulfilled,
-      (state, { payload }) => {}
-    );
-    builder.addCase(
-      addToRoomBookingWishlist.rejected,
       (state, { payload }) => {}
     );
     builder.addCase(fetchBookingRoomDevices.fulfilled, (state, { payload }) => {
@@ -167,6 +183,12 @@ const roomBookingSlice = createSlice({
     builder.addCase(fetchRoomBookingById.fulfilled, (state, { payload }) => {
       state.bookingRoom = payload;
     });
+    builder.addCase(
+      fetchBookingRoomsByFilters.fulfilled,
+      (state, { payload }) => {
+        state.filteredBookingRequests = payload;
+      }
+    );
   },
 });
 
@@ -181,5 +203,9 @@ export const {
   saveToday,
   saveToSlot,
   saveFromSlotNum,
-  saveToSlotNum
+  saveToSlotNum,
+  setGlobalDateStart,
+  setGlobalDateEnd,
+  resetGlobalDateStart,
+  resetGlobalDateEnd,
 } = roomBookingSlice.actions;

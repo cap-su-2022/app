@@ -499,6 +499,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('st.slot_num', 'slotStart')
       .addSelect('se.slot_num', 'slotEnd')
       .addSelect('booking_request.status', 'status')
+      .addSelect('a.username', 'requestedBy')
+      .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
       .innerJoin(RoomType, 'rt', 'rt.id = r.type')
       .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
@@ -514,7 +516,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .andWhere('st.slot_num >= :slotStart', {
         slotStart: filters.slotStart,
       })
-      .andWhere('st.slot_num <= :slotEnd', {
+      .andWhere('se.slot_num <= :slotEnd', {
         slotEnd: filters.slotEnd,
       });
     if (filters.status) {

@@ -23,6 +23,7 @@
     "react-native-permissions": "*",
     "react-native-qrcode-scanner": "*",
     "react-native-mmkv": "*",
+    "react-native-camera": "*",
     "react-native-date-picker": "*",
     "react-native-calendars": "*",
     "react-native-signature-canvas": "*",

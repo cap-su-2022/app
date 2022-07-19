@@ -45,7 +45,13 @@ const TrackBookingRoomNavigator: React.FC<any> = () => {
         component={AcceptBookingNavigator}
       />
       <StackScreen name="BOOKING_QR_SCAN" component={BookingQRScan} />
-      <StackScreen name="CALENDAR_SELECT" component={CalendarDateSelect} />
+      <StackScreen
+        name="CALENDAR_SELECT"
+        options={{
+          headerShown: false,
+        }}
+        component={CalendarDateSelect}
+      />
     </StackNavigator>
   );
 };
