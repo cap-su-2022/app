@@ -141,15 +141,7 @@ const AcceptRequestComponent: React.FC<AcceptRequestComponentProps> = (
           Cancel
         </Button>
       </div>
-      {show && <div>jasdbv sdb
-        fdb
-        fd
-        ds
-        v
-        fdb
-        doLoginfds
-        vdsbgdsf
-        divsdg</div>}
+      {show && <ListRequestPendingAtSameSlot />}
     </div>
   );
 };
