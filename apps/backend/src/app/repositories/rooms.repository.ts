@@ -327,4 +327,16 @@ export class RoomsRepository extends Repository<Rooms> {
       }
       return query.getRawMany<Rooms>();
   }
+
+  filterRoomFreeByRoomBooked(listIdRoomBooked: string[]) {
+    const query = this.createQueryBuilder('rooms')
+      .select('rooms.id', 'id')
+      .addSelect('rooms.name', 'name')
+      .addSelect('rooms.type', 'type')
+      .addSelect('rooms.description', 'description')
+      .where('rooms.disabled_at IS NULL')
+      .andWhere('rooms.deleted_at IS NULL')
+      .andWhere('rooms.id NOT IN (:...listIdRoomBooked)', { listIdRoomBooked: listIdRoomBooked })
+      return query.getRawMany<Rooms>();
+  }
 }

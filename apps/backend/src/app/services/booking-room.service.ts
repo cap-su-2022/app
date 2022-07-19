@@ -218,9 +218,13 @@ export class BookingRoomService {
     }
   }
 
-  async getBookingByRoomInDay(roomId: string, requestId: string, date: string) {
+  async getRequestPendingOfRoomInDay(
+    roomId: string,
+    requestId: string,
+    date: string
+  ) {
     try {
-      return this.repository.getBookingPendingByRoomInDay(
+      return this.repository.getRequestPendingOfRoomInDay(
         roomId,
         requestId,
         date
@@ -231,7 +235,7 @@ export class BookingRoomService {
     }
   }
 
-  async getBookingWithSameSlot(payload: {
+  async getRequestOfRoomWithSameSlot(payload: {
     roomId: string;
     date: string;
     requestId: string;
@@ -243,7 +247,7 @@ export class BookingRoomService {
       const slotOut = await this.slotService.getNumOfSlot(
         payload.checkoutSlotId
       );
-      const listRequestPending = await this.getBookingByRoomInDay(
+      const listRequestPending = await this.getRequestPendingOfRoomInDay(
         payload.roomId,
         payload.requestId,
         payload.date
@@ -259,6 +263,55 @@ export class BookingRoomService {
         return listResult;
       }
       return null;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getRoomFreeAtTime(payload: {
+    date: string;
+    checkinSlotId: string;
+    checkoutSlotId: string;
+  }) {
+    try {
+      // console.log("DATE:", payload.date);
+      // console.log("Checkin Slot:", payload.checkinSlotId);
+      // console.log("Checkout Slot:", payload.checkoutSlotId);
+      const listRequestBookedInDay =
+        await this.repository.getRequestBookedInDay(payload.date);
+      if (listRequestBookedInDay.length > 0) {
+        const slotIn = await this.slotService.getNumOfSlot(
+          payload.checkinSlotId
+        );
+        const slotOut = await this.slotService.getNumOfSlot(
+          payload.checkoutSlotId
+        );
+
+        const listRequestBookedInDaySameSlot = listRequestBookedInDay.filter(
+          (request) => {
+            for (let j = request.slotIn; j <= request.slotOut; j++) {
+              if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+                return request;
+              }
+            }
+          }
+        );
+        console.log('LIST ROOM BOOKED: ', listRequestBookedInDaySameSlot);
+
+        if (listRequestBookedInDaySameSlot.length > 0) {
+          const listRoomBookedInDaySameSlot = []
+          listRequestBookedInDaySameSlot.map(
+            (request) => {
+              listRoomBookedInDaySameSlot.push(request.roomId);
+            }
+          );
+          console.log("LIST ROOM ID BOOKED", listRoomBookedInDaySameSlot);
+          const result = await this.roomService.filterRoomFreeByRoomBooked(listRoomBookedInDaySameSlot)
+          console.log("LIST ROOM AFTER FILTER", result)
+          return result
+        }
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -317,7 +370,8 @@ export class BookingRoomService {
       const slotOut = await this.slotService.getNumOfSlot(payload.checkoutSlot);
       const listRequestPeningAndBookedInDay =
         await this.repository.getBookingPendingAndBookedByDay(
-          payload.checkinDate
+          payload.checkinDate,
+          payload.roomId
         );
 
       let status = 'PENDING';
@@ -406,7 +460,7 @@ export class BookingRoomService {
         throw new BadRequestException('Request already cancelled!');
       }
 
-      const listRequestSameSlot = await this.getBookingWithSameSlot({
+      const listRequestSameSlot = await this.getRequestOfRoomWithSameSlot({
         roomId: request.roomId,
         date: dayjs(request.checkinDate).format('YYYY-MM-DD'),
         requestId: request.id,
