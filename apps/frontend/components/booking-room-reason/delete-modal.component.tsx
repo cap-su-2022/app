@@ -78,10 +78,10 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          Cy chỉnh chổ này giúp mình frontend/components/booking-room-reason/delete-modal
+
         </Text>
         <div className={classes.modalFooter}>
-          
+
           <Button
             color="red"
             leftIcon={<Trash />}

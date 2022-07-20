@@ -20,6 +20,7 @@ import { randomUUID } from 'crypto';
 import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
 import { AccountHistService } from './account-hist.service';
 import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
+import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
 
 @Injectable()
 export class AccountsService {
@@ -241,9 +242,9 @@ export class AccountsService {
       if (isDeleted) {
         throw new BadRequestException('This account is already deleted');
       }
-      const device = await this.repository.deleteById(accountId, id);
-      await this.histService.createNew(device);
-      return device;
+      const account = await this.repository.deleteById(accountId, id);
+      await this.histService.createNew(account);
+      return account;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -375,7 +376,7 @@ export class AccountsService {
 
   async updateMyProfile(
     keycloakUser: KeycloakUserInstance,
-    payload: { fullname: string; phone: string; description: string }
+    body: AccountUpdateProfilePayload,
   ): Promise<Accounts> {
     try {
       const user = await this.repository.findByKeycloakId(keycloakUser.sub);
@@ -387,7 +388,7 @@ export class AccountsService {
 
       return await this.repository.save({
         ...user,
-        ...payload,
+        ...body,
       });
     } catch (e) {
       this.logger.error(e.message);

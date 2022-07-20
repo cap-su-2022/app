@@ -16,15 +16,15 @@ export class SlotController {
   }
 
   @Get('name')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  getRoomNames() {
-    return this.service.getSlotNames();
-  }
+@Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+getRoomNames() {
+  return this.service.getSlotNames();
+}
 
-  @Get(':id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  getSlotById(@Param('id') id: string) {
-    return this.service.getById(id);
-  }
+@Get(':id')
+@Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+getSlotById(@Param('id') id: string) {
+  return this.service.getById(id);
+}
 
 }

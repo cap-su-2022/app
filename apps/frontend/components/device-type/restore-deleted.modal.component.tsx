@@ -146,7 +146,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
           color="red"
           leftIcon={<Ban />}
         >
-          Permanentt Delete
+          Permanent Delete
         </Button>
       </td>
     </tr>

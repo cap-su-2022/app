@@ -40,7 +40,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
     dispatch(fetchDeletedBookingReasons());
   }, []);
 
-  const handelPermanetDeleteButton = (id) => {
+  const handelPermanentDeleteButton = (id) => {
     setId(id);
     setPermanentDeleteShown(true);
   };
@@ -132,7 +132,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
         </Button>
 
         <Button
-          onClick={() => handelPermanetDeleteButton(row.id)}
+          onClick={() => handelPermanentDeleteButton(row.id)}
           style={{
             margin: 5,
           }}
@@ -140,7 +140,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           color="red"
           leftIcon={<Ban />}
         >
-          Permanat Delete
+          Permanent Delete
         </Button>
       </td>
     </tr>

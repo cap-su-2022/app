@@ -18,7 +18,7 @@ export class AccountRepository extends Repository<Accounts> {
       .select('COUNT(1)', 'count')
       .where('accounts.id = :id', { id: id })
       .getRawOne()
-      .then((data) => data['count'] > 0);
+      .then((data) => data?.count > 0);
   }
 
   async getRoleOfAccount(id: string): Promise<{ role_name: string}> {

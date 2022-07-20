@@ -8,7 +8,7 @@ interface FetchRoomsRejectPayload {
 }
 
 export const fetchRoomsName = createAsyncThunk<
-  { value: string; lable: string }[],
+  { value: string; label: string }[],
   void,
   {
     rejectValue: FetchRoomsRejectPayload;

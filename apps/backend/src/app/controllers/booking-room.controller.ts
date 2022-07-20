@@ -13,11 +13,11 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { BookingRoomService } from '../services';
-import { BookingRoomResponseDTO } from '../dto/booking-room.response.dto';
-import { WishlistBookingRoomResponseDTO } from '../dto/wishlist-booking-room.response.dto';
-import { KeycloakUser, User } from '../decorators/keycloak-user.decorator';
-import { WishlistBookingRoomRequestDTO } from '../dto/wishlist-booking-room.request.dto';
+import {BookingRoomService} from '../services';
+import {BookingRoomResponseDTO} from '../dto/booking-room.response.dto';
+import {WishlistBookingRoomResponseDTO} from '../dto/wishlist-booking-room.response.dto';
+import {KeycloakUser, User} from '../decorators/keycloak-user.decorator';
+import {WishlistBookingRoomRequestDTO} from '../dto/wishlist-booking-room.request.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -25,20 +25,21 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
-import { BookingRequest } from '../models';
-import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.request.payload';
+import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
+import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum/roles.enum';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {GetBookingRoomsPaginationPayload} from '../payload/request/get-booking-rooms-pagination.payload';
+import {BookingRequest} from '../models';
+import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.request.payload';
 
 @Controller('/v1/booking-room')
 @ApiTags('Booking Room')
 @UseInterceptors(new PathLoggerInterceptor(BookingRoomController.name))
 @ApiBearerAuth()
 export class BookingRoomController {
-  constructor(private readonly service: BookingRoomService) {}
+  constructor(private readonly service: BookingRoomService) {
+  }
 
   @Get('search')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -193,6 +194,28 @@ export class BookingRoomController {
       user.account_id,
       payload.id
     );
+  }
+
+  @Get('count-pending')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully get count request booking pending',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getCountRequestBookingPending() {
+    return this.service.getCountRequestBookingPending();
   }
 
   @Get()

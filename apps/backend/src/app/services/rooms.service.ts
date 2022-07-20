@@ -58,7 +58,7 @@ export class RoomsService {
       const result = await this.repository.findById(id);
       if (!result) {
         throw new BadRequestException(
-          'This device is already deleted or disabled'
+          'This room is already deleted or disabled'
         );
       }
       return result;

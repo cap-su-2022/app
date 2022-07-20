@@ -128,11 +128,34 @@ exports.AUTHORIZATION_LOWERCASE = "authorization";
 
 /***/ }),
 
+/***/ "./apps/backend/src/app/controllers/accounts-pagination.model.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AccountsPaginationParams = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const pagination_model_1 = __webpack_require__("./apps/backend/src/app/controllers/pagination.model.ts");
+const class_validator_1 = __webpack_require__("class-validator");
+class AccountsPaginationParams extends pagination_model_1.PaginationParams {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsString)({
+        message: 'Role type must be a string',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    tslib_1.__metadata("design:type", String)
+], AccountsPaginationParams.prototype, "role", void 0);
+exports.AccountsPaginationParams = AccountsPaginationParams;
+
+
+/***/ }),
+
 /***/ "./apps/backend/src/app/controllers/accounts.controller.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var AccountsController_1, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
+var AccountsController_1, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AccountsController = void 0;
 const tslib_1 = __webpack_require__("tslib");
@@ -140,144 +163,51 @@ const common_1 = __webpack_require__("@nestjs/common");
 const services_1 = __webpack_require__("./apps/backend/src/app/services/index.ts");
 const swagger_1 = __webpack_require__("@nestjs/swagger");
 const users_validation_1 = __webpack_require__("./apps/backend/src/app/pipes/validation/users.validation.ts");
-const users_payload_1 = __webpack_require__("./apps/backend/src/app/payload/request/users.payload.ts");
 const keycloak_user_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/keycloak-user.decorator.ts");
 const path_logger_interceptor_1 = __webpack_require__("./apps/backend/src/app/interceptors/path-logger.interceptor.ts");
 const role_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/role.decorator.ts");
 const roles_enum_1 = __webpack_require__("./apps/backend/src/app/enum/roles.enum.ts");
-const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
 const keycloak_user_1 = __webpack_require__("./apps/backend/src/app/dto/keycloak.user.ts");
 const fastify_file_interceptor_1 = __webpack_require__("./apps/backend/src/app/interceptors/fastify-file.interceptor.ts");
 const change_password_request_payload_1 = __webpack_require__("./apps/backend/src/app/payload/request/change-password.request.payload.ts");
-class UploadProfileRequest {
-}
-class CreateUserRequest {
-}
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: 'username',
-        description: 'Username of the account is used for logging into the system',
-        required: true,
-        type: String,
-        title: 'username',
-        example: 'account01',
-        minLength: 3,
-        maxLength: 100,
-    }),
-    tslib_1.__metadata("design:type", String)
-], CreateUserRequest.prototype, "username", void 0);
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: 'fullname',
-        description: 'Fullname of the account',
-        minLength: 2,
-        maxLength: 200,
-        required: true,
-        title: 'fullname',
-        type: String,
-        example: 'Adios',
-    }),
-    tslib_1.__metadata("design:type", String)
-], CreateUserRequest.prototype, "fullname", void 0);
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: 'phone',
-        description: 'Phone number of the account',
-        minLength: 10,
-        maxLength: 10,
-        required: true,
-        type: String,
-        title: 'phone',
-        example: '0123456789',
-    }),
-    tslib_1.__metadata("design:type", String)
-], CreateUserRequest.prototype, "phone", void 0);
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: 'email',
-        description: 'E-mail address of the account',
-        minLength: 10,
-        maxLength: 10,
-        required: true,
-        type: String,
-        title: 'phone',
-        example: 'account01@fpt.edu.vn',
-    }),
-    tslib_1.__metadata("design:type", String)
-], CreateUserRequest.prototype, "email", void 0);
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: 'phone',
-        description: 'Phone number of the account',
-        minLength: 10,
-        maxLength: 10,
-        required: true,
-        type: String,
-        title: 'phone',
-        example: '0123456789',
-    }),
-    tslib_1.__metadata("design:type", String)
-], CreateUserRequest.prototype, "description", void 0);
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: 'role',
-        description: 'Role of the account',
-        required: true,
-        type: String,
-        title: 'role',
-        example: roles_enum_1.Role.APP_STAFF,
-        enum: roles_enum_1.Role,
-        enumName: 'role',
-    }),
-    tslib_1.__metadata("design:type", String)
-], CreateUserRequest.prototype, "role", void 0);
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: 'avatar',
-        description: 'Avatar of the account',
-        required: true,
-        type: String,
-        title: 'avatar',
-        example: 'http://google.com/',
-        minLength: 1,
-        maxLength: 256,
-    }),
-    tslib_1.__metadata("design:type", String)
-], CreateUserRequest.prototype, "avatar", void 0);
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: 'is_disabled',
-        description: 'Disable status of the account',
-        required: true,
-        type: Boolean,
-        title: 'is_disabled',
-        example: false,
-    }),
-    tslib_1.__metadata("design:type", Boolean)
-], CreateUserRequest.prototype, "is_disabled", void 0);
-class AccountCreationResponse {
-}
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: 'id',
-    }),
-    tslib_1.__metadata("design:type", String)
-], AccountCreationResponse.prototype, "id", void 0);
+const accounts_pagination_model_1 = __webpack_require__("./apps/backend/src/app/controllers/accounts-pagination.model.ts");
+const account_add_request_payload_1 = __webpack_require__("./apps/backend/src/app/payload/request/account-add.request.payload.ts");
+const account_update_profile_request_payload_1 = __webpack_require__("./apps/backend/src/app/payload/request/account-update-profile.request.payload.ts");
 let AccountsController = AccountsController_1 = class AccountsController {
     constructor(service) {
         this.service = service;
     }
     getAll(payload) {
-        return this.service.getAllByPagination(payload);
+        return this.service.getAll(payload);
     }
     syncUsersFromKeycloak() {
         return this.service.syncUsersFromKeycloak();
     }
-    createNewUser(user, room) {
-        return this.service.add(room);
-    }
     getAccountById(payload) {
         return this.service.getById(payload.id);
+    }
+    //   @ApiResponse({
+    //   status: HttpStatus.OK,
+    //   description: 'Successfully created a new user',
+    //   type: Accounts,
+    //   schema: {
+    //     allOf: [
+    //       {
+    //         $ref: getSchemaPath(Accounts),
+    //       },
+    //       {
+    //         properties: {
+    //           results: {
+    //             type: 'object',
+    //             items: { $ref: getSchemaPath(Accounts) },
+    //           },
+    //         },
+    //       },
+    //     ],
+    //   },
+    // })
+    createNewUser(user, account) {
+        return this.service.add(account, user.account_id);
     }
     getCurrentProfileInformation(user) {
         return this.service.getCurrentProfileInformation(user.sub);
@@ -285,32 +215,32 @@ let AccountsController = AccountsController_1 = class AccountsController {
     getAccountByKeycloakId(payload) {
         return this.service.getAccountByKeycloakId(payload.id);
     }
-    getRoomsByRoomType(roleId = '') {
+    getAccountsByRoleId(roleId = '') {
         return this.service.getAccountsByRoleId(roleId);
     }
-    getDisabledAccounts() {
-        return this.service.getDisabledAccounts();
+    disableAccountById(user, id) {
+        return this.service.disableById(user.account_id, id);
     }
-    getDeletedAccounts() {
-        return this.service.getDeletedAccounts();
+    getDisabledAccounts(search = '') {
+        return this.service.getDisabledAccounts(search);
     }
-    restoreDeletedUserById(payload) {
-        return this.service.handleRestoreAccountById(payload.id);
+    restoreDisabledAccountById(user, payload) {
+        return this.service.handleRestoreDisabledAccountById(user.account_id, payload.id);
     }
-    restoreDisabledAccountById(payload) {
-        return this.service.handleRestoreDisabledAccountById(payload.id);
+    getDeletedAccounts(search = '') {
+        return this.service.getDeletedAccounts(search);
+    }
+    restoreDeletedUserById(user, payload) {
+        return this.service.handleRestoreDeletedAccountById(user.account_id, payload.id);
     }
     updateAccountById(user, payload, body) {
-        return this.service.updateById(body, payload.id);
+        return this.service.updateById(user.account_id, payload.id, body);
     }
-    updateMyProfile(user, payload) {
-        return this.service.updateMyProfile(user, payload);
-    }
-    disableAccountById(user, payload) {
-        return this.service.disableById(payload.id);
+    updateMyProfile(user, body) {
+        return this.service.updateMyProfile(user, body);
     }
     deleteAccountById(user, payload) {
-        return this.service.deleteById(payload.id);
+        return this.service.deleteById(user.account_id, payload.id);
     }
     updateAccountUploadAvatarById(user, image, payload) {
         return this.service.uploadAvatarByAccountId(image, payload.id);
@@ -329,7 +259,7 @@ let AccountsController = AccountsController_1 = class AccountsController {
     }
 };
 tslib_1.__decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Get)(),
     (0, common_1.UsePipes)(new users_validation_1.UsersValidation()),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -353,67 +283,26 @@ tslib_1.__decorate([
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Not enough privileges',
     }),
-    tslib_1.__param(0, (0, common_1.Body)()),
+    tslib_1.__param(0, (0, common_1.Query)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof users_payload_1.UsersRequestPayload !== "undefined" && users_payload_1.UsersRequestPayload) === "function" ? _a : Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof accounts_pagination_model_1.AccountsPaginationParams !== "undefined" && accounts_pagination_model_1.AccountsPaginationParams) === "function" ? _a : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "getAll", null);
 tslib_1.__decorate([
+    (0, common_1.Get)('syncKeycloak'),
+    (0, common_1.UsePipes)(new users_validation_1.UsersValidation()),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, swagger_1.ApiOperation)({
         description: 'Sync users from Keycloak to current DB',
     }),
-    (0, common_1.Get)('syncKeycloak'),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", []),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "syncUsersFromKeycloak", null);
 tslib_1.__decorate([
-    (0, swagger_1.ApiOperation)({
-        summary: 'Create a new account',
-        description: 'Create a new account with the provided payload',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully created a new user',
-        type: models_1.Accounts,
-        schema: {
-            allOf: [
-                {
-                    $ref: (0, swagger_1.getSchemaPath)(models_1.Accounts),
-                },
-                {
-                    properties: {
-                        results: {
-                            type: 'object',
-                            items: { $ref: (0, swagger_1.getSchemaPath)(models_1.Accounts) },
-                        },
-                    },
-                },
-            ],
-        },
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Request payload for user is not validated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalidated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Invalid role',
-    }),
-    (0, common_1.Post)('add'),
-    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Get)('find/:id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__param(1, (0, common_1.Body)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _b : Object, CreateUserRequest]),
-    tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
-], AccountsController.prototype, "createNewUser", null);
-tslib_1.__decorate([
     (0, swagger_1.ApiOperation)({
         summary: 'Retrieve account information by id',
         description: 'Get account information by id',
@@ -428,20 +317,50 @@ tslib_1.__decorate([
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalid',
+        description: 'Invalid access token',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Not enough privileges',
+        description: 'Insufficient privileges',
     }),
-    (0, common_1.Get)('find/:id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     tslib_1.__param(0, (0, common_1.Param)()),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "getAccountById", null);
 tslib_1.__decorate([
+    (0, common_1.Post)('add'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Create a new account',
+        description: 'Create a new account with the provided payload',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.CREATED,
+        description: 'Successfully created a new device',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request payload for user is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Body)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _b : Object, typeof (_c = typeof account_add_request_payload_1.AccountAddRequestPayload !== "undefined" && account_add_request_payload_1.AccountAddRequestPayload) === "function" ? _c : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
+], AccountsController.prototype, "createNewUser", null);
+tslib_1.__decorate([
+    (0, common_1.Get)('my-profile'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
     (0, swagger_1.ApiOperation)({
         summary: 'Retrieve current profile information',
         description: 'Get profile information',
@@ -462,12 +381,10 @@ tslib_1.__decorate([
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Not enough privileges',
     }),
-    (0, common_1.Get)('my-profile'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
     tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_d = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _d : Object]),
-    tslib_1.__metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+    tslib_1.__metadata("design:paramtypes", [typeof (_e = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _e : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
 ], AccountsController.prototype, "getCurrentProfileInformation", null);
 tslib_1.__decorate([
     (0, common_1.Get)('find-by-keycloak-id/:id'),
@@ -510,7 +427,7 @@ tslib_1.__decorate([
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.OK,
-        description: 'Successfully fetched deleted rooms',
+        description: 'Successfully fetched accounts',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.FORBIDDEN,
@@ -519,8 +436,37 @@ tslib_1.__decorate([
     tslib_1.__param(0, (0, common_1.Query)('role')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
-], AccountsController.prototype, "getRoomsByRoomType", null);
+    tslib_1.__metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
+], AccountsController.prototype, "getAccountsByRoleId", null);
+tslib_1.__decorate([
+    (0, common_1.Put)('disable/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Disable account by id',
+        description: 'Disable account by provided id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully disabled the account',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Error while disabling the account',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Invalid access token',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Param)('id')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_h = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _h : Object, String]),
+    tslib_1.__metadata("design:returntype", void 0)
+], AccountsController.prototype, "disableAccountById", null);
 tslib_1.__decorate([
     (0, common_1.Get)('disabled'),
     (0, swagger_1.ApiOperation)({
@@ -536,10 +482,40 @@ tslib_1.__decorate([
         description: 'Not enough privileges',
     }),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    tslib_1.__param(0, (0, common_1.Query)('search')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:paramtypes", [Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "getDisabledAccounts", null);
+tslib_1.__decorate([
+    (0, common_1.Put)('restore-disabled/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Restore the disabled account by id',
+        description: 'Restore the disabled account by provided id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully restored the disabled account',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Error while restoring the disabled the account',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Invalid access token',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Param)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_j = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _j : Object, Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], AccountsController.prototype, "restoreDisabledAccountById", null);
 tslib_1.__decorate([
     (0, common_1.Get)('deleted'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -551,8 +527,9 @@ tslib_1.__decorate([
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Not enough privileges',
     }),
+    tslib_1.__param(0, (0, common_1.Query)('search')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:paramtypes", [Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "getDeletedAccounts", null);
 tslib_1.__decorate([
@@ -566,29 +543,14 @@ tslib_1.__decorate([
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Not enough privileges',
     }),
-    tslib_1.__param(0, (0, common_1.Param)()),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Param)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_k = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _k : Object, Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "restoreDeletedUserById", null);
 tslib_1.__decorate([
-    (0, common_1.Put)('restore-disabled/:id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalid',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Not enough privileges',
-    }),
-    tslib_1.__param(0, (0, common_1.Param)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", void 0)
-], AccountsController.prototype, "restoreDisabledAccountById", null);
-tslib_1.__decorate([
-    (0, common_1.Put)('update/id/:id'),
+    (0, common_1.Put)('update/:id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.UNAUTHORIZED,
@@ -602,7 +564,7 @@ tslib_1.__decorate([
     tslib_1.__param(1, (0, common_1.Param)()),
     tslib_1.__param(2, (0, common_1.Body)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_g = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _g : Object, Object, Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_l = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _l : Object, Object, typeof (_m = typeof account_add_request_payload_1.AccountAddRequestPayload !== "undefined" && account_add_request_payload_1.AccountAddRequestPayload) === "function" ? _m : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "updateAccountById", null);
 tslib_1.__decorate([
@@ -619,26 +581,9 @@ tslib_1.__decorate([
     tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__param(1, (0, common_1.Body)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_h = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _h : Object, UploadProfileRequest]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_o = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _o : Object, typeof (_p = typeof account_update_profile_request_payload_1.AccountUpdateProfilePayload !== "undefined" && account_update_profile_request_payload_1.AccountUpdateProfilePayload) === "function" ? _p : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "updateMyProfile", null);
-tslib_1.__decorate([
-    (0, common_1.Put)('disable/:id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalid',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Not enough privileges',
-    }),
-    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__param(1, (0, common_1.Param)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_j = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _j : Object, Object]),
-    tslib_1.__metadata("design:returntype", void 0)
-], AccountsController.prototype, "disableAccountById", null);
 tslib_1.__decorate([
     (0, common_1.Delete)(':id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -653,7 +598,7 @@ tslib_1.__decorate([
     tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__param(1, (0, common_1.Param)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_k = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _k : Object, Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_q = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _q : Object, Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "deleteAccountById", null);
 tslib_1.__decorate([
@@ -677,7 +622,7 @@ tslib_1.__decorate([
     tslib_1.__param(1, (0, common_1.UploadedFile)()),
     tslib_1.__param(2, (0, common_1.Param)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_l = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _l : Object, typeof (_o = typeof Express !== "undefined" && (_m = Express.Multer) !== void 0 && _m.File) === "function" ? _o : Object, Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_r = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _r : Object, typeof (_t = typeof Express !== "undefined" && (_s = Express.Multer) !== void 0 && _s.File) === "function" ? _t : Object, Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "updateAccountUploadAvatarById", null);
 tslib_1.__decorate([
@@ -700,7 +645,7 @@ tslib_1.__decorate([
     tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__param(1, (0, common_1.UploadedFile)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_p = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _p : Object, typeof (_r = typeof Express !== "undefined" && (_q = Express.Multer) !== void 0 && _q.File) === "function" ? _r : Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_u = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _u : Object, typeof (_w = typeof Express !== "undefined" && (_v = Express.Multer) !== void 0 && _v.File) === "function" ? _w : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "updateCurrentProfileAvatar", null);
 tslib_1.__decorate([
@@ -721,7 +666,7 @@ tslib_1.__decorate([
     tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__param(1, (0, common_1.Body)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_s = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _s : Object, typeof (_t = typeof change_password_request_payload_1.ChangeProfilePasswordRequest !== "undefined" && change_password_request_payload_1.ChangeProfilePasswordRequest) === "function" ? _t : Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_x = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _x : Object, typeof (_y = typeof change_password_request_payload_1.ChangeProfilePasswordRequest !== "undefined" && change_password_request_payload_1.ChangeProfilePasswordRequest) === "function" ? _y : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "changePassword", null);
 tslib_1.__decorate([
@@ -762,7 +707,7 @@ tslib_1.__decorate([
     }),
     tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_u = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _u : Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_z = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _z : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], AccountsController.prototype, "getMyAvatarURL", null);
 AccountsController = AccountsController_1 = tslib_1.__decorate([
@@ -770,7 +715,7 @@ AccountsController = AccountsController_1 = tslib_1.__decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiTags)('Accounts'),
     (0, common_1.UseInterceptors)(new path_logger_interceptor_1.PathLoggerInterceptor(AccountsController_1.name)),
-    tslib_1.__metadata("design:paramtypes", [typeof (_v = typeof services_1.AccountsService !== "undefined" && services_1.AccountsService) === "function" ? _v : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_0 = typeof services_1.AccountsService !== "undefined" && services_1.AccountsService) === "function" ? _0 : Object])
 ], AccountsController);
 exports.AccountsController = AccountsController;
 
@@ -1097,7 +1042,7 @@ exports.AuthenticationController = AuthenticationController;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var _a, _b, _c, _d, _e;
+var _a, _b, _c, _d, _e, _f, _g;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BookingReasonController = void 0;
 const tslib_1 = __webpack_require__("tslib");
@@ -1109,27 +1054,25 @@ const roles_enum_1 = __webpack_require__("./apps/backend/src/app/enum/roles.enum
 const keycloak_user_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/keycloak-user.decorator.ts");
 const keycloak_user_1 = __webpack_require__("./apps/backend/src/app/dto/keycloak.user.ts");
 const booking_reason_request_payload_1 = __webpack_require__("./apps/backend/src/app/payload/request/booking-reason.request.payload.ts");
+const pagination_model_1 = __webpack_require__("./apps/backend/src/app/controllers/pagination.model.ts");
 let BookingReasonController = class BookingReasonController {
     constructor(service) {
         this.service = service;
     }
-    getRoomTypes(limit, dir, page, sort, search) {
-        return this.service.getRoomTypesWithPagination({
-            limit,
-            dir,
-            sort,
-            search,
-            page,
-        });
+    getBookingReasonTypes(payload) {
+        return this.service.getBookingReasonTypesWithPagination(payload);
     }
-    addNewBookingReason(user, payload) {
-        return this.service.addNewBookingReason(user.account_id, payload);
+    getBookingReasonNames() {
+        return this.service.getBookingReasonNames();
     }
-    getRoomTypeById(id) {
+    getBookingReasonById(id) {
         return this.service.getBookingReasonById(id);
     }
-    updateRoomTypeById(updatePayload, id, keycloakUser) {
-        return this.service.updateBookingReasonById(keycloakUser.account_id, updatePayload, id);
+    addNewBookingReason(user, payload) {
+        return this.service.createNewBookingReason(user.account_id, payload);
+    }
+    updateBookingReasonById(payload, id, user) {
+        return this.service.updateBookingReasonById(user.account_id, payload, id);
     }
     deleteBookingReasonById(id, user) {
         return this.service.deleteBookingReasonById(user.account_id, id);
@@ -1137,12 +1080,19 @@ let BookingReasonController = class BookingReasonController {
     getDeletedBookingReasons(search) {
         return this.service.getDeletedReasons(search);
     }
+    restoreDeletedReasonById(id, keycloakUser) {
+        return this.service.restoreDeletedReasonById(keycloakUser.account_id, id);
+    }
+    permanentlyDeleteReasonById(id) {
+        return this.service.permanentlyDeleteReasonById(id);
+    }
 };
 tslib_1.__decorate([
     (0, common_1.Get)(),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.OK,
-        description: 'Successfully fetched room types by pagination',
+        description: 'Successfully fetched booking reason by pagination',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.BAD_REQUEST,
@@ -1157,27 +1107,36 @@ tslib_1.__decorate([
         description: 'Insufficient privileges',
     }),
     (0, swagger_1.ApiOperation)({
-        summary: 'Get room type by pagination',
-        description: 'Get room type by pagination',
+        summary: 'Get booking reason type by pagination',
+        description: 'Get booking reason type by pagination',
     }),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    tslib_1.__param(0, (0, common_1.Query)('limit', new common_1.DefaultValuePipe(10), common_1.ParseIntPipe)),
-    tslib_1.__param(1, (0, common_1.Query)('dir', new common_1.DefaultValuePipe('ASC'))),
-    tslib_1.__param(2, (0, common_1.Query)('page', new common_1.DefaultValuePipe(1), common_1.ParseIntPipe)),
-    tslib_1.__param(3, (0, common_1.Query)('sort', new common_1.DefaultValuePipe('name'))),
-    tslib_1.__param(4, (0, common_1.Query)('search', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(0, (0, common_1.Query)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Number, String, Number, String, String]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof pagination_model_1.PaginationParams !== "undefined" && pagination_model_1.PaginationParams) === "function" ? _a : Object]),
     tslib_1.__metadata("design:returntype", void 0)
-], BookingReasonController.prototype, "getRoomTypes", null);
+], BookingReasonController.prototype, "getBookingReasonTypes", null);
 tslib_1.__decorate([
-    (0, common_1.Post)(),
-    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__param(1, (0, common_1.Body)()),
+    (0, common_1.Get)('name'),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully got booking reason',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for roles is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get booking reason',
+        description: 'Get booking reason',
+    }),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _a : Object, Object]),
+    tslib_1.__metadata("design:paramtypes", []),
     tslib_1.__metadata("design:returntype", void 0)
-], BookingReasonController.prototype, "addNewBookingReason", null);
+], BookingReasonController.prototype, "getBookingReasonNames", null);
 tslib_1.__decorate([
     (0, common_1.Get)(':id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -1205,7 +1164,35 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [String]),
     tslib_1.__metadata("design:returntype", void 0)
-], BookingReasonController.prototype, "getRoomTypeById", null);
+], BookingReasonController.prototype, "getBookingReasonById", null);
+tslib_1.__decorate([
+    (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Add booking reason',
+        description: 'Add booking reason',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully added booking reason',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for roles is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Body)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _b : Object, Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], BookingReasonController.prototype, "addNewBookingReason", null);
 tslib_1.__decorate([
     (0, common_1.Put)(':id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -1233,15 +1220,36 @@ tslib_1.__decorate([
     tslib_1.__param(1, (0, common_1.Param)('id')),
     tslib_1.__param(2, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof booking_reason_request_payload_1.BookingReasonUpdateRequestPayload !== "undefined" && booking_reason_request_payload_1.BookingReasonUpdateRequestPayload) === "function" ? _b : Object, String, typeof (_c = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _c : Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_c = typeof booking_reason_request_payload_1.BookingReasonUpdateRequestPayload !== "undefined" && booking_reason_request_payload_1.BookingReasonUpdateRequestPayload) === "function" ? _c : Object, String, typeof (_d = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _d : Object]),
     tslib_1.__metadata("design:returntype", void 0)
-], BookingReasonController.prototype, "updateRoomTypeById", null);
+], BookingReasonController.prototype, "updateBookingReasonById", null);
 tslib_1.__decorate([
     (0, common_1.Delete)(':id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully deleted booking reason',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for roles is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Deleted booking reason',
+        description: 'Deleted booking reason',
+    }),
     tslib_1.__param(0, (0, common_1.Param)('id')),
     tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String, typeof (_d = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _d : Object]),
+    tslib_1.__metadata("design:paramtypes", [String, typeof (_e = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _e : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], BookingReasonController.prototype, "deleteBookingReasonById", null);
 tslib_1.__decorate([
@@ -1272,9 +1280,66 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [String]),
     tslib_1.__metadata("design:returntype", void 0)
 ], BookingReasonController.prototype, "getDeletedBookingReasons", null);
+tslib_1.__decorate([
+    (0, common_1.Put)('restore-deleted/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully restored deleted booking reason by id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for deleted booking reason type is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Successfully restored deleted booking reason type by id',
+        description: 'Successfully restored deleted booking reason type by id',
+    }),
+    tslib_1.__param(0, (0, common_1.Param)('id')),
+    tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String, typeof (_f = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _f : Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], BookingReasonController.prototype, "restoreDeletedReasonById", null);
+tslib_1.__decorate([
+    (0, common_1.Delete)('permanent/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully permanent deleted room type by id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for permanent delete room type is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Permanently delete room type by id',
+        description: 'Permanently delete room type by id',
+    }),
+    tslib_1.__param(0, (0, common_1.Param)('id')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", void 0)
+], BookingReasonController.prototype, "permanentlyDeleteReasonById", null);
 BookingReasonController = tslib_1.__decorate([
     (0, common_1.Controller)('/v1/booking-reasons'),
-    tslib_1.__metadata("design:paramtypes", [typeof (_e = typeof booking_reason_service_1.BookingReasonService !== "undefined" && booking_reason_service_1.BookingReasonService) === "function" ? _e : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_g = typeof booking_reason_service_1.BookingReasonService !== "undefined" && booking_reason_service_1.BookingReasonService) === "function" ? _g : Object])
 ], BookingReasonController);
 exports.BookingReasonController = BookingReasonController;
 
@@ -1285,7 +1350,7 @@ exports.BookingReasonController = BookingReasonController;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var BookingRoomController_1, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+var BookingRoomController_1, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BookingRoomController = void 0;
 const tslib_1 = __webpack_require__("tslib");
@@ -1298,30 +1363,10 @@ const path_logger_interceptor_1 = __webpack_require__("./apps/backend/src/app/in
 const role_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/role.decorator.ts");
 const roles_enum_1 = __webpack_require__("./apps/backend/src/app/enum/roles.enum.ts");
 const keycloak_user_1 = __webpack_require__("./apps/backend/src/app/dto/keycloak.user.ts");
+const booking_request_add_request_payload_1 = __webpack_require__("./apps/backend/src/app/payload/request/booking-request-add.request.payload.ts");
 let BookingRoomController = BookingRoomController_1 = class BookingRoomController {
     constructor(service) {
         this.service = service;
-    }
-    getChoosingBookingRooms(filter) {
-        return this.service.getChoosingBookingRooms(filter);
-    }
-    getCurrentRoomBookingListOfCurrentUser(user) {
-        return this.service.getCurrentRoomBookingList(user.account_id);
-    }
-    getCurrentRoomBookingDetail(user, payload) {
-        return this.service.getCurrentRoomBookingDetail(user.account_id, payload.id);
-    }
-    getRequestBookingByRoomId(roomId = '') {
-        return this.service.getRequestBookingByRoomId(roomId);
-    }
-    cancelRoomBookingById(user, payload) {
-        return this.service.cancelRoomBookingById(user.account_id, payload.id);
-    }
-    getUsernameList() {
-        return this.service.getUsernameList();
-    }
-    getRoomsName() {
-        return this.service.getRoomsName();
     }
     getAllBookingRoomsPagination(search, sort, limit, page, reasonType, checkInAt, checkOutAt, status, dir) {
         return this.service.getAllBookingRoomsPagination({
@@ -1336,6 +1381,42 @@ let BookingRoomController = BookingRoomController_1 = class BookingRoomControlle
             status: status,
         });
     }
+    getBookingByRoomInWeek(roomId, date) {
+        return this.service.getBookingByRoomInWeek({
+            roomId: roomId,
+            date: date,
+        });
+    }
+    getBookingWithSameSlot(checkinSlotId, checkoutSlotId, roomId, requestId, date, user) {
+        return this.service.getBookingWithSameSlot({
+            roomId: roomId,
+            requestId: requestId,
+            date: date,
+            checkinSlotId: checkinSlotId,
+            checkoutSlotId: checkoutSlotId,
+        });
+    }
+    getRequestBookingByRoomId(roomId = '') {
+        return this.service.getRequestBookingByRoomId(roomId);
+    }
+    getRequestBookingByAccountId(accountId = '') {
+        return this.service.getRequestBookingByAccountId(accountId);
+    }
+    getBookingRoomById(id) {
+        return this.service.getBookingRoomById(id);
+    }
+    getChoosingBookingRooms(filter) {
+        return this.service.getChoosingBookingRooms(filter);
+    }
+    getCurrentRoomBookingListOfCurrentUser(user) {
+        return this.service.getCurrentRoomBookingList(user.account_id);
+    }
+    getCurrentRoomBookingDetail(user, payload) {
+        return this.service.getCurrentRoomBookingDetail(user.account_id, payload.id);
+    }
+    getCountRequestBookingPending() {
+        return this.service.getCountRequestBookingPending();
+    }
     getBookingRooms(search, sorting, slot) {
         return this.service.getBookingRooms({
             sorting: sorting,
@@ -1343,8 +1424,23 @@ let BookingRoomController = BookingRoomController_1 = class BookingRoomControlle
             slot: slot,
         });
     }
-    getBookingRoomById(id) {
-        return this.service.getBookingRoomById(id);
+    addNewRequest(user, request) {
+        return this.service.addNewRequest(request, user.account_id);
+    }
+    acceptRequestById(user, payload) {
+        return this.service.acceptById(user.account_id, payload.id);
+    }
+    rejectRequestById(user, payload) {
+        return this.service.rejectById(user.account_id, payload.id);
+    }
+    cancelRoomBookingById(user, payload) {
+        return this.service.cancelRoomBookingById(user.account_id, payload.id);
+    }
+    getUsernameList() {
+        return this.service.getUsernameList();
+    }
+    getRoomsName() {
+        return this.service.getRoomNames();
     }
     getBookingRoomDevices(name, type, sort) {
         return this.service.getBookingRoomDevices(name, type, sort);
@@ -1363,30 +1459,43 @@ let BookingRoomController = BookingRoomController_1 = class BookingRoomControlle
     }
 };
 tslib_1.__decorate([
-    (0, common_1.Get)('rooms'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
-    tslib_1.__param(0, (0, common_1.Query)('filter')),
+    (0, common_1.Get)('search'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    tslib_1.__param(0, (0, common_1.Query)('search', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(1, (0, common_1.Query)('sort', new common_1.DefaultValuePipe('requested_at'))),
+    tslib_1.__param(2, (0, common_1.Query)('limit', new common_1.DefaultValuePipe(5), common_1.ParseIntPipe)),
+    tslib_1.__param(3, (0, common_1.Query)('page', new common_1.DefaultValuePipe(1), common_1.ParseIntPipe)),
+    tslib_1.__param(4, (0, common_1.Query)('reasonType', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(5, (0, common_1.Query)('checkInAt', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(6, (0, common_1.Query)('checkOutAt', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(7, (0, common_1.Query)('status', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(8, (0, common_1.Query)('dir', new common_1.DefaultValuePipe('ASC'))),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:paramtypes", [String, String, Number, Number, String, String, String, String, String]),
     tslib_1.__metadata("design:returntype", void 0)
-], BookingRoomController.prototype, "getChoosingBookingRooms", null);
+], BookingRoomController.prototype, "getAllBookingRoomsPagination", null);
 tslib_1.__decorate([
-    (0, common_1.Get)('current-booking-list'),
+    (0, common_1.Get)('list-booking-by-room-in-week'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
-    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(0, (0, common_1.Query)('roomId', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(1, (0, common_1.Query)('date', new common_1.DefaultValuePipe(''))),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _a : Object]),
+    tslib_1.__metadata("design:paramtypes", [String, String]),
     tslib_1.__metadata("design:returntype", void 0)
-], BookingRoomController.prototype, "getCurrentRoomBookingListOfCurrentUser", null);
+], BookingRoomController.prototype, "getBookingByRoomInWeek", null);
 tslib_1.__decorate([
-    (0, common_1.Get)('current-booking/:id'),
+    (0, common_1.Get)('list-booking-with-same-slot'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
-    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__param(1, (0, common_1.Param)()),
+    tslib_1.__param(0, (0, common_1.Query)('checkinSlotId', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(1, (0, common_1.Query)('checkoutSlotId', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(2, (0, common_1.Query)('roomId', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(3, (0, common_1.Query)('requestId', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(4, (0, common_1.Query)('date', new common_1.DefaultValuePipe(''))),
+    tslib_1.__param(5, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _b : Object, Object]),
+    tslib_1.__metadata("design:paramtypes", [String, String, String, String, String, typeof (_a = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _a : Object]),
     tslib_1.__metadata("design:returntype", void 0)
-], BookingRoomController.prototype, "getCurrentRoomBookingDetail", null);
+], BookingRoomController.prototype, "getBookingWithSameSlot", null);
 tslib_1.__decorate([
     (0, common_1.Get)('by-room-id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -1409,45 +1518,108 @@ tslib_1.__decorate([
     tslib_1.__param(0, (0, common_1.Query)('room-id')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+    tslib_1.__metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
 ], BookingRoomController.prototype, "getRequestBookingByRoomId", null);
 tslib_1.__decorate([
-    (0, common_1.Put)('cancel/:id'),
+    (0, common_1.Get)('by-account-id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'One or more payload parameters are invalid',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully fetched deleted rooms',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, common_1.Query)('account-id')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+], BookingRoomController.prototype, "getRequestBookingByAccountId", null);
+tslib_1.__decorate([
+    (0, common_1.Get)(':id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Retrieving booking room detail',
+        description: 'Retrieving a booking room detail',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully retrieved a list of booking rooms',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Error while retrieving a list of booking rooms',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Invalid access token',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, common_1.Param)('id')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", void 0)
+], BookingRoomController.prototype, "getBookingRoomById", null);
+tslib_1.__decorate([
+    (0, common_1.Get)('rooms'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
+    tslib_1.__param(0, (0, common_1.Query)('filter')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", void 0)
+], BookingRoomController.prototype, "getChoosingBookingRooms", null);
+tslib_1.__decorate([
+    (0, common_1.Get)('current-booking-list'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_d = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _d : Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], BookingRoomController.prototype, "getCurrentRoomBookingListOfCurrentUser", null);
+tslib_1.__decorate([
+    (0, common_1.Get)('current-booking/:id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
     tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__param(1, (0, common_1.Param)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_d = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _d : Object, Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_e = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _e : Object, Object]),
     tslib_1.__metadata("design:returntype", void 0)
-], BookingRoomController.prototype, "cancelRoomBookingById", null);
+], BookingRoomController.prototype, "getCurrentRoomBookingDetail", null);
 tslib_1.__decorate([
-    (0, common_1.Get)('accounts-name'),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
-    tslib_1.__metadata("design:returntype", void 0)
-], BookingRoomController.prototype, "getUsernameList", null);
-tslib_1.__decorate([
-    (0, common_1.Get)('rooms-name'),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
-    tslib_1.__metadata("design:returntype", void 0)
-], BookingRoomController.prototype, "getRoomsName", null);
-tslib_1.__decorate([
-    (0, common_1.Get)('search'),
+    (0, common_1.Get)('count-pending'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    tslib_1.__param(0, (0, common_1.Query)('search', new common_1.DefaultValuePipe(''))),
-    tslib_1.__param(1, (0, common_1.Query)('sort', new common_1.DefaultValuePipe('booked_at'))),
-    tslib_1.__param(2, (0, common_1.Query)('limit', new common_1.DefaultValuePipe(5), common_1.ParseIntPipe)),
-    tslib_1.__param(3, (0, common_1.Query)('page', new common_1.DefaultValuePipe(1), common_1.ParseIntPipe)),
-    tslib_1.__param(4, (0, common_1.Query)('reasonType', new common_1.DefaultValuePipe(''))),
-    tslib_1.__param(5, (0, common_1.Query)('checkInAt', new common_1.DefaultValuePipe(''))),
-    tslib_1.__param(6, (0, common_1.Query)('checkOutAt', new common_1.DefaultValuePipe(''))),
-    tslib_1.__param(7, (0, common_1.Query)('status', new common_1.DefaultValuePipe(''))),
-    tslib_1.__param(8, (0, common_1.Query)('dir', new common_1.DefaultValuePipe('ASC'))),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'One or more payload parameters are invalid',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully get count request booking pending',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String, String, Number, Number, String, String, String, String, String]),
+    tslib_1.__metadata("design:paramtypes", []),
     tslib_1.__metadata("design:returntype", void 0)
-], BookingRoomController.prototype, "getAllBookingRoomsPagination", null);
+], BookingRoomController.prototype, "getCountRequestBookingPending", null);
 tslib_1.__decorate([
     (0, common_1.Get)(),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -1483,22 +1655,52 @@ tslib_1.__decorate([
     tslib_1.__param(2, (0, common_1.Query)('slot')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [String, String, Number]),
-    tslib_1.__metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+    tslib_1.__metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
 ], BookingRoomController.prototype, "getBookingRooms", null);
 tslib_1.__decorate([
-    (0, common_1.Get)(':id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, common_1.Post)('new-request'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
     (0, swagger_1.ApiOperation)({
-        summary: 'Retrieving booking room detail',
-        description: 'Retrieving a booking room detail',
+        summary: 'Create a new request',
+        description: 'Create new request with the provided payload',
     }),
     (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully retrieved a list of booking rooms',
+        status: common_1.HttpStatus.CREATED,
+        description: 'Successfully created a new request',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Error while retrieving a list of booking rooms',
+        description: 'Request payload for request is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Body)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_g = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _g : Object, typeof (_h = typeof booking_request_add_request_payload_1.BookingRequestAddRequestPayload !== "undefined" && booking_request_add_request_payload_1.BookingRequestAddRequestPayload) === "function" ? _h : Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], BookingRoomController.prototype, "addNewRequest", null);
+tslib_1.__decorate([
+    (0, common_1.Put)('accept/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Accept request by id',
+        description: 'Accept request by provided id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully accept the request',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Error while accept the request',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.UNAUTHORIZED,
@@ -1508,14 +1710,65 @@ tslib_1.__decorate([
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Insufficient privileges',
     }),
-    tslib_1.__param(0, (0, common_1.Param)('id')),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Param)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_j = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _j : Object, Object]),
     tslib_1.__metadata("design:returntype", void 0)
-], BookingRoomController.prototype, "getBookingRoomById", null);
+], BookingRoomController.prototype, "acceptRequestById", null);
 tslib_1.__decorate([
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_STAFF),
+    (0, common_1.Put)('reject/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Reject request by id',
+        description: 'Reject request by provided id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully reject the request',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Error while reject the request',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Invalid access token',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Param)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_k = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _k : Object, Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], BookingRoomController.prototype, "rejectRequestById", null);
+tslib_1.__decorate([
+    (0, common_1.Put)('cancel/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Param)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_l = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _l : Object, Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], BookingRoomController.prototype, "cancelRoomBookingById", null);
+tslib_1.__decorate([
+    (0, common_1.Get)('accounts-name'),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", void 0)
+], BookingRoomController.prototype, "getUsernameList", null);
+tslib_1.__decorate([
+    (0, common_1.Get)('rooms-name'),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", void 0)
+], BookingRoomController.prototype, "getRoomsName", null);
+tslib_1.__decorate([
     (0, common_1.Get)('devices'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_STAFF),
     tslib_1.__param(0, (0, common_1.Query)('name')),
     tslib_1.__param(1, (0, common_1.Query)('type')),
     tslib_1.__param(2, (0, common_1.Query)('sort')),
@@ -1524,8 +1777,8 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", void 0)
 ], BookingRoomController.prototype, "getBookingRoomDevices", null);
 tslib_1.__decorate([
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, common_1.Get)('wishlist'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, swagger_1.ApiOperation)({
         summary: 'Retrieving a list of booking rooms in wishlist',
         description: 'Retrieving a list of booking rooms in wishlist',
@@ -1558,12 +1811,12 @@ tslib_1.__decorate([
     tslib_1.__param(2, (0, common_1.Query)('from')),
     tslib_1.__param(3, (0, common_1.Query)('to')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_f = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _f : Object, String, Number, Number]),
-    tslib_1.__metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
+    tslib_1.__metadata("design:paramtypes", [typeof (_m = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _m : Object, String, Number, Number]),
+    tslib_1.__metadata("design:returntype", typeof (_o = typeof Promise !== "undefined" && Promise) === "function" ? _o : Object)
 ], BookingRoomController.prototype, "getWishlistBookingRooms", null);
 tslib_1.__decorate([
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
     (0, common_1.Post)('add-to-wishlist'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
     (0, swagger_1.ApiOperation)({
         summary: 'Add booking room to wishlist',
         description: 'Add requested booking room to wishlist',
@@ -1587,8 +1840,8 @@ tslib_1.__decorate([
     tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__param(1, (0, common_1.Body)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_h = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _h : Object, typeof (_j = typeof wishlist_booking_room_request_dto_1.WishlistBookingRoomRequestDTO !== "undefined" && wishlist_booking_room_request_dto_1.WishlistBookingRoomRequestDTO) === "function" ? _j : Object]),
-    tslib_1.__metadata("design:returntype", typeof (_k = typeof Promise !== "undefined" && Promise) === "function" ? _k : Object)
+    tslib_1.__metadata("design:paramtypes", [typeof (_p = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _p : Object, typeof (_q = typeof wishlist_booking_room_request_dto_1.WishlistBookingRoomRequestDTO !== "undefined" && wishlist_booking_room_request_dto_1.WishlistBookingRoomRequestDTO) === "function" ? _q : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_r = typeof Promise !== "undefined" && Promise) === "function" ? _r : Object)
 ], BookingRoomController.prototype, "addToBookingRoomWishlist", null);
 tslib_1.__decorate([
     (0, common_1.Delete)('remove-from-wishlist'),
@@ -1597,7 +1850,7 @@ tslib_1.__decorate([
     tslib_1.__param(1, (0, common_1.Query)('roomId')),
     tslib_1.__param(2, (0, common_1.Query)('slot')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_l = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _l : Object, String, Number]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_s = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _s : Object, String, Number]),
     tslib_1.__metadata("design:returntype", void 0)
 ], BookingRoomController.prototype, "removeFromBookingRoomWishlist", null);
 BookingRoomController = BookingRoomController_1 = tslib_1.__decorate([
@@ -1605,7 +1858,7 @@ BookingRoomController = BookingRoomController_1 = tslib_1.__decorate([
     (0, swagger_1.ApiTags)('Booking Room'),
     (0, common_1.UseInterceptors)(new path_logger_interceptor_1.PathLoggerInterceptor(BookingRoomController_1.name)),
     (0, swagger_1.ApiBearerAuth)(),
-    tslib_1.__metadata("design:paramtypes", [typeof (_m = typeof services_1.BookingRoomService !== "undefined" && services_1.BookingRoomService) === "function" ? _m : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_t = typeof services_1.BookingRoomService !== "undefined" && services_1.BookingRoomService) === "function" ? _t : Object])
 ], BookingRoomController);
 exports.BookingRoomController = BookingRoomController;
 
@@ -1636,11 +1889,11 @@ let DeviceTypeController = class DeviceTypeController {
     getAllDeviceTypes(payload) {
         return this.service.getAllDeviceTypes(payload);
     }
-    getDeviceTypeById(id) {
-        return this.service.getDeviceTypeById(id);
-    }
     getDeviceTypeNames() {
         return this.service.getDeviceTypeNames();
+    }
+    getDeviceTypeById(id) {
+        return this.service.getDeviceTypeById(id);
     }
     addNewDeviceType(user, payload) {
         return this.service.addNewDeviceType(user.account_id, payload);
@@ -1651,23 +1904,66 @@ let DeviceTypeController = class DeviceTypeController {
     deleteDeviceTypeById(id, user) {
         return this.service.deleteDeviceTypeById(user.account_id, id);
     }
-    permanentlyDeleteDeviceTypeById(id) {
-        return this.service.permanentlyDeleteDeviceTypeById(id);
-    }
     getDeletedDeviceTypes(search) {
         return this.service.getDeletedDeviceTypes(search);
     }
-    restoreDeletedRoomTypeById(id, keycloakUser) {
-        return this.service.restoreDeletedRoomTypeById(keycloakUser.account_id, id);
+    restoreDeletedTypeById(id, keycloakUser) {
+        return this.service.restoreDeletedDeviceTypeById(keycloakUser.account_id, id);
+    }
+    permanentlyDeleteDeviceTypeById(id) {
+        return this.service.permanentlyDeleteDeviceTypeById(id);
     }
 };
 tslib_1.__decorate([
     (0, common_1.Get)(),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully got get all device types',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for roles is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get all device types',
+        description: 'Get all device types',
+    }),
     tslib_1.__param(0, (0, common_1.Query)()),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof pagination_model_1.PaginationParams !== "undefined" && pagination_model_1.PaginationParams) === "function" ? _a : Object]),
     tslib_1.__metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
 ], DeviceTypeController.prototype, "getAllDeviceTypes", null);
+tslib_1.__decorate([
+    (0, common_1.Get)('name'),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully got device type name',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for roles is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get device type name',
+        description: 'Get device type name',
+    }),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", void 0)
+], DeviceTypeController.prototype, "getDeviceTypeNames", null);
 tslib_1.__decorate([
     (0, common_1.Get)(':id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -1697,43 +1993,16 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
 ], DeviceTypeController.prototype, "getDeviceTypeById", null);
 tslib_1.__decorate([
-    (0, common_1.Get)('name'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully got disabled device types',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Request params for roles is not validated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalidated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Get disabled device types',
-        description: 'Get disabled device types',
-    }),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
-    tslib_1.__metadata("design:returntype", void 0)
-], DeviceTypeController.prototype, "getDeviceTypeNames", null);
-tslib_1.__decorate([
     (0, common_1.Post)(),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({
-        summary: 'Add room type',
-        description: 'Add room type',
+        summary: 'Add device type',
+        description: 'Add device type',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.OK,
-        description: 'Successfully added room type',
+        description: 'Successfully added device type',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.BAD_REQUEST,
@@ -1755,6 +2024,27 @@ tslib_1.__decorate([
 ], DeviceTypeController.prototype, "addNewDeviceType", null);
 tslib_1.__decorate([
     (0, common_1.Put)(':id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully updated device type by id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for roles is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Update device type by id',
+        description: 'Update device type by id',
+    }),
     tslib_1.__param(0, (0, common_1.Param)('id')),
     tslib_1.__param(1, (0, common_1.Body)()),
     tslib_1.__param(2, (0, keycloak_user_decorator_1.User)()),
@@ -1764,19 +2054,33 @@ tslib_1.__decorate([
 ], DeviceTypeController.prototype, "updateDeviceTypeById", null);
 tslib_1.__decorate([
     (0, common_1.Delete)(':id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully deleted device types',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for roles is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Deleted device types',
+        description: 'Deleted device types',
+    }),
     tslib_1.__param(0, (0, common_1.Param)('id')),
     tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [String, typeof (_h = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _h : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], DeviceTypeController.prototype, "deleteDeviceTypeById", null);
-tslib_1.__decorate([
-    (0, common_1.Delete)('permanent/:id'),
-    tslib_1.__param(0, (0, common_1.Param)('id')),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String]),
-    tslib_1.__metadata("design:returntype", void 0)
-], DeviceTypeController.prototype, "permanentlyDeleteDeviceTypeById", null);
 tslib_1.__decorate([
     (0, common_1.Get)('deleted'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -1810,11 +2114,11 @@ tslib_1.__decorate([
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.OK,
-        description: 'Successfully restored deleted room by id',
+        description: 'Successfully restored deleted device by id',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Request params for deleted room type is not validated',
+        description: 'Request params for deleted device type is not validated',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.UNAUTHORIZED,
@@ -1825,15 +2129,43 @@ tslib_1.__decorate([
         description: 'Insufficient privileges',
     }),
     (0, swagger_1.ApiOperation)({
-        summary: 'Successfully restored deleted room type by id',
-        description: 'Successfully restored deleted room type by id',
+        summary: 'Successfully restored deleted device type by id',
+        description: 'Successfully restored deleted device type by id',
     }),
     tslib_1.__param(0, (0, common_1.Param)('id')),
     tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [String, typeof (_j = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _j : Object]),
     tslib_1.__metadata("design:returntype", void 0)
-], DeviceTypeController.prototype, "restoreDeletedRoomTypeById", null);
+], DeviceTypeController.prototype, "restoreDeletedTypeById", null);
+tslib_1.__decorate([
+    (0, common_1.Delete)('permanent/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully permanent deleted device type by id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for permanent delete device type is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Permanently delete device type by id',
+        description: 'Permanently delete device type by id',
+    }),
+    tslib_1.__param(0, (0, common_1.Param)('id')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", void 0)
+], DeviceTypeController.prototype, "permanentlyDeleteDeviceTypeById", null);
 DeviceTypeController = tslib_1.__decorate([
     (0, common_1.Controller)('/v1/device-type'),
     tslib_1.__metadata("design:paramtypes", [typeof (_k = typeof device_type_service_1.DeviceTypeService !== "undefined" && device_type_service_1.DeviceTypeService) === "function" ? _k : Object])
@@ -1843,93 +2175,165 @@ exports.DeviceTypeController = DeviceTypeController;
 
 /***/ }),
 
+/***/ "./apps/backend/src/app/controllers/devices-pagination.model.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.DevicesPaginationParams = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const pagination_model_1 = __webpack_require__("./apps/backend/src/app/controllers/pagination.model.ts");
+const class_validator_1 = __webpack_require__("class-validator");
+class DevicesPaginationParams extends pagination_model_1.PaginationParams {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsString)({
+        message: 'Room type must be a string',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    tslib_1.__metadata("design:type", String)
+], DevicesPaginationParams.prototype, "deviceType", void 0);
+exports.DevicesPaginationParams = DevicesPaginationParams;
+
+
+/***/ }),
+
 /***/ "./apps/backend/src/app/controllers/devices.controller.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var DevicesController_1, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+var DevicesController_1, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DevicesController = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const services_1 = __webpack_require__("./apps/backend/src/app/services/index.ts");
 const swagger_1 = __webpack_require__("@nestjs/swagger");
-const models_1 = __webpack_require__("./libs/models/src/index.ts");
-const devices_payload_1 = __webpack_require__("./apps/backend/src/app/payload/request/devices.payload.ts");
 const devices_validation_1 = __webpack_require__("./apps/backend/src/app/pipes/validation/devices.validation.ts");
 const path_logger_interceptor_1 = __webpack_require__("./apps/backend/src/app/interceptors/path-logger.interceptor.ts");
 const role_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/role.decorator.ts");
 const roles_enum_1 = __webpack_require__("./apps/backend/src/app/enum/roles.enum.ts");
 const keycloak_user_1 = __webpack_require__("./apps/backend/src/app/dto/keycloak.user.ts");
 const keycloak_user_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/keycloak-user.decorator.ts");
+const devices_pagination_model_1 = __webpack_require__("./apps/backend/src/app/controllers/devices-pagination.model.ts");
+const data_add_request_payload_1 = __webpack_require__("./apps/backend/src/app/payload/request/data-add.request.payload.ts");
 let DevicesController = DevicesController_1 = class DevicesController {
     constructor(service) {
         this.service = service;
     }
-    createNewDevice(user, room) {
-        return this.service.add(room);
+    getDevices(payload) {
+        return this.service.getAll(payload);
     }
-    getDeviceById(id) {
-        return this.service.findById(id);
+    getDeviceNames() {
+        return this.service.getDeviceNames();
     }
-    getRoomsByRoomType(deviceTypeId = '') {
+    getDevicesByDeviceType(deviceTypeId = '') {
         return this.service.getDevicesByDeviceType(deviceTypeId);
     }
-    getDevices(request) {
-        return this.service.getAll(request);
+    getDeviceById(payload) {
+        return this.service.findById(payload.id);
     }
-    getDisableDevices() {
-        return this.service.getDisabledDevices();
-    }
-    getDeletedDevices() {
-        return this.service.getDeletedDevices();
-    }
-    restoreDeletedDeviceById(payload) {
-        return this.service.handleRestoreDeviceById(payload.id);
-    }
-    restoreDisabledDeviceById(payload) {
-        return this.service.handleRestoreDisabledDeviceById(payload.id);
+    createNewDevice(user, device) {
+        return this.service.add(device, user.account_id);
     }
     updateDeviceById(user, payload, body) {
         return this.service.updateById(user.account_id, payload.id, body);
     }
-    disableDeviceById(user, payload) {
-        return this.service.disableById(payload.id);
+    disableDeviceById(user, id) {
+        return this.service.disableById(user.account_id, id);
+    }
+    getDisableDevices(search = '') {
+        return this.service.getDisabledDevices(search);
+    }
+    restoreDisabledDeviceById(payload, user) {
+        return this.service.handleRestoreDisabledDeviceById(user.account_id, payload.id);
     }
     deleteDeviceById(user, payload) {
         return this.service.deleteById(user.account_id, payload.id);
     }
+    getDeletedDevices(search = '') {
+        return this.service.getDeletedDevices(search);
+    }
+    restoreDeletedDeviceById(payload) {
+        return this.service.handleRestoreDeletedDeviceById(payload.id);
+    }
 };
 tslib_1.__decorate([
-    (0, swagger_1.ApiOperation)({
-        summary: 'Create a new device',
-        description: 'Create new device with the provided payload',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.CREATED,
-        description: 'Successfully created a new device',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Request payload for device is not validated',
-    }),
+    (0, common_1.Get)(),
+    (0, common_1.UsePipes)(new devices_validation_1.DevicesValidation()),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.UNAUTHORIZED,
         description: 'Access token is invalidated',
     }),
     (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'One or more payload parameters are invalid',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully fetched devices',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Not enough privileges to access this endpoint',
+    }),
+    (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Insufficient privileges',
     }),
-    (0, common_1.Post)('add'),
-    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__param(1, (0, common_1.Body)()),
+    tslib_1.__param(0, (0, common_1.Query)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _a : Object, typeof (_b = typeof models_1.AddDeviceRequest !== "undefined" && models_1.AddDeviceRequest) === "function" ? _b : Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof devices_pagination_model_1.DevicesPaginationParams !== "undefined" && devices_pagination_model_1.DevicesPaginationParams) === "function" ? _a : Object]),
     tslib_1.__metadata("design:returntype", void 0)
-], DevicesController.prototype, "createNewDevice", null);
+], DevicesController.prototype, "getDevices", null);
+tslib_1.__decorate([
+    (0, common_1.Get)('name'),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully got device type name',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for roles is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get device type name',
+        description: 'Get device type name',
+    }),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", void 0)
+], DevicesController.prototype, "getDeviceNames", null);
+tslib_1.__decorate([
+    (0, common_1.Get)('by-device-type'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'One or more payload parameters are invalid',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully fetched deleted devices',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, common_1.Query)('type')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
+], DevicesController.prototype, "getDevicesByDeviceType", null);
 tslib_1.__decorate([
     (0, common_1.Get)('find/:id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -1955,49 +2359,53 @@ tslib_1.__decorate([
     }),
     tslib_1.__param(0, (0, common_1.Param)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String]),
-    tslib_1.__metadata("design:returntype", void 0)
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
 ], DevicesController.prototype, "getDeviceById", null);
 tslib_1.__decorate([
-    (0, common_1.Get)('by-device-type'),
+    (0, common_1.Post)('add'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Create a new device',
+        description: 'Create new device with the provided payload',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.CREATED,
+        description: 'Successfully created a new device',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request payload for device is not validated',
+    }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.UNAUTHORIZED,
         description: 'Access token is invalidated',
     }),
     (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'One or more payload parameters are invalid',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully fetched deleted rooms',
-    }),
-    (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Insufficient privileges',
     }),
-    tslib_1.__param(0, (0, common_1.Query)('type')),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Body)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
-], DevicesController.prototype, "getRoomsByRoomType", null);
+    tslib_1.__metadata("design:paramtypes", [typeof (_d = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _d : Object, typeof (_e = typeof data_add_request_payload_1.DataAddRequestPayload !== "undefined" && data_add_request_payload_1.DataAddRequestPayload) === "function" ? _e : Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], DevicesController.prototype, "createNewDevice", null);
 tslib_1.__decorate([
-    (0, common_1.Post)(),
-    (0, common_1.UsePipes)(new devices_validation_1.DevicesValidation()),
-    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Put)('update/:id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, swagger_1.ApiOperation)({
-        summary: 'Retrieving a list of devices',
-        description: 'Retrieving a list of devices with provided pagination payload',
+        summary: 'Update the device by id',
+        description: 'Update the device by provided id',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.OK,
-        description: 'Successfully retrieving a list of devices',
+        description: 'Successfully updated the device',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Error while retrieving a list of devices',
+        description: 'Error while updating the device',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.UNAUTHORIZED,
@@ -2007,11 +2415,42 @@ tslib_1.__decorate([
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Insufficient privileges',
     }),
-    tslib_1.__param(0, (0, common_1.Body)()),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Param)()),
+    tslib_1.__param(2, (0, common_1.Body)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_d = typeof devices_payload_1.DevicesRequestPayload !== "undefined" && devices_payload_1.DevicesRequestPayload) === "function" ? _d : Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_f = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _f : Object, Object, typeof (_g = typeof data_add_request_payload_1.DataAddRequestPayload !== "undefined" && data_add_request_payload_1.DataAddRequestPayload) === "function" ? _g : Object]),
     tslib_1.__metadata("design:returntype", void 0)
-], DevicesController.prototype, "getDevices", null);
+], DevicesController.prototype, "updateDeviceById", null);
+tslib_1.__decorate([
+    (0, common_1.Put)('disable/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Removing the device by id',
+        description: 'Removing the device by provided id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully removed the device',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Error while removing the device',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Invalid access token',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Param)('id')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_h = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _h : Object, String]),
+    tslib_1.__metadata("design:returntype", void 0)
+], DevicesController.prototype, "disableDeviceById", null);
 tslib_1.__decorate([
     (0, common_1.Get)('disabled'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -2035,10 +2474,69 @@ tslib_1.__decorate([
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Insufficient privileges',
     }),
+    tslib_1.__param(0, (0, common_1.Query)('search')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
-    tslib_1.__metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", typeof (_j = typeof Promise !== "undefined" && Promise) === "function" ? _j : Object)
 ], DevicesController.prototype, "getDisableDevices", null);
+tslib_1.__decorate([
+    (0, common_1.Put)('restore-disabled/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Restore the disabled device by id',
+        description: 'Restore the disabled device by provided id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully restored the disabled device',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Error while restoring the disabled device',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Invalid access token',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, common_1.Param)()),
+    tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object, typeof (_k = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _k : Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], DevicesController.prototype, "restoreDisabledDeviceById", null);
+tslib_1.__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Removing the device by id',
+        description: 'Removing the device by provided id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully removed the device',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Error while removing the device',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Invalid access token',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Param)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_l = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _l : Object, Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], DevicesController.prototype, "deleteDeviceById", null);
 tslib_1.__decorate([
     (0, common_1.Get)('deleted'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -2062,9 +2560,10 @@ tslib_1.__decorate([
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Insufficient privileges',
     }),
+    tslib_1.__param(0, (0, common_1.Query)('search')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
-    tslib_1.__metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", typeof (_m = typeof Promise !== "undefined" && Promise) === "function" ? _m : Object)
 ], DevicesController.prototype, "getDeletedDevices", null);
 tslib_1.__decorate([
     (0, common_1.Put)('restore-deleted/:id'),
@@ -2094,186 +2593,14 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], DevicesController.prototype, "restoreDeletedDeviceById", null);
-tslib_1.__decorate([
-    (0, common_1.Put)('restore-disabled/:id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Restore the disabled device by id',
-        description: 'Restore the disabled device by provided id',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully restored the disabled device',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Error while restoring the disabled device',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Invalid access token',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    tslib_1.__param(0, (0, common_1.Param)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", void 0)
-], DevicesController.prototype, "restoreDisabledDeviceById", null);
-tslib_1.__decorate([
-    (0, common_1.Put)('update/:id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Update the device by id',
-        description: 'Update the device by provided id',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully updated the device',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Error while updating the device',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Invalid access token',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__param(1, (0, common_1.Param)()),
-    tslib_1.__param(2, (0, common_1.Body)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_g = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _g : Object, Object, typeof (_h = typeof models_1.UpdateDeviceRequest !== "undefined" && models_1.UpdateDeviceRequest) === "function" ? _h : Object]),
-    tslib_1.__metadata("design:returntype", void 0)
-], DevicesController.prototype, "updateDeviceById", null);
-tslib_1.__decorate([
-    (0, common_1.Put)('disable/:id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Removing the device by id',
-        description: 'Removing the device by provided id',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully removed the device',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Error while removing the device',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Invalid access token',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__param(1, (0, common_1.Param)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_j = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _j : Object, Object]),
-    tslib_1.__metadata("design:returntype", void 0)
-], DevicesController.prototype, "disableDeviceById", null);
-tslib_1.__decorate([
-    (0, common_1.Delete)(':id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Removing the device by id',
-        description: 'Removing the device by provided id',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully removed the device',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Error while removing the device',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Invalid access token',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__param(1, (0, common_1.Param)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_k = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _k : Object, Object]),
-    tslib_1.__metadata("design:returntype", void 0)
-], DevicesController.prototype, "deleteDeviceById", null);
 DevicesController = DevicesController_1 = tslib_1.__decorate([
     (0, common_1.Controller)('/v1/devices'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiTags)('Devices'),
     (0, common_1.UseInterceptors)(new path_logger_interceptor_1.PathLoggerInterceptor(DevicesController_1.name)),
-    tslib_1.__metadata("design:paramtypes", [typeof (_l = typeof services_1.DevicesService !== "undefined" && services_1.DevicesService) === "function" ? _l : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_o = typeof services_1.DevicesService !== "undefined" && services_1.DevicesService) === "function" ? _o : Object])
 ], DevicesController);
 exports.DevicesController = DevicesController;
-
-
-/***/ }),
-
-/***/ "./apps/backend/src/app/controllers/equipments-history.controller.ts":
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-var _a, _b;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.EquipmentsHistoryController = void 0;
-const tslib_1 = __webpack_require__("tslib");
-const common_1 = __webpack_require__("@nestjs/common");
-const services_1 = __webpack_require__("./apps/backend/src/app/services/index.ts");
-const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
-const swagger_1 = __webpack_require__("@nestjs/swagger");
-const path_logger_interceptor_1 = __webpack_require__("./apps/backend/src/app/interceptors/path-logger.interceptor.ts");
-const role_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/role.decorator.ts");
-const roles_enum_1 = __webpack_require__("./apps/backend/src/app/enum/roles.enum.ts");
-let EquipmentsHistoryController = class EquipmentsHistoryController {
-    constructor(service) {
-        this.service = service;
-    }
-    getAll() {
-        return this.service.getAllByPagination();
-    }
-};
-tslib_1.__decorate([
-    (0, swagger_1.ApiOperation)({
-        description: "Get all equipments history"
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Request payload for equipments history not validated'
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: "Access token is invalidated"
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: "Invalid role"
-    }),
-    (0, common_1.Get)(),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
-    tslib_1.__metadata("design:returntype", typeof (_a = typeof Promise !== "undefined" && Promise) === "function" ? _a : Object)
-], EquipmentsHistoryController.prototype, "getAll", null);
-EquipmentsHistoryController = tslib_1.__decorate([
-    (0, common_1.Controller)("/v1/equipments-history"),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseInterceptors)(new path_logger_interceptor_1.PathLoggerInterceptor(models_1.DevicesHist.name)),
-    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof services_1.DevicesHistService !== "undefined" && services_1.DevicesHistService) === "function" ? _b : Object])
-], EquipmentsHistoryController);
-exports.EquipmentsHistoryController = EquipmentsHistoryController;
 
 
 /***/ }),
@@ -2347,7 +2674,7 @@ tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/controllers/acc
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/controllers/authentication.controller.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/controllers/booking-room.controller.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/controllers/devices.controller.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/controllers/equipments-history.controller.ts"), exports);
+// export * from "./equipments-history.controller";
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/controllers/health-check.controller.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/controllers/rooms.controller.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/controllers/users-otp.controller.ts"), exports);
@@ -2438,11 +2765,12 @@ exports.PaginationParams = PaginationParams;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var RoleController_1, _a, _b, _c, _d;
+var RoleController_1, _a, _b, _c, _d, _e, _f, _g, _h;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RoleController = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
+const pagination_model_1 = __webpack_require__("./apps/backend/src/app/controllers/pagination.model.ts");
 const keycloak_user_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/keycloak-user.decorator.ts");
 const keycloak_user_1 = __webpack_require__("./apps/backend/src/app/dto/keycloak.user.ts");
 const role_service_1 = __webpack_require__("./apps/backend/src/app/services/role.service.ts");
@@ -2450,26 +2778,25 @@ const swagger_1 = __webpack_require__("@nestjs/swagger");
 const path_logger_interceptor_1 = __webpack_require__("./apps/backend/src/app/interceptors/path-logger.interceptor.ts");
 const roles_enum_1 = __webpack_require__("./apps/backend/src/app/enum/roles.enum.ts");
 const role_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/role.decorator.ts");
+const master_data_add_request_payload_1 = __webpack_require__("./apps/backend/src/app/payload/request/master-data-add.request.payload.ts");
 let RoleController = RoleController_1 = class RoleController {
     constructor(service) {
         this.service = service;
     }
-    getRolesByPagination(search, dir, page, limit) {
-        return this.service.getRolesByPagination({
-            dir,
-            page,
-            search,
-            limit,
-        });
+    getRolesByPagination(payload) {
+        return this.service.getRolesByPagination(payload);
+    }
+    getRoleNames() {
+        return this.service.getRoleNames();
     }
     getRoleById(id) {
         return this.service.getRoleById(id);
     }
-    updateRoleById(body, user, id) {
-        return this.service.updateRoleById(user.account_id, body, id);
-    }
     addRole(body, user) {
         return this.service.addRole(body, user.account_id);
+    }
+    updateRoleById(body, user, id) {
+        return this.service.updateRoleById(user.account_id, body, id);
     }
     deleteRoleById(keycloakUser, id) {
         return this.service.deleteRoleById(keycloakUser.account_id, id);
@@ -2477,8 +2804,11 @@ let RoleController = RoleController_1 = class RoleController {
     getDeletedRoles(search) {
         return this.service.getDeletedRoles(search);
     }
-    restoreDeletedRoomById(payload) {
-        return this.service.handleRestoreDeletedRoleById(payload.id);
+    restoreDeletedRoleById(payload, keycloakUser) {
+        return this.service.handleRestoreDeletedRoleById(keycloakUser.account_id, payload.id);
+    }
+    permanentDeleteRoleById(id) {
+        return this.service.permanentDeleteRoleById(id);
     }
 };
 tslib_1.__decorate([
@@ -2504,16 +2834,36 @@ tslib_1.__decorate([
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Insufficient privileges',
     }),
-    tslib_1.__param(0, (0, common_1.Query)('search', new common_1.DefaultValuePipe(''))),
-    tslib_1.__param(1, (0, common_1.Query)('dir', new common_1.DefaultValuePipe('ASC'))),
-    tslib_1.__param(2, (0, common_1.Query)('page', new common_1.DefaultValuePipe(1), common_1.ParseIntPipe)),
-    tslib_1.__param(3, (0, common_1.Query)('limit', new common_1.DefaultValuePipe(10), common_1.ParseIntPipe)),
+    tslib_1.__param(0, (0, common_1.Query)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String, String, Number, Number]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof pagination_model_1.PaginationParams !== "undefined" && pagination_model_1.PaginationParams) === "function" ? _a : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], RoleController.prototype, "getRolesByPagination", null);
 tslib_1.__decorate([
+    (0, common_1.Get)('name'),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully get role name',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for roles is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get role name',
+        description: 'Get role name',
+    }),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", void 0)
+], RoleController.prototype, "getRoleNames", null);
+tslib_1.__decorate([
     (0, common_1.Get)(':id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, swagger_1.ApiOperation)({
         summary: 'Get role by id',
         description: 'Get role by id',
@@ -2534,12 +2884,41 @@ tslib_1.__decorate([
         status: common_1.HttpStatus.OK,
         description: 'Successfully fetched role by id',
     }),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     tslib_1.__param(0, (0, common_1.Param)('id')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [String]),
     tslib_1.__metadata("design:returntype", void 0)
 ], RoleController.prototype, "getRoleById", null);
+tslib_1.__decorate([
+    (0, common_1.Post)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request payload for role is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully added role',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Add role',
+        description: 'Add role',
+    }),
+    tslib_1.__param(0, (0, common_1.Body)()),
+    tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof master_data_add_request_payload_1.MasterDataAddRequestPayload !== "undefined" && master_data_add_request_payload_1.MasterDataAddRequestPayload) === "function" ? _b : Object, typeof (_c = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _c : Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], RoleController.prototype, "addRole", null);
 tslib_1.__decorate([
     (0, common_1.Put)(':id'),
     (0, swagger_1.ApiOperation)({
@@ -2567,39 +2946,9 @@ tslib_1.__decorate([
     tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__param(2, (0, common_1.Param)('id')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object, typeof (_a = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _a : Object, String]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_d = typeof master_data_add_request_payload_1.MasterDataAddRequestPayload !== "undefined" && master_data_add_request_payload_1.MasterDataAddRequestPayload) === "function" ? _d : Object, typeof (_e = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _e : Object, String]),
     tslib_1.__metadata("design:returntype", void 0)
 ], RoleController.prototype, "updateRoleById", null);
-tslib_1.__decorate([
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Request payload for role is not validated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalidated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully added role',
-    }),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Add role',
-        description: 'Add role',
-    }),
-    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    (0, common_1.Post)(),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    tslib_1.__param(0, (0, common_1.Body)()),
-    tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object, typeof (_b = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _b : Object]),
-    tslib_1.__metadata("design:returntype", void 0)
-], RoleController.prototype, "addRole", null);
 tslib_1.__decorate([
     (0, common_1.Delete)(':id'),
     (0, swagger_1.ApiResponse)({
@@ -2626,7 +2975,7 @@ tslib_1.__decorate([
     tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__param(1, (0, common_1.Param)('id')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_c = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _c : Object, String]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_f = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _f : Object, String]),
     tslib_1.__metadata("design:returntype", void 0)
 ], RoleController.prototype, "deleteRoleById", null);
 tslib_1.__decorate([
@@ -2681,16 +3030,45 @@ tslib_1.__decorate([
         description: 'Insufficient privileges',
     }),
     tslib_1.__param(0, (0, common_1.Param)()),
+    tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:paramtypes", [Object, typeof (_g = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _g : Object]),
     tslib_1.__metadata("design:returntype", void 0)
-], RoleController.prototype, "restoreDeletedRoomById", null);
+], RoleController.prototype, "restoreDeletedRoleById", null);
+tslib_1.__decorate([
+    (0, common_1.Delete)('permanent/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully permanent deleted role by id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for permanent delete role is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Permanently delete role by id',
+        description: 'Permanently delete role by id',
+    }),
+    tslib_1.__param(0, (0, common_1.Param)('id')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", void 0)
+], RoleController.prototype, "permanentDeleteRoleById", null);
 RoleController = RoleController_1 = tslib_1.__decorate([
     (0, common_1.Controller)('/v1/roles'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiTags)('Role'),
     (0, common_1.UseInterceptors)(new path_logger_interceptor_1.PathLoggerInterceptor(RoleController_1.name)),
-    tslib_1.__metadata("design:paramtypes", [typeof (_d = typeof role_service_1.RoleService !== "undefined" && role_service_1.RoleService) === "function" ? _d : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_h = typeof role_service_1.RoleService !== "undefined" && role_service_1.RoleService) === "function" ? _h : Object])
 ], RoleController);
 exports.RoleController = RoleController;
 
@@ -2701,7 +3079,7 @@ exports.RoleController = RoleController;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+var _a, _b, _c, _d, _e, _f, _g, _h;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RoomTypeController = void 0;
 const tslib_1 = __webpack_require__("tslib");
@@ -2728,57 +3106,23 @@ let RoomTypeController = class RoomTypeController {
     getRoomTypeById(id) {
         return this.service.getRoomTypeById(id);
     }
-    updateRoomTypeById(updatePayload, id, keycloakUser) {
+    addRoomType(keycloakUser, addRoomType) {
+        return this.service.addRoomType(keycloakUser.account_id, addRoomType);
+    }
+    updateRoomTypeById(id, updatePayload, keycloakUser) {
         return this.service.updateRoomTypeById(keycloakUser.account_id, updatePayload, id);
-    }
-    // @Put('disable/:id')
-    // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-    // @ApiResponse({
-    //   status: HttpStatus.OK,
-    //   description: 'Successfully fetched disabled room type by id',
-    // })
-    // @ApiResponse({
-    //   status: HttpStatus.BAD_REQUEST,
-    //   description: 'Request params for roles is not validated',
-    // })
-    // @ApiResponse({
-    //   status: HttpStatus.UNAUTHORIZED,
-    //   description: 'Access token is invalidated',
-    // })
-    // @ApiResponse({
-    //   status: HttpStatus.FORBIDDEN,
-    //   description: 'Insufficient privileges',
-    // })
-    // @ApiOperation({
-    //   summary: 'Get disabled room type by id',
-    //   description: 'Get disabled room type by id',
-    // })
-    // disableRoomTypeById(
-    //   @Param('id') id: string,
-    //   @User() keycloakUser: KeycloakUserInstance
-    // ) {
-    //   return this.service.disableRoomTypeById(keycloakUser.account_id, id);
-    // }
-    getDisabledRoomTypes(search) {
-        return this.service.getDisabledRoomTypes(search);
-    }
-    getDeletedRoomTypes(search) {
-        return this.service.getDeletedRoomTypes(search);
-    }
-    restoreDisabledRoomTypeById(id, keycloakUser) {
-        return this.service.restoreDisabledRoomTypeById(keycloakUser.account_id, id);
-    }
-    restoreDeletedRoomTypeById(id, keycloakUser) {
-        return this.service.restoreDeletedRoomTypeById(keycloakUser.account_id, id);
     }
     deleteRoomTypeById(id, keycloakUser) {
         return this.service.deleteRoomTypeById(keycloakUser.account_id, id);
     }
+    getDeletedRoomTypes(search) {
+        return this.service.getDeletedRoomTypes(search);
+    }
+    restoreDeletedRoomTypeById(id, keycloakUser) {
+        return this.service.restoreDeletedRoomTypeById(keycloakUser.account_id, id);
+    }
     permanentDeleteRoomTypeById(id) {
         return this.service.permanentDeleteRoomTypeById(id);
-    }
-    addRoomType(keycloakUser, addRoomType) {
-        return this.service.addRoomType(keycloakUser.account_id, addRoomType);
     }
 };
 tslib_1.__decorate([
@@ -2813,26 +3157,21 @@ tslib_1.__decorate([
 ], RoomTypeController.prototype, "getRoomTypes", null);
 tslib_1.__decorate([
     (0, common_1.Get)('name'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.OK,
-        description: 'Successfully got disabled room types',
+        description: 'Successfully get room types name',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.BAD_REQUEST,
         description: 'Request params for roles is not validated',
     }),
     (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalidated',
-    }),
-    (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Insufficient privileges',
     }),
     (0, swagger_1.ApiOperation)({
-        summary: 'Get disabled room types',
-        description: 'Get disabled room types',
+        summary: 'Get room types name',
+        description: 'Get room types name',
     }),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", []),
@@ -2867,6 +3206,36 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", void 0)
 ], RoomTypeController.prototype, "getRoomTypeById", null);
 tslib_1.__decorate([
+    (0, common_1.Post)(),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Add room type',
+        description: 'Add room type',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully added room type',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for roles is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Body)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _b : Object, typeof (_c = typeof master_data_add_request_payload_1.MasterDataAddRequestPayload !== "undefined" && master_data_add_request_payload_1.MasterDataAddRequestPayload) === "function" ? _c : Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], RoomTypeController.prototype, "addRoomType", null);
+tslib_1.__decorate([
     (0, common_1.Put)(':id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, swagger_1.ApiResponse)({
@@ -2889,127 +3258,13 @@ tslib_1.__decorate([
         summary: 'Update room type by id',
         description: 'Update room type by id',
     }),
-    tslib_1.__param(0, (0, common_1.Body)()),
-    tslib_1.__param(1, (0, common_1.Param)('id')),
+    tslib_1.__param(0, (0, common_1.Param)('id')),
+    tslib_1.__param(1, (0, common_1.Body)()),
     tslib_1.__param(2, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof master_data_add_request_payload_1.MasterDataAddRequestPayload !== "undefined" && master_data_add_request_payload_1.MasterDataAddRequestPayload) === "function" ? _b : Object, String, typeof (_c = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _c : Object]),
+    tslib_1.__metadata("design:paramtypes", [String, typeof (_d = typeof master_data_add_request_payload_1.MasterDataAddRequestPayload !== "undefined" && master_data_add_request_payload_1.MasterDataAddRequestPayload) === "function" ? _d : Object, typeof (_e = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _e : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], RoomTypeController.prototype, "updateRoomTypeById", null);
-tslib_1.__decorate([
-    (0, common_1.Get)('disabled'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully got disabled room types',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Request params for roles is not validated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalidated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Get disabled room types',
-        description: 'Get disabled room types',
-    }),
-    tslib_1.__param(0, (0, common_1.Query)('search')),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String]),
-    tslib_1.__metadata("design:returntype", void 0)
-], RoomTypeController.prototype, "getDisabledRoomTypes", null);
-tslib_1.__decorate([
-    (0, common_1.Get)('deleted'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully deleted room types',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Request params for roles is not validated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalidated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Get deleted room types',
-        description: 'Get deleted room types',
-    }),
-    tslib_1.__param(0, (0, common_1.Query)('search')),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String]),
-    tslib_1.__metadata("design:returntype", void 0)
-], RoomTypeController.prototype, "getDeletedRoomTypes", null);
-tslib_1.__decorate([
-    (0, common_1.Put)('restore-disabled/:id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully restored disabled room by id',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Request params for roles is not validated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalidated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Restore disabled room type by id',
-        description: 'Restore disabled room type by id',
-    }),
-    tslib_1.__param(0, (0, common_1.Param)('id')),
-    tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String, typeof (_d = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _d : Object]),
-    tslib_1.__metadata("design:returntype", void 0)
-], RoomTypeController.prototype, "restoreDisabledRoomTypeById", null);
-tslib_1.__decorate([
-    (0, common_1.Put)('restore-deleted/:id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully restored deleted room by id',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Request params for deleted room type is not validated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalidated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Successfully restored deleted room type by id',
-        description: 'Successfully restored deleted room type by id',
-    }),
-    tslib_1.__param(0, (0, common_1.Param)('id')),
-    tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String, typeof (_e = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _e : Object]),
-    tslib_1.__metadata("design:returntype", void 0)
-], RoomTypeController.prototype, "restoreDeletedRoomTypeById", null);
 tslib_1.__decorate([
     (0, common_1.Delete)(':id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -3040,6 +3295,63 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", void 0)
 ], RoomTypeController.prototype, "deleteRoomTypeById", null);
 tslib_1.__decorate([
+    (0, common_1.Get)('deleted'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully deleted room types',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for roles is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get deleted room types',
+        description: 'Get deleted room types',
+    }),
+    tslib_1.__param(0, (0, common_1.Query)('search')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", void 0)
+], RoomTypeController.prototype, "getDeletedRoomTypes", null);
+tslib_1.__decorate([
+    (0, common_1.Put)('restore-deleted/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully restored deleted room by id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request params for deleted room type is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Successfully restored deleted room type by id',
+        description: 'Successfully restored deleted room type by id',
+    }),
+    tslib_1.__param(0, (0, common_1.Param)('id')),
+    tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String, typeof (_g = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _g : Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], RoomTypeController.prototype, "restoreDeletedRoomTypeById", null);
+tslib_1.__decorate([
     (0, common_1.Delete)('permanent/:id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
     (0, swagger_1.ApiResponse)({
@@ -3067,42 +3379,12 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [String]),
     tslib_1.__metadata("design:returntype", void 0)
 ], RoomTypeController.prototype, "permanentDeleteRoomTypeById", null);
-tslib_1.__decorate([
-    (0, common_1.Post)(),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Add room type',
-        description: 'Add room type',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully added room type',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Request params for roles is not validated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalidated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__param(1, (0, common_1.Body)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_g = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _g : Object, typeof (_h = typeof master_data_add_request_payload_1.MasterDataAddRequestPayload !== "undefined" && master_data_add_request_payload_1.MasterDataAddRequestPayload) === "function" ? _h : Object]),
-    tslib_1.__metadata("design:returntype", void 0)
-], RoomTypeController.prototype, "addRoomType", null);
 RoomTypeController = tslib_1.__decorate([
     (0, common_1.Controller)('/v1/room-type'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiTags)('Room Type'),
     (0, common_1.UseInterceptors)(new path_logger_interceptor_1.PathLoggerInterceptor(room_type_service_1.RoomTypeService.name)),
-    tslib_1.__metadata("design:paramtypes", [typeof (_j = typeof room_type_service_1.RoomTypeService !== "undefined" && room_type_service_1.RoomTypeService) === "function" ? _j : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_h = typeof room_type_service_1.RoomTypeService !== "undefined" && room_type_service_1.RoomTypeService) === "function" ? _h : Object])
 ], RoomTypeController);
 exports.RoomTypeController = RoomTypeController;
 
@@ -3136,13 +3418,12 @@ exports.RoomsPaginationParams = RoomsPaginationParams;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var RoomsController_1, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+var RoomsController_1, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RoomsController = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const services_1 = __webpack_require__("./apps/backend/src/app/services/index.ts");
-const models_1 = __webpack_require__("./libs/models/src/index.ts");
 const rooms_validation_1 = __webpack_require__("./apps/backend/src/app/pipes/validation/rooms.validation.ts");
 const swagger_1 = __webpack_require__("@nestjs/swagger");
 const path_logger_interceptor_1 = __webpack_require__("./apps/backend/src/app/interceptors/path-logger.interceptor.ts");
@@ -3152,33 +3433,25 @@ const add_room_validation_1 = __webpack_require__("./apps/backend/src/app/pipes/
 const keycloak_user_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/keycloak-user.decorator.ts");
 const keycloak_user_1 = __webpack_require__("./apps/backend/src/app/dto/keycloak.user.ts");
 const rooms_pagination_model_1 = __webpack_require__("./apps/backend/src/app/controllers/rooms-pagination.model.ts");
+const data_add_request_payload_1 = __webpack_require__("./apps/backend/src/app/payload/request/data-add.request.payload.ts");
 let RoomsController = RoomsController_1 = class RoomsController {
     constructor(service) {
         this.service = service;
     }
-    addRoom(user, room) {
-        return this.service.add(user, room);
-    }
-    getRoomById(payload) {
-        return this.service.findById(payload.id);
-    }
     getRooms(payload) {
         return this.service.getAll(payload);
-    }
-    getDisableRooms(search = '') {
-        return this.service.getDisabledRooms(search);
-    }
-    getDeletedRooms(search = '') {
-        return this.service.getDeletedRooms(search);
     }
     getRoomsByRoomType(roomTypeId = '') {
         return this.service.getRoomsByRoomType(roomTypeId);
     }
-    restoreDeletedRoomById(payload) {
-        return this.service.handleRestoreDeletedRoomById(payload.id);
+    getRoomNames() {
+        return this.service.getRoomNames();
     }
-    restoreDisabledRoomById(payload) {
-        return this.service.handleRestoreDisabledRoomById(payload.id);
+    getRoomById(payload) {
+        return this.service.findById(payload.id);
+    }
+    addRoom(user, room) {
+        return this.service.add(user, room);
     }
     updateRoomById(user, payload, body) {
         return this.service.updateById(user.account_id, payload.id, body);
@@ -3186,68 +3459,22 @@ let RoomsController = RoomsController_1 = class RoomsController {
     disableRoomById(user, id) {
         return this.service.disableById(user.account_id, id);
     }
+    getDisableRooms(search = '') {
+        return this.service.getDisabledRooms(search);
+    }
+    restoreDisabledRoomById(user, payload) {
+        return this.service.handleRestoreDisabledRoomById(user.account_id, payload.id);
+    }
     deleteRoomById(user, payload) {
         return this.service.deleteById(user.account_id, payload.id);
     }
+    getDeletedRooms(search = '') {
+        return this.service.getDeletedRooms(search);
+    }
+    restoreDeletedRoomById(payload, user) {
+        return this.service.handleRestoreDeletedRoomById(user.account_id, payload.id);
+    }
 };
-tslib_1.__decorate([
-    (0, swagger_1.ApiOperation)({
-        summary: 'Create a new library room',
-        description: 'Create new library room with the provided payload',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.CREATED,
-        description: 'Successfully created a new library room',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Request payload for libary room is not validated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalidated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    (0, common_1.Post)('add'),
-    (0, common_1.UsePipes)(new add_room_validation_1.AddRoomValidation()),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
-    tslib_1.__param(1, (0, common_1.Body)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _a : Object, typeof (_b = typeof models_1.AddRoomRequest !== "undefined" && models_1.AddRoomRequest) === "function" ? _b : Object]),
-    tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
-], RoomsController.prototype, "addRoom", null);
-tslib_1.__decorate([
-    (0, common_1.Get)('find/:id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Retrieving the library room by id',
-        description: 'Retrieving the library room by provided id',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully retrieved the library room',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Error while retrieving the library room',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Invalid access token',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    tslib_1.__param(0, (0, common_1.Param)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
-], RoomsController.prototype, "getRoomById", null);
 tslib_1.__decorate([
     (0, common_1.Get)(),
     (0, common_1.UsePipes)(new rooms_validation_1.RoomsValidation()),
@@ -3275,57 +3502,9 @@ tslib_1.__decorate([
     }),
     tslib_1.__param(0, (0, common_1.Query)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_e = typeof rooms_pagination_model_1.RoomsPaginationParams !== "undefined" && rooms_pagination_model_1.RoomsPaginationParams) === "function" ? _e : Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof rooms_pagination_model_1.RoomsPaginationParams !== "undefined" && rooms_pagination_model_1.RoomsPaginationParams) === "function" ? _a : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], RoomsController.prototype, "getRooms", null);
-tslib_1.__decorate([
-    (0, common_1.Get)('disabled'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalidated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'One or more payload parameters are invalid',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully fetched disabled rooms',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    tslib_1.__param(0, (0, common_1.Query)('search')),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
-], RoomsController.prototype, "getDisableRooms", null);
-tslib_1.__decorate([
-    (0, common_1.Get)('deleted'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Access token is invalidated',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'One or more payload parameters are invalid',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Successfully fetched deleted rooms',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Insufficient privileges',
-    }),
-    tslib_1.__param(0, (0, common_1.Query)('search')),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
-], RoomsController.prototype, "getDeletedRooms", null);
 tslib_1.__decorate([
     (0, common_1.Get)('by-room-type'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -3348,50 +3527,44 @@ tslib_1.__decorate([
     tslib_1.__param(0, (0, common_1.Query)('type')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
+    tslib_1.__metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
 ], RoomsController.prototype, "getRoomsByRoomType", null);
 tslib_1.__decorate([
-    (0, common_1.Put)('restore-deleted/:id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Restore the deleted library room by id',
-        description: 'Restore the deleted library room by provided id',
-    }),
+    (0, common_1.Get)('name'),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.OK,
-        description: 'Successfully restored the deleted library room',
+        description: 'Successfully get role name',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Error while restoring the deleted the library room',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.UNAUTHORIZED,
-        description: 'Invalid access token',
+        description: 'Request params for roles is not validated',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.FORBIDDEN,
         description: 'Insufficient privileges',
     }),
-    tslib_1.__param(0, (0, common_1.Param)()),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get room name',
+        description: 'Get room name',
+    }),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:paramtypes", []),
     tslib_1.__metadata("design:returntype", void 0)
-], RoomsController.prototype, "restoreDeletedRoomById", null);
+], RoomsController.prototype, "getRoomNames", null);
 tslib_1.__decorate([
-    (0, common_1.Put)('restore-disabled/:id'),
-    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, common_1.Get)('find/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
     (0, swagger_1.ApiOperation)({
-        summary: 'Restore the disabled library room by id',
-        description: 'Restore the disabled library room by provided id',
+        summary: 'Retrieving the library room by id',
+        description: 'Retrieving the library room by provided id',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.OK,
-        description: 'Successfully restored the disabled library room',
+        description: 'Successfully retrieved the library room',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Error while restoring the disabled the library room',
+        description: 'Error while retrieving the library room',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.UNAUTHORIZED,
@@ -3404,8 +3577,38 @@ tslib_1.__decorate([
     tslib_1.__param(0, (0, common_1.Param)()),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", void 0)
-], RoomsController.prototype, "restoreDisabledRoomById", null);
+    tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+], RoomsController.prototype, "getRoomById", null);
+tslib_1.__decorate([
+    (0, common_1.Post)('add'),
+    (0, common_1.UsePipes)(new add_room_validation_1.AddRoomValidation()),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Create a new library room',
+        description: 'Create new library room with the provided payload',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.CREATED,
+        description: 'Successfully created a new library room',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Request payload for libary room is not validated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Body)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_d = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _d : Object, typeof (_e = typeof data_add_request_payload_1.DataAddRequestPayload !== "undefined" && data_add_request_payload_1.DataAddRequestPayload) === "function" ? _e : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
+], RoomsController.prototype, "addRoom", null);
 tslib_1.__decorate([
     (0, common_1.Put)('update/:id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -3433,7 +3636,7 @@ tslib_1.__decorate([
     tslib_1.__param(1, (0, common_1.Param)()),
     tslib_1.__param(2, (0, common_1.Body)()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_j = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _j : Object, Object, typeof (_k = typeof models_1.UpdateRoomRequest !== "undefined" && models_1.UpdateRoomRequest) === "function" ? _k : Object]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_g = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _g : Object, Object, typeof (_h = typeof data_add_request_payload_1.DataAddRequestPayload !== "undefined" && data_add_request_payload_1.DataAddRequestPayload) === "function" ? _h : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], RoomsController.prototype, "updateRoomById", null);
 tslib_1.__decorate([
@@ -3462,9 +3665,62 @@ tslib_1.__decorate([
     tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
     tslib_1.__param(1, (0, common_1.Param)('id')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_l = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _l : Object, String]),
+    tslib_1.__metadata("design:paramtypes", [typeof (_j = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _j : Object, String]),
     tslib_1.__metadata("design:returntype", void 0)
 ], RoomsController.prototype, "disableRoomById", null);
+tslib_1.__decorate([
+    (0, common_1.Get)('disabled'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'One or more payload parameters are invalid',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully fetched disabled rooms',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, common_1.Query)('search')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", typeof (_k = typeof Promise !== "undefined" && Promise) === "function" ? _k : Object)
+], RoomsController.prototype, "getDisableRooms", null);
+tslib_1.__decorate([
+    (0, common_1.Put)('restore-disabled/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Restore the disabled library room by id',
+        description: 'Restore the disabled library room by provided id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully restored the disabled library room',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Error while restoring the disabled the library room',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Invalid access token',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__param(1, (0, common_1.Param)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_l = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _l : Object, Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], RoomsController.prototype, "restoreDisabledRoomById", null);
 tslib_1.__decorate([
     (0, common_1.Delete)(':id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -3494,12 +3750,65 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [typeof (_m = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _m : Object, Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], RoomsController.prototype, "deleteRoomById", null);
+tslib_1.__decorate([
+    (0, common_1.Get)('deleted'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Access token is invalidated',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'One or more payload parameters are invalid',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully fetched deleted rooms',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, common_1.Query)('search')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", typeof (_o = typeof Promise !== "undefined" && Promise) === "function" ? _o : Object)
+], RoomsController.prototype, "getDeletedRooms", null);
+tslib_1.__decorate([
+    (0, common_1.Put)('restore-deleted/:id'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Restore the deleted library room by id',
+        description: 'Restore the deleted library room by provided id',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Successfully restored the deleted library room',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Error while restoring the deleted the library room',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.UNAUTHORIZED,
+        description: 'Invalid access token',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Insufficient privileges',
+    }),
+    tslib_1.__param(0, (0, common_1.Param)()),
+    tslib_1.__param(1, (0, keycloak_user_decorator_1.User)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object, typeof (_p = typeof keycloak_user_1.KeycloakUserInstance !== "undefined" && keycloak_user_1.KeycloakUserInstance) === "function" ? _p : Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], RoomsController.prototype, "restoreDeletedRoomById", null);
 RoomsController = RoomsController_1 = tslib_1.__decorate([
     (0, common_1.Controller)('/v1/rooms'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiTags)('Rooms'),
     (0, common_1.UseInterceptors)(new path_logger_interceptor_1.PathLoggerInterceptor(RoomsController_1.name)),
-    tslib_1.__metadata("design:paramtypes", [typeof (_o = typeof services_1.RoomsService !== "undefined" && services_1.RoomsService) === "function" ? _o : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_q = typeof services_1.RoomsService !== "undefined" && services_1.RoomsService) === "function" ? _q : Object])
 ], RoomsController);
 exports.RoomsController = RoomsController;
 
@@ -3526,6 +3835,9 @@ let SlotController = class SlotController {
     getAllSlotsByPagination(params) {
         return this.service.getAllByPagination(params);
     }
+    getRoomNames() {
+        return this.service.getSlotNames();
+    }
     getSlotById(id) {
         return this.service.getById(id);
     }
@@ -3539,6 +3851,13 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof pagination_model_1.PaginationParams !== "undefined" && pagination_model_1.PaginationParams) === "function" ? _a : Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], SlotController.prototype, "getAllSlotsByPagination", null);
+tslib_1.__decorate([
+    (0, common_1.Get)('name'),
+    (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN, roles_enum_1.Role.APP_STAFF),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", void 0)
+], SlotController.prototype, "getRoomNames", null);
 tslib_1.__decorate([
     (0, common_1.Get)(':id'),
     (0, role_decorator_1.Roles)(roles_enum_1.Role.APP_LIBRARIAN, roles_enum_1.Role.APP_MANAGER, roles_enum_1.Role.APP_ADMIN),
@@ -4009,6 +4328,110 @@ exports.PathLoggerInterceptor = PathLoggerInterceptor;
 
 /***/ }),
 
+/***/ "./apps/backend/src/app/models/account-hist.entity.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AccountHist = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_1 = __webpack_require__("typeorm");
+const base_entity_1 = __webpack_require__("./apps/backend/src/app/models/base/base.entity.ts");
+let AccountHist = class AccountHist extends base_entity_1.BaseEntity {
+};
+tslib_1.__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid', {
+        name: 'id',
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountHist.prototype, "id", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'account_id',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountHist.prototype, "accountId", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'keycloak_id',
+        type: 'varchar',
+        length: 100,
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountHist.prototype, "keycloakId", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'google_id',
+        type: 'varchar',
+        length: 100,
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountHist.prototype, "googleId", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'username',
+        type: 'varchar',
+        length: 100,
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountHist.prototype, "username", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'email',
+        type: 'varchar',
+        length: 100,
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountHist.prototype, "email", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'phone',
+        type: 'varchar',
+        length: 100,
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountHist.prototype, "phone", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'fullname',
+        type: 'varchar',
+        length: 100,
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountHist.prototype, "fullname", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'avatar',
+        type: 'varchar',
+        length: 250,
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountHist.prototype, "avatar", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'role_id',
+        type: 'varchar',
+        length: 100,
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountHist.prototype, "roleId", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'description',
+        type: 'varchar',
+        length: 500,
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountHist.prototype, "description", void 0);
+AccountHist = tslib_1.__decorate([
+    (0, typeorm_1.Entity)('account_hist')
+], AccountHist);
+exports.AccountHist = AccountHist;
+
+
+/***/ }),
+
 /***/ "./apps/backend/src/app/models/account.entity.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -4301,6 +4724,166 @@ exports.BookingReason = BookingReason;
 
 /***/ }),
 
+/***/ "./apps/backend/src/app/models/booking-request-hist.entity.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+var _a, _b, _c, _d, _e, _f;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BookingRequestHist = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_1 = __webpack_require__("typeorm");
+let BookingRequestHist = class BookingRequestHist {
+};
+tslib_1.__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid', {
+        name: 'id',
+        comment: 'ID of the Booking Request Hist',
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "id", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'booking_request_id',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "bookingRequestId", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'room_id',
+        nullable: false,
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "roomId", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'requested_by',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "requestedBy", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'requested_at',
+        nullable: false,
+        type: 'timestamptz',
+        default: () => 'CURRENT_TIMESTAMP',
+    }),
+    tslib_1.__metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
+], BookingRequestHist.prototype, "requestedAt", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'status',
+        nullable: false,
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "status", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'checkin_at',
+        nullable: false,
+        type: 'timestamptz',
+    }),
+    tslib_1.__metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
+], BookingRequestHist.prototype, "checkedInAt", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'checkout_at',
+        nullable: false,
+        type: 'timestamptz',
+    }),
+    tslib_1.__metadata("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
+], BookingRequestHist.prototype, "checkedOutAt", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'updated_at',
+        nullable: false,
+        type: 'timestamptz',
+    }),
+    tslib_1.__metadata("design:type", typeof (_d = typeof Date !== "undefined" && Date) === "function" ? _d : Object)
+], BookingRequestHist.prototype, "updatedAt", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'updated_by',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "updatedBy", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'booking_reason_id',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "bookingReasonId", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'description',
+        type: 'varchar',
+        length: 500,
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "description", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'cancelled_at',
+        nullable: false,
+        type: 'timestamptz',
+    }),
+    tslib_1.__metadata("design:type", typeof (_e = typeof Date !== "undefined" && Date) === "function" ? _e : Object)
+], BookingRequestHist.prototype, "cancelledAt", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'cancelled_by',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "cancelledBy", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'checkin_slot',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "checkinSlot", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'checkout_slot',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "checkoutSlot", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: "checkin_date",
+        nullable: false,
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "checkinDate", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'accepted_at',
+        nullable: false,
+        type: 'timestamptz',
+    }),
+    tslib_1.__metadata("design:type", typeof (_f = typeof Date !== "undefined" && Date) === "function" ? _f : Object)
+], BookingRequestHist.prototype, "acceptedAt", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'accepted_by',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestHist.prototype, "acceptedBy", void 0);
+BookingRequestHist = tslib_1.__decorate([
+    (0, typeorm_1.Entity)('booking_request_hist')
+], BookingRequestHist);
+exports.BookingRequestHist = BookingRequestHist;
+
+
+/***/ }),
+
 /***/ "./apps/backend/src/app/models/booking-request.entity.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -4328,22 +4911,6 @@ tslib_1.__decorate([
 ], BookingRequest.prototype, "roomId", void 0);
 tslib_1.__decorate([
     (0, typeorm_1.Column)({
-        name: "time_checkin",
-        nullable: false,
-        type: "timestamptz"
-    }),
-    tslib_1.__metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
-], BookingRequest.prototype, "timeCheckIn", void 0);
-tslib_1.__decorate([
-    (0, typeorm_1.Column)({
-        name: "time_checkout",
-        nullable: false,
-        type: "timestamptz"
-    }),
-    tslib_1.__metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
-], BookingRequest.prototype, "timeCheckOut", void 0);
-tslib_1.__decorate([
-    (0, typeorm_1.Column)({
         name: "requested_by",
         type: "uuid",
     }),
@@ -4356,7 +4923,7 @@ tslib_1.__decorate([
         type: "timestamptz",
         default: () => "CURRENT_TIMESTAMP"
     }),
-    tslib_1.__metadata("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
+    tslib_1.__metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
 ], BookingRequest.prototype, "requestedAt", void 0);
 tslib_1.__decorate([
     (0, typeorm_1.Column)({
@@ -4367,40 +4934,156 @@ tslib_1.__decorate([
 ], BookingRequest.prototype, "status", void 0);
 tslib_1.__decorate([
     (0, typeorm_1.Column)({
-        name: "booked_at",
-        nullable: false,
-        type: "timestamptz"
+        name: "booking_reason_id",
+        nullable: false
     }),
-    tslib_1.__metadata("design:type", typeof (_d = typeof Date !== "undefined" && Date) === "function" ? _d : Object)
-], BookingRequest.prototype, "bookedAt", void 0);
+    tslib_1.__metadata("design:type", String)
+], BookingRequest.prototype, "bookingReasonId", void 0);
 tslib_1.__decorate([
     (0, typeorm_1.Column)({
-        name: "checkin_at",
-        nullable: false,
-        type: "timestamptz"
+        name: "cancelled_by",
+        type: "uuid",
     }),
-    tslib_1.__metadata("design:type", typeof (_e = typeof Date !== "undefined" && Date) === "function" ? _e : Object)
-], BookingRequest.prototype, "checkedInAt", void 0);
+    tslib_1.__metadata("design:type", String)
+], BookingRequest.prototype, "cancelledBy", void 0);
 tslib_1.__decorate([
     (0, typeorm_1.Column)({
-        name: "checkout_at",
+        name: "cancelled_at",
         nullable: false,
-        type: "timestamptz"
+        type: "timestamptz",
+        default: () => "CURRENT_TIMESTAMP"
     }),
-    tslib_1.__metadata("design:type", typeof (_f = typeof Date !== "undefined" && Date) === "function" ? _f : Object)
-], BookingRequest.prototype, "checkedOutAt", void 0);
+    tslib_1.__metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
+], BookingRequest.prototype, "cancelledAt", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: "updated_by",
+        type: "uuid",
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequest.prototype, "updatedBy", void 0);
 tslib_1.__decorate([
     (0, typeorm_1.Column)({
         name: "updated_at",
         nullable: false,
-        type: "timestamptz"
+        type: "timestamptz",
+        default: () => "CURRENT_TIMESTAMP"
+    }),
+    tslib_1.__metadata("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
+], BookingRequest.prototype, "updatedAt", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: "accepted_by",
+        type: "uuid",
     }),
     tslib_1.__metadata("design:type", String)
-], BookingRequest.prototype, "updatedAt", void 0);
+], BookingRequest.prototype, "acceptedBy", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: "accepted_at",
+        nullable: false,
+        type: "timestamptz",
+        default: () => "CURRENT_TIMESTAMP"
+    }),
+    tslib_1.__metadata("design:type", typeof (_d = typeof Date !== "undefined" && Date) === "function" ? _d : Object)
+], BookingRequest.prototype, "acceptedAt", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: "checkin_slot",
+        nullable: false,
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequest.prototype, "checkinSlot", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: "checkout_slot",
+        nullable: false,
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequest.prototype, "checkoutSlot", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: "checkin_date",
+        nullable: false,
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequest.prototype, "checkinDate", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: "checkedin_at",
+        nullable: false,
+        type: "timestamptz"
+    }),
+    tslib_1.__metadata("design:type", typeof (_e = typeof Date !== "undefined" && Date) === "function" ? _e : Object)
+], BookingRequest.prototype, "checkedinAt", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: "checkedout_at",
+        nullable: false,
+        type: "timestamptz"
+    }),
+    tslib_1.__metadata("design:type", typeof (_f = typeof Date !== "undefined" && Date) === "function" ? _f : Object)
+], BookingRequest.prototype, "checkedoutAt", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'description',
+        type: 'varchar',
+        length: 500,
+    }),
+    tslib_1.__metadata("design:type", String)
+], BookingRequest.prototype, "description", void 0);
 BookingRequest = tslib_1.__decorate([
     (0, typeorm_1.Entity)("booking_request")
 ], BookingRequest);
 exports.BookingRequest = BookingRequest;
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/models/device-type-hist.entity.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.DeviceTypeHist = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_1 = __webpack_require__("typeorm");
+const base_entity_1 = __webpack_require__("./apps/backend/src/app/models/base/base.entity.ts");
+let DeviceTypeHist = class DeviceTypeHist extends base_entity_1.BaseEntity {
+};
+tslib_1.__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid', {
+        name: 'id',
+    }),
+    tslib_1.__metadata("design:type", String)
+], DeviceTypeHist.prototype, "id", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'device_type_id',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], DeviceTypeHist.prototype, "deviceTypeId", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'name',
+        type: 'varchar',
+        length: 100,
+    }),
+    tslib_1.__metadata("design:type", String)
+], DeviceTypeHist.prototype, "name", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'description',
+        type: 'varchar',
+        length: 500,
+    }),
+    tslib_1.__metadata("design:type", String)
+], DeviceTypeHist.prototype, "description", void 0);
+DeviceTypeHist = tslib_1.__decorate([
+    (0, typeorm_1.Entity)('device_type_hist')
+], DeviceTypeHist);
+exports.DeviceTypeHist = DeviceTypeHist;
 
 
 /***/ }),
@@ -4450,76 +5133,53 @@ exports.DeviceType = DeviceType;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var DevicesHist_1, _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DevicesHist = void 0;
+exports.DeviceHist = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const typeorm_1 = __webpack_require__("typeorm");
 const base_entity_1 = __webpack_require__("./apps/backend/src/app/models/base/base.entity.ts");
-let DevicesHist = DevicesHist_1 = class DevicesHist extends base_entity_1.BaseEntityWithDisabled {
+let DeviceHist = class DeviceHist extends base_entity_1.BaseEntityWithDisabled {
 };
 tslib_1.__decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('increment', {
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid', {
         name: 'id',
-        comment: 'ID for Equipment History',
-        type: 'bigint',
     }),
-    tslib_1.__metadata("design:type", Number)
-], DevicesHist.prototype, "equipmentsHistoryId", void 0);
+    tslib_1.__metadata("design:type", String)
+], DeviceHist.prototype, "id", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'device_id',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], DeviceHist.prototype, "deviceId", void 0);
 tslib_1.__decorate([
     (0, typeorm_1.Column)({
         name: 'name',
-        nullable: false,
-        unique: false,
-        length: 36,
         type: 'varchar',
-        comment: 'Old ID for Equipment',
+        length: 100,
     }),
     tslib_1.__metadata("design:type", String)
-], DevicesHist.prototype, "id", void 0);
+], DeviceHist.prototype, "name", void 0);
 tslib_1.__decorate([
     (0, typeorm_1.Column)({
-        name: 'name',
-        nullable: false,
-        unique: false,
-        length: 250,
-        type: 'varchar',
-        comment: 'Equipments name',
+        name: 'type',
+        type: 'uuid',
     }),
     tslib_1.__metadata("design:type", String)
-], DevicesHist.prototype, "name", void 0);
+], DeviceHist.prototype, "type", void 0);
 tslib_1.__decorate([
     (0, typeorm_1.Column)({
         name: 'description',
-        nullable: true,
-        unique: false,
-        length: 500,
         type: 'varchar',
-        comment: 'Equipments description',
+        length: 500,
     }),
     tslib_1.__metadata("design:type", String)
-], DevicesHist.prototype, "description", void 0);
-tslib_1.__decorate([
-    (0, typeorm_1.Column)({
-        name: 'effdate',
-        nullable: true,
-        type: 'timestamp',
-        default: () => 'CURRENT_TIMESTAMP',
-    }),
-    tslib_1.__metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
-], DevicesHist.prototype, "effDate", void 0);
-tslib_1.__decorate([
-    (0, typeorm_1.Column)({
-        name: 'inactive_date',
-        nullable: true,
-        type: 'timestamp',
-    }),
-    tslib_1.__metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
-], DevicesHist.prototype, "inactiveDate", void 0);
-DevicesHist = DevicesHist_1 = tslib_1.__decorate([
-    (0, typeorm_1.Entity)(DevicesHist_1.name.toLowerCase())
-], DevicesHist);
-exports.DevicesHist = DevicesHist;
+], DeviceHist.prototype, "description", void 0);
+DeviceHist = tslib_1.__decorate([
+    (0, typeorm_1.Entity)('device_hist')
+], DeviceHist);
+exports.DeviceHist = DeviceHist;
 
 
 /***/ }),
@@ -4567,7 +5227,7 @@ tslib_1.__decorate([
 ], Devices.prototype, "description", void 0);
 tslib_1.__decorate([
     (0, typeorm_1.Column)({
-        name: 'device_type_id',
+        name: 'type',
         nullable: false,
         unique: false,
         length: 250,
@@ -4575,7 +5235,7 @@ tslib_1.__decorate([
         comment: 'Equipments description',
     }),
     tslib_1.__metadata("design:type", String)
-], Devices.prototype, "deviceTypeId", void 0);
+], Devices.prototype, "type", void 0);
 Devices = Devices_1 = tslib_1.__decorate([
     (0, typeorm_1.Entity)(Devices_1.name.toLowerCase())
 ], Devices);
@@ -4591,15 +5251,70 @@ exports.Devices = Devices;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const tslib_1 = __webpack_require__("tslib");
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/account.entity.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/devices.entity.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/booking-request.entity.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/devices-hist.entity.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/room-wishlist.entity.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/users-otp.entity.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/users-warning-flag.entity.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/users-warning-flag.hist.entity.ts"), exports);
+tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/booking-reason-hist.entity.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/rooms.entity.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/room-type.entity.ts"), exports);
+tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/room-hist.entity.ts"), exports);
+tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/room-type-hist.entity.ts"), exports);
+tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/devices.entity.ts"), exports);
+tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/device-type.entity.ts"), exports);
+tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/devices-hist.entity.ts"), exports);
+tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/device-type-hist.entity.ts"), exports);
+tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/account-hist.entity.ts"), exports);
+tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/models/booking-request-hist.entity.ts"), exports);
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/models/role-hist.entity.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RoleHist = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_1 = __webpack_require__("typeorm");
+const base_entity_1 = __webpack_require__("./apps/backend/src/app/models/base/base.entity.ts");
+let RoleHist = class RoleHist extends base_entity_1.BaseEntity {
+};
+tslib_1.__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid', {
+        name: 'id',
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoleHist.prototype, "id", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'role_id',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoleHist.prototype, "roleId", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'name',
+        type: 'varchar',
+        length: 100,
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoleHist.prototype, "name", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'description',
+        type: 'varchar',
+        length: 500,
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoleHist.prototype, "description", void 0);
+RoleHist = tslib_1.__decorate([
+    (0, typeorm_1.Entity)('role_hist')
+], RoleHist);
+exports.RoleHist = RoleHist;
 
 
 /***/ }),
@@ -4639,6 +5354,110 @@ Roles = tslib_1.__decorate([
     (0, typeorm_1.Entity)('role')
 ], Roles);
 exports.Roles = Roles;
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/models/room-hist.entity.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RoomHist = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_1 = __webpack_require__("typeorm");
+const base_entity_1 = __webpack_require__("./apps/backend/src/app/models/base/base.entity.ts");
+let RoomHist = class RoomHist extends base_entity_1.BaseEntity {
+};
+tslib_1.__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid', {
+        name: 'id',
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoomHist.prototype, "id", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'room_id',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoomHist.prototype, "roomId", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'name',
+        type: 'varchar',
+        length: 100,
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoomHist.prototype, "name", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'description',
+        type: 'varchar',
+        length: 500,
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoomHist.prototype, "description", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'type',
+        type: 'varchar',
+        length: 500,
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoomHist.prototype, "type", void 0);
+RoomHist = tslib_1.__decorate([
+    (0, typeorm_1.Entity)('room_hist')
+], RoomHist);
+exports.RoomHist = RoomHist;
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/models/room-type-hist.entity.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RoomTypeHist = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_1 = __webpack_require__("typeorm");
+const base_entity_1 = __webpack_require__("./apps/backend/src/app/models/base/base.entity.ts");
+let RoomTypeHist = class RoomTypeHist extends base_entity_1.BaseEntity {
+};
+tslib_1.__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid', {
+        name: 'id',
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoomTypeHist.prototype, "id", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'room_type_id',
+        type: 'uuid',
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoomTypeHist.prototype, "roomTypeId", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'name',
+        type: 'varchar',
+        length: 100,
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoomTypeHist.prototype, "name", void 0);
+tslib_1.__decorate([
+    (0, typeorm_1.Column)({
+        name: 'description',
+        type: 'varchar',
+        length: 500,
+    }),
+    tslib_1.__metadata("design:type", String)
+], RoomTypeHist.prototype, "description", void 0);
+RoomTypeHist = tslib_1.__decorate([
+    (0, typeorm_1.Entity)('room_type_hist')
+], RoomTypeHist);
+exports.RoomTypeHist = RoomTypeHist;
 
 
 /***/ }),
@@ -5095,6 +5914,8 @@ const config_module_1 = __webpack_require__("./apps/backend/src/app/modules/glob
 const axios_1 = __webpack_require__("@nestjs/axios");
 const services_3 = __webpack_require__("./apps/backend/src/app/services/index.ts");
 const typeorm_ex_module_1 = __webpack_require__("./apps/backend/src/app/modules/global/typeorm-ex.module.ts");
+const account_hist_service_1 = __webpack_require__("./apps/backend/src/app/services/account-hist.service.ts");
+const account_hist_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/account-hist.repository.ts");
 let AccountsModule = class AccountsModule {
 };
 AccountsModule = tslib_1.__decorate([
@@ -5102,13 +5923,19 @@ AccountsModule = tslib_1.__decorate([
         imports: [
             config_module_1.default,
             axios_1.HttpModule,
-            typeorm_ex_module_1.TypeOrmExModule.forCustomRepository([repositories_1.AccountRepository])
+            typeorm_ex_module_1.TypeOrmExModule.forCustomRepository([
+                repositories_1.AccountRepository,
+                account_hist_repository_1.AccountHistRepository,
+            ]),
         ],
-        controllers: [
-            controllers_1.AccountsController
+        controllers: [controllers_1.AccountsController],
+        providers: [
+            services_1.AccountsService,
+            services_2.KeycloakService,
+            services_3.CloudinaryService,
+            account_hist_service_1.AccountHistService,
         ],
-        providers: [services_1.AccountsService, services_2.KeycloakService, services_3.CloudinaryService],
-        exports: [services_1.AccountsService]
+        exports: [services_1.AccountsService, account_hist_service_1.AccountHistService],
     })
 ], AccountsModule);
 exports.AccountsModule = AccountsModule;
@@ -5249,6 +6076,10 @@ const typeorm_ex_module_1 = __webpack_require__("./apps/backend/src/app/modules/
 const devices_module_1 = __webpack_require__("./apps/backend/src/app/modules/devices.module.ts");
 const task_service_1 = __webpack_require__("./apps/backend/src/app/services/task.service.ts");
 const accounts_module_1 = __webpack_require__("./apps/backend/src/app/modules/accounts.module.ts");
+const room_type_module_1 = __webpack_require__("./apps/backend/src/app/modules/room-type.module.ts");
+const booking_room_hist_service_1 = __webpack_require__("./apps/backend/src/app/services/booking-room-hist.service.ts");
+const booking_request_hist_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/booking-request-hist.repository.ts");
+const slot_module_1 = __webpack_require__("./apps/backend/src/app/modules/slot.module.ts");
 let BookingRoomModule = class BookingRoomModule {
 };
 BookingRoomModule = tslib_1.__decorate([
@@ -5259,15 +6090,17 @@ BookingRoomModule = tslib_1.__decorate([
             keycloak_module_1.KeycloakModule,
             rooms_module_1.RoomsModule,
             accounts_module_1.AccountsModule,
-            typeorm_ex_module_1.TypeOrmExModule.forCustomRepository([repositories_1.BookingRoomRepository, repositories_1.AccountRepository])
+            room_type_module_1.RoomTypeModule,
+            slot_module_1.SlotModule,
+            typeorm_ex_module_1.TypeOrmExModule.forCustomRepository([
+                repositories_1.BookingRoomRepository,
+                repositories_1.AccountRepository,
+                booking_request_hist_repository_1.BookingRequestHistRepository
+            ]),
         ],
-        controllers: [
-            controllers_1.BookingRoomController
-        ],
-        providers: [services_1.BookingRoomService, task_service_1.TasksService],
-        exports: [
-            services_1.BookingRoomService
-        ]
+        controllers: [controllers_1.BookingRoomController],
+        providers: [services_1.BookingRoomService, task_service_1.TasksService, booking_room_hist_service_1.BookingRequestHistService],
+        exports: [services_1.BookingRoomService, booking_room_hist_service_1.BookingRequestHistService],
     })
 ], BookingRoomModule);
 exports.BookingRoomModule = BookingRoomModule;
@@ -5317,6 +6150,9 @@ const accounts_module_1 = __webpack_require__("./apps/backend/src/app/modules/ac
 const config_module_1 = __webpack_require__("./apps/backend/src/app/modules/global/config.module.ts");
 const axios_1 = __webpack_require__("@nestjs/axios");
 const services_1 = __webpack_require__("./apps/backend/src/app/services/index.ts");
+const device_type_hist_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/device-type-hist.repository.ts");
+const device_type_hist_service_1 = __webpack_require__("./apps/backend/src/app/services/device-type-hist.service.ts");
+const devices_module_1 = __webpack_require__("./apps/backend/src/app/modules/devices.module.ts");
 let DeviceTypeModule = class DeviceTypeModule {
 };
 DeviceTypeModule = tslib_1.__decorate([
@@ -5325,11 +6161,12 @@ DeviceTypeModule = tslib_1.__decorate([
             config_module_1.default,
             axios_1.HttpModule,
             accounts_module_1.AccountsModule,
-            typeorm_ex_module_1.TypeOrmExModule.forCustomRepository([device_type_repository_1.DeviceTypeRepository]),
+            devices_module_1.DevicesModule,
+            typeorm_ex_module_1.TypeOrmExModule.forCustomRepository([device_type_repository_1.DeviceTypeRepository, device_type_hist_repository_1.DeviceTypeHistRepository]),
         ],
         controllers: [device_type_controller_1.DeviceTypeController],
-        exports: [device_type_service_1.DeviceTypeService],
-        providers: [device_type_service_1.DeviceTypeService, services_1.KeycloakService],
+        exports: [device_type_service_1.DeviceTypeService, device_type_hist_service_1.DeviceTypeHistService],
+        providers: [device_type_service_1.DeviceTypeService, services_1.KeycloakService, device_type_hist_service_1.DeviceTypeHistService],
     })
 ], DeviceTypeModule);
 exports.DeviceTypeModule = DeviceTypeModule;
@@ -5346,7 +6183,7 @@ exports.DevicesModule = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const controllers_1 = __webpack_require__("./apps/backend/src/app/controllers/index.ts");
-const controllers_2 = __webpack_require__("./apps/backend/src/app/controllers/index.ts");
+// import { EquipmentsHistoryController } from '../controllers';
 const services_1 = __webpack_require__("./apps/backend/src/app/services/index.ts");
 const services_2 = __webpack_require__("./apps/backend/src/app/services/index.ts");
 const repositories_1 = __webpack_require__("./apps/backend/src/app/repositories/index.ts");
@@ -5366,11 +6203,11 @@ DevicesModule = tslib_1.__decorate([
             accounts_module_1.AccountsModule,
             typeorm_ex_module_1.TypeOrmExModule.forCustomRepository([
                 repositories_1.DevicesRepository,
-                repositories_2.DevicesHistRepository,
+                repositories_2.DeviceHistRepository,
             ]),
         ],
-        controllers: [controllers_1.DevicesController, controllers_2.EquipmentsHistoryController],
-        providers: [services_1.DevicesService, services_2.DevicesHistService, services_3.KeycloakService],
+        controllers: [controllers_1.DevicesController],
+        providers: [services_1.DevicesService, services_2.DeviceHistService, services_3.KeycloakService],
         exports: [services_1.DevicesService],
     })
 ], DevicesModule);
@@ -5505,6 +6342,7 @@ const models_2 = __webpack_require__("./apps/backend/src/app/models/index.ts");
 const device_type_entity_1 = __webpack_require__("./apps/backend/src/app/models/device-type.entity.ts");
 const booking_reason_entity_1 = __webpack_require__("./apps/backend/src/app/models/booking-reason.entity.ts");
 const slot_entity_1 = __webpack_require__("./apps/backend/src/app/models/slot.entity.ts");
+const role_hist_entity_1 = __webpack_require__("./apps/backend/src/app/models/role-hist.entity.ts");
 const GlobalTypeOrmModule = typeorm_1.TypeOrmModule.forRootAsync({
     imports: [config_1.ConfigModule],
     useFactory: (configService) => ({
@@ -5516,20 +6354,25 @@ const GlobalTypeOrmModule = typeorm_1.TypeOrmModule.forRootAsync({
         database: configService.get(constants_1.Environment.db.postgres.database),
         entities: [
             models_1.Accounts,
+            models_1.AccountHist,
             models_1.Rooms,
-            models_1.BookingRequest,
+            models_1.RoomHist,
+            models_2.RoomType,
+            models_1.RoomTypeHist,
             models_1.Devices,
-            models_1.DevicesHist,
+            device_type_entity_1.DeviceType,
+            models_1.DeviceHist,
+            models_1.DeviceTypeHist,
+            models_1.BookingRequest,
             models_1.RoomWishlist,
-            models_1.Rooms,
             models_1.UsersOTP,
             models_1.UsersWarningFlag,
             models_1.UsersWarningFlagHistory,
             role_entity_1.Roles,
-            models_2.RoomType,
-            device_type_entity_1.DeviceType,
+            role_hist_entity_1.RoleHist,
             booking_reason_entity_1.BookingReason,
             slot_entity_1.Slot,
+            models_1.BookingReasonHist,
         ],
         synchronize: configService.get(constants_1.Environment.db.postgres.synchronize),
         logging: ['query'],
@@ -5673,6 +6516,9 @@ const services_1 = __webpack_require__("./apps/backend/src/app/services/index.ts
 const config_module_1 = __webpack_require__("./apps/backend/src/app/modules/global/config.module.ts");
 const axios_1 = __webpack_require__("@nestjs/axios");
 const accounts_module_1 = __webpack_require__("./apps/backend/src/app/modules/accounts.module.ts");
+const room_type_hist_service_1 = __webpack_require__("./apps/backend/src/app/services/room-type-hist.service.ts");
+const room_type_hist_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/room-type-hist.repository.ts");
+const rooms_module_1 = __webpack_require__("./apps/backend/src/app/modules/rooms.module.ts");
 let RoomTypeModule = class RoomTypeModule {
 };
 RoomTypeModule = tslib_1.__decorate([
@@ -5681,11 +6527,22 @@ RoomTypeModule = tslib_1.__decorate([
             config_module_1.default,
             axios_1.HttpModule,
             accounts_module_1.AccountsModule,
-            typeorm_ex_module_1.TypeOrmExModule.forCustomRepository([room_type_repository_1.RoomTypeRepository]),
+            rooms_module_1.RoomsModule,
+            typeorm_ex_module_1.TypeOrmExModule.forCustomRepository([
+                room_type_repository_1.RoomTypeRepository,
+                room_type_hist_repository_1.RoomTypeHistRepository,
+            ]),
         ],
-        exports: [room_type_service_1.RoomTypeService],
         controllers: [room_type_controller_1.RoomTypeController],
-        providers: [room_type_service_1.RoomTypeService, services_1.KeycloakService],
+        exports: [
+            room_type_service_1.RoomTypeService,
+            room_type_hist_service_1.RoomTypeHistService,
+        ],
+        providers: [
+            room_type_service_1.RoomTypeService,
+            services_1.KeycloakService,
+            room_type_hist_service_1.RoomTypeHistService,
+        ],
     })
 ], RoomTypeModule);
 exports.RoomTypeModule = RoomTypeModule;
@@ -5738,24 +6595,22 @@ const config_module_1 = __webpack_require__("./apps/backend/src/app/modules/glob
 const typeorm_ex_module_1 = __webpack_require__("./apps/backend/src/app/modules/global/typeorm-ex.module.ts");
 const keycloak_module_1 = __webpack_require__("./apps/backend/src/app/modules/keycloak.module.ts");
 const accounts_module_1 = __webpack_require__("./apps/backend/src/app/modules/accounts.module.ts");
+const room_hist_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/room-hist.repository.ts");
+const room_hist_service_1 = __webpack_require__("./apps/backend/src/app/services/room-hist.service.ts");
 let RoomsModule = class RoomsModule {
 };
 RoomsModule = tslib_1.__decorate([
     (0, common_1.Module)({
         imports: [
             accounts_module_1.AccountsModule,
-            typeorm_ex_module_1.TypeOrmExModule.forCustomRepository([
-                repositories_1.RoomsRepository,
-            ]),
+            typeorm_ex_module_1.TypeOrmExModule.forCustomRepository([repositories_1.RoomsRepository, room_hist_repository_1.RoomHistRepository]),
             axios_1.HttpModule,
             config_module_1.default,
-            keycloak_module_1.KeycloakModule
+            keycloak_module_1.KeycloakModule,
         ],
-        controllers: [
-            controllers_1.RoomsController
-        ],
-        providers: [services_1.RoomsService],
-        exports: [services_1.RoomsService]
+        controllers: [controllers_1.RoomsController],
+        providers: [services_1.RoomsService, room_hist_service_1.RoomHistService],
+        exports: [services_1.RoomsService, room_hist_service_1.RoomHistService],
     })
 ], RoomsModule);
 exports.RoomsModule = RoomsModule;
@@ -5834,11 +6689,228 @@ exports.UsersWarningFlagModule = UsersWarningFlagModule;
 
 /***/ }),
 
+/***/ "./apps/backend/src/app/payload/request/account-add.request.payload.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AccountAddRequestPayload = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const pagination_model_1 = __webpack_require__("./apps/backend/src/app/controllers/pagination.model.ts");
+const class_validator_1 = __webpack_require__("class-validator");
+const class_transformer_1 = __webpack_require__("class-transformer");
+const swagger_1 = __webpack_require__("@nestjs/swagger");
+class AccountAddRequestPayload extends pagination_model_1.PaginationParams {
+}
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.MinLength)(8),
+    (0, class_validator_1.MaxLength)(100),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'Userame can not be empty',
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountAddRequestPayload.prototype, "username", void 0);
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.MinLength)(8),
+    (0, class_validator_1.MaxLength)(100),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'FullName can not be empty',
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountAddRequestPayload.prototype, "fullname", void 0);
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.MinLength)(11),
+    (0, class_validator_1.MaxLength)(11),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    tslib_1.__metadata("design:type", String)
+], AccountAddRequestPayload.prototype, "phone", void 0);
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.MinLength)(11),
+    (0, class_validator_1.MaxLength)(11),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    tslib_1.__metadata("design:type", String)
+], AccountAddRequestPayload.prototype, "email", void 0);
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.MaxLength)(100),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'Description can not be empty',
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountAddRequestPayload.prototype, "description", void 0);
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'Role can not be empty',
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountAddRequestPayload.prototype, "roleId", void 0);
+tslib_1.__decorate([
+    (0, swagger_1.ApiProperty)({
+        name: 'avatar',
+        description: 'Avatar of the account',
+        required: true,
+        type: String,
+        title: 'avatar',
+        example: 'http://google.com/',
+        minLength: 1,
+        maxLength: 256,
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountAddRequestPayload.prototype, "avatar", void 0);
+tslib_1.__decorate([
+    (0, swagger_1.ApiProperty)({
+        name: 'isDisabled',
+        description: 'Is the account should be disabled',
+        type: Boolean,
+        example: true,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    tslib_1.__metadata("design:type", Boolean)
+], AccountAddRequestPayload.prototype, "isDisabled", void 0);
+exports.AccountAddRequestPayload = AccountAddRequestPayload;
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/payload/request/account-update-profile.request.payload.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AccountUpdateProfilePayload = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const pagination_model_1 = __webpack_require__("./apps/backend/src/app/controllers/pagination.model.ts");
+const class_validator_1 = __webpack_require__("class-validator");
+const class_transformer_1 = __webpack_require__("class-transformer");
+class AccountUpdateProfilePayload extends pagination_model_1.PaginationParams {
+}
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'Full name can not be empty',
+    }),
+    (0, class_validator_1.MinLength)(0),
+    (0, class_validator_1.MaxLength)(55),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], AccountUpdateProfilePayload.prototype, "fullname", void 0);
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'Email can not be empty',
+    }),
+    (0, class_validator_1.IsEmail)(),
+    tslib_1.__metadata("design:type", String)
+], AccountUpdateProfilePayload.prototype, "email", void 0);
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.Matches)(/[0-9]/, {
+        message: 'Phone number must be numbers'
+    }),
+    (0, class_validator_1.MinLength)(10),
+    (0, class_validator_1.MaxLength)(11),
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'Phone can not be empty',
+    }),
+    tslib_1.__metadata("design:type", String)
+], AccountUpdateProfilePayload.prototype, "phone", void 0);
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.IsOptional)(),
+    tslib_1.__metadata("design:type", String)
+], AccountUpdateProfilePayload.prototype, "description", void 0);
+exports.AccountUpdateProfilePayload = AccountUpdateProfilePayload;
+
+
+/***/ }),
+
 /***/ "./apps/backend/src/app/payload/request/booking-reason.request.payload.ts":
 /***/ ((__unused_webpack_module, exports) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/payload/request/booking-request-add.request.payload.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BookingRequestAddRequestPayload = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const pagination_model_1 = __webpack_require__("./apps/backend/src/app/controllers/pagination.model.ts");
+const class_validator_1 = __webpack_require__("class-validator");
+const class_transformer_1 = __webpack_require__("class-transformer");
+class BookingRequestAddRequestPayload extends pagination_model_1.PaginationParams {
+}
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.MaxLength)(100),
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'Room can not be empty',
+    }),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestAddRequestPayload.prototype, "roomId", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'Day checkin can not be empty',
+    }),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestAddRequestPayload.prototype, "checkinDate", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestAddRequestPayload.prototype, "checkoutDate", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'Slot check in can not be empty',
+    }),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestAddRequestPayload.prototype, "checkinSlot", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'Slot check out can not be empty',
+    }),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestAddRequestPayload.prototype, "checkoutSlot", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.MaxLength)(500),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestAddRequestPayload.prototype, "description", void 0);
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'Reason type can not be empty',
+    }),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], BookingRequestAddRequestPayload.prototype, "bookingReasonId", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    tslib_1.__metadata("design:type", Array)
+], BookingRequestAddRequestPayload.prototype, "device", void 0);
+exports.BookingRequestAddRequestPayload = BookingRequestAddRequestPayload;
 
 
 /***/ }),
@@ -5891,51 +6963,60 @@ exports.ChangeProfilePasswordRequest = ChangeProfilePasswordRequest;
 
 /***/ }),
 
-/***/ "./apps/backend/src/app/payload/request/devices.payload.ts":
+/***/ "./apps/backend/src/app/payload/request/data-add.request.payload.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DevicesRequestPayload = void 0;
+exports.DataAddRequestPayload = void 0;
 const tslib_1 = __webpack_require__("tslib");
+const pagination_model_1 = __webpack_require__("./apps/backend/src/app/controllers/pagination.model.ts");
 const class_validator_1 = __webpack_require__("class-validator");
-const global_validator_1 = __webpack_require__("./apps/backend/src/app/pipes/validation/global.validator.ts");
-class DevicesRequestPayload {
+const class_transformer_1 = __webpack_require__("class-transformer");
+const swagger_1 = __webpack_require__("@nestjs/swagger");
+class DataAddRequestPayload extends pagination_model_1.PaginationParams {
 }
 tslib_1.__decorate([
-    (0, class_validator_1.IsString)({
-        message: 'Search property must be a string'
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
+    (0, class_validator_1.MaxLength)(100),
+    (0, class_validator_1.IsNotEmpty)({
+        message: 'Name can not be empty',
     }),
     tslib_1.__metadata("design:type", String)
-], DevicesRequestPayload.prototype, "search", void 0);
+], DataAddRequestPayload.prototype, "name", void 0);
 tslib_1.__decorate([
-    (0, class_validator_1.IsNotEmpty)({
-        message: 'Page property must not be empty'
+    (0, swagger_1.ApiProperty)({
+        name: 'description',
+        description: 'Description to be added',
+        maxLength: 500,
+        minLength: 0,
+        type: String,
+        example: 'New entity',
     }),
-    (0, class_validator_1.IsNumber)(global_validator_1.validationConfig.number),
-    (0, class_validator_1.Max)(2147483647, {
-        message: 'Page number is invalid'
-    }),
-    (0, class_validator_1.Min)(1, {
-        message: 'Page number must be positive integer'
-    }),
-    tslib_1.__metadata("design:type", Number)
-], DevicesRequestPayload.prototype, "page", void 0);
+    (0, class_validator_1.MaxLength)(500),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], DataAddRequestPayload.prototype, "description", void 0);
 tslib_1.__decorate([
+    (0, swagger_1.ApiProperty)({
+        name: 'isDisabled',
+        description: 'Is the room should be disabled',
+        type: Boolean,
+        example: true,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    tslib_1.__metadata("design:type", Boolean)
+], DataAddRequestPayload.prototype, "isDisabled", void 0);
+tslib_1.__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
     (0, class_validator_1.IsNotEmpty)({
-        message: 'Size must not be empty'
+        message: 'Type can not be empty',
     }),
-    (0, class_validator_1.Max)(2147483647, {
-        message: 'Size number is invalid'
-    }),
-    (0, class_validator_1.Min)(1, {
-        message: 'Size number must be positive integer'
-    }),
-    (0, class_validator_1.IsNumber)(global_validator_1.validationConfig.number),
-    tslib_1.__metadata("design:type", Number)
-], DevicesRequestPayload.prototype, "limit", void 0);
-exports.DevicesRequestPayload = DevicesRequestPayload;
-;
+    tslib_1.__metadata("design:type", String)
+], DataAddRequestPayload.prototype, "type", void 0);
+exports.DataAddRequestPayload = DataAddRequestPayload;
 
 
 /***/ }),
@@ -5955,7 +7036,7 @@ class MasterDataAddRequestPayload extends pagination_model_1.PaginationParams {
 tslib_1.__decorate([
     (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
     (0, class_validator_1.IsNotEmpty)({
-        message: 'Name of type can not be empty',
+        message: 'Name can not be empty',
     }),
     tslib_1.__metadata("design:type", String)
 ], MasterDataAddRequestPayload.prototype, "name", void 0);
@@ -5964,62 +7045,6 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], MasterDataAddRequestPayload.prototype, "description", void 0);
 exports.MasterDataAddRequestPayload = MasterDataAddRequestPayload;
-
-
-/***/ }),
-
-/***/ "./apps/backend/src/app/payload/request/users.payload.ts":
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UsersRequestPayload = void 0;
-const tslib_1 = __webpack_require__("tslib");
-const class_validator_1 = __webpack_require__("class-validator");
-const contains_many_validator_1 = __webpack_require__("./apps/backend/src/app/validators/contains-many.validator.ts");
-const global_validator_1 = __webpack_require__("./apps/backend/src/app/pipes/validation/global.validator.ts");
-class UsersRequestPayload {
-}
-tslib_1.__decorate([
-    (0, class_validator_1.IsString)({
-        message: 'Search property must be a string'
-    }),
-    tslib_1.__metadata("design:type", String)
-], UsersRequestPayload.prototype, "search", void 0);
-tslib_1.__decorate([
-    (0, class_validator_1.IsNotEmpty)({
-        message: 'Page property must not be empty'
-    }),
-    (0, class_validator_1.IsNumber)(global_validator_1.validationConfig.number),
-    (0, class_validator_1.Max)(2147483647, {
-        message: 'Page number is invalid'
-    }),
-    (0, class_validator_1.Min)(1, {
-        message: 'Page number must be positive integer'
-    }),
-    tslib_1.__metadata("design:type", Number)
-], UsersRequestPayload.prototype, "page", void 0);
-tslib_1.__decorate([
-    (0, class_validator_1.IsNotEmpty)({
-        message: 'Size must not be empty'
-    }),
-    (0, class_validator_1.Max)(2147483647, {
-        message: 'Size number is invalid'
-    }),
-    (0, class_validator_1.Min)(1, {
-        message: 'Size number must be positive integer'
-    }),
-    (0, class_validator_1.IsNumber)(global_validator_1.validationConfig.number),
-    tslib_1.__metadata("design:type", Number)
-], UsersRequestPayload.prototype, "limit", void 0);
-tslib_1.__decorate([
-    (0, contains_many_validator_1.ContainsMany)(["ASC", "DESC"], {
-        message: `Sorting option must be 'ASC' or 'DESC'`
-    }),
-    tslib_1.__metadata("design:type", Object)
-], UsersRequestPayload.prototype, "sort", void 0);
-exports.UsersRequestPayload = UsersRequestPayload;
-;
 
 
 /***/ }),
@@ -6160,22 +7185,6 @@ exports.DevicesValidation = DevicesValidation;
 
 /***/ }),
 
-/***/ "./apps/backend/src/app/pipes/validation/global.validator.ts":
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.validationConfig = void 0;
-exports.validationConfig = {
-    number: {
-        allowNaN: false,
-        allowInfinity: false
-    },
-};
-
-
-/***/ }),
-
 /***/ "./apps/backend/src/app/pipes/validation/rooms.validation.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -6254,6 +7263,34 @@ exports.UsersValidation = UsersValidation;
 
 /***/ }),
 
+/***/ "./apps/backend/src/app/repositories/account-hist.repository.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AccountHistRepository = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_1 = __webpack_require__("typeorm");
+const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/typeorm-ex.decorator.ts");
+const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
+let AccountHistRepository = class AccountHistRepository extends typeorm_1.Repository {
+    createNew(payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            console.log("AAAAAAAAAA: ", payload);
+            const accountId = payload.id;
+            delete payload.id;
+            return this.save(Object.assign({ accountId: accountId }, payload));
+        });
+    }
+};
+AccountHistRepository = tslib_1.__decorate([
+    (0, typeorm_ex_decorator_1.CustomRepository)(models_1.AccountHist)
+], AccountHistRepository);
+exports.AccountHistRepository = AccountHistRepository;
+
+
+/***/ }),
+
 /***/ "./apps/backend/src/app/repositories/account.repository.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -6267,12 +7304,57 @@ const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decor
 const nestjs_typeorm_paginate_1 = __webpack_require__("nestjs-typeorm-paginate");
 const role_entity_1 = __webpack_require__("./apps/backend/src/app/models/role.entity.ts");
 let AccountRepository = class AccountRepository extends typeorm_1.Repository {
+    existsById(id) {
+        return this.createQueryBuilder('accounts')
+            .select('COUNT(1)', 'count')
+            .where('accounts.id = :id', { id: id })
+            .getRawOne()
+            .then((data) => (data === null || data === void 0 ? void 0 : data.count) > 0);
+    }
+    getRoleOfAccount(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('account')
+                .select('role.name')
+                .innerJoin(role_entity_1.Roles, 'role', 'role.id = account.role_id')
+                .where('account.disabled_at IS NULL')
+                .andWhere('account.deleted_at IS NULL')
+                .andWhere('account.id = :accountId', { accountId: id })
+                .getRawOne();
+        });
+    }
+    checkIfAccountIsDeletedById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('accounts')
+                .select('accounts.deleted_at')
+                .where('accounts.id = :id', { id: id })
+                .getRawOne()
+                .then((data) => (data ? data['deleted_at'] : true));
+        });
+    }
+    checkIfAccountIsDisabledById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('accounts')
+                .select('accounts.disabled_at')
+                .where('accounts.id = :id', { id: id })
+                .getRawOne()
+                .then((data) => (data ? data['disabled_at'] : true));
+        });
+    }
     findKeycloakIdByGoogleId(googleId) {
         return this.createQueryBuilder('accounts')
             .select('accounts.keycloak_id', 'keycloakId')
             .where('accounts.google_id = :googleId', { googleId: googleId })
             .getRawOne()
             .then((data) => data === null || data === void 0 ? void 0 : data.keycloakId);
+    }
+    isExistedByUsername(username) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('accounts')
+                .select('COUNT(accounts.username)')
+                .where('accounts.username = :username', { username })
+                .getRawOne()
+                .then((data) => data['count'] > 0);
+        });
     }
     checkIfUserAlreadyHasAvatar(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -6282,23 +7364,6 @@ let AccountRepository = class AccountRepository extends typeorm_1.Repository {
                 .getRawOne();
             return data.length > 0;
         });
-    }
-    addAvatarURLById(avatarUrl, id) {
-        return this.createQueryBuilder('accounts')
-            .update()
-            .set({
-            avatar: avatarUrl,
-        })
-            .where('accounts.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
-    }
-    findByGoogleId(googleId) {
-        return this.createQueryBuilder('accounts')
-            .where('accounts.googleId = :googleId', { googleId })
-            .andWhere('accounts.disabled_at IS NULL')
-            .andWhere('accounts.deleted_at IS NULL')
-            .getOneOrFail();
     }
     findByKeycloakId(keycloakId) {
         return this.createQueryBuilder('accounts')
@@ -6319,14 +7384,43 @@ let AccountRepository = class AccountRepository extends typeorm_1.Repository {
             .andWhere('accounts.deleted_at IS NULL')
             .getOneOrFail();
     }
-    updateGoogleIdByEmail(userGoogleId, email) {
+    findByGoogleId(googleId) {
         return this.createQueryBuilder('accounts')
-            .update({
-            googleId: userGoogleId,
+            .where('accounts.googleId = :googleId', { googleId })
+            .andWhere('accounts.disabled_at IS NULL')
+            .andWhere('accounts.deleted_at IS NULL')
+            .getOneOrFail();
+    }
+    searchAccount(payload) {
+        const query = this.createQueryBuilder('account')
+            .select('account.id', 'id')
+            .addSelect('account.username', 'username')
+            .addSelect('account.description', 'description')
+            .addSelect('account.fullname', 'fullname')
+            .addSelect('account.createdAt', 'createdAt')
+            .addSelect('account.updatedAt', 'updatedAt')
+            .addSelect('account.email', 'email')
+            .addSelect('role.name', 'role')
+            .addSelect('a.username', 'createdBy')
+            .addSelect('aa.username', 'updatedBy')
+            .leftJoin(models_1.Accounts, 'a', 'a.id = account.created_by')
+            .leftJoin(models_1.Accounts, 'aa', 'aa.id = account.updated_by')
+            .innerJoin(role_entity_1.Roles, 'role', 'role.id = account.role_id')
+            .where('LOWER(account.fullname) ILIKE LOWER(:search)', {
+            search: `%${payload.search.trim()}%`,
         })
-            .where('accounts.email = :email', { email: email })
-            .useTransaction(true)
-            .execute();
+            .andWhere('account.deleted_at IS NULL')
+            .andWhere('account.disabled_at IS NULL')
+            .orderBy(payload.sort, payload.dir);
+        if (payload.role && payload.role !== '') {
+            query.andWhere('role.name = :role', {
+                role: payload.role,
+            });
+        }
+        return (0, nestjs_typeorm_paginate_1.paginateRaw)(query, {
+            limit: payload.limit,
+            page: payload.page,
+        });
     }
     getAccountsByRoleId(roleId) {
         return this.createQueryBuilder(`account`)
@@ -6351,25 +7445,27 @@ let AccountRepository = class AccountRepository extends typeorm_1.Repository {
             return result.size;
         });
     }
-    search(payload) {
-        const query = this.createQueryBuilder(`accounts`)
-            .where(`accounts.name LIKE :name`, { name: `%${payload.search}%` })
-            .orWhere(`accounts.description LIKE :description`, {
-            description: `%${payload.search}%`,
-        })
-            .andWhere('accounts.disabled_at IS NULL')
-            .andWhere('accounts.deleted_at IS NULL')
-            .orWhere(`accounts.username = :username`, {
-            username: `%${payload.search}%`,
-        })
-            .orWhere(`accounts.description = :description`, {
-            description: `%${payload.search}%`,
-        });
-        return (0, nestjs_typeorm_paginate_1.paginateRaw)(query, {
-            page: payload.page,
-            limit: payload.limit,
-        });
-    }
+    // search(
+    //   payload: RepositoryPaginationPayload
+    // ): Promise<Pagination<Accounts, IPaginationMeta>> {
+    //   const query = this.createQueryBuilder(`accounts`)
+    //     .where(`accounts.name LIKE :name`, { name: `%${payload.search}%` })
+    //     .orWhere(`accounts.description LIKE :description`, {
+    //       description: `%${payload.search}%`,
+    //     })
+    //     .andWhere('accounts.disabled_at IS NULL')
+    //     .andWhere('accounts.deleted_at IS NULL')
+    //     .orWhere(`accounts.username = :username`, {
+    //       username: `%${payload.search}%`,
+    //     })
+    //     .orWhere(`accounts.description = :description`, {
+    //       description: `%${payload.search}%`,
+    //     });
+    //   return paginateRaw<Accounts>(query, {
+    //     page: payload.page,
+    //     limit: payload.limit,
+    //   });
+    // }
     findIdByKeycloakId(keycloakId) {
         return this.createQueryBuilder('accounts')
             .select('accounts.id', 'id')
@@ -6393,59 +7489,199 @@ let AccountRepository = class AccountRepository extends typeorm_1.Repository {
                 .then((data) => (data ? data['avatar'] : undefined));
         });
     }
-    restoreDisabledAccountById(id) {
+    addAvatarURLById(avatarUrl, id) {
         return this.createQueryBuilder('accounts')
-            .update({
-            disabledBy: null,
-            disabledAt: null,
+            .update()
+            .set({
+            avatar: avatarUrl,
         })
             .where('accounts.id = :id', { id: id })
             .useTransaction(true)
             .execute();
     }
-    findDisabledAccounts() {
-        return this.createQueryBuilder('accounts')
-            .andWhere('accounts.disabled_at IS NOT NULL')
-            .andWhere('accounts.deleted_at IS NULL')
-            .getMany();
+    createNewAccount(payload, userId) {
+        if (payload.isDisabled) {
+            return this.save({
+                username: payload.username,
+                fullname: payload.fullname,
+                email: payload.email,
+                phone: payload.phone,
+                roleId: payload.roleId,
+                description: payload.description,
+                createdBy: userId,
+                createdAt: new Date(),
+                disabledBy: userId,
+                disabledAt: new Date(),
+            }, {
+                transaction: true,
+            });
+        }
+        else {
+            return this.save({
+                username: payload.username,
+                fullname: payload.fullname,
+                email: payload.email,
+                phone: payload.phone,
+                roleId: payload.roleId,
+                description: payload.description,
+                createdBy: userId,
+                createdAt: new Date(),
+            }, {
+                transaction: true,
+            });
+        }
     }
-    findDeletedAccounts() {
-        return this.createQueryBuilder('accounts')
-            .where('accounts.deleted_at IS NOT NULL')
-            .getMany();
+    updatePartially(body, account, accountId) {
+        return this.save(Object.assign(Object.assign({}, account), { fullname: body.fullname, email: body.email, phone: body.phone, description: body.description, updatedBy: accountId, roleId: body.roleId }), {
+            transaction: true,
+        });
     }
-    restoreAccountById(id) {
+    updateGoogleIdByEmail(userGoogleId, email) {
+        return this.createQueryBuilder('accounts')
+            .update({
+            googleId: userGoogleId,
+        })
+            .where('accounts.email = :email', { email: email })
+            .useTransaction(true)
+            .execute();
+    }
+    disableById(accountId, id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return this.createQueryBuilder('accounts')
+            const isDisabled = yield this.createQueryBuilder('account')
                 .update({
-                deletedAt: null,
-                deletedBy: null,
+                disabledBy: accountId,
+                disabledAt: new Date(),
+            })
+                .where('account.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isDisabled.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
+    }
+    findDisabledAccounts(search) {
+        return this.createQueryBuilder('account')
+            .select('account.id', 'id')
+            .addSelect('account.username', 'username')
+            .addSelect('account.fullname', 'fullname')
+            .addSelect('account.description', 'description')
+            .addSelect('account.role_id', 'roleId')
+            .addSelect('account.email', 'email')
+            .addSelect('account.phone', 'phone')
+            .addSelect('account.disabledAt', 'disabledAt')
+            .addSelect('a.username', 'disabledBy')
+            .leftJoin(models_1.Accounts, 'a', 'a.id = account.disabled_by')
+            .andWhere('account.disabled_at IS NOT NULL')
+            .andWhere('account.deleted_at IS NULL')
+            .andWhere('account.username ILIKE :name', { name: `%${search.trim()}%` })
+            .getRawMany();
+    }
+    restoreDisabledAccountById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isRestored = yield this.createQueryBuilder('accounts')
+                .update({
+                disabledAt: null,
+                disabledBy: null,
+                updatedBy: accountId,
+                updatedAt: new Date(),
             })
                 .where('accounts.id = :id', { id: id })
                 .useTransaction(true)
                 .execute();
+            if (isRestored.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
         });
     }
-    disableAccountById(id) {
-        return this.createQueryBuilder('accounts')
-            .update({
-            disabledAt: new Date(),
-            disabledBy: '',
-        })
-            .where('accounts.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
+    deleteById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isDeleted = yield this.createQueryBuilder('accounts')
+                .update({
+                deletedAt: new Date(),
+                deletedBy: accountId,
+                disabledAt: null,
+                disabledBy: null,
+            })
+                .where('accounts.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isDeleted.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
+    }
+    findDeletedAccounts(search) {
+        return (this.createQueryBuilder('account')
+            .select('account.id', 'id')
+            .addSelect('account.username', 'username')
+            .addSelect('account.fullname', 'fullname')
+            .addSelect('account.description', 'description')
+            .addSelect('account.role_id', 'roleId')
+            .addSelect('account.email', 'email')
+            .addSelect('account.phone', 'phone')
+            .addSelect('account.deletedAt', 'deletedAt')
+            .addSelect('a.username', 'deletedBy')
+            .leftJoin(models_1.Accounts, 'a', 'a.id = account.deleted_by')
+            .andWhere('account.deleted_at IS NOT NULL')
+            .andWhere('account.username ILIKE :name', { name: `%${search.trim()}%` })
+            // .andWhere('account.deleted_at IS NULL')
+            .getRawMany());
+    }
+    restoreDeletedAccountById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isRestored = yield this.createQueryBuilder('accounts')
+                .update({
+                deletedAt: null,
+                deletedBy: null,
+                updatedAt: new Date(),
+                updatedBy: accountId,
+            })
+                .where('accounts.id = :id', { id: id })
+                .execute();
+            if (isRestored.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
     }
     findById(id) {
-        return this.findOneOrFail({
-            where: {
-                id: id,
-            },
-        });
-    }
-    updatePartially(body, account) {
-        return this.save(Object.assign(Object.assign({}, account), body), {
-            transaction: true,
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('account')
+                .select('account.id', 'id')
+                .addSelect('account.username', 'username')
+                .addSelect('account.description', 'description')
+                .addSelect('account.fullname', 'fullname')
+                .addSelect('account.createdAt', 'createdAt')
+                .addSelect('account.updatedAt', 'updatedAt')
+                .addSelect('account.role_id', 'roleId')
+                .addSelect('account.email', 'email')
+                .addSelect('account.phone', 'phone')
+                .addSelect('role.name', 'role')
+                .addSelect('a.username', 'createdBy')
+                .addSelect('aa.username', 'updatedBy')
+                .leftJoin(models_1.Accounts, 'a', 'a.id = account.created_by')
+                .leftJoin(models_1.Accounts, 'aa', 'aa.id = account.updated_by')
+                .innerJoin(role_entity_1.Roles, 'role', 'role.id = account.role_id')
+                .where('account.disabled_at IS NULL')
+                .andWhere('account.deleted_at IS NULL')
+                .andWhere('account.id = :accountId', { accountId: id })
+                .getRawOne();
         });
     }
     findRoleByKeycloakId(keycloakId) {
@@ -6495,13 +7731,6 @@ let AccountRepository = class AccountRepository extends typeorm_1.Repository {
             .getRawMany()
             .then((data) => data.map((acc) => acc.username));
     }
-    existsById(id) {
-        return this.createQueryBuilder('accounts')
-            .select('COUNT(1)', 'count')
-            .where('accounts.id = :id', { id: id })
-            .getRawOne()
-            .then((data) => data['count'] > 0);
-    }
 };
 AccountRepository = tslib_1.__decorate([
     (0, typeorm_ex_decorator_1.CustomRepository)(models_1.Accounts)
@@ -6521,11 +7750,23 @@ const tslib_1 = __webpack_require__("tslib");
 const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/typeorm-ex.decorator.ts");
 const typeorm_1 = __webpack_require__("typeorm");
 const booking_reason_hist_entity_1 = __webpack_require__("./apps/backend/src/app/models/booking-reason-hist.entity.ts");
-const crypto_1 = __webpack_require__("crypto");
 let BookingReasonHistRepository = class BookingReasonHistRepository extends typeorm_1.Repository {
     createNew(payload) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return this.save(Object.assign({ id: (0, crypto_1.randomUUID)(), bookingReasonId: payload.id }, payload));
+            const bookingReasonId = payload.id;
+            delete payload.id;
+            return this.save(Object.assign({ bookingReasonId: bookingReasonId }, payload), {
+                transaction: true,
+            });
+        });
+    }
+    deleteAllHist(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return yield this.createQueryBuilder('booking_reason_hist')
+                .delete()
+                .where('booking_reason_hist.booking_reason_id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
         });
     }
 };
@@ -6551,6 +7792,13 @@ const booking_reason_entity_1 = __webpack_require__("./apps/backend/src/app/mode
 const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
 const common_1 = __webpack_require__("@nestjs/common");
 let BookingReasonRepository = class BookingReasonRepository extends typeorm_1.Repository {
+    existsById(id) {
+        return this.createQueryBuilder('rt')
+            .select('COUNT(1)', 'count')
+            .where('rt.id = :id', { id: id })
+            .getRawOne()
+            .then((data) => (data === null || data === void 0 ? void 0 : data.count) > 0);
+    }
     findByPagination(payload) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const query = this.createQueryBuilder('br')
@@ -6567,12 +7815,12 @@ let BookingReasonRepository = class BookingReasonRepository extends typeorm_1.Re
             });
         });
     }
-    existsById(id) {
-        return this.createQueryBuilder('rt')
-            .select('COUNT(1)', 'count')
-            .where('rt.id = :id', { id: id })
-            .getRawOne()
-            .then((data) => (data === null || data === void 0 ? void 0 : data.count) > 0);
+    findBookingReasonName() {
+        return this.createQueryBuilder('dt')
+            .select('dt.id', 'id')
+            .addSelect('dt.name', 'name')
+            .andWhere('dt.deleted_at IS NULL')
+            .getRawMany();
     }
     findById(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -6590,7 +7838,71 @@ let BookingReasonRepository = class BookingReasonRepository extends typeorm_1.Re
                 .leftJoin(models_1.Accounts, 'aa', 'aa.id = br.updated_by')
                 .leftJoin(models_1.Accounts, 'aaa', 'aaa.id = br.deleted_by')
                 .where('br.id = :id', { id: id })
+                .andWhere('br.deleted_at IS NULL')
                 .getRawOne();
+        });
+    }
+    createNew(accountId, payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.save({
+                    name: payload.name.trim(),
+                    description: payload.description,
+                    createdAt: new Date(),
+                    createdBy: accountId,
+                }, {
+                    transaction: true,
+                });
+            }
+            catch (e) {
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    updateById(accountId, payload, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return yield this.save({
+                id: id,
+                name: payload.name,
+                description: payload.description,
+                updatedAt: new Date(),
+                updatedBy: accountId,
+            }, {
+                transaction: true,
+            });
+        });
+    }
+    // async get(id: string): Promise<BookingReason> {
+    //   return this.createQueryBuilder('booking-reason')
+    //     .select('booking-reason.id', 'id')
+    //     .addSelect('booking-reason.name', 'name')
+    //     .addSelect('booking-reason.description', 'description')
+    //     .addSelect('booking-reason.created_by', 'createdBy')
+    //     .addSelect('booking-reason.created_at', 'createdAt')
+    //     .addSelect('booking-reason.updated_by', 'updatedBy')
+    //     .addSelect('booking-reason.updated_at', 'updatedAt')
+    //     .addSelect('booking-reason.deleted_by', 'deletedBy')
+    //     .addSelect('booking-reason.deleted_at', 'deletedAt')
+    //     .where('booking-reason.id = :id', { id: id })
+    //     .getRawOne<BookingReason>();
+    // }
+    deleteById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isDeleted = yield this.createQueryBuilder('booking_reason')
+                .update({
+                deletedBy: accountId,
+                deletedAt: new Date(),
+            })
+                .where('booking_reason.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isDeleted.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
         });
     }
     findDeletedByPagination(search) {
@@ -6607,70 +7919,33 @@ let BookingReasonRepository = class BookingReasonRepository extends typeorm_1.Re
     }
     restoreDeletedById(accountId, id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return this.createQueryBuilder('br')
+            const isRestored = yield this.createQueryBuilder('booking_reason')
                 .update({
                 deletedBy: null,
                 deletedAt: null,
-            })
-                .where('br.id = :id', { id: id })
-                .useTransaction(true)
-                .execute();
-        });
-    }
-    deleteById(accountId, id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return this.createQueryBuilder('booking_reason')
-                .update({
-                deletedBy: accountId,
-                deletedAt: new Date(),
+                updatedBy: accountId,
+                updatedAt: new Date(),
             })
                 .where('booking_reason.id = :id', { id: id })
                 .useTransaction(true)
                 .execute();
-        });
-    }
-    createNew(accountId, payload) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return this.save({
-                createdAt: new Date(),
-                createdBy: accountId,
-                name: payload.name,
-                description: payload.description,
-            }, {
-                transaction: true,
-            });
-        });
-    }
-    updateById(accountId, payload) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return this.save({
-                updatedAt: new Date(),
-                updatedBy: accountId,
-                name: payload.name,
-                id: payload.id,
-                description: payload.description,
-            }, {
-                transaction: true,
-            });
-        });
-    }
-    addNew(accountId, payload) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.save({
-                    createdBy: accountId,
-                    name: payload.name.trim(),
-                    description: payload.description,
-                    createdAt: new Date(),
-                    updatedBy: accountId,
-                    updatedAt: new Date(),
-                }, {
-                    transaction: true,
+            if (isRestored.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
                 });
+                ;
             }
-            catch (e) {
-                throw new common_1.BadRequestException(e.message);
-            }
+        });
+    }
+    permanentlyDeleteById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('booking_reason')
+                .delete()
+                .where('booking_reason.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
         });
     }
 };
@@ -6682,7 +7957,34 @@ exports.BookingReasonRepository = BookingReasonRepository;
 
 /***/ }),
 
-/***/ "./apps/backend/src/app/repositories/booking-room.repository.ts":
+/***/ "./apps/backend/src/app/repositories/booking-request-hist.repository.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BookingRequestHistRepository = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/typeorm-ex.decorator.ts");
+const typeorm_1 = __webpack_require__("typeorm");
+const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
+let BookingRequestHistRepository = class BookingRequestHistRepository extends typeorm_1.Repository {
+    createNew(payload, queryRunner) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const bookingRequestId = payload.id;
+            delete payload.id;
+            return yield queryRunner.manager.save(models_1.BookingRequestHist, Object.assign({ bookingRequestId: bookingRequestId }, payload));
+        });
+    }
+};
+BookingRequestHistRepository = tslib_1.__decorate([
+    (0, typeorm_ex_decorator_1.CustomRepository)(models_1.BookingRequestHist)
+], BookingRequestHistRepository);
+exports.BookingRequestHistRepository = BookingRequestHistRepository;
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/repositories/booking-request.repository.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -6693,6 +7995,9 @@ const typeorm_1 = __webpack_require__("typeorm");
 const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
 const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/typeorm-ex.decorator.ts");
 const nestjs_typeorm_paginate_1 = __webpack_require__("nestjs-typeorm-paginate");
+const slot_entity_1 = __webpack_require__("./apps/backend/src/app/models/slot.entity.ts");
+const booking_reason_entity_1 = __webpack_require__("./apps/backend/src/app/models/booking-reason.entity.ts");
+const common_1 = __webpack_require__("@nestjs/common");
 let BookingRoomRepository = class BookingRoomRepository extends typeorm_1.Repository {
     findByBookingStatus(status, next5Mins) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -6703,33 +8008,43 @@ let BookingRoomRepository = class BookingRoomRepository extends typeorm_1.Reposi
         });
     }
     findByPaginationPayload(payload) {
-        console.log("TIME CHECK OUT: ", payload.checkOutAt);
         const query = this.createQueryBuilder('booking_request')
-            .select('booking_request.time_checkin', 'checkInAt')
-            .addSelect('booking_request.time_checkout', 'checkOutAt')
+            .select('booking_request.checkin_Date', 'checkinDate')
             .addSelect('booking_request.room_id', 'roomId')
             .addSelect('r.name', 'roomName')
             .addSelect('r.description', 'roomDescription')
-            .addSelect('booking_request.reason_type', 'reasonType')
+            .addSelect('booking_request.booking_reason_id', 'reasonType')
             .addSelect('booking_request.status', 'status')
-            .addSelect('booking_request.booked_at', 'bookedAt')
+            .addSelect('booking_request.requested_at', 'bookedAt')
+            .addSelect('a.username', 'requestedBy')
+            .addSelect('booking_request.checkin_date', 'checkinDate')
             .addSelect('booking_request.id', 'id')
             .innerJoin(models_1.Rooms, 'r', 'r.id = booking_request.room_id')
+            .innerJoin(models_1.Accounts, 'a', 'a.id = booking_request.requested_by')
             .where('r.name ILIKE :roomName', {
             roomName: `%${payload.search}%`,
-        })
-            .andWhere('booking_request.time_checkin >= :timeCheckIn', {
-            timeCheckIn: payload.checkInAt,
-        })
-            .andWhere('booking_request.time_checkout <= :timeCheckOut', {
-            timeCheckOut: payload.checkOutAt,
         })
             .andWhere('booking_request.status LIKE :status', {
             status: `%${payload.status}%`,
         })
             .orderBy(payload.sort, payload.dir);
+        if (payload.checkInAt && payload.checkInAt !== '') {
+            query.andWhere('booking_request.checkedin_at >= :checkInAt', {
+                checkInAt: payload.checkInAt,
+            });
+        }
+        if (payload.checkOutAt && payload.checkOutAt !== '') {
+            query.andWhere('booking_request.checkout_at >= :checkOutAt', {
+                checkOutAt: payload.checkOutAt,
+            });
+        }
+        if (payload.checkinDate && payload.checkinDate !== '') {
+            query.andWhere('booking_request.checkin_date >= :checkinDate', {
+                checkinDate: payload.checkinDate,
+            });
+        }
         if (payload.reasonType && payload.reasonType !== '') {
-            query.andWhere('booking_request.reason_type = :reason', {
+            query.andWhere('booking_request.booking_reason_id = :reason', {
                 reason: payload.reasonType,
             });
         }
@@ -6738,19 +8053,90 @@ let BookingRoomRepository = class BookingRoomRepository extends typeorm_1.Reposi
             limit: payload.limit,
         });
     }
+    getBookingByRoomInWeek(payload) {
+        const curr = new Date(payload.date); // get current date
+        const firstDay = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+        const lastDay = firstDay + 6; // last day is the first day + 6
+        const sunday = new Date(curr.setDate(firstDay));
+        const satuday = new Date(curr.setDate(lastDay));
+        console.log('SUNNNNN: ', sunday);
+        console.log('SATTTTT: ', satuday);
+        const query = this.createQueryBuilder('booking_request')
+            .select('booking_request.id', 'id')
+            .addSelect('booking_request.checkin_Date', 'checkinDate')
+            .addSelect('booking_request.room_id', 'roomId')
+            .addSelect('booking_request.status', 'status')
+            .addSelect('booking_request.checkin_slot', 'checkinSlot')
+            .addSelect('booking_request.checkout_slot', 'checkoutSlot')
+            .addSelect('slot_in.slot_num', 'slotIn')
+            .addSelect('slot_out.slot_num', 'slotOut')
+            .innerJoin(slot_entity_1.Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
+            .innerJoin(slot_entity_1.Slot, 'slot_out', 'slot_out.id = booking_request.checkout_slot')
+            .andWhere('booking_request.room_id = :roomId', { roomId: payload.roomId })
+            .andWhere("(booking_request.status = 'PENDING' OR booking_request.status = 'BOOKED')");
+        // .andWhere("booking_request.status LIKE 'PENDING'");
+        if (payload.date && payload.date !== '') {
+            query.andWhere('booking_request.checkin_date >= :sunday', {
+                sunday: sunday,
+            });
+            query.andWhere('booking_request.checkin_date <= :satuday', {
+                satuday: satuday,
+            });
+        }
+        return query.getRawMany();
+    }
+    getBookingPendingByRoomInDay(roomId, requestId, date) {
+        const query = this.createQueryBuilder('booking_request')
+            .select('booking_request.id', 'id')
+            .addSelect('slot_in.slot_num', 'slotIn')
+            .addSelect('slot_out.slot_num', 'slotOut')
+            .addSelect('slot_in.name', 'slotInName')
+            .addSelect('slot_out.name', 'slotOutName')
+            .addSelect('a.username', 'requestedBy')
+            .addSelect('r.name', 'reason')
+            .addSelect('booking_request.status', 'status')
+            .innerJoin(slot_entity_1.Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
+            .innerJoin(models_1.Accounts, 'a', 'a.id = booking_request.requested_by')
+            .innerJoin(booking_reason_entity_1.BookingReason, 'r', 'r.id = booking_request.booking_reason_id')
+            .innerJoin(slot_entity_1.Slot, 'slot_out', 'slot_out.id = booking_request.checkout_slot')
+            .where('booking_request.checkinDate = :checkinDate', {
+            checkinDate: date,
+        })
+            .andWhere('booking_request.room_id = :roomId', {
+            roomId: roomId,
+        })
+            .andWhere('booking_request.id != :id', {
+            id: requestId,
+        })
+            .andWhere("(booking_request.status = 'PENDING')");
+        return query.getRawMany();
+    }
+    getBookingPendingAndBookedByDay(date) {
+        const query = this.createQueryBuilder('booking_request')
+            .select('booking_request.id', 'id')
+            .addSelect('slot_in.slot_num', 'slotIn')
+            .addSelect('slot_out.slot_num', 'slotOut')
+            .addSelect('booking_request.status', 'status')
+            .innerJoin(slot_entity_1.Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
+            .innerJoin(slot_entity_1.Slot, 'slot_out', 'slot_out.id = booking_request.checkout_slot')
+            .where('booking_request.checkinDate = :checkinDate', {
+            checkinDate: date,
+        })
+            .andWhere("(booking_request.status = 'PENDING' OR booking_request.status = 'BOOKED')");
+        return query.getRawMany();
+    }
     getTotalRowCount() {
         return;
     }
     findByCurrentBookingListAndAccountId(accountId) {
         return this.createQueryBuilder('booking_request')
-            .select('booking_request.time_checkin', 'timeCheckIn')
-            .addSelect('booking_request.time_checkout', 'timeCheckOut')
-            .addSelect('booking_request.booked_at', 'bookedAt')
+            .select('booking_request.checkin_date', 'checkinDate')
+            .addSelect('booking_request.requested_at', 'bookedAt')
             .addSelect('booking_request.status', 'status')
             .addSelect('r.name', 'roomName')
             .addSelect('booking_request.id', 'id')
             .addSelect('booking_request.requested_at', 'requestedAt')
-            .addSelect('booking_request.checkin_at', 'checkinAt')
+            .addSelect('booking_request.checkedin_at', 'checkinAt')
             .innerJoin(models_1.Rooms, 'r', 'r.id = booking_request.room_id')
             .where('booking_request.requested_by = :accountId', {
             accountId: accountId,
@@ -6762,14 +8148,13 @@ let BookingRoomRepository = class BookingRoomRepository extends typeorm_1.Reposi
         return this.createQueryBuilder('booking_request')
             .select('booking_request.id', 'id')
             .addSelect('booking_request.status', 'status')
-            .addSelect('booking_request.time_checkin', 'timeCheckIn')
-            .addSelect('booking_request.time_checkout', 'timeCheckOut')
-            .addSelect('booking_request.reason_type', 'reasonType')
+            .addSelect('booking_request.checkin_Date', 'checkinDate')
+            .addSelect('booking_request.booking_reason_id', 'reasonType')
             .addSelect('booking_request.description', 'description')
             .addSelect('booking_request.requested_at', 'requestedAt')
             .addSelect('booking_request.requested_by', 'requestedBy')
             .addSelect('booking_request.updated_at', 'updatedAt')
-            .addSelect('booking_request.booked_at', 'bookedAt')
+            .addSelect('booking_request.requested_at', 'bookedAt')
             .addSelect('r.type', 'roomType')
             .addSelect('r.id', 'roomId')
             .addSelect('r.name', 'roomName')
@@ -6786,26 +8171,28 @@ let BookingRoomRepository = class BookingRoomRepository extends typeorm_1.Reposi
             .select('booking_request.id', 'id')
             .addSelect('r.name', 'roomName')
             .addSelect('a.username', 'requestedBy')
-            .addSelect('booking_request.time_checkin', 'timeCheckin')
-            .addSelect('booking_request.time_checkout', 'timeCheckout')
+            .addSelect('booking_request.checkin_Date', 'checkinDate')
             .innerJoin(models_1.Rooms, 'r', 'r.id = booking_request.room_id')
             .innerJoin(models_1.Accounts, 'a', 'a.id = booking_request.requested_by')
-            .where(`booking_request.status = :status`, { status: "BOOKING" })
+            .where(`booking_request.status = :status`, { status: 'BOOKING' })
             .andWhere('booking_request.room_id = :room_id', { room_id: roomId })
-            .orderBy('booking_request.time_checkin', 'ASC')
+            .orderBy('booking_request.checkin_date', 'ASC')
             .getRawMany();
     }
-    cancelRoomBookingById(accountId, id) {
-        return this.createQueryBuilder('booking_request')
-            .update({
-            status: 'CANCELLED',
+    getRequestBookingByAccountId(accountId) {
+        return this.createQueryBuilder(`booking_request`)
+            .select('booking_request.id', 'id')
+            .addSelect('r.name', 'roomName')
+            .addSelect('a.username', 'requestedBy')
+            .addSelect('booking_request.checkin_Date', 'checkinDate')
+            .innerJoin(models_1.Rooms, 'r', 'r.id = booking_request.room_id')
+            .innerJoin(models_1.Accounts, 'a', 'a.id = booking_request.requested_by')
+            .where(`booking_request.status = :status`, { status: 'BOOKING' })
+            .andWhere('booking_request.requested_by = :account_id', {
+            account_id: accountId,
         })
-            .where('booking_request.id = :id', { id: id })
-            .andWhere('booking_request.requested_by = :accountId', {
-            accountId: accountId,
-        })
-            .useTransaction(true)
-            .execute();
+            .orderBy('booking_request.checkin_date', 'ASC')
+            .getRawMany();
     }
     existsById(id) {
         return this.createQueryBuilder('booking_request')
@@ -6814,6 +8201,28 @@ let BookingRoomRepository = class BookingRoomRepository extends typeorm_1.Reposi
             .getRawOne()
             .then((data) => (data === null || data === void 0 ? void 0 : data.count) > 0);
     }
+    isAcceptById(id) {
+        return this.createQueryBuilder('booking_request')
+            .select('COUNT(1)', 'count')
+            .where('booking_request.id = :id', { id: id })
+            .andWhere("booking_request.status = 'BOOKED'")
+            .getRawOne()
+            .then((data) => (data === null || data === void 0 ? void 0 : data.count) > 0);
+    }
+    isCancelledById(id) {
+        return this.createQueryBuilder('booking_request')
+            .select('COUNT(1)', 'count')
+            .where('booking_request.id = :id', { id: id })
+            .andWhere("booking_request.status = 'CANCELLED'")
+            .getRawOne()
+            .then((data) => (data === null || data === void 0 ? void 0 : data.count) > 0);
+    }
+    getCountRequestBookingPending() {
+        return this.createQueryBuilder('booking_request')
+            .select('COUNT(1)', 'count')
+            .where("booking_request.status = 'PENDING'")
+            .getRawOne();
+    }
     findById(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             return this.createQueryBuilder('br')
@@ -6821,23 +8230,114 @@ let BookingRoomRepository = class BookingRoomRepository extends typeorm_1.Reposi
                 .addSelect('r.id', 'roomId')
                 .addSelect('r.name', 'roomName')
                 .addSelect('r.description', 'roomDescription')
-                .addSelect('a.username', 'requestedBy')
-                .addSelect('br.time_checkin', 'timeCheckin')
-                .addSelect('br.time_checkout', 'timeCheckout')
+                .addSelect('br.checkin_Date', 'checkinDate')
                 .addSelect('br.status', 'status')
-                .addSelect('br.requested_at', 'requestedAt')
-                .addSelect('br.booked_at', 'bookedAt')
-                .addSelect('br.updated_at', 'updatedAt')
-                .addSelect('br.reason_type', 'reasonType')
+                .addSelect('br.booking_reason_id', 'reasonType')
                 .addSelect('br.description', 'description')
-                .addSelect('br.checkin_at', 'checkinAt')
-                .addSelect('br.checkout_at', 'checkoutAt')
+                .addSelect('br.checkedin_at', 'checkinAt')
+                .addSelect('bkr.name', 'reason')
+                .addSelect('br.requested_at', 'requestedAt')
+                .addSelect('br.requested_by', 'requestedById')
+                .addSelect('a.username', 'requestedBy')
+                .addSelect('br.updated_at', 'updatedAt')
                 .addSelect('aa.username', 'updatedBy')
+                .addSelect('br.cancelled_at', 'cancelledAt')
+                .addSelect('aaa.username', 'cancelledBy')
+                .addSelect('aaaa.username', 'acceptedBy')
+                .addSelect('br.accepted_at', 'acceptedAt')
+                .addSelect('s.name', 'checkinSlot')
+                .addSelect('ss.name', 'checkoutSlot')
+                .addSelect('br.checkin_slot', 'checkinSlotId')
+                .addSelect('br.checkout_slot', 'checkoutSlotId')
                 .innerJoin(models_1.Rooms, 'r', 'r.id = br.room_id')
                 .innerJoin(models_1.Accounts, 'a', 'a.id = br.requested_by')
                 .leftJoin(models_1.Accounts, 'aa', 'aa.id = br.updated_by')
+                .leftJoin(models_1.Accounts, 'aaa', 'aaa.id = br.cancelled_by')
+                .leftJoin(models_1.Accounts, 'aaaa', 'aaaa.id = br.accepted_by')
+                .leftJoin(slot_entity_1.Slot, 's', 's.id = br.checkin_slot')
+                .leftJoin(slot_entity_1.Slot, 'ss', 'ss.id = br.checkout_slot')
+                .innerJoin(booking_reason_entity_1.BookingReason, 'bkr', 'bkr.id = br.booking_reason_id')
                 .where('br.id = :id', { id: id })
                 .getRawOne();
+        });
+    }
+    createNewRequest(payload, userId, status, queryRunner) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return yield queryRunner.manager.save(models_1.BookingRequest, {
+                roomId: payload.roomId,
+                requestedBy: userId,
+                requestedAt: new Date(),
+                status: status,
+                bookingReasonId: payload.bookingReasonId,
+                description: payload.description,
+                checkinSlot: payload.checkinSlot,
+                checkoutSlot: payload.checkoutSlot,
+                checkinDate: payload.checkinDate,
+            });
+        });
+    }
+    cancelRoomBookingById(accountId, id, role, queryRunner) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const oldData = yield this.findOneOrFail({
+                where: {
+                    id: id,
+                },
+            });
+            if (oldData.requestedBy === accountId ||
+                role === 'Librarian' ||
+                role === 'System Admin') {
+                return yield queryRunner.manager.save(models_1.BookingRequest, Object.assign(Object.assign({}, oldData), { status: 'CANCELLED', updatedBy: accountId, updatedAt: new Date(), cancelledBy: accountId, cancelledAt: new Date() }), {
+                    transaction: true,
+                });
+            }
+            else {
+                throw new common_1.BadRequestException("You are not allowed to cancel someone else's request");
+            }
+        });
+    }
+    // createNewBooking(payload: BookingRequestAddRequestPayload, userId: string) {
+    //   if (!payload.checkoutDate || payload.checkoutDate === payload.checkinDate) {
+    //     return this.save(
+    //       {
+    //         roomId: payload.roomId,
+    //         requestedBy: userId,
+    //         requestedAt: new Date(),
+    //         checkinDate: payload.checkinDate,
+    //         checkoutDate: payload.checkoutDate,
+    //         checkinSlot: payload.checkinSlot,
+    //         checkoutSlot: payload.checkoutSlot,
+    //         status: 'BOOKED',
+    //         description: payload.description,
+    //         bookingReasonId: payload.bookingReasonId,
+    //       },
+    //       {
+    //         transaction: true,
+    //       }
+    //     );
+    //   }
+    // }
+    acceptById(accountId, roomId, queryRunner) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const oldData = yield this.findOneOrFail({
+                where: {
+                    id: roomId,
+                },
+            });
+            return yield queryRunner.manager.save(models_1.BookingRequest, Object.assign(Object.assign({}, oldData), { status: 'BOOKED', updatedBy: accountId, updatedAt: new Date(), acceptedBy: accountId, acceptedAt: new Date() }), {
+                transaction: true,
+            });
+        });
+    }
+    rejectById(accountId, roomId, queryRunner) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const oldData = yield this.findOneOrFail({
+                where: {
+                    id: roomId,
+                },
+            });
+            return yield queryRunner.manager.save(models_1.BookingRequest, Object.assign(Object.assign({}, oldData), { status: 'CANCELLED', updatedBy: accountId, updatedAt: new Date(), cancelledBy: accountId, cancelledAt: new Date() }), {
+                transaction: true,
+            });
         });
     }
 };
@@ -6845,6 +8345,71 @@ BookingRoomRepository = tslib_1.__decorate([
     (0, typeorm_ex_decorator_1.CustomRepository)(models_1.BookingRequest)
 ], BookingRoomRepository);
 exports.BookingRoomRepository = BookingRoomRepository;
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/repositories/device-hist.repository.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.DeviceHistRepository = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_1 = __webpack_require__("typeorm");
+const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
+const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/typeorm-ex.decorator.ts");
+let DeviceHistRepository = class DeviceHistRepository extends typeorm_1.Repository {
+    createNew(payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const deviceId = payload.id;
+            delete payload.id;
+            return this.save(Object.assign({ deviceId: deviceId, type: payload.type }, payload));
+        });
+    }
+};
+DeviceHistRepository = tslib_1.__decorate([
+    (0, typeorm_ex_decorator_1.CustomRepository)(models_1.DeviceHist)
+], DeviceHistRepository);
+exports.DeviceHistRepository = DeviceHistRepository;
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/repositories/device-type-hist.repository.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.DeviceTypeHistRepository = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/typeorm-ex.decorator.ts");
+const typeorm_1 = __webpack_require__("typeorm");
+const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
+let DeviceTypeHistRepository = class DeviceTypeHistRepository extends typeorm_1.Repository {
+    createNew(payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const deviceTypeId = payload.id;
+            delete payload.id;
+            const data = yield this.save(Object.assign({ deviceTypeId: deviceTypeId }, payload));
+            console.log("AAAAAAAAAAAA: ", data);
+            return data;
+        });
+    }
+    deleteAllHist(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return yield this.createQueryBuilder('device_type_hist')
+                .delete()
+                .where('device_type_hist.device_type_id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+        });
+    }
+};
+DeviceTypeHistRepository = tslib_1.__decorate([
+    (0, typeorm_ex_decorator_1.CustomRepository)(models_1.DeviceTypeHist)
+], DeviceTypeHistRepository);
+exports.DeviceTypeHistRepository = DeviceTypeHistRepository;
 
 
 /***/ }),
@@ -6862,6 +8427,13 @@ const device_type_entity_1 = __webpack_require__("./apps/backend/src/app/models/
 const nestjs_typeorm_paginate_1 = __webpack_require__("nestjs-typeorm-paginate");
 const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
 let DeviceTypeRepository = class DeviceTypeRepository extends typeorm_1.Repository {
+    existsById(id) {
+        return this.createQueryBuilder('rt')
+            .select('COUNT(1)', 'count')
+            .where('rt.id = :id', { id: id })
+            .getRawOne()
+            .then((data) => (data === null || data === void 0 ? void 0 : data.count) > 0);
+    }
     findByPagination(pagination) {
         const query = this.createQueryBuilder('dt')
             .select('dt.id', 'id')
@@ -6875,6 +8447,13 @@ let DeviceTypeRepository = class DeviceTypeRepository extends typeorm_1.Reposito
             page: pagination.page,
             limit: pagination.limit,
         });
+    }
+    findDeviceTypeName() {
+        return this.createQueryBuilder('dt')
+            .select('dt.id', 'id')
+            .addSelect('dt.name', 'name')
+            .andWhere('dt.deleted_at IS NULL')
+            .getRawMany();
     }
     findById(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -6893,92 +8472,6 @@ let DeviceTypeRepository = class DeviceTypeRepository extends typeorm_1.Reposito
                 .getRawOne();
         });
     }
-    findDeviceTypeName() {
-        return this.createQueryBuilder('dt')
-            .select('dt.id', 'id')
-            .addSelect('dt.name', 'name')
-            .andWhere("dt.deleted_at IS NULL")
-            .getRawMany();
-    }
-    deleteByIdAndAccountId(accountId, id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return this.createQueryBuilder('rt')
-                .update({
-                deletedAt: new Date(),
-                deletedBy: accountId,
-            })
-                .where('rt.id = :id', { id: id })
-                .useTransaction(true)
-                .execute();
-        });
-    }
-    existsById(id) {
-        return this.createQueryBuilder('rt')
-            .select('COUNT(1)', 'count')
-            .where('rt.id = :id', { id: id })
-            .getRawOne()
-            .then((data) => (data === null || data === void 0 ? void 0 : data.count) > 0);
-    }
-    restoreDisabledById(accountId, id) {
-        return this.createQueryBuilder('rt')
-            .update({
-            updatedAt: new Date(),
-            updatedBy: accountId,
-        })
-            .where('rt.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
-    }
-    deleteById(accountId, id) {
-        return this.createQueryBuilder('device_type')
-            .update({
-            deletedAt: new Date(),
-            deletedBy: accountId,
-        })
-            .where('device_type.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
-    }
-    findDeletedByPagination(search) {
-        return this.createQueryBuilder('device_type')
-            .select('device_type.id', 'id')
-            .addSelect('device_type.name', 'name')
-            .addSelect('device_type.deleted_at', 'deletedAt')
-            .addSelect('a.username', 'deletedBy')
-            .innerJoin(models_1.Accounts, 'a', 'a.id = device_type.deleted_by')
-            .where('device_type.name LIKE :search', { search: `%${search.trim()}%` })
-            .andWhere('device_type.deleted_at IS NOT NULL')
-            .orderBy('device_type.deleted_at', 'DESC')
-            .getRawMany();
-    }
-    restoreDeletedById(accountId, id) {
-        return this.createQueryBuilder('device_type')
-            .update({
-            updatedAt: new Date(),
-            updatedBy: accountId,
-            deletedAt: null,
-            deletedBy: null,
-        })
-            .where('device_type.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
-    }
-    updateById(accountId, deviceTypeId, payload) {
-        return this.save({
-            id: deviceTypeId,
-            name: payload.name.trim(),
-            description: payload.description,
-            updatedBy: accountId,
-            updatedAt: new Date(),
-        }, {
-            transaction: true,
-        });
-    }
-    permanentlyDeleteById(id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return Promise.resolve(undefined);
-        });
-    }
     addNew(accountId, payload) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             return this.save({
@@ -6991,31 +8484,84 @@ let DeviceTypeRepository = class DeviceTypeRepository extends typeorm_1.Reposito
             });
         });
     }
+    updateById(accountId, deviceTypeId, payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const oldData = yield this.findOneOrFail({
+                where: {
+                    id: deviceTypeId,
+                }
+            });
+            return this.save(Object.assign(Object.assign({}, oldData), { id: deviceTypeId, name: payload.name.trim(), description: payload.description, updatedBy: accountId, updatedAt: new Date() }), {
+                transaction: true,
+            });
+        });
+    }
+    deleteById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isDeleted = yield this.createQueryBuilder('device_type')
+                .update({
+                deletedAt: new Date(),
+                deletedBy: accountId,
+            })
+                .where('device_type.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isDeleted.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
+    }
+    findDeletedByPagination(search) {
+        return this.createQueryBuilder('device_type')
+            .select('device_type.id', 'id')
+            .addSelect('device_type.name', 'name')
+            .addSelect('device_type.deleted_at', 'deletedAt')
+            .addSelect('a.username', 'deletedBy')
+            .innerJoin(models_1.Accounts, 'a', 'a.id = device_type.deleted_by')
+            .where('device_type.name ILIKE :search', { search: `%${search.trim()}%` })
+            .andWhere('device_type.deleted_at IS NOT NULL')
+            .orderBy('device_type.deleted_at', 'DESC')
+            .getRawMany();
+    }
+    restoreDeletedById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isRestored = yield this.createQueryBuilder('device_type')
+                .update({
+                updatedAt: new Date(),
+                updatedBy: accountId,
+                deletedAt: null,
+                deletedBy: null,
+            })
+                .where('device_type.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isRestored.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
+    }
+    permanentlyDeleteById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('device_type')
+                .delete()
+                .where('device_type.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+        });
+    }
 };
 DeviceTypeRepository = tslib_1.__decorate([
     (0, typeorm_ex_decorator_1.CustomRepository)(device_type_entity_1.DeviceType)
 ], DeviceTypeRepository);
 exports.DeviceTypeRepository = DeviceTypeRepository;
-
-
-/***/ }),
-
-/***/ "./apps/backend/src/app/repositories/devices-hist.repository.ts":
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DevicesHistRepository = void 0;
-const tslib_1 = __webpack_require__("tslib");
-const typeorm_1 = __webpack_require__("typeorm");
-const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
-const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/typeorm-ex.decorator.ts");
-let DevicesHistRepository = class DevicesHistRepository extends typeorm_1.Repository {
-};
-DevicesHistRepository = tslib_1.__decorate([
-    (0, typeorm_ex_decorator_1.CustomRepository)(models_1.DevicesHist)
-], DevicesHistRepository);
-exports.DevicesHistRepository = DevicesHistRepository;
 
 
 /***/ }),
@@ -7033,6 +8579,15 @@ const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decor
 const nestjs_typeorm_paginate_1 = __webpack_require__("nestjs-typeorm-paginate");
 const device_type_entity_1 = __webpack_require__("./apps/backend/src/app/models/device-type.entity.ts");
 let DevicesRepository = class DevicesRepository extends typeorm_1.Repository {
+    existsById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('devices')
+                .select('COUNT(1)', 'count')
+                .where('devices.id = :id', { id: id })
+                .getRawOne()
+                .then((data) => (data === null || data === void 0 ? void 0 : data.count) > 0);
+        });
+    }
     getSize() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const result = yield this.createQueryBuilder(`devices`)
@@ -7053,41 +8608,96 @@ let DevicesRepository = class DevicesRepository extends typeorm_1.Repository {
         });
     }
     searchDevices(payload) {
-        const query = this.createQueryBuilder(`devices`)
-            // qb.where(`rooms.name LIKE :name`, {name: `%${payload.search}%`});
-            //  qb.orWhere(`rooms.description LIKE :description`, {description: `%${payload.search}%`})
-            .where(`devices.disabled_at IS NULL`)
-            .andWhere(`devices.deleted_at IS NULL`)
-            .orWhere(`devices.name = :name`, { name: `%${payload.search}%` })
-            .orWhere(`devices.description = :description`, {
-            description: `%${payload.search}%`,
-        });
+        const query = this.createQueryBuilder('d')
+            .select('d.id', 'id')
+            .addSelect('d.name', 'name')
+            .addSelect('d.description', 'description')
+            .addSelect('d.createdAt', 'createdAt')
+            .addSelect('d.updatedAt', 'updatedAt')
+            .addSelect('dt.name', 'type')
+            .innerJoin(device_type_entity_1.DeviceType, 'dt', 'dt.id = d.type')
+            .where('LOWER(d.name) ILIKE LOWER(:search)', {
+            search: `%${payload.search.trim()}%`,
+        })
+            .andWhere(`d.deleted_at IS NULL`)
+            .andWhere(`d.disabled_at IS NULL`)
+            .orderBy(payload.sort, payload.dir);
+        if (payload.deviceType && payload.deviceType !== '') {
+            query.andWhere('dt.name = :deviceTypeName', {
+                deviceTypeName: payload.deviceType,
+            });
+        }
         return (0, nestjs_typeorm_paginate_1.paginateRaw)(query, {
             limit: payload.limit,
             page: payload.page,
         });
     }
+    findDeviceName() {
+        return this.createQueryBuilder('device')
+            .select('device.id', 'id')
+            .addSelect('device.name', 'name')
+            .andWhere('device.deleted_at IS NULL')
+            .getRawMany();
+    }
     getDevicesByDeviceType(deviceTypeId) {
         return this.createQueryBuilder(`device`)
             .select('device.id', 'id')
             .addSelect('device.name', 'name')
-            .addSelect('device.device_type_id', 'type')
+            .addSelect('device.type', 'type')
             .addSelect('dt.name', 'deviceTypeName')
-            .innerJoin(device_type_entity_1.DeviceType, 'dt', 'dt.id = device.device_type_id')
+            .innerJoin(device_type_entity_1.DeviceType, 'dt', 'dt.id = device.type')
             .where(`device.deleted_at IS NULL`)
             .andWhere(`device.disabled_at IS NULL`)
-            .andWhere('device.device_type_id = :type', { type: deviceTypeId })
+            .andWhere('device.type = :type', { type: deviceTypeId })
             .getRawMany();
     }
-    deleteDeviceById(accountId, id) {
-        return this.createQueryBuilder('devices')
-            .update({
-            deletedAt: new Date(),
-            deletedBy: accountId,
-        })
-            .where('devices.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
+    findById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('devices')
+                .select('devices.id', 'id')
+                .addSelect('devices.name', 'name')
+                .addSelect('devices.description', 'description')
+                .addSelect('devices.created_at', 'createdAt')
+                .addSelect('devices.updated_at', 'updatedAt')
+                .addSelect('devices.disabled_at', 'disableAt')
+                .addSelect('devices.deleted_at', 'deletedAt')
+                .addSelect('devices.disabled_by', 'disabledBy')
+                .addSelect('devices.deleted_by', 'deletedBy')
+                .addSelect('devices.type', 'deviceTypeId')
+                .addSelect('dt.name', 'deviceTypeName')
+                .addSelect('a.username', 'createdBy')
+                .addSelect('aa.username', 'updatedBy')
+                .innerJoin(models_1.Accounts, 'a', 'devices.created_by = a.id')
+                .leftJoin(models_1.Accounts, 'aa', 'devices.updated_by = aa.id')
+                .innerJoin(device_type_entity_1.DeviceType, 'dt', 'dt.id = devices.type')
+                .where('devices.disabled_at IS NULL')
+                .andWhere('devices.deleted_at IS NULL')
+                .andWhere('devices.id = :deviceId', { deviceId: id })
+                .getRawOne();
+        });
+    }
+    createNewDevice(payload, userId) {
+        return this.save({
+            name: payload.name.trim(),
+            description: payload.description,
+            type: payload.type,
+            createdBy: userId,
+            createdAt: new Date(),
+        }, {
+            transaction: true,
+        });
+    }
+    updateById(accountId, deviceId, payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const oldData = yield this.findOneOrFail({
+                where: {
+                    id: deviceId,
+                },
+            });
+            return this.save(Object.assign(Object.assign({}, oldData), { id: deviceId, name: payload.name.trim(), description: payload.description, type: payload.type, updatedBy: accountId, updatedAt: new Date() }), {
+                transaction: true,
+            });
+        });
     }
     checkIfDeviceIsDeletedById(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -7107,29 +8717,98 @@ let DevicesRepository = class DevicesRepository extends typeorm_1.Repository {
                 .then((data) => (data ? data['disabled_at'] : true));
         });
     }
-    disableById(id) {
-        return this.createQueryBuilder('devices')
-            .update({
-            disabledAt: new Date(),
-            disabledBy: '',
-        })
-            .where('devices.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
+    disableById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isDisabled = yield this.createQueryBuilder('rooms')
+                .update({
+                disabledBy: accountId,
+                disabledAt: new Date(),
+            })
+                .where('devices.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isDisabled.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
     }
-    restoreDisabledDeviceById(id) {
+    getDisabledDevices(search) {
         return this.createQueryBuilder('devices')
-            .update({
-            deletedAt: null,
-            deletedBy: null,
-        })
-            .where('devices.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
+            .select('devices.id', 'id')
+            .addSelect('devices.name', 'name')
+            .addSelect('devices.disabled_at', 'disabledAt')
+            .addSelect('a.username', 'disabledBy')
+            .addSelect('dt.name', 'roomTypeName')
+            .innerJoin(models_1.Accounts, 'a', 'devices.disabled_by = a.id')
+            .innerJoin(device_type_entity_1.DeviceType, 'dt', 'devices.type = dt.id')
+            .where(`devices.deleted_at IS NULL`)
+            .andWhere(`devices.disabled_at IS NOT NULL`)
+            .andWhere('devices.name ILIKE :search', { search: `%${search.trim()}%` })
+            .getRawMany();
+    }
+    restoreDisabledDeviceById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isRestored = yield this.createQueryBuilder('devices')
+                .update({
+                disabledAt: null,
+                disabledBy: null,
+                updatedAt: new Date(),
+                updatedBy: accountId,
+            })
+                .where('devices.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isRestored.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
+    }
+    deleteById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isDeleted = yield this.createQueryBuilder('devices')
+                .update({
+                deletedAt: new Date(),
+                deletedBy: accountId,
+                disabledAt: null,
+                disabledBy: null,
+            })
+                .where('devices.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isDeleted.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
+    }
+    getDeletedDevices(search) {
+        return this.createQueryBuilder(`devices`)
+            .select('devices.id', 'id')
+            .addSelect('devices.name', 'name')
+            .addSelect('devices.deleted_at', 'deletedAt')
+            .addSelect('a.username', 'deletedBy')
+            .addSelect('dt.name', 'deviceTypeName')
+            .innerJoin(models_1.Accounts, 'a', 'devices.deleted_by = a.id')
+            .innerJoin(device_type_entity_1.DeviceType, 'dt', 'dt.id = devices.type')
+            .where(`devices.deleted_at IS NOT NULL`)
+            .andWhere(`devices.disabled_at IS NULL`)
+            .andWhere('devices.name ILIKE :name', { name: `%${search.trim()}%` })
+            .getRawMany();
     }
     restoreDeletedDeviceById(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return this.createQueryBuilder('devices')
+            const isRestored = yield this.createQueryBuilder('devices')
                 .update({
                 deletedBy: null,
                 deletedAt: null,
@@ -7137,22 +8816,13 @@ let DevicesRepository = class DevicesRepository extends typeorm_1.Repository {
                 .where('devices.id = :id', { id: id })
                 .useTransaction(true)
                 .execute();
-        });
-    }
-    getDeletedDevices() {
-        return this.createQueryBuilder('devices')
-            .andWhere(`devices.deleted_at IS NOT NULL`)
-            .getMany();
-    }
-    getDisabledDevices() {
-        return this.createQueryBuilder('devices')
-            .where(`devices.disabled_at IS NOT NULL`)
-            .andWhere(`devices.deleted_at IS NULL`)
-            .getMany();
-    }
-    createNewDevice(payload) {
-        return this.save(payload, {
-            transaction: true,
+            if (isRestored.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
         });
     }
     findDeviceListByBookingRoomRequest(name, type, sort) {
@@ -7180,9 +8850,9 @@ exports.DevicesRepository = DevicesRepository;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const tslib_1 = __webpack_require__("tslib");
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/repositories/account.repository.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/repositories/booking-room.repository.ts"), exports);
+tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/repositories/booking-request.repository.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/repositories/devices.repository.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/repositories/devices-hist.repository.ts"), exports);
+tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/repositories/device-hist.repository.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/repositories/room-wishlist.repository.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/repositories/rooms.repository.ts"), exports);
 tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/repositories/users-otp.repository.ts"), exports);
@@ -7198,9 +8868,31 @@ tslib_1.__exportStar(__webpack_require__("./apps/backend/src/app/repositories/us
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RoleHistRepository = void 0;
+const tslib_1 = __webpack_require__("tslib");
 const typeorm_1 = __webpack_require__("typeorm");
-class RoleHistRepository extends typeorm_1.Repository {
-}
+const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/typeorm-ex.decorator.ts");
+const role_hist_entity_1 = __webpack_require__("./apps/backend/src/app/models/role-hist.entity.ts");
+let RoleHistRepository = class RoleHistRepository extends typeorm_1.Repository {
+    createNew(payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const roleId = payload.id;
+            delete payload.id;
+            return this.save(Object.assign({ roleId: roleId }, payload));
+        });
+    }
+    deleteAllHist(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return yield this.createQueryBuilder('role_hist')
+                .delete()
+                .where('role_hist.role_id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+        });
+    }
+};
+RoleHistRepository = tslib_1.__decorate([
+    (0, typeorm_ex_decorator_1.CustomRepository)(role_hist_entity_1.RoleHist)
+], RoleHistRepository);
 exports.RoleHistRepository = RoleHistRepository;
 
 
@@ -7228,6 +8920,15 @@ let RolesRepository = class RolesRepository extends typeorm_1.Repository {
                 .then((data) => (data === null || data === void 0 ? void 0 : data.count) > 0);
         });
     }
+    isExistedByName(name) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('rooms')
+                .select('COUNT(rooms.name)')
+                .where('rooms.name = :name', { name })
+                .getRawOne()
+                .then((data) => data['count'] > 0);
+        });
+    }
     findByPagination(pagination) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const query = this.createQueryBuilder('r')
@@ -7245,6 +8946,13 @@ let RolesRepository = class RolesRepository extends typeorm_1.Repository {
             });
         });
     }
+    findRoleName() {
+        return this.createQueryBuilder('roles')
+            .select('roles.id', 'id')
+            .addSelect('roles.name', 'name')
+            .andWhere("roles.deleted_at IS NULL")
+            .getRawMany();
+    }
     findById(id) {
         return this.createQueryBuilder('r')
             .select('r.id', 'id')
@@ -7255,31 +8963,69 @@ let RolesRepository = class RolesRepository extends typeorm_1.Repository {
             .addSelect('a.username', 'createdBy')
             .addSelect('aa.username', 'updatedBy')
             .innerJoin(models_1.Accounts, 'a', 'a.id = r.created_by')
-            .innerJoin(models_1.Accounts, 'aa', 'aa.id = r.updated_by')
+            .leftJoin(models_1.Accounts, 'aa', 'aa.id = r.updated_by')
             .where('r.id = :id', { id: id })
             .andWhere('r.deleted_at IS NULL')
             .getRawOne();
     }
+    // async get(id: string): Promise<Roles> {
+    //   return this.createQueryBuilder('roles')
+    //     .select('roles.id', 'id')
+    //     .addSelect('roles.name', 'name')
+    //     .addSelect('roles.description', 'description')
+    //     .addSelect('roles.created_by', 'createdBy')
+    //     .addSelect('roles.created_at', 'createdAt')
+    //     .addSelect('roles.updated_by', 'updatedBy')
+    //     .addSelect('roles.updated_at', 'updatedAt')
+    //     .addSelect('roles.deleted_by', 'deletedBy')
+    //     .addSelect('roles.deleted_at', 'deletedAt')
+    //     .where('roles.id = :id', { id: id })
+    //     .getRawOne<Roles>();
+    // }
+    addNew(accountId, payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.save({
+                name: payload.name.trim(),
+                description: payload.description,
+                createdBy: accountId,
+                createdAt: new Date(),
+            }, {
+                transaction: true,
+            });
+        });
+    }
     updateById(id, accountId, payload) {
-        return this.save({
-            id: id,
-            name: payload.name.trim(),
-            description: payload.description,
-            updatedBy: accountId,
-            updatedAt: new Date(),
-        }, {
-            transaction: true,
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const oldData = yield this.findOneOrFail({
+                where: {
+                    id: id,
+                }
+            });
+            return this.save(Object.assign(Object.assign({}, oldData), { id: id, name: payload.name.trim(), description: payload.description, updatedBy: accountId, updatedAt: new Date() }), {
+                transaction: true,
+            });
         });
     }
     deleteById(accountId, id) {
-        return this.createQueryBuilder('role')
-            .update({
-            deletedAt: new Date(),
-            deletedBy: accountId,
-        })
-            .where('role.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isDeleted = yield this.createQueryBuilder('role')
+                .update({
+                deletedAt: new Date(),
+                deletedBy: accountId,
+                updatedAt: new Date(),
+                updatedBy: accountId,
+            })
+                .where('role.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isDeleted.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
     }
     getDeletedRoles(search) {
         return this.createQueryBuilder('role')
@@ -7288,18 +9034,37 @@ let RolesRepository = class RolesRepository extends typeorm_1.Repository {
             .addSelect('role.deleted_at', 'deletedAt')
             .addSelect('a.username', 'deletedBy')
             .innerJoin(models_1.Accounts, 'a', 'a.id = role.deleted_by')
-            .where('role.name LIKE :search', { search: `%${search.trim()}%` })
+            .where('role.name ILIKE :search', { search: `%${search.trim()}%` })
             .andWhere('role.deleted_at IS NOT NULL')
             .orderBy('role.deleted_at', 'DESC')
             .getRawMany();
     }
-    restoreDeletedRoleById(id) {
+    restoreDeletedById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isRestored = yield this.createQueryBuilder('role')
+                .update({
+                updatedAt: new Date(),
+                updatedBy: accountId,
+                deletedAt: null,
+                deletedBy: null,
+            })
+                .where('role.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isRestored.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
+    }
+    permanentlyDeleteById(id) {
         return this.createQueryBuilder('role')
-            .update({
-            deletedAt: null,
-            deletedBy: null,
-        })
+            .delete()
             .where('role.id = :id', { id: id })
+            .useTransaction(true)
             .execute();
     }
 };
@@ -7307,6 +9072,69 @@ RolesRepository = tslib_1.__decorate([
     (0, typeorm_ex_decorator_1.CustomRepository)(role_entity_1.Roles)
 ], RolesRepository);
 exports.RolesRepository = RolesRepository;
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/repositories/room-hist.repository.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RoomHistRepository = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/typeorm-ex.decorator.ts");
+const typeorm_1 = __webpack_require__("typeorm");
+const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
+let RoomHistRepository = class RoomHistRepository extends typeorm_1.Repository {
+    createNew(payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const roomId = payload.id;
+            delete payload.id;
+            return this.save(Object.assign({ roomId: roomId }, payload));
+        });
+    }
+};
+RoomHistRepository = tslib_1.__decorate([
+    (0, typeorm_ex_decorator_1.CustomRepository)(models_1.RoomHist)
+], RoomHistRepository);
+exports.RoomHistRepository = RoomHistRepository;
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/repositories/room-type-hist.repository.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RoomTypeHistRepository = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const typeorm_ex_decorator_1 = __webpack_require__("./apps/backend/src/app/decorators/typeorm-ex.decorator.ts");
+const typeorm_1 = __webpack_require__("typeorm");
+const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
+let RoomTypeHistRepository = class RoomTypeHistRepository extends typeorm_1.Repository {
+    createNew(payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const roomTypeId = payload.id;
+            delete payload.id;
+            return this.save(Object.assign({ roomTypeId: roomTypeId }, payload));
+        });
+    }
+    deleteAllHist(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return yield this.createQueryBuilder('room_type_hist')
+                .delete()
+                .where('room_type_hist.room_type_id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+        });
+    }
+};
+RoomTypeHistRepository = tslib_1.__decorate([
+    (0, typeorm_ex_decorator_1.CustomRepository)(models_1.RoomTypeHist)
+], RoomTypeHistRepository);
+exports.RoomTypeHistRepository = RoomTypeHistRepository;
 
 
 /***/ }),
@@ -7323,7 +9151,20 @@ const typeorm_1 = __webpack_require__("typeorm");
 const room_type_entity_1 = __webpack_require__("./apps/backend/src/app/models/room-type.entity.ts");
 const models_1 = __webpack_require__("./apps/backend/src/app/models/index.ts");
 const nestjs_typeorm_paginate_1 = __webpack_require__("nestjs-typeorm-paginate");
+const common_1 = __webpack_require__("@nestjs/common");
+const device_type_service_1 = __webpack_require__("./apps/backend/src/app/services/device-type.service.ts");
 let RoomTypeRepository = class RoomTypeRepository extends typeorm_1.Repository {
+    constructor() {
+        super(...arguments);
+        this.logger = new common_1.Logger(device_type_service_1.DeviceTypeService.name);
+    }
+    existsById(id) {
+        return this.createQueryBuilder('rt')
+            .select('COUNT(1)', 'count')
+            .where('rt.id = :id', { id: id })
+            .getRawOne()
+            .then((data) => (data === null || data === void 0 ? void 0 : data.count) > 0);
+    }
     findRoomTypesByPagination(pagination) {
         const query = this.createQueryBuilder('rt')
             .select('rt.id', 'id')
@@ -7342,8 +9183,7 @@ let RoomTypeRepository = class RoomTypeRepository extends typeorm_1.Repository {
         return this.createQueryBuilder('rt')
             .select('rt.id', 'id')
             .addSelect('rt.name', 'name')
-            .andWhere('rt.disabled_at IS NULL')
-            .andWhere("rt.deleted_at IS NULL")
+            .andWhere('rt.deleted_at IS NULL')
             .getRawMany();
     }
     findById(id) {
@@ -7357,77 +9197,73 @@ let RoomTypeRepository = class RoomTypeRepository extends typeorm_1.Repository {
                 .addSelect('aa.username', 'updatedBy')
                 .addSelect('rt.updated_at', 'updatedAt')
                 .innerJoin(models_1.Accounts, 'a', 'a.id = rt.created_by')
-                .innerJoin(models_1.Accounts, 'aa', 'aa.id = rt.updated_by')
+                .leftJoin(models_1.Accounts, 'aa', 'aa.id = rt.updated_by')
                 .where('rt.id = :id', { id: id })
                 .andWhere('rt.deleted_at IS NULL')
                 .getRawOne();
         });
     }
-    deleteByIdAndAccountId(accountId, id) {
+    // async get(id: string): Promise<RoomType> {
+    //   return this.createQueryBuilder('rt')
+    //     .select('rt.id', 'id')
+    //     .addSelect('rt.name', 'name')
+    //     .addSelect('rt.description', 'description')
+    //     .addSelect('rt.created_by', 'createdBy')
+    //     .addSelect('rt.created_at', 'createdAt')
+    //     .addSelect('rt.updated_by', 'updatedBy')
+    //     .addSelect('rt.updated_at', 'updatedAt')
+    //     .addSelect('rt.deleted_by', 'deletedBy')
+    //     .addSelect('rt.deleted_at', 'deletedAt')
+    //     .where('rt.id = :id', { id: id })
+    //     .getRawOne<RoomType>();
+    // }
+    addNew(accountId, payload) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return this.createQueryBuilder('rt')
+            try {
+                const roomType = yield this.save({
+                    name: payload.name.trim(),
+                    description: payload.description,
+                    createdBy: accountId,
+                    createdAt: new Date(),
+                });
+                return roomType;
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    updateById(accountId, roomTypeId, payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const oldData = yield this.findOneOrFail({
+                where: {
+                    id: roomTypeId,
+                }
+            });
+            return this.save(Object.assign(Object.assign({}, oldData), { id: roomTypeId, name: payload.name.trim(), description: payload.description, updatedBy: accountId, updatedAt: new Date() }), {
+                transaction: true,
+            });
+        });
+    }
+    deleteById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isDeleted = yield this.createQueryBuilder('room_type')
                 .update({
                 deletedAt: new Date(),
                 deletedBy: accountId,
             })
-                .where('rt.id = :id', { id: id })
+                .where('room_type.id = :id', { id: id })
                 .useTransaction(true)
                 .execute();
+            if (isDeleted.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
         });
-    }
-    existsById(id) {
-        return this.createQueryBuilder('rt')
-            .select('COUNT(1)', 'count')
-            .where('rt.id = :id', { id: id })
-            .getRawOne()
-            .then((data) => (data === null || data === void 0 ? void 0 : data.count) > 0);
-    }
-    restoreDisabledById(accountId, id) {
-        return this.createQueryBuilder('rt')
-            .update({
-            updatedAt: new Date(),
-            updatedBy: accountId,
-        })
-            .where('rt.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
-    }
-    restoreDeletedById(accountId, id) {
-        return this.createQueryBuilder('room_type')
-            .update({
-            updatedAt: new Date(),
-            updatedBy: accountId,
-            deletedAt: null,
-            deletedBy: null,
-        })
-            .where('room_type.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
-    }
-    deleteById(accountId, id) {
-        return this.createQueryBuilder('room_type')
-            .update({
-            deletedAt: new Date(),
-            deletedBy: accountId,
-        })
-            .where('room_type.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
-    }
-    permanantDeleteById(id) {
-        return this.createQueryBuilder('room_type')
-            .delete()
-            .where('room_type.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
-    }
-    findDisabledByPagination(search) {
-        return this.createQueryBuilder('rt')
-            .select('rt.id', 'id')
-            .addSelect('rt.name', 'name')
-            .where('rt.name LIKE :search', { search: search.trim() })
-            .andWhere('rt.disabled_at IS NOT NULL')
-            .getRawMany();
     }
     findDeletedByPagination(search) {
         return this.createQueryBuilder('rt')
@@ -7441,16 +9277,33 @@ let RoomTypeRepository = class RoomTypeRepository extends typeorm_1.Repository {
             .orderBy('rt.deleted_at', 'DESC')
             .getRawMany();
     }
-    updateById(roomTypeId, accountId, payload) {
-        return this.save({
-            id: roomTypeId,
-            name: payload.name.trim(),
-            description: payload.description,
-            updatedBy: accountId,
-            updatedAt: new Date(),
-        }, {
-            transaction: true,
+    restoreDeletedById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isRestored = yield this.createQueryBuilder('room_type')
+                .update({
+                updatedAt: new Date(),
+                updatedBy: accountId,
+                deletedAt: null,
+                deletedBy: null,
+            })
+                .where('room_type.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isRestored.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
         });
+    }
+    permanentlyDeleteById(id) {
+        return this.createQueryBuilder('room_type')
+            .delete()
+            .where('room_type.id = :id', { id: id })
+            .useTransaction(true)
+            .execute();
     }
 };
 RoomTypeRepository = tslib_1.__decorate([
@@ -7548,13 +9401,31 @@ let RoomsRepository = class RoomsRepository extends typeorm_1.Repository {
             return result.size;
         });
     }
-    isExistedById(id) {
+    existsById(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             return this.createQueryBuilder('rooms')
                 .select('COUNT(rooms.name)')
                 .where('rooms.id = :id', { id })
                 .getRawOne()
                 .then((data) => data['count'] > 0);
+        });
+    }
+    checkIfRoomIsDeletedById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('rooms')
+                .select('rooms.deleted_at')
+                .where('rooms.id = :id', { id: id })
+                .getRawOne()
+                .then((data) => (data ? data['deleted_at'] : true));
+        });
+    }
+    checkIfRoomIsDisabledById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('rooms')
+                .select('rooms.disabled_at')
+                .where('rooms.id = :id', { id: id })
+                .getRawOne()
+                .then((data) => (data ? data['disabled_at'] : true));
         });
     }
     isExistedByName(name) {
@@ -7566,50 +9437,10 @@ let RoomsRepository = class RoomsRepository extends typeorm_1.Repository {
                 .then((data) => data['count'] > 0);
         });
     }
-    findDisabledRooms(search) {
-        return this.createQueryBuilder('rooms')
-            .select('rooms.id', 'id')
-            .addSelect('rooms.name', 'name')
-            .addSelect('rooms.disabled_at', 'disabledAt')
-            .addSelect('a.username', 'disabledBy')
-            .addSelect('rt.name', 'roomTypeName')
-            .innerJoin(models_2.Accounts, 'a', 'rooms.disabled_by = a.id')
-            .innerJoin(room_type_entity_1.RoomType, 'rt', 'rooms.type = rt.id')
-            .where(`rooms.deleted_at IS NULL`)
-            .andWhere(`rooms.disabled_at IS NOT NULL`)
-            .andWhere('rooms.name ILIKE :search', { search: `%${search.trim()}%` })
-            .getRawMany();
-    }
-    findDeletedRooms(search) {
-        return this.createQueryBuilder(`rooms`)
-            .select('rooms.id', 'id')
-            .addSelect('rooms.name', 'name')
-            .addSelect('rooms.deleted_at', 'deletedAt')
-            .addSelect('a.username', 'deletedBy')
-            .addSelect('rt.name', 'roomTypeName')
-            .innerJoin(models_2.Accounts, 'a', 'rooms.deleted_by = a.id')
-            .innerJoin(room_type_entity_1.RoomType, 'rt', 'rt.id = rooms.type')
-            .where(`rooms.deleted_at IS NOT NULL`)
-            .andWhere(`rooms.disabled_at IS NULL`)
-            .andWhere('rooms.name ILIKE :name', { name: `%${search.trim()}%` })
-            .getRawMany();
-    }
-    getRoomsByRoomType(roomTypeId) {
-        return this.createQueryBuilder(`rooms`)
-            .select('rooms.id', 'id')
-            .addSelect('rooms.name', 'name')
-            .addSelect('rooms.type', 'type')
-            .addSelect('rt.name', 'roomTypeName')
-            .innerJoin(room_type_entity_1.RoomType, 'rt', 'rt.id = rooms.type')
-            .where(`rooms.deleted_at IS NULL`)
-            .andWhere(`rooms.disabled_at IS NULL`)
-            .andWhere('rooms.type = :type', { type: roomTypeId })
-            .getRawMany();
-    }
     searchRoom(payload) {
         const query = this.createQueryBuilder('r')
-            .innerJoin(models_2.Accounts, 'a', 'r.created_by = a.id')
-            .innerJoin(models_2.Accounts, 'aa', 'r.updated_by = aa.id')
+            .leftJoin(models_2.Accounts, 'a', 'r.created_by = a.id')
+            .leftJoin(models_2.Accounts, 'aa', 'r.updated_by = aa.id')
             .select('r.id', 'id')
             .addSelect('r.name', 'name')
             .addSelect('r.description', 'description')
@@ -7635,57 +9466,6 @@ let RoomsRepository = class RoomsRepository extends typeorm_1.Repository {
             page: payload.page,
         });
     }
-    disableById(accountId, id) {
-        return this.createQueryBuilder('rooms')
-            .update({
-            disabledBy: accountId,
-            disabledAt: new Date(),
-        })
-            .where('rooms.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
-    }
-    restoreDisabledRoomById(id) {
-        return this.createQueryBuilder('rooms')
-            .update({
-            disabledAt: null,
-            disabledBy: null,
-        })
-            .where('rooms.id = :id', { id: id })
-            .useTransaction(true)
-            .execute();
-    }
-    deleteById(accountId, id) {
-        return this.createQueryBuilder('rooms')
-            .update({
-            disabledAt: null,
-            disabledBy: null,
-            deletedBy: accountId,
-            deletedAt: new Date(),
-        })
-            .where('rooms.id = :id', { id: id })
-            .execute();
-    }
-    restoreDeletedRoomById(id) {
-        return this.createQueryBuilder('rooms')
-            .update({
-            deletedAt: null,
-            deletedBy: null,
-        })
-            .where('rooms.id = :id', { id: id })
-            .execute();
-    }
-    getAllRoomsForElasticIndex() {
-        return this.createQueryBuilder('rooms')
-            .select([
-            'rooms.id',
-            'rooms.name',
-            'rooms.description',
-            'rooms.isDeleted',
-            'rooms.isDisabled',
-        ])
-            .getMany();
-    }
     findRoomNames() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             return this.createQueryBuilder('rooms')
@@ -7708,8 +9488,8 @@ let RoomsRepository = class RoomsRepository extends typeorm_1.Repository {
                 .addSelect('rooms.updated_at', 'updatedAt')
                 .addSelect('aa.username', 'updatedBy')
                 .addSelect('rooms.description', 'description')
-                .innerJoin(models_2.Accounts, 'a', 'rooms.created_by = a.id')
-                .innerJoin(models_2.Accounts, 'aa', 'rooms.updated_by = aa.id')
+                .leftJoin(models_2.Accounts, 'a', 'rooms.created_by = a.id')
+                .leftJoin(models_2.Accounts, 'aa', 'rooms.updated_by = aa.id')
                 .innerJoin(room_type_entity_1.RoomType, 'rt', 'rt.id = rooms.type')
                 .where('rooms.disabled_at IS NULL')
                 .andWhere('rooms.deleted_at IS NULL')
@@ -7717,18 +9497,190 @@ let RoomsRepository = class RoomsRepository extends typeorm_1.Repository {
                 .getRawOne();
         });
     }
-    filterByNameAndType(payload) {
+    createNewRoom(payload, userId) {
+        if (payload.isDisabled) {
+            return this.save({
+                name: payload.name.trim(),
+                description: payload.description,
+                type: payload.type,
+                createdBy: userId,
+                createdAt: new Date(),
+                disabledBy: userId,
+                disabledAt: new Date(),
+            }, {
+                transaction: true,
+            });
+        }
+        else {
+            return this.save({
+                name: payload.name.trim(),
+                description: payload.description,
+                type: payload.type,
+                createdBy: userId,
+                createdAt: new Date(),
+            }, {
+                transaction: true,
+            });
+        }
+    }
+    updateById(accountId, roomId, payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const oldData = yield this.findOneOrFail({
+                where: {
+                    id: roomId,
+                },
+            });
+            return this.save(Object.assign(Object.assign({}, oldData), { id: roomId, name: payload.name.trim(), description: payload.description, type: payload.type, updatedBy: accountId, updatedAt: new Date() }), {
+                transaction: true,
+            });
+        });
+    }
+    findDisabledRooms(search) {
         return this.createQueryBuilder('rooms')
+            .select('rooms.id', 'id')
+            .addSelect('rooms.name', 'name')
+            .addSelect('rooms.disabled_at', 'disabledAt')
+            .addSelect('a.username', 'disabledBy')
+            .addSelect('rt.name', 'roomTypeName')
+            .innerJoin(models_2.Accounts, 'a', 'rooms.disabled_by = a.id')
+            .innerJoin(room_type_entity_1.RoomType, 'rt', 'rooms.type = rt.id')
+            .where(`rooms.deleted_at IS NULL`)
+            .andWhere(`rooms.disabled_at IS NOT NULL`)
+            .andWhere('rooms.name ILIKE :search', { search: `%${search.trim()}%` })
+            .getRawMany();
+    }
+    getRoomsByRoomType(roomTypeId) {
+        return this.createQueryBuilder(`rooms`)
+            .select('rooms.id', 'id')
+            .addSelect('rooms.name', 'name')
+            .addSelect('rooms.type', 'type')
+            .addSelect('rt.name', 'roomTypeName')
+            .innerJoin(room_type_entity_1.RoomType, 'rt', 'rt.id = rooms.type')
+            .where(`rooms.deleted_at IS NULL`)
+            .andWhere(`rooms.disabled_at IS NULL`)
+            .andWhere('rooms.type = :type', { type: roomTypeId })
+            .getRawMany();
+    }
+    disableById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isDisabled = yield this.createQueryBuilder('rooms')
+                .update({
+                disabledBy: accountId,
+                disabledAt: new Date(),
+            })
+                .where('rooms.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isDisabled.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
+    }
+    restoreDisabledRoomById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isRestored = yield this.createQueryBuilder('rooms')
+                .update({
+                disabledAt: null,
+                disabledBy: null,
+                updatedBy: accountId,
+                updatedAt: new Date(),
+            })
+                .where('rooms.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isRestored.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
+    }
+    deleteById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isDeleted = yield this.createQueryBuilder('rooms')
+                .update({
+                deletedAt: new Date(),
+                deletedBy: accountId,
+                disabledAt: null,
+                disabledBy: null,
+            })
+                .where('rooms.id = :id', { id: id })
+                .useTransaction(true)
+                .execute();
+            if (isDeleted.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
+    }
+    findDeletedRooms(search) {
+        return this.createQueryBuilder(`rooms`)
+            .select('rooms.id', 'id')
+            .addSelect('rooms.name', 'name')
+            .addSelect('rooms.deleted_at', 'deletedAt')
+            .addSelect('a.username', 'deletedBy')
+            .addSelect('rt.name', 'roomTypeName')
+            .innerJoin(models_2.Accounts, 'a', 'rooms.deleted_by = a.id')
+            .innerJoin(room_type_entity_1.RoomType, 'rt', 'rt.id = rooms.type')
+            .where(`rooms.deleted_at IS NOT NULL`)
+            .andWhere(`rooms.disabled_at IS NULL`)
+            .andWhere('rooms.name ILIKE :name', { name: `%${search.trim()}%` })
+            .getRawMany();
+    }
+    restoreDeletedRoomById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isRestored = yield this.createQueryBuilder('rooms')
+                .update({
+                deletedAt: null,
+                deletedBy: null,
+                updatedAt: new Date(),
+                updatedBy: accountId,
+            })
+                .where('rooms.id = :id', { id: id })
+                .execute();
+            if (isRestored.affected > 0) {
+                return this.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+            }
+        });
+    }
+    getAllRoomsForElasticIndex() {
+        return this.createQueryBuilder('rooms')
+            .select([
+            'rooms.id',
+            'rooms.name',
+            'rooms.description',
+            'rooms.isDeleted',
+            'rooms.isDisabled',
+        ])
+            .getMany();
+    }
+    filterByNameAndType(payload) {
+        const query = this.createQueryBuilder('rooms')
             .select('rooms.id', 'id')
             .addSelect('rooms.name', 'name')
             .addSelect('rooms.type', 'type')
             .where('rooms.disabled_at IS NULL')
             .andWhere('rooms.deleted_at IS NULL')
-            .andWhere('rooms.type LIKE :type', { type: `%${payload.roomType.name}%` })
-            .andWhere('rooms.name LIKE :name', { name: `%${payload.roomName.name}%` })
+            .andWhere('rooms.name ILIKE :name', { name: `%${payload.roomName.name}%` })
             .orderBy('rooms.name', payload.roomName.sort)
-            .addOrderBy('rooms.type', payload.roomType.sort)
-            .getRawMany();
+            .addOrderBy('rooms.type', payload.roomType.sort);
+        if (payload.roomType.name.length > 0) {
+            query.andWhere('rooms.type = :type', { type: payload.roomType.name });
+        }
+        return query.getRawMany();
     }
 };
 RoomsRepository = tslib_1.__decorate([
@@ -7766,6 +9718,28 @@ let SlotRepository = class SlotRepository extends typeorm_1.Repository {
         return (0, nestjs_typeorm_paginate_1.paginateRaw)(query, {
             page: params.page,
             limit: params.limit,
+        });
+    }
+    getNumOfSlot(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('slot')
+                .select('slot.slot_num', "slotNum")
+                .where('slot.id = :slotId', { slotId: id })
+                .getRawOne();
+        });
+    }
+    findSlotNames() {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.createQueryBuilder('slots')
+                .select('slots.name', 'name')
+                .addSelect('slots.id', 'id')
+                .addSelect('slots.slot_num', 'slotNum')
+                .addSelect('slots.time_start', 'timeStart')
+                .addSelect('slots.time_end', 'timeEnd')
+                .where('slots.deleted_by IS NULL')
+                .andWhere('slots.deleted_at IS NULL')
+                .orderBy('slot_num', 'ASC')
+                .getRawMany();
         });
     }
     findById(id) {
@@ -7864,30 +9838,91 @@ exports.UsersWarningFlagRepository = UsersWarningFlagRepository;
 
 /***/ }),
 
+/***/ "./apps/backend/src/app/services/account-hist.service.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AccountHistService = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const common_1 = __webpack_require__("@nestjs/common");
+const account_hist_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/account-hist.repository.ts");
+let AccountHistService = class AccountHistService {
+    constructor(repository) {
+        this.repository = repository;
+    }
+    createNew(account) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.repository.createNew(account);
+        });
+    }
+};
+AccountHistService = tslib_1.__decorate([
+    (0, common_1.Injectable)(),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof account_hist_repository_1.AccountHistRepository !== "undefined" && account_hist_repository_1.AccountHistRepository) === "function" ? _a : Object])
+], AccountHistService);
+exports.AccountHistService = AccountHistService;
+
+
+/***/ }),
+
 /***/ "./apps/backend/src/app/services/accounts.service.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var AccountsService_1, _a, _b, _c;
+var AccountsService_1, _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AccountsService = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
-const base_service_1 = __webpack_require__("./apps/backend/src/app/services/base.service.ts");
 const repositories_1 = __webpack_require__("./apps/backend/src/app/repositories/index.ts");
 const keycloak_service_1 = __webpack_require__("./apps/backend/src/app/services/keycloak.service.ts");
 const cloudinary_service_1 = __webpack_require__("./apps/backend/src/app/services/cloudinary.service.ts");
 const crypto_1 = __webpack_require__("crypto");
-let AccountsService = AccountsService_1 = class AccountsService extends base_service_1.BaseService {
-    constructor(cloudinaryService, keycloakService, repository) {
-        super();
+const account_hist_service_1 = __webpack_require__("./apps/backend/src/app/services/account-hist.service.ts");
+let AccountsService = AccountsService_1 = class AccountsService {
+    constructor(cloudinaryService, keycloakService, repository, histService) {
         this.cloudinaryService = cloudinaryService;
         this.keycloakService = keycloakService;
         this.repository = repository;
+        this.histService = histService;
         this.logger = new common_1.Logger(AccountsService_1.name);
     }
-    getAll() {
-        return null;
+    getAll(request) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.repository.searchAccount(request);
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException('One or more parameters is invalid');
+            }
+        });
+    }
+    getRoleOfAccount(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const role = yield this.repository.getRoleOfAccount(id);
+                return role;
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException('One or more parameters is invalid');
+            }
+        });
+    }
+    getById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const account = yield this.repository.findById(id);
+                return account;
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException('Account does not exist');
+            }
+        });
     }
     getUserIdByKeycloakId(keycloakId) {
         return this.repository.findIdByKeycloakId(keycloakId);
@@ -7901,21 +9936,6 @@ let AccountsService = AccountsService_1 = class AccountsService extends base_ser
             throw new common_1.BadRequestException(e.message);
         }
     }
-    add(model) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const entity = Object.assign({}, model);
-                return this.repository.save(entity);
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while adding new account');
-            }
-        });
-    }
-    addAll(models) {
-        return Promise.resolve([]);
-    }
     getAccountsByRoleId(roleId) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
@@ -7923,104 +9943,180 @@ let AccountsService = AccountsService_1 = class AccountsService extends base_ser
             }
             catch (e) {
                 this.logger.error(e);
-                throw new common_1.BadRequestException('An error occurred while getting rooms by type ' + roleId);
+                throw new common_1.BadRequestException('An error occurred while getting accounts by type ' + roleId);
             }
         });
     }
-    deleteById(id) {
-        return Promise.resolve(undefined);
-    }
-    getAllByPagination(request) {
+    add(payload, userId) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isExisted = yield this.repository.isExistedByUsername(payload.username);
+            if (isExisted) {
+                throw new common_1.BadRequestException('Username is duplicated!');
+            }
             try {
-                return yield this.repository.search({
-                    search: request.search,
-                    page: request.page,
-                    limit: request.limit,
-                    direction: request.sort,
+                const accountAdded = yield this.repository.createNewAccount(payload, userId);
+                yield this.histService.createNew(accountAdded);
+                return accountAdded;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                if (e.message.includes('constraint') &&
+                    e.message.includes('devices_device_type_id_fk')) {
+                    throw new common_1.BadRequestException('There is no device type with the provided id');
+                }
+                throw new common_1.BadRequestException('Error while creating a new device');
+            }
+        });
+    }
+    addAll(models) {
+        return Promise.resolve([]);
+    }
+    updateById(accountId, id, body) {
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            let account;
+            try {
+                account = yield this.repository.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
                 });
             }
             catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException('One or more parameters are invalid');
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException("Account doesn't exist with the provided id");
             }
-        });
-    }
-    updateById(body, id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const data = yield this.repository.findById(id);
+            if (data === undefined) {
+                throw new common_1.BadRequestException('This account is already deleted or disabled');
+            }
             try {
-                const account = yield this.repository.findById(id);
-                return yield this.repository.updatePartially(body, account);
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException('Account does not exist');
-            }
-        });
-    }
-    getById(id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.repository.findById(id);
+                const accountUpdated = yield this.repository.updatePartially(body, account, accountId);
+                yield this.histService.createNew(accountUpdated);
+                return accountUpdated;
             }
             catch (e) {
                 this.logger.error(e);
-                throw new common_1.BadRequestException('Account does not exist');
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'Error occurred while updating this account');
             }
         });
     }
-    disableById(id) {
+    disableById(accountId, id) {
+        var _a;
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isExisted = yield this.repository.existsById(id);
+            if (!isExisted) {
+                throw new common_1.BadRequestException('Account does not found with the provided id');
+            }
+            const isDisabled = yield this.repository.checkIfAccountIsDisabledById(id);
+            if (isDisabled) {
+                throw new common_1.BadRequestException('This account is already disabled');
+            }
+            const isDeleted = yield this.repository.checkIfAccountIsDeletedById(id);
+            if (isDeleted) {
+                throw new common_1.BadRequestException('This account is already deleted, can not disable');
+            }
             try {
-                yield this.repository.disableAccountById(id);
+                const account = yield this.repository.disableById(accountId, id);
+                yield this.histService.createNew(account);
+                return account;
             }
             catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while disabling account');
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'Error occurred while disable this account');
             }
         });
     }
-    handleRestoreDisabledAccountById(id) {
+    getDisabledAccounts(search) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.repository.restoreDisabledAccountById(id);
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while restoring disabled account');
-            }
-        });
-    }
-    handleRestoreAccountById(id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                yield this.repository.restoreAccountById(id);
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while getting deleted accounts');
-            }
-        });
-    }
-    getDeletedAccounts() {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.repository.findDeletedAccounts();
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while getting deleted accounts');
-            }
-        });
-    }
-    getDisabledAccounts() {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.repository.findDisabledAccounts();
+                return yield this.repository.findDisabledAccounts(search);
             }
             catch (e) {
                 this.logger.error(e.message);
                 throw new common_1.BadRequestException('Error while getting disabled accounts');
+            }
+        });
+    }
+    handleRestoreDisabledAccountById(accountId, id) {
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Account does not found with the provided id');
+                }
+                const isDeleted = yield this.repository.checkIfAccountIsDeletedById(id);
+                if (isDeleted) {
+                    throw new common_1.BadRequestException('This account is already deleted');
+                }
+                const isDisabled = yield this.repository.checkIfAccountIsDisabledById(id);
+                if (!isDisabled) {
+                    throw new common_1.BadRequestException('This account ID is now active. Cannot restore it');
+                }
+                const account = yield this.repository.restoreDisabledAccountById(accountId, id);
+                yield this.histService.createNew(account);
+                return account;
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'Error occurred while restore the disabled status of this account');
+            }
+        });
+    }
+    deleteById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Account does not found with the provided id');
+                }
+                const isDeleted = yield this.repository.checkIfAccountIsDeletedById(id);
+                if (isDeleted) {
+                    throw new common_1.BadRequestException('This account is already deleted');
+                }
+                const account = yield this.repository.deleteById(accountId, id);
+                yield this.histService.createNew(account);
+                return account;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    getDeletedAccounts(search) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.repository.findDeletedAccounts(search);
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException('Error while getting deleted accounts');
+            }
+        });
+    }
+    handleRestoreDeletedAccountById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Account does not found with the provided id');
+                }
+                const isDisabled = yield this.repository.checkIfAccountIsDisabledById(id);
+                if (isDisabled) {
+                    throw new common_1.BadRequestException('This account is already disabled');
+                }
+                const isDeleted = yield this.repository.checkIfAccountIsDeletedById(id);
+                if (!isDeleted) {
+                    throw new common_1.BadRequestException('This account ID is now active. Cannot restore it');
+                }
+                const account = yield this.repository.restoreDeletedAccountById(accountId, id);
+                yield this.histService.createNew(account);
+                return account;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
             }
         });
     }
@@ -8086,25 +10182,22 @@ let AccountsService = AccountsService_1 = class AccountsService extends base_ser
             }
         });
     }
-    getUsernameByAccountId(id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.repository.findUsernameById(id);
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException(e.message);
-            }
-        });
-    }
-    updateMyProfile(keycloakUser, payload) {
+    // async getUsernameByAccountId(id: string): Promise<string> {
+    //   try {
+    //     return await this.repository.findUsernameById(id);
+    //   } catch (e) {
+    //     this.logger.error(e);
+    //     throw new BadRequestException(e.message);
+    //   }
+    // }
+    updateMyProfile(keycloakUser, body) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
                 const user = yield this.repository.findByKeycloakId(keycloakUser.sub);
                 if (!user) {
                     throw new common_1.BadRequestException('Account does not exist with the provided id');
                 }
-                return yield this.repository.save(Object.assign(Object.assign({}, user), payload));
+                return yield this.repository.save(Object.assign(Object.assign({}, user), body));
             }
             catch (e) {
                 this.logger.error(e.message);
@@ -8216,7 +10309,7 @@ let AccountsService = AccountsService_1 = class AccountsService extends base_ser
 };
 AccountsService = AccountsService_1 = tslib_1.__decorate([
     (0, common_1.Injectable)(),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof cloudinary_service_1.CloudinaryService !== "undefined" && cloudinary_service_1.CloudinaryService) === "function" ? _a : Object, typeof (_b = typeof keycloak_service_1.KeycloakService !== "undefined" && keycloak_service_1.KeycloakService) === "function" ? _b : Object, typeof (_c = typeof repositories_1.AccountRepository !== "undefined" && repositories_1.AccountRepository) === "function" ? _c : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof cloudinary_service_1.CloudinaryService !== "undefined" && cloudinary_service_1.CloudinaryService) === "function" ? _a : Object, typeof (_b = typeof keycloak_service_1.KeycloakService !== "undefined" && keycloak_service_1.KeycloakService) === "function" ? _b : Object, typeof (_c = typeof repositories_1.AccountRepository !== "undefined" && repositories_1.AccountRepository) === "function" ? _c : Object, typeof (_d = typeof account_hist_service_1.AccountHistService !== "undefined" && account_hist_service_1.AccountHistService) === "function" ? _d : Object])
 ], AccountsService);
 exports.AccountsService = AccountsService;
 
@@ -8391,6 +10484,11 @@ let BookingReasonHistService = class BookingReasonHistService {
             return this.repository.createNew(bookingReason);
         });
     }
+    deleteAllHist(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.repository.deleteAllHist(id);
+        });
+    }
 };
 BookingReasonHistService = tslib_1.__decorate([
     (0, common_1.Injectable)(),
@@ -8418,7 +10516,7 @@ let BookingReasonService = BookingReasonService_1 = class BookingReasonService {
         this.histService = histService;
         this.logger = new common_1.Logger(BookingReasonService_1.name);
     }
-    getRoomTypesWithPagination(pagination) {
+    getBookingReasonTypesWithPagination(pagination) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
                 return yield this.repository.findByPagination(pagination);
@@ -8429,33 +10527,22 @@ let BookingReasonService = BookingReasonService_1 = class BookingReasonService {
             }
         });
     }
-    deleteBookingReasonById(accountId, id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.repository.deleteById(accountId, id);
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException(e.message);
-            }
-        });
-    }
-    getDeletedReasons(search) {
+    getBookingReasonNames() {
         try {
-            return this.repository.findDeletedByPagination(search);
+            return this.repository.findBookingReasonName();
         }
         catch (e) {
             this.logger.error(e.message);
             throw new common_1.BadRequestException(e.message);
         }
     }
-    addNewBookingReason(accountId, payload) {
+    getBookingReasonById(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.repository.addNew(accountId, payload);
+                return yield this.repository.findById(id);
             }
             catch (e) {
-                this.logger.error(e);
+                this.logger.error(e.message);
                 throw new common_1.BadRequestException(e.message);
             }
         });
@@ -8483,7 +10570,9 @@ let BookingReasonService = BookingReasonService_1 = class BookingReasonService {
                 if (!isExisted) {
                     throw new common_1.BadRequestException('Room type does not found with the provided id');
                 }
-                return yield this.repository.updateById(accountId, updatePayload);
+                const bookingReason = yield this.repository.updateById(accountId, updatePayload, id);
+                yield this.histService.createNew(bookingReason);
+                return bookingReason;
             }
             catch (e) {
                 this.logger.error(e.message);
@@ -8491,10 +10580,64 @@ let BookingReasonService = BookingReasonService_1 = class BookingReasonService {
             }
         });
     }
-    getBookingReasonById(id) {
+    deleteBookingReasonById(accountId, id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.repository.findById(id);
+                const data = yield this.repository.findById(id);
+                if (data === undefined) {
+                    throw new common_1.BadRequestException('This reason already deleted!');
+                }
+                const reason = yield this.repository.deleteById(accountId, id);
+                yield this.histService.createNew(reason);
+                return reason;
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    getDeletedReasons(search) {
+        try {
+            return this.repository.findDeletedByPagination(search);
+        }
+        catch (e) {
+            this.logger.error(e.message);
+            throw new common_1.BadRequestException(e.message);
+        }
+    }
+    restoreDeletedReasonById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Reason does not exist with the provided id');
+                }
+                const data = yield this.repository.findById(id);
+                if (data !== undefined) {
+                    throw new common_1.BadRequestException('This reason ID is now active. Cannot restore');
+                }
+                const reason = yield this.repository.restoreDeletedById(accountId, id);
+                yield this.histService.createNew(reason);
+                return reason;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    permanentlyDeleteReasonById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = yield this.repository.findById(id);
+                if (data !== undefined) {
+                    throw new common_1.BadRequestException('Please delete this type after permanently delete');
+                }
+                else {
+                    yield this.histService.deleteAllHist(id);
+                    return this.repository.permanentlyDeleteById(id);
+                }
             }
             catch (e) {
                 this.logger.error(e.message);
@@ -8512,11 +10655,40 @@ exports.BookingReasonService = BookingReasonService;
 
 /***/ }),
 
+/***/ "./apps/backend/src/app/services/booking-room-hist.service.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BookingRequestHistService = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const common_1 = __webpack_require__("@nestjs/common");
+const booking_request_hist_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/booking-request-hist.repository.ts");
+let BookingRequestHistService = class BookingRequestHistService {
+    constructor(repository) {
+        this.repository = repository;
+    }
+    createNew(request, queryRunner) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.repository.createNew(request, queryRunner);
+        });
+    }
+};
+BookingRequestHistService = tslib_1.__decorate([
+    (0, common_1.Injectable)(),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof booking_request_hist_repository_1.BookingRequestHistRepository !== "undefined" && booking_request_hist_repository_1.BookingRequestHistRepository) === "function" ? _a : Object])
+], BookingRequestHistService);
+exports.BookingRequestHistService = BookingRequestHistService;
+
+
+/***/ }),
+
 /***/ "./apps/backend/src/app/services/booking-room.service.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var BookingRoomService_1, _a, _b, _c, _d, _e;
+var BookingRoomService_1, _a, _b, _c, _d, _e, _f, _g, _h, _j;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BookingRoomService = void 0;
 const tslib_1 = __webpack_require__("tslib");
@@ -8526,13 +10698,22 @@ const repositories_1 = __webpack_require__("./apps/backend/src/app/repositories/
 const room_wishlist_service_1 = __webpack_require__("./apps/backend/src/app/services/room-wishlist.service.ts");
 const devices_service_1 = __webpack_require__("./apps/backend/src/app/services/devices.service.ts");
 const accounts_service_1 = __webpack_require__("./apps/backend/src/app/services/accounts.service.ts");
+const room_type_service_1 = __webpack_require__("./apps/backend/src/app/services/room-type.service.ts");
+const booking_room_hist_service_1 = __webpack_require__("./apps/backend/src/app/services/booking-room-hist.service.ts");
+const slot_service_1 = __webpack_require__("./apps/backend/src/app/services/slot.service.ts");
+const dayjs = __webpack_require__("dayjs");
+const typeorm_1 = __webpack_require__("typeorm");
 let BookingRoomService = BookingRoomService_1 = class BookingRoomService {
-    constructor(roomService, deviceService, roomWishlistService, repository, accountService) {
+    constructor(dataSource, roomService, roomTypeService, deviceService, roomWishlistService, repository, accountService, slotService, histService) {
+        this.dataSource = dataSource;
         this.roomService = roomService;
+        this.roomTypeService = roomTypeService;
         this.deviceService = deviceService;
         this.roomWishlistService = roomWishlistService;
         this.repository = repository;
         this.accountService = accountService;
+        this.slotService = slotService;
+        this.histService = histService;
         this.logger = new common_1.Logger(BookingRoomService_1.name);
     }
     getBookingRooms(payload) {
@@ -8568,7 +10749,18 @@ let BookingRoomService = BookingRoomService_1 = class BookingRoomService {
             }
             catch (e) {
                 this.logger.error(e);
-                throw new common_1.BadRequestException('An error occurred while getting rooms by type ' + roomId);
+                throw new common_1.BadRequestException('An error occurred while getting request by room id ' + roomId);
+            }
+        });
+    }
+    getRequestBookingByAccountId(accountId) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.repository.getRequestBookingByAccountId(accountId);
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException('An error occurred while getting request by account id ' + accountId);
             }
         });
     }
@@ -8611,29 +10803,37 @@ let BookingRoomService = BookingRoomService_1 = class BookingRoomService {
     getUsernameList() {
         return this.accountService.getUsernameList();
     }
-    getRoomsName() {
-        return this.roomService.getRoomsName();
+    getRoomNames() {
+        return this.roomService.getRoomNames();
     }
     getChoosingBookingRooms(filter) {
-        try {
-            const payload = filter
-                ? JSON.parse(filter)
-                : {
-                    roomName: {
-                        name: '',
-                        sort: 'ASC',
-                    },
-                    roomType: {
-                        name: '',
-                        sort: 'ASC',
-                    },
-                };
-            return this.roomService.getRoomsFilterByNameAndType(payload);
-        }
-        catch (e) {
-            this.logger.error(e.message);
-            throw new common_1.BadRequestException(e.message);
-        }
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const payload = filter
+                    ? JSON.parse(filter)
+                    : {
+                        roomName: {
+                            name: '',
+                            sort: 'ASC',
+                        },
+                        roomType: {
+                            name: 'e6f085ec',
+                            sort: 'ASC',
+                        },
+                    };
+                if (payload.roomType.name.length > 0) {
+                    const isExisted = yield this.roomTypeService.existsById(payload.roomType.name);
+                    if (!isExisted) {
+                        throw new common_1.BadRequestException('Room type does not exist with provided id');
+                    }
+                }
+                return this.roomService.getRoomsFilterByNameAndType(payload);
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
     }
     getAllBookingRoomsPagination(payload) {
         try {
@@ -8643,6 +10843,50 @@ let BookingRoomService = BookingRoomService_1 = class BookingRoomService {
             this.logger.error(e.message);
             throw new common_1.BadRequestException(e.message);
         }
+    }
+    getBookingByRoomInWeek(payload) {
+        try {
+            return this.repository.getBookingByRoomInWeek(payload);
+        }
+        catch (e) {
+            this.logger.error(e.message);
+            throw new common_1.BadRequestException(e.message);
+        }
+    }
+    getBookingByRoomInDay(roomId, requestId, date) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                return this.repository.getBookingPendingByRoomInDay(roomId, requestId, date);
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    getBookingWithSameSlot(payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const slotIn = yield this.slotService.getNumOfSlot(payload.checkinSlotId);
+                const slotOut = yield this.slotService.getNumOfSlot(payload.checkoutSlotId);
+                const listRequestPending = yield this.getBookingByRoomInDay(payload.roomId, payload.requestId, payload.date);
+                if (listRequestPending.length > 0) {
+                    const listResult = listRequestPending.filter((request) => {
+                        for (let j = request.slotIn; j <= request.slotOut; j++) {
+                            if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+                                return request;
+                            }
+                        }
+                    });
+                    return listResult;
+                }
+                return null;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
     }
     getCurrentRoomBookingList(accountId) {
         try {
@@ -8662,23 +10906,6 @@ let BookingRoomService = BookingRoomService_1 = class BookingRoomService {
             throw new common_1.BadRequestException(e.message);
         }
     }
-    cancelRoomBookingById(accountId, id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const isExisted = yield this.repository.existsById(id);
-                if (isExisted) {
-                    yield this.repository.cancelRoomBookingById(accountId, id);
-                }
-                else {
-                    throw new common_1.BadRequestException('Not found with the provided id');
-                }
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException(e.message);
-            }
-        });
-    }
     getBookingRoomById(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
@@ -8690,10 +10917,178 @@ let BookingRoomService = BookingRoomService_1 = class BookingRoomService {
             }
         });
     }
+    getCountRequestBookingPending() {
+        try {
+            return this.repository.getCountRequestBookingPending();
+        }
+        catch (e) {
+            this.logger.error(e.message);
+            throw new common_1.BadRequestException(e.message);
+        }
+    }
+    addNewRequest(payload, userId) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const queryRunner = this.dataSource.createQueryRunner();
+            yield queryRunner.connect();
+            yield queryRunner.startTransaction();
+            try {
+                const role = yield this.accountService.getRoleOfAccount(userId);
+                const slotIn = yield this.slotService.getNumOfSlot(payload.checkinSlot);
+                const slotOut = yield this.slotService.getNumOfSlot(payload.checkoutSlot);
+                const listRequestPeningAndBookedInDay = yield this.repository.getBookingPendingAndBookedByDay(payload.checkinDate);
+                let status = 'PENDING';
+                let haveRequestBooked = false;
+                if (role.role_name === 'Librarian' || role.role_name === 'System Admin') {
+                    status = 'BOOKED';
+                }
+                if (listRequestPeningAndBookedInDay.length > 0) {
+                    listRequestPeningAndBookedInDay.map((request) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+                        for (let j = request.slotIn; j <= request.slotOut; j++) {
+                            if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+                                if (request.status === 'PENDING') {
+                                    // j is slot of request pending
+                                    if (role.role_name === 'Librarian' ||
+                                        role.role_name === 'System Admin') {
+                                        this.repository.rejectById(userId, request.id, queryRunner);
+                                        break;
+                                    }
+                                }
+                                else if (request.status === 'BOOKED') {
+                                    haveRequestBooked = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }));
+                }
+                if (haveRequestBooked) {
+                    throw new common_1.BadRequestException('Already have request booked in this slot, try another slot');
+                }
+                const request = yield this.repository.createNewRequest(payload, userId, status, queryRunner);
+                // await this.histService.createNew(request, queryRunner);
+                yield queryRunner.commitTransaction();
+                return request;
+            }
+            catch (e) {
+                console.log("EEEEEEEEEEEEEEEE");
+                this.logger.error(e.message);
+                yield queryRunner.rollbackTransaction();
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    acceptById(accountId, id) {
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const queryRunner = this.dataSource.createQueryRunner();
+            yield queryRunner.connect();
+            yield queryRunner.startTransaction();
+            try {
+                const request = yield this.repository.findOneOrFail({
+                    where: {
+                        id: id,
+                    },
+                });
+                if (!request) {
+                    throw new common_1.BadRequestException('Request does not found with the provided id');
+                }
+                const isAccepted = yield this.repository.isAcceptById(id);
+                if (isAccepted) {
+                    throw new common_1.BadRequestException('Request already accepted!');
+                }
+                const isCancelled = yield this.repository.isCancelledById(id);
+                if (isCancelled) {
+                    throw new common_1.BadRequestException('Request already cancelled!');
+                }
+                const listRequestSameSlot = yield this.getBookingWithSameSlot({
+                    roomId: request.roomId,
+                    date: dayjs(request.checkinDate).format('YYYY-MM-DD'),
+                    requestId: request.id,
+                    checkinSlotId: request.checkinSlot,
+                    checkoutSlotId: request.checkoutSlot,
+                });
+                listRequestSameSlot.map((request) => {
+                    return this.repository.rejectById(accountId, request.id, queryRunner);
+                });
+                const requestAccepted = yield this.repository.acceptById(accountId, id, queryRunner);
+                console.log(requestAccepted);
+                // await this.histService.createNew(requestAccepted);
+                yield queryRunner.commitTransaction();
+                return requestAccepted;
+            }
+            catch (e) {
+                this.logger.error(e);
+                yield queryRunner.rollbackTransaction();
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'Error occurred while accept request');
+            }
+        });
+    }
+    rejectById(accountId, id) {
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const queryRunner = this.dataSource.createQueryRunner();
+            yield queryRunner.connect();
+            yield queryRunner.startTransaction();
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Request does not found with the provided id');
+                }
+                const isAccepted = yield this.repository.isAcceptById(id);
+                if (isAccepted) {
+                    throw new common_1.BadRequestException('Request already accepted!');
+                }
+                const isCancelled = yield this.repository.isCancelledById(id);
+                if (isCancelled) {
+                    throw new common_1.BadRequestException('Request already cancelled!');
+                }
+                const requestAccepted = yield this.repository.rejectById(accountId, id, queryRunner);
+                console.log(requestAccepted);
+                yield queryRunner.commitTransaction();
+                // await this.histService.createNew(requestAccepted);
+                return requestAccepted;
+            }
+            catch (e) {
+                this.logger.error(e);
+                yield queryRunner.rollbackTransaction();
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'Error occurred while reject request');
+            }
+        });
+    }
+    cancelRoomBookingById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const queryRunner = this.dataSource.createQueryRunner();
+            yield queryRunner.connect();
+            yield queryRunner.startTransaction();
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Request does not found with the provided id');
+                }
+                const isAccepted = yield this.repository.isAcceptById(id);
+                if (isAccepted) {
+                    throw new common_1.BadRequestException('Request already accepted!');
+                }
+                const isCancelled = yield this.repository.isCancelledById(id);
+                if (isCancelled) {
+                    throw new common_1.BadRequestException('Request already cancelled!');
+                }
+                const role = yield this.accountService.getRoleOfAccount(accountId);
+                const request = yield this.repository.cancelRoomBookingById(accountId, id, role.role_name, queryRunner);
+                yield queryRunner.commitTransaction();
+                return request;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                yield queryRunner.rollbackTransaction();
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
 };
 BookingRoomService = BookingRoomService_1 = tslib_1.__decorate([
     (0, common_1.Injectable)(),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof rooms_service_1.RoomsService !== "undefined" && rooms_service_1.RoomsService) === "function" ? _a : Object, typeof (_b = typeof devices_service_1.DevicesService !== "undefined" && devices_service_1.DevicesService) === "function" ? _b : Object, typeof (_c = typeof room_wishlist_service_1.RoomWishlistService !== "undefined" && room_wishlist_service_1.RoomWishlistService) === "function" ? _c : Object, typeof (_d = typeof repositories_1.BookingRoomRepository !== "undefined" && repositories_1.BookingRoomRepository) === "function" ? _d : Object, typeof (_e = typeof accounts_service_1.AccountsService !== "undefined" && accounts_service_1.AccountsService) === "function" ? _e : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof typeorm_1.DataSource !== "undefined" && typeorm_1.DataSource) === "function" ? _a : Object, typeof (_b = typeof rooms_service_1.RoomsService !== "undefined" && rooms_service_1.RoomsService) === "function" ? _b : Object, typeof (_c = typeof room_type_service_1.RoomTypeService !== "undefined" && room_type_service_1.RoomTypeService) === "function" ? _c : Object, typeof (_d = typeof devices_service_1.DevicesService !== "undefined" && devices_service_1.DevicesService) === "function" ? _d : Object, typeof (_e = typeof room_wishlist_service_1.RoomWishlistService !== "undefined" && room_wishlist_service_1.RoomWishlistService) === "function" ? _e : Object, typeof (_f = typeof repositories_1.BookingRoomRepository !== "undefined" && repositories_1.BookingRoomRepository) === "function" ? _f : Object, typeof (_g = typeof accounts_service_1.AccountsService !== "undefined" && accounts_service_1.AccountsService) === "function" ? _g : Object, typeof (_h = typeof slot_service_1.SlotService !== "undefined" && slot_service_1.SlotService) === "function" ? _h : Object, typeof (_j = typeof booking_room_hist_service_1.BookingRequestHistService !== "undefined" && booking_room_hist_service_1.BookingRequestHistService) === "function" ? _j : Object])
 ], BookingRoomService);
 exports.BookingRoomService = BookingRoomService;
 
@@ -8762,40 +11157,63 @@ exports.CloudinaryService = CloudinaryService;
 
 /***/ }),
 
+/***/ "./apps/backend/src/app/services/device-type-hist.service.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.DeviceTypeHistService = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const common_1 = __webpack_require__("@nestjs/common");
+const device_type_hist_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/device-type-hist.repository.ts");
+let DeviceTypeHistService = class DeviceTypeHistService {
+    constructor(repository) {
+        this.repository = repository;
+    }
+    createNew(deviceType) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.repository.createNew(deviceType);
+        });
+    }
+    deleteAllHist(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.repository.deleteAllHist(id);
+        });
+    }
+};
+DeviceTypeHistService = tslib_1.__decorate([
+    (0, common_1.Injectable)(),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof device_type_hist_repository_1.DeviceTypeHistRepository !== "undefined" && device_type_hist_repository_1.DeviceTypeHistRepository) === "function" ? _a : Object])
+], DeviceTypeHistService);
+exports.DeviceTypeHistService = DeviceTypeHistService;
+
+
+/***/ }),
+
 /***/ "./apps/backend/src/app/services/device-type.service.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var DeviceTypeService_1, _a;
+var DeviceTypeService_1, _a, _b, _c;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DeviceTypeService = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const device_type_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/device-type.repository.ts");
+const device_type_hist_service_1 = __webpack_require__("./apps/backend/src/app/services/device-type-hist.service.ts");
+const devices_service_1 = __webpack_require__("./apps/backend/src/app/services/devices.service.ts");
 let DeviceTypeService = DeviceTypeService_1 = class DeviceTypeService {
-    constructor(repository) {
+    constructor(repository, deviceService, histService) {
         this.repository = repository;
+        this.deviceService = deviceService;
+        this.histService = histService;
         this.logger = new common_1.Logger(DeviceTypeService_1.name);
     }
     getAllDeviceTypes(param) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
                 return yield this.repository.findByPagination(param);
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException(e.message);
-            }
-        });
-    }
-    getDeviceTypeById(id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = yield this.repository.findById(id);
-                if (data === undefined) {
-                    throw new common_1.BadRequestException('This room is already deleted or disabled');
-                }
-                return data;
             }
             catch (e) {
                 this.logger.error(e);
@@ -8812,14 +11230,52 @@ let DeviceTypeService = DeviceTypeService_1 = class DeviceTypeService {
             throw new common_1.BadRequestException(e.message);
         }
     }
+    getDeviceTypeById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Device type does not found with the provided id');
+                }
+                const data = yield this.repository.findById(id);
+                if (data === undefined) {
+                    throw new common_1.BadRequestException('This device type is already deleted');
+                }
+                return data;
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    addNewDeviceType(accountId, payload) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const deviceType = yield this.repository.addNew(accountId, payload);
+                yield this.histService.createNew(deviceType);
+                return deviceType;
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
     updateDeviceTypeById(accountId, id, payload) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Device type does not found with the provided id');
+                }
                 const data = yield this.repository.findById(id);
                 if (data === undefined) {
-                    throw new common_1.BadRequestException('This room is already deleted or disabled');
+                    throw new common_1.BadRequestException('This device type is already deleted');
                 }
-                return yield this.repository.updateById(accountId, id, payload);
+                const deviceType = yield this.repository.updateById(accountId, id, payload);
+                yield this.histService.createNew(deviceType);
+                return deviceType;
             }
             catch (e) {
                 this.logger.error(e);
@@ -8830,7 +11286,24 @@ let DeviceTypeService = DeviceTypeService_1 = class DeviceTypeService {
     deleteDeviceTypeById(accountId, id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.repository.deleteById(accountId, id);
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Device type does not found with the provided id');
+                }
+                const data = yield this.repository.findById(id);
+                if (data === undefined) {
+                    throw new common_1.BadRequestException('This type is already deleted');
+                }
+                const listDeviceOfThisType = yield this.deviceService.getDevicesByDeviceType(id);
+                if (listDeviceOfThisType !== undefined &&
+                    listDeviceOfThisType.length > 0) {
+                    throw new common_1.BadRequestException('There are still device of this type, please change the type of those devices before deleting type');
+                }
+                else {
+                    const deviceType = yield this.repository.deleteById(accountId, id);
+                    yield this.histService.createNew(deviceType);
+                    return deviceType;
+                }
             }
             catch (e) {
                 this.logger.error(e);
@@ -8847,14 +11320,20 @@ let DeviceTypeService = DeviceTypeService_1 = class DeviceTypeService {
             throw new common_1.BadRequestException(e.message);
         }
     }
-    restoreDeletedRoomTypeById(accountId, id) {
+    restoreDeletedDeviceTypeById(accountId, id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
-                const isExisted = this.repository.existsById(id);
+                const isExisted = yield this.repository.existsById(id);
                 if (!isExisted) {
-                    throw new common_1.BadRequestException('Room type does not exist with the provided id');
+                    throw new common_1.BadRequestException('Device type does not found with the provided id');
                 }
-                return yield this.repository.restoreDeletedById(accountId, id);
+                const data = yield this.repository.findById(id);
+                if (data !== undefined) {
+                    throw new common_1.BadRequestException('This device type ID is now active. Cannot restore it');
+                }
+                const deviceType = yield this.repository.restoreDeletedById(accountId, id);
+                yield this.histService.createNew(deviceType);
+                return deviceType;
             }
             catch (e) {
                 this.logger.error(e.message);
@@ -8865,21 +11344,21 @@ let DeviceTypeService = DeviceTypeService_1 = class DeviceTypeService {
     permanentlyDeleteDeviceTypeById(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.repository.permanentlyDeleteById(id);
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Device type does not found with the provided id');
+                }
+                const data = yield this.repository.findById(id);
+                if (data !== undefined) {
+                    throw new common_1.BadRequestException('Please delete this type after permanently delete');
+                }
+                else {
+                    yield this.histService.deleteAllHist(id);
+                    return this.repository.permanentlyDeleteById(id);
+                }
             }
             catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException(e.message);
-            }
-        });
-    }
-    addNewDeviceType(accountId, payload) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.repository.addNew(accountId, payload);
-            }
-            catch (e) {
-                this.logger.error(e);
+                this.logger.error(e.message);
                 throw new common_1.BadRequestException(e.message);
             }
         });
@@ -8887,7 +11366,7 @@ let DeviceTypeService = DeviceTypeService_1 = class DeviceTypeService {
 };
 DeviceTypeService = DeviceTypeService_1 = tslib_1.__decorate([
     (0, common_1.Injectable)(),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof device_type_repository_1.DeviceTypeRepository !== "undefined" && device_type_repository_1.DeviceTypeRepository) === "function" ? _a : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof device_type_repository_1.DeviceTypeRepository !== "undefined" && device_type_repository_1.DeviceTypeRepository) === "function" ? _a : Object, typeof (_b = typeof devices_service_1.DevicesService !== "undefined" && devices_service_1.DevicesService) === "function" ? _b : Object, typeof (_c = typeof device_type_hist_service_1.DeviceTypeHistService !== "undefined" && device_type_hist_service_1.DeviceTypeHistService) === "function" ? _c : Object])
 ], DeviceTypeService);
 exports.DeviceTypeService = DeviceTypeService;
 
@@ -8900,41 +11379,25 @@ exports.DeviceTypeService = DeviceTypeService;
 
 var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DevicesHistService = void 0;
+exports.DeviceHistService = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const repositories_1 = __webpack_require__("./apps/backend/src/app/repositories/index.ts");
-let DevicesHistService = class DevicesHistService {
+let DeviceHistService = class DeviceHistService {
     constructor(repository) {
         this.repository = repository;
     }
-    add(model) {
-        return Promise.resolve(undefined);
-    }
-    addAll(models) {
-        return Promise.resolve([]);
-    }
-    deleteById(id) {
-        return Promise.resolve(undefined);
-    }
-    getAll() {
-        return Promise.resolve([]);
-    }
-    getAllByPagination() {
-        return Promise.resolve([]);
-    }
-    getById(id) {
-        return Promise.resolve(undefined);
-    }
-    updateById(model, id) {
-        return Promise.resolve(undefined);
+    createNew(device) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.repository.createNew(device);
+        });
     }
 };
-DevicesHistService = tslib_1.__decorate([
+DeviceHistService = tslib_1.__decorate([
     (0, common_1.Injectable)(),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof repositories_1.DevicesHistRepository !== "undefined" && repositories_1.DevicesHistRepository) === "function" ? _a : Object])
-], DevicesHistService);
-exports.DevicesHistService = DevicesHistService;
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof repositories_1.DeviceHistRepository !== "undefined" && repositories_1.DeviceHistRepository) === "function" ? _a : Object])
+], DeviceHistService);
+exports.DeviceHistService = DeviceHistService;
 
 
 /***/ }),
@@ -8943,59 +11406,29 @@ exports.DevicesHistService = DevicesHistService;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var DevicesService_1, _a;
+var DevicesService_1, _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DevicesService = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const devices_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/devices.repository.ts");
+const devices_hist_service_1 = __webpack_require__("./apps/backend/src/app/services/devices-hist.service.ts");
 let DevicesService = DevicesService_1 = class DevicesService {
-    constructor(repository) {
+    constructor(repository, histService) {
         this.repository = repository;
+        this.histService = histService;
         this.logger = new common_1.Logger(DevicesService_1.name);
-    }
-    add(payload) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.repository.createNewDevice(payload);
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while creating a new device');
-            }
-        });
-    }
-    addAll(models) {
-        return Promise.resolve([]);
-    }
-    deleteById(accountId, id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const isDeleted = yield this.repository.checkIfDeviceIsDeletedById(id);
-                if (isDeleted) {
-                    throw new common_1.BadRequestException('Not found with provided id');
-                }
-                yield this.repository.deleteDeviceById(accountId, id);
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while deleting the device with id');
-            }
-        });
     }
     getAll(request) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return yield this.repository
-                .searchDevices({
-                search: request.search,
-                page: request.page,
-                limit: request.limit,
-                direction: request.sort,
-            })
-                .catch((e) => {
+            try {
+                const result = yield this.repository.searchDevices(request);
+                return result;
+            }
+            catch (e) {
                 this.logger.error(e);
                 throw new common_1.BadRequestException('One or more parameters is invalid');
-            });
+            }
         });
     }
     getDevicesByDeviceType(deviceTypeId) {
@@ -9009,60 +11442,113 @@ let DevicesService = DevicesService_1 = class DevicesService {
             }
         });
     }
-    updateById(accountId, id, body) {
+    getDeviceNames() {
+        try {
+            return this.repository.findDeviceName();
+        }
+        catch (e) {
+            this.logger.error(e.message);
+            throw new common_1.BadRequestException(e.message);
+        }
+    }
+    findById(id) {
+        var _a;
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            let device;
             try {
-                device = yield this.repository.findOneOrFail({
-                    where: {
-                        id: id,
-                    },
-                });
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException("Device doesn't exist with the provided id");
-            }
-            if (device.name !== body.name) {
-                const isExisted = yield this.repository.isExistedByName(body.name);
-                if (isExisted) {
-                    throw new common_1.BadRequestException('The device name you want to use is duplicated!');
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Device does not found with the provided id');
                 }
-            }
-            try {
-                yield this.repository.save(Object.assign(Object.assign({}, device), { name: body.name.trim(), description: body.description, updatedBy: accountId, deviceTypeId: body.type }), {
-                    transaction: true,
-                });
+                const result = yield this.repository.findById(id);
+                if (!result) {
+                    throw new common_1.BadRequestException('This device is already deleted or disabled');
+                }
+                return result;
             }
             catch (e) {
                 this.logger.error(e);
-                throw new common_1.BadRequestException('Error occurred while updating this room');
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'An error occurred while retrieving this Device');
             }
         });
     }
-    findById(id) {
+    add(payload, userId) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isExisted = yield this.repository.isExistedByName(payload.name);
+            if (isExisted) {
+                throw new common_1.BadRequestException('Device name is duplicated!');
+            }
             try {
-                return yield this.repository.findOneOrFail({
-                    where: {
-                        id: id,
-                    },
-                });
+                const deviceAdded = yield this.repository.createNewDevice(payload, userId);
+                yield this.histService.createNew(deviceAdded);
+                return deviceAdded;
             }
             catch (e) {
                 this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while retrieving device');
+                if (e.message.includes('constraint') &&
+                    e.message.includes('devices_device_type_id_fk')) {
+                    throw new common_1.BadRequestException('There is no device type with the provided id');
+                }
+                throw new common_1.BadRequestException('Error while creating a new device');
             }
         });
     }
-    disableById(id) {
+    // addAll(models: any[]): Promise<any[]> {
+    //   return Promise.resolve([]);
+    // }
+    updateById(accountId, id, body) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isExisted = yield this.repository.existsById(id);
+            if (!isExisted) {
+                throw new common_1.BadRequestException('Device does not found with the provided id');
+            }
+            const data = yield this.repository.findById(id);
+            if (data === undefined) {
+                throw new common_1.BadRequestException('This device is already deleted or disabled');
+            }
+            try {
+                const deviceUpdated = yield this.repository.updateById(accountId, id, body);
+                yield this.histService.createNew(deviceUpdated);
+                return deviceUpdated;
+            }
+            catch (e) {
+                this.logger.error(e);
+                if (e.message.includes('constraint') &&
+                    e.message.includes('devices_device_type_id_fk')) {
+                    throw new common_1.BadRequestException('There is no device type with the provided id');
+                }
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    disableById(accountId, id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Device does not found with the provided id');
+                }
+                const isDisabled = yield this.repository.checkIfDeviceIsDisabledById(id);
+                if (isDisabled) {
+                    throw new common_1.BadRequestException('This device is already disabled');
+                }
                 const isDeleted = yield this.repository.checkIfDeviceIsDeletedById(id);
                 if (isDeleted) {
-                    throw new common_1.BadRequestException('Not found with provided id');
+                    throw new common_1.BadRequestException('This device is already deleted, can not disable');
                 }
-                yield this.repository.disableById(id);
+                const device = yield this.repository.disableById(accountId, id);
+                yield this.histService.createNew(device);
+                return device;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    getDisabledDevices(search) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.repository.getDisabledDevices(search);
             }
             catch (e) {
                 this.logger.error(e.message);
@@ -9070,55 +11556,85 @@ let DevicesService = DevicesService_1 = class DevicesService {
             }
         });
     }
-    handleRestoreDisabledDeviceById(id) {
+    handleRestoreDisabledDeviceById(accountId, id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Device does not found with the provided id');
+                }
                 const isDeleted = yield this.repository.checkIfDeviceIsDeletedById(id);
                 if (isDeleted) {
-                    throw new common_1.BadRequestException('Not found with provided id');
+                    throw new common_1.BadRequestException('This device is already deleted');
                 }
-                yield this.repository.restoreDisabledDeviceById(id);
+                const isDisabled = yield this.repository.checkIfDeviceIsDisabledById(id);
+                if (!isDisabled) {
+                    throw new common_1.BadRequestException('This device ID is now active. Cannot restore it');
+                }
+                const device = yield this.repository.restoreDisabledDeviceById(accountId, id);
+                yield this.histService.createNew(device);
+                return device;
             }
             catch (e) {
                 this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while disabling this device');
+                throw new common_1.BadRequestException(e.message);
             }
         });
     }
-    handleRestoreDeviceById(id) {
+    deleteById(accountId, id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Device does not found with the provided id');
+                }
+                const isDeleted = yield this.repository.checkIfDeviceIsDeletedById(id);
+                if (isDeleted) {
+                    throw new common_1.BadRequestException('This device is already deleted');
+                }
+                const device = yield this.repository.deleteById(accountId, id);
+                yield this.histService.createNew(device);
+                return device;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    getDeletedDevices(search) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.repository.getDeletedDevices(search);
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException('Error while get deleted devices');
+            }
+        });
+    }
+    handleRestoreDeletedDeviceById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Device does not found with the provided id');
+                }
+                const isDisabled = yield this.repository.checkIfDeviceIsDisabledById(id);
+                if (isDisabled) {
+                    throw new common_1.BadRequestException('This device is already disabled');
+                }
                 const isDeleted = yield this.repository.checkIfDeviceIsDeletedById(id);
                 if (!isDeleted) {
-                    throw new common_1.BadRequestException('Not found with provided id');
+                    throw new common_1.BadRequestException('This device ID is now active. Cannot restore it');
                 }
-                yield this.repository.restoreDeletedDeviceById(id);
+                const device = yield this.repository.restoreDeletedDeviceById(id);
+                yield this.histService.createNew(device);
+                return device;
             }
             catch (e) {
                 this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while disabling this device');
-            }
-        });
-    }
-    getDeletedDevices() {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.repository.getDeletedDevices();
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while disabling this device');
-            }
-        });
-    }
-    getDisabledDevices() {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.repository.getDisabledDevices();
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while disabling this device');
+                throw new common_1.BadRequestException(e.message);
             }
         });
     }
@@ -9133,7 +11649,7 @@ let DevicesService = DevicesService_1 = class DevicesService {
 };
 DevicesService = DevicesService_1 = tslib_1.__decorate([
     (0, common_1.Injectable)(),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof devices_repository_1.DevicesRepository !== "undefined" && devices_repository_1.DevicesRepository) === "function" ? _a : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof devices_repository_1.DevicesRepository !== "undefined" && devices_repository_1.DevicesRepository) === "function" ? _a : Object, typeof (_b = typeof devices_hist_service_1.DeviceHistService !== "undefined" && devices_hist_service_1.DeviceHistService) === "function" ? _b : Object])
 ], DevicesService);
 exports.DevicesService = DevicesService;
 
@@ -9432,14 +11948,30 @@ exports.KeycloakService = KeycloakService;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
+var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RoleHistService = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
+const role_hist_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/role-hist.repository.ts");
 let RoleHistService = class RoleHistService {
+    constructor(repository) {
+        this.repository = repository;
+    }
+    createNew(role) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.repository.createNew(role);
+        });
+    }
+    deleteAllHist(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.repository.deleteAllHist(id);
+        });
+    }
 };
 RoleHistService = tslib_1.__decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof role_hist_repository_1.RoleHistRepository !== "undefined" && role_hist_repository_1.RoleHistRepository) === "function" ? _a : Object])
 ], RoleHistService);
 exports.RoleHistService = RoleHistService;
 
@@ -9450,25 +11982,85 @@ exports.RoleHistService = RoleHistService;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var RoleService_1, _a;
+var RoleService_1, _a, _b, _c;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RoleService = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const roles_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/roles.repository.ts");
+const role_hist_service_1 = __webpack_require__("./apps/backend/src/app/services/role-hist.service.ts");
+const accounts_service_1 = __webpack_require__("./apps/backend/src/app/services/accounts.service.ts");
 let RoleService = RoleService_1 = class RoleService {
-    constructor(repository) {
+    constructor(repository, accountService, histService) {
         this.repository = repository;
+        this.accountService = accountService;
+        this.histService = histService;
         this.logger = new common_1.Logger(RoleService_1.name);
+    }
+    getRolesByPagination(payload) {
+        try {
+            return this.repository.findByPagination(payload);
+        }
+        catch (e) {
+            this.logger.error(e);
+            throw new common_1.BadRequestException(e.message);
+        }
+    }
+    getRoleNames() {
+        try {
+            return this.repository.findRoleName();
+        }
+        catch (e) {
+            this.logger.error(e.message);
+            throw new common_1.BadRequestException(e.message);
+        }
     }
     getRoleById(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
                 const isExisted = yield this.repository.existsById(id);
                 if (!isExisted) {
-                    throw new common_1.BadRequestException('Could not find role with provided id.');
+                    throw new common_1.BadRequestException('Role does not found with the provided id');
                 }
-                return yield this.repository.findById(id);
+                const data = yield this.repository.findById(id);
+                if (data === undefined) {
+                    throw new common_1.BadRequestException('This role is already deleted');
+                }
+                return data;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    addRole(body, accountId) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isExisted = yield this.repository.isExistedByName(body.name);
+            if (isExisted) {
+                throw new common_1.BadRequestException('Role name is duplicated!');
+            }
+            else {
+                const role = yield this.repository.addNew(accountId, body);
+                yield this.histService.createNew(role);
+                return role;
+            }
+        });
+    }
+    updateRoleById(accountId, payload, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Role does not found with the provided id');
+                }
+                const data = yield this.repository.findById(id);
+                if (data === undefined) {
+                    throw new common_1.BadRequestException('This role is already deleted or disabled');
+                }
+                const role = yield this.repository.updateById(id, accountId, payload);
+                yield this.histService.createNew(role);
+                return role;
             }
             catch (e) {
                 this.logger.error(e.message);
@@ -9479,32 +12071,24 @@ let RoleService = RoleService_1 = class RoleService {
     deleteRoleById(accountId, id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
-                const isExisted = yield this.repository.existsById(id);
-                if (!isExisted) {
-                    throw new common_1.BadRequestException('Role does not found with the existed id');
+                const data = yield this.repository.findById(id);
+                const lisyAccountOfThisRole = yield this.accountService.getAccountsByRoleId(id);
+                if (data === undefined) {
+                    throw new common_1.BadRequestException('This role is already deleted');
                 }
-                const result = yield this.repository.deleteById(accountId, id);
-                if (result.affected < 1) {
-                    throw new common_1.BadRequestException('Could not delete role by id');
+                else if (lisyAccountOfThisRole !== undefined &&
+                    lisyAccountOfThisRole.length > 0) {
+                    throw new common_1.BadRequestException('There are still account of this type, please change the type of those accounts before deleting role');
+                }
+                else {
+                    const role = yield this.repository.deleteById(accountId, id);
+                    yield this.histService.createNew(role);
+                    return role;
                 }
             }
             catch (e) {
                 this.logger.error(e.message);
                 throw new common_1.BadRequestException(e.message);
-            }
-        });
-    }
-    handleRestoreDeletedRoleById(id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const result = yield this.repository.restoreDeletedRoleById(id);
-                if (result.affected < 1) {
-                    throw new common_1.BadRequestException("Role doesn't exist with the provided id");
-                }
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException('Error occurred while restore the delete status of this role');
             }
         });
     }
@@ -9515,30 +12099,43 @@ let RoleService = RoleService_1 = class RoleService {
             }
             catch (e) {
                 this.logger.error(e.message);
-                throw new common_1.BadRequestException('Error while disabling this device');
+                throw new common_1.BadRequestException('Error while delete this role');
             }
         });
     }
-    addRole(body, accountId) {
-        return this.repository.save({
-            name: body.name.trim(),
-            description: body.description,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            createdBy: accountId,
-            updatedBy: accountId,
-        }, {
-            transaction: true,
-        });
-    }
-    updateRoleById(accountId, updatePayload, id) {
+    handleRestoreDeletedRoleById(accountId, id) {
+        var _a;
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
                 const isExisted = yield this.repository.existsById(id);
                 if (!isExisted) {
-                    throw new common_1.BadRequestException('Role does not found with the provided id');
+                    throw new common_1.BadRequestException('Role does not exist with the provided id');
                 }
-                return yield this.repository.updateById(id, accountId, updatePayload);
+                const data = yield this.repository.findById(id);
+                if (data !== undefined) {
+                    throw new common_1.BadRequestException('This Role ID is now active. Cannot restore it');
+                }
+                const role = yield this.repository.restoreDeletedById(accountId, id);
+                yield this.histService.createNew(role);
+                return role;
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'Error occurred while restore the delete status of this role');
+            }
+        });
+    }
+    permanentDeleteRoleById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = yield this.repository.findById(id);
+                if (data !== undefined) {
+                    throw new common_1.BadRequestException('Please delete this role after permanently delete');
+                }
+                else {
+                    yield this.histService.deleteAllHist(id);
+                    return this.repository.permanentlyDeleteById(id);
+                }
             }
             catch (e) {
                 this.logger.error(e.message);
@@ -9546,15 +12143,75 @@ let RoleService = RoleService_1 = class RoleService {
             }
         });
     }
-    getRolesByPagination(payload) {
-        return this.repository.findByPagination(payload);
-    }
 };
 RoleService = RoleService_1 = tslib_1.__decorate([
     (0, common_1.Injectable)(),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof roles_repository_1.RolesRepository !== "undefined" && roles_repository_1.RolesRepository) === "function" ? _a : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof roles_repository_1.RolesRepository !== "undefined" && roles_repository_1.RolesRepository) === "function" ? _a : Object, typeof (_b = typeof accounts_service_1.AccountsService !== "undefined" && accounts_service_1.AccountsService) === "function" ? _b : Object, typeof (_c = typeof role_hist_service_1.RoleHistService !== "undefined" && role_hist_service_1.RoleHistService) === "function" ? _c : Object])
 ], RoleService);
 exports.RoleService = RoleService;
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/services/room-hist.service.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RoomHistService = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const common_1 = __webpack_require__("@nestjs/common");
+const room_hist_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/room-hist.repository.ts");
+let RoomHistService = class RoomHistService {
+    constructor(repository) {
+        this.repository = repository;
+    }
+    createNew(room) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.repository.createNew(room);
+        });
+    }
+};
+RoomHistService = tslib_1.__decorate([
+    (0, common_1.Injectable)(),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof room_hist_repository_1.RoomHistRepository !== "undefined" && room_hist_repository_1.RoomHistRepository) === "function" ? _a : Object])
+], RoomHistService);
+exports.RoomHistService = RoomHistService;
+
+
+/***/ }),
+
+/***/ "./apps/backend/src/app/services/room-type-hist.service.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RoomTypeHistService = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const common_1 = __webpack_require__("@nestjs/common");
+const room_type_hist_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/room-type-hist.repository.ts");
+let RoomTypeHistService = class RoomTypeHistService {
+    constructor(repository) {
+        this.repository = repository;
+    }
+    createNew(roomType) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.repository.createNew(roomType);
+        });
+    }
+    deleteAllHist(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return this.repository.deleteAllHist(id);
+        });
+    }
+};
+RoomTypeHistService = tslib_1.__decorate([
+    (0, common_1.Injectable)(),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof room_type_hist_repository_1.RoomTypeHistRepository !== "undefined" && room_type_hist_repository_1.RoomTypeHistRepository) === "function" ? _a : Object])
+], RoomTypeHistService);
+exports.RoomTypeHistService = RoomTypeHistService;
 
 
 /***/ }),
@@ -9563,16 +12220,25 @@ exports.RoleService = RoleService;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var RoomTypeService_1, _a;
+var RoomTypeService_1, _a, _b, _c;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RoomTypeService = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const room_type_repository_1 = __webpack_require__("./apps/backend/src/app/repositories/room-type.repository.ts");
+const room_type_hist_service_1 = __webpack_require__("./apps/backend/src/app/services/room-type-hist.service.ts");
+const rooms_service_1 = __webpack_require__("./apps/backend/src/app/services/rooms.service.ts");
 let RoomTypeService = RoomTypeService_1 = class RoomTypeService {
-    constructor(repository) {
+    constructor(repository, roomService, histService) {
         this.repository = repository;
+        this.roomService = roomService;
+        this.histService = histService;
         this.logger = new common_1.Logger(RoomTypeService_1.name);
+    }
+    existsById(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return yield this.repository.existsById(id);
+        });
     }
     getRoomTypesWithPagination(pagination) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -9597,14 +12263,31 @@ let RoomTypeService = RoomTypeService_1 = class RoomTypeService {
     getRoomTypeById(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Room type does not found with the provided id');
+                }
                 const data = yield this.repository.findById(id);
                 if (data === undefined) {
-                    throw new common_1.BadRequestException('This room is already deleted or disabled');
+                    throw new common_1.BadRequestException('This room is already deleted');
                 }
                 return data;
             }
             catch (e) {
                 this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    addRoomType(accountId, addRoomType) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const roomType = yield this.repository.addNew(accountId, addRoomType);
+                yield this.histService.createNew(roomType);
+                return roomType;
+            }
+            catch (e) {
+                this.logger.error(e);
                 throw new common_1.BadRequestException(e.message);
             }
         });
@@ -9616,64 +12299,13 @@ let RoomTypeService = RoomTypeService_1 = class RoomTypeService {
                 if (!isExisted) {
                     throw new common_1.BadRequestException('Room type does not found with the provided id');
                 }
-                return yield this.repository.updateById(id, accountId, updatePayload);
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException(e.message);
-            }
-        });
-    }
-    // async disableRoomTypeById(accountId: string, id: string): Promise<any> {
-    //   try {
-    //     const result = await this.repository.disableById(accountId, id);
-    //     if (result.affected < 1) {
-    //       throw new BadRequestException(
-    //         "Room doesn't exist with the provided id"
-    //       );
-    //     }
-    //   } catch (e) {
-    //     this.logger.error(e.message);
-    //     throw new BadRequestException(e.message);
-    //   }
-    // }
-    getDisabledRoomTypes(search) {
-        try {
-            return this.repository.findDisabledByPagination(search);
-        }
-        catch (e) {
-            this.logger.error(e.message);
-            throw new common_1.BadRequestException(e.message);
-        }
-    }
-    getDeletedRoomTypes(search) {
-        try {
-            return this.repository.findDeletedByPagination(search);
-        }
-        catch (e) {
-            this.logger.error(e.message);
-            throw new common_1.BadRequestException(e.message);
-        }
-    }
-    restoreDeletedRoomTypeById(accountId, id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const isExisted = this.repository.existsById(id);
-                if (!isExisted) {
-                    throw new common_1.BadRequestException('Room type does not exist with the provided id');
+                const data = yield this.repository.findById(id);
+                if (data === undefined) {
+                    throw new common_1.BadRequestException('This room is already deleted');
                 }
-                return yield this.repository.restoreDeletedById(accountId, id);
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException(e.message);
-            }
-        });
-    }
-    restoreDisabledRoomTypeById(accountId, id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.repository.restoreDisabledById(accountId, id);
+                const roomType = yield this.repository.updateById(accountId, id, updatePayload);
+                yield this.histService.createNew(roomType);
+                return roomType;
             }
             catch (e) {
                 this.logger.error(e.message);
@@ -9684,13 +12316,57 @@ let RoomTypeService = RoomTypeService_1 = class RoomTypeService {
     deleteRoomTypeById(accountId, id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Room type does not found with the provided id');
+                }
                 const data = yield this.repository.findById(id);
+                const listRoomOfThisType = yield this.roomService.getRoomsByRoomType(id);
                 if (data === undefined) {
                     throw new common_1.BadRequestException('This room type is already deleted or disabled');
                 }
-                else {
-                    return this.repository.deleteById(accountId, id);
+                else if (listRoomOfThisType !== undefined &&
+                    listRoomOfThisType.length > 0) {
+                    throw new common_1.BadRequestException('There are still rooms of this type, please change the type of those rooms before deleting type');
                 }
+                else {
+                    const roomType = yield this.repository.deleteById(accountId, id);
+                    yield this.histService.createNew(roomType);
+                    return roomType;
+                }
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    getDeletedRoomTypes(search) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const roomType = yield this.repository.findDeletedByPagination(search);
+                return roomType;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    restoreDeletedRoomTypeById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Room type does not found with the provided id');
+                }
+                const data = yield this.repository.findById(id);
+                if (data !== undefined) {
+                    throw new common_1.BadRequestException('This room type ID is now active. Cannot restore it');
+                }
+                const roomType = yield this.repository.restoreDeletedById(accountId, id);
+                yield this.histService.createNew(roomType);
+                return roomType;
             }
             catch (e) {
                 this.logger.error(e.message);
@@ -9701,13 +12377,17 @@ let RoomTypeService = RoomTypeService_1 = class RoomTypeService {
     permanentDeleteRoomTypeById(id) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Room type does not found with the provided id');
+                }
                 const data = yield this.repository.findById(id);
-                console.log("DATA NE: ", data);
                 if (data !== undefined) {
                     throw new common_1.BadRequestException('Please delete this room type after permanently delete');
                 }
                 else {
-                    return this.repository.permanantDeleteById(id);
+                    yield this.histService.deleteAllHist(id);
+                    return this.repository.permanentlyDeleteById(id);
                 }
             }
             catch (e) {
@@ -9716,28 +12396,10 @@ let RoomTypeService = RoomTypeService_1 = class RoomTypeService {
             }
         });
     }
-    addRoomType(accountId, addRoomType) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.repository.save({
-                    createdBy: accountId,
-                    name: addRoomType.name.trim(),
-                    description: addRoomType.description,
-                    createdAt: new Date(),
-                    updatedBy: accountId,
-                    updatedAt: new Date(),
-                });
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException(e.message);
-            }
-        });
-    }
 };
 RoomTypeService = RoomTypeService_1 = tslib_1.__decorate([
     (0, common_1.Injectable)(),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof room_type_repository_1.RoomTypeRepository !== "undefined" && room_type_repository_1.RoomTypeRepository) === "function" ? _a : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof room_type_repository_1.RoomTypeRepository !== "undefined" && room_type_repository_1.RoomTypeRepository) === "function" ? _a : Object, typeof (_b = typeof rooms_service_1.RoomsService !== "undefined" && rooms_service_1.RoomsService) === "function" ? _b : Object, typeof (_c = typeof room_type_hist_service_1.RoomTypeHistService !== "undefined" && room_type_hist_service_1.RoomTypeHistService) === "function" ? _c : Object])
 ], RoomTypeService);
 exports.RoomTypeService = RoomTypeService;
 
@@ -9810,204 +12472,31 @@ exports.RoomWishlistService = RoomWishlistService;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var RoomsService_1, _a;
+var RoomsService_1, _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RoomsService = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const repositories_1 = __webpack_require__("./apps/backend/src/app/repositories/index.ts");
+const room_hist_service_1 = __webpack_require__("./apps/backend/src/app/services/room-hist.service.ts");
 let RoomsService = RoomsService_1 = class RoomsService {
-    constructor(repository) {
+    constructor(repository, histService) {
         this.repository = repository;
+        this.histService = histService;
         this.logger = new common_1.Logger(RoomsService_1.name);
-    }
-    add(user, room) {
-        var _a;
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const isExisted = yield this.repository.isExistedByName(room.name);
-                if (isExisted) {
-                    throw new common_1.BadRequestException('This room is already existed');
-                }
-                if (room.isDisabled) {
-                    const addedRoom = yield this.repository.save(Object.assign({ createdBy: user.account_id, updatedAt: new Date(), disabledBy: user.account_id, disabledAt: new Date() }, room), {
-                        transaction: true,
-                    });
-                    return addedRoom;
-                }
-                else {
-                    const addedRoom = yield this.repository.save(Object.assign({ createdBy: user.account_id, updatedAt: new Date(), updatedBy: user.account_id }, room), {
-                        transaction: true,
-                    });
-                    return addedRoom;
-                }
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'An error occurred while adding this room');
-            }
-        });
-    }
-    findById(id) {
-        var _a;
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const isExisted = yield this.repository.isExistedById(id);
-                if (!isExisted) {
-                    throw new common_1.BadRequestException('Room does not found with the id');
-                }
-                const result = yield this.repository.findById(id);
-                if (!result) {
-                    throw new common_1.BadRequestException('Room does not found with the id');
-                }
-                return result;
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'An error occurred while retrieving this room');
-            }
-        });
     }
     getAll(request) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return yield this.repository.searchRoom(request);
-        });
-    }
-    getDeletedRooms(search) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.repository.findDeletedRooms(search);
+                return yield this.repository.searchRoom(request);
             }
             catch (e) {
                 this.logger.error(e);
-                throw new common_1.BadRequestException('An error occurred while getting deleted rooms');
+                throw new common_1.BadRequestException('One or more parameters is invalid');
             }
         });
     }
-    getDisabledRooms(search) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = yield this.repository.findDisabledRooms(search);
-                return data;
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException('An error occurred while getting disabled rooms');
-            }
-        });
-    }
-    getRoomsByRoomType(roomTypeId) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.repository.getRoomsByRoomType(roomTypeId);
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException('An error occurred while getting rooms by type ' + roomTypeId);
-            }
-        });
-    }
-    getAllWithoutPagination() {
-        try {
-            return this.repository
-                .createQueryBuilder('rooms')
-                .where('rooms.disabled_at IS NULL')
-                .andWhere('rooms.deleted_at IS NULL')
-                .getMany();
-        }
-        catch (e) {
-            this.logger.error(e);
-            throw new common_1.BadRequestException('An error occurred while adding this room');
-        }
-    }
-    updateById(accountId, id, body) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            let room;
-            try {
-                room = yield this.repository.findOneOrFail({
-                    where: {
-                        id: id,
-                    },
-                });
-            }
-            catch (e) {
-                this.logger.error(e.message);
-                throw new common_1.BadRequestException("Room doesn't exist with the provided id");
-            }
-            if (room.name !== body.name) {
-                const isExisted = yield this.repository.isExistedByName(body.name);
-                if (isExisted) {
-                    throw new common_1.BadRequestException('The room name you want to use is duplicated!');
-                }
-            }
-            try {
-                yield this.repository.save(Object.assign(Object.assign({}, room), { name: body.name.trim(), description: body.description, updatedBy: accountId, type: body.type }), {
-                    transaction: true,
-                });
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException('Error occurred while updating this room');
-            }
-        });
-    }
-    disableById(accountId, id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const result = yield this.repository.disableById(accountId, id);
-                if (result.affected < 1) {
-                    throw new common_1.BadRequestException("Room doesn't exist with the provided id");
-                }
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException('Error occurred while disabling this room');
-            }
-        });
-    }
-    handleRestoreDeletedRoomById(id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const result = yield this.repository.restoreDeletedRoomById(id);
-                if (result.affected < 1) {
-                    throw new common_1.BadRequestException("Room doesn't exist with the provided id");
-                }
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException('Error occurred while restore the delete status of this room');
-            }
-        });
-    }
-    handleRestoreDisabledRoomById(id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const result = yield this.repository.restoreDisabledRoomById(id);
-                if (result.affected < 1) {
-                    throw new common_1.BadRequestException("Room doesn't exist with the provided id");
-                }
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException('Error occurred while restore the disabled status of this room');
-            }
-        });
-    }
-    deleteById(accountId, id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                const result = yield this.repository.deleteById(accountId, id);
-                if (result.affected < 1) {
-                    throw new common_1.BadRequestException("Room doesn't exist with the provided id");
-                }
-            }
-            catch (e) {
-                this.logger.error(e);
-                throw new common_1.BadRequestException('Error occurred while deleting this room');
-            }
-        });
-    }
-    getRoomsName() {
+    getRoomNames() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
                 return yield this.repository.findRoomNames();
@@ -10018,13 +12507,222 @@ let RoomsService = RoomsService_1 = class RoomsService {
             }
         });
     }
+    getRoomsByRoomType(roomTypeId) {
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.repository.getRoomsByRoomType(roomTypeId);
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'An error occurred while getting rooms by type ' + roomTypeId);
+            }
+        });
+    }
+    findById(id) {
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Room does not found with the provided id');
+                }
+                const result = yield this.repository.findById(id);
+                if (!result) {
+                    throw new common_1.BadRequestException('This room is already deleted or disabled');
+                }
+                return result;
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'An error occurred while retrieving this room');
+            }
+        });
+    }
+    add(user, room) {
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = yield this.repository.isExistedByName(room.name);
+                if (isExisted) {
+                    throw new common_1.BadRequestException('Room name is duplicated!');
+                }
+                const roomAdded = yield this.repository.createNewRoom(room, user.account_id);
+                yield this.histService.createNew(roomAdded);
+                return roomAdded;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                if (e.message.includes('constraint') &&
+                    e.message.includes('rooms_room_type_id_fk')) {
+                    throw new common_1.BadRequestException('There is no room type with the provided id');
+                }
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'Error occurred while adding this room');
+            }
+        });
+    }
+    updateById(accountId, id, body) {
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isExisted = yield this.repository.existsById(id);
+            if (!isExisted) {
+                throw new common_1.BadRequestException('Room does not found with the provided id');
+            }
+            const data = yield this.repository.findById(id);
+            if (data === undefined) {
+                throw new common_1.BadRequestException('This room is already deleted or disabled');
+            }
+            try {
+                const roomUpdated = yield this.repository.updateById(accountId, id, body);
+                yield this.histService.createNew(roomUpdated);
+                return roomUpdated;
+            }
+            catch (e) {
+                this.logger.error(e);
+                if (e.message.includes('constraint') &&
+                    e.message.includes('rooms_room_type_id_fk')) {
+                    throw new common_1.BadRequestException('There is no room type with the provided id');
+                }
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'Error occurred while updating this room');
+            }
+        });
+    }
+    disableById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const isExisted = yield this.repository.existsById(id);
+            if (!isExisted) {
+                throw new common_1.BadRequestException('Room does not found with the provided id');
+            }
+            const isDisabled = yield this.repository.checkIfRoomIsDisabledById(id);
+            if (isDisabled) {
+                throw new common_1.BadRequestException('This room is already disabled');
+            }
+            const isDeleted = yield this.repository.checkIfRoomIsDeletedById(id);
+            if (isDeleted) {
+                throw new common_1.BadRequestException('This room is already deleted, can not disable');
+            }
+            const room = yield this.repository.disableById(accountId, id);
+            yield this.histService.createNew(room);
+            return room;
+        });
+    }
+    getDisabledRooms(search) {
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.repository.findDisabledRooms(search);
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'An error occurred while getting disabled rooms');
+            }
+        });
+    }
+    handleRestoreDisabledRoomById(accountId, id) {
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Room does not found with the provided id');
+                }
+                const isDeleted = yield this.repository.checkIfRoomIsDeletedById(id);
+                if (isDeleted) {
+                    throw new common_1.BadRequestException('This room is already deleted');
+                }
+                const isDisabled = yield this.repository.checkIfRoomIsDisabledById(id);
+                if (!isDisabled) {
+                    throw new common_1.BadRequestException('This room ID is now active. Cannot restore it');
+                }
+                const room = yield this.repository.restoreDisabledRoomById(accountId, id);
+                yield this.histService.createNew(room);
+                return room;
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'Error occurred while restore the disabled status of this room');
+            }
+        });
+    }
+    deleteById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Room does not found with the provided id');
+                }
+                const isDeleted = yield this.repository.checkIfRoomIsDeletedById(id);
+                if (isDeleted) {
+                    throw new common_1.BadRequestException('This room is already deleted');
+                }
+                const device = yield this.repository.deleteById(accountId, id);
+                yield this.histService.createNew(device);
+                return device;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    getDeletedRooms(search) {
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.repository.findDeletedRooms(search);
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'An error occurred while getting deleted rooms');
+            }
+        });
+    }
+    handleRestoreDeletedRoomById(accountId, id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const isExisted = yield this.repository.existsById(id);
+                if (!isExisted) {
+                    throw new common_1.BadRequestException('Room does not found with the provided id');
+                }
+                const isDisabled = yield this.repository.checkIfRoomIsDisabledById(id);
+                if (isDisabled) {
+                    throw new common_1.BadRequestException('This room is already disabled');
+                }
+                const isDeleted = yield this.repository.checkIfRoomIsDeletedById(id);
+                if (!isDeleted) {
+                    throw new common_1.BadRequestException('This room ID is now active. Cannot restore it');
+                }
+                const room = yield this.repository.restoreDeletedRoomById(accountId, id);
+                yield this.histService.createNew(room);
+                return room;
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    getAllWithoutPagination() {
+        var _a;
+        try {
+            return this.repository
+                .createQueryBuilder('rooms')
+                .where('rooms.disabled_at IS NULL')
+                .andWhere('rooms.deleted_at IS NULL')
+                .getMany();
+        }
+        catch (e) {
+            this.logger.error(e);
+            throw new common_1.BadRequestException((_a = e.message) !== null && _a !== void 0 ? _a : 'An error occurred while adding this room');
+        }
+    }
     getRoomsFilterByNameAndType(payload) {
         return this.repository.filterByNameAndType(payload);
     }
 };
 RoomsService = RoomsService_1 = tslib_1.__decorate([
     (0, common_1.Injectable)(),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof repositories_1.RoomsRepository !== "undefined" && repositories_1.RoomsRepository) === "function" ? _a : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof repositories_1.RoomsRepository !== "undefined" && repositories_1.RoomsRepository) === "function" ? _a : Object, typeof (_b = typeof room_hist_service_1.RoomHistService !== "undefined" && room_hist_service_1.RoomHistService) === "function" ? _b : Object])
 ], RoomsService);
 exports.RoomsService = RoomsService;
 
@@ -10058,6 +12756,29 @@ let SlotService = SlotService_1 = class SlotService {
             catch (e) {
                 this.logger.error(e.message);
                 throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    getSlotNames() {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.repository.findSlotNames();
+            }
+            catch (e) {
+                this.logger.error(e.message);
+                throw new common_1.BadRequestException(e.message);
+            }
+        });
+    }
+    getNumOfSlot(id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const slot = yield this.repository.getNumOfSlot(id);
+                return slot;
+            }
+            catch (e) {
+                this.logger.error(e);
+                throw new common_1.BadRequestException('One or more parameters is invalid');
             }
         });
     }
@@ -10457,271 +13178,6 @@ exports.TEXT_PLAIN = "text/plain";
 
 /***/ }),
 
-/***/ "./libs/models/src/index.ts":
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const tslib_1 = __webpack_require__("tslib");
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/room.dto.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/request/index.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/firebase-setting.dto.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/keycloak/index.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/response/index.ts"), exports);
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/firebase-setting.dto.ts":
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-;
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/keycloak/index.ts":
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const tslib_1 = __webpack_require__("tslib");
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/keycloak/keycloak-user.dto.ts"), exports);
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/keycloak/keycloak-user.dto.ts":
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/request/add-equipment-request.dto.ts":
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AddDeviceRequest = void 0;
-class AddDeviceRequest {
-}
-exports.AddDeviceRequest = AddDeviceRequest;
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/request/add-room-request.dto.ts":
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AddRoomRequest = void 0;
-const tslib_1 = __webpack_require__("tslib");
-const swagger_1 = __webpack_require__("@nestjs/swagger");
-const class_validator_1 = __webpack_require__("class-validator");
-class AddRoomRequest {
-}
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: "name",
-        description: "Name of the room to be added",
-        maxLength: 100,
-        minLength: 1,
-        type: String,
-        example: "LB01"
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(1),
-    (0, class_validator_1.MaxLength)(100),
-    (0, class_validator_1.IsString)(),
-    tslib_1.__metadata("design:type", String)
-], AddRoomRequest.prototype, "name", void 0);
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: "description",
-        description: "Description of the room to be added",
-        maxLength: 500,
-        minLength: 0,
-        type: String,
-        example: "New library room"
-    }),
-    (0, class_validator_1.MinLength)(1),
-    (0, class_validator_1.MaxLength)(500),
-    (0, class_validator_1.IsString)(),
-    tslib_1.__metadata("design:type", String)
-], AddRoomRequest.prototype, "description", void 0);
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: "isDisabled",
-        description: "Is the room should be disabled",
-        type: Boolean,
-        example: true
-    }),
-    (0, class_validator_1.IsBoolean)(),
-    tslib_1.__metadata("design:type", Boolean)
-], AddRoomRequest.prototype, "isDisabled", void 0);
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        name: "type",
-        description: "Library room type",
-        type: String,
-        example: "Library Room"
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(1),
-    (0, class_validator_1.MaxLength)(100),
-    tslib_1.__metadata("design:type", String)
-], AddRoomRequest.prototype, "type", void 0);
-exports.AddRoomRequest = AddRoomRequest;
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/request/index.ts":
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const tslib_1 = __webpack_require__("tslib");
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/request/username-password-credentials.dto.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/request/add-room-request.dto.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/request/update-room-request.dto.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/request/users.dto.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/request/keycloak.user.dto.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/request/update-device-request.dto.ts"), exports);
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/request/add-equipment-request.dto.ts"), exports);
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/request/keycloak.user.dto.ts":
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.KeycloakUserSigninRequest = void 0;
-const tslib_1 = __webpack_require__("tslib");
-const swagger_1 = __webpack_require__("@nestjs/swagger");
-class KeycloakUserSigninRequest {
-}
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: "The username of the signin request.",
-        minLength: 1,
-        maxLength: 100,
-        example: 'admin',
-        type: String,
-        name: 'username',
-        nullable: false,
-        required: true,
-    }),
-    tslib_1.__metadata("design:type", String)
-], KeycloakUserSigninRequest.prototype, "username", void 0);
-tslib_1.__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: "The password of the signin request.",
-        minLength: 1,
-        maxLength: 100,
-        example: '1234',
-        type: String,
-        name: 'password',
-        nullable: false,
-        required: true,
-    }),
-    tslib_1.__metadata("design:type", String)
-], KeycloakUserSigninRequest.prototype, "password", void 0);
-exports.KeycloakUserSigninRequest = KeycloakUserSigninRequest;
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/request/update-device-request.dto.ts":
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UpdateDeviceRequest = void 0;
-class UpdateDeviceRequest {
-}
-exports.UpdateDeviceRequest = UpdateDeviceRequest;
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/request/update-room-request.dto.ts":
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UpdateRoomRequest = void 0;
-class UpdateRoomRequest {
-}
-exports.UpdateRoomRequest = UpdateRoomRequest;
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/request/username-password-credentials.dto.ts":
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/request/users.dto.ts":
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UsersDTO = void 0;
-class UsersDTO {
-}
-exports.UsersDTO = UsersDTO;
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/response/index.ts":
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const tslib_1 = __webpack_require__("tslib");
-tslib_1.__exportStar(__webpack_require__("./libs/models/src/lib/response/username-password-login-response.dto.ts"), exports);
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/response/username-password-login-response.dto.ts":
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-
-
-/***/ }),
-
-/***/ "./libs/models/src/lib/room.dto.ts":
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RoomsDTO = void 0;
-class RoomsDTO {
-}
-exports.RoomsDTO = RoomsDTO;
-;
-
-
-/***/ }),
-
 /***/ "@nestjs/axios":
 /***/ ((module) => {
 
@@ -10803,6 +13259,13 @@ module.exports = require("class-validator");
 /***/ ((module) => {
 
 module.exports = require("cloudinary");
+
+/***/ }),
+
+/***/ "dayjs":
+/***/ ((module) => {
+
+module.exports = require("dayjs");
 
 /***/ }),
 

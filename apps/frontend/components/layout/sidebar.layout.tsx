@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { createStyles, Navbar, Group, Code } from '@mantine/core';
+import React, {useEffect, useRef, useState} from 'react';
+import {createStyles, Navbar, Group, Code, Badge} from '@mantine/core';
 import {
   Logout,
   User,
@@ -18,40 +18,53 @@ import {
   MessageCode,
   Clock2,
 } from 'tabler-icons-react';
-import { FPT_ORANGE_COLOR } from '@app/constants';
-import { BLACK, WHITE } from '@app/constants';
-import { useRouter } from 'next/router';
+import {FPT_ORANGE_COLOR} from '@app/constants';
+import {BLACK, WHITE} from '@app/constants';
+import {useRouter} from 'next/router';
 import LogoutModal from '../logout.modal';
 import PreferencesModal from '../preferences.modal.component';
+import {useAppDispatch} from "../../redux/hooks";
+import {
+  fetchCountPendingRequestBooking
+} from "../../redux/features/room-booking/thunk/fetch-count-pending-request-booking";
+
 
 const data = [
-  { link: '/dashboard', label: 'Dashboard', icon: Dashboard },
-  { link: '/rooms', label: 'Rooms', icon: BuildingWarehouse },
-  { link: '/room-type', label: 'Room Type', icon: Door },
-  { link: '/devices', label: 'Devices', icon: Devices },
-  { link: '/device-type', label: 'Device Type', icon: DeviceTablet },
-  { link: '/role', label: 'Role', icon: BarrierBlock },
-  { link: '/accounts', label: 'Accounts', icon: Users },
-  { link: '/feedback-type', label: 'Feedback Type', icon: MessageCode },
-  { link: '/feedbacks', label: 'Feedback', icon: BrandHipchat },
-  { link: '/notifications', label: 'Notification', icon: Bell },
-  { link: '/booking-room', label: 'Booking Room', icon: Ticket },
+  {link: '/dashboard', label: 'Dashboard', icon: Dashboard},
+  {link: '/rooms', label: 'Rooms', icon: BuildingWarehouse},
+  {link: '/room-type', label: 'Room Type', icon: Door},
+  {link: '/devices', label: 'Devices', icon: Devices},
+  {link: '/device-type', label: 'Device Type', icon: DeviceTablet},
+  {link: '/role', label: 'Role', icon: BarrierBlock},
+  {link: '/accounts', label: 'Accounts', icon: Users},
+  {link: '/feedback-type', label: 'Feedback Type', icon: MessageCode},
+  {link: '/feedbacks', label: 'Feedback', icon: BrandHipchat},
+  {link: '/notifications', label: 'Notification', icon: Bell},
+  {link: '/booking-room', label: 'Booking Room', icon: Ticket},
   {
     link: '/booking-reason',
     label: 'Booking Reason',
     icon: DeviceMobileMessage,
   },
   // { link: '/feedback', label: 'Feedback', icon:  BrandHipchat},
-  { link: '/slot', label: 'Slot', icon: Clock2 },
+  {link: '/slot', label: 'Slot', icon: Clock2},
 ];
 
 function LayoutSidebar() {
-  const { classes, cx } = useStyles();
+  const {classes, cx} = useStyles();
 
   const [isLogoutModalShown, setLogoutModalShown] = useState<boolean>(false);
   const [active, setActive] = useState('Billing');
-
+  const dispatch = useAppDispatch();
   const [isPreferencesShown, setPreferencesShown] = useState<boolean>(false);
+  const [count, setCount] = useState<number>();
+
+  useEffect(() => {
+      dispatch(fetchCountPendingRequestBooking()).unwrap().then(count => setCount(count.count));
+  },[]);
+
+  console.log(count)
+
 
   const router = useRouter();
 
@@ -67,8 +80,9 @@ function LayoutSidebar() {
   };
 
   const links = data.map((item, index) => (
+
     <a
-      className={cx(classes.link, { [classes.linkActive]: isMenuSelect(item) })}
+      className={cx(classes.link, {[classes.linkActive]: isMenuSelect(item)})}
       href={item.link}
       key={index}
       onClick={async (event) => {
@@ -77,14 +91,21 @@ function LayoutSidebar() {
         await router.push(item.link);
       }}
     >
+
       <item.icon
         className={cx(classes.linkIcon, {
           [classes.iconActive]: isMenuSelect(item),
         })}
       />
-      <span className={cx({ [classes.labelActive]: isMenuSelect(item) })}>
+
+      <span className={cx({[classes.labelActive]: isMenuSelect(item)})}>
         {item.label}
       </span>
+      {(item.link === '/booking-room' && count > 0 ? (
+
+        <Badge style={{marginLeft: 10}} color="red" variant="filled">{count}</Badge>
+      ): null)}
+
     </a>
   ));
 
@@ -107,7 +128,7 @@ function LayoutSidebar() {
             setPreferencesShown(!isPreferencesShown);
           }}
         >
-          <User className={classes.linkIcon} />
+          <User className={classes.linkIcon}/>
           <span>Profile</span>
         </a>
         {isPreferencesShown ? (
@@ -123,7 +144,7 @@ function LayoutSidebar() {
             className={classes.link}
             onClick={(event) => handleLogoutSubmit(event)}
           >
-            <Logout className={classes.linkIcon} />
+            <Logout className={classes.linkIcon}/>
             <span>Logout</span>
           </a>
           {isLogoutModalShown ? (
@@ -206,7 +227,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
     iconActive: {
       color: FPT_ORANGE_COLOR,
     },
-    labelActive: { color: FPT_ORANGE_COLOR },
+    labelActive: {color: FPT_ORANGE_COLOR},
 
     linkActive: {
       '&, &:hover': {
