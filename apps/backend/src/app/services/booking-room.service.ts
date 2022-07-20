@@ -355,6 +355,15 @@ export class BookingRoomService {
     }
   }
 
+  getCountRequestBookingPending(){
+    try {
+      return this.repository.getCountRequestBookingPending();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async addNewRequest(
     payload: BookingRequestAddRequestPayload,
     userId: string

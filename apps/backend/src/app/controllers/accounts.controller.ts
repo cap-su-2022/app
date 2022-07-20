@@ -38,12 +38,12 @@ import { diskStorage } from 'multer';
 import { imageFileFilter } from '../validators/utils/file-upload.util';
 import { AccountsPaginationParams } from './accounts-pagination.model';
 import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
+import {
+  AccountUpdateProfilePayload
+} from '../payload/request/account-update-profile.request.payload';
 
-class UploadProfileRequest {
-  fullname: string;
-  phone: string;
-  description: string;
-}
+
+
 
 @Controller('v1/accounts')
 @ApiBearerAuth()
@@ -387,9 +387,9 @@ export class AccountsController {
   })
   updateMyProfile(
     @User() user: KeycloakUserInstance,
-    @Body() payload: UploadProfileRequest
+    @Body() body: AccountUpdateProfilePayload
   ) {
-    return this.service.updateMyProfile(user, payload);
+    return this.service.updateMyProfile(user, body);
   }
 
   @Delete(':id')
