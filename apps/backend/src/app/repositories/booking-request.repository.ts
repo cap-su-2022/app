@@ -323,6 +323,13 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .then((data) => data?.count > 0);
   }
 
+  getCountRequestBookingPending(){
+    return this.createQueryBuilder('booking_request')
+      .select('COUNT(1)', 'count')
+      .where("booking_request.status = 'PENDING'")
+      .getRawOne<{count: number}>();
+  }
+
   async findById(id: string): Promise<BookingRequest> {
     return this.createQueryBuilder('br')
       .select('br.id', 'id')

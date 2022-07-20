@@ -78,10 +78,10 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          Cy chỉnh chổ này giúp mình frontend/components/booking-room-reason/delete-modal
+         Are you sure to delete this booking reason? Deleting this reasson does not affect to booking room's process.
         </Text>
         <div className={classes.modalFooter}>
-          
+
           <Button
             color="red"
             leftIcon={<Trash />}

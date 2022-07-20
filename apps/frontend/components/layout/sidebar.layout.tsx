@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { createStyles, Navbar, Group, Code } from '@mantine/core';
+import React, { useEffect, useRef, useState } from 'react';
+import { createStyles, Navbar, Group, Code, Badge } from '@mantine/core';
 import {
   Logout,
   User,
@@ -23,6 +23,10 @@ import { BLACK, WHITE } from '@app/constants';
 import { useRouter } from 'next/router';
 import LogoutModal from '../logout.modal';
 import PreferencesModal from '../preferences.modal.component';
+import {useAppDispatch} from "../../redux/hooks";
+import {
+  fetchCountPendingRequestBooking
+} from "../../redux/features/room-booking/thunk/fetch-count-pending-request-booking";
 
 const data = [
   { link: '/dashboard', label: 'Dashboard', icon: Dashboard },
@@ -50,10 +54,18 @@ function LayoutSidebar() {
 
   const [isLogoutModalShown, setLogoutModalShown] = useState<boolean>(false);
   const [active, setActive] = useState('Billing');
-
+  const dispatch = useAppDispatch();
   const [isPreferencesShown, setPreferencesShown] = useState<boolean>(false);
 
   const router = useRouter();
+
+  const [count, setCount] = useState<number>();
+
+  useEffect(() => {
+    dispatch(fetchCountPendingRequestBooking()).unwrap().then(count => setCount(count.count));
+  },[]);
+
+
 
   const handleLogoutSubmit = async (
     event: React.MouseEvent<HTMLAnchorElement>
@@ -85,6 +97,10 @@ function LayoutSidebar() {
       <span className={cx({ [classes.labelActive]: isMenuSelect(item) })}>
         {item.label}
       </span>
+      {(item.link === '/booking-room' && count > 0 ? (
+
+        <Badge style={{marginLeft: 10}} color="red" variant="filled">{count}</Badge>
+      ): null)}
     </a>
   ));
 

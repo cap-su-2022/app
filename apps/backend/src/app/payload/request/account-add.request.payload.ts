@@ -47,7 +47,7 @@ export class AccountAddRequestPayload extends PaginationParams {
   @MaxLength(100)
   @IsString()
   @IsNotEmpty({
-    message: 'Email can not be empty',
+    message: 'Description can not be empty',
   })
   description: string;
 
