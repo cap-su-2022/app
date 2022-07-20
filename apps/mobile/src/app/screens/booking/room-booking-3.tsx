@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
-  SafeAreaView, ScrollView,
+  SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -17,6 +18,9 @@ import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
 import { useAppSelector } from '../../hooks/use-app-selector.hook';
 import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
 import { addNewRequestBooking } from '../../redux/features/room-booking/thunk/add-new-request-booking';
+import { fetchAllBookingReason } from '../../redux/features/booking-reason/thunk/fetch-all';
+import { BookingRoomReason } from '../../redux/models/booking-reason-response';
+import SelectBookingReason from './schedule-booking-v2/select-booking-reason';
 
 export const RoomBooking3: React.FC = () => {
   const navigate = useAppNavigation();
@@ -24,6 +28,44 @@ export const RoomBooking3: React.FC = () => {
   const roomBooking = useAppSelector(
     (state) => state.roomBooking.addRoomBooking
   );
+  const [bookingReasonSelections, setBookingReasonSelections] = useState([]);
+  const [bookingReason, setBookingReason] = useState<string>();
+
+  console.log('state ne: ', bookingReason)
+
+  useEffect(() => {
+    dispatch(fetchAllBookingReason())
+      .unwrap()
+      .then((value) => {
+        transformBookingReasonToBookingReasonPicker(value);
+
+      });
+    return () => {
+      setBookingReasonSelections([]);
+    };
+  }, []);
+
+  const transformBookingReasonToBookingReasonPicker = (
+    val: BookingRoomReason[]
+  ) => {
+    const bookingReasonSelection = val.map((bookingRoomReason, index) => {
+      return {
+        value: bookingRoomReason.id,
+        label: bookingRoomReason.name,
+      };
+    });
+    setBookingReasonSelections(bookingReasonSelection);
+    handleSetBookingRoomReason(bookingReasonSelection[0].value);
+
+  };
+
+  const handleSetBookingRoomReason = (value) => {
+    if (value === undefined || value === null) {
+      setBookingReason('Other');
+    } else {
+      setBookingReason(value);
+    }
+  };
 
   const handleNextStep = () => {
     dispatch(
@@ -39,7 +81,7 @@ export const RoomBooking3: React.FC = () => {
     )
       .unwrap()
       .then((e) => console.log(e));
-    navigate.navigate("ROOM_BOOKING_SUCCESS")
+    navigate.navigate('ROOM_BOOKING_SUCCESS');
   };
 
   const InfoDetail = (title, detail) => {
@@ -86,33 +128,18 @@ export const RoomBooking3: React.FC = () => {
               data={roomBooking.devices}
               renderItem={(device) => Device(device)}
             />
-            {InfoDetail('Booking Reason:', 'Other')}
+            <SelectBookingReason
+              handleSetBookingRoomReason={(val) => setBookingReason(val)}
+              bookingReason={bookingReason}
+              bookingReasonSelections={bookingReasonSelections}
+            />
             {InfoDetail('Description', 'Chua co')}
           </View>
 
-          <View
-            style={{
-              height: 80,
-              backgroundColor: WHITE,
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              alignItems: 'center',
-            }}
-          >
+          <View style={styles.footerContainer}>
             <TouchableOpacity
               onPress={() => navigate.pop()}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-evenly',
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderRadius: 8,
-                borderWidth: 2,
-                borderColor: RED,
-                width: deviceWidth / 2.2,
-                height: 50,
-              }}
+              style={styles.reviewAgainContainer}
             >
               <ChevronDoubleLeftIcon color={RED} />
               <Text
@@ -153,7 +180,6 @@ export const RoomBooking3: React.FC = () => {
           </View>
         </View>
       </ScrollView>
-
     </SafeAreaView>
   );
 };
@@ -245,4 +271,24 @@ const styles = StyleSheet.create({
     borderColor: FPT_ORANGE_COLOR,
     borderRadius: 8,
   },
+  footerContainer: {
+    height: 80,
+    backgroundColor: WHITE,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  reviewAgainContainer: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: RED,
+    width: deviceWidth / 2.2,
+    height: 50,
+  },
+  reviewAgainText: {},
 });
