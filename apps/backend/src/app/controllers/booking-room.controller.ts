@@ -86,7 +86,7 @@ export class BookingRoomController {
     @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
     @Query('roomId', new DefaultValuePipe('')) roomId: string,
     @Query('requestId', new DefaultValuePipe('')) requestId: string,
-    @Query('date', new DefaultValuePipe('')) date: string,
+    @Query('date', new DefaultValuePipe('')) date: string
   ) {
     return this.service.getRequestOfRoomWithSameSlot({
       roomId: roomId,
@@ -102,7 +102,7 @@ export class BookingRoomController {
   getRoomFreeAtTime(
     @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
     @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
-    @Query('date', new DefaultValuePipe('')) date: string,
+    @Query('date', new DefaultValuePipe('')) date: string
   ) {
     return this.service.getRoomFreeAtTime({
       date: date,
@@ -481,5 +481,21 @@ export class BookingRoomController {
     @Query() filters: GetAllBookingRequestsFilter
   ) {
     return this.service.getAllBookingRoomsRequestsByFilter(filters);
+  }
+
+  @Get('check-out')
+  getCurrenBookingCheckoutInformation(@User() user: KeycloakUserInstance) {
+    return this.service.getCurrentBookingCheckoutInformation(user.account_id);
+  }
+
+  @Post('check-out/:booking-room-id')
+  checkoutBookingRoom(
+    @Param('booking-room-id') bookingRoomId: string,
+    @User() keycloakUser: KeycloakUserInstance
+  ) {
+    return this.service.checkOutBookingRoom(
+      bookingRoomId,
+      keycloakUser.account_id
+    );
   }
 }
