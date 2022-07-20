@@ -31,14 +31,13 @@ export const RoomBooking3: React.FC = () => {
   const [bookingReasonSelections, setBookingReasonSelections] = useState([]);
   const [bookingReason, setBookingReason] = useState<string>();
 
-  console.log('state ne: ', bookingReason)
+  console.log('state ne: ', bookingReason);
 
   useEffect(() => {
     dispatch(fetchAllBookingReason())
       .unwrap()
       .then((value) => {
         transformBookingReasonToBookingReasonPicker(value);
-
       });
     return () => {
       setBookingReasonSelections([]);
@@ -56,7 +55,6 @@ export const RoomBooking3: React.FC = () => {
     });
     setBookingReasonSelections(bookingReasonSelection);
     handleSetBookingRoomReason(bookingReasonSelection[0].value);
-
   };
 
   const handleSetBookingRoomReason = (value) => {
@@ -80,8 +78,13 @@ export const RoomBooking3: React.FC = () => {
       })
     )
       .unwrap()
-      .then((e) => console.log(e));
-    navigate.navigate('ROOM_BOOKING_SUCCESS');
+      .then((e) => console.log(e))
+      .then(() => navigate.navigate('ROOM_BOOKING_SUCCESS'))
+      .catch(() => {
+        alert('This room has already been booked. Please book another room');
+
+        navigate.pop(2);
+      });
   };
 
   const InfoDetail = (title, detail) => {

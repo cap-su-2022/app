@@ -1,5 +1,6 @@
 import React, {
   createRef,
+  ElementRef,
   forwardRef,
   useCallback,
   useEffect,
@@ -35,6 +36,8 @@ import {
   resetGlobalDateEnd,
   resetGlobalDateStart,
 } from '../../../redux/features/room-booking/slice';
+import { boxShadow } from '../../../utils/box-shadow.util';
+import TrackBookingRoomFilterStatusSelection from './status-selection';
 
 interface TrackBookingRoomFilterHandler {
   slotStart: number;
@@ -49,50 +52,6 @@ interface TrackBookingRoomFilterProps {
   handleFilterSearch(): void;
 }
 
-const statusData = [
-  {
-    id: 0,
-    label: 'All',
-    value: undefined,
-    style: { width: deviceWidth / 9.5 },
-    slotContainerLeftStyle: { left: 5 },
-  },
-  {
-    id: 1,
-    label: 'Pending',
-    value: 'PENDING',
-    style: { width: deviceWidth / 5.5 },
-    slotContainerLeftStyle: { left: 55 },
-  },
-  {
-    id: 2,
-    label: 'Booked',
-    value: 'BOOKED',
-    style: { width: deviceWidth / 6 },
-    slotContainerLeftStyle: { left: 135 },
-  },
-  {
-    id: 3,
-    label: 'Checked In',
-    value: 'CHECKED_IN',
-    style: { width: deviceWidth / 4.5 },
-    slotContainerLeftStyle: { left: 210 },
-  },
-  {
-    id: 4,
-    label: 'Checked Out',
-    value: 'CHECKED_OUT',
-    style: { width: deviceWidth / 4 },
-    slotContainerLeftStyle: { left: 310 },
-  },
-  {
-    id: 5,
-    label: 'Cancelled',
-    value: 'CANCELLED',
-    style: { width: deviceWidth / 5 },
-    slotContainerLeftStyle: { left: 415 },
-  },
-];
 const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
   TrackBookingRoomFilterHandler,
   TrackBookingRoomFilterProps
@@ -123,7 +82,7 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
 
   useEffect(() => {
     handleSearch();
-  }, [search, status.length, globalDateStart, globalDateEnd]);
+  }, [search, globalDateStart, globalDateEnd, status]);
 
   useEffect(() => {
     if (slots.length > 0) {
@@ -138,7 +97,7 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
     dateStart: globalDateStart,
     dateEnd: globalDateEnd,
     roomName: search,
-    status: status.length < 1 ? undefined : status,
+    status: status.length > 0 ? status : undefined,
   }));
 
   const inputRef = useRef(null);
@@ -163,16 +122,8 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
   };
 
   return (
-    <>
-      <View
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexDirection: 'row',
-          margin: 10,
-        }}
-      >
+    <View>
+      <View style={styles.container}>
         <Text
           style={{
             color: GRAY,
@@ -347,90 +298,24 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
           </View>
         </View>
 
-        <ScrollView showsHorizontalScrollIndicator={false} horizontal>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              height: 60,
-              alignItems: 'center',
-            }}
-          >
-            {statusData.map((statusFilter) => (
-              <>
-                <TouchableOpacity
-                  onPress={() => {
-                    if (
-                      !status.some((val) => statusFilter.value === val) &&
-                      statusFilter.value
-                    ) {
-                      setStatus([...status, statusFilter.value]);
-                    } else if (
-                      status.some((val) => statusFilter.value === val)
-                    ) {
-                      setStatus(
-                        status.filter((stt) => stt !== statusFilter.value)
-                      );
-                    } else if (!statusFilter.value) {
-                      setStatus([]);
-                    }
-                  }}
-                  key={statusFilter.id}
-                  style={[styles.filterTypeButton, statusFilter.style]}
-                >
-                  <Text style={styles.filterTypeText}>
-                    {statusFilter.label}
-                  </Text>
-                </TouchableOpacity>
-                {status.some((val) => val === statusFilter.value) ? (
-                  <View
-                    style={[
-                      styles.selectContainer,
-                      statusFilter.slotContainerLeftStyle,
-                    ]}
-                  >
-                    <CheckIcon color={WHITE} size={deviceWidth / 30} />
-                  </View>
-                ) : status.length < 1 ? (
-                  <View style={[styles.selectContainer, { left: 5 }]}>
-                    <CheckIcon color={WHITE} size={deviceWidth / 30} />
-                  </View>
-                ) : null}
-              </>
-            ))}
-          </View>
-        </ScrollView>
+        <TrackBookingRoomFilterStatusSelection
+          status={status}
+          setStatus={setStatus}
+          handleSearch={handleSearch}
+        />
       </View>
-    </>
+    </View>
   );
 };
 
-const slotFilterContainer: PickerStyle = {
-  viewContainer: {
-    borderWidth: 2,
-    borderColor: GRAY,
-    borderTopRightRadius: 8,
-    borderBottomRightRadius: 8,
-    height: 35,
-    width: deviceWidth / 3.4,
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  inputIOS: {
-    color: GRAY,
-    marginLeft: 10,
-    fontWeight: '500',
-    fontSize: deviceWidth / 32,
-  },
-  inputAndroid: {
-    color: GRAY,
-    marginLeft: 10,
-    fontWeight: '500',
-    fontSize: deviceWidth / 32,
-  },
-};
-
 const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    margin: 10,
+  },
   clearFilterButton: {
     height: 20,
     width: 50,
@@ -498,33 +383,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  filterTypeButton: {
-    marginLeft: 10,
-    borderRadius: 8,
-    height: 30,
-    borderColor: FPT_ORANGE_COLOR,
-    borderWidth: 2,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  filterTypeText: {
-    color: FPT_ORANGE_COLOR,
-    fontWeight: '600',
-    fontSize: deviceWidth / 30,
-  },
-
-  selectContainer: {
-    height: 15,
-    width: 15,
-    borderRadius: 50,
-    backgroundColor: FPT_ORANGE_COLOR,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: 10,
-  },
 });
 
+const slotFilterContainer: PickerStyle = {
+  viewContainer: {
+    borderWidth: 2,
+    borderColor: GRAY,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
+    height: 35,
+    width: deviceWidth / 3.4,
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  inputIOS: {
+    color: GRAY,
+    marginLeft: 10,
+    fontWeight: '500',
+    fontSize: deviceWidth / 32,
+  },
+  inputAndroid: {
+    color: GRAY,
+    marginLeft: 10,
+    fontWeight: '500',
+    fontSize: deviceWidth / 32,
+  },
+};
 export default forwardRef(TrackBookingRoomFilter);

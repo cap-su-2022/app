@@ -1,15 +1,13 @@
-import React, {ReactNode } from "react";
-import {createStyles, Text} from "@mantine/core";
+import React, { ReactNode } from 'react';
+import { createStyles, Text } from '@mantine/core';
 
 interface HeaderProps {
   title: string;
-  icon: ReactNode
-
+  icon: ReactNode;
 }
 
 const Header: React.FC<HeaderProps> = (props) => {
-  const {classes} = useStyles();
-
+  const { classes } = useStyles();
 
   return (
     <div className={classes.container}>
@@ -17,13 +15,13 @@ const Header: React.FC<HeaderProps> = (props) => {
       <Text className={classes.text}>{props.title}</Text>
     </div>
   );
-}
+};
 
 const useStyles = createStyles({
   text: {
     marginLeft: 10,
     fontWeight: 600,
-    fontSize: 30
+    fontSize: 30,
   },
   container: {
     marginLeft: 20,
@@ -33,7 +31,7 @@ const useStyles = createStyles({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-  }
+  },
 });
 
 export default Header;

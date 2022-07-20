@@ -1,4 +1,11 @@
-import { Burger, Button, createStyles, Group, Modal, Text } from '@mantine/core';
+import {
+  Burger,
+  Button,
+  createStyles,
+  Group,
+  Modal,
+  Text,
+} from '@mantine/core';
 import AdminLayout from '../../components/layout/admin.layout';
 import React, { useEffect, useState } from 'react';
 import { Download, Plus, Ticket } from 'tabler-icons-react';
@@ -163,7 +170,7 @@ const BookingRoom = () => {
             style={{ marginRight: 10 }}
             size="xs"
           >
-             Booked
+            Booked
           </Button>
           <Button
             variant="outline"
@@ -246,10 +253,11 @@ const BookingRoom = () => {
         <NoDataFound />
       )}
 
-      <SendBookingModal  
+      <SendBookingModal
         toggleShown={() => setAddShown(!isAddShown)}
         isShown={isAddShown}
-        pagination={pagination} />
+        pagination={pagination}
+      />
     </AdminLayout>
   );
 };

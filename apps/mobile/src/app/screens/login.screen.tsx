@@ -1,25 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import Background from "../components/blob-scene-haikei.svg";
-import FPTULogo from "../components/LogoFPTU.svg";
-import Asterik from "../components/text/asterik";
-import Divider from "../components/text/divider";
-import GoogleIcon from "../components/google-icon.svg";
-import { persistGoogleIdToken } from "../redux/userSlice";
-import CheckAlive from "../components/check-alive.component";
-import { Formik } from "formik";
-import LoginErrorModal from "../components/modals/login-error.component";
-import { toggleSpinnerOff, toggleSpinnerOn } from "../redux/features/spinner";
-import { BLACK, FPT_ORANGE_COLOR } from "@app/constants";
-import { doLogin } from "../redux/features/auth/thunk/login.thunk";
-import { isUserSessionExisted } from "../utils/local-storage";
-import { validateAccessToken } from "../redux/features/auth/thunk/validate-access-token.thunk";
-import { deviceWidth } from "../utils/device";
-import { useAppDispatch } from "../hooks/use-app-dispatch.hook";
-import { useAppNavigation } from "../hooks/use-app-navigation.hook";
-import BookLogo from "../components/book-logo";
-import { doGoogleLogin } from "../redux/features/auth/thunk/google-login.thunk";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Background from '../components/blob-scene-haikei.svg';
+import FPTULogo from '../components/LogoFPTU.svg';
+import Asterik from '../components/text/asterik';
+import Divider from '../components/text/divider';
+import GoogleIcon from '../components/google-icon.svg';
+import { persistGoogleIdToken } from '../redux/userSlice';
+import CheckAlive from '../components/check-alive.component';
+import { Formik } from 'formik';
+import LoginErrorModal from '../components/modals/login-error.component';
+import { toggleSpinnerOff, toggleSpinnerOn } from '../redux/features/spinner';
+import { BLACK, FPT_ORANGE_COLOR } from '@app/constants';
+import { doLogin } from '../redux/features/auth/thunk/login.thunk';
+import { isUserSessionExisted } from '../utils/local-storage';
+import { validateAccessToken } from '../redux/features/auth/thunk/validate-access-token.thunk';
+import { deviceWidth } from '../utils/device';
+import { useAppDispatch } from '../hooks/use-app-dispatch.hook';
+import { useAppNavigation } from '../hooks/use-app-navigation.hook';
+import BookLogo from '../components/book-logo';
+import { doGoogleLogin } from '../redux/features/auth/thunk/google-login.thunk';
 
 const LoginScreen = () => {
   const dispatch = useAppDispatch();
@@ -31,18 +38,22 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if (isUserSessionExisted()) {
-      dispatch(validateAccessToken()).unwrap().then(() => {
-        navigate.navigate("MAIN");
-      })
+      dispatch(validateAccessToken())
+        .unwrap()
+        .then(() => {
+          navigate.navigate('MAIN');
+        });
     }
   }, []);
 
   const handleLoginWithGoogle = async () => {
-    dispatch(doGoogleLogin()).unwrap().then(() => {
-      setTimeout(() => {
-        navigate.navigate("MAIN");
-      }, 0);
-    });
+    dispatch(doGoogleLogin())
+      .unwrap()
+      .then(() => {
+        setTimeout(() => {
+          navigate.navigate('MAIN');
+        }, 0);
+      });
   };
 
   const initialValues = {
@@ -59,14 +70,19 @@ const LoginScreen = () => {
       setLoginFailure(true);
       return;
     }
-    dispatch(doLogin({
-      username: values.username.trim(),
-      password: values.password.trim()
-    })).unwrap().then(() => {
-      navigate.navigate('MAIN');
-    }).catch((e) => {
-      setLoginFailure(true);
-    });
+    dispatch(
+      doLogin({
+        username: values.username.trim(),
+        password: values.password.trim(),
+      })
+    )
+      .unwrap()
+      .then(() => {
+        navigate.navigate('MAIN');
+      })
+      .catch((e) => {
+        setLoginFailure(true);
+      });
   };
 
   return (
@@ -226,31 +242,31 @@ const styles = StyleSheet.create({
   },
   loginGoogleBtnTextContainer: {
     display: 'flex',
-    flexDirection: "row"
+    flexDirection: 'row',
   },
   googleIcon: {
     marginTop: 2,
-    marginRight: 6
+    marginRight: 6,
   },
   loginGoogleBtnText: {
     fontSize: 14,
-    color: BLACK
+    color: BLACK,
   },
   logoContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center"
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   loginDividerContainer: {
-    display: "flex",
-    flexDirection: "row"
+    display: 'flex',
+    flexDirection: 'row',
   },
   loginDividerText: {
     fontSize: 10,
-    color: "rgb(134, 142, 150)",
+    color: 'rgb(134, 142, 150)',
     marginTop: 10,
     marginLeft: 6,
-    marginRight: 6
+    marginRight: 6,
   },
   shadowProp: {
     shadowColor: '#171717',
@@ -259,20 +275,20 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   modal: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
     opacity: 0.5,
-    backgroundColor: "rgb(206, 212, 218)",
-    justifyContent: "center",
-    alignItems: "center"
+    backgroundColor: 'rgb(206, 212, 218)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   forgotPasswordText: {
     color: FPT_ORANGE_COLOR,
-    fontSize: deviceWidth / 32
-  }
+    fontSize: deviceWidth / 32,
+  },
 });
 
 export default LoginScreen;

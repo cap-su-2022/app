@@ -1,29 +1,38 @@
-import React, { useEffect, useRef, useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { BanIcon } from "react-native-heroicons/outline";
-import { BLACK, FPT_ORANGE_COLOR, GRAY, RED, WHITE } from "@app/constants";
-import { deviceWidth } from "../utils/device";
-import Divider from "../components/text/divider";
-import { LockClosedIcon } from "react-native-heroicons/solid";
-import { AuthUser } from "../redux/models/auth-user.model";
-import { LOCAL_STORAGE } from "../utils/local-storage";
-import { useAppNavigation } from "../hooks/use-app-navigation.hook";
-
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { BanIcon } from 'react-native-heroicons/outline';
+import { BLACK, FPT_ORANGE_COLOR, GRAY, RED, WHITE } from '@app/constants';
+import { deviceWidth } from '../utils/device';
+import Divider from '../components/text/divider';
+import { LockClosedIcon } from 'react-native-heroicons/solid';
+import { AuthUser } from '../redux/models/auth-user.model';
+import { LOCAL_STORAGE } from '../utils/local-storage';
+import { useAppNavigation } from '../hooks/use-app-navigation.hook';
 
 const EditProfile = () => {
   const scrollViewRef = useRef<null | ScrollView>(null);
   const navigate = useAppNavigation();
 
-  const [authUser, setAuthUser] = useState<AuthUser>(JSON.parse(LOCAL_STORAGE.getString('user')));
-
+  const [authUser, setAuthUser] = useState<AuthUser>(
+    JSON.parse(LOCAL_STORAGE.getString('user'))
+  );
 
   return (
-    <SafeAreaView style={{ flex: 1}}>
-      <View style={{
-        display: 'flex',
-        flexDirection: 'column',
-        flexGrow: 1
-      }}>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: 1,
+        }}
+      >
         <ScrollView
           ref={(ref) => {
             scrollViewRef.current = ref;
@@ -48,9 +57,14 @@ const EditProfile = () => {
             </View>
           </View>
 
-          <View style={[styles.container, {
-            height: 90
-          }]}>
+          <View
+            style={[
+              styles.container,
+              {
+                height: 90,
+              },
+            ]}
+          >
             <View style={styles.inputWrapper}>
               <Text style={styles.profileTitle}>Phone</Text>
               <Text style={styles.profileValue}>{authUser.phone}</Text>
@@ -63,14 +77,19 @@ const EditProfile = () => {
           </View>
         </ScrollView>
         <View style={styles.footerContainer}>
-          <TouchableOpacity style={styles.changePasswordButton} onPress={() => navigate.navigate('ChangePasswordProfile')}>
-            <LockClosedIcon color={WHITE}/>
+          <TouchableOpacity
+            style={styles.changePasswordButton}
+            onPress={() => navigate.navigate('ChangePasswordProfile')}
+          >
+            <LockClosedIcon color={WHITE} />
             <Text style={styles.changePasswordButtonText}>Change password</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.deactiveAccountButton}>
-            <BanIcon color={WHITE}/>
-            <Text style={styles.deactiveAccountButtonText}>De-active account</Text>
+            <BanIcon color={WHITE} />
+            <Text style={styles.deactiveAccountButtonText}>
+              De-active account
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -84,7 +103,7 @@ export const styles = StyleSheet.create({
     marginLeft: 5,
     color: WHITE,
     fontSize: deviceWidth / 21,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   deactiveAccountButton: {
     width: deviceWidth / 1.25,
@@ -94,13 +113,13 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8
+    borderRadius: 8,
   },
   changePasswordButtonText: {
     marginLeft: 5,
     color: WHITE,
     fontSize: deviceWidth / 21,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   changePasswordButton: {
     width: deviceWidth / 1.25,
@@ -110,7 +129,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8
+    borderRadius: 8,
   },
   footerContainer: {
     marginTop: 20,
@@ -119,65 +138,63 @@ export const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-evenly',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   inputWrapper: {
-    display: "flex",
-    flexDirection: "row",
+    display: 'flex',
+    flexDirection: 'row',
     flexGrow: 1,
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginLeft: 10,
-    marginRight: 10
+    marginRight: 10,
   },
   container: {
     height: 140,
     marginTop: 10,
     backgroundColor: WHITE,
-    display: "flex",
-    justifyContent: "center",
-    flexDirection: "column"
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
   },
   profileValue: {
     color: BLACK,
     fontSize: deviceWidth / 24,
-    fontWeight: "600"
+    fontWeight: '600',
   },
   profileTitle: {
     fontSize: deviceWidth / 24,
-    color: GRAY
+    color: GRAY,
   },
   scrollView: {},
   myHeader: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
   header: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
 
-    display: "flex",
-    marginTop: 10
-
+    display: 'flex',
+    marginTop: 10,
   },
   userInfoIcon: {
-    color: "#000",
-    fontSize: 20
+    color: '#000',
+    fontSize: 20,
   },
   userDetail: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
 
-    display: "flex",
+    display: 'flex',
     marginTop: 10,
-    height: 270
+    height: 270,
   },
   active: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
 
-    display: "flex",
+    display: 'flex',
     marginTop: 10,
-    height: 80
-  }
-
+    height: 80,
+  },
 });

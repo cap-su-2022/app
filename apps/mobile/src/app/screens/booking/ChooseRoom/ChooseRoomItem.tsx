@@ -1,12 +1,15 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {deviceWidth} from "../../../utils/device";
-import {BLACK, FPT_ORANGE_COLOR, WHITE} from "@app/constants";
-import {InformationCircleIcon, LibraryIcon} from "react-native-heroicons/outline";
-import {ChoosingBookingRoom} from "../../../redux/models/choosing-booking-room.model";
-import {useAppNavigation} from "../../../hooks/use-app-navigation.hook";
-import {fetchRoomById} from "../../../redux/features/room/thunk/fetch-room-by-id.thunk";
-import {useAppDispatch} from "../../../hooks/use-app-dispatch.hook";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { deviceWidth } from '../../../utils/device';
+import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
+import {
+  InformationCircleIcon,
+  LibraryIcon,
+} from 'react-native-heroicons/outline';
+import { ChoosingBookingRoom } from '../../../redux/models/choosing-booking-room.model';
+import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
+import { fetchRoomById } from '../../../redux/features/room/thunk/fetch-room-by-id.thunk';
+import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 
 interface ChooseRoomItemProps {
   item: ChoosingBookingRoom;
@@ -15,49 +18,63 @@ interface ChooseRoomItemProps {
   setRoomName(val: string): void;
 }
 const ChooseRoomItem: React.FC<ChooseRoomItemProps> = (props) => {
-
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
 
   const handleViewRoomDetail = (id: string) => {
-    dispatch(fetchRoomById({
-      roomId: id
-    })).unwrap().then((e) => {
-      navigate.navigate("ROOM_BOOKING_VIEW_ROOM_DETAIL");
-    });
-  }
+    dispatch(
+      fetchRoomById({
+        roomId: id,
+      })
+    )
+      .unwrap()
+      .then((e) => {
+        navigate.navigate('ROOM_BOOKING_VIEW_ROOM_DETAIL');
+      });
+  };
 
   return (
     <TouchableOpacity
       onPress={() => {
-        props.setRoomId(props.item.id)
-        props.setRoomName(props.item.name)
+        props.setRoomId(props.item.id);
+        props.setRoomName(props.item.name);
       }}
-      style={[styles.container, (props.roomId === props.item.id) ? {
-        borderWidth: 2,
-        borderColor: FPT_ORANGE_COLOR
-      } : null]}>
+      style={[
+        styles.container,
+        props.roomId === props.item.id
+          ? {
+              borderWidth: 2,
+              borderColor: FPT_ORANGE_COLOR,
+            }
+          : null,
+      ]}
+    >
       <View style={styles.wrapper}>
         <View style={styles.roomIconContainer}>
-          <LibraryIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 18}/>
+          <LibraryIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 18} />
         </View>
         <View style={styles.roomInfoContainer}>
           <Text style={styles.roomInfoTitle} numberOfLines={1}>
-            Room {props.item.name.length < 15 ? `${props.item.name}` : `${props.item.name.substring(0, 15)}...`}
+            Room{' '}
+            {props.item.name.length < 15
+              ? `${props.item.name}`
+              : `${props.item.name.substring(0, 15)}...`}
           </Text>
           <Text style={styles.roomInfoType} numberOfLines={1}>
-            Room type: {props.item.type.length < 15 ? `${props.item.type}` : `${props.item.type.substring(0, 15)}...`}
+            Room type:{' '}
+            {props.item.type.length < 15
+              ? `${props.item.type}`
+              : `${props.item.type.substring(0, 15)}...`}
           </Text>
         </View>
       </View>
       <View style={styles.roomActionContainer}>
         <TouchableOpacity
           onPress={() => handleViewRoomDetail(props.item.id)}
-          style={styles.roomViewMoreButton}>
-          <InformationCircleIcon color={WHITE} size={deviceWidth / 23}/>
-          <Text style={styles.roomViewMoreButtonText}>
-            View Detail
-          </Text>
+          style={styles.roomViewMoreButton}
+        >
+          <InformationCircleIcon color={WHITE} size={deviceWidth / 23} />
+          <Text style={styles.roomViewMoreButtonText}>View Detail</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -83,7 +100,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flexGrow: 0.1
+    flexGrow: 0.1,
   },
 
   roomIconContainer: {
@@ -94,21 +111,21 @@ const styles = StyleSheet.create({
     borderColor: FPT_ORANGE_COLOR,
     height: 50,
     width: 50,
-    borderRadius: 50
+    borderRadius: 50,
   },
   roomInfoContainer: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   roomInfoTitle: {
     fontWeight: '600',
     fontSize: deviceWidth / 25,
-    color: BLACK
+    color: BLACK,
   },
   roomInfoType: {
     color: BLACK,
     fontWeight: '400',
-    fontSize: deviceWidth / 30
+    fontSize: deviceWidth / 30,
   },
 
   roomActionContainer: {
@@ -127,12 +144,12 @@ const styles = StyleSheet.create({
     height: 30,
     width: deviceWidth / 4.2,
     backgroundColor: FPT_ORANGE_COLOR,
-    borderRadius: 8
+    borderRadius: 8,
   },
   roomViewMoreButtonText: {
     fontWeight: '600',
     color: WHITE,
-    fontSize: deviceWidth / 30
-  }
+    fontSize: deviceWidth / 30,
+  },
 });
 export default ChooseRoomItem;

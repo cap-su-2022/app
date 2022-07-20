@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -7,77 +7,99 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  VirtualizedList
-} from "react-native";
-import { fetchAllWishlistRooms } from "../../redux/features/room-booking/thunk/fetch-all-wishlist.thunk";
-import { ExclamationCircleIcon, SearchIcon } from "react-native-heroicons/solid";
-import { BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, RED, WHITE } from "@app/constants";
-import { deviceWidth } from "../../utils/device";
-import { RoomWishListResponse } from "../../redux/models/wishlist-booking-room.model";
+  VirtualizedList,
+} from 'react-native';
+import { fetchAllWishlistRooms } from '../../redux/features/room-booking/thunk/fetch-all-wishlist.thunk';
+import {
+  ExclamationCircleIcon,
+  SearchIcon,
+} from 'react-native-heroicons/solid';
+import {
+  BLACK,
+  FPT_ORANGE_COLOR,
+  GRAY,
+  LIGHT_GRAY,
+  RED,
+  WHITE,
+} from '@app/constants';
+import { deviceWidth } from '../../utils/device';
+import { RoomWishListResponse } from '../../redux/models/wishlist-booking-room.model';
 import {
   ArrowRightIcon,
   ClockIcon,
   LibraryIcon,
   TicketIcon,
-  XIcon
-} from "react-native-heroicons/outline";
-import { getTimeDetailBySlotNumber } from "../../utils/slot-resolver.util";
-import { removeWishlistBookingRoom } from "../../redux/features/room-booking/thunk/remove-wishlist-booking-room.thunk";
-import Empty from "../../components/empty.svg";
-import AlertModal from "../../components/modals/alert-modal.component";
-import DelayInput from "react-native-debounce-input";
-import RNPickerSelect from "react-native-picker-select";
-import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
-import { useAppDispatch } from "../../hooks/use-app-dispatch.hook";
-import { useAppSelector } from "../../hooks/use-app-selector.hook";
-import { SLOTS } from "../../constants/slot.constant";
+  XIcon,
+} from 'react-native-heroicons/outline';
+import { getTimeDetailBySlotNumber } from '../../utils/slot-resolver.util';
+import { removeWishlistBookingRoom } from '../../redux/features/room-booking/thunk/remove-wishlist-booking-room.thunk';
+import Empty from '../../components/empty.svg';
+import AlertModal from '../../components/modals/alert-modal.component';
+import DelayInput from 'react-native-debounce-input';
+import RNPickerSelect from 'react-native-picker-select';
+import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
+import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
+import { useAppSelector } from '../../hooks/use-app-selector.hook';
+import { SLOTS } from '../../constants/slot.constant';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface RoomBookingWishlistProps {
-
-}
+interface RoomBookingWishlistProps {}
 
 const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
-
-  const wishlistBookingRooms = useAppSelector((state) => state.roomBooking.wishlistBookingRooms);
+  const wishlistBookingRooms = useAppSelector(
+    (state) => state.roomBooking.wishlistBookingRooms
+  );
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
 
-  const [isConfirmDeleteModalShown, setConfirmDeleteModalShown] = useState<boolean>(false);
-  const [deleteBookingRoom, setDeleteBookingRoom] = useState<{ roomId: string, slot: number }>(null);
+  const [isConfirmDeleteModalShown, setConfirmDeleteModalShown] =
+    useState<boolean>(false);
+  const [deleteBookingRoom, setDeleteBookingRoom] = useState<{
+    roomId: string;
+    slot: number;
+  }>(null);
 
-  const [searchRoomName, setSearchRoomName] = useState<string>("");
+  const [searchRoomName, setSearchRoomName] = useState<string>('');
 
   const [slotStart, setSlotStart] = useState<number>(1);
   const [slotEnd, setSlotEnd] = useState<number>(6);
 
-
   useEffect(() => {
     setTimeout(() => {
-      dispatch(fetchAllWishlistRooms({
-        search: searchRoomName,
-        from: slotStart,
-        to: slotEnd
-      }));
+      dispatch(
+        fetchAllWishlistRooms({
+          search: searchRoomName,
+          from: slotStart,
+          to: slotEnd,
+        })
+      );
     }, 400);
   }, [searchRoomName, slotStart, slotEnd, dispatch]);
 
-  const handleRemoveBookingRoomFromWishlist = async (roomId: string, slot: number) => {
+  const handleRemoveBookingRoomFromWishlist = async (
+    roomId: string,
+    slot: number
+  ) => {
     setDeleteBookingRoom({
       roomId: roomId,
-      slot: slot
+      slot: slot,
     });
     setConfirmDeleteModalShown(true);
   };
 
   const handleAttemptRemoveBookingRoomFromWishlist = async () => {
     setConfirmDeleteModalShown(false);
-    dispatch(removeWishlistBookingRoom(deleteBookingRoom)).unwrap()
-      .then(() => dispatch(fetchAllWishlistRooms({
-        search: searchRoomName,
-        from: slotStart,
-        to: slotEnd
-      })));
+    dispatch(removeWishlistBookingRoom(deleteBookingRoom))
+      .unwrap()
+      .then(() =>
+        dispatch(
+          fetchAllWishlistRooms({
+            search: searchRoomName,
+            from: slotStart,
+            to: slotEnd,
+          })
+        )
+      );
   };
 
   const handleSetSlotStart = (value) => {
@@ -94,7 +116,6 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
     setSlotEnd(value);
   };
 
-
   const RoomWishlistItem: React.FC<RoomWishListResponse> = (item) => {
     const duration = getTimeDetailBySlotNumber(item.slot);
     return (
@@ -105,14 +126,21 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
           </View>
           <View style={styles.libraryInfoContainer}>
             <Text style={styles.libraryRoomText}>Library Room</Text>
-            <Text style={{ fontSize: deviceWidth / 25 }}>Room Code: {item.roomname}</Text>
-            <Text style={{ fontSize: deviceWidth / 25 }}>Time:
-              Slot {item.slot} ({duration.startTime} - {duration.endTime})</Text>
+            <Text style={{ fontSize: deviceWidth / 25 }}>
+              Room Code: {item.roomname}
+            </Text>
+            <Text style={{ fontSize: deviceWidth / 25 }}>
+              Time: Slot {item.slot} ({duration.startTime} - {duration.endTime})
+            </Text>
           </View>
         </View>
         <View style={styles.roomWishlistButtonContainer}>
-          <TouchableOpacity style={styles.removeFromWishlistButton}
-                            onPress={() => handleRemoveBookingRoomFromWishlist(item.roomid, item.slot)}>
+          <TouchableOpacity
+            style={styles.removeFromWishlistButton}
+            onPress={() =>
+              handleRemoveBookingRoomFromWishlist(item.roomid, item.slot)
+            }
+          >
             <XIcon color={RED} size={deviceWidth / 15} />
             <Text style={styles.removeFromWishlistButtonText}>
               Remove from wishlist
@@ -127,7 +155,6 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
         </View>
       </View>
     );
-
   };
 
   const DeleteConfirmModal: React.FC = () => {
@@ -140,7 +167,10 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
       >
         <View style={deleteConfirmModalStyles.container}>
           <View style={deleteConfirmModalStyles.body}>
-            <ExclamationCircleIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 8} />
+            <ExclamationCircleIcon
+              color={FPT_ORANGE_COLOR}
+              size={deviceWidth / 8}
+            />
             <Text style={deleteConfirmModalStyles.textContent}>
               Are you sure want to delete this booking room from wishlist?
             </Text>
@@ -148,14 +178,16 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
           <View style={deleteConfirmModalStyles.footer}>
             <TouchableOpacity
               onPress={() => setConfirmDeleteModalShown(false)}
-              style={deleteConfirmModalStyles.cancelButton}>
+              style={deleteConfirmModalStyles.cancelButton}
+            >
               <Text style={deleteConfirmModalStyles.cancelButtonText}>
                 Cancel
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={deleteConfirmModalStyles.removeButton}
-              onPress={() => handleAttemptRemoveBookingRoomFromWishlist()}>
+              onPress={() => handleAttemptRemoveBookingRoomFromWishlist()}
+            >
               <Text style={deleteConfirmModalStyles.removeButtonText}>
                 Remove
               </Text>
@@ -178,158 +210,180 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
   const Filtering: React.FC = () => {
     return (
       <View style={styles.filterContainer}>
-        <Text style={styles.filterHeaderText}>
-          FILTERING
-        </Text>
+        <Text style={styles.filterHeaderText}>FILTERING</Text>
         <View style={styles.filterBodyContainer}>
           <View style={styles.filterInputContainer}>
             <View style={styles.filterInputIconContainer}>
               <SearchIcon color={BLACK} />
             </View>
             <View style={styles.filterInput}>
-              <DelayInput value={searchRoomName}
-                          minLength={0}
-                          onChangeText={(text) => setSearchRoomName(text.toString())}
-                          placeholder="Search by room name" />
+              <DelayInput
+                value={searchRoomName}
+                minLength={0}
+                onChangeText={(text) => setSearchRoomName(text.toString())}
+                placeholder="Search by room name"
+              />
             </View>
           </View>
 
-          <View style={[styles.filterInputContainer, {
-            justifyContent: "space-around"
-          }]}>
-            <View style={{
-              height: 50,
-              width: 50,
-              borderRadius: 8,
-              backgroundColor: LIGHT_GRAY,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
-            }}>
+          <View
+            style={[
+              styles.filterInputContainer,
+              {
+                justifyContent: 'space-around',
+              },
+            ]}
+          >
+            <View
+              style={{
+                height: 50,
+                width: 50,
+                borderRadius: 8,
+                backgroundColor: LIGHT_GRAY,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
               <ClockIcon color={BLACK} />
             </View>
-            <View style={{
-              width: deviceWidth / 3.3,
-              height: 50,
-              backgroundColor: LIGHT_GRAY,
-              borderRadius: 8,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
-            }}>
-
+            <View
+              style={{
+                width: deviceWidth / 3.3,
+                height: 50,
+                backgroundColor: LIGHT_GRAY,
+                borderRadius: 8,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
               <RNPickerSelect
                 fixAndroidTouchableBug={true}
                 items={SLOTS}
                 style={{
                   inputAndroid: {
                     color: BLACK,
-                    fontWeight: "600"
-                  }
-                }} useNativeAndroidPickerStyle={false}
+                    fontWeight: '600',
+                  },
+                }}
+                useNativeAndroidPickerStyle={false}
                 value={slotStart}
-                onValueChange={(value) => handleSetSlotStart(value)} />
+                onValueChange={(value) => handleSetSlotStart(value)}
+              />
             </View>
-            <View style={{
-              height: 50,
-              width: 50,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: LIGHT_GRAY,
-              borderRadius: 8
-            }}>
+            <View
+              style={{
+                height: 50,
+                width: 50,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: LIGHT_GRAY,
+                borderRadius: 8,
+              }}
+            >
               <ArrowRightIcon color={BLACK} size={deviceWidth / 15} />
             </View>
-            <View style={{
-              width: deviceWidth / 3.3,
-              height: 50,
-              backgroundColor: LIGHT_GRAY,
-              borderRadius: 8,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
-            }}>
-
+            <View
+              style={{
+                width: deviceWidth / 3.3,
+                height: 50,
+                backgroundColor: LIGHT_GRAY,
+                borderRadius: 8,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
               <RNPickerSelect
                 fixAndroidTouchableBug={true}
                 items={SLOTS}
                 style={{
                   inputAndroid: {
                     color: BLACK,
-                    fontWeight: "600"
-                  }
-                }} useNativeAndroidPickerStyle={false}
+                    fontWeight: '600',
+                  },
+                }}
+                useNativeAndroidPickerStyle={false}
                 value={slotEnd}
-                onValueChange={(value) => handleSetSlotEnd(value)} />
+                onValueChange={(value) => handleSetSlotEnd(value)}
+              />
             </View>
           </View>
         </View>
       </View>
     );
-  }
+  };
 
   return (
-    <SafeAreaView style={{
-      flex: 1
-    }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+      }}
+    >
       <Filtering />
-      {wishlistBookingRooms.length > 0 ?
+      {wishlistBookingRooms.length > 0 ? (
         <VirtualizedList
           getItemCount={(data) => data.length}
           getItem={(data, index) => data[index]}
           data={wishlistBookingRooms}
-          renderItem={({ item }: { item: RoomWishListResponse; }) =>
-            <RoomWishlistItem roomname={item.roomname}
-                              id={item.id}
-                              slot={item.slot}
-                              roomid={item.roomid}
-                              stt={item.stt} />} />
-        : <EmptyData />
-      }
+          renderItem={({ item }: { item: RoomWishListResponse }) => (
+            <RoomWishlistItem
+              roomname={item.roomname}
+              id={item.id}
+              slot={item.slot}
+              roomid={item.roomid}
+              stt={item.stt}
+            />
+          )}
+        />
+      ) : (
+        <EmptyData />
+      )}
       <DeleteConfirmModal />
     </SafeAreaView>
   );
-}
+};
 
 const emptyDataStyles = StyleSheet.create({
   container: {
-    display: "flex",
-    justifyContent: "space-around",
-    alignItems: "center",
-    flexGrow: 0.8
+    display: 'flex',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    flexGrow: 0.8,
   },
   textContent: {
     color: BLACK,
     fontSize: deviceWidth / 18,
-    fontWeight: "600"
-  }
+    fontWeight: '600',
+  },
 });
 
 const deleteConfirmModalStyles = StyleSheet.create({
   container: {
-    display: "flex",
+    display: 'flex',
     flexGrow: 0.7,
-    justifyContent: "space-around"
+    justifyContent: 'space-around',
   },
   body: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    margin: 10
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 10,
   },
   textContent: {
     color: BLACK,
     fontSize: deviceWidth / 24,
-    fontWeight: "600",
-    textAlign: "center",
+    fontWeight: '600',
+    textAlign: 'center',
     marginLeft: 20,
-    marginRight: 20
+    marginRight: 20,
   },
   footer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around"
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
   cancelButton: {
     borderWidth: 2,
@@ -337,39 +391,39 @@ const deleteConfirmModalStyles = StyleSheet.create({
     borderRadius: 8,
     width: deviceWidth / 3.5,
     height: 50,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cancelButtonText: {
     fontSize: deviceWidth / 21,
-    fontWeight: "600",
-    color: RED
+    fontWeight: '600',
+    color: RED,
   },
   removeButton: {
     backgroundColor: RED,
     borderRadius: 8,
     width: deviceWidth / 3.5,
     height: 50,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   removeButtonText: {
     color: WHITE,
     fontSize: deviceWidth / 21,
-    fontWeight: "600"
-  }
+    fontWeight: '600',
+  },
 });
 
 const styles = StyleSheet.create({
   filterContainer: {
-    display: "flex",
-    flexDirection: "column",
+    display: 'flex',
+    flexDirection: 'column',
     margin: 10,
     backgroundColor: WHITE,
     height: 160,
-    borderRadius: 8
+    borderRadius: 8,
   },
   filterHeaderText: {
     color: GRAY,
@@ -380,14 +434,14 @@ const styles = StyleSheet.create({
   },
   filterBodyContainer: {
     margin: 10,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    flexGrow: 1
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    flexGrow: 1,
   },
   filterInputContainer: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   filterInputIconContainer: {
     display: 'flex',
@@ -404,7 +458,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
     height: 50,
-    width: deviceWidth / 1.3
+    width: deviceWidth / 1.3,
   },
   filterSortButton: {
     width: 50,
@@ -421,7 +475,7 @@ const styles = StyleSheet.create({
     height: 220,
     margin: 10,
 
-    borderRadius: 8
+    borderRadius: 8,
   },
   roomLibraryIconContainer: {
     display: 'flex',
@@ -431,19 +485,19 @@ const styles = StyleSheet.create({
     borderColor: FPT_ORANGE_COLOR,
     width: 50,
     height: 50,
-    borderRadius: 50
+    borderRadius: 50,
   },
   libraryRoomText: {
     color: BLACK,
     fontSize: deviceWidth / 22,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   roomWishlistButtonContainer: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    flexGrow: 1
+    flexGrow: 1,
   },
   bookThisRoomButtonContainer: {
     backgroundColor: FPT_ORANGE_COLOR,
@@ -453,22 +507,22 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
   },
   bookThisRoomButtonText: {
     color: WHITE,
     fontSize: deviceWidth / 20,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   libraryInfoContainer: {
     display: 'flex',
     flexDirection: 'column',
-    marginLeft: 10
+    marginLeft: 10,
   },
   libraryHeaderContainer: {
     display: 'flex',
     flexDirection: 'row',
-    margin: 10
+    margin: 10,
   },
   removeFromWishlistButton: {
     borderWidth: 2,
@@ -484,8 +538,8 @@ const styles = StyleSheet.create({
   removeFromWishlistButtonText: {
     color: RED,
     fontSize: deviceWidth / 20,
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });
 
 export default RoomBookingWishlist;

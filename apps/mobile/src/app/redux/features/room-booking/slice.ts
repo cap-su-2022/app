@@ -17,8 +17,10 @@ import { BookingRoomsByFiltersResponse } from '../../models/booking-rooms-by-fil
 import dayjs from 'dayjs';
 import { addNewRequestBooking } from './thunk/add-new-request-booking';
 import { NewRequestBookingResponseModel } from '../../models/new-request-booking-response.model';
+import { fetchCurrentCheckoutInformation } from './thunk/fetch-current-checkout-information.thunk';
 
 interface RoomBookingState {
+  roomBookingCheckout: RoomBookingCheckout;
   bookingRoom: BookingRoom;
   bookingRooms: BookingRoom[];
   wishlistBookingRooms: RoomWishListResponse[];
@@ -56,7 +58,25 @@ interface AddRoomBookingPayload {
   isMultiSLot: boolean;
 }
 
+interface RoomBookingCheckout {
+  id: string;
+  description: string;
+  status: string;
+  bookingReason: string;
+  requestedBy: string;
+  requestedAt: string;
+  acceptedBy: string;
+  acceptedAt: string;
+  checkinSlot: number;
+  checkoutSlot: number;
+  checkedInAt: string;
+  roomName: string;
+  roomType: string;
+  checkinDate: string;
+}
+
 const initialState: RoomBookingState = {
+  roomBookingCheckout: {} as RoomBookingCheckout,
   globalDateStart: dayjs(new Date()).format('YYYY-MM-DD'),
   globalDateEnd: dayjs(dayjs().endOf('year')).format('YYYY-MM-DD'),
   filteredBookingRequests: [],
@@ -158,18 +178,9 @@ const roomBookingSlice = createSlice({
     builder.addCase(addNewRequestBooking.fulfilled, (state, { payload }) => {
       state.response = payload;
     });
-    builder.addCase(fetchAllBookingRooms.rejected, (state, { payload }) => {});
     builder.addCase(fetchAllWishlistRooms.fulfilled, (state, { payload }) => {
       state.wishlistBookingRooms = payload;
     });
-    builder.addCase(
-      addToRoomBookingWishlist.fulfilled,
-      (state, { payload }) => {}
-    );
-    builder.addCase(
-      addToRoomBookingWishlist.rejected,
-      (state, { payload }) => {}
-    );
     builder.addCase(fetchBookingRoomDevices.fulfilled, (state, { payload }) => {
       state.devices = payload;
     });
@@ -198,6 +209,12 @@ const roomBookingSlice = createSlice({
       fetchBookingRoomsByFilters.fulfilled,
       (state, { payload }) => {
         state.filteredBookingRequests = payload;
+      }
+    );
+    builder.addCase(
+      fetchCurrentCheckoutInformation.fulfilled,
+      (state, { payload }) => {
+        state.roomBookingCheckout = payload;
       }
     );
   },

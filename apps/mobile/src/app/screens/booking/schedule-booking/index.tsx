@@ -35,12 +35,12 @@ import dayjs from 'dayjs';
 import AlertModal from '../../../components/modals/alert-modal.component';
 import { step1ScheduleRoomBooking } from '../../../redux/features/room-booking/slice';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
-import CustomSlotBookingModal from "./custom-slot-booking";
-import Footer from "./footer";
-import {useAppSelector} from "../../../hooks/use-app-selector.hook";
-import {fetchAllSlots} from "../../../redux/features/slot";
-import SelectDuration from "./select-duration";
-import {Slot} from "../../../redux/models/slot.model";
+import CustomSlotBookingModal from './custom-slot-booking';
+import Footer from './footer';
+import { useAppSelector } from '../../../hooks/use-app-selector.hook';
+import { fetchAllSlots } from '../../../redux/features/slot';
+import SelectDuration from './select-duration';
+import { Slot } from '../../../redux/models/slot.model';
 
 const ScheduleRoomBooking: React.FC = () => {
   const navigate = useAppNavigation();
@@ -53,9 +53,9 @@ const ScheduleRoomBooking: React.FC = () => {
   const [currentSelectedDate, setCurrentSelectedDate] =
     useState<string>('2022-05-01');
 
-  const [isCustomSlotModalShown, setCustomSlotModalShown] = useState<boolean>(false);
+  const [isCustomSlotModalShown, setCustomSlotModalShown] =
+    useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<string>();
-
 
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [slotSelections, setSlotSelections] = useState([]);
@@ -66,16 +66,15 @@ const ScheduleRoomBooking: React.FC = () => {
       .then((val) => transformSlotsToSlotPicker(val));
     return () => {
       setSlotSelections([]);
-    }
+    };
   }, []);
-
 
   const transformSlotsToSlotPicker = (val: Slot[]) => {
     const slotSelections = val.map((slot, index) => {
       return {
         value: slot.id,
-        label: slot.name
-      }
+        label: slot.name,
+      };
     });
     setSlotSelections(slotSelections);
     handleSetSlotStart(slotSelections[0].value);
@@ -88,7 +87,7 @@ const ScheduleRoomBooking: React.FC = () => {
       const currentDateString = dayjs().toISOString().split('T')[0];
       setCurrentSelectedDate(currentDateString);
       setErrorMessage('Please select other day than Sunday');
-     // setErrorModalShown(true);
+      // setErrorModalShown(true);
     }
   }, [currentSelectedDate]);
 
@@ -99,12 +98,11 @@ const ScheduleRoomBooking: React.FC = () => {
     if (slotStart > slotEnd) {
       setSlotStart(slotEnd);
     }
-
   }, [slotStart, slotEnd]);
 
   const handleSetSlotEnd = (value) => {
     if (value === undefined || value === null) {
-      setSlotEnd("1");
+      setSlotEnd('1');
     } else {
       setSlotEnd(value);
     }
@@ -112,21 +110,21 @@ const ScheduleRoomBooking: React.FC = () => {
 
   const handleSetSlotStart = (value) => {
     if (value === undefined || value === null) {
-      setSlotStart("1");
+      setSlotStart('1');
     } else {
       setSlotStart(value);
     }
   };
 
   const handleResetCalendar = () => {
-    setSlotStart("1");
-    setSlotEnd("1");
+    setSlotStart('1');
+    setSlotEnd('1');
     setCurrentSelectedDate('2022-05-01');
   };
 
   const handleNextStep = () => {
     console.log(`step 1 ${slotStart} ${slotEnd}`);
-    console.log(currentSelectedDate)
+    console.log(currentSelectedDate);
     const slotStartDetail = dayjs(
       `${currentSelectedDate} ${getTimeDetailBySlotNumber(1).startTime}`
     ).format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`);
@@ -134,14 +132,15 @@ const ScheduleRoomBooking: React.FC = () => {
       `${currentSelectedDate} ${getTimeDetailBySlotNumber(1).endTime}`
     ).format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`);
     dispatch(
-      step1ScheduleRoomBooking({ fromSlot: slotStartDetail, toSlot: slotEndDetail })
+      step1ScheduleRoomBooking({
+        fromSlot: slotStartDetail,
+        toSlot: slotEndDetail,
+      })
     );
     setTimeout(() => {
       navigate.navigate('ROOM_BOOKING_CHOOSE_ROOM');
     }, 0);
   };
-
-
 
   const Body: React.FC = () => {
     return (
@@ -185,7 +184,7 @@ const ScheduleRoomBooking: React.FC = () => {
           slotStart={slotStart}
           slotEnd={slotEnd}
           slotSelections={slotSelections}
-          />
+        />
         <View style={styles.noticeContainer}>
           <View style={styles.noticeTextContainer}>
             <Asterik />
@@ -279,8 +278,6 @@ const ScheduleRoomBooking: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-
-
   noticeText: {
     fontSize: 16,
   },
@@ -294,7 +291,6 @@ const styles = StyleSheet.create({
     height: 60,
     backgroundColor: WHITE,
   },
-
 
   container: {
     display: 'flex',
@@ -330,7 +326,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
 });
 
 export default ScheduleRoomBooking;

@@ -1,16 +1,15 @@
-import {StyleSheet, View} from "react-native";
-import {QrcodeIcon} from "react-native-heroicons/solid";
-import React from "react";
-import {FPT_ORANGE_COLOR} from "@app/constants";
+import { StyleSheet, View } from 'react-native';
+import { QrcodeIcon } from 'react-native-heroicons/solid';
+import React from 'react';
+import { FPT_ORANGE_COLOR } from '@app/constants';
 
 const QRScanButton = () => {
   return (
     <View style={[styles.container]}>
-      <QrcodeIcon color="#fff" size={50}/>
+      <QrcodeIcon color="#fff" size={50} />
     </View>
-
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -22,7 +21,7 @@ const styles = StyleSheet.create({
     width: 65,
     height: 65,
     borderColor: 'rgba(209, 209, 209, 1)',
-  }
+  },
 });
 
 export default QRScanButton;

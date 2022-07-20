@@ -15,7 +15,7 @@ import {
 } from 'react-native-heroicons/outline';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { saveStartDay } from '../../../redux/features/room-booking/slice';
-import {useAppSelector} from "../../../hooks/use-app-selector.hook";
+import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 
 const StartDayCalendar: React.FC<any> = (props) => {
   const dispatch = useAppDispatch();
@@ -25,7 +25,7 @@ const StartDayCalendar: React.FC<any> = (props) => {
 
   const handleDayPress = (day) => {
     setDayStart(day.dateString);
-    dispatch(saveStartDay({fromDay: day.dateString}));
+    dispatch(saveStartDay({ fromDay: day.dateString }));
   };
 
   return (

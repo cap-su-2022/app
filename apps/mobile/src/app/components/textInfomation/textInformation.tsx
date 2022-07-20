@@ -1,24 +1,18 @@
-import React from "react";
-import {View, StyleSheet, Text} from "react-native";
-import {FPT_ORANGE_COLOR, WHITE} from "@app/constants";
-
+import React from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 
 const TextInformation = (props) => {
   return (
     <View style={[styles.container]}>
-      <Text style={[styles.title]}>
-        {props.title}
-      </Text>
-      <Text style={[styles.content]}>
-        {props.content}
-      </Text>
+      <Text style={[styles.title]}>{props.title}</Text>
+      <Text style={[styles.content]}>{props.content}</Text>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-
     display: 'flex',
     flex: null,
     flexGrow: 0,
@@ -28,17 +22,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 10,
     backgroundColor: WHITE,
-    borderRadius: 18
+    borderRadius: 18,
   },
   title: {
     fontSize: 19,
-    fontWeight: "900",
-    marginBottom: 5
+    fontWeight: '900',
+    marginBottom: 5,
   },
   content: {
     fontSize: 19,
-    fontWeight: "400"
-  }
+    fontWeight: '400',
+  },
 });
 
-export default TextInformation
+export default TextInformation;

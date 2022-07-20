@@ -54,7 +54,6 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
     };
   }, []);
 
-
   const transformSlotsToSlotPicker = (val: Slot[]) => {
     const slotSelections = val.map((slot, index) => {
       return {
@@ -78,8 +77,8 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
     );
     const slotEndNum = slotSelections.find((slot) => slot.value === slotEnd);
 
-    dispatch(saveFromSlotNum({fromSlotNum: slotStartNum.slotNum}));
-    dispatch(saveToSlotNum({toSlotNum: slotEndNum.slotNum}));
+    dispatch(saveFromSlotNum({ fromSlotNum: slotStartNum.slotNum }));
+    dispatch(saveToSlotNum({ toSlotNum: slotEndNum.slotNum }));
     dispatch(
       step1ScheduleRoomBooking({
         fromSlotName: slotStartName.label,
@@ -223,7 +222,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: "rgba(240, 110, 40, 0.2)",
+    backgroundColor: 'rgba(240, 110, 40, 0.2)',
   },
   bookingNowButtonText: {
     fontSize: deviceWidth / 23,
@@ -284,7 +283,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderWidth: 3,
     borderColor: FPT_ORANGE_COLOR,
-    borderRadius: 8
+    borderRadius: 8,
   },
   startDayContainer: {
     display: 'flex',

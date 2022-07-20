@@ -589,4 +589,11 @@ export class BookingRoomService {
   checkOutBookingRoom(bookingRequestId: string, accountId: string) {
     return this.repository.checkoutBookingRoom(bookingRequestId, accountId);
   }
+
+  getAllBookingRoomHistory(
+    accountId: string,
+    filters: GetAllBookingRequestsFilter
+  ) {
+    return this.repository.findBookingRoomHistory(accountId, filters);
+  }
 }

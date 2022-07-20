@@ -63,9 +63,13 @@ const RoomBooking2: React.FC = () => {
     if (deviceIds.length < 1) {
       setErrorModalShown(true);
     } else {
-      const devices = []
+      const devices = [];
       for (let i = 0; i < deviceIds.length; i++) {
-        devices.push({label: deviceNames[i], value: deviceIds[i], quantity: 1})
+        devices.push({
+          label: deviceNames[i],
+          value: deviceIds[i],
+          quantity: 1,
+        });
       }
       navigate.navigate('ROOM_BOOKING_3');
       dispatch(
@@ -460,7 +464,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: WHITE,
-    marginBottom: 50
+    marginBottom: 50,
   },
   filterContainer: {
     display: 'flex',

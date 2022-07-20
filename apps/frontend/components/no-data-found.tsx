@@ -1,23 +1,26 @@
-import React from "react";
-import Image from "next/image";
-import {createStyles, Text} from "@mantine/core";
+import React from 'react';
+import Image from 'next/image';
+import { createStyles, Text } from '@mantine/core';
 
 const NoDataFound: React.FC = () => {
-
-  const {classes} = useStyles();
+  const { classes } = useStyles();
 
   return (
     <div className={classes.container}>
-      <Image src="/undraw/no-data.svg" layout="fixed"
-             height={400}
-             width={400}/>
+      <Image
+        src="/undraw/no-data.svg"
+        layout="fixed"
+        height={400}
+        width={400}
+      />
       <Text className={classes.text}>
-        No data found!<br/>
+        No data found!
+        <br />
         Please come back later!
       </Text>
     </div>
   );
-}
+};
 
 const useStyles = createStyles({
   container: {

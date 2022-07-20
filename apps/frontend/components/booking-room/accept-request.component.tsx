@@ -49,14 +49,12 @@ const AcceptRequestComponent: React.FC<AcceptRequestComponentProps> = (
   }, [dispatch, request]);
 
   const handleAcceptSelectedRequest = () => {
-    dispatch(acceptRequest(request.id))
-      .then(() => {
-        props.toggleShown();
-        props.toggleInforModalShown();
-        dispatch(fetchRoomBookings(props.pagination));
-      })
+    dispatch(acceptRequest(request.id)).then(() => {
+      props.toggleShown();
+      props.toggleInforModalShown();
+      dispatch(fetchRoomBookings(props.pagination));
+    });
   };
-
 
   const ListRequestPendingAtSameSlot = () => {
     const rows =

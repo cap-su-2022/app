@@ -521,4 +521,15 @@ export class BookingRoomController {
       keycloakUser.account_id
     );
   }
+
+  @Get('history')
+  getAllBookingRoomHistory(
+    @User() keycloakUser: KeycloakUserInstance,
+    @Query() filters: GetAllBookingRequestsFilter
+  ) {
+    return this.service.getAllBookingRoomHistory(
+      keycloakUser.account_id,
+      filters
+    );
+  }
 }

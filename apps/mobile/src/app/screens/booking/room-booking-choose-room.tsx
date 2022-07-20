@@ -17,7 +17,7 @@ import { fetchChoosingBookingRoom } from '../../redux/features/room-booking/thun
 import { ChoosingBookingRoom } from '../../redux/models/choosing-booking-room.model';
 import { deviceHeight, deviceWidth } from '../../utils/device';
 import { LOCAL_STORAGE } from '../../utils/local-storage';
-import {WHITE} from "@app/constants";
+import { WHITE } from '@app/constants';
 
 const RoomBookingChooseRoom: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -118,8 +118,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   historyText: {
-
-    fontWeight: "700"
+    fontWeight: '700',
   },
   wrapper: {
     display: 'flex',

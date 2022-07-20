@@ -566,9 +566,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       })
       .andWhere('booking_request.status = :status', { status: 'CHECKED_IN' })
       .andWhere('booking_request.checkedin_at IS NOT NULL')
-      .andWhere('booking_request.checkin_date = :date', {
-        date: dayjs(new Date()).format('YYYY-MM-DD'),
-      })
       .andWhere('booking_request.accepted_by IS NOT NULL')
       .andWhere('booking_request.accepted_at IS NOT NULL')
       .andWhere('booking_request.cancelled_at IS NULL')
@@ -587,5 +584,44 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .where('booking_request.id = :id', { id: id })
       .useTransaction(true)
       .execute();
+  }
+
+  findBookingRoomHistory(
+    accountId: string,
+    filters: GetAllBookingRequestsFilter
+  ) {
+    const query = this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('r.name', 'roomName')
+      .addSelect('rt.name', 'roomType')
+      .addSelect('booking_request.requested_at', 'requestedAt')
+      .addSelect('booking_request.requested_by', 'requestedBy')
+      .addSelect('booking_request.status', 'status')
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(RoomType, 'rt', 'r.type = rt.id')
+      .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
+      .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
+      .where('booking_request.requested_by = :accountId', {
+        accountId: accountId,
+      })
+      .andWhere('r.name LIKE :name', { name: `%${filters.roomName}%` })
+      .andWhere('booking_request.checkin_date >= :dateStart', {
+        dateStart: filters.dateStart,
+      })
+      .andWhere('booking_request.checkin_date <= :dateEnd', {
+        dateEnd: filters.dateEnd,
+      })
+      .andWhere('st.slot_num >= :slotStart', {
+        slotStart: filters.slotStart,
+      })
+      .andWhere('se.slot_num <= :slotEnd', {
+        slotEnd: filters.slotEnd,
+      });
+    if (filters.status) {
+      query.andWhere('booking_request.status IN (:...status)', {
+        status: JSON.parse(filters.status),
+      });
+    }
+    return query.getRawMany();
   }
 }

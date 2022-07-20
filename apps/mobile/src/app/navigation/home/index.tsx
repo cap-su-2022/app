@@ -1,12 +1,12 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { StackNavigator, StackScreen } from '@app/utils';
-import RoomCheckoutNavigator from './booking-room-checkout.navigator';
 import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
-import HomeScreen from '../../screens/home.screen';
 import RoomBookingNavigator from '../room-booking';
 import TrackBookingRoomNavigator from './track-booking-room';
+import RoomBookingCheckoutNavigator from '../room-booking/checkout';
+import HomeScreen from '../../screens/home';
 
 const HomeNavigator: React.FC = () => {
   const navigate = useAppNavigation();
@@ -33,7 +33,7 @@ const HomeNavigator: React.FC = () => {
         options={{
           headerShown: false,
         }}
-        component={RoomCheckoutNavigator}
+        component={RoomBookingCheckoutNavigator}
       />
       <StackScreen
         name="TRACK_BOOKING_ROOM"

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -13,20 +13,17 @@ import { deviceHeight, deviceWidth } from '../../../utils/device';
 import {
   ChevronDoubleRightIcon,
   DeviceMobileIcon,
-  DeviceTabletIcon,
   ExclamationCircleIcon,
-  ExclamationIcon,
   LibraryIcon,
 } from 'react-native-heroicons/outline';
 import Divider from '../../../components/text/divider';
 import Signature, { SignatureViewRef } from 'react-native-signature-canvas';
 import QRCode from 'react-native-qrcode-svg';
 import AlertModal from '../../../components/modals/alert-modal.component';
-import { enableScreens } from 'react-native-screens';
-import { fetchCurrentCheckoutInformation } from '../../../redux/features/room-booking/thunk/fetch-current-checkout-information.thunk';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import dayjs from 'dayjs';
 import { checkOutBookingRoom } from '../../../redux/features/room-booking/thunk/checkout-booking-room.thunk';
+import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 
 const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -35,54 +32,11 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const scrollView = useRef<ScrollView>(null);
   const signature = useRef<SignatureViewRef>(null);
 
-  const [roomBooking, setRoomBooking] = useState<{
-    id: string;
-    description: string;
-    status: string;
-    bookingReason: string;
-    requestedBy: string;
-    requestedAt: string;
-    acceptedBy: string;
-    acceptedAt: string;
-    checkinSlot: number;
-    checkoutSlot: number;
-    checkedInAt: string;
-    roomName: string;
-    roomType: string;
-    checkinDate: string;
-  }>(
-    {} as {
-      id: string;
-      description: string;
-      status: string;
-      bookingReason: string;
-      requestedBy: string;
-      requestedAt: string;
-      acceptedBy: string;
-      acceptedAt: string;
-      checkinSlot: number;
-      checkoutSlot: number;
-      checkedInAt: string;
-      roomName: string;
-      roomType: string;
-      checkinDate: string;
-    }
-  );
+  const { roomBookingCheckout } = useAppSelector((state) => state.roomBooking);
 
   navigate.addListener('focus', (a) => {
     setHidden(false);
   });
-
-  useEffect(() => {
-    dispatch(fetchCurrentCheckoutInformation())
-      .unwrap()
-      .then((e) => {
-        setRoomBooking(e);
-        return e;
-      })
-      .then((e) => (!e.id ? navigate.navigate('NO_ROOM_CHECKOUT') : null))
-      .catch(() => alert('Failed while fetching data'));
-  }, []);
 
   useEffect(() => {
     return () => {
@@ -101,8 +55,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const handleCheckoutBookingRoom = () => {
     if (signature.current) {
       signature.current.readSignature();
-      alert(roomBooking.id);
-      dispatch(checkOutBookingRoom(roomBooking.id))
+      dispatch(checkOutBookingRoom(roomBookingCheckout.id))
         .unwrap()
         .then(() => navigate.navigate('CHECKOUT_SUCCESSFULLY'))
         .catch((e) => alert('Failed while checking out booking room'));
@@ -198,7 +151,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
                   />
                 </View>
                 <Text style={styles.bookingInforHeaderName}>
-                  {roomBooking.roomName}
+                  {roomBookingCheckout.roomName}
                 </Text>
               </View>
 
@@ -258,7 +211,9 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
                       color: BLACK,
                     }}
                   >
-                    {dayjs(roomBooking.requestedAt).format('HH:mm DD/MM/YYYY')}
+                    {dayjs(roomBookingCheckout.requestedAt).format(
+                      'HH:mm DD/MM/YYYY'
+                    )}
                   </Text>
                 </View>
                 <View style={[styles.bookingInforDetail, { marginTop: 5 }]}>
@@ -272,7 +227,9 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
                       color: BLACK,
                     }}
                   >
-                    {dayjs(roomBooking.checkedInAt).format('HH:mm DD/MM/YYYY')}
+                    {dayjs(roomBookingCheckout.checkedInAt).format(
+                      'HH:mm DD/MM/YYYY'
+                    )}
                   </Text>
                 </View>
               </View>
@@ -295,14 +252,17 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
                     flexWrap: 'wrap',
                   }}
                 >
-                  <QRCode size={deviceWidth / 5} value={roomBooking.id} />
+                  <QRCode
+                    size={deviceWidth / 5}
+                    value={roomBookingCheckout.id}
+                  />
                   <Text
                     style={{
                       color: BLACK,
                       marginTop: 5,
                     }}
                   >
-                    {roomBooking.id}
+                    {roomBookingCheckout.id}
                   </Text>
                 </View>
                 <Text
