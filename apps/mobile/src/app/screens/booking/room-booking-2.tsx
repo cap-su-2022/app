@@ -238,7 +238,7 @@ const RoomBooking2: React.FC = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <View>
+        <ScrollView>
           <Filtering />
           <VirtualizedList
             getItemCount={(data) => data.length}
@@ -248,7 +248,7 @@ const RoomBooking2: React.FC = () => {
             )}
             data={devices}
           />
-        </View>
+        </ScrollView>
         <View style={styles.footerContainer}>
           <TouchableOpacity
             onPress={() => navigate.pop()}
