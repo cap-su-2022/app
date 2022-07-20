@@ -1,13 +1,13 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
 import axios from "axios";
-import {Room} from "../../../../models/room.model";
+import { Device } from "../../../../models/device.model";
 
 interface RejectValue {
   message: string;
 }
 
-export const fetchDeletedDevices = createAsyncThunk<Room[], string, {
+export const fetchDeletedDevices = createAsyncThunk<Device[], string, {
   rejectValue: RejectValue
 }>('device/fetch-deleted', async (any, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());

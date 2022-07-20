@@ -33,23 +33,35 @@ import { FormikProps } from 'formik';
 import { DatePicker } from '@mantine/dates';
 import { showNotification } from '@mantine/notifications';
 import { fetchListBookingByRoomInWeek } from '../../redux/features/room-booking/thunk/fetch-list-booking-by-room-in-week.thunk';
+import { fetchRoomFreeAtTime } from '../../redux/features/room-booking/thunk/fetch-room-free-at-time';
 
 interface ChooseSlotModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
   handleBackChooseSlot(): void;
-  handleNextChooseDevice(): void;
 }
 const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
   const { classes } = useStyles();
-  const dispatch = useAppDispatch(); 
+  const dispatch = useAppDispatch();
   const [listRoom, setListRoom] = useState([]);
+  console.log(listRoom)
+
+  useEffect(() => {
+    dispatch(
+      fetchRoomFreeAtTime({
+        date: props.formik.values.checkinDate,
+        checkinSlotId: props.formik.values.checkinSlot,
+        checkoutSlotId: props.formik.values.checkoutSlot,
+      })
+    )
+      .unwrap()
+      .then((roomFree) => setListRoom(roomFree));
+  }, []);
 
   console.log('LISSSSS: ', listRoom);
   const handleNextStep = () => {
     console.log(props.formik);
   };
-
 
   return (
     <div>

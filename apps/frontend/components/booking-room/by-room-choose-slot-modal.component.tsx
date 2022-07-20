@@ -2,33 +2,17 @@ import React, { useEffect, useState } from 'react';
 import {
   Button,
   createStyles,
-  InputWrapper,
-  Modal,
   Select,
   Table,
-  Text,
-  Textarea,
-  TextInput,
 } from '@mantine/core';
-import { useWindowDimensions } from '../../hooks/use-window-dimensions';
 import {
-  Alarm,
-  Archive,
-  BuildingWarehouse,
-  CalendarStats,
   ChevronLeft,
   ChevronRight,
   ChevronsRight,
-  ClipboardText,
-  Clock,
-  FileDescription,
-  Id,
-  User,
   X,
 } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
-import autoAnimate from '@formkit/auto-animate';
 import { FormikProps } from 'formik';
 import { DatePicker } from '@mantine/dates';
 import { showNotification } from '@mantine/notifications';
@@ -40,11 +24,11 @@ interface ChooseSlotModalProps {
   handleBackChooseRoom(): void;
   handleNextChooseDevice(): void;
   roomNames: any[];
-  slotNames: any[];
 }
 const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const { classes } = useStyles();
-  const [slotNames, setSlotName] = useState<any[]>(props.slotNames);
+  const [slotNames, setSlotName] = useState<any[]>();
+  const slotInfors = useAppSelector((state) => state.slot.slotInfor);
   const dispatch = useAppDispatch();
   const [dayShowShecule, setDayShowShecule] = useState(
     new Date(dayjs(new Date()).format('YYYY-MM-DD'))
@@ -87,15 +71,12 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   };
 
   useEffect(() => {
-    if (
-      props.formik.values.checkinSlot &&
-      props.formik.values.checkoutSlot
-    ) {
-      const slotIn = slotNames.find(
-        (slot) => slot.value === props.formik.values.checkinSlot
+    if (props.formik.values.checkinSlot && props.formik.values.checkoutSlot) {
+      const slotIn = slotInfors.find(
+        (slot) => slot.id === props.formik.values.checkinSlot
       );
-      const slotOut = slotNames.find(
-        (slot) => slot.value === props.formik.values.checkoutSlot
+      const slotOut = slotInfors.find(
+        (slot) => slot.id === props.formik.values.checkoutSlot
       );
       if (slotIn.slotNum > slotOut.slotNum) {
         const tmp = props.formik.values.checkinSlot;
@@ -138,7 +119,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       const currTime = dayjs(curr).format('HH:mm:ss');
       const choosedDay = new Date(props.formik.values.checkinDate).getDate();
 
-      const result = slotNames.map((slot, indexSlot) => {
+      const result = slotInfors?.map((slot, indexSlot) => {
         let isFree = true;
         let isOverSlot = false;
 
@@ -164,26 +145,29 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
         if (!isOverSlot) {
           if (isFree) {
             return {
-              ...slot,
+              value: slot.id,
+              label: slot.name,
               disabled: false,
             };
           } else {
             return {
-              ...slot,
+              value: slot.id,
+              label: slot.name,
               disabled: true,
             };
           }
         } else {
           return {
-            ...slot,
+            value: slot.id,
+            label: slot.name,
             disabled: true,
           };
         }
       });
       setSlotName(result);
     } else {
-      const result = slotNames.map((slot) => {
-        return { ...slot, disabled: true };
+      const result = slotInfors?.map((slot) => {
+        return { value: slot.id, label: slot.name, disabled: true };
       });
       setSlotName(result);
     }
@@ -200,13 +184,13 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     setDays(tmpArr);
   }, [dayShowShecule, sun]);
 
-  const rows = slotNames.map((slot, indexSlot) => {
+  const rows = slotInfors?.map((slot, indexSlot) => {
     let isBooked = false;
     let isPending = false;
     let isPassed = false;
     let isOverSlot = false;
     return (
-      <tr key={slot.value}>
+      <tr key={slot.id}>
         <td>Slot {indexSlot + 1}</td>
         {days
           ? days.map((day, index) => {
@@ -215,64 +199,60 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
               isPassed = false;
               isOverSlot = false;
               return (
-                <>
-                  <td key={indexSlot + '' + index}>
-                    {listRequest.length > 0
-                      ? listRequest.map((request) => {
-                          if (
-                            // request.checkinSlot === request.checkoutSlot &&
-                            request.checkinDate === day.getDate()
-                          ) {
-                            return request.checkinDate === day.getDate() &&
-                              request.slotIn <= slot.slotNum &&
-                              request.slotOut >= slot.slotNum
-                              ? request.status === 'BOOKED'
-                                ? (isBooked = true)
-                                : (isPending = true)
-                              : null;
+                <td key={indexSlot + '' + index}>
+                  {listRequest?.length > 0
+                    ? listRequest?.map((request) => {
+                        if (
+                          // request.checkinSlot === request.checkoutSlot &&
+                          request.checkinDate === day.getDate()
+                        ) {
+                          return request.checkinDate === day.getDate() &&
+                            request.slotIn <= slot.slotNum &&
+                            request.slotOut >= slot.slotNum
+                            ? request.status === 'BOOKED'
+                              ? (isBooked = true)
+                              : (isPending = true)
+                            : null;
+                        }
+                        if (day < curr.setHours(0, 0, 0, 0)) {
+                          isPassed = true;
+                        }
+                        if (
+                          day.getDay() ===
+                          curr.getDate() - curr.getDay() + 6
+                        ) {
+                          if (indexSlot > 2) {
+                            isOverSlot = true;
                           }
-                          if (day < curr.setHours(0, 0, 0, 0)) {
-                            isPassed = true;
-                          }
-                          if (
-                            day.getDay() ===
-                            curr.getDate() - curr.getDay() + 6
-                          ) {
-                            if (indexSlot > 2) {
-                              isOverSlot = true;
-                            }
-                          }
-                          // if (
-                          //   slotInThisDayBeBooked === day &&
-                          //   slotBeBooked !== slot.value
-                          // ) {
-                          //   isFree = false;
-                          // }
-                        })
-                      : day < curr
-                      ? (isPassed = true)
-                      : null}
-                    {!isOverSlot ? (
-                      !isPassed ? (
-                        isPending ? (
-                          <div className={classes.slotPending}>
-                            {day.getDate()}
-                          </div>
-                        ) : isBooked ? (
-                          <div className={classes.slotBooked}>
-                            {day.getDate()}
-                          </div>
-                        ) : (
-                          <div className={classes.slotFree}>
-                            {day.getDate()}
-                          </div>
-                        )
+                        }
+                        // if (
+                        //   slotInThisDayBeBooked === day &&
+                        //   slotBeBooked !== slot.id
+                        // ) {
+                        //   isFree = false;
+                        // }
+                      })
+                    : day < curr
+                    ? (isPassed = true)
+                    : null}
+                  {!isOverSlot ? (
+                    !isPassed ? (
+                      isPending ? (
+                        <div className={classes.slotPending}>
+                          {day.getDate()}
+                        </div>
+                      ) : isBooked ? (
+                        <div className={classes.slotBooked}>
+                          {day.getDate()}
+                        </div>
                       ) : (
-                        <div className={classes.dayPassed}>{day.getDate()}</div>
+                        <div className={classes.slotFree}>{day.getDate()}</div>
                       )
-                    ) : null}
-                  </td>
-                </>
+                    ) : (
+                      <div className={classes.dayPassed}>{day.getDate()}</div>
+                    )
+                  ) : null}
+                </td>
               );
             })
           : null}
@@ -417,7 +397,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           transitionTimingFunction="ease"
           dropdownPosition="top"
           radius="md"
-          data={slotNames}
+          data={slotNames || []}
           onChange={props.formik.handleChange('checkinSlot')}
           value={props.formik.values.checkinSlot}
         />
@@ -437,7 +417,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           transitionTimingFunction="ease"
           dropdownPosition="top"
           radius="md"
-          data={slotNames}
+          data={slotNames || []}
           onChange={props.formik.handleChange('checkoutSlot')}
           value={props.formik.values.checkoutSlot}
         />

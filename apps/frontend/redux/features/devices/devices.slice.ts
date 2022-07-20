@@ -11,12 +11,14 @@ import { PaginationResponse } from '../../../models/pagination-response.payload'
 import { restoreDisabledDevice } from "./thunk/restore-disabled.thunk";
 import { restoreDeletedDevice } from "./thunk/restore-deleted.thunk";
 import { updateDeviceById } from "./thunk/update-by-id";
+import { fetchDeviceNames } from "./thunk/fetch-device-names.thunk";
 
 interface DevicesState {
   device: Device;
   devices: PaginationResponse<Device>;
   disabledDevices: Device[];
   deletedDevices: Device[];
+  deviceNames: {value: string, label: string}[]
 
   totalPage: number;
   size: number;
@@ -31,6 +33,7 @@ const devicesInitialState: DevicesState = {
   disabledDevices: [],
   deletedDevices: [],
   device: {} as Device,
+  deviceNames: {} as {value: string, label: string}[],
 
   totalPage: 1,
   size: 3,
@@ -51,41 +54,6 @@ const devicesSlice = createSlice({
     builder.addCase(fetchDeviceById.fulfilled, (state, { payload }) => {
       state.device = payload;
     });
-    builder.addCase(fetchDeviceById.rejected, (state, {payload}) => {
-
-    });
-
-    builder.addCase(disableDeviceById.pending, (state) => {
-
-    });
-
-    builder.addCase(disableDeviceById.fulfilled, (state, {payload}) => {
-
-    });
-
-    builder.addCase(disableDeviceById.rejected, (state, {payload}) => {
-
-    });
-
-    builder.addCase(fetchDevices.fulfilled, (state, { payload }) => {
-      state.devices = payload;
-    });
-
-    builder.addCase(fetchDevices.rejected, (state, {payload}) => {
-
-    });
-
-    builder.addCase(updateDeviceById.fulfilled, (state, {payload}) => {
-
-    });
-
-    builder.addCase(addDevice.fulfilled, (state, {payload}) => {
-
-    });
-
-    builder.addCase(addDevice.rejected, (state, {payload}) => {
-
-    });
 
     builder.addCase(fetchDisabledDevices.fulfilled, (state, {payload}) => {
         state.disabledDevices = payload;
@@ -93,9 +61,11 @@ const devicesSlice = createSlice({
     builder.addCase(fetchDeletedDevices.fulfilled, (state, {payload}) => {
       state.deletedDevices = payload;
     });
+    builder.addCase(fetchDeviceNames.fulfilled, (state, {payload}) => {
+      state.deviceNames = payload;
+    });
     builder.addCase(restoreDisabledDevice.fulfilled, (state, {payload}) => {
       return;
-
     });
     builder.addCase(restoreDeletedDevice.fulfilled, (state, {payload}) => {
       return;

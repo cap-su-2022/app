@@ -15,31 +15,47 @@ import { FormikProps } from 'formik';
 import { showNotification } from '@mantine/notifications';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import autoAnimate from '@formkit/auto-animate';
+import { useAppSelector } from '../../redux/hooks';
+import ConfirmModal from './confirm-modal.component';
 
 interface ChooseDeviceModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
   handleBackChooseSlot(): void;
-  deviceNames: any[];
-  reasonNames: any[];
 }
 const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   const { classes } = useStyles();
   const [value, setValue] = useState(0);
   const [device, setDevice] = useState('');
-  const [deviceNames, setDeviceNames] = useState<any[]>(props.deviceNames);
+  const [deviceNames, setDeviceNames] = useState<any[]>(
+    useAppSelector((state) => state.device.deviceNames)
+  );
+  const reasonNames = useAppSelector(
+    (state) => state.bookingReason.reasonNames
+  );
   const [choosedDevice, setChoosedDevice] = useState<any[]>([]);
-  console.log('Deviices: ', deviceNames);
-  console.log('Deviices choose: ', choosedDevice);
   const [parent] = useAutoAnimate();
   const handlers = useRef<NumberInputHandlers>();
+
+  const [showChooseDevice, setShowChooseDevice] = useState(true);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const [show, setShow] = useState(false);
   const dropdown = useRef(null);
 
+  const handelNextConfirm = () => {
+    setShowChooseDevice(false);
+    setShowConfirm(true);
+  };
+
+  const handleBackChooseDevice = () => {
+    setShowChooseDevice(true);
+    setShowConfirm(false);
+  };
+
   useEffect(() => {
-    props.formik.setFieldValue('bookingReasonId', props.reasonNames[0].value);
-  }, [])
+    props.formik.setFieldValue('bookingReasonId', reasonNames[0].value);
+  }, []);
 
   useEffect(() => {
     parent.current && autoAnimate(dropdown.current);
@@ -107,8 +123,6 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   const remove = (item) => {
     for (let i = 0; i < choosedDevice.length; i++) {
       if (choosedDevice[i].value === item) {
-        console.log('RUN HERE');
-
         setDeviceNames((devicename) => [
           ...devicename,
           { value: choosedDevice[i].value, label: choosedDevice[i].label },
@@ -130,7 +144,8 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   const handleNextStep = () => {
     props.formik.setFieldValue('listDevice', choosedDevice);
     if (props.formik.values.bookingReasonId) {
-      props.handleSubmit();
+      // props.handleSubmit();
+      handelNextConfirm();
     } else {
       showNotification({
         id: 'miss-data',
@@ -153,147 +168,152 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   };
 
   return (
-    <div>
-      <ScrollArea style={{ height: 480 }}>
-        <div className={classes.divInfor} ref={dropdown}>
-          <div className={classes.divHeader}>
-            <h3
-              className={classes.buttonChooseDevice}
-              onClick={reveal}
-            >
-              Choose devices
-            </h3>
-          </div>
-          {show && (
-            <div className={classes.displayFex}>
-              <Select
-                id="device"
-                name="device"
-                label="Select device (optional)"
-                onChange={setDevice}
-                value={device}
-                transition="pop-top-left"
-                transitionDuration={80}
-                transitionTimingFunction="ease"
-                dropdownPosition="bottom"
-                radius="md"
-                data={deviceNames}
-                searchable={true}
-                className={classes.selectComponent}
-                onKeyPress={handleKeypress}
-              />
-              <Group spacing={5} className={classes.groupComponent}>
-                <ActionIcon
-                  size={35}
-                  variant="default"
-                  onClick={() => handlers.current.decrement()}
-                >
-                  –
-                </ActionIcon>
-
-                <NumberInput
-                  hideControls
-                  value={value}
-                  onChange={(val) => setValue(val)}
-                  handlersRef={handlers}
-                  max={10}
-                  min={0}
-                  step={1}
-                  styles={{ input: { width: 54, textAlign: 'center' } }}
-                />
-
-                <ActionIcon
-                  size={35}
-                  variant="default"
-                  onClick={() => handlers.current.increment()}
-                >
-                  +
-                </ActionIcon>
-              </Group>
-              <Button
-                radius="md"
-                className={classes.buttonComponent}
-                onClick={() => add()}
-              >
-                <Plus />
-              </Button>
-            </div>
-          )}
-          <div ref={parent} style={{ width: '300px' }}>
-            {choosedDevice
-              ? choosedDevice.map((item) => (
-                  <div key={item.value} className={classes.item}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <div style={{ margin: ' 0 10px' }}>{item.quantity}</div>
-                      <div>{item.label}</div>
-                    </div>
-                    <Button
-                      variant="subtle"
-                      color="red"
-                      size="xs"
-                      onClick={() => remove(item.value)}
+    <>
+      {showChooseDevice && (
+        <div>
+          <ScrollArea style={{ height: 480 }}>
+            <div className={classes.divInfor} ref={dropdown}>
+              <div className={classes.divHeader}>
+                <h3 className={classes.buttonChooseDevice} onClick={reveal}>
+                  Choose devices
+                </h3>
+              </div>
+              {show && (
+                <div className={classes.displayFex}>
+                  <Select
+                    id="device"
+                    name="device"
+                    label="Select device (optional)"
+                    onChange={setDevice}
+                    value={device}
+                    transition="pop-top-left"
+                    transitionDuration={80}
+                    transitionTimingFunction="ease"
+                    dropdownPosition="bottom"
+                    radius="md"
+                    data={deviceNames}
+                    searchable={true}
+                    className={classes.selectComponent}
+                    onKeyPress={handleKeypress}
+                  />
+                  <Group spacing={5} className={classes.groupComponent}>
+                    <ActionIcon
+                      size={35}
+                      variant="default"
+                      onClick={() => handlers.current.decrement()}
                     >
-                      <X color="red" size={20} strokeWidth={2.5} />
-                    </Button>
-                  </div>
-                ))
-              : null}
-          </div>
-          <div>
-            <div className={classes.divHeader}>
-              <h3 style={{ margin: 0 }}>Choose reason</h3>
+                      –
+                    </ActionIcon>
+
+                    <NumberInput
+                      hideControls
+                      value={value}
+                      onChange={(val) => setValue(val)}
+                      handlersRef={handlers}
+                      max={10}
+                      min={0}
+                      step={1}
+                      styles={{ input: { width: 54, textAlign: 'center' } }}
+                    />
+
+                    <ActionIcon
+                      size={35}
+                      variant="default"
+                      onClick={() => handlers.current.increment()}
+                    >
+                      +
+                    </ActionIcon>
+                  </Group>
+                  <Button
+                    radius="md"
+                    className={classes.buttonComponent}
+                    onClick={() => add()}
+                  >
+                    <Plus />
+                  </Button>
+                </div>
+              )}
+              <div ref={parent} style={{ width: '300px' }}>
+                {choosedDevice
+                  ? choosedDevice.map((item) => (
+                      <div key={item.value} className={classes.item}>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <div style={{ margin: ' 0 10px' }}>
+                            {item.quantity}
+                          </div>
+                          <div>{item.label}</div>
+                        </div>
+                        <Button
+                          variant="subtle"
+                          color="red"
+                          size="xs"
+                          onClick={() => remove(item.value)}
+                        >
+                          <X color="red" size={20} strokeWidth={2.5} />
+                        </Button>
+                      </div>
+                    ))
+                  : null}
+              </div>
+              <div>
+                <div className={classes.divHeader}>
+                  <h3 style={{ margin: 0 }}>Choose reason</h3>
+                </div>
+                <div className={classes.displayFex}>
+                  <Select
+                    id="bookingReasonId"
+                    name="bookingReasonId"
+                    label="Select season"
+                    required
+                    onChange={props.formik.handleChange('bookingReasonId')}
+                    value={props.formik.values.bookingReasonId}
+                    transition="pop-top-left"
+                    transitionDuration={80}
+                    transitionTimingFunction="ease"
+                    dropdownPosition="bottom"
+                    radius="md"
+                    data={reasonNames}
+                    searchable={true}
+                    className={classes.selectComponent}
+                    style={{ width: 400 }}
+                  />
+                </div>
+                <Textarea
+                  placeholder="A few notes about your booking request this time"
+                  label="Description"
+                  minRows={4}
+                  maxRows={4}
+                  onChange={props.formik.handleChange('description')}
+                  value={props.formik.values.description}
+                />
+              </div>
             </div>
-            <div className={classes.displayFex}>
-              <Select
-                id="bookingReasonId"
-                name="bookingReasonId"
-                label="Select season"
-                required
-                onChange={props.formik.handleChange('bookingReasonId')}
-                value={props.formik.values.bookingReasonId}
-                transition="pop-top-left"
-                transitionDuration={80}
-                transitionTimingFunction="ease"
-                dropdownPosition="bottom"
-                radius="md"
-                data={props.reasonNames}
-                searchable={true}
-                className={classes.selectComponent}
-                style={{ width: 400 }}
-              />
-            </div>
-            <Textarea
-              placeholder="A few notes about your booking request this time"
-              label="Description"
-              minRows={4}
-              maxRows={4}
-              onChange={props.formik.handleChange('description')}
-              value={props.formik.values.description}
-            />
+          </ScrollArea>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              onClick={() => props.handleBackChooseSlot()}
+              // leftIcon={<Pencil />}
+              color="green"
+            >
+              Back
+            </Button>
+
+            <Button onClick={() => handleNextStep()} color="green">
+              Next
+            </Button>
           </div>
         </div>
-      </ScrollArea>
+      )}
 
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button
-          onClick={() => props.handleBackChooseSlot()}
-          // leftIcon={<Pencil />}
-          color="green"
-        >
-          Back
-        </Button>
-
-        <Button
-          // onClick={() => props.handleSubmit()}
-          onClick={() => handleNextStep()}
-          // leftIcon={<Pencil />}
-
-          color="green"
-        >
-          Next
-        </Button>
-      </div>
-    </div>
+      {showConfirm && (
+        <ConfirmModal
+          formik={props.formik}
+          handleSubmit={props.handleSubmit}
+          handleBackChooseDevice={() => handleBackChooseDevice()}
+        />
+      )}
+    </>
   );
 };
 

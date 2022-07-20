@@ -306,10 +306,9 @@ export class BookingRoomService {
               listRoomBookedInDaySameSlot.push(request.roomId);
             }
           );
-          console.log("LIST ROOM ID BOOKED", listRoomBookedInDaySameSlot);
           const result = await this.roomService.filterRoomFreeByRoomBooked(listRoomBookedInDaySameSlot)
-          console.log("LIST ROOM AFTER FILTER", result)
-          return result
+          console.log("LIST ROOM FREE: ", result)
+          return result;
         }
       }
     } catch (e) {
