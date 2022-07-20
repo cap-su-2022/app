@@ -54,14 +54,6 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (slotEnd < slotStart) {
-      setSlotEnd(slotStart);
-    }
-    if (slotStart > slotEnd) {
-      setSlotStart(slotEnd);
-    }
-  }, [slotStart, slotEnd]);
 
   const transformSlotsToSlotPicker = (val: Slot[]) => {
     const slotSelections = val.map((slot, index) => {

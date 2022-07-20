@@ -203,7 +203,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .where('booking_request.checkinDate = :checkinDate', {
         checkinDate: date,
       })
-      .where('booking_request.room_id = :roomId', {
+      .andWhere('booking_request.room_id = :roomId', {
         roomId: roomId,
       })
       .andWhere(

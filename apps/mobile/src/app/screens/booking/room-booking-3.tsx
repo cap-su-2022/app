@@ -1,27 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FlatList,
-  SafeAreaView,
+  SafeAreaView, ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { BLACK, FPT_ORANGE_COLOR, RED, WHITE } from '@app/constants';
+import { FPT_ORANGE_COLOR, RED, WHITE } from '@app/constants';
 import { deviceHeight, deviceWidth } from '../../utils/device';
 import {
-  CalendarIcon,
   ChevronDoubleLeftIcon,
   TicketIcon,
 } from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
 import { useAppSelector } from '../../hooks/use-app-selector.hook';
+import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
+import { addNewRequestBooking } from '../../redux/features/room-booking/thunk/add-new-request-booking';
 
 export const RoomBooking3: React.FC = () => {
   const navigate = useAppNavigation();
+  const dispatch = useAppDispatch();
   const roomBooking = useAppSelector(
     (state) => state.roomBooking.addRoomBooking
   );
+
+  const handleNextStep = () => {
+    dispatch(
+      addNewRequestBooking({
+        bookingReasonId: '38e47b6b-fde7-4d18-834d-ad8fd01e2fbd',
+        checkinDate: roomBooking.fromDay,
+        checkinSlot: roomBooking.fromSlot,
+        checkoutSlot: roomBooking.fromSlot,
+        description: 'Ahuhu',
+        listDevice: roomBooking.devices,
+        roomId: roomBooking.roomId,
+      })
+    )
+      .unwrap()
+      .then((e) => console.log(e));
+    navigate.navigate("ROOM_BOOKING_SUCCESS")
+  };
 
   const InfoDetail = (title, detail) => {
     return (
@@ -36,99 +55,105 @@ export const RoomBooking3: React.FC = () => {
     );
   };
 
-  const Device = ({ item, index }) => {
+  const Device = ({ item }) => {
     return (
       <View style={styles.historyContainer}>
-        <Text>{item}</Text>
+        <View style={styles.bookingNowContainer}>
+          <Text style={styles.bookingNowButtonText}>
+            {item ? item.label : 'N/A'}
+          </Text>
+        </View>
       </View>
     );
   };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View
-        style={{
-          display: 'flex',
-          flexGrow: 1,
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-        }}
-      >
-        <View>
-          {InfoDetail('Start Day:', roomBooking.fromDay)}
-          {InfoDetail('To Day:', roomBooking.toDay)}
-          {InfoDetail('From Slot:', roomBooking.fromSlotName)}
-          {InfoDetail('To Slot:', roomBooking.toSlotName)}
-          {InfoDetail('Room Name:', roomBooking.roomName)}
-          <Text>List Device</Text>
-          <FlatList
-            data={roomBooking.deviceNames}
-            renderItem={(device) => Device(device)}
-          />
-        </View>
+      <ScrollView>
+        <View style={styles.container}>
+          <View>
+            {InfoDetail('Start Day:', roomBooking.fromDay)}
+            {InfoDetail(
+              roomBooking.toSlotNum !== 1 ? 'From Slot:' : 'Slot',
+              `Slot ${roomBooking.toSlotNum}`
+            )}
+            {roomBooking.toSlotNum !== 1
+              ? InfoDetail('To Slot:', roomBooking.toSlotName)
+              : null}
+            {InfoDetail('Room Name:', roomBooking.roomName)}
+            <Text style={styles.title}>List Device</Text>
+            <FlatList
+              data={roomBooking.devices}
+              renderItem={(device) => Device(device)}
+            />
+            {InfoDetail('Booking Reason:', 'Other')}
+            {InfoDetail('Description', 'Chua co')}
+          </View>
 
-        <View
-          style={{
-            height: 80,
-            backgroundColor: WHITE,
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            alignItems: 'center',
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => navigate.pop()}
+          <View
             style={{
+              height: 80,
+              backgroundColor: WHITE,
               display: 'flex',
-              justifyContent: 'space-evenly',
               flexDirection: 'row',
+              justifyContent: 'space-around',
               alignItems: 'center',
-              borderRadius: 8,
-              borderWidth: 2,
-              borderColor: RED,
-              width: deviceWidth / 2.2,
-              height: 50,
             }}
           >
-            <ChevronDoubleLeftIcon color={RED} />
-            <Text
+            <TouchableOpacity
+              onPress={() => navigate.pop()}
               style={{
-                fontSize: deviceWidth / 18,
-                fontWeight: '600',
-                color: RED,
+                display: 'flex',
+                justifyContent: 'space-evenly',
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderRadius: 8,
+                borderWidth: 2,
+                borderColor: RED,
+                width: deviceWidth / 2.2,
+                height: 50,
               }}
             >
-              Review again
-            </Text>
-          </TouchableOpacity>
+              <ChevronDoubleLeftIcon color={RED} />
+              <Text
+                style={{
+                  fontSize: deviceWidth / 18,
+                  fontWeight: '600',
+                  color: RED,
+                }}
+              >
+                Review again
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => navigate.navigate('ROOM_BOOKING_SUCCESS')}
-            style={{
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              alignItems: 'center',
-              borderRadius: 8,
-              backgroundColor: FPT_ORANGE_COLOR,
-              width: deviceWidth / 2.2,
-              height: 50,
-              flexDirection: 'row',
-            }}
-          >
-            <TicketIcon color={WHITE} />
-            <Text
+            <TouchableOpacity
+              onPress={() => handleNextStep()}
               style={{
-                color: WHITE,
-                fontSize: deviceWidth / 18,
-                fontWeight: '600',
+                display: 'flex',
+                justifyContent: 'space-evenly',
+                alignItems: 'center',
+                borderRadius: 8,
+                backgroundColor: FPT_ORANGE_COLOR,
+                width: deviceWidth / 2.2,
+                height: 50,
+                flexDirection: 'row',
               }}
             >
-              Book Now
-            </Text>
-          </TouchableOpacity>
+              <TicketIcon color={WHITE} />
+              <Text
+                style={{
+                  color: WHITE,
+                  fontSize: deviceWidth / 18,
+                  fontWeight: '600',
+                }}
+              >
+                Book Now
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </ScrollView>
+
     </SafeAreaView>
   );
 };
@@ -138,7 +163,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     padding: 20,
     flexDirection: 'column',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
+
     flexGrow: 1,
     backgroundColor: WHITE,
   },
@@ -156,17 +182,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#EEF5FF',
+    backgroundColor: 'rgba(240, 110, 40, 0.2)',
   },
   bookingNowButtonText: {
-    fontSize: deviceWidth / 23,
-    fontWeight: '600',
+    fontSize: deviceWidth / 25,
+    fontWeight: '500',
   },
-  title: {
-    fontSize: deviceWidth / 23,
-    fontWeight: '700',
-    marginBottom: 5,
-  },
+
   bookingLaterContainer: {
     width: 250,
     height: 50,
@@ -189,5 +211,38 @@ const styles = StyleSheet.create({
   },
   historyText: {
     fontWeight: '700',
+  },
+  slotStart: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  durationButton: {
+    margin: 5,
+    backgroundColor: 'rgba(240, 110, 40, 0.2)',
+    height: 50,
+    width: deviceWidth / 1.5,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+  },
+  durationButtonText: {
+    fontSize: 24,
+    fontWeight: '600',
+  },
+  title: {
+    fontSize: deviceWidth / 23,
+    fontWeight: '700',
+    marginBottom: 5,
+  },
+  slotContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  checkBox: {
+    alignSelf: 'center',
+    borderWidth: 3,
+    borderColor: FPT_ORANGE_COLOR,
+    borderRadius: 8,
   },
 });

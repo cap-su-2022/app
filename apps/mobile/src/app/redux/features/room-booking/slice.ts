@@ -15,6 +15,8 @@ import { fetchRoomBookingById } from './thunk/fetch-room-booking-by-id.thunk';
 import { fetchBookingRoomsByFilters } from './thunk/fetch-booking-room-by-filters.thunk';
 import { BookingRoomsByFiltersResponse } from '../../models/booking-rooms-by-filters-response.model';
 import dayjs from 'dayjs';
+import { addNewRequestBooking } from './thunk/add-new-request-booking';
+import { NewRequestBookingResponseModel } from '../../models/new-request-booking-response.model';
 
 interface RoomBookingState {
   bookingRoom: BookingRoom;
@@ -29,11 +31,13 @@ interface RoomBookingState {
   filteredBookingRequests: BookingRoomsByFiltersResponse[];
   globalDateStart: string;
   globalDateEnd: string;
+  response: NewRequestBookingResponseModel;
 }
 
 interface BookingDevice {
-  devideId: string;
+  value: string;
   quantity: number;
+  label: string;
 }
 
 interface AddRoomBookingPayload {
@@ -65,6 +69,7 @@ const initialState: RoomBookingState = {
   currentBookingRooms: [],
   currentBookingRoom: {} as CurrentBookingRoom,
   today: '',
+  response: {} as NewRequestBookingResponseModel,
 };
 
 const roomBookingSlice = createSlice({
@@ -113,12 +118,10 @@ const roomBookingSlice = createSlice({
     step1ScheduleRoomBooking(state, { payload }) {
       state.addRoomBooking = {
         ...state.addRoomBooking,
-        fromSlotName: payload.fromSlotName,
-        toSlotName: payload.toSlotName,
+        roomId: payload.roomId,
+        roomName: payload.roomName,
         fromDay: payload.fromDay,
-        toDay: payload.toDay,
         fromSlot: payload.fromSlot,
-        toSlot: payload.toSlot,
       };
     },
     step2ScheduleRoomBooking(state, { payload }) {
@@ -152,11 +155,19 @@ const roomBookingSlice = createSlice({
     builder.addCase(fetchAllBookingRooms.fulfilled, (state, { payload }) => {
       state.bookingRooms = payload;
     });
+    builder.addCase(addNewRequestBooking.fulfilled, (state, { payload }) => {
+      state.response = payload;
+    });
+    builder.addCase(fetchAllBookingRooms.rejected, (state, { payload }) => {});
     builder.addCase(fetchAllWishlistRooms.fulfilled, (state, { payload }) => {
       state.wishlistBookingRooms = payload;
     });
     builder.addCase(
       addToRoomBookingWishlist.fulfilled,
+      (state, { payload }) => {}
+    );
+    builder.addCase(
+      addToRoomBookingWishlist.rejected,
       (state, { payload }) => {}
     );
     builder.addCase(fetchBookingRoomDevices.fulfilled, (state, { payload }) => {

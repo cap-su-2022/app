@@ -7,10 +7,12 @@ import { deviceWidth } from "../../utils/device";
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from "@app/constants";
 import QRCode from "react-native-qrcode-svg";
 import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
+import {useAppSelector} from "../../hooks/use-app-selector.hook";
 
 export const RoomBookingSuccess: React.FC = () => {
   const navigate = useAppNavigation();
-
+const response = useAppSelector(state => state.roomBooking.response)
+  console.log(response)
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{
@@ -39,7 +41,7 @@ export const RoomBookingSuccess: React.FC = () => {
             fontSize: deviceWidth / 23
           }}>Please check-in your library in time</Text>
         </View>
-        <QRCode value="1233" />
+        <QRCode value={response.id} />
         <TouchableOpacity style={{
           borderRadius: 8,
           backgroundColor: FPT_ORANGE_COLOR,
