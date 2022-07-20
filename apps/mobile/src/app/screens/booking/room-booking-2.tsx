@@ -50,8 +50,6 @@ const RoomBooking2: React.FC = () => {
   const [search, setSearch] = useState<string>('');
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
-  console.log(deviceNames);
-
   useEffect(() => {
     dispatch(
       fetchBookingRoomDevices({
@@ -65,11 +63,14 @@ const RoomBooking2: React.FC = () => {
     if (deviceIds.length < 1) {
       setErrorModalShown(true);
     } else {
+      const devices = []
+      for (let i = 0; i < deviceIds.length; i++) {
+        devices.push({label: deviceNames[i], value: deviceIds[i], quantity: 1})
+      }
       navigate.navigate('ROOM_BOOKING_3');
       dispatch(
         step3ScheduleRoomBooking({
-          devices: deviceIds,
-          deviceNames: deviceNames,
+          devices: devices,
         })
       );
     }
@@ -459,6 +460,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: WHITE,
+    marginBottom: 50
   },
   filterContainer: {
     display: 'flex',
