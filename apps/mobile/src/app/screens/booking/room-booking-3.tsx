@@ -55,7 +55,7 @@ export const RoomBooking3: React.FC = () => {
       };
     });
     setBookingReasonSelections(bookingReasonSelection);
-    handleSetBookingRoomReason(bookingReasonSelection[0].name);
+    handleSetBookingRoomReason(bookingReasonSelection[0].value);
 
   };
 
