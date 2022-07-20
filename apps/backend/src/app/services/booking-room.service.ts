@@ -300,14 +300,14 @@ export class BookingRoomService {
         console.log('LIST ROOM BOOKED: ', listRequestBookedInDaySameSlot);
 
         if (listRequestBookedInDaySameSlot.length > 0) {
-          const listRoomBookedInDaySameSlot = []
-          listRequestBookedInDaySameSlot.map(
-            (request) => {
-              listRoomBookedInDaySameSlot.push(request.roomId);
-            }
+          const listRoomBookedInDaySameSlot = [];
+          listRequestBookedInDaySameSlot.map((request) => {
+            listRoomBookedInDaySameSlot.push(request.roomId);
+          });
+          const result = await this.roomService.filterRoomFreeByRoomBooked(
+            listRoomBookedInDaySameSlot
           );
-          const result = await this.roomService.filterRoomFreeByRoomBooked(listRoomBookedInDaySameSlot)
-          console.log("LIST ROOM FREE: ", result)
+          console.log('LIST ROOM FREE: ', result);
           return result;
         }
       }
@@ -571,5 +571,13 @@ export class BookingRoomService {
 
   getAllBookingRoomsRequestsByFilter(filters: GetAllBookingRequestsFilter) {
     return this.repository.findBookingRoomRequestsByFilter(filters);
+  }
+
+  getCurrentBookingCheckoutInformation(accountId: string) {
+    return this.repository.findCurrentCheckoutInformation(accountId);
+  }
+
+  checkOutBookingRoom(bookingRequestId: string, accountId: string) {
+    return this.repository.checkoutBookingRoom(bookingRequestId, accountId);
   }
 }

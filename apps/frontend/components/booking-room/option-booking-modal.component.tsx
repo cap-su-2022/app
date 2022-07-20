@@ -176,6 +176,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
     <>
       <Modal
         title={<ModalHeaderTitle />}
+        closeOnClickOutside={false}
         size="lg"
         centered
         opened={props.isShown}

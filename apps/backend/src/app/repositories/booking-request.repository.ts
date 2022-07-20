@@ -10,6 +10,7 @@ import { BookingRequestAddRequestPayload } from '../payload/request/booking-requ
 import { BookingReason } from '../models/booking-reason.entity';
 import { BadRequestException } from '@nestjs/common';
 import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
+import dayjs = require('dayjs');
 
 @CustomRepository(BookingRequest)
 export class BookingRoomRepository extends Repository<BookingRequest> {
@@ -189,6 +190,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       status: string;
     }[]
   > {
+    console.log('DATEEEE: ' + date);
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('slot_in.slot_num', 'slotIn')
@@ -525,5 +527,54 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       });
     }
     return query.getRawMany<BookingRequest>();
+  }
+
+  findCurrentCheckoutInformation(accountId: string) {
+    return this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('a.username', 'requestedBy')
+      .addSelect('booking_request.id', 'description')
+      .addSelect('booking_request.checkedin_at', 'checkedInAt')
+      .addSelect('booking_request.status', 'status')
+      .addSelect('st.slot_num', 'checkinSlot')
+      .addSelect('se.slot_num', 'checkoutSlot')
+      .addSelect('booking_request.checkin_date', 'checkin_date')
+      .addSelect('booking_request.accepted_by', 'acceptedBy')
+      .addSelect('booking_request.accepted_at', 'acceptedAt')
+      .addSelect('br.name', 'bookingReason')
+      .innerJoin(
+        BookingReason,
+        'br',
+        'br.id = booking_request.booking_reason_id'
+      )
+      .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
+      .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
+      .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
+      .where('booking_request.requested_by = :accountId', {
+        accountId: accountId,
+      })
+      .andWhere('booking_request.status = :status', { status: 'CHECKED_IN' })
+      .andWhere('booking_request.checkedin_at IS NOT NULL')
+      .andWhere('booking_request.checkin_date = :date', {
+        date: dayjs(new Date()).format('YYYY-MM-DD'),
+      })
+      .andWhere('booking_request.accepted_by IS NOT NULL')
+      .andWhere('booking_request.accepted_at IS NOT NULL')
+      .andWhere('booking_request.cancelled_at IS NULL')
+      .andWhere('booking_request.cancelled_by IS NULL')
+      .getRawOne();
+  }
+
+  checkoutBookingRoom(id: string, accountId: string) {
+    return this.createQueryBuilder('booking_request')
+      .update({
+        status: 'CHECKED_OUT',
+        updatedAt: new Date(),
+        updatedBy: accountId,
+        checkedoutAt: new Date(),
+      })
+      .where('booking_request.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
   }
 }

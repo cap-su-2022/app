@@ -14,6 +14,7 @@ import { getRoomById } from '../../redux/features/room/thunk/get-room-by-id';
 import ChooseSlotModal from './by-room-choose-slot-modal.component';
 import { showNotification } from '@mantine/notifications';
 import ChooseDeviceModal from './choose-device-modal.component';
+import ConfirmModal from './confirm-modal.component';
 
 interface ChooseRoomModalProps {
   formik: FormikProps<any>;
@@ -27,6 +28,7 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
   const [showChooseRoom, setShowChooseRoom] = useState(true);
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(false);
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -58,6 +60,11 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
     setShowChooseDevice(true);
   };
 
+  const handleNextConfirm = () => {
+    setShowConfirm(true);
+    setShowChooseDevice(false);
+  };
+
   const handleBackChooseRoom = () => {
     setShowChooseRoom(true);
     setShowChooseSlot(false);
@@ -66,6 +73,11 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
   const handleBackChooseSlot = () => {
     setShowChooseSlot(true);
     setShowChooseDevice(false);
+  };
+
+  const handleBackChooseDevice = () => {
+    setShowChooseDevice(true);
+    setShowConfirm(false);
   };
 
   const ChooseRoom: React.FC = () => {
@@ -155,7 +167,15 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
         <ChooseDeviceModal
           formik={props.formik}
           handleSubmit={props.handleSubmit}
+          handleNextConfirm={handleNextConfirm}
           handleBackChooseSlot={handleBackChooseSlot}
+        />
+      )}
+      {showConfirm && (
+        <ConfirmModal
+          formik={props.formik}
+          handleSubmit={props.handleSubmit}
+          handleBackChooseDevice={handleBackChooseDevice}
         />
       )}
     </>

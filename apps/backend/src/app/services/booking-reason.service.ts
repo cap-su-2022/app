@@ -19,7 +19,9 @@ export class BookingReasonService {
     pagination: PaginationParams
   ): Promise<Pagination<BookingReason>> {
     try {
-      return await this.repository.findByPagination(pagination);
+      const test =  await this.repository.findByPagination(pagination);
+      console.log(test);
+      return test
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
