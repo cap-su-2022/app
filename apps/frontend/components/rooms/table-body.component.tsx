@@ -2,16 +2,9 @@ import React, { CSSProperties, useState } from 'react';
 import {
   createStyles,
   Table,
-  UnstyledButton,
-  Group,
-  Text,
-  Center,
   Button,
 } from '@mantine/core';
 import {
-  Selector,
-  ChevronDown,
-  ChevronUp,
   InfoCircle,
   Pencil,
   Trash,
@@ -23,14 +16,6 @@ import Th from '../../components/table/th.table.component';
 interface RowData {
   name: string;
   booked_at: string;
-}
-
-interface ThProps {
-  children: React.ReactNode;
-  reversed: boolean;
-  sorted: boolean;
-  style?: CSSProperties;
-  onSort(): void;
 }
 
 interface TableBodyProps {

@@ -55,6 +55,10 @@ const devicesSlice = createSlice({
       state.device = payload;
     });
 
+    builder.addCase(fetchDevices.fulfilled, (state, { payload }) => {
+      state.devices = payload;
+    });
+
     builder.addCase(fetchDisabledDevices.fulfilled, (state, {payload}) => {
         state.disabledDevices = payload;
     });
