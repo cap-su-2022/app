@@ -15,13 +15,13 @@ export class BookingReasonService {
     private readonly histService: BookingReasonHistService
   ) {}
 
-  async getBookingReasonTypesWithPagination(
-    pagination: PaginationParams
-  ): Promise<Pagination<BookingReason>> {
+  async getBookingReasonTypesWithPagination(pagination: PaginationParams) {
     try {
-      const test =  await this.repository.findByPagination(pagination);
-      console.log(test);
-      return test
+      if (!pagination || !pagination.page) {
+        return await this.repository.findAll();
+      } else {
+        return await this.repository.findByPagination(pagination);
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

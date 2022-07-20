@@ -8,7 +8,6 @@ import { Accounts } from '../models';
 import { update } from 'react-spring';
 import { BadRequestException } from '@nestjs/common';
 
-
 @CustomRepository(BookingReason)
 export class BookingReasonRepository extends Repository<BookingReason> {
   existsById(id: string): Promise<boolean> {
@@ -68,15 +67,17 @@ export class BookingReasonRepository extends Repository<BookingReason> {
     payload: BookingReason
   ): Promise<BookingReason> {
     try {
-      return await this.save({
-        name: payload.name.trim(),
-        description: payload.description,
-        createdAt: new Date(),
-        createdBy: accountId,
-      },
-      {
-        transaction: true,
-      });
+      return await this.save(
+        {
+          name: payload.name.trim(),
+          description: payload.description,
+          createdAt: new Date(),
+          createdBy: accountId,
+        },
+        {
+          transaction: true,
+        }
+      );
     } catch (e) {
       throw new BadRequestException(e.message);
     }
@@ -117,7 +118,7 @@ export class BookingReasonRepository extends Repository<BookingReason> {
   //     .getRawOne<BookingReason>();
   // }
 
-  async deleteById(accountId: string, id: string){
+  async deleteById(accountId: string, id: string) {
     const isDeleted = await this.createQueryBuilder('booking_reason')
       .update({
         deletedBy: accountId,
@@ -126,13 +127,13 @@ export class BookingReasonRepository extends Repository<BookingReason> {
       .where('booking_reason.id = :id', { id: id })
       .useTransaction(true)
       .execute();
-      if (isDeleted.affected > 0) {
-        return this.findOneOrFail({
-          where: {
-            id: id,
-          },
-        });
-      }
+    if (isDeleted.affected > 0) {
+      return this.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+    }
   }
 
   findDeletedByPagination(search: string): Promise<BookingReason[]> {
@@ -164,7 +165,7 @@ export class BookingReasonRepository extends Repository<BookingReason> {
         where: {
           id: id,
         },
-      });;
+      });
     }
   }
 
@@ -174,5 +175,14 @@ export class BookingReasonRepository extends Repository<BookingReason> {
       .where('booking_reason.id = :id', { id: id })
       .useTransaction(true)
       .execute();
+  }
+
+  async findAll() {
+    return this.createQueryBuilder('booking_reason')
+      .select('booking_reason.id', 'id')
+      .addSelect('booking_reason.name', 'name')
+      .where('booking_reason.deleted_at IS NULL')
+      .andWhere('booking_reason.deleted_by IS NULL')
+      .getRawMany();
   }
 }
