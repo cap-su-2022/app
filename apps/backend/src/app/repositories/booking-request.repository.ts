@@ -189,6 +189,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       status: string;
     }[]
   > {
+    console.log("DATEEEE: " + date)
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('slot_in.slot_num', 'slotIn')
@@ -203,7 +204,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .where('booking_request.checkinDate = :checkinDate', {
         checkinDate: date,
       })
-      .where('booking_request.room_id = :roomId', {
+      .andWhere('booking_request.room_id = :roomId', {
         roomId: roomId,
       })
       .andWhere(
