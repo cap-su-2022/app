@@ -19,9 +19,6 @@ interface ChooseRoomModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
   roomNames: any[];
-  slotNames: any[];
-  deviceNames: any[];
-  reasonNames: any[];
 }
 
 const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
@@ -30,7 +27,6 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
   const [showChooseRoom, setShowChooseRoom] = useState(true);
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(false);
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
-  const [slotNames, setSlotName] = useState<any[]>(props.slotNames);
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -40,40 +36,6 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
         .then((result) => setRoom(result));
     }
   }, [dispatch, props.formik.values.roomId]);
-
-  useEffect(() => {
-    const curr = new Date();
-    const sat = curr.getDate() - curr.getDay() + 6;
-    const choosedDay = new Date(props.formik.values.checkinDate);
-    if (slotNames !== undefined) {
-      if (
-        choosedDay.getDate() === sat ||
-        choosedDay.getDate() === sat + 7 ||
-        choosedDay.getDate() === sat + 14
-      ) {
-        const result = slotNames.map((slot, index) => {
-          if (index > 2) {
-            return {
-              ...slot,
-              disabled: true,
-            };
-          } else {
-            return {
-              ...slot,
-              disabled: false,
-            };
-          }
-        });
-        setSlotName(result);
-      } else {
-        const result = slotNames.map((slot) => ({
-          ...slot,
-          disabled: false,
-        }));
-        setSlotName(result);
-      }
-    }
-  }, [props.formik.values.checkinDate]);
 
   const handleNextChooseSlot = () => {
     if (room === null) {
@@ -187,7 +149,6 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
           handleBackChooseRoom={handleBackChooseRoom}
           handleNextChooseDevice={handleNextChooseDevice}
           roomNames={props.roomNames}
-          slotNames={props.slotNames}
         />
       )}
       {showChooseDevice && (
@@ -195,9 +156,6 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
           formik={props.formik}
           handleSubmit={props.handleSubmit}
           handleBackChooseSlot={handleBackChooseSlot}
-          // handleNextChooseDevice={handleNextChooseDevice}
-          deviceNames={props.deviceNames}
-          reasonNames={props.reasonNames}
         />
       )}
     </>

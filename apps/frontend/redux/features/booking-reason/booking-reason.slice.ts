@@ -1,3 +1,4 @@
+import { fetchReasonNames } from './thunk/fetch-booking-reason-names.thunk';
 import { createSlice } from '@reduxjs/toolkit';
 import { PaginationResponse } from '../../../models/pagination-response.payload';
 
@@ -10,12 +11,15 @@ interface InitialState {
   bookingReasons: PaginationResponse<BookingReason>;
   bookingReason: BookingReason;
   deletedBookingReasons: BookingReason[];
+  reasonNames: {value: string, label: string}[]
 }
 
 const initialState: InitialState = {
   bookingReasons: {} as PaginationResponse<BookingReason>,
   bookingReason: {} as BookingReason,
   deletedBookingReasons: [],
+  reasonNames: {} as {value: string, label: string}[],
+
 
 };
 
@@ -32,6 +36,9 @@ export const bookingReasonSlice = createSlice({
     });
     builder.addCase(fetchDeletedBookingReasons.fulfilled, (state, { payload }) => {
       state.deletedBookingReasons = payload;
+    });
+    builder.addCase(fetchReasonNames.fulfilled, (state, { payload }) => {
+      state.reasonNames = payload;
     });
   },
 });

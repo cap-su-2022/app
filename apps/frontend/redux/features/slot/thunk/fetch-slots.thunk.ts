@@ -3,9 +3,10 @@ import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
 import { Slot } from '../../../../models/slot.model';
 import { PaginationParams } from '../../../../models/pagination-params.model';
+import { PaginationResponse } from '../../../../models/pagination-response.payload';
 
 export const fetchAllSlots = createAsyncThunk<
-  Slot[],
+  PaginationResponse<Slot>,
   PaginationParams,
   {
     rejectValue: {

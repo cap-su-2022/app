@@ -1,32 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Button,
-  createStyles,
-  InputWrapper,
-  Modal,
-  Text,
-  Textarea,
-  TextInput,
-} from '@mantine/core';
-import { useWindowDimensions } from '../../hooks/use-window-dimensions';
-import {
-  Alarm,
-  Archive,
-  BuildingWarehouse,
-  CalendarStats,
-  Check,
-  ClipboardText,
-  Clock,
-  FileDescription,
-  Id,
-  User,
-  X,
-} from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import dayjs from 'dayjs';
+import { Button, createStyles, Modal, Text } from '@mantine/core';
+import { BuildingWarehouse, Check, X } from 'tabler-icons-react';
+import { useAppDispatch } from '../../redux/hooks';
 import ChooseRoomModal from './by-room-choose-room-modal.component';
 import autoAnimate from '@formkit/auto-animate';
-import ChooseSlotModal from './by-room-choose-slot-modal.component';
 import { useFormik } from 'formik';
 import { fetchRoomNames } from '../../redux/features/room/thunk/fetch-room-names.thunk';
 import { fetchSlotNames } from '../../redux/features/slot/thunk/fetch-slot-names.thunk';
@@ -55,25 +32,19 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
       .then((roomNames) => setRoomNames(roomNames));
   }, []);
 
-  const [slotNames, setSlotNames] = useState([]);
   useEffect(() => {
     dispatch(fetchSlotNames())
-      .unwrap()
-      .then((slotNames) => setSlotNames(slotNames));
+      .unwrap();
   }, []);
 
-  const [deviceNames, setDeviceNames] = useState([]);
   useEffect(() => {
     dispatch(fetchDeviceNames())
-      .unwrap()
-      .then((deviceNames) => setDeviceNames(deviceNames));
+      .unwrap();
   }, []);
 
-  const [reasonNames, setReasonNames] = useState([]);
   useEffect(() => {
     dispatch(fetchReasonNames())
-      .unwrap()
-      .then((ReasonNames) => setReasonNames(ReasonNames));
+      .unwrap();
   }, []);
 
   const ModalHeaderTitle: React.FC = () => {
@@ -185,9 +156,6 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
               formik={formik}
               handleSubmit={() => formik.handleSubmit()}
               roomNames={roomNames}
-              slotNames={slotNames}
-              deviceNames={deviceNames}
-              reasonNames={reasonNames}
             />
           )}
         </div>
@@ -197,10 +165,6 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
             <BySlotChooseSlotModal
               formik={formik}
               handleSubmit={() => formik.handleSubmit()}
-              roomNames={roomNames}
-              slotNames={slotNames}
-              deviceNames={deviceNames}
-              reasonNames={reasonNames}
             />
           )}
         </div>
