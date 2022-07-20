@@ -538,7 +538,9 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.status', 'status')
       .addSelect('st.slot_num', 'checkinSlot')
       .addSelect('se.slot_num', 'checkoutSlot')
-      .addSelect('booking_request.checkin_date', 'checkin_date')
+      .addSelect('booking_request.checkin_date', 'checkinDate')
+      .addSelect('r.name', 'roomName')
+      .addSelect('rt.name', 'roomType')
       .addSelect('booking_request.accepted_by', 'acceptedBy')
       .addSelect('booking_request.accepted_at', 'acceptedAt')
       .addSelect('br.name', 'bookingReason')
@@ -547,6 +549,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         'br',
         'br.id = booking_request.booking_reason_id'
       )
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(RoomType, 'rt', 'rt.id = r.type')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
       .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
       .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')

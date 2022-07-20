@@ -23,16 +23,66 @@ import Signature, { SignatureViewRef } from 'react-native-signature-canvas';
 import QRCode from 'react-native-qrcode-svg';
 import AlertModal from '../../../components/modals/alert-modal.component';
 import { enableScreens } from 'react-native-screens';
+import { fetchCurrentCheckoutInformation } from '../../../redux/features/room-booking/thunk/fetch-current-checkout-information.thunk';
+import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
+import dayjs from 'dayjs';
+import { checkOutBookingRoom } from '../../../redux/features/room-booking/thunk/checkout-booking-room.thunk';
 
 const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const navigate = useAppNavigation();
+  const dispatch = useAppDispatch();
 
   const scrollView = useRef<ScrollView>(null);
   const signature = useRef<SignatureViewRef>(null);
 
+  const [roomBooking, setRoomBooking] = useState<{
+    id: string;
+    description: string;
+    status: string;
+    bookingReason: string;
+    requestedBy: string;
+    requestedAt: string;
+    acceptedBy: string;
+    acceptedAt: string;
+    checkinSlot: number;
+    checkoutSlot: number;
+    checkedInAt: string;
+    roomName: string;
+    roomType: string;
+    checkinDate: string;
+  }>(
+    {} as {
+      id: string;
+      description: string;
+      status: string;
+      bookingReason: string;
+      requestedBy: string;
+      requestedAt: string;
+      acceptedBy: string;
+      acceptedAt: string;
+      checkinSlot: number;
+      checkoutSlot: number;
+      checkedInAt: string;
+      roomName: string;
+      roomType: string;
+      checkinDate: string;
+    }
+  );
+
   navigate.addListener('focus', (a) => {
     setHidden(false);
   });
+
+  useEffect(() => {
+    dispatch(fetchCurrentCheckoutInformation())
+      .unwrap()
+      .then((e) => {
+        setRoomBooking(e);
+        return e;
+      })
+      .then((e) => (!e.id ? navigate.navigate('NO_ROOM_CHECKOUT') : null))
+      .catch(() => alert('Failed while fetching data'));
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -47,6 +97,19 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const [errorMessage, setErrorMessage] = useState<string>('Error');
 
   const handleGetData = (e) => {};
+
+  const handleCheckoutBookingRoom = () => {
+    if (signature.current) {
+      signature.current.readSignature();
+      alert(roomBooking.id);
+      dispatch(checkOutBookingRoom(roomBooking.id))
+        .unwrap()
+        .then(() => navigate.navigate('CHECKOUT_SUCCESSFULLY'))
+        .catch((e) => alert('Failed while checking out booking room'));
+    } else {
+      alert('Please sign the signature');
+    }
+  };
 
   const ErrorAlertModal: React.FC = () => {
     return (
@@ -135,7 +198,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
                   />
                 </View>
                 <Text style={styles.bookingInforHeaderName}>
-                  Library Room LB12
+                  {roomBooking.roomName}
                 </Text>
               </View>
 
@@ -195,7 +258,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
                       color: BLACK,
                     }}
                   >
-                    12:12 01/06/2022
+                    {dayjs(roomBooking.requestedAt).format('HH:mm DD/MM/YYYY')}
                   </Text>
                 </View>
                 <View style={[styles.bookingInforDetail, { marginTop: 5 }]}>
@@ -209,7 +272,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
                       color: BLACK,
                     }}
                   >
-                    14:12 15/06/2022
+                    {dayjs(roomBooking.checkedInAt).format('HH:mm DD/MM/YYYY')}
                   </Text>
                 </View>
               </View>
@@ -232,17 +295,14 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
                     flexWrap: 'wrap',
                   }}
                 >
-                  <QRCode
-                    size={deviceWidth / 5}
-                    value="consdasdsadsdsdsdasasascac"
-                  />
+                  <QRCode size={deviceWidth / 5} value={roomBooking.id} />
                   <Text
                     style={{
                       color: BLACK,
                       marginTop: 5,
                     }}
                   >
-                    1234567-12345-123456-1234567
+                    {roomBooking.id}
                   </Text>
                 </View>
                 <Text
@@ -331,9 +391,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
         </ScrollView>
         <View style={styles.footer}>
           <TouchableOpacity
-            onPress={() => {
-              signature.current.readSignature();
-            }}
+            onPress={() => handleCheckoutBookingRoom()}
             style={styles.checkOutButton}
           >
             <Text style={styles.checkOutButtonText}>Proceed to check out</Text>

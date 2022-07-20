@@ -488,9 +488,9 @@ export class BookingRoomController {
     return this.service.getCurrentBookingCheckoutInformation(user.account_id);
   }
 
-  @Post('check-out/:booking-room-id')
+  @Post('check-out/:id')
   checkoutBookingRoom(
-    @Param('booking-room-id') bookingRoomId: string,
+    @Param('id') bookingRoomId: string,
     @User() keycloakUser: KeycloakUserInstance
   ) {
     return this.service.checkOutBookingRoom(
