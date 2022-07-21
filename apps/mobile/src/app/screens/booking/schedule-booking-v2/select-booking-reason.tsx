@@ -13,7 +13,7 @@ const SelectSlots: React.FC<any> = (props) => {
           <View style={styles.durationButton}>
             <RNPickerSelect
               fixAndroidTouchableBug={true}
-              items={props.bookingReason}
+              items={props.bookingReasonSelections}
               style={{
                 inputAndroid: {
                   fontSize: deviceWidth / 21,
@@ -28,9 +28,9 @@ const SelectSlots: React.FC<any> = (props) => {
                 },
               }}
               useNativeAndroidPickerStyle={false}
-              value={props.handleBookingReason}
+              value={props.bookingReason}
               onValueChange={(value) => {
-                props.handleBookingReasonSelect(value);
+                props.handleSetBookingRoomReason(value);
               }}
             />
           </View>

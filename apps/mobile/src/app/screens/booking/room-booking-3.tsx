@@ -4,7 +4,7 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
+  Text, TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -30,8 +30,7 @@ export const RoomBooking3: React.FC = () => {
   );
   const [bookingReasonSelections, setBookingReasonSelections] = useState([]);
   const [bookingReason, setBookingReason] = useState<string>();
-
-  console.log('state ne: ', bookingReason);
+  const [description, setDescription] = useState<string>("")
 
   useEffect(() => {
     dispatch(fetchAllBookingReason())
@@ -47,7 +46,7 @@ export const RoomBooking3: React.FC = () => {
   const transformBookingReasonToBookingReasonPicker = (
     val: BookingRoomReason[]
   ) => {
-    const bookingReasonSelection = val.map((bookingRoomReason, index) => {
+    const bookingReasonSelection = val.map((bookingRoomReason) => {
       return {
         value: bookingRoomReason.id,
         label: bookingRoomReason.name,
@@ -68,11 +67,11 @@ export const RoomBooking3: React.FC = () => {
   const handleNextStep = () => {
     dispatch(
       addNewRequestBooking({
-        bookingReasonId: '38e47b6b-fde7-4d18-834d-ad8fd01e2fbd',
+        bookingReasonId: bookingReason,
         checkinDate: roomBooking.fromDay,
         checkinSlot: roomBooking.fromSlot,
         checkoutSlot: roomBooking.fromSlot,
-        description: 'Ahuhu',
+        description: description,
         listDevice: roomBooking.devices,
         roomId: roomBooking.roomId,
       })
@@ -82,14 +81,19 @@ export const RoomBooking3: React.FC = () => {
       .then(() => navigate.navigate('ROOM_BOOKING_SUCCESS'))
       .catch(() => {
         alert('This room has already been booked. Please book another room');
-
         navigate.pop(2);
       });
   };
 
   const InfoDetail = (title, detail) => {
     return (
-      <View>
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
         <Text style={styles.title}>{title}</Text>
         <View style={styles.bookingNowContainer}>
           <Text style={styles.bookingNowButtonText}>
@@ -116,27 +120,45 @@ export const RoomBooking3: React.FC = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
         <View style={styles.container}>
-          <View>
+          <Text style={styles.bigTitle}>Review Your Booking Information</Text>
+          <View style={styles.bookingInformationContainer}>
             {InfoDetail('Start Day:', roomBooking.fromDay)}
-            {InfoDetail(
-              roomBooking.toSlotNum !== 1 ? 'From Slot:' : 'Slot',
-              `Slot ${roomBooking.toSlotNum}`
-            )}
-            {roomBooking.toSlotNum !== 1
-              ? InfoDetail('To Slot:', roomBooking.toSlotName)
-              : null}
+            {InfoDetail('Slot', `Slot ${roomBooking.toSlotNum}`)}
             {InfoDetail('Room Name:', roomBooking.roomName)}
             <Text style={styles.title}>List Device</Text>
             <FlatList
               data={roomBooking.devices}
               renderItem={(device) => Device(device)}
             />
+          </View>
+          <Text style={styles.bigTitle}>Additional Booking Information</Text>
+          <View style={styles.bookingInformationContainer}>
             <SelectBookingReason
               handleSetBookingRoomReason={(val) => setBookingReason(val)}
               bookingReason={bookingReason}
               bookingReasonSelections={bookingReasonSelections}
             />
-            {InfoDetail('Description', 'Chua co')}
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={styles.title}>Description</Text>
+              <View style={styles.bookingDescriptionContainer}>
+                <TextInput
+                  onChangeText={(val) => setDescription(val)}
+                  numberOfLines={5}
+                  multiline={true}
+                  maxLength={250}
+                  value={description}
+                  placeholder="Your description ..."
+                  keyboardType="default"
+                />
+              </View>
+            </View>
+
           </View>
 
           <View style={styles.footerContainer}>
@@ -145,29 +167,12 @@ export const RoomBooking3: React.FC = () => {
               style={styles.reviewAgainContainer}
             >
               <ChevronDoubleLeftIcon color={RED} />
-              <Text
-                style={{
-                  fontSize: deviceWidth / 18,
-                  fontWeight: '600',
-                  color: RED,
-                }}
-              >
-                Review again
-              </Text>
+              <Text style={styles.reviewAgainText}>Review again</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => handleNextStep()}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-evenly',
-                alignItems: 'center',
-                borderRadius: 8,
-                backgroundColor: FPT_ORANGE_COLOR,
-                width: deviceWidth / 2.2,
-                height: 50,
-                flexDirection: 'row',
-              }}
+              style={styles.bookNowButton}
             >
               <TicketIcon color={WHITE} />
               <Text
@@ -193,12 +198,21 @@ const styles = StyleSheet.create({
     padding: 20,
     flexDirection: 'column',
     justifyContent: 'space-between',
-
     flexGrow: 1,
     backgroundColor: WHITE,
   },
+  bookNowButton: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    borderRadius: 8,
+    backgroundColor: FPT_ORANGE_COLOR,
+    width: deviceWidth / 2.2,
+    height: 50,
+    flexDirection: 'row',
+  },
   bookingNowContainer: {
-    width: deviceWidth / 1.15,
+    flex: 1,
     height: deviceHeight / 13,
     paddingHorizontal: 10,
     borderWidth: 2,
@@ -206,7 +220,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     borderRadius: 10,
-    marginBottom: 10,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -235,8 +248,6 @@ const styles = StyleSheet.create({
   },
   historyContainer: {
     backgroundColor: WHITE,
-    marginHorizontal: 5,
-    padding: 5,
   },
   historyText: {
     fontWeight: '700',
@@ -293,5 +304,44 @@ const styles = StyleSheet.create({
     width: deviceWidth / 2.2,
     height: 50,
   },
-  reviewAgainText: {},
+  reviewAgainText: {
+    fontSize: deviceWidth / 18,
+    fontWeight: '600',
+    color: RED,
+  },
+  bigTitle: {
+    fontSize: deviceWidth / 20,
+    fontWeight: '700',
+    marginBottom: 5,
+    marginVertical: 10
+  },
+  bookingInformationContainer: {
+    padding: 20,
+    borderWidth: 1,
+    borderRadius: 15,
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    shadowOffset: {
+      height: 1,
+      width: 1
+    },
+    borderColor: FPT_ORANGE_COLOR,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  bookingDescriptionContainer: {
+    flex: 1,
+    height: '100%',
+    paddingHorizontal: 10,
+    borderWidth: 2,
+    borderColor: WHITE,
+    fontSize: 20,
+    fontWeight: '600',
+    borderRadius: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: 'rgba(240, 110, 40, 0.2)',
+  },
 });
