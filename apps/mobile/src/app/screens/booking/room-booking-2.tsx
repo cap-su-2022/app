@@ -111,6 +111,7 @@ const RoomBooking2: React.FC = () => {
   }> = (props) => {
     return (
       <TouchableOpacity
+        key={props.device.id}
         onPress={() => {
           deviceIds.filter((id) => id === props.device.id)[0]
             ? setDeviceIds(deviceIds.filter((id) => id !== props.device.id))
@@ -244,14 +245,15 @@ const RoomBooking2: React.FC = () => {
       <View style={styles.container}>
         <ScrollView>
           <Filtering />
-          <VirtualizedList
-            getItemCount={(data) => data.length}
-            getItem={(data, index) => data[index]}
-            renderItem={(item: ListRenderItemInfo<Device>) => (
-              <DeviceRenderItem device={item.item} />
-            )}
-            data={devices}
-          />
+          {/*<VirtualizedList*/}
+          {/*  getItemCount={(data) => data.length}*/}
+          {/*  getItem={(data, index) => data[index]}*/}
+          {/*  renderItem={(item: ListRenderItemInfo<Device>) => (*/}
+          {/*    <DeviceRenderItem device={item.item} />*/}
+          {/*  )}*/}
+          {/*  data={devices}*/}
+          {/*/>*/}
+          {devices.map(device => <DeviceRenderItem device={device}/>) }
         </ScrollView>
         <View style={styles.footerContainer}>
           <TouchableOpacity
@@ -464,7 +466,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: WHITE,
-    marginBottom: 50,
+
   },
   filterContainer: {
     display: 'flex',

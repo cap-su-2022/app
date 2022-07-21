@@ -29,62 +29,88 @@ import { addToRoomBookingWishlist } from '../../../redux/features/room-booking/t
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import { step1ScheduleRoomBooking } from '../../../redux/features/room-booking/slice';
+import { fetchBookedRequestByDayAndSlot } from '../../../redux/features/room-booking-v2/thunk/fetch-booked-request.thunk';
+import { fetchAllRooms } from '../../../redux/features/room/thunk/fetch-all';
 
 const ChooseSlot: React.FC<any> = (props) => {
-  const fromDay = useAppSelector(
-    (state) => state.roomBooking.addRoomBooking.fromDay
+  const fromSlotId = useAppSelector(
+    (state) => state.roomBooking.addRoomBooking.fromSlot
   );
-  const toDay = useAppSelector(
-    (state) => state.roomBooking.addRoomBooking.toDay
+  const addRoomBooking = useAppSelector(
+    (state) => state.roomBooking.addRoomBooking
   );
-  const fromSlot = useAppSelector(
-    (state) => state.roomBooking.addRoomBooking.fromSlotNum
+  const bookedRequest = useAppSelector(
+    (state) => state.bookedRequest.bookedRequests
   );
-  const toSLot = useAppSelector(
-    (state) => state.roomBooking.addRoomBooking.toSlotNum
-  );
-
   const slotsFromState = useAppSelector((state) => state.slot.slots);
+  const roomsFromState = useAppSelector((state) => state.room.rooms);
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
   const Today = new Date().toJSON().slice(0, 10);
 
-  const [selectedDay, setSelectedDay] = useState(fromDay || Today);
+  const [selectedDay, setSelectedDay] = useState(
+    addRoomBooking.fromDay || Today
+  );
   const [isModalOpened, setModalOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [slotAndRoom, setSlotAndRoom] = useState([])
 
-  const rooms = ['LB25', 'P2', 'P3', 'P4', 'P5', 'P6'];
-  const slots = ['Slot 1', 'Slot 2', 'Slot 3', 'Slot 4', 'Slot 5', 'Slot 6'];
 
-  const convertRoomsAndSlotsInto1Array = () => {
-    const myArrays = [];
-    let multiSlotArray = [];
-    if (toSLot !== 1) {
-      multiSlotArray = slotsFromState.filter(
-        (slot) => slot.slotNum >= fromSlot && slot.slotNum <= toSLot
-      );
-      for (let i = 0; i < rooms.length; i++) {
-        for (let j = 0; j < multiSlotArray.length; j++) {
-          myArrays.push({
-            roomName: rooms[i],
-            roomID: '3de0287e-35a8-4422-ba2e-7fbe796dcd2e',
-            slot: multiSlotArray[j],
-          });
+
+  useEffect(() => {
+    dispatch(
+      fetchBookedRequestByDayAndSlot({
+        checkoutSlotId: addRoomBooking.toSlot,
+        date: Today,
+        checkinSlotId: addRoomBooking.fromSlot,
+      })
+    )
+      .unwrap()
+      .then((val) => {
+        console.log('1');
+      });
+    dispatch(fetchAllRooms())
+      .unwrap()
+      .then((val) => {
+        console.log('2');
+      }).then(() => {
+      const transformToData = () => {
+        const result = [];
+        for (let i = 0; i < bookedRequest.length; i++) {
+          const data = bookedRequest[i];
+          for (let j = data.slotStart; j <= data.slotEnd; j++) {
+            result.push({ roomName: data.roomName, roomId: data.id, slot: j });
+          }
+        }
+        return result;
+      };
+
+      const bookedData = transformToData();
+      const result = [];
+
+      for (let i = 0; i < slotsFromState.length; i++) {
+        for (let j = 0; j < roomsFromState.length; j++) {
+          if (
+            bookedData.some(
+              (data) =>
+                data.slot !== slotsFromState[i] &&
+                data.roomName !== roomsFromState[j].name
+            )
+          ) {
+            result.push({
+              roomName: roomsFromState[j].name,
+              roomId: roomsFromState[j].id,
+              slotId: slotsFromState[i].id,
+              slotName: slotsFromState[i].name
+            });
+          }
         }
       }
-    } else {
-      for (let i = 0; i < rooms.length; i++) {
-        for (let j = 0; j < slotsFromState.length; j++) {
-          myArrays.push({
-            roomName: rooms[i],
-            roomID: '3de0287e-35a8-4422-ba2e-7fbe796dcd2e',
-            slot: slotsFromState[j],
-          });
-        }
-      }
-    }
-    return myArrays;
-  };
+      setSlotAndRoom(result)
+    });
+
+  }, []);
+
 
   const handleAddToWishlist = (roomId, slot) => {
     dispatch(addToRoomBookingWishlist({ roomId, slot }))
@@ -99,7 +125,7 @@ const ChooseSlot: React.FC<any> = (props) => {
   const handleBookRoom = (item) => {
     dispatch(
       step1ScheduleRoomBooking({
-        fromSlot: item.slot.id,
+        fromSlot: item.slotId,
         fromDay: selectedDay,
         roomId: item.roomID,
         roomName: item.roomName,
@@ -112,7 +138,7 @@ const ChooseSlot: React.FC<any> = (props) => {
 
   const SlotAndRoom = ({ item }) => {
     return (
-      <View key={item.stt} style={styles.roomBookingItemContainer}>
+      <View key={`${item.roomId} ${item.slotId}`} style={styles.roomBookingItemContainer}>
         <View style={styles.roomBookingItem}>
           <View style={styles.libraryIconContainer}>
             <LibraryIcon color={FPT_ORANGE_COLOR} />
@@ -133,9 +159,7 @@ const ChooseSlot: React.FC<any> = (props) => {
                   fontWeight: '600',
                 }}
               >
-                {' '}
-                Slot {item.slot.name} ({item.slot.timeStart} -{' '}
-                {item.slot.timeEnd})
+                {item.slotName}
               </Text>
             </Text>
           </View>
@@ -171,12 +195,12 @@ const ChooseSlot: React.FC<any> = (props) => {
 
   const WeekAgendaScreen = () => (
     <CalendarProvider
-      date={selectedDay || fromDay || Today}
+      date={selectedDay || addRoomBooking.fromDay || Today}
       style={{ marginBottom: -450 }}
     >
       <WeekCalendar
-        minDate={fromDay || Today}
-        maxDate={toDay}
+        minDate={addRoomBooking.fromDay || Today}
+        maxDate={addRoomBooking.toDay}
         onDayPress={(day) => setSelectedDay(day.dateString)}
         firstDay={1}
         showsHorizontalScrollIndicator={true}
@@ -185,6 +209,7 @@ const ChooseSlot: React.FC<any> = (props) => {
       />
     </CalendarProvider>
   );
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -202,10 +227,11 @@ const ChooseSlot: React.FC<any> = (props) => {
           style={{ flex: 1 }}
           getItemCount={(data) => data.length}
           getItem={(data, index) => data[index]}
-          data={convertRoomsAndSlotsInto1Array()}
+          data={slotAndRoom}
           renderItem={(item) => (
             <SlotAndRoom key={item.index} item={item.item} />
           )}
+          keyExtractor={(item, index) => index.toString()}
         />
       </View>
     </SafeAreaView>

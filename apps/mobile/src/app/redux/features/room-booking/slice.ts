@@ -142,6 +142,7 @@ const roomBookingSlice = createSlice({
         roomName: payload.roomName,
         fromDay: payload.fromDay,
         fromSlot: payload.fromSlot,
+        toSlot: payload.toSlot
       };
     },
     step2ScheduleRoomBooking(state, { payload }) {
