@@ -1,13 +1,17 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {Room} from "../../../../../../frontend/models/room.model";
 import {fetchRoomById} from "./thunk/fetch-room-by-id.thunk";
+import {fetchAllRooms} from "./thunk/fetch-all";
+import {RoomModel} from "../../models/room.model";
+import {Room} from "../../../../../../frontend/models/room.model";
 
 interface InitialState {
   room: Room;
+  rooms: RoomModel[];
 }
 
 const initialState: InitialState = {
-  room: {} as Room
+  room: {} as Room,
+  rooms: []
 }
 
 const roomSlice = createSlice({
@@ -19,6 +23,9 @@ const roomSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchRoomById.fulfilled, (state, {payload}) => {
       state.room = payload;
+    });
+    builder.addCase(fetchAllRooms.fulfilled, (state, {payload}) => {
+      state.rooms = payload;
     });
   }
 });

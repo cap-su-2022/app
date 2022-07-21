@@ -21,6 +21,7 @@ import { addNewRequestBooking } from '../../redux/features/room-booking/thunk/ad
 import { fetchAllBookingReason } from '../../redux/features/booking-reason/thunk/fetch-all';
 import { BookingRoomReason } from '../../redux/models/booking-reason-response';
 import SelectBookingReason from './schedule-booking-v2/select-booking-reason';
+import {Device} from "../../redux/models/device.model";
 
 export const RoomBooking3: React.FC = () => {
   const navigate = useAppNavigation();
@@ -104,12 +105,14 @@ export const RoomBooking3: React.FC = () => {
     );
   };
 
-  const Device = ({ item }) => {
+  const Device: React.FC<{
+    device: any
+  }> = (props) => {
     return (
-      <View style={styles.historyContainer}>
+      <View style={styles.historyContainer} key={props.device.id}>
         <View style={styles.bookingNowContainer}>
           <Text style={styles.bookingNowButtonText}>
-            {item ? item.label : 'N/A'}
+            {props.device ? props.device.label : 'N/A'}
           </Text>
         </View>
       </View>
@@ -126,10 +129,11 @@ export const RoomBooking3: React.FC = () => {
             {InfoDetail('Slot', `Slot ${roomBooking.toSlotNum}`)}
             {InfoDetail('Room Name:', roomBooking.roomName)}
             <Text style={styles.title}>List Device</Text>
-            <FlatList
-              data={roomBooking.devices}
-              renderItem={(device) => Device(device)}
-            />
+            {/*<FlatList*/}
+            {/*  data={roomBooking.devices}*/}
+            {/*  renderItem={(device) => Device(device)}*/}
+            {/*/>*/}
+            {roomBooking.devices.map(device => <Device device={device}/>)}
           </View>
           <Text style={styles.bigTitle}>Additional Booking Information</Text>
           <View style={styles.bookingInformationContainer}>
