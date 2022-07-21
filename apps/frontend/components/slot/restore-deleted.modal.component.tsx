@@ -35,7 +35,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   props
 ) => {
   const { classes, cx } = useStyles();
-  const deletedDeviceTypes = useAppSelector((state) => state.deviceType.deletedDeviceTypes);
+  const deletedSlots = useAppSelector((state) => state.slot.deletedSlots);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
   const [isPermanentDeleteShown, setPermanentDeleteShown] = useState(false);

@@ -5,4 +5,6 @@ export interface Slot {
   timeStart?: string;
   timeEnd?: string;
   slotNum?: number;
+  createdBy?: string;
+  createdAt?: string;
 }

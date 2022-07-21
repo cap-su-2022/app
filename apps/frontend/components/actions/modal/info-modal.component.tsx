@@ -18,6 +18,7 @@ interface InfoModalProps {
 
 const InfoModal: React.FC<InfoModalProps> = (props) => {
   const { classes } = useStyles();
+  console.log("SHOW:  ", props.fields)
 
   return (
     <Modal
@@ -46,7 +47,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
                 id={field.id}
                 name={field.name}
                 icon={(field.id === 'id' ? <Id /> :
-                      field.id === 'name'? <ClipboardText /> : 
+                      field.id === 'name'? <ClipboardText /> :
                       field.id === 'description'? <FileDescription /> :
                       (field.id === 'createAt' || field.id === 'updateAt')? <CalendarStats /> :
                       (field.id === 'createBy' || field.id === 'updateBy')? <User /> : null)}

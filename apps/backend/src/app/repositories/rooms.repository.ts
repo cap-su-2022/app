@@ -323,7 +323,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .addOrderBy('rooms.type', payload.roomType.sort)
       if(payload.roomType.name.length > 0){
         query.andWhere('rooms.type = :type', { type: payload.roomType.name })
-      
+
       }
       return query.getRawMany<Rooms>();
   }
@@ -332,8 +332,10 @@ export class RoomsRepository extends Repository<Rooms> {
     const query = this.createQueryBuilder('rooms')
       .select('rooms.id', 'id')
       .addSelect('rooms.name', 'name')
-      .addSelect('rooms.type', 'type')
+      // .addSelect('rooms.type', 'type')
       .addSelect('rooms.description', 'description')
+      .addSelect('rt.name', 'type')
+      .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
       .where('rooms.disabled_at IS NULL')
       .andWhere('rooms.deleted_at IS NULL')
       .andWhere('rooms.id NOT IN (:...listIdRoomBooked)', { listIdRoomBooked: listIdRoomBooked })

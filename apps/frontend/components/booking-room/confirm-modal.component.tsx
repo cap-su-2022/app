@@ -19,6 +19,7 @@ import { useAppSelector } from '../../redux/hooks';
 import { Slot } from '../../models/slot.model';
 import { BookingReason } from '../../models/booking-reason.model';
 import dayjs from 'dayjs';
+import { FPT_ORANGE_COLOR } from '@app/constants';
 
 interface ConfirmModalProps {
   formik: FormikProps<any>;
@@ -74,6 +75,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
                 padding: 5,
                 borderRadius: 5,
                 flexBasis: '70%',
+                color: 'black',
               }}
             >
               {room.name}
@@ -87,6 +89,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
                 padding: 5,
                 borderRadius: 5,
                 flexBasis: '70%',
+                color: 'black',
               }}
             >
               {dayjs(props.formik.values.checkinDate).format('ddd DD-MM-YYYY')}
@@ -101,7 +104,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
               padding: 10,
               margin: '5px',
               justifyContent: 'space-between',
-              width: '80%'
+              width: '80%',
             }}
           >
             <div className={classes.slotArea}>
@@ -116,7 +119,12 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
                 </p>
               </div>
             </div>
-            <ChevronsRight size={40} strokeWidth={2} color={'black'} style={{}}/>
+            <ChevronsRight
+              size={40}
+              strokeWidth={2}
+              color={'white'}
+              style={{}}
+            />
             <div className={classes.slotArea}>
               <b style={{ marginRight: 10 }}>To slot:</b>
               <div className={classes.slotDiv}>
@@ -128,7 +136,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
             </div>
           </div>
           <div className={classes.otherDiv}>
-            <div style={{flexBasis: '30%'}}>
+            <div style={{ flexBasis: '30%' }}>
               <b>List device:</b>
             </div>
             {props.formik.values.listDevice.length > 0 ? (
@@ -179,12 +187,13 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
 
 const useStyles = createStyles({
   mainDiv: {
-    backgroundColor: '#5fc672',
+    backgroundColor: FPT_ORANGE_COLOR,
     padding: 20,
     paddingTop: 10,
     borderRadius: 10,
     marginBottom: 10,
     minHeight: 470,
+    color: 'white',
   },
   nameAndDateDiv: {
     display: 'flex',
@@ -212,6 +221,7 @@ const useStyles = createStyles({
     backgroundColor: '#ffffffab',
     borderRadius: '0.5em',
     fontSize: '0.875em',
+    color: 'black',
   },
   item: {
     display: 'flex',
@@ -221,7 +231,7 @@ const useStyles = createStyles({
     marginBottom: '0.75em',
     borderRadius: '0.5em',
     // boxShadow: 'rgb(238 239 255) 0px 0px 0px 3px',
-
+    color: 'black',
     fontSize: '0.875em',
   },
 });

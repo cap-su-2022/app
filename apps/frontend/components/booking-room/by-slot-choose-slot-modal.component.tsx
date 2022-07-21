@@ -25,6 +25,8 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const [showChooseRoom, setShowChooseRoom] = useState(false);
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(true);
   const [slotNames, setSlotNames] = useState<any[]>();
+  const [slotInName, setSlotInName] = useState('')
+  const [slotOutName, setSlotOutName] = useState('')
   const slotInfors = useAppSelector((state) => state.slot.slotInfor);
   useEffect(() => {
     const result = slotInfors?.map((slot) => {
@@ -36,22 +38,80 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
 
   useEffect(() => {
     if (props.formik.values.checkinSlot && props.formik.values.checkoutSlot) {
-      const slotIn = slotNames.find(
-        (slot) => slot.value === props.formik.values.checkinSlot
+      const slotIn = slotInfors.find(
+        (slot) => slot.id === props.formik.values.checkinSlot
       );
-      const slotOut = slotNames.find(
-        (slot) => slot.value === props.formik.values.checkoutSlot
+      const slotOut = slotInfors.find(
+        (slot) => slot.id === props.formik.values.checkoutSlot
       );
       if (slotIn.slotNum > slotOut.slotNum) {
+        setSlotInName(slotOut.name)
+        setSlotOutName(slotIn.name)
         const tmp = props.formik.values.checkinSlot;
         props.formik.setFieldValue(
           'checkinSlot',
           props.formik.values.checkoutSlot
         );
         props.formik.setFieldValue('checkoutSlot', tmp);
+      } else {
+        setSlotOutName(slotOut.name)
+        setSlotInName(slotIn.name)
       }
     }
   }, [props.formik.values.checkinSlot, props.formik.values.checkoutSlot]);
+
+  useEffect(() => {
+    props.formik.values.checkinSlot = null;
+    props.formik.values.checkoutSlot = null;
+    if (props.formik.values.checkinDate) {
+      const curr = new Date();
+      const currTime = dayjs(curr).format('HH:mm:ss');
+      const choosedDay = new Date(props.formik.values.checkinDate).getDate();
+
+      const result = slotInfors?.map((slot, indexSlot) => {
+        let isFree = true;
+        let isOverSlot = false;
+
+        if (choosedDay === curr.getDate() && currTime > slot.timeStart) {
+          isFree = false;
+        }
+
+        if (choosedDay === curr.getDate() - curr.getDay() + 6) {
+          if (indexSlot > 2) {
+            isOverSlot = true;
+          }
+        }
+
+        if (!isOverSlot) {
+          if (isFree) {
+            return {
+              value: slot.id,
+              label: slot.name,
+              disabled: false,
+            };
+          } else {
+            return {
+              value: slot.id,
+              label: slot.name,
+              disabled: true,
+            };
+          }
+        } else {
+          return {
+            value: slot.id,
+            label: slot.name,
+            disabled: true,
+          };
+        }
+      });
+      setSlotNames(result);
+    } else {
+      const result = slotInfors?.map((slot) => {
+        return { value: slot.id, label: slot.name, disabled: true };
+      });
+      setSlotNames(result);
+    }
+  }, [props.formik.values.checkinDate]);
 
   const handleNextChooseRoom = () => {
     if (
@@ -167,6 +227,8 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           formik={props.formik}
           handleSubmit={props.handleSubmit}
           handleBackChooseSlot={handleBackChooseSlot}
+          slotInName={slotInName}
+          slotOutName={slotOutName}
         />
       )}
       {/* {showChooseDevice && (

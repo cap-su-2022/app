@@ -111,6 +111,20 @@ export class BookingRoomController {
     });
   }
 
+  @Get('get-booked-requests')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  getListRequestBookedInDayAndSlot(
+    @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
+    @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
+    @Query('date', new DefaultValuePipe('')) date: string
+  ) {
+    return this.service.getListRequestBookedInDayAndSlot({
+      date: date,
+      checkinSlotId: checkinSlotId,
+      checkoutSlotId: checkoutSlotId,
+    });
+  }
+
   @Get('by-room-id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({

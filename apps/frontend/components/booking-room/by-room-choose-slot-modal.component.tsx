@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  createStyles,
-  Select,
-  Table,
-} from '@mantine/core';
+import { Button, createStyles, Select, Table } from '@mantine/core';
 import {
   ChevronLeft,
   ChevronRight,
@@ -431,13 +426,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           Back
         </Button>
 
-        <Button
-          // onClick={() => props.handleSubmit()}
-          onClick={() => handleNextStep()}
-          // leftIcon={<Pencil />}
-
-          color="green"
-        >
+        <Button onClick={() => handleNextStep()} color="green">
           Next
         </Button>
       </div>

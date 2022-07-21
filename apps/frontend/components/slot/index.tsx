@@ -1,54 +1,60 @@
 import React, { useEffect, useState } from 'react';
+import { Button, createStyles } from '@mantine/core';
+import AdminLayout from '../../components/layout/admin.layout';
+import Header from '../../components/common/header.component';
+import {
+  ArchiveOff,
+  BuildingWarehouse,
+  Check,
+  Plus,
+  X,
+} from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fetchAllSlots } from '../../redux/features/slot';
 import {
   defaultPaginationParams,
   PaginationParams,
 } from '../../models/pagination-params.model';
 import { useDebouncedValue } from '@mantine/hooks';
-import {
-  fetchRoomTypeById,
-  fetchRoomTypes,
-} from '../../redux/features/room-type';
-import Header from '../common/header.component';
-import { BuildingWarehouse, Download, Plus } from 'tabler-icons-react';
-import TableHeader from '../actions/table-header.component';
-import { TableBody } from '../actions/table-body.component';
-import InfoModal from '../actions/modal/info-modal.component';
-import UpdateModal from '../actions/modal/update-modal.component';
-import AddModal from '../actions/modal/add-modal.component';
-import TableFooter from '../actions/table-footer.component';
-import { Button } from '@mantine/core';
-import dayjs from 'dayjs';
-import { InputUpdateProps } from '../actions/models/input-update-props.model';
-import { InputTypes } from '../actions/models/input-type.constant';
-import { FormikValues, useFormik } from 'formik';
-import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
+import TableHeader from '../../components/actions/table-header.component';
+import { TableBody } from './table-body.component';
+import TableFooter from '../../components/actions/table-footer.component';
 import * as Yup from 'yup';
-const UpdateRoomValidation = Yup.object().shape({
+import AddModal from '../../components/actions/modal/add-modal.component';
+import { FormikValues, useFormik } from 'formik';
+import { InputAddProps } from '../../components/actions/models/input-add-props.model';
+import { InputTypes } from '../../components/actions/models/input-type.constant';
+import InfoModal from '../../components/actions/modal/info-modal.component';
+import RestoreDeletedModal from '../../components/device-type/restore-deleted.modal.component';
+import { showNotification } from '@mantine/notifications';
+import dayjs from 'dayjs';
+import { fetchAllSlots } from '../../redux/features/slot';
+import { fetchSlotById } from '../../redux/features/slot/thunk/fetch-by-id.thunk';
+import { addSlot } from '../../redux/features/slot/thunk/add.thunk';
+
+const AddSlotValidation = Yup.object().shape({
   name: Yup.string()
+    .trim()
     .min(1, 'Minimum device type name is 1 character')
     .max(100, 'Maximum device type name is 100 characters.')
     .required('Device type name is required'),
-  description: Yup.string().max(
-    500,
-    'Maximum device type description is 500 characters'
-  ),
+  // description: Yup.string().max(
+  //   500,
+  //   'Maximum Device type description is 500 characters'
+  // ),
 });
-const SlotManagement: React.FC = () => {
-  const dispatch = useAppDispatch();
+
+const ManageSlot: React.FC<any> = () => {
+  const styles = useStyles();
+  const slot = useAppSelector((state) => state.slot.slot);
   const slots = useAppSelector((state) => state.slot.slots);
-  const [isInfoShown, setInfoShown] = useState<boolean>(false);
-  const [isAddShown, setAddShown] = useState<boolean>(false);
-  const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
-  const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
-  const [id, setId] = useState<string>();
 
   const [pagination, setPagination] = useState<PaginationParams>(
     defaultPaginationParams
   );
 
   const [debounceSearchValue] = useDebouncedValue(pagination.search, 400);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchAllSlots(pagination));
@@ -95,23 +101,36 @@ const SlotManagement: React.FC = () => {
   };
 
   const handleFetchById = (idVal) => {
-    return dispatch(fetchRoomTypeById(idVal));
+    return dispatch(fetchSlotById(idVal));
   };
+
+  const [id, setId] = useState<string>('');
+  const [isInfoShown, setInfoShown] = useState<boolean>(false);
+  const [isAddShown, setAddShown] = useState<boolean>(false);
+  const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
+  const [isRestoreDeletedShown, setRestoreDeletedShown] =
+    useState<boolean>(false);
+
   const ActionsFilter: React.FC = () => {
     return (
-      <>
+      <div>
         <Button
-          variant="outline"
-          color="violet"
-          onClick={() => setAddShown(true)}
+          leftIcon={<Plus />}
+          color="green"
+          onClick={() => setAddShown(!isAddShown)}
           style={{ marginRight: 10 }}
         >
-          <Plus />
+          Add
         </Button>
-        <Button variant="outline" color="violet">
-          <Download />
+
+        <Button
+          variant="outline"
+          color="red"
+          onClick={() => setRestoreDeletedShown(true)}
+        >
+          <ArchiveOff />
         </Button>
-      </>
+      </div>
     );
   };
 
@@ -122,15 +141,11 @@ const SlotManagement: React.FC = () => {
         .unwrap()
         .then(() => setInfoShown(!isInfoShown));
     },
-    update: (id) => {
+    delete: (id) => {
       setId(id);
       handleFetchById(id)
         .unwrap()
-        .then(() => setUpdateShown(!isUpdateShown));
-    },
-    delete: (id) => {
-      setId(id);
-      setDeleteShown(!isDeleteShown);
+        .then(() => setDeleteShown(!isDeleteShown));
     },
   };
 
@@ -139,142 +154,152 @@ const SlotManagement: React.FC = () => {
       label: 'Id',
       id: 'id',
       name: 'id',
-      value: '',
+      value: slot.id,
       readOnly: true,
     },
     {
       label: 'Name',
       id: 'name',
       name: 'name',
-      value: '',
+      value: slot.name,
       readOnly: true,
     },
     {
-      label: 'Type',
-      id: 'type',
-      name: 'type',
-      value: '',
+      label: 'Description',
+      id: 'description',
+      name: 'description',
+      value: slot.description,
+      readOnly: true,
+    },
+    {
+      label: 'Slot num',
+      id: 'slotNum',
+      name: 'slotNum',
+      value: slot.slotNum + '',
+      readOnly: true,
+    },
+    {
+      label: 'Time start',
+      id: 'timeStart',
+      name: 'timeStart',
+      value: slot.timeStart,
+      readOnly: true,
+    },
+
+    {
+      label: 'Create at',
+      id: 'createAt',
+      name: 'createAt',
+      value: dayjs(slot.createdAt).format('HH:mm DD/MM/YYYY'),
+      readOnly: true,
+    },
+    {
+      label: 'Time end',
+      id: 'timeEnd',
+      name: 'timeEnd',
+      value: slot.timeEnd,
       readOnly: true,
     },
     {
       label: 'Create By',
-      id: 'createdBy',
-      name: 'createdBy',
-      value: '',
-      readOnly: true,
-    },
-    {
-      label: 'Create At',
-      id: 'createdAt',
-      name: 'createdAt',
-      value: dayjs('').format('HH:mm DD/MM/YYYY'),
-      readOnly: true,
-    },
-    {
-      label: 'Update By',
-      id: 'updatedBy',
-      name: 'updatedBy',
-      value: '',
-      readOnly: true,
-    },
-    {
-      label: 'Update At',
-      id: 'updatedAt',
-      name: 'updatedAt',
-      value: dayjs('').format('HH:mm DD/MM/YYYY'),
-      readOnly: true,
-    },
-    {
-      label: 'Description',
-      id: 'description',
-      name: 'description',
-      value: '',
+      id: 'createBy',
+      name: 'createBy',
+      value: slot.createdBy,
       readOnly: true,
     },
   ];
 
-  const updateFields: InputUpdateProps[] = [
+  const addFields: InputAddProps[] = [
     {
-      id: 'id',
-      name: 'id',
-      description: 'Id of Room',
-      inputtype: InputTypes.TextInput,
-      label: 'Id',
-      readOnly: true,
-      required: false,
-      value: '',
-    },
-    {
+      label: 'Name',
+      description:
+        'Device type name must be unique between others (Max 100 char.)',
       id: 'name',
       name: 'name',
-      description: 'Room name',
+      required: true,
       inputtype: InputTypes.TextInput,
-      label: 'Room name',
-      readOnly: false,
-      required: true,
-      value: '',
     },
     {
-      id: 'type',
-      name: 'type',
-      description: 'Room type',
-      inputtype: InputTypes.Select,
-      label: 'Room type',
-      readOnly: false,
+      label: 'Slot num',
+      description: null,
+      id: 'slotNum',
+      name: 'slotNum',
       required: true,
-      data: [],
-      value: '',
+      inputtype: InputTypes.TextInput,
     },
     {
+      label: 'Description',
+      description:
+        'Device type description describe additional information (Max 500 char.)',
       id: 'description',
       name: 'description',
-      description: 'Room description',
-      inputtype: InputTypes.TextArea,
-      label: 'Description',
-      readOnly: false,
       required: false,
-      value: '',
+      inputtype: InputTypes.TextArea,
     },
   ];
 
   const handleAddModalClose = () => {
     setAddShown(!isAddShown);
+    addFormik.resetForm();
   };
-
-  const handleUpdateSubmit = (values: FormikValues) => {
+  const handleAddSubmit = (values: FormikValues) => {
     dispatch(
-      updateRoomById({
-        id: values.id,
-        payload: { name: values.name, description: values.description },
+      addSlot({
+        name: values.name,
+        slotNum: values.slotNum,
+        description: values.description,
       })
     )
       .unwrap()
-      .then((e) => handleUpdateModalClose());
+      .then(() =>
+        showNotification({
+          id: 'Add-slot',
+          color: 'teal',
+          title: 'Slot was added',
+          message: 'Slot was successfully added',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .then((e) => handleAddModalClose())
+      .catch((e) => {
+        showNotification({
+          id: 'Add-slot',
+          color: 'red',
+          title: 'Error while add slot',
+          message: `${e.message}`,
+          icon: <X />,
+          autoClose: 3000,
+        });
+      });
   };
 
-  const updateFormik = useFormik({
-    validationSchema: UpdateRoomValidation,
+  const addFormik = useFormik({
+    validationSchema: AddSlotValidation,
     initialValues: {
-      id: '',
       name: '',
+      slotNum: 0,
       description: '',
     },
     enableReinitialize: true,
-    onSubmit: (e) => handleUpdateSubmit(e),
+    onSubmit: (e) => handleAddSubmit(e),
   });
 
-  const handleUpdateModalClose = () => {
-    setUpdateShown(!isUpdateShown);
-    updateFormik.resetForm();
-  };
-
   return (
-    <>
+    <AdminLayout>
+      <Header title="Slot" icon={<BuildingWarehouse size={50} />} />
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter />}
+        actionsLeft={null}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
+      />
+
+      <RestoreDeletedModal
+        isShown={isRestoreDeletedShown}
+        toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
+        pagination={pagination}
       />
       {slots.items ? (
         <>
@@ -286,23 +311,29 @@ const SlotManagement: React.FC = () => {
             itemsPerPage={pagination.limit}
           />
           <InfoModal
-            header="Room Type Information"
+            header="Slot Information"
             fields={infoFields}
             toggleShown={() => setInfoShown(!isInfoShown)}
+            // toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
             isShown={isInfoShown}
           />
 
-          <UpdateModal
-            fields={updateFields}
-            formik={updateFormik}
-            handleSubmit={() => updateFormik.handleSubmit()}
-            header="Update current room type"
-            isShown={isUpdateShown}
-            toggleShown={() => setUpdateShown(!isUpdateShown)}
-          />
+          {/* <DeleteModal
+            isShown={isDeleteShown}
+            toggleShown={() => setDeleteShown(!isDeleteShown)}
+            pagination={pagination}
+            slots={slots}
+          /> */}
         </>
       ) : null}
-
+      <AddModal
+        header="Add new slot"
+        isShown={isAddShown}
+        toggleShown={() => handleAddModalClose()}
+        formik={addFormik}
+        fields={addFields}
+        handleSubmit={() => addFormik.handleSubmit()}
+      />
       {slots.meta ? (
         <TableFooter
           handlePageChange={(val) => handlePageChange(val)}
@@ -310,8 +341,14 @@ const SlotManagement: React.FC = () => {
           metadata={slots.meta}
         />
       ) : null}
-    </>
+    </AdminLayout>
   );
 };
 
-export default SlotManagement;
+const useStyles = createStyles((theme) => {
+  return {
+    container: {},
+  };
+});
+
+export default ManageSlot;

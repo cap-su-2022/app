@@ -1,5 +1,5 @@
 import { PaginationParams } from '../../controllers/pagination.model';
-import { IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
 import { Transform, TransformFnParams } from 'class-transformer';
 
 export class MasterDataAddRequestPayload extends PaginationParams {
@@ -8,6 +8,10 @@ export class MasterDataAddRequestPayload extends PaginationParams {
     message: 'Name can not be empty',
   })
   name: string;
+
+  @IsOptional()
+  @IsNumber()
+  slotNum: number;
 
   @IsOptional()
   description: string;

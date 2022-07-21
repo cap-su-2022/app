@@ -269,17 +269,15 @@ export class BookingRoomService {
     }
   }
 
-  async getRoomFreeAtTime(payload: {
+  async getListRequestBookedInDayAndSlot(payload: {
     date: string;
     checkinSlotId: string;
     checkoutSlotId: string;
   }) {
     try {
-      // console.log("DATE:", payload.date);
-      // console.log("Checkin Slot:", payload.checkinSlotId);
-      // console.log("Checkout Slot:", payload.checkoutSlotId);
       const listRequestBookedInDay =
         await this.repository.getRequestBookedInDay(payload.date);
+
       if (listRequestBookedInDay.length > 0) {
         const slotIn = await this.slotService.getNumOfSlot(
           payload.checkinSlotId
@@ -288,28 +286,42 @@ export class BookingRoomService {
           payload.checkoutSlotId
         );
 
-        const listRequestBookedInDaySameSlot = listRequestBookedInDay.filter(
+        const listRequestBookedInDayAndSlot = listRequestBookedInDay.filter(
           (request) => {
-            for (let j = request.slotIn; j <= request.slotOut; j++) {
+            for (let j = request.slotStart; j <= request.slotEnd; j++) {
               if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
                 return request;
               }
             }
           }
         );
-        console.log('LIST ROOM BOOKED: ', listRequestBookedInDaySameSlot);
+        console.log('LIST ROOM BOOKED: ', listRequestBookedInDayAndSlot);
+        return listRequestBookedInDayAndSlot;
+      }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
 
-        if (listRequestBookedInDaySameSlot.length > 0) {
-          const listRoomBookedInDaySameSlot = [];
-          listRequestBookedInDaySameSlot.map((request) => {
-            listRoomBookedInDaySameSlot.push(request.roomId);
-          });
-          const result = await this.roomService.filterRoomFreeByRoomBooked(
-            listRoomBookedInDaySameSlot
-          );
-          console.log('LIST ROOM FREE: ', result);
-          return result;
-        }
+  async getRoomFreeAtTime(payload: {
+    date: string;
+    checkinSlotId: string;
+    checkoutSlotId: string;
+  }) {
+    try {
+      const listRequestBookedInDaySameSlot =
+        await this.getListRequestBookedInDayAndSlot(payload);
+      if (listRequestBookedInDaySameSlot.length > 0) {
+        const listRoomBookedInDaySameSlot = [];
+        listRequestBookedInDaySameSlot.map((request) => {
+          listRoomBookedInDaySameSlot.push(request.roomId);
+        });
+        const result = await this.roomService.filterRoomFreeByRoomBooked(
+          listRoomBookedInDaySameSlot
+        );
+        console.log('LIST ROOM FREE: ', result);
+        return result;
       }
     } catch (e) {
       this.logger.error(e.message);
@@ -355,7 +367,7 @@ export class BookingRoomService {
     }
   }
 
-  getCountRequestBookingPending(){
+  getCountRequestBookingPending() {
     try {
       return this.repository.getCountRequestBookingPending();
     } catch (e) {
