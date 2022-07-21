@@ -152,20 +152,22 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   getRequestBookedInDay(
     date: string
   ): Promise<
-    { id: string; roomId: string; slotIn: number; slotOut: number }[]
+    { id: string; roomId: string; roomName: string; slotStart: number; slotEnd: number }[]
   > {
     return this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('booking_request.room_id', 'roomId')
-      .addSelect('slot_in.slot_num', 'slotIn')
-      .addSelect('slot_out.slot_num', 'slotOut')
-      .addSelect('slot_in.name', 'slotInName')
-      .addSelect('slot_out.name', 'slotOutName')
-      .innerJoin(Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
+      .addSelect('r.name', 'roomName')
+      .addSelect('slot_start.slot_num', 'slotStart')
+      .addSelect('slot_end.slot_num', 'slotEnd')
+      // .addSelect('slot_start.name', 'slotStart')
+      // .addSelect('slot_end.name', 'slotEnd')
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(Slot, 'slot_start', 'slot_start.id = booking_request.checkin_slot')
       .innerJoin(
         Slot,
-        'slot_out',
-        'slot_out.id = booking_request.checkout_slot'
+        'slot_end',
+        'slot_end.id = booking_request.checkout_slot'
       )
       .where('booking_request.checkinDate = :checkinDate', {
         checkinDate: date,
@@ -174,8 +176,9 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getRawMany<{
         id: string;
         roomId: string;
-        slotIn: number;
-        slotOut: number;
+        roomName: string;
+        slotStart: number;
+        slotEnd: number;
       }>();
   }
 

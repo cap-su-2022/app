@@ -14,9 +14,6 @@ export class SlotService {
     params: PaginationParams
   ): Promise<Pagination<Slot> | Slot[]> {
     try {
-      if (!params.search) {
-        return this.repository.findAll();
-      }
       return await this.repository.findByPagination(params);
     } catch (e) {
       this.logger.error(e.message);
@@ -54,5 +51,49 @@ export class SlotService {
 
   getAll(): Promise<Slot[]> {
     return this.repository.findAll();
+  }
+
+  async addNewSlot(
+    accountId: string,
+    payload: { name: string; slotNum: number; description: string }
+  ) {
+    try {
+      const isHaveSlotSameNameActive = this.repository.isHaveSlotSameNameActive(
+        payload.name
+      );
+      if (isHaveSlotSameNameActive) {
+        throw new BadRequestException(
+          `Already have slot with name '${payload.name}' active. Try other name or delete slot have name '${payload.name}' before add new`
+        );
+      }
+      const slot = await this.repository.addNew(accountId, payload);
+      // await this.histService.createNew(slot);
+      return slot;
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async deleteSlotById(accountId: string, id: string) {
+    try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Slot does not found with the provided id'
+        );
+      }
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException('This slot is already deleted');
+      }
+
+      const slot = await this.repository.deleteById(accountId, id);
+      // await this.histService.createNew(slot);
+      return slot;
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
   }
 }

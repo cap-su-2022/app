@@ -140,9 +140,9 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           </Th>
 
           <Th
-            sorted={sortBy === 'checkin_date'}
+            sorted={sortBy === 'requested_at'}
             reversed={reverseSortDirection}
-            onSort={() => setSorting('checkin_date')}
+            onSort={() => setSorting('requested_at')}
           >
             Booked At
           </Th>

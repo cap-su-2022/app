@@ -85,7 +85,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
         .then(() => {
           props.toggleShown();
           dispatch(fetchRoomTypes(props.pagination));
-          dispatch(fetchDeletedRoomTypes());
+          dispatch(fetchDeletedRoomTypes(''));
         });
     }
   };

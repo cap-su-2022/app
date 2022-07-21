@@ -7,11 +7,10 @@ import Head from 'next/head';
 
 function SlotPage() {
   return (
-    <AdminLayout>
-      <Header title="Room Type" icon={<BuildingWarehouse size={50} />} />
+    <>
       <Head>FLRBMS | Slot Management</Head>
       <SlotManagement />
-    </AdminLayout>
+    </>
   );
 }
 
