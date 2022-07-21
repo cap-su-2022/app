@@ -103,7 +103,6 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
   const inputRef = useRef(null);
 
   const handleClearFilter = useCallback(() => {
-    console.log(slots);
     setSearch('');
     setSlotStart(slots[0]?.slotNum);
     setSlotEnd(slots[slots.length - 1]?.slotNum);
@@ -113,12 +112,14 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
   }, []);
 
   const renderSlotData = () => {
-    return slots?.map((slot) => {
-      return {
-        label: slot.name,
-        value: slot.slotNum,
-      };
-    });
+    return slots
+      ? slots.map((slot) => {
+          return {
+            label: slot.name,
+            value: slot.slotNum,
+          };
+        })
+      : [];
   };
 
   return (

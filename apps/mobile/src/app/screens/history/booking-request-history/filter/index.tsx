@@ -154,12 +154,14 @@ const BookingRoomHistoryFilter: React.ForwardRefRenderFunction<
   }, []);
 
   const renderSlotData = () => {
-    return slots?.map((slot) => {
-      return {
-        label: slot.name,
-        value: slot.slotNum,
-      };
-    });
+    return slots
+      ? slots.map((slot) => {
+          return {
+            label: slot.name,
+            value: slot.slotNum,
+          };
+        })
+      : [];
   };
 
   return (

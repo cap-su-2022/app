@@ -1,9 +1,20 @@
-import {Body, Controller, Delete, Get, HttpCode, HttpStatus, Optional, Param, Post, Query} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Optional,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { SlotService } from '../services/slot.service';
 import { PaginationParams } from './pagination.model';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
-import {Slot} from "../models/slot.entity";
+import { Slot } from '../models/slot.entity';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { User } from '../decorators/keycloak-user.decorator';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
@@ -14,14 +25,14 @@ export class SlotController {
   constructor(private readonly service: SlotService) {}
 
   @Get()
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getAllSlotsByPagination(@Optional() @Query() params?: PaginationParams) {
     return this.service.getAllByPagination(params);
   }
 
   @Get('name')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  getRoomNames() {
+  getSlotNames() {
     return this.service.getSlotNames();
   }
 
@@ -83,10 +94,7 @@ export class SlotController {
     summary: 'Deleted slots',
     description: 'Deleted slots',
   })
-  deleteSlotById(
-    @Param('id') id: string,
-    @User() user: KeycloakUserInstance
-  ) {
+  deleteSlotById(@Param('id') id: string, @User() user: KeycloakUserInstance) {
     return this.service.deleteSlotById(user.account_id, id);
   }
 }

@@ -26,7 +26,7 @@ export class BookingReasonController {
   constructor(private readonly service: BookingReasonService) {}
 
   @Get()
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully fetched booking reason by pagination',

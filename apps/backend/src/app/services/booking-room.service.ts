@@ -385,6 +385,7 @@ export class BookingRoomService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
+      console.log('asss');
       const role = await this.accountService.getRoleOfAccount(userId);
       const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlot);
       const slotOut = await this.slotService.getNumOfSlot(payload.checkoutSlot);
@@ -393,7 +394,7 @@ export class BookingRoomService {
           payload.checkinDate,
           payload.roomId
         );
-
+      console.log('book');
       let status = 'PENDING';
       let haveRequestBooked = false;
 
@@ -487,10 +488,11 @@ export class BookingRoomService {
         checkinSlotId: request.checkinSlot,
         checkoutSlotId: request.checkoutSlot,
       });
-
-      listRequestSameSlot.map((request) => {
-        return this.repository.rejectById(accountId, request.id, queryRunner);
-      });
+      if (listRequestSameSlot) {
+        listRequestSameSlot.map((request) => {
+          return this.repository.rejectById(accountId, request.id, queryRunner);
+        });
+      }
       const requestAccepted = await this.repository.acceptById(
         accountId,
         id,
@@ -536,7 +538,6 @@ export class BookingRoomService {
         id,
         queryRunner
       );
-      console.log(requestAccepted);
       await queryRunner.commitTransaction();
       // await this.histService.createNew(requestAccepted);
       return requestAccepted;

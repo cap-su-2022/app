@@ -14,7 +14,11 @@ export class SlotService {
     params: PaginationParams
   ): Promise<Pagination<Slot> | Slot[]> {
     try {
-      return await this.repository.findByPagination(params);
+      if (!params || !params.page) {
+        return await this.repository.findAll();
+      } else {
+        return await this.repository.findByPagination(params);
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

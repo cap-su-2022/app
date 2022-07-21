@@ -11,10 +11,15 @@ import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import {
   BLACK,
+  BOOKED,
+  CANCELLED,
+  CHECKED_IN,
+  CHECKED_OUT,
   FPT_ORANGE_COLOR,
   GRAY,
   INPUT_GRAY_COLOR,
   LIGHT_GRAY,
+  PENDING,
   WHITE,
 } from '@app/constants';
 import { deviceWidth } from '../../../utils/device';
@@ -29,22 +34,55 @@ import {
 import Divider from '../../../components/text/divider';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import dayjs from 'dayjs';
+import AcceptBookingFooter from './footer';
+import { acceptCheckinBookingRequest } from '../../../redux/features/room-booking/thunk/accept-checkin-booking-request.thunk';
+import { rejectCheckinBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkin-booking-request.thunk';
 
 const AcceptBooking: React.FC<any> = () => {
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
   const { bookingRoom } = useAppSelector((state) => state.roomBooking);
 
+  const handleRejectBookingRequest = () => {};
+
+  const handleAcceptBookingRequest = () => {};
+
+  const handleRejectCheckout = () => {};
+
+  const handleAcceptCheckout = () => {};
+
+  const handleAcceptCheckin = () => {
+    dispatch(acceptCheckinBookingRequest(bookingRoom.id))
+      .unwrap()
+      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
+      .catch(() =>
+        alert('Error while processing your request. Please try again')
+      );
+  };
+
+  const handleRejectCheckin = () => {
+    dispatch(rejectCheckinBookingRequest(bookingRoom.id))
+      .unwrap()
+      .then(() => navigate.replace('TRACK_BOOKING_ROOM'))
+      .catch(() =>
+        alert('Error while processing your request. Please try again')
+      );
+  };
+
+  const handleStatusMessageConvert = () => {
+    switch (bookingRoom.status) {
+      case PENDING:
+        return 'book';
+      case BOOKED:
+        return 'check-in';
+      case CHECKED_IN:
+        return 'check-out';
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
-      <View
-        style={{
-          display: 'flex',
-          flex: 1,
-          justifyContent: 'space-between',
-          flexDirection: 'column',
-        }}
-      >
+      <View style={styles.container}>
         <ScrollView
           style={{
             backgroundColor: WHITE,
@@ -52,52 +90,46 @@ const AcceptBooking: React.FC<any> = () => {
           showsVerticalScrollIndicator={false}
         >
           <View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}
-            >
+            <View style={styles.header}>
               <TouchableOpacity onPress={() => navigate.pop()}>
                 <ChevronLeftIcon
-                  style={{
-                    marginTop: -10,
-                    marginLeft: 20,
-                  }}
+                  style={styles.backNavigation}
                   size={deviceWidth / 14}
                   color={FPT_ORANGE_COLOR}
                 />
               </TouchableOpacity>
               <Text style={styles.headerTitleText}>
-                Incoming Booking Request
+                {bookingRoom.status !== CANCELLED &&
+                bookingRoom.status !== CHECKED_OUT
+                  ? 'Incoming Booking Request'
+                  : 'Review booking request'}
               </Text>
             </View>
-            <View style={styles.warningMessageContainer}>
-              <ExclamationIcon
-                color={FPT_ORANGE_COLOR}
-                size={deviceWidth / 14}
-                style={styles.warningMessageIcon}
-              />
-              <Text style={styles.warningMessageText}>
-                Read the booking request information carefully before proceeding
-                the next step!
+            {bookingRoom.status !== CANCELLED &&
+            bookingRoom.status !== CHECKED_OUT ? (
+              <View style={styles.warningMessageContainer}>
+                <ExclamationIcon
+                  color={FPT_ORANGE_COLOR}
+                  size={deviceWidth / 14}
+                  style={styles.warningMessageIcon}
+                />
+                <Text style={styles.warningMessageText}>
+                  Read the booking request information carefully before
+                  proceeding the next step!
+                </Text>
+              </View>
+            ) : null}
+            {bookingRoom.status !== CANCELLED &&
+            bookingRoom.status !== CHECKED_OUT ? (
+              <Text style={styles.textStatus}>
+                {bookingRoom.requestedBy} wants to{' '}
+                {handleStatusMessageConvert()} the room {bookingRoom.roomName}
               </Text>
-            </View>
+            ) : null}
             <Text style={styles.informationHeaderTitle}>
               BOOKING INFORMATION
             </Text>
-            <View
-              style={{
-                marginTop: 10,
-                display: 'flex',
-                width: deviceWidth / 1.1,
-                borderRadius: 8,
-                borderWidth: 1,
-                borderColor: INPUT_GRAY_COLOR,
-                alignSelf: 'center',
-              }}
-            >
+            <View style={styles.bookingInformationContainer}>
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Requested By</Text>
                 <Text style={styles.valueText}>{bookingRoom.requestedBy}</Text>
@@ -170,6 +202,22 @@ const AcceptBooking: React.FC<any> = () => {
               </View>
             </View>
 
+            {bookingRoom.status === CHECKED_OUT ? (
+              <>
+                <Text style={styles.informationHeaderTitle}>
+                  CHECKED OUT INFORMATION
+                </Text>
+                <View style={styles.bookingInformationContainer}>
+                  <View style={styles.dataRowContainer}>
+                    <Text style={styles.titleText}>Checked-out At</Text>
+                    <Text style={styles.valueText}>
+                      {bookingRoom.checkoutSlot}
+                    </Text>
+                  </View>
+                </View>
+              </>
+            ) : null}
+
             <View
               style={{
                 marginTop: 20,
@@ -178,17 +226,7 @@ const AcceptBooking: React.FC<any> = () => {
               <Text style={styles.informationHeaderTitle}>
                 MORE INFORMATION
               </Text>
-              <View
-                style={{
-                  marginTop: 10,
-                  display: 'flex',
-                  width: deviceWidth / 1.1,
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: INPUT_GRAY_COLOR,
-                  alignSelf: 'center',
-                }}
-              >
+              <View style={styles.bookingInformationContainer}>
                 <View style={styles.dataRowContainer}>
                   <Text style={styles.titleText}>Booking ID</Text>
                   <Text style={styles.valueText}>{bookingRoom.id}</Text>
@@ -224,106 +262,74 @@ const AcceptBooking: React.FC<any> = () => {
                 ) : null}
               </View>
 
-              <View
-                style={{
-                  marginTop: 20,
-                }}
-              >
-                <Text
-                  style={{
-                    color: GRAY,
-                    fontSize: deviceWidth / 23,
-                    fontWeight: '600',
-                    marginLeft: 20,
-                  }}
-                >
-                  SIGNATURE
-                </Text>
+              {bookingRoom.status !== PENDING ? (
                 <View
                   style={{
-                    marginTop: 10,
-                    display: 'flex',
-                    width: deviceWidth / 1.1,
-                    borderRadius: 8,
-                    borderWidth: 1,
-                    borderColor: INPUT_GRAY_COLOR,
-                    alignSelf: 'center',
-                    height: 150,
+                    marginTop: 20,
                   }}
                 >
-                  <View style={styles.dataRowContainer}></View>
+                  <Text
+                    style={{
+                      color: GRAY,
+                      fontSize: deviceWidth / 23,
+                      fontWeight: '600',
+                      marginLeft: 20,
+                    }}
+                  >
+                    SIGNATURE
+                  </Text>
+                  <View style={styles.signatureView}>
+                    <View style={styles.dataRowContainer}></View>
+                  </View>
                 </View>
-              </View>
+              ) : null}
             </View>
           </View>
         </ScrollView>
-
-        <View
-          style={{
-            height: 80,
-            backgroundColor: WHITE,
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            alignItems: 'center',
-            flexDirection: 'row',
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              width: deviceWidth / 2.5,
-              height: 50,
-              borderWidth: 2,
-              borderColor: FPT_ORANGE_COLOR,
-              borderRadius: 8,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'row',
-            }}
-          >
-            <XCircleIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 14} />
-            <Text
-              style={{
-                marginLeft: 10,
-                color: FPT_ORANGE_COLOR,
-                fontSize: deviceWidth / 19,
-                fontWeight: '600',
-              }}
-            >
-              Reject
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              width: deviceWidth / 2.5,
-              height: 50,
-              backgroundColor: FPT_ORANGE_COLOR,
-              borderRadius: 8,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'row',
-            }}
-          >
-            <CheckCircleIcon color={WHITE} size={deviceWidth / 14} />
-            <Text
-              style={{
-                marginLeft: 10,
-                color: WHITE,
-                fontSize: deviceWidth / 19,
-                fontWeight: '600',
-              }}
-            >
-              Accept
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {bookingRoom.status !== CANCELLED &&
+        bookingRoom.status !== CHECKED_OUT ? (
+          <AcceptBookingFooter
+            handleReject={() => handleRejectCheckin()}
+            handleAccept={() => handleAcceptCheckin()}
+          />
+        ) : null}
       </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    flex: 1,
+    justifyContent: 'space-between',
+    flexDirection: 'column',
+  },
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backNavigation: {
+    marginTop: -10,
+    marginLeft: 20,
+  },
+  bookingInformationContainer: {
+    marginTop: 10,
+    display: 'flex',
+    width: deviceWidth / 1.1,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: INPUT_GRAY_COLOR,
+    alignSelf: 'center',
+  },
+  textStatus: {
+    fontWeight: '500',
+    fontSize: deviceWidth / 23,
+    alignSelf: 'center',
+    marginTop: 10,
+    textAlign: 'center',
+  },
   headerTitleText: {
     color: BLACK,
     fontWeight: '600',
@@ -376,6 +382,16 @@ const styles = StyleSheet.create({
     color: BLACK,
     fontSize: deviceWidth / 23,
     fontWeight: '500',
+  },
+  signatureView: {
+    marginTop: 10,
+    display: 'flex',
+    width: deviceWidth / 1.1,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: INPUT_GRAY_COLOR,
+    alignSelf: 'center',
+    height: 150,
   },
 });
 
