@@ -79,6 +79,12 @@ export class BookingRoomController {
     });
   }
 
+  @Get('list-booking-by-slot')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  getBookingBySlot(@Query('slotId', new DefaultValuePipe('')) slotId: string) {
+    return this.service.getBookingBySlot(slotId);
+  }
+
   @Get('list-booking-with-same-slot')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getRequestWithSameSlot(
@@ -125,7 +131,7 @@ export class BookingRoomController {
     });
   }
 
-  @Get('by-room-id')
+  @Get('list-booking-by-room')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -144,7 +150,7 @@ export class BookingRoomController {
     description: 'Insufficient privileges',
   })
   getRequestBookingByRoomId(
-    @Query('room-id') roomId = ''
+    @Query('roomId') roomId = ''
   ): Promise<BookingRequest[]> {
     return this.service.getRequestBookingByRoomId(roomId);
   }
@@ -246,7 +252,6 @@ export class BookingRoomController {
       payload.id
     );
   }
-
 
   @Get('count-pending')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -413,20 +418,20 @@ export class BookingRoomController {
     return this.service.getUsernameList();
   }
 
-  @Get('rooms-name')
-  getRoomsName() {
-    return this.service.getRoomNames();
-  }
+  // @Get('rooms-name')
+  // getRoomsName() {
+  //   return this.service.getRoomNames();
+  // }
 
-  @Get('devices')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_ADMIN, Role.APP_MANAGER, Role.APP_STAFF)
-  getBookingRoomDevices(
-    @Query('name') name: string,
-    @Query('type') type: string,
-    @Query('sort') sort: string
-  ) {
-    return this.service.getBookingRoomDevices(name, type, sort);
-  }
+  // @Get('devices')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_ADMIN, Role.APP_MANAGER, Role.APP_STAFF)
+  // getBookingRoomDevices(
+  //   @Query('name') name: string,
+  //   @Query('type') type: string,
+  //   @Query('sort') sort: string
+  // ) {
+  //   return this.service.getBookingRoomDevices(name, type, sort);
+  // }
 
   @Get('wishlist')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)

@@ -19,9 +19,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AddDeviceRequest, UpdateDeviceRequest } from '@app/models';
-import { DevicesResponsePayload } from '../payload/response/devices.payload';
-import { DevicesRequestPayload } from '../payload/request/devices.payload';
 import { DevicesValidation } from '../pipes/validation/devices.validation';
 import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
 import { Roles } from '../decorators/role.decorator';

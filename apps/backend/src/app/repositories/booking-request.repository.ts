@@ -107,6 +107,47 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     return query.getRawMany<BookingRequest>();
   }
 
+  getRequestBySlot(slotId: string) {
+    const date = new Date();
+    const query = this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('slot_in.slot_num', 'slotStartNum')
+      .addSelect('slot_out.slot_num', 'slotEndNum')
+      .addSelect('slot_in.name', 'checkinSlot')
+      .addSelect('slot_out.name', 'checkoutSlot')
+      .addSelect('a.username', 'requestedBy')
+      .addSelect('r.name', 'roomName')
+      .addSelect('booking_request.checkin_date', 'checkinDate')
+      .addSelect('br.name', 'reason')
+      .addSelect('booking_request.status', 'status')
+      .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(BookingReason, 'br', 'br.id = booking_request.booking_reason_id')
+      .innerJoin(Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
+      .innerJoin(
+        Slot,
+        'slot_out',
+        'slot_out.id = booking_request.checkout_slot'
+      )
+      .innerJoin(Slot, 'slot_del', 'slot_del.id = :slotId', {
+        slotId: slotId,
+      })
+      .where('booking_request.checkinDate >= :toDay', {
+        toDay: date,
+      })
+      .andWhere('slot_in.slot_num <= slot_del.slot_num')
+      .andWhere('slot_out.slot_num >= slot_del.slot_num')
+      .andWhere("booking_request.status IN ('PENDING', 'BOOKED')")
+      .orderBy('booking_request.checkin_date', 'ASC')
+    return query.getRawMany<{
+      id: string;
+      slotIn: number;
+      slotOut: number;
+      status: string;
+      requestedBy: string;
+    }>();
+  }
+
   getRequestPendingOfRoomInDay(
     roomId: string,
     requestId: string,
@@ -149,37 +190,47 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     }>();
   }
 
-  getRequestBookedInDay(
-    date: string
-  ): Promise<
-    { id: string; roomId: string; roomName: string; slotStart: number; slotEnd: number }[]
+  getRequestBookedInDay(date: string): Promise<
+    {
+      id: string;
+      roomId: string;
+      roomName: string;
+      slotStart: number;
+      slotEnd: number;
+    }[]
   > {
-    return this.createQueryBuilder('booking_request')
-      .select('booking_request.id', 'id')
-      .addSelect('booking_request.room_id', 'roomId')
-      .addSelect('r.name', 'roomName')
-      .addSelect('slot_start.slot_num', 'slotStart')
-      .addSelect('slot_end.slot_num', 'slotEnd')
-      // .addSelect('slot_start.name', 'slotStart')
-      // .addSelect('slot_end.name', 'slotEnd')
-      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
-      .innerJoin(Slot, 'slot_start', 'slot_start.id = booking_request.checkin_slot')
-      .innerJoin(
-        Slot,
-        'slot_end',
-        'slot_end.id = booking_request.checkout_slot'
-      )
-      .where('booking_request.checkinDate = :checkinDate', {
-        checkinDate: date,
-      })
-      .andWhere("(booking_request.status = 'BOOKED')")
-      .getRawMany<{
-        id: string;
-        roomId: string;
-        roomName: string;
-        slotStart: number;
-        slotEnd: number;
-      }>();
+    return (
+      this.createQueryBuilder('booking_request')
+        .select('booking_request.id', 'id')
+        .addSelect('booking_request.room_id', 'roomId')
+        .addSelect('r.name', 'roomName')
+        .addSelect('slot_start.slot_num', 'slotStart')
+        .addSelect('slot_end.slot_num', 'slotEnd')
+        // .addSelect('slot_start.name', 'slotStart')
+        // .addSelect('slot_end.name', 'slotEnd')
+        .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+        .innerJoin(
+          Slot,
+          'slot_start',
+          'slot_start.id = booking_request.checkin_slot'
+        )
+        .innerJoin(
+          Slot,
+          'slot_end',
+          'slot_end.id = booking_request.checkout_slot'
+        )
+        .where('booking_request.checkinDate = :checkinDate', {
+          checkinDate: date,
+        })
+        .andWhere("(booking_request.status = 'BOOKED')")
+        .getRawMany<{
+          id: string;
+          roomId: string;
+          roomName: string;
+          slotStart: number;
+          slotEnd: number;
+        }>()
+    );
   }
 
   getBookingPendingAndBookedByDay(
@@ -269,18 +320,43 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getRawOne<BookingRequest>();
   }
   getRequestBookingByRoomId(roomId: string) {
-    return this.createQueryBuilder(`booking_request`)
+    const date = new Date();
+    const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
-      .addSelect('r.name', 'roomName')
+      .addSelect('slot_in.slot_num', 'slotStartNum')
+      .addSelect('slot_out.slot_num', 'slotEndNum')
+      .addSelect('slot_in.name', 'checkinSlot')
+      .addSelect('slot_out.name', 'checkoutSlot')
       .addSelect('a.username', 'requestedBy')
-      .addSelect('booking_request.checkin_Date', 'checkinDate')
-
-      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .addSelect('r.name', 'roomName')
+      .addSelect('booking_request.checkin_date', 'checkinDate')
+      .addSelect('br.name', 'reason')
+      .addSelect('booking_request.status', 'status')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
-      .where(`booking_request.status = :status`, { status: 'BOOKING' })
-      .andWhere('booking_request.room_id = :room_id', { room_id: roomId })
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(BookingReason, 'br', 'br.id = booking_request.booking_reason_id')
+      .innerJoin(Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
+      .innerJoin(
+        Slot,
+        'slot_out',
+        'slot_out.id = booking_request.checkout_slot'
+      )
+
+      .where('booking_request.checkinDate >= :toDay', {
+        toDay: date,
+      })
+      .andWhere('booking_request.roomId = :roomId', {
+        roomId: roomId,
+      })
+      .andWhere("booking_request.status IN ('PENDING', 'BOOKED')")
       .orderBy('booking_request.checkin_date', 'ASC')
-      .getRawMany<BookingRequest>();
+    return query.getRawMany<{
+      id: string;
+      slotIn: number;
+      slotOut: number;
+      status: string;
+      requestedBy: string;
+    }>();
   }
 
   getRequestBookingByAccountId(accountId: string) {
@@ -326,11 +402,11 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .then((data) => data?.count > 0);
   }
 
-  getCountRequestBookingPending(){
+  getCountRequestBookingPending() {
     return this.createQueryBuilder('booking_request')
       .select('COUNT(1)', 'count')
       .where("booking_request.status = 'PENDING'")
-      .getRawOne<{count: number}>();
+      .getRawOne<{ count: number }>();
   }
 
   async findById(id: string): Promise<BookingRequest> {

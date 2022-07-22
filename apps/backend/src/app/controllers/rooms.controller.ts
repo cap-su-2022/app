@@ -11,13 +11,8 @@ import {
   Query,
   UseInterceptors,
   UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { RoomsService } from '../services';
-
-import { AddRoomRequest, UpdateRoomRequest } from '@app/models';
-import { RoomsRequestPayload } from '../payload/request/rooms.payload';
-import { RoomsResponsePayload } from '../payload/response/rooms.payload';
 import { RoomsValidation } from '../pipes/validation/rooms.validation';
 import { Rooms } from '../models';
 import {
@@ -32,8 +27,6 @@ import { Role } from '../enum/roles.enum';
 import { AddRoomValidation } from '../pipes/validation/add-room.validation';
 import { User } from '../decorators/keycloak-user.decorator';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { Max, Min } from 'class-validator';
-import { PaginationParams } from './pagination.model';
 import { RoomsPaginationParams } from './rooms-pagination.model';
 import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
 

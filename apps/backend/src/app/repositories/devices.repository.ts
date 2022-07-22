@@ -9,7 +9,6 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { DeviceType } from '../models/device-type.entity';
-import { DevicesRequestPayload } from '../payload/request/devices.payload';
 import { DevicesPaginationParams } from '../controllers/devices-pagination.model';
 import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
 
@@ -73,6 +72,7 @@ export class DevicesRepository extends Repository<Devices> {
       .select('device.id', 'id')
       .addSelect('device.name', 'name')
       .andWhere('device.deleted_at IS NULL')
+      .orderBy('device.name', 'ASC')
       .getRawMany<DeviceType>();
   }
 
@@ -277,13 +277,13 @@ export class DevicesRepository extends Repository<Devices> {
     }
   }
 
-  findDeviceListByBookingRoomRequest(name: string, type: string, sort: string) {
-    return this.createQueryBuilder('devices')
-      .select(['devices.id', 'devices.name'])
-      .where('devices.disabled_at IS NULL')
-      .andWhere('devices.deleted_at IS NULL')
-      .andWhere('devices.name LIKE :name', { name: `%${name}%` })
-      .orderBy('devices.name', sort as 'ASC' | 'DESC')
-      .getMany();
-  }
+  // findDeviceListByBookingRoomRequest(name: string, type: string, sort: string) {
+  //   return this.createQueryBuilder('devices')
+  //     .select(['devices.id', 'devices.name'])
+  //     .where('devices.disabled_at IS NULL')
+  //     .andWhere('devices.deleted_at IS NULL')
+  //     .andWhere('devices.name LIKE :name', { name: `%${name}%` })
+  //     .orderBy('devices.name', sort as 'ASC' | 'DESC')
+  //     .getMany();
+  // }
 }

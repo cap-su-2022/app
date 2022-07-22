@@ -18,9 +18,9 @@ export class SlotRepository extends Repository<Slot> {
   isHaveSlotSameNameActive(name: string): Promise<boolean> {
     return this.createQueryBuilder('sl')
       .select('COUNT(1)', 'count')
-      .where('sl.name = :name', { name: name })
-      .andWhere('slots.deleted_by IS NULL')
-      .andWhere('slots.deleted_at IS NULL')
+      .where('sl.name ILIKE :name', { name: name })
+      .andWhere('sl.deleted_by IS NULL')
+      .andWhere('sl.deleted_at IS NULL')
       .getRawOne()
       .then((data) => data?.count > 0);
   }
@@ -113,12 +113,12 @@ export class SlotRepository extends Repository<Slot> {
   }
 
   async deleteById(accountId: string, id: string) {
-    const isDeleted = await this.createQueryBuilder('sl')
+    const isDeleted = await this.createQueryBuilder('slot')
       .update({
         deletedAt: new Date(),
         deletedBy: accountId,
       })
-      .where('sl.id = :id', { id: id })
+      .where('slot.id = :id', { id: id })
       .useTransaction(true)
       .execute();
     if (isDeleted.affected > 0) {
@@ -129,4 +129,40 @@ export class SlotRepository extends Repository<Slot> {
       });
     }
   }
+
+  findDeletedByPagination(search: string): Promise<Slot[]> {
+    return this.createQueryBuilder('sl')
+      .select('sl.id', 'id')
+      .addSelect('sl.name', 'name')
+      .addSelect('sl.time_start', 'timeStart')
+      .addSelect('sl.time_end', 'timEnd')
+      .addSelect('sl.deleted_at', 'deletedAt')
+      .addSelect('a.username', 'deletedBy')
+      .innerJoin(Accounts, 'a', 'a.id = sl.deleted_by')
+      .where('sl.name ILIKE :search', { search: `%${search.trim()}%` })
+      .andWhere('sl.deleted_at IS NOT NULL')
+      .orderBy('sl.deleted_at', 'DESC')
+      .getRawMany<Slot>();
+  }
+
+  async restoreDeletedById(accountId: string, id: string) {
+    const isRestored = await this.createQueryBuilder('sl')
+      .update({
+        updatedAt: new Date(),
+        updatedBy: accountId,
+        deletedAt: null,
+        deletedBy: null,
+      })
+      .where('sl.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
+    if (isRestored.affected > 0) {
+      return this.findOneOrFail({
+        where: {
+          id: id,
+        },
+      });
+    }
+  }
+
 }

@@ -1,4 +1,6 @@
 export interface Slot {
+  deletedAt: string;
+  deletedBy: string;
   id?: string;
   name?: string;
   description?: string;

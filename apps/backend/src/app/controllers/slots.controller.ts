@@ -8,6 +8,7 @@ import {
   Optional,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { SlotService } from '../services/slot.service';
@@ -97,4 +98,60 @@ export class SlotController {
   deleteSlotById(@Param('id') id: string, @User() user: KeycloakUserInstance) {
     return this.service.deleteSlotById(user.account_id, id);
   }
+
+  @Get('deleted')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully deleted slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get deleted slot',
+    description: 'Get deleted slot',
+  })
+  getDeletedSlots(@Query('search') search: string) {
+    return this.service.getDeletedSlots(search);
+  }
+
+  @Put('restore-deleted/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully restored deleted slot by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for deleted slot is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Successfully restored deleted slot by id',
+    description: 'Successfully restored deleted slot by id',
+  })
+  restoreDeletedSlotById(
+    @Param('id') id: string,
+    @User() keycloakUser: KeycloakUserInstance
+  ) {
+    return this.service.restoreDeletedSlotById(keycloakUser.account_id, id);
+  }
+
 }

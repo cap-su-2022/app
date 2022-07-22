@@ -71,7 +71,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
             <b style={{ marginRight: 10, flexBasis: '30%' }}>Room name:</b>
             <div
               style={{
-                backgroundColor: '#ffffffab',
+                backgroundColor: 'white',
                 padding: 5,
                 borderRadius: 5,
                 flexBasis: '70%',
@@ -85,7 +85,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
             <b style={{ marginRight: 10, flexBasis: '30%' }}>Date check in:</b>
             <div
               style={{
-                backgroundColor: '#ffffffab',
+                backgroundColor: 'white',
                 padding: 5,
                 borderRadius: 5,
                 flexBasis: '70%',
@@ -187,13 +187,13 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
 
 const useStyles = createStyles({
   mainDiv: {
-    backgroundColor: FPT_ORANGE_COLOR,
+    backgroundColor: '#f0f0f0',
     padding: 20,
     paddingTop: 10,
     borderRadius: 10,
     marginBottom: 10,
     minHeight: 470,
-    color: 'white',
+    // color: 'white',
   },
   nameAndDateDiv: {
     display: 'flex',
@@ -218,7 +218,7 @@ const useStyles = createStyles({
   },
   slotDiv: {
     width: 100,
-    backgroundColor: '#ffffffab',
+    backgroundColor: 'white',
     borderRadius: '0.5em',
     fontSize: '0.875em',
     color: 'black',
@@ -227,7 +227,7 @@ const useStyles = createStyles({
     display: 'flex',
     justifyContent: 'space-between',
     padding: '0.5em',
-    backgroundColor: '#ffffffab',
+    backgroundColor: 'white',
     marginBottom: '0.75em',
     borderRadius: '0.5em',
     // boxShadow: 'rgb(238 239 255) 0px 0px 0px 3px',
