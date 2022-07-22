@@ -17,7 +17,7 @@ import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabl
 import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
-import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-room';
+import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-request-by-room';
 import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 import { disableAccountById } from '../../redux/features/account/thunk/disable-by-id';
 import { fetchDisabledAccounts } from '../../redux/features/account/thunk/fetch-disabled.thunk';

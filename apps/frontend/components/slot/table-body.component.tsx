@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, {useState } from 'react';
 import {
   createStyles,
   Table,
@@ -6,7 +6,6 @@ import {
 } from '@mantine/core';
 import {
   InfoCircle,
-  Pencil,
   Trash,
 } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';

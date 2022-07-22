@@ -10,7 +10,7 @@ import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabl
 import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
-import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-room';
+import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-request-by-room';
 
 interface DisableRoomModalProps {
   isShown: boolean;

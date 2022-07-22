@@ -1,13 +1,11 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -19,8 +17,6 @@ import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { RoleService } from '../services/role.service';
 import {
   ApiBearerAuth,
-  ApiConsumes,
-  ApiOkResponse,
   ApiOperation,
   ApiProduces,
   ApiResponse,
@@ -30,7 +26,6 @@ import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
 import { Role } from '../enum/roles.enum';
 import { Roles } from '../decorators/role.decorator';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
-import { RoomsPaginationParams } from './rooms-pagination.model';
 
 @Controller('/v1/roles')
 @ApiBearerAuth()

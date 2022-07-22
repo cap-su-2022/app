@@ -15,7 +15,7 @@ import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
 import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-id';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-room';
+import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-request-by-room';
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
 import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';

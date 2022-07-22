@@ -2,28 +2,18 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
 
-interface AddPayload {
-  name: string;
-  slotNum: number;
-  description: string;
-}
-
-interface RejectValue {
-  message: string;
-}
-
-export const addSlot = createAsyncThunk<
+export const deleteSlotById = createAsyncThunk<
   void,
-  AddPayload,
+  string,
   {
-    rejectValue: RejectValue;
+    rejectValue: {
+      message: string;
+    };
   }
->('slot/add-slot', async (payload, thunkAPI) => {
+>('slot/delete-by-id', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
-
   try {
-    payload.slotNum = Number(payload.slotNum)
-    const response = await axios.post(`/api/slots`, payload);
+    const response = await axios.delete(`api/slots/${payload}`);
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

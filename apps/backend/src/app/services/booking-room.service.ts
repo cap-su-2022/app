@@ -28,11 +28,11 @@ export class BookingRoomService {
 
   constructor(
     private readonly dataSource: DataSource,
+    private readonly repository: BookingRoomRepository,
     private readonly roomService: RoomsService,
     private readonly roomTypeService: RoomTypeService,
     private readonly deviceService: DevicesService,
     private readonly roomWishlistService: RoomWishlistService,
-    private readonly repository: BookingRoomRepository,
     private readonly accountService: AccountsService,
     private readonly slotService: SlotService,
     private readonly bookingRoomDeviceService: BookingRoomDevicesService,
@@ -157,9 +157,9 @@ export class BookingRoomService {
     }
   }
 
-  getBookingRoomDevices(name: string, type: string, sort: string) {
-    return this.deviceService.getBookingRoomDeviceList(name, type, sort);
-  }
+  // getBookingRoomDevices(name: string, type: string, sort: string) {
+  //   return this.deviceService.getBookingRoomDeviceList(name, type, sort);
+  // }
 
   getUsernameList(): Promise<string[]> {
     return this.accountService.getUsernameList();
@@ -212,6 +212,15 @@ export class BookingRoomService {
   getBookingByRoomInWeek(payload: { roomId: string; date: string }) {
     try {
       return this.repository.getBookingByRoomInWeek(payload);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  getBookingBySlot(slotId: string) {
+    try {
+      return this.repository.getRequestBySlot(slotId);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

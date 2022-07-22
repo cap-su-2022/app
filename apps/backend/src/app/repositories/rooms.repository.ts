@@ -88,13 +88,14 @@ export class RoomsRepository extends Repository<Rooms> {
     });
   }
 
-  async findRoomNames(): Promise<Devices[]> {
+  async findRoomNames(): Promise<Rooms[]> {
     return this.createQueryBuilder('rooms')
       .select('rooms.name', 'name')
       .addSelect('rooms.id', 'id')
       .where('rooms.disabled_at IS NULL')
       .andWhere('rooms.deleted_at IS NULL')
-      .getRawMany<Devices>();
+      .orderBy('rooms.name', 'ASC')
+      .getRawMany<Rooms>();
   }
 
   async findById(id: string): Promise<Rooms> {

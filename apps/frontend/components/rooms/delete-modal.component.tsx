@@ -8,17 +8,18 @@ import {
   Table,
   Text,
 } from '@mantine/core';
-import { Archive, ScanEye, Trash, X } from 'tabler-icons-react';
+import { Archive, Check, ScanEye, Trash, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
 import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-id';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-room';
+import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-request-by-room';
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
 import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
+import { showNotification } from '@mantine/notifications';
 
 interface DeleteRoomModalProps {
   isShown: boolean;
@@ -36,12 +37,44 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const handleDeleteRoom = () => {
-    dispatch(deleteRoomById(selectedRoomId)).then(() => {
-      props.toggleShown();
-      dispatch(fetchRooms(props.pagination));
-      dispatch(fetchDeletedRooms(''));
-      listRequest.map((request) => dispatch(cancelBooking(request.id)));
-    });
+    if (listRequest.length > 0) {
+      showNotification({
+        id: 'delete-data',
+        color: 'red',
+        title: 'Error while delete room',
+        message: 'Chưa xử lý vụ delete room đã có người book',
+        icon: <X />,
+        autoClose: 3000,
+      });
+    } else {
+      dispatch(deleteRoomById(selectedRoomId))
+        .catch((e) =>
+          showNotification({
+            id: 'delete-data',
+            color: 'red',
+            title: 'Error while delete room',
+            message: e.message ?? 'Failed to delete room',
+            icon: <X />,
+            autoClose: 3000,
+          })
+        )
+        .then(() =>
+          showNotification({
+            id: 'delete-data',
+            color: 'teal',
+            title: 'Room was deleted',
+            message: 'Room was successfully deleted',
+            icon: <Check />,
+            autoClose: 3000,
+          })
+        )
+        .then(() => {
+          props.toggleShown();
+          dispatch(fetchRooms(props.pagination));
+          dispatch(fetchDeletedRooms(''));
+          listRequest.map((request) => dispatch(cancelBooking(request.id)));
+        });
+    }
   };
 
   useEffect(() => {
@@ -64,16 +97,16 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
         ? listRequest.map((row, index) => (
             <tr key={row.id}>
               <td>{index + 1}</td>
+              <td>{row.roomName}</td>
+              <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
               <td>{row.requestedBy}</td>
-              <td>{dayjs(row.timeCheckin).format('HH:mm DD/MM/YYYY')}</td>
-              <td>{dayjs(row.timeCheckout).format('HH:mm DD/MM/YYYY')}</td>
+              <td>{row.checkinSlot}</td>
+              <td>{row.checkoutSlot}</td>
             </tr>
           ))
         : null;
     return listRequest && listRequest.length > 0 ? (
-      <ScrollArea
-        sx={{ height: 200 }}
-      >
+      <ScrollArea sx={{ height: 200 }}>
         <Table
           horizontalSpacing="md"
           verticalSpacing="xs"
@@ -95,26 +128,21 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
               </Th>
 
               <Th sorted={null} reversed={null} onSort={null}>
-                Request By
+                Name
               </Th>
 
               <Th sorted={null} reversed={null} onSort={null}>
-                Time start
+                Check in date
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
-                Time end
+                Requested by
               </Th>
-
-              {/* <Th
-              style={{
-                width: '100px',
-              }}
-              sorted={null}
-              reversed={null}
-              onSort={null}
-            >
-              Actions
-            </Th> */}
+              <Th sorted={null} reversed={null} onSort={null}>
+                Slot start
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Slot End
+              </Th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>
@@ -142,7 +170,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
       closeOnClickOutside={true}
       size={isShownListRequest && listRequest.length > 0 ? '50%' : null}
       centered
-      zIndex={2000}
+      zIndex={100}
       title={<ModalHeaderTitle />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}

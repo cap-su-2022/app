@@ -24,12 +24,13 @@ import { FormikValues, useFormik } from 'formik';
 import { InputAddProps } from '../../components/actions/models/input-add-props.model';
 import { InputTypes } from '../../components/actions/models/input-type.constant';
 import InfoModal from '../../components/actions/modal/info-modal.component';
-import RestoreDeletedModal from '../../components/device-type/restore-deleted.modal.component';
+import RestoreDeletedModal from './restore-deleted.modal.component';
 import { showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
 import { fetchAllSlots } from '../../redux/features/slot';
 import { fetchSlotById } from '../../redux/features/slot/thunk/fetch-by-id.thunk';
 import { addSlot } from '../../redux/features/slot/thunk/add.thunk';
+import DeleteModal from './delete-modal.component';
 
 const AddSlotValidation = Yup.object().shape({
   name: Yup.string()
@@ -252,6 +253,9 @@ const ManageSlot: React.FC<any> = () => {
     )
       .unwrap()
       .then(() =>
+        dispatch(fetchAllSlots(pagination)).finally(() => addFormik.resetForm())
+      )
+      .then(() =>
         showNotification({
           id: 'Add-slot',
           color: 'teal',
@@ -318,12 +322,12 @@ const ManageSlot: React.FC<any> = () => {
             isShown={isInfoShown}
           />
 
-          {/* <DeleteModal
+          <DeleteModal
             isShown={isDeleteShown}
             toggleShown={() => setDeleteShown(!isDeleteShown)}
             pagination={pagination}
-            slots={slots}
-          /> */}
+            // slots={slots}
+          />
         </>
       ) : null}
       <AddModal

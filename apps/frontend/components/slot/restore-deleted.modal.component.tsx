@@ -10,19 +10,17 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {Ban, Check, RotateClockwise, Search, X} from 'tabler-icons-react';
+import {Check, RotateClockwise, Search, X} from 'tabler-icons-react';
 import {
-  restoreDeletedDeviceTypeById,
-  permanentlyDeleteDeviceTypeById,
   fetchDeletedDeviceTypes,
   fetchDeviceTypes,
 } from '../../redux/features/device-type';
 import { PaginationParams } from '../../models/pagination-params.model';
 import dayjs from 'dayjs';
 import { showNotification } from '@mantine/notifications';
-import PermanentDeleteModal from '../actions/modal/permanant-delete-modal.component';
 import NoDataFound from "../no-data-found";
 import { useDebouncedValue } from '@mantine/hooks';
+import { restoreDeletedSlotById } from '../../redux/features/slot/thunk/restore-delete-slot-by-id.thunk';
 
 
 interface RestoreDeletedModalProps {
@@ -38,8 +36,6 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   const deletedSlots = useAppSelector((state) => state.slot.deletedSlots);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
-  const [isPermanentDeleteShown, setPermanentDeleteShown] = useState(false);
-  const [id, setId] = useState('');
   const [search, setSearch] = useState<string>('');
   const [searchDebounced] = useDebouncedValue<string>(search, 400);
 
@@ -48,15 +44,15 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   }, [searchDebounced]);
 
 
-  const handleRestoreDeletedDeviceType = (id: string) => {
-    dispatch(restoreDeletedDeviceTypeById(id))
+  const handleRestoreDeletedSlot = (id: string) => {
+    dispatch(restoreDeletedSlotById(id))
       .unwrap()
       .catch((e) =>
         showNotification({
           id: 'restore-data',
           color: 'red',
-          title: 'Error while restore device type',
-          message: e.message ?? 'Failed to restore device type',
+          title: 'Error while restore slot',
+          message: e.message ?? 'Failed to restore slot',
           icon: <X />,
           autoClose: 3000,
         })
@@ -65,8 +61,8 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
         showNotification({
           id: 'restore-data',
           color: 'teal',
-          title: 'Device type was restored',
-          message: 'Device type was successfully restored',
+          title: 'Slot was restored',
+          message: 'Slot was successfully restored',
           icon: <Check />,
           autoClose: 3000,
         })
@@ -78,47 +74,14 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
       })
   };
 
-  const handelPermanentDeleteButton = (id) => {
-    setId(id);
-    setPermanentDeleteShown(true);
-  };
 
-  const handelPermanentDeleteButtonOut = () => {
-    setId('');
-    setPermanentDeleteShown(false);
-  };
-
-  const handlePermanentDeleted = (id: string) => {
-    dispatch(permanentlyDeleteDeviceTypeById(id))
-      .unwrap()
-      .then(() => dispatch(fetchDeletedDeviceTypes('')))
-      .then(() =>
-        showNotification({
-          id: 'delete-device-type',
-          color: 'teal',
-          title: 'Device type was permanent deleted',
-          message: 'Device type was successfully permanent deleted',
-          icon: <Check />,
-          autoClose: 3000,
-        })
-      )
-      .catch((e) => {
-        showNotification({
-          id: 'delete-device-type',
-          color: 'red',
-          title: 'Error while permanent deleted device type',
-          message: `${e.message}`,
-          icon: <X/>,
-          autoClose: 3000,
-        });
-      });
-    setPermanentDeleteShown(false);
-  };
-  const rows = deletedDeviceTypes?.map((row, index) => (
+  const rows = deletedSlots?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
       <td>{row.name}</td>
-      <td>{  dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
+      <td>{row.timeStart}</td>
+      <td>{row.timeEnd}</td>
+      <td>{dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.deletedBy}</td>
       <td
         style={{
@@ -127,7 +90,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
         }}
       >
         <Button
-          onClick={() => handleRestoreDeletedDeviceType(row.id)}
+          onClick={() => handleRestoreDeletedSlot(row.id)}
           style={{
             margin: 5,
           }}
@@ -136,17 +99,6 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
           leftIcon={<RotateClockwise />}
         >
           Restore
-        </Button>
-        <Button
-          onClick={() => handelPermanentDeleteButton(row.id)}
-          style={{
-            margin: 5,
-          }}
-          variant="outline"
-          color="red"
-          leftIcon={<Ban />}
-        >
-          Permanent Delete
         </Button>
       </td>
     </tr>
@@ -160,7 +112,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
           fontSize: 22,
         }}
       >
-        Restore Deleted Device Type
+        Restore Deleted Slot
       </Text>
     );
   };
@@ -182,7 +134,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
           icon={<Search />}
         />
       </InputWrapper>
-      {deletedDeviceTypes?.length > 0 ? (
+      {deletedSlots?.length > 0 ? (
         <ScrollArea
           sx={{height: 500}}
           onScrollPositionChange={({y}) => setScrolled(y !== 0)}
@@ -194,6 +146,8 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
             <tr>
               <th>STT</th>
               <th>Name</th>
+              <th>Time Start</th>
+              <th>Time End</th>
               <th>Deleted At</th>
               <th>Deleted By</th>
               <th>Action</th>
@@ -204,11 +158,6 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
         </ScrollArea>
       ) : <NoDataFound/>}
     </Modal>
-      <PermanentDeleteModal
-        handleSubmit={() => handlePermanentDeleted(id)}
-        isShown={isPermanentDeleteShown}
-        toggleShown={() => handelPermanentDeleteButtonOut()}
-      />
     </div>
   );
 };
