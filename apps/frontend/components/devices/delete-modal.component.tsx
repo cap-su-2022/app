@@ -8,20 +8,17 @@ import {
   Table,
   Text,
 } from '@mantine/core';
-import { Archive, ScanEye, Trash, X } from 'tabler-icons-react';
+import { Check, ScanEye, Trash, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-id';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-room';
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
-import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
 import { deleteDeviceById } from '../../redux/features/devices/thunk/delete-by-id';
 import { fetchDevices } from '../../redux/features/devices/thunk/fetch-devices.thunk';
 import { fetchDeletedDevices } from '../../redux/features/devices/thunk/fetch-deleted.thunk';
+import { fetchRequestByDeviceId } from '../../redux/features/room-booking/thunk/fetch-request-by-device';
+import { showNotification } from '@mantine/notifications';
 
 interface DeleteDeviceModalProps {
   isShown: boolean;
@@ -32,16 +29,134 @@ interface DeleteDeviceModalProps {
 const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
   const { classes, cx } = useStyles();
   const selectedDeviceId = useAppSelector((state) => state.device.device.id);
+  const [listRequest, setListRequest] = useState([]);
+  const [isShownListRequest, setShownListRequest] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   const dispatch = useAppDispatch();
 
   const handleDeleteDevice = () => {
-    dispatch(deleteDeviceById(selectedDeviceId)).then(() => {
-      props.toggleShown();
-      dispatch(fetchDevices(props.pagination));
-      dispatch(fetchDeletedDevices(''));
-    });
+    if (listRequest.length > 0) {
+      showNotification({
+        id: 'delete-data',
+        color: 'red',
+        title: 'Error while delete device',
+        message: 'Chưa xử lý vụ delete device đã có người book',
+        icon: <X />,
+        autoClose: 3000,
+      });
+    } else {
+      dispatch(deleteDeviceById(selectedDeviceId))
+        .catch((e) =>
+          showNotification({
+            id: 'delete-data',
+            color: 'red',
+            title: 'Error while delete device',
+            message: e.message ?? 'Failed to delete device',
+            icon: <X />,
+            autoClose: 3000,
+          })
+        )
+        .then(() =>
+          showNotification({
+            id: 'delete-data',
+            color: 'teal',
+            title: 'Device was deleted',
+            message: 'Device was successfully deleted',
+            icon: <Check />,
+            autoClose: 3000,
+          })
+        )
+        .then(() => {
+          props.toggleShown();
+          dispatch(fetchDevices(props.pagination));
+          dispatch(fetchDeletedDevices(''));
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (selectedDeviceId) {
+      dispatch(fetchRequestByDeviceId(selectedDeviceId))
+        .unwrap()
+        .then((response) => setListRequest(response));
+    }
+  }, [dispatch, selectedDeviceId]);
+
+  useEffect(() => {
+    if (!props.isShown) {
+      setShownListRequest(false);
+    }
+  }, [props.isShown]);
+
+  const ListRequestByDeviceId = () => {
+    const rows =
+      listRequest && listRequest.length > 0
+        ? listRequest.map((row, index) => (
+            <tr key={row.id}>
+              <td>{index + 1}</td>
+              <td>{row.roomName}</td>
+              <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
+              <td>{row.requestedBy}</td>
+              <td>{row.checkinSlot}</td>
+              <td>{row.checkoutSlot}</td>
+            </tr>
+          ))
+        : null;
+    return listRequest && listRequest.length > 0 ? (
+      <ScrollArea sx={{ height: 200 }}>
+        <Table
+          horizontalSpacing="md"
+          verticalSpacing="xs"
+          sx={{ tableLayout: 'fixed' }}
+        >
+          <thead
+            className={cx(classes.header, { [classes.scrolled]: scrolled })}
+          >
+            <tr>
+              <Th
+                style={{
+                  width: '60px',
+                }}
+                sorted={null}
+                reversed={null}
+                onSort={null}
+              >
+                STT
+              </Th>
+
+              <Th sorted={null} reversed={null} onSort={null}>
+                Name
+              </Th>
+
+              <Th sorted={null} reversed={null} onSort={null}>
+                Check in date
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Requested by
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Slot start
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Slot End
+              </Th>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </Table>
+      </ScrollArea>
+    ) : (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '20px 0px',
+        }}
+      >
+        <h1>Dont have any room with this type</h1>
+      </div>
+    );
   };
 
   const ModalHeaderTitle: React.FC = () => {
@@ -52,16 +167,24 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
     <Modal
       closeOnClickOutside={true}
       centered
-      zIndex={2000}
+      size={isShownListRequest && listRequest.length > 0 ? '50%' : null}
+      zIndex={100}
       title={<ModalHeaderTitle />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}
     >
       <div className={classes.modalContainer}>
-        <Text className={classes.modalBody}>
-          Chổ này thay đổi sau đi
-        </Text>
+        <Text className={classes.modalBody}>Chổ này thay đổi sau đi</Text>
         <div className={classes.modalFooter}>
+          {listRequest.length > 0 ? (
+            <Button
+              leftIcon={<ScanEye />}
+              style={{ backgroundColor: 'blue', width: '60%', margin: 10 }}
+              onClick={() => setShownListRequest(!isShownListRequest)}
+            >
+              Requests use this device
+            </Button>
+          ) : null}
 
           <Button
             color="red"
@@ -87,6 +210,9 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
           </Button>
         </div>
       </div>
+      {isShownListRequest && listRequest.length > 0 ? (
+        <ListRequestByDeviceId />
+      ) : null}
     </Modal>
   );
 };

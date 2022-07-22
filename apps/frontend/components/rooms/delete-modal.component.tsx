@@ -4,11 +4,10 @@ import {
   createStyles,
   Modal,
   ScrollArea,
-  Select,
   Table,
   Text,
 } from '@mantine/core';
-import { Archive, Check, ScanEye, Trash, X } from 'tabler-icons-react';
+import { Check, ScanEye, Trash, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
