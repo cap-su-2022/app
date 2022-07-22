@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
-  durationButton: {
+  slotPicker: {
     margin: 5,
     backgroundColor: 'rgba(240, 110, 40, 0.2)',
     height: 50,

@@ -17,9 +17,7 @@ import RoomBookingChooseRoom from '../../screens/booking/room-booking-choose-roo
 import ChooseRoomItemDetail from '../../screens/booking/ChooseRoom/choose-room-item-detail';
 import AlreadyBookDetail from '../../screens/booking/AlreadyBook/Detail';
 import RoomBookingAlreadyBook from '../../screens/booking/checkin/room-booking-already-book';
-import ScheduleRoomBooking from '../../screens/booking/schedule-booking';
 import ScheduleRoomBookingLater from '../../screens/booking/request-room-booking';
-import BookingCalendar from '../../screens/booking/request-room-booking/choose-start-day';
 import StartDayCalendar from '../../screens/booking/request-room-booking/choose-start-day';
 import EndDayCalendar from '../../screens/booking/request-room-booking/choose-end-day';
 import AcceptBookingNavigator from '../home/track-booking-room/accept-booking';

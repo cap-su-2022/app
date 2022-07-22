@@ -5,26 +5,12 @@ import {
   TouchableOpacity,
   SafeAreaView,
   View,
-  Image,
   ScrollView,
 } from 'react-native';
-import {
-  BLACK,
-  FPT_ORANGE_COLOR,
-  GRAY,
-  INPUT_GRAY_COLOR,
-  WHITE,
-} from '@app/constants';
+import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
-import {
-  CalendarIcon,
-  ChevronDoubleLeftIcon,
-  ChevronDoubleRightIcon,
-  ChevronLeftIcon,
-  SearchIcon,
-} from 'react-native-heroicons/outline';
+import { SearchIcon } from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
-import SelectSlots from './select-slot';
 import { fetchAllSlots } from '../../../redux/features/slot';
 import { Slot } from '../../../redux/models/slot.model';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
@@ -36,11 +22,10 @@ import {
   step1ScheduleRoomBooking,
 } from '../../../redux/features/room-booking/slice';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
-import { CheckIcon, HeartIcon } from 'react-native-heroicons/solid';
-import { boxShadow } from '../../../utils/box-shadow.util';
 import DateSelect from './date-select';
 import RequestRoomBookingHeader from './header';
 import RequestRoomBookingRecentlySearch from './recently-search';
+import SlotSelect from './slot-select';
 
 const ScheduleRoomBookingLater: React.FC<any> = (props) => {
   const navigate = useAppNavigation();
@@ -130,11 +115,11 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
 
   const getContainerHeightBasedOnMultiChecks = () => {
     if (!isMultiDateChecked && !isMultiSlotChecked) {
-      return { height: deviceHeight / 3.5 };
+      return { height: deviceHeight / 3.2 };
     } else if (isMultiDateChecked && isMultiSlotChecked) {
-      return { height: deviceHeight / 2 };
+      return { height: deviceHeight / 1.9 };
     } else if (isMultiDateChecked || isMultiSlotChecked) {
-      return { height: deviceHeight / 2.5 };
+      return { height: deviceHeight / 2.4 };
     }
   };
 
@@ -158,7 +143,7 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
               isChecked={isMultiDateChecked}
               handleCheck={() => setMultiDateChecked(!isMultiDateChecked)}
             />
-            <SelectSlots
+            <SlotSelect
               isChecked={isMultiSlotChecked}
               handleCheck={() => setMultiSlotChecked(!isMultiSlotChecked)}
               handleChangeSlotStart={(val) => setSlotStart(val)}

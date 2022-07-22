@@ -13,7 +13,7 @@ const DateSelectMultiDateCheckbox: React.FC<
 > = (props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Multi dates</Text>
+      <Text style={styles.title}>Multi date</Text>
       <View style={styles.checkboxContainer}>
         <TouchableOpacity
           style={styles.checkBox}

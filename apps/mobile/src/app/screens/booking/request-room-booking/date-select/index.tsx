@@ -53,7 +53,7 @@ const RequestRoomBookingDateSelect: React.FC<
         <>
           <Text style={styles.title}>To date</Text>
           <TouchableOpacity
-            style={styles.bookingNowContainer}
+            style={[styles.bookingNowContainer, { width: deviceWidth / 1.2 }]}
             onPress={() => {
               navigate.navigate('ROOM_BOOKING_CHOOSE_END_DAY');
             }}
@@ -72,7 +72,6 @@ const styles = StyleSheet.create({
     fontSize: deviceWidth / 23,
     fontWeight: '600',
     marginBottom: 6,
-    marginLeft: 5,
   },
   startDayContainer: {
     display: 'flex',
@@ -86,11 +85,9 @@ const styles = StyleSheet.create({
     width: deviceWidth / 1.5,
     height: 50,
     paddingHorizontal: 10,
-    borderWidth: 2,
-    borderColor: WHITE,
     fontSize: 20,
     fontWeight: '600',
-    borderRadius: 10,
+    borderRadius: 8,
     marginBottom: 10,
     display: 'flex',
     flexDirection: 'row',

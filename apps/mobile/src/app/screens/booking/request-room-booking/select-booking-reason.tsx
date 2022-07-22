@@ -10,7 +10,7 @@ const SelectSlots: React.FC<any> = (props) => {
       <View style={styles.slotStart}>
         <View style={styles.container}>
           <Text style={styles.title}>Booking Reason</Text>
-          <View style={styles.durationButton}>
+          <View style={styles.slotPicker}>
             <RNPickerSelect
               fixAndroidTouchableBug={true}
               items={props.bookingReasonSelections}
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
-  durationButton: {
+  slotPicker: {
     margin: 5,
     backgroundColor: 'rgba(240, 110, 40, 0.2)',
     height: 50,
