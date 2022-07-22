@@ -40,8 +40,8 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
         showNotification({
           id: 'delete-data',
           color: 'red',
-          title: 'Error while delete device type',
-          message: e.message ?? 'Failed to delete device type',
+          title: 'Error while delete booking reason',
+          message: e.message ?? 'Failed to delete booking reason',
           icon: <X />,
           autoClose: 3000,
         })
@@ -50,8 +50,8 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
         showNotification({
           id: 'delete-data',
           color: 'teal',
-          title: 'Device type was updated',
-          message: 'Device type was successfully updated',
+          title: 'This booking room reason was deleted',
+          message: 'This booking room reason was successfully deleted',
           icon: <Check />,
           autoClose: 3000,
         })
@@ -78,7 +78,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-         Are you sure to delete this booking reason? Deleting this reasson does not affect to booking room's process.
+         Are you sure to delete this booking reason? Deleting this reason does not affect to booking room process.
         </Text>
         <div className={classes.modalFooter}>
 

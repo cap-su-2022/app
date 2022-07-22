@@ -222,7 +222,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         requestBooking.listDevice.length > 0 && (
           <div>
             <div style={{ marginBottom: 35 }}>
-              <b>LIST DEVICE</b>
+              <b>LIST DEVICES</b>
             </div>
             {listDeviceDiv}
           </div>

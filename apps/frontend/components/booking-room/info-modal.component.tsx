@@ -90,7 +90,7 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
                 {requestBooking.status}
               </div>
               <span className={classes.acceptedByDiv}>
-                Accept by <b>{requestBooking.acceptedBy || 'auto'}</b>
+                Accepted by <b>{requestBooking.acceptedBy || 'auto'}</b>
               </span>
             </div>
           ) : requestBooking.status === 'CHECKED_IN' ? (

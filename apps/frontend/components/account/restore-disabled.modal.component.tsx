@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   createStyles,
   Table,
@@ -9,28 +9,31 @@ import {
   InputWrapper,
   TextInput,
 } from '@mantine/core';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { RotateClockwise, Search, Trash } from 'tabler-icons-react';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {Check, RotateClockwise, Search, Trash, X} from 'tabler-icons-react';
 import dayjs from 'dayjs';
-import { useDebouncedValue } from '@mantine/hooks';
-import { PagingParams } from '../../models/pagination-params/paging-params.model';
+import {useDebouncedValue} from '@mantine/hooks';
+import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import NoDataFound from '../no-data-found';
-import { fetchDisabledAccounts } from '../../redux/features/account/thunk/fetch-disabled.thunk';
-import { restoreDisabledAccount } from '../../redux/features/account/thunk/restore-disabled.thunk';
-import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
-import { deleteAccountById } from '../../redux/features/account/thunk/delete-by-id';
-import { fetchDeletedAccounts } from '../../redux/features/account/thunk/fetch-deleted.thunk';
+import {fetchDisabledAccounts} from '../../redux/features/account/thunk/fetch-disabled.thunk';
+import {restoreDisabledAccount} from '../../redux/features/account/thunk/restore-disabled.thunk';
+import {fetchAccounts} from '../../redux/features/account/thunk/fetch-accounts.thunk';
+import {deleteAccountById} from '../../redux/features/account/thunk/delete-by-id';
+import {fetchDeletedAccounts} from '../../redux/features/account/thunk/fetch-deleted.thunk';
+import {showNotification} from "@mantine/notifications";
 
 interface RestoreDisabledModalProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   pagination: PagingParams;
 }
 
 const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
   props
 ) => {
-  const { classes, cx } = useStyles();
+  const {classes, cx} = useStyles();
   const disabledAccounts = useAppSelector((state) => state.account.disabledAccounts);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
@@ -45,6 +48,26 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
   const handleActiveAccount = (id: string) => {
     dispatch(restoreDisabledAccount(id))
       .unwrap()
+      .catch(
+        (e) =>
+          showNotification({
+              id: 'restore-data',
+              color: 'red',
+              title: 'Error while activate account',
+              message: e.message ?? 'Failed to activate account',
+              icon: <X/>,
+              autoClose: 3000,
+            }
+          )).then(() =>
+      showNotification({
+        id: 'restore-data',
+        color: 'teal',
+        title: 'This account was activated',
+        message: 'This account was successfully activated',
+        icon: <Check/>,
+        autoClose: 3000,
+      })
+    )
       .then(() => dispatch(fetchAccounts(props.pagination)))
       .then(() =>
         dispatch(fetchDisabledAccounts(search))
@@ -58,6 +81,26 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
   const handleDeleteAccount = (id: string) => {
     dispatch(deleteAccountById(id))
       .unwrap()
+      .catch(
+        (e) =>
+          showNotification({
+              id: 'delete-data',
+              color: 'red',
+              title: 'Error while disable account',
+              message: e.message ?? 'Failed to disable account',
+              icon: <X/>,
+              autoClose: 3000,
+            }
+          )).then(() =>
+      showNotification({
+        id: 'delete-data',
+        color: 'teal',
+        title: 'This account was deleted',
+        message: 'This account was successfully deleted',
+        icon: <Check/>,
+        autoClose: 3000,
+      })
+    )
       .then(() => dispatch(fetchAccounts(props.pagination)))
       .then(() =>
         dispatch(fetchDisabledAccounts(search))
@@ -91,7 +134,7 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
           }}
           variant="outline"
           color="green"
-          leftIcon={<RotateClockwise />}
+          leftIcon={<RotateClockwise/>}
         >
           Activate
         </Button>
@@ -102,7 +145,7 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
           }}
           variant="outline"
           color="red"
-          leftIcon={<Trash />}
+          leftIcon={<Trash/>}
         >
           Delete
         </Button>
@@ -122,37 +165,37 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
       onClose={() => props.toggleShown()}
       centered
       size="70%"
-      title={<ModalHeaderTitle />}
+      title={<ModalHeaderTitle/>}
       closeOnClickOutside={true}
       closeOnEscape={false}
     >
       <InputWrapper label="Search">
         <TextInput
           onChange={(e) => setSearch(e.target.value)}
-          icon={<Search />}
+          icon={<Search/>}
         />
       </InputWrapper>
       {disabledAccounts.length > 0 ? (
         <>
           <ScrollArea
-            sx={{ height: 500 }}
-            onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+            sx={{height: 500}}
+            onScrollPositionChange={({y}) => setScrolled(y !== 0)}
           >
             <div>
-              <Table sx={{ minWidth: 700 }}>
+              <Table sx={{minWidth: 700}}>
                 <thead
                   className={cx(classes.header, {
                     [classes.scrolled]: scrolled,
                   })}
                 >
-                  <tr>
-                    <th>STT</th>
-                    <th>Username</th>
-                    <th>Fullname</th>
-                    <th>Disabled at</th>
-                    <th>Disabled by</th>
-                    <th>Action</th>
-                  </tr>
+                <tr>
+                  <th>STT</th>
+                  <th>Username</th>
+                  <th>Fullname</th>
+                  <th>Disabled at</th>
+                  <th>Disabled by</th>
+                  <th>Action</th>
+                </tr>
                 </thead>
                 <tbody>{rows}</tbody>
               </Table>
@@ -160,7 +203,7 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
           </ScrollArea>
         </>
       ) : (
-        <NoDataFound />
+        <NoDataFound/>
       )}
     </Modal>
   );

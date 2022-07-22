@@ -62,8 +62,8 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
         showNotification({
           id: 'restore-data',
           color: 'teal',
-          title: 'Reason was restored',
-          message: 'Reason was successfully restored',
+          title: 'This reason was restored',
+          message: 'This reason was successfully restored',
           icon: <Check />,
           autoClose: 3000,
         })
@@ -75,7 +75,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
       });
   };
 
-  const handelPermanetDeleteButtonOut = () => {
+  const handelPermanentDeleteButtonOut = () => {
     setId('');
     setPermanentDeleteShown(false);
   };
@@ -193,7 +193,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
       <PermanentDeleteModal
         handleSubmit={() => handlePermanentDeleted(id)}
         isShown={isPermanentDeleteShown}
-        toggleShown={() => handelPermanetDeleteButtonOut()}
+        toggleShown={() => handelPermanentDeleteButtonOut()}
       />
     </>
   );

@@ -172,7 +172,7 @@ export class DevicesRepository extends Repository<Devices> {
   }
 
   async disableById(accountId: string, id: string) {
-    const isDisabled = await this.createQueryBuilder('rooms')
+    const isDisabled = await this.createQueryBuilder('devices')
       .update({
         disabledBy: accountId,
         disabledAt: new Date(),

@@ -124,7 +124,7 @@ export class AccountsService {
   async updateById(
     accountId: string,
     id: string,
-    body: AccountAddRequestPayload
+    body: AccountUpdateProfilePayload
   ) {
     let account;
     try {
