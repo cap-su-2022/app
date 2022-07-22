@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet,  View, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { deviceWidth } from '../../../utils/device';
 import { FPT_ORANGE_COLOR, GRAY } from '@app/constants';
 
 const SelectSlots: React.FC<any> = (props) => {
   return (
-    <View style={styles.slotContainer}>
+    <View style={styles.container}>
       <View style={styles.slotStart}>
-        <View style={styles.slotContainer}>
+        <View style={styles.container}>
           <Text style={styles.title}>Booking Reason</Text>
           <View style={styles.durationButton}>
             <RNPickerSelect
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 5,
   },
-  slotContainer: {
+  container: {
     display: 'flex',
     flexDirection: 'column',
   },
