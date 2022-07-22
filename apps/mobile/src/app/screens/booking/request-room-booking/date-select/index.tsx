@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CalendarIcon } from 'react-native-heroicons/outline';
 import { FPT_ORANGE_COLOR, GRAY, WHITE } from '@app/constants';
@@ -6,6 +6,7 @@ import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
 import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
 import { deviceWidth } from '../../../../utils/device';
 import DateSelectMultiDateCheckbox from './multi-date';
+import dayjs from 'dayjs';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface RequestRoomBookingDateSelectProps {
@@ -17,7 +18,9 @@ const RequestRoomBookingDateSelect: React.FC<
 > = (props) => {
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
-  const Today = new Date().toJSON().slice(0, 10);
+  const Today = useMemo(() => {
+    return dayjs(new Date()).format('ddd DD/MM/YYYY');
+  }, []);
 
   /*
 * props.route.params
