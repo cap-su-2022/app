@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
-import { SearchIcon } from 'react-native-heroicons/outline';
+import { SearchIcon, TicketIcon } from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import { fetchAllSlots } from '../../../redux/features/slot';
 import { Slot } from '../../../redux/models/slot.model';
@@ -117,7 +117,7 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
     if (!isMultiDateChecked && !isMultiSlotChecked) {
       return { height: deviceHeight / 3.2 };
     } else if (isMultiDateChecked && isMultiSlotChecked) {
-      return { height: deviceHeight / 1.9 };
+      return { height: deviceHeight / 1.7 };
     } else if (isMultiDateChecked || isMultiSlotChecked) {
       return { height: deviceHeight / 2.4 };
     }
@@ -152,6 +152,17 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
               slotEnd={slotEnd}
               slotSelections={slotSelections}
             />
+            {isMultiSlotChecked && isMultiDateChecked ? (
+              <TouchableOpacity
+                onPress={() => alert('Long-term booking')}
+                style={styles.searchButton}
+              >
+                <TicketIcon color={WHITE} size={deviceWidth / 14} />
+                <Text style={styles.searchButtonText}>
+                  Long-term booking room
+                </Text>
+              </TouchableOpacity>
+            ) : null}
             <TouchableOpacity
               onPress={() => handleNextStep()}
               style={styles.searchButton}
