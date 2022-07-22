@@ -41,4 +41,8 @@ export class AccountUpdateProfilePayload extends PaginationParams {
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsOptional()
   description?: string;
+
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  @IsOptional()
+  roleId?: string;
 }

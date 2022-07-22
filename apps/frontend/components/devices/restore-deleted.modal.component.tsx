@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   createStyles,
   Table,
@@ -9,29 +9,32 @@ import {
   InputWrapper,
   TextInput,
 } from '@mantine/core';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { RotateClockwise, Search } from 'tabler-icons-react';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import { restoreDeletedRoom } from '../../redux/features/room/thunk/restore-deleted.thunk';
-import { PagingParams } from '../../models/pagination-params/paging-params.model';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {Check, RotateClockwise, Search, X} from 'tabler-icons-react';
+import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
+import {fetchDeletedRooms} from '../../redux/features/room/thunk/fetch-deleted-rooms';
+import {restoreDeletedRoom} from '../../redux/features/room/thunk/restore-deleted.thunk';
+import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import dayjs from 'dayjs';
-import { useDebouncedValue } from '@mantine/hooks';
+import {useDebouncedValue} from '@mantine/hooks';
 import NoDataFound from '../no-data-found';
-import { fetchDeletedDevices } from '../../redux/features/devices/thunk/fetch-deleted.thunk';
-import { restoreDeletedDevice } from '../../redux/features/devices/thunk/restore-deleted.thunk';
-import { fetchDevices } from '../../redux/features/devices/thunk/fetch-devices.thunk';
+import {fetchDeletedDevices} from '../../redux/features/devices/thunk/fetch-deleted.thunk';
+import {restoreDeletedDevice} from '../../redux/features/devices/thunk/restore-deleted.thunk';
+import {fetchDevices} from '../../redux/features/devices/thunk/fetch-devices.thunk';
+import {showNotification} from "@mantine/notifications";
 
 interface RestoreDeletedDeviceModalProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   pagination: PagingParams;
 }
 
 const RestoreDeletedDeviceModal: React.FC<RestoreDeletedDeviceModalProps> = (
   props
 ) => {
-  const { classes, cx } = useStyles();
+  const {classes, cx} = useStyles();
   const deletedDevices = useAppSelector((state) => state.device.deletedDevices);
   console.log(deletedDevices)
   const dispatch = useAppDispatch();
@@ -46,6 +49,26 @@ const RestoreDeletedDeviceModal: React.FC<RestoreDeletedDeviceModalProps> = (
   const handleRestoreDeletedDevice = (id: string) => {
     dispatch(restoreDeletedDevice(id))
       .unwrap()
+      .catch(
+        (e) =>
+          showNotification({
+              id: 'restore-data',
+              color: 'red',
+              title: 'Error while restore device',
+              message: e.message ?? 'Failed to restore device',
+              icon: <X/>,
+              autoClose: 3000,
+            }
+          )).then(() =>
+      showNotification({
+        id: 'restore-data',
+        color: 'teal',
+        title: 'This device was restored',
+        message: 'This device was successfully restored',
+        icon: <Check/>,
+        autoClose: 3000,
+      })
+    )
       .then(() => dispatch(fetchDeletedDevices('')))
       .then(() => dispatch(fetchDevices(props.pagination)));
   };
@@ -69,7 +92,7 @@ const RestoreDeletedDeviceModal: React.FC<RestoreDeletedDeviceModalProps> = (
           }}
           variant="outline"
           color="green"
-          leftIcon={<RotateClockwise />}
+          leftIcon={<RotateClockwise/>}
         >
           Restore
         </Button>
@@ -96,41 +119,41 @@ const RestoreDeletedDeviceModal: React.FC<RestoreDeletedDeviceModalProps> = (
       onClose={() => props.toggleShown()}
       centered
       size="70%"
-      title={<ModalHeaderTitle />}
+      title={<ModalHeaderTitle/>}
       closeOnClickOutside={true}
       closeOnEscape={false}
     >
       <InputWrapper label="Search">
         <TextInput
           onChange={(e) => setSearch(e.target.value)}
-          icon={<Search />}
+          icon={<Search/>}
         />
       </InputWrapper>
       {deletedDevices.length > 0 ? (
         <>
           <ScrollArea
-            sx={{ height: 500 }}
-            onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+            sx={{height: 500}}
+            onScrollPositionChange={({y}) => setScrolled(y !== 0)}
           >
-            <Table sx={{ minWidth: 700 }}>
+            <Table sx={{minWidth: 700}}>
               <thead
-                className={cx(classes.header, { [classes.scrolled]: scrolled })}
+                className={cx(classes.header, {[classes.scrolled]: scrolled})}
               >
-                <tr>
-                  <th>STT</th>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Delete At</th>
-                  <th>Delete By</th>
-                  <th>Action</th>
-                </tr>
+              <tr>
+                <th>STT</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Delete At</th>
+                <th>Delete By</th>
+                <th>Action</th>
+              </tr>
               </thead>
               <tbody>{rows}</tbody>
             </Table>
           </ScrollArea>
         </>
       ) : (
-        <NoDataFound />
+        <NoDataFound/>
       )}
     </Modal>
   );
