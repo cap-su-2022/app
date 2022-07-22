@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Button, createStyles, Modal, ScrollArea, Table, Text } from '@mantine/core';
-import { Archive, ScanEye, X } from 'tabler-icons-react';
+import {
+  Button,
+  createStyles,
+  Modal,
+  ScrollArea,
+  Table,
+  Text,
+} from '@mantine/core';
+import { Archive, Check, ScanEye, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { disableRoomById } from '../../redux/features/room/thunk/disable-room-by-id';
@@ -11,6 +18,7 @@ import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-bo
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
 import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-request-by-room';
+import { showNotification } from '@mantine/notifications';
 
 interface DisableRoomModalProps {
   isShown: boolean;
@@ -27,13 +35,44 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const handleDisableSelectedRoom = () => {
-    dispatch(disableRoomById(selectedRoomId)).then(() => {
-      props.toggleShown();
-      props.toggleInforModalShown();
-      dispatch(fetchDisabledRooms(''));
-      dispatch(fetchRooms(props.pagination));
-      listRequest.map((request) => dispatch(cancelBooking(request.id)));
-    });
+    if (listRequest.length > 0) {
+      showNotification({
+        id: 'disable-data',
+        color: 'red',
+        title: 'Error while disable room',
+        message: 'Chưa xử lý vụ disable room đã có người book',
+        icon: <X />,
+        autoClose: 3000,
+      });
+    } else {
+      dispatch(disableRoomById(selectedRoomId))
+        .catch((e) =>
+          showNotification({
+            id: 'disable-data',
+            color: 'red',
+            title: 'Error while disable room',
+            message: e.message ?? 'Failed to disable room',
+            icon: <X />,
+            autoClose: 3000,
+          })
+        )
+        .then(() =>
+          showNotification({
+            id: 'disable-data',
+            color: 'teal',
+            title: 'Room was disabled',
+            message: 'Room was successfully disabled',
+            icon: <Check />,
+            autoClose: 3000,
+          })
+        )
+        .then(() => {
+          props.toggleShown();
+          props.toggleInforModalShown();
+          dispatch(fetchDisabledRooms(''));
+          dispatch(fetchRooms(props.pagination));
+        });
+    }
   };
   useEffect(() => {
     if (selectedRoomId) {
@@ -49,9 +88,11 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
         ? listRequest.map((row, index) => (
             <tr key={row.id}>
               <td>{index + 1}</td>
+              <td>{row.roomName}</td>
+              <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
               <td>{row.requestedBy}</td>
-              <td>{dayjs(row.timeCheckin).format('HH:mm DD/MM/YYYY')}</td>
-              <td>{dayjs(row.timeCheckout).format('HH:mm DD/MM/YYYY')}</td>
+              <td>{row.checkinSlot}</td>
+              <td>{row.checkoutSlot}</td>
             </tr>
           ))
         : null;
@@ -76,14 +117,20 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
               </Th>
 
               <Th sorted={null} reversed={null} onSort={null}>
-                Request By
+                Name
               </Th>
 
               <Th sorted={null} reversed={null} onSort={null}>
-                Time start
+                Check in date
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
-                Time end
+                Requested by
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Slot start
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Slot End
               </Th>
             </tr>
           </thead>

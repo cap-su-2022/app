@@ -82,7 +82,55 @@ export class BookingRoomController {
   @Get('list-booking-by-slot')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getBookingBySlot(@Query('slotId', new DefaultValuePipe('')) slotId: string) {
-    return this.service.getBookingBySlot(slotId);
+    return this.service.getRequestBySlotId(slotId);
+  }
+
+  @Get('list-booking-by-room')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched deleted rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getRequestByRoomId(
+    @Query('roomId') roomId = ''
+  ): Promise<BookingRequest[]> {
+    return this.service.getRequestByRoomId(roomId);
+  }
+
+  @Get('list-booking-by-device')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched deleted rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getRequestByDeviceId(
+    @Query('deviceId') deviceId = ''
+  ): Promise<BookingRequest[]> {
+    return this.service.getRequestByDeviceId(deviceId);
   }
 
   @Get('list-booking-with-same-slot')
@@ -129,30 +177,6 @@ export class BookingRoomController {
       checkinSlotId: checkinSlotId,
       checkoutSlotId: checkoutSlotId,
     });
-  }
-
-  @Get('list-booking-by-room')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'One or more payload parameters are invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully fetched deleted rooms',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getRequestBookingByRoomId(
-    @Query('roomId') roomId = ''
-  ): Promise<BookingRequest[]> {
-    return this.service.getRequestBookingByRoomId(roomId);
   }
 
   @Get('by-account-id')

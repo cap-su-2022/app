@@ -57,7 +57,6 @@ const defaultPagination = {
 function DevicesManagement(props: any) {
   const { classes } = useStyles();
   const devices = useAppSelector((state) => state.device.devices);
-  console.log("DEVICESSS:", devices);
   const [deviceTypeNames, setDeviceTypeNames] = useState([]);
   const [pagination, setPagination] = useState<PagingParams>(defaultPagination);
   const [debounceSearchValue] = useDebouncedValue(pagination.name, 400);

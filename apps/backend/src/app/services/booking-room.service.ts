@@ -72,14 +72,32 @@ export class BookingRoomService {
     }
   }
 
-  async getRequestBookingByRoomId(roomId: string): Promise<BookingRequest[]> {
+  async getRequestByRoomId(roomId: string): Promise<BookingRequest[]> {
     try {
-      return await this.repository.getRequestBookingByRoomId(roomId);
+      return await this.repository.getRequestByRoomId(roomId);
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
         'An error occurred while getting request by room id ' + roomId
       );
+    }
+  }
+
+  getRequestBySlotId(slotId: string) {
+    try {
+      return this.repository.getRequestBySlotId(slotId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  getRequestByDeviceId(deviceId: string) {
+    try {
+      return this.repository.getRequestByDeviceId(deviceId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
     }
   }
 
@@ -218,14 +236,7 @@ export class BookingRoomService {
     }
   }
 
-  getBookingBySlot(slotId: string) {
-    try {
-      return this.repository.getRequestBySlot(slotId);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+
 
   async getRequestPendingOfRoomInDay(
     roomId: string,
