@@ -19,7 +19,7 @@ import TableHeader from '../../components/actions/table-header.component';
 import { TableBody } from './table-body.component';
 import TableFooter from '../../components/actions/table-footer.component';
 import * as Yup from 'yup';
-import AddModal from '../../components/actions/modal/add-modal.component';
+import AddModal from './add-modal.component';
 import { FormikValues, useFormik } from 'formik';
 import { InputAddProps } from '../../components/actions/models/input-add-props.model';
 import { InputTypes } from '../../components/actions/models/input-type.constant';
@@ -210,84 +210,100 @@ const ManageSlot: React.FC<any> = () => {
     },
   ];
 
-  const addFields: InputAddProps[] = [
-    {
-      label: 'Name',
-      description:
-        'Device type name must be unique between others (Max 100 char.)',
-      id: 'name',
-      name: 'name',
-      required: true,
-      inputtype: InputTypes.TextInput,
-    },
-    {
-      label: 'Slot num',
-      description: null,
-      id: 'slotNum',
-      name: 'slotNum',
-      required: true,
-      inputtype: InputTypes.TextInput,
-    },
-    {
-      label: 'Description',
-      description:
-        'Device type description describe additional information (Max 500 char.)',
-      id: 'description',
-      name: 'description',
-      required: false,
-      inputtype: InputTypes.TextArea,
-    },
-  ];
+  // const addFields: InputAddProps[] = [
+  //   {
+  //     label: 'Name',
+  //     description:
+  //       'Device type name must be unique between others (Max 100 char.)',
+  //     id: 'name',
+  //     name: 'name',
+  //     required: true,
+  //     inputtype: InputTypes.TextInput,
+  //   },
+  //   {
+  //     label: 'Slot num',
+  //     description: null,
+  //     id: 'slotNum',
+  //     name: 'slotNum',
+  //     required: true,
+  //     inputtype: InputTypes.TextInput,
+  //   },
+  //   {
+  //     label: 'Time start',
+  //     description: null,
+  //     id: 'timeStart',
+  //     name: 'timeStart',
+  //     required: true,
+  //     inputtype: InputTypes.TimeInput,
+  //   },
+  //   {
+  //     label: 'Time end',
+  //     description: null,
+  //     id: 'timeEnd',
+  //     name: 'timeEnd',
+  //     required: true,
+  //     inputtype: InputTypes.TimeInput,
+  //   },
+  //   {
+  //     label: 'Description',
+  //     description:
+  //       'Device type description describe additional information (Max 500 char.)',
+  //     id: 'description',
+  //     name: 'description',
+  //     required: false,
+  //     inputtype: InputTypes.TextArea,
+  //   },
+  // ];
 
   const handleAddModalClose = () => {
     setAddShown(!isAddShown);
-    addFormik.resetForm();
+    // addFormik.resetForm();
   };
-  const handleAddSubmit = (values: FormikValues) => {
-    dispatch(
-      addSlot({
-        name: values.name,
-        slotNum: values.slotNum,
-        description: values.description,
-      })
-    )
-      .unwrap()
-      .then(() =>
-        dispatch(fetchAllSlots(pagination)).finally(() => addFormik.resetForm())
-      )
-      .then(() =>
-        showNotification({
-          id: 'Add-slot',
-          color: 'teal',
-          title: 'Slot was added',
-          message: 'Slot was successfully added',
-          icon: <Check />,
-          autoClose: 3000,
-        })
-      )
-      .then((e) => handleAddModalClose())
-      .catch((e) => {
-        showNotification({
-          id: 'Add-slot',
-          color: 'red',
-          title: 'Error while add slot',
-          message: `${e.message}`,
-          icon: <X />,
-          autoClose: 3000,
-        });
-      });
-  };
+  // const handleAddSubmit = (values: FormikValues) => {
+  //   dispatch(
+  //     addSlot({
+  //       name: values.name,
+  //       slotNum: values.slotNum,
+  //       description: values.description,
+  //     })
+  //   )
+  //     .unwrap()
+  //     .then(() =>
+  //       dispatch(fetchAllSlots(pagination)).finally(() => addFormik.resetForm())
+  //     )
+  //     .then(() =>
+  //       showNotification({
+  //         id: 'Add-slot',
+  //         color: 'teal',
+  //         title: 'Slot was added',
+  //         message: 'Slot was successfully added',
+  //         icon: <Check />,
+  //         autoClose: 3000,
+  //       })
+  //     )
+  //     .then((e) => handleAddModalClose())
+  //     .catch((e) => {
+  //       showNotification({
+  //         id: 'Add-slot',
+  //         color: 'red',
+  //         title: 'Error while add slot',
+  //         message: `${e.message}`,
+  //         icon: <X />,
+  //         autoClose: 3000,
+  //       });
+  //     });
+  // };
 
-  const addFormik = useFormik({
-    validationSchema: AddSlotValidation,
-    initialValues: {
-      name: '',
-      slotNum: 0,
-      description: '',
-    },
-    enableReinitialize: true,
-    onSubmit: (e) => handleAddSubmit(e),
-  });
+  // const addFormik = useFormik({
+  //   validationSchema: AddSlotValidation,
+  //   initialValues: {
+  //     name: '',
+  //     slotNum: 0,
+  //     description: '',
+  //   },
+  //   enableReinitialize: true,
+  //   onSubmit: (e) => handleAddSubmit(e),
+  // });
 
   return (
     <AdminLayout>
@@ -331,12 +347,10 @@ const ManageSlot: React.FC<any> = () => {
         </>
       ) : null}
       <AddModal
-        header="Add new slot"
+        // header="Add new slot"
         isShown={isAddShown}
         toggleShown={() => handleAddModalClose()}
-        formik={addFormik}
-        fields={addFields}
-        handleSubmit={() => addFormik.handleSubmit()}
+        pagination={pagination}
       />
       {slots.meta ? (
         <TableFooter

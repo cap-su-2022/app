@@ -1,6 +1,7 @@
 import React from 'react';
 import { InputTypes } from '../models/input-type.constant';
 import { Select, Textarea, TextInput } from '@mantine/core';
+import { TimeInput } from '@mantine/dates';
 
 const InputType: React.FC<any> = (props) => {
   switch (props.inputtype) {
@@ -10,6 +11,8 @@ const InputType: React.FC<any> = (props) => {
       return <Textarea { ...props.value? {...props} : {...props, value: undefined} } />;
     case InputTypes.Select:
       return <Select data={props.data} {...props} />;
+    case InputTypes.TimeInput:
+      return <TimeInput {...props} />;
   }
 };
 

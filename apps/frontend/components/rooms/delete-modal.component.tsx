@@ -190,7 +190,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
               style={{ backgroundColor: 'blue', width: '60%', margin: 10 }}
               onClick={() => setShownListRequest(!isShownListRequest)}
             >
-              List request on this room
+              Requests use this room
             </Button>
           ) : null}
 

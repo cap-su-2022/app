@@ -178,7 +178,7 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
               style={{ backgroundColor: 'blue', width: '60%', margin: 10 }}
               onClick={() => setShownListRequest(!isShownListRequest)}
             >
-              List request on this room
+              Requests use this room
             </Button>
           ) : null}
 
