@@ -96,12 +96,14 @@ export class SlotRepository extends Repository<Slot> {
 
   async addNew(
     accountId: string,
-    payload: { name: string; slotNum: number, description: string }
+    payload: { name: string; slotNum: number, timeStart: string, timeEnd: string, description: string }
   ): Promise<Slot> {
     return this.save<Slot>(
       {
         name: payload.name.trim(),
         slotNum: payload.slotNum,
+        timeStart: payload.timeStart,
+        timeEnd: payload.timeEnd,
         description: payload.description,
         createdBy: accountId,
         createdAt: new Date(),

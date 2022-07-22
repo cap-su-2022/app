@@ -15,4 +15,10 @@ export class MasterDataAddRequestPayload extends PaginationParams {
 
   @IsOptional()
   description: string;
+
+  @IsOptional()
+  timeStart: string;
+
+  @IsOptional()
+  timeEnd: string;
 }

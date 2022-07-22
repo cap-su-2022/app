@@ -63,7 +63,7 @@ export class SlotService {
 
   async addNewSlot(
     accountId: string,
-    payload: { name: string; slotNum: number; description: string }
+    payload: { name: string; slotNum: number; timeStart: string, timeEnd: string, description: string }
   ) {
     try {
       const isHaveSlotSameNameActive =
@@ -76,6 +76,7 @@ export class SlotService {
       const slot = await this.repository.addNew(accountId, payload);
       // await this.histService.createNew(slot);
       return slot;
+      return null
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);
