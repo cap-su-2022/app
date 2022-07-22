@@ -1,16 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import HomeScreenSectionCarousel from './carousel';
 import HomeScreenSectionRoomBooking from './room-booking';
 import HomeScreenSectionRoomCheckout from './room-checkout';
 import HomeScreenSectionTrackBookingRoom from './track-booking-room';
 import HomeScreenSectionResolveFeedback from './resolve-feedbacks';
-import { ViewGridIcon } from 'react-native-heroicons/outline';
+import { PencilIcon, ViewGridIcon } from 'react-native-heroicons/outline';
 import { deviceWidth } from '../../../utils/device';
 import { boxShadow } from '../../../utils/box-shadow.util';
+import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 
 const HomeScreenSection: React.FC<any> = () => {
+  const navigate = useAppNavigation();
   return (
     <View style={[boxShadow(styles), styles.container]}>
       <HomeScreenSectionCarousel />
@@ -19,12 +21,26 @@ const HomeScreenSection: React.FC<any> = () => {
           style={{
             display: 'flex',
             flexDirection: 'row',
+            justifyContent: 'space-between',
             marginLeft: 10,
             marginBottom: 10,
+            marginRight: 10,
           }}
         >
-          <ViewGridIcon color={BLACK} size={deviceWidth / 14} />
-          <Text style={styles.quickAccessText}>Quick Access</Text>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+            }}
+          >
+            <ViewGridIcon color={BLACK} size={deviceWidth / 14} />
+            <Text style={styles.quickAccessText}>Quick Access</Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => navigate.navigate('QUICK_ACCESS_CONTROL')}
+          >
+            <PencilIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 16} />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.quickAccessButtons}>

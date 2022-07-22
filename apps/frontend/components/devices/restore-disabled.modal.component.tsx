@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   createStyles,
   Table,
@@ -9,33 +9,36 @@ import {
   InputWrapper,
   TextInput,
 } from '@mantine/core';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { RotateClockwise, Search, Trash } from 'tabler-icons-react';
-import { restoreDisabledRoom } from '../../redux/features/room/thunk/restore-disabled.thunk';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
-import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-id';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {Check, RotateClockwise, Search, Trash, X} from 'tabler-icons-react';
+import {restoreDisabledRoom} from '../../redux/features/room/thunk/restore-disabled.thunk';
+import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
+import {fetchDisabledRooms} from '../../redux/features/room/thunk/fetch-disabled-rooms';
+import {deleteRoomById} from '../../redux/features/room/thunk/delete-room-by-id';
 import dayjs from 'dayjs';
-import { useDebouncedValue } from '@mantine/hooks';
-import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
+import {useDebouncedValue} from '@mantine/hooks';
+import {PagingParams} from '../../models/pagination-params/paging-params.model';
+import {fetchDeletedRooms} from '../../redux/features/room/thunk/fetch-deleted-rooms';
 import NoDataFound from '../no-data-found';
-import { fetchDisabledDevices } from '../../redux/features/devices/thunk/fetch-disabled.thunk';
-import { restoreDisabledDevice } from '../../redux/features/devices/thunk/restore-disabled.thunk';
-import { fetchDevices } from '../../redux/features/devices/thunk/fetch-devices.thunk';
-import { deleteDeviceById } from '../../redux/features/devices/thunk/delete-by-id';
-import { fetchDeletedDevices } from '../../redux/features/devices/thunk/fetch-deleted.thunk';
+import {fetchDisabledDevices} from '../../redux/features/devices/thunk/fetch-disabled.thunk';
+import {restoreDisabledDevice} from '../../redux/features/devices/thunk/restore-disabled.thunk';
+import {fetchDevices} from '../../redux/features/devices/thunk/fetch-devices.thunk';
+import {deleteDeviceById} from '../../redux/features/devices/thunk/delete-by-id';
+import {fetchDeletedDevices} from '../../redux/features/devices/thunk/fetch-deleted.thunk';
+import {showNotification} from "@mantine/notifications";
 
 interface RestoreDisabledDeviceModalProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   pagination: PagingParams;
 }
 
 const RestoreDisabledDeviceModal: React.FC<RestoreDisabledDeviceModalProps> = (
   props
 ) => {
-  const { classes, cx } = useStyles();
+  const {classes, cx} = useStyles();
   const disabledDevices = useAppSelector((state) => state.device.disabledDevices);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
@@ -50,6 +53,26 @@ const RestoreDisabledDeviceModal: React.FC<RestoreDisabledDeviceModalProps> = (
   const handleActiveDevice = (id: string) => {
     dispatch(restoreDisabledDevice(id))
       .unwrap()
+      .catch(
+        (e) =>
+          showNotification({
+              id: 'restore-data',
+              color: 'red',
+              title: 'Error while restore device',
+              message: e.message ?? 'Failed to restore device',
+              icon: <X/>,
+              autoClose: 3000,
+            }
+          )).then(() =>
+      showNotification({
+        id: 'restore-data',
+        color: 'teal',
+        title: 'This device was restored',
+        message: 'This device was successfully restored',
+        icon: <Check/>,
+        autoClose: 3000,
+      })
+    )
       .then(() => dispatch(fetchDevices(props.pagination)))
       .then(() =>
         dispatch(fetchDisabledDevices(search))
@@ -96,9 +119,9 @@ const RestoreDisabledDeviceModal: React.FC<RestoreDisabledDeviceModalProps> = (
           }}
           variant="outline"
           color="green"
-          leftIcon={<RotateClockwise />}
+          leftIcon={<RotateClockwise/>}
         >
-          Activate
+          Restore
         </Button>
         <Button
           onClick={() => handleDeleteDevice(row.id)}
@@ -107,7 +130,7 @@ const RestoreDisabledDeviceModal: React.FC<RestoreDisabledDeviceModalProps> = (
           }}
           variant="outline"
           color="red"
-          leftIcon={<Trash />}
+          leftIcon={<Trash/>}
         >
           Delete
         </Button>
@@ -127,37 +150,37 @@ const RestoreDisabledDeviceModal: React.FC<RestoreDisabledDeviceModalProps> = (
       onClose={() => props.toggleShown()}
       centered
       size="70%"
-      title={<ModalHeaderTitle />}
+      title={<ModalHeaderTitle/>}
       closeOnClickOutside={true}
       closeOnEscape={false}
     >
       <InputWrapper label="Search">
         <TextInput
           onChange={(e) => setSearch(e.target.value)}
-          icon={<Search />}
+          icon={<Search/>}
         />
       </InputWrapper>
       {disabledDevices.length > 0 ? (
         <>
           <ScrollArea
-            sx={{ height: 500 }}
-            onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+            sx={{height: 500}}
+            onScrollPositionChange={({y}) => setScrolled(y !== 0)}
           >
             <div>
-              <Table sx={{ minWidth: 700 }}>
+              <Table sx={{minWidth: 700}}>
                 <thead
                   className={cx(classes.header, {
                     [classes.scrolled]: scrolled,
                   })}
                 >
-                  <tr>
-                    <th>STT</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Disabled at</th>
-                    <th>Disabled by</th>
-                    <th>Action</th>
-                  </tr>
+                <tr>
+                  <th>STT</th>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Disabled at</th>
+                  <th>Disabled by</th>
+                  <th>Action</th>
+                </tr>
                 </thead>
                 <tbody>{rows}</tbody>
               </Table>
@@ -165,7 +188,7 @@ const RestoreDisabledDeviceModal: React.FC<RestoreDisabledDeviceModalProps> = (
           </ScrollArea>
         </>
       ) : (
-        <NoDataFound />
+        <NoDataFound/>
       )}
     </Modal>
   );

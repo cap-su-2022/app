@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   createStyles,
   Table,
@@ -9,29 +9,31 @@ import {
   InputWrapper,
   TextInput,
 } from '@mantine/core';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { Ban, Check, RotateClockwise, Search, X } from 'tabler-icons-react';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {Ban, Check, RotateClockwise, Search, X} from 'tabler-icons-react';
 import {
   fetchRoles,
   fetchDeletedRoles,
   restoreDeletedRoleById,
 } from '../../redux/features/role';
-import { PaginationParams } from '../../models/pagination-params.model';
+import {PaginationParams} from '../../models/pagination-params.model';
 import dayjs from 'dayjs';
 import PermanentDeleteModal from '../actions/modal/permanant-delete-modal.component';
-import { showNotification } from '@mantine/notifications';
-import { permanentlyDeleteRoleById } from '../../redux/features/role/thunk/permanently-delete-role-by-id.thunk';
+import {showNotification} from '@mantine/notifications';
+import {permanentlyDeleteRoleById} from '../../redux/features/role/thunk/permanently-delete-role-by-id.thunk';
 import NoDataFound from '../no-data-found';
-import { useDebouncedValue } from '@mantine/hooks';
+import {useDebouncedValue} from '@mantine/hooks';
 
 interface RestoreDeletedModalProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   pagination: PaginationParams;
 }
 
 const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
-  const { classes, cx } = useStyles();
+  const {classes, cx} = useStyles();
   const deletedRoles = useAppSelector((state) => state.role.deletedRoles);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
@@ -44,12 +46,12 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
     dispatch(fetchDeletedRoles(search));
   }, [searchDebounced]);
 
-  const handelPermanetDeleteButton = (id) => {
+  const handelPermanentDeleteButton = (id) => {
     setId(id);
     setPermanentDeleteShown(true);
   };
 
-  const handelPermanetDeleteButtonOut = () => {
+  const handelPermanentDeleteButtonOut = () => {
     setId('');
     setPermanentDeleteShown(false);
   };
@@ -60,11 +62,11 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
       .then(() => dispatch(fetchDeletedRoles('')))
       .then(() =>
         showNotification({
-          id: 'delete-booking-reason',
+          id: 'delete-role',
           color: 'teal',
-          title: 'Reason was permanent deleted',
-          message: 'Reason was successfully permanent deleted',
-          icon: <Check />,
+          title: 'This role was permanent deleted',
+          message: 'This role was successfully permanent deleted',
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -72,9 +74,9 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
         showNotification({
           id: 'delete-booking-reason',
           color: 'red',
-          title: 'Error while permanent deleted reason',
+          title: 'Error while permanent deleted role',
           message: `${e.message}`,
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         });
       });
@@ -84,6 +86,26 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
   const handleRestoreDeletedRole = (id: string) => {
     dispatch(restoreDeletedRoleById(id))
       .unwrap()
+      .catch(
+        (e) =>
+          showNotification({
+              id: 'restore-data',
+              color: 'red',
+              title: 'Error while restore this role',
+              message: e.message ?? 'Failed to restore this role',
+              icon: <X/>,
+              autoClose: 3000,
+            }
+          )).then(() =>
+      showNotification({
+        id: 'restore-data',
+        color: 'teal',
+        title: 'This role was restored',
+        message: 'This role was successfully restored',
+        icon: <Check/>,
+        autoClose: 3000,
+      })
+    )
       .then(() => dispatch(fetchDeletedRoles('')))
       .then(() => dispatch(fetchRoles(props.pagination)));
   };
@@ -106,19 +128,19 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           }}
           variant="outline"
           color="green"
-          leftIcon={<RotateClockwise />}
+          leftIcon={<RotateClockwise/>}
         >
           Restore
         </Button>
 
         <Button
-          onClick={() => handelPermanetDeleteButton(row.id)}
+          onClick={() => handelPermanentDeleteButton(row.id)}
           style={{
             margin: 5,
           }}
           variant="outline"
           color="red"
-          leftIcon={<Ban />}
+          leftIcon={<Ban/>}
         >
           Permanat Delete
         </Button>
@@ -146,48 +168,48 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
         onClose={() => props.toggleShown()}
         centered
         size="85%"
-        title={<ModalHeaderTitle />}
+        title={<ModalHeaderTitle/>}
         closeOnClickOutside={true}
         closeOnEscape={false}
       >
         <InputWrapper label="Search">
-        <TextInput
-          onChange={(e) => setSearch(e.target.value)}
-          icon={<Search />}
-        />
-      </InputWrapper>
+          <TextInput
+            onChange={(e) => setSearch(e.target.value)}
+            icon={<Search/>}
+          />
+        </InputWrapper>
         {deletedRoles.length > 0 ? (
           <>
             <ScrollArea
-              sx={{ height: 500 }}
-              onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+              sx={{height: 500}}
+              onScrollPositionChange={({y}) => setScrolled(y !== 0)}
             >
-              <Table sx={{ minWidth: 700 }}>
+              <Table sx={{minWidth: 700}}>
                 <thead
                   className={cx(classes.header, {
                     [classes.scrolled]: scrolled,
                   })}
                 >
-                  <tr>
-                    <th>STT</th>
-                    <th>Name</th>
-                    <th>Deleted At</th>
-                    <th>Deleted By</th>
-                    <th>Action</th>
-                  </tr>
+                <tr>
+                  <th>STT</th>
+                  <th>Name</th>
+                  <th>Deleted At</th>
+                  <th>Deleted By</th>
+                  <th>Action</th>
+                </tr>
                 </thead>
                 <tbody>{rows}</tbody>
               </Table>
             </ScrollArea>
           </>
         ) : (
-          <NoDataFound />
+          <NoDataFound/>
         )}
       </Modal>
       <PermanentDeleteModal
         handleSubmit={() => handlePermanentDeleted(id)}
         isShown={isPermanentDeleteShown}
-        toggleShown={() => handelPermanetDeleteButtonOut()}
+        toggleShown={() => handelPermanentDeleteButtonOut()}
       />
     </>
   );

@@ -4,7 +4,8 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text, TextInput,
+  Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -20,8 +21,8 @@ import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
 import { addNewRequestBooking } from '../../redux/features/room-booking/thunk/add-new-request-booking';
 import { fetchAllBookingReason } from '../../redux/features/booking-reason/thunk/fetch-all';
 import { BookingRoomReason } from '../../redux/models/booking-reason-response';
-import SelectBookingReason from './schedule-booking-v2/select-booking-reason';
-import {Device} from "../../redux/models/device.model";
+import SelectBookingReason from './request-room-booking/select-booking-reason';
+import { Device } from '../../redux/models/device.model';
 
 export const RoomBooking3: React.FC = () => {
   const navigate = useAppNavigation();
@@ -31,7 +32,7 @@ export const RoomBooking3: React.FC = () => {
   );
   const [bookingReasonSelections, setBookingReasonSelections] = useState([]);
   const [bookingReason, setBookingReason] = useState<string>();
-  const [description, setDescription] = useState<string>("")
+  const [description, setDescription] = useState<string>('');
 
   useEffect(() => {
     dispatch(fetchAllBookingReason())
@@ -106,7 +107,7 @@ export const RoomBooking3: React.FC = () => {
   };
 
   const Device: React.FC<{
-    device: any
+    device: any;
   }> = (props) => {
     return (
       <View style={styles.historyContainer} key={props.device.id}>
@@ -133,7 +134,9 @@ export const RoomBooking3: React.FC = () => {
             {/*  data={roomBooking.devices}*/}
             {/*  renderItem={(device) => Device(device)}*/}
             {/*/>*/}
-            {roomBooking.devices.map(device => <Device device={device}/>)}
+            {roomBooking.devices.map((device) => (
+              <Device device={device} />
+            ))}
           </View>
           <Text style={styles.bigTitle}>Additional Booking Information</Text>
           <View style={styles.bookingInformationContainer}>
@@ -162,7 +165,6 @@ export const RoomBooking3: React.FC = () => {
                 />
               </View>
             </View>
-
           </View>
 
           <View style={styles.footerContainer}>
@@ -260,7 +262,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
-  durationButton: {
+  slotPicker: {
     margin: 5,
     backgroundColor: 'rgba(240, 110, 40, 0.2)',
     height: 50,
@@ -279,7 +281,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 5,
   },
-  slotContainer: {
+  container: {
     display: 'flex',
     flexDirection: 'column',
   },
@@ -317,7 +319,7 @@ const styles = StyleSheet.create({
     fontSize: deviceWidth / 20,
     fontWeight: '700',
     marginBottom: 5,
-    marginVertical: 10
+    marginVertical: 10,
   },
   bookingInformationContainer: {
     padding: 20,
@@ -327,7 +329,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     shadowOffset: {
       height: 1,
-      width: 1
+      width: 1,
     },
     borderColor: FPT_ORANGE_COLOR,
     display: 'flex',

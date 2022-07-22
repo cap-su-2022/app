@@ -65,7 +65,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
       <ScrollArea style={{ height: 480, marginBottom: 5, borderRadius: 5 }}>
         <div className={classes.mainDiv}>
           <div style={{ textAlign: 'center' }}>
-            <b>CONFIRM INFOR OF BOOKING</b>
+            <b>CONFIRM INFORMATION OF BOOKING</b>
           </div>
           <div className={classes.nameAndDateDiv}>
             <b style={{ marginRight: 10, flexBasis: '30%' }}>Room name:</b>

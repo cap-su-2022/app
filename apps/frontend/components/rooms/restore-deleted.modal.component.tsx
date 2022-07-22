@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   createStyles,
   Table,
@@ -9,26 +9,29 @@ import {
   InputWrapper,
   TextInput,
 } from '@mantine/core';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { RotateClockwise, Search } from 'tabler-icons-react';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import { restoreDeletedRoom } from '../../redux/features/room/thunk/restore-deleted.thunk';
-import { PagingParams } from '../../models/pagination-params/paging-params.model';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {Check, RotateClockwise, Search, X} from 'tabler-icons-react';
+import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
+import {fetchDeletedRooms} from '../../redux/features/room/thunk/fetch-deleted-rooms';
+import {restoreDeletedRoom} from '../../redux/features/room/thunk/restore-deleted.thunk';
+import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import dayjs from 'dayjs';
-import { useDebouncedValue } from '@mantine/hooks';
+import {useDebouncedValue} from '@mantine/hooks';
 import NoDataFound from '../no-data-found';
+import {showNotification} from "@mantine/notifications";
 
 interface RestoreDeletedRoomModalProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   pagination: PagingParams;
 }
 
 const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
   props
 ) => {
-  const { classes, cx } = useStyles();
+  const {classes, cx} = useStyles();
   const deletedRooms = useAppSelector((state) => state.room.deletedRooms);
   console.log(deletedRooms)
   const dispatch = useAppDispatch();
@@ -44,7 +47,27 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
     dispatch(restoreDeletedRoom(id))
       .unwrap()
       .then(() => dispatch(fetchDeletedRooms('')))
-      .then(() => dispatch(fetchRooms(props.pagination)));
+      .then(() => dispatch(fetchRooms(props.pagination)))
+      .then(() =>
+        showNotification({
+          id: 'restore-room',
+          color: 'teal',
+          title: 'Library room was restored',
+          message: 'Library room was successfully restored',
+          icon: <Check/>,
+          autoClose: 3000,
+        })
+      )
+      .catch((e) => {
+        showNotification({
+          id: 'restore-room',
+          color: 'red',
+          title: 'Error while restore room',
+          message: `${e.message}`,
+          icon: <X/>,
+          autoClose: 3000,
+        });
+      });
   };
   const rows = deletedRooms?.map((row, index) => (
     <tr key={row.id}>
@@ -66,7 +89,7 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
           }}
           variant="outline"
           color="green"
-          leftIcon={<RotateClockwise />}
+          leftIcon={<RotateClockwise/>}
         >
           Restore
         </Button>
@@ -93,41 +116,41 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
       onClose={() => props.toggleShown()}
       centered
       size="70%"
-      title={<ModalHeaderTitle />}
+      title={<ModalHeaderTitle/>}
       closeOnClickOutside={true}
       closeOnEscape={false}
     >
       <InputWrapper label="Search">
         <TextInput
           onChange={(e) => setSearch(e.target.value)}
-          icon={<Search />}
+          icon={<Search/>}
         />
       </InputWrapper>
       {deletedRooms.length > 0 ? (
         <>
           <ScrollArea
-            sx={{ height: 500 }}
-            onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+            sx={{height: 500}}
+            onScrollPositionChange={({y}) => setScrolled(y !== 0)}
           >
-            <Table sx={{ minWidth: 700 }}>
+            <Table sx={{minWidth: 700}}>
               <thead
-                className={cx(classes.header, { [classes.scrolled]: scrolled })}
+                className={cx(classes.header, {[classes.scrolled]: scrolled})}
               >
-                <tr>
-                  <th>STT</th>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Delete At</th>
-                  <th>Delete By</th>
-                  <th>Action</th>
-                </tr>
+              <tr>
+                <th>STT</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Deleted At</th>
+                <th>Deleted By</th>
+                <th>Action</th>
+              </tr>
               </thead>
               <tbody>{rows}</tbody>
             </Table>
           </ScrollArea>
         </>
       ) : (
-        <NoDataFound />
+        <NoDataFound/>
       )}
     </Modal>
   );

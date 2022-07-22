@@ -1,14 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from "react-native";
-import {ChartPieIcon, ChevronRightIcon, ClockIcon} from "react-native-heroicons/outline";
-import {deviceWidth} from "../../../utils/device";
-import {BLACK, GRAY, LIGHT_GRAY, WHITE} from "@app/constants";
-import RNPickerSelect from "react-native-picker-select";
-import {useAppSelector} from "../../../hooks/use-app-selector.hook";
-import {useAppDispatch} from "../../../hooks/use-app-dispatch.hook";
-import {fetchAllSlots} from "../../../redux/features/slot";
-import {getTimeDetailBySlotNumber} from "../../../utils/slot-resolver.util";
-import {Slot} from "../../../redux/models/slot.model";
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import {
+  ChartPieIcon,
+  ChevronRightIcon,
+  ClockIcon,
+} from 'react-native-heroicons/outline';
+import { deviceWidth } from '../../../utils/device';
+import { BLACK, GRAY, LIGHT_GRAY, WHITE } from '@app/constants';
+import RNPickerSelect from 'react-native-picker-select';
+import { useAppSelector } from '../../../hooks/use-app-selector.hook';
+import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
+import { fetchAllSlots } from '../../../redux/features/slot';
+import { getTimeDetailBySlotNumber } from '../../../utils/slot-resolver.util';
+import { Slot } from '../../../redux/models/slot.model';
 
 interface SelectDurationProps {
   handleSetSlotStart(val: string): void;
@@ -19,30 +23,25 @@ interface SelectDurationProps {
 }
 
 const SelectDuration: React.FC<SelectDurationProps> = (props) => {
-
   const dispatch = useAppDispatch();
 
   const slots = useAppSelector((state) => state.slot.slots);
   const [bookTimeDetail, setBookTimeDetail] = useState<string>();
 
-
-
   const findSlotById = (id: string) => {
     return slots.filter((slot) => slot.id === id)[0];
-  }
+  };
 
   useEffect(() => {
-   if (props.slotStart && props.slotEnd) {
-     const slotStart = findSlotById(props.slotStart);
-     const slotEnd = findSlotById(props.slotEnd);
-     if (slotStart.timeStart > slotEnd.timeEnd) {
-       props.handleSetSlotStart(slotEnd.id);
-       props.handleSetSlotEnd(slotStart.id);
-     }
-     setBookTimeDetail(
-       `${slotStart.timeStart} - ${slotEnd.timeEnd}`
-     );
-   }
+    if (props.slotStart && props.slotEnd) {
+      const slotStart = findSlotById(props.slotStart);
+      const slotEnd = findSlotById(props.slotEnd);
+      if (slotStart.timeStart > slotEnd.timeEnd) {
+        props.handleSetSlotStart(slotEnd.id);
+        props.handleSetSlotEnd(slotStart.id);
+      }
+      setBookTimeDetail(`${slotStart.timeStart} - ${slotEnd.timeEnd}`);
+    }
   }, [props.slotStart, props.slotEnd]);
 
   return (
@@ -56,7 +55,7 @@ const SelectDuration: React.FC<SelectDurationProps> = (props) => {
             <View style={styles.iconDurationContainer}>
               <ChartPieIcon size={deviceWidth / 15} color={BLACK} />
             </View>
-            <View style={styles.durationButton}>
+            <View style={styles.slotPicker}>
               <RNPickerSelect
                 fixAndroidTouchableBug={true}
                 items={props.slotSelections}
@@ -71,7 +70,7 @@ const SelectDuration: React.FC<SelectDurationProps> = (props) => {
                     fontSize: deviceWidth / 21,
                     fontWeight: '600',
                     color: GRAY,
-                  }
+                  },
                 }}
                 useNativeAndroidPickerStyle={false}
                 value={props.slotStart}
@@ -79,7 +78,7 @@ const SelectDuration: React.FC<SelectDurationProps> = (props) => {
               />
             </View>
             <ChevronRightIcon color={BLACK} />
-            <View style={styles.durationButton}>
+            <View style={styles.slotPicker}>
               <RNPickerSelect
                 fixAndroidTouchableBug={true}
                 items={props.slotSelections}
@@ -94,7 +93,7 @@ const SelectDuration: React.FC<SelectDurationProps> = (props) => {
                     fontSize: deviceWidth / 21,
                     fontWeight: '600',
                     color: GRAY,
-                  }
+                  },
                 }}
                 useNativeAndroidPickerStyle={false}
                 value={props.slotEnd}
@@ -107,9 +106,7 @@ const SelectDuration: React.FC<SelectDurationProps> = (props) => {
               <ClockIcon size={deviceWidth / 15} color={BLACK} />
             </View>
             <View style={styles.bookTimeDetailContainer}>
-              <Text style={styles.bookTimeDetailText}>
-                {bookTimeDetail}
-              </Text>
+              <Text style={styles.bookTimeDetailText}>{bookTimeDetail}</Text>
             </View>
           </View>
         </View>
@@ -148,7 +145,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  durationButton: {
+  slotPicker: {
     margin: 5,
     backgroundColor: '#f2f2f2',
     height: 50,

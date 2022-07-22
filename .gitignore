@@ -4,6 +4,10 @@
 /dist
 /tmp
 /out-tsc
+/apps/mobile/src/app/constants/constant.ts
+/apps/backend/dist/main.js
+/apps/backend/dist/main.js.map
+/apps/mobile/project.json
 
 # dependencies
 /node_modules

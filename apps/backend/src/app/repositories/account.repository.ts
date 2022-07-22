@@ -10,6 +10,7 @@ import {
 import { Roles } from '../models/role.entity';
 import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
 import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
+import {AccountUpdateProfilePayload} from "../payload/request/account-update-profile.request.payload";
 
 @CustomRepository(Accounts)
 export class AccountRepository extends Repository<Accounts> {
@@ -261,7 +262,7 @@ export class AccountRepository extends Repository<Accounts> {
   }
 
   updatePartially(
-    body: AccountAddRequestPayload,
+    body: AccountUpdateProfilePayload,
     account: Accounts,
     accountId: string
   ): Promise<Accounts> {
@@ -292,12 +293,12 @@ export class AccountRepository extends Repository<Accounts> {
   }
 
   async disableById(accountId: string, id: string) {
-    const isDisabled = await this.createQueryBuilder('account')
+    const isDisabled = await this.createQueryBuilder('accounts')
       .update({
         disabledBy: accountId,
         disabledAt: new Date(),
       })
-      .where('account.id = :id', { id: id })
+      .where('accounts.id = :id', { id: id })
       .useTransaction(true)
       .execute();
     if (isDisabled.affected > 0) {

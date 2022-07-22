@@ -60,7 +60,6 @@ const StartDayCalendar: React.FC<any> = (props) => {
           }}
           theme={{
             indicatorColor: FPT_ORANGE_COLOR,
-            textDayFontFamily: '',
             textDayFontWeight: '300',
             textMonthFontWeight: 'bold',
             textDayHeaderFontWeight: '300',

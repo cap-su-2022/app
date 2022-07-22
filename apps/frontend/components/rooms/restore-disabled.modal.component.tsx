@@ -93,7 +93,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
           color="green"
           leftIcon={<RotateClockwise />}
         >
-          Activate
+         Restore
         </Button>
         <Button
           onClick={() => handleDeleteRoom(row.id)}

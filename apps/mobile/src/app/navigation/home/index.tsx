@@ -7,6 +7,7 @@ import RoomBookingNavigator from '../room-booking';
 import TrackBookingRoomNavigator from './track-booking-room';
 import RoomBookingCheckoutNavigator from '../room-booking/checkout';
 import HomeScreen from '../../screens/home';
+import QuickAccessControlScreen from '../../screens/home/section/quick-access-control';
 
 const HomeNavigator: React.FC = () => {
   const navigate = useAppNavigation();
@@ -20,6 +21,13 @@ const HomeNavigator: React.FC = () => {
           headerShown: false,
         }}
         component={HomeScreen}
+      />
+      <StackScreen
+        name="QUICK_ACCESS_CONTROL"
+        component={QuickAccessControlScreen}
+        options={{
+          headerTitle: 'Quick Access Control',
+        }}
       />
       <StackScreen
         name={'ROOM_BOOKING'}

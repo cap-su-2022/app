@@ -17,13 +17,11 @@ import RoomBookingChooseRoom from '../../screens/booking/room-booking-choose-roo
 import ChooseRoomItemDetail from '../../screens/booking/ChooseRoom/choose-room-item-detail';
 import AlreadyBookDetail from '../../screens/booking/AlreadyBook/Detail';
 import RoomBookingAlreadyBook from '../../screens/booking/checkin/room-booking-already-book';
-import ScheduleRoomBooking from '../../screens/booking/schedule-booking';
-import ScheduleRoomBookingLater from '../../screens/booking/schedule-booking-v2';
-import BookingCalendar from '../../screens/booking/schedule-booking-v2/choose-start-day';
-import StartDayCalendar from '../../screens/booking/schedule-booking-v2/choose-start-day';
-import EndDayCalendar from '../../screens/booking/schedule-booking-v2/choose-end-day';
+import ScheduleRoomBookingLater from '../../screens/booking/request-room-booking';
+import StartDayCalendar from '../../screens/booking/request-room-booking/choose-start-day';
+import EndDayCalendar from '../../screens/booking/request-room-booking/choose-end-day';
 import AcceptBookingNavigator from '../home/track-booking-room/accept-booking';
-import ChooseSlot from '../../screens/booking/schedule-booking-v2/choose-slot';
+import ChooseSlot from '../../screens/booking/request-room-booking/choose-slot';
 
 const RoomBookingNavigator: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
@@ -94,6 +92,9 @@ const RoomBookingNavigator: React.FC = () => {
         />
         <StackScreen name={'ROOM_BOOKING_NOW'} component={RoomBookingNow} />
         <StackScreen
+          options={{
+            headerShown: false,
+          }}
           name={'ROOM_BOOKING_LATER'}
           component={ScheduleRoomBookingLater}
         />

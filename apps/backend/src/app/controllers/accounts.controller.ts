@@ -270,7 +270,7 @@ export class AccountsController {
   updateAccountById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string },
-    @Body() body: AccountAddRequestPayload
+    @Body() body: AccountUpdateProfilePayload
   ) {
     return this.service.updateById(user.account_id, payload.id, body);
   }
@@ -422,7 +422,7 @@ export class AccountsController {
     );
   }
 
- 
+
 
   @Put('update/upload-avatar/:id')
   @ApiConsumes('multipart/form-data')

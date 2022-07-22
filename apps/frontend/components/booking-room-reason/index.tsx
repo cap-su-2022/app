@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Button, createStyles } from '@mantine/core';
+import React, {useEffect, useState} from 'react';
+import {Button, createStyles} from '@mantine/core';
 import Header from '../common/header.component';
-import { ArchiveOff, BuildingWarehouse, Plus } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {ArchiveOff, BuildingWarehouse, Check, Plus, X} from 'tabler-icons-react';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {
   fetchBookingReasonById,
   fetchBookingReasons,
@@ -13,22 +13,23 @@ import {
   defaultPaginationParams,
   PaginationParams,
 } from '../../models/pagination-params.model';
-import { useDebouncedValue } from '@mantine/hooks';
-import { TableBody } from '../actions/table-body.component';
+import {useDebouncedValue} from '@mantine/hooks';
+import {TableBody} from '../actions/table-body.component';
 import TableFooter from '../actions/table-footer.component';
 import TableHeader from '../actions/table-header.component';
 import InfoModal from '../actions/modal/info-modal.component';
 import * as Yup from 'yup';
 import AddModal from '../actions/modal/add-modal.component';
-import { FormikValues, useFormik } from 'formik';
-import { InputAddProps } from '../actions/models/input-add-props.model';
-import { InputTypes } from '../actions/models/input-type.constant';
+import {FormikValues, useFormik} from 'formik';
+import {InputAddProps} from '../actions/models/input-add-props.model';
+import {InputTypes} from '../actions/models/input-type.constant';
 import UpdateModal from '../actions/modal/update-modal.component';
-import { InputUpdateProps } from '../actions/models/input-update-props.model';
+import {InputUpdateProps} from '../actions/models/input-update-props.model';
 import AdminLayout from '../layout/admin.layout';
 import dayjs from 'dayjs';
 import RestoreDeletedModal from './restore-deleted.modal.component';
 import DeleteModal from './delete-modal.component';
+import {showNotification} from "@mantine/notifications";
 
 const AddBookingReasonValidation = Yup.object().shape({
   name: Yup.string()
@@ -130,10 +131,10 @@ const ManageBookingReason: React.FC<any> = () => {
     return (
       <div>
         <Button
-          leftIcon={<Plus />}
+          leftIcon={<Plus/>}
           color="green"
           onClick={() => setAddShown(!isAddShown)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
           Add
         </Button>
@@ -142,7 +143,7 @@ const ManageBookingReason: React.FC<any> = () => {
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
         >
-          <ArchiveOff />
+          <ArchiveOff/>
         </Button>
       </div>
     );
@@ -285,6 +286,26 @@ const ManageBookingReason: React.FC<any> = () => {
       })
     )
       .unwrap()
+      .catch(
+        (e) =>
+          showNotification({
+              id: 'restore-data',
+              color: 'red',
+              title: 'Error while add booking reason',
+              message: e.message ?? 'Failed to add booking reason',
+              icon: <X/>,
+              autoClose: 3000,
+            }
+          )).then(() =>
+      showNotification({
+        id: 'restore-data',
+        color: 'teal',
+        title: 'New booking reason was added',
+        message: 'New booking reason successfully added',
+        icon: <Check/>,
+        autoClose: 3000,
+      })
+    )
       .then((e) => handleAddModalClose());
   };
 
@@ -327,10 +348,10 @@ const ManageBookingReason: React.FC<any> = () => {
   });
   return (
     <AdminLayout>
-      <Header title="Booking Reason" icon={<BuildingWarehouse size={50} />} />
+      <Header title="Booking Reason" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
-        actions={<ActionsFilter />}
+        actions={<ActionsFilter/>}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
         actionsLeft={null}
