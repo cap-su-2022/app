@@ -136,6 +136,8 @@ export class AccountRepository extends Repository<Accounts> {
     return this.createQueryBuilder(`account`)
       .select('account.id', 'id')
       .addSelect('account.username', 'username')
+      .addSelect('account.email', 'email')
+      .addSelect('account.phone', 'phone')
       .addSelect('account.fullname', 'fullname')
       .addSelect('account.role_id', 'roleId')
       .addSelect('r.name', 'roleName')

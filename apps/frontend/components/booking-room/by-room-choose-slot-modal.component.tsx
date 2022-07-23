@@ -186,7 +186,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     let isOverSlot = false;
     return (
       <tr key={slot.id}>
-        <td>Slot {indexSlot + 1}</td>
+        <td>{slot.name}</td>
         {days
           ? days.map((day, index) => {
               isBooked = false;

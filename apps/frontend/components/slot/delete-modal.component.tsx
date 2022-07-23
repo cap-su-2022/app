@@ -7,12 +7,7 @@ import {
   Table,
   Text,
 } from '@mantine/core';
-import {
-  Check,
-  ScanEye,
-  Trash,
-  X,
-} from 'tabler-icons-react';
+import { Check, ScanEye, Trash, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -40,56 +35,43 @@ interface DeleteModalProps {
 
 const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const { classes } = useStyles();
-  const selectedSlotId = useAppSelector(
-    (state) => state.slot.slot.id
-  );
+  const selectedSlotId = useAppSelector((state) => state.slot.slot.id);
   const [slot, setSlot] = useState<string>('');
   const [isShownListRequest, setShownListRequest] = useState(false);
 
   const [listRequest, setListRequest] = useState([]);
-  console.log("LIST REQUEST: ", listRequest);
+  console.log('LIST REQUEST: ', listRequest);
 
   const dispatch = useAppDispatch();
 
   const handleDeleteSlot = () => {
-    if (listRequest.length > 0) {
-      showNotification({
-        id: 'delete-data',
-        color: 'red',
-        title: 'Error while delete slot',
-        message:
-          'Chưa xử lý vụ delete slot đã có người book',
-        icon: <X />,
-        autoClose: 3000,
-      });
-    } else {
-      dispatch(deleteSlotById(selectedSlotId))
-        .catch((e) =>
-          showNotification({
-            id: 'delete-data',
-            color: 'red',
-            title: 'Error while delete slot',
-            message: e.message ?? 'Failed to delete slot',
-            icon: <X />,
-            autoClose: 3000,
-          })
-        )
-        .then(() =>
-          showNotification({
-            id: 'delete-data',
-            color: 'teal',
-            title: 'Slot was deleted',
-            message: 'Slot was successfully deleted',
-            icon: <Check />,
-            autoClose: 3000,
-          })
-        )
-        .then(() => {
-          props.toggleShown();
-          dispatch(fetchAllSlots(props.pagination));
-          dispatch(fetchDeletedSlots(''));
-        });
-    }
+    dispatch(deleteSlotById(selectedSlotId))
+      .unwrap()
+      .then(() =>
+        showNotification({
+          id: 'delete-data',
+          color: 'teal',
+          title: 'Slot was deleted',
+          message: 'Slot was successfully deleted',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .then(() => {
+        props.toggleShown();
+        dispatch(fetchAllSlots(props.pagination));
+        dispatch(fetchDeletedSlots(''));
+      })
+      .catch((e) =>
+        showNotification({
+          id: 'delete-data',
+          color: 'red',
+          title: 'Error while delete slot',
+          message: e.message ?? 'Failed to delete slot',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      );
   };
 
   useEffect(() => {
@@ -158,7 +140,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
             <tr key={row.id}>
               <td>{index + 1}</td>
               <td>{row.roomName}</td>
-              <td>{dayjs(row.checkinDate).format("DD-MM-YYYY")}</td>
+              <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
               <td>{row.requestedBy}</td>
               <td>{row.checkinSlot}</td>
               <td>{row.checkoutSlot}</td>
@@ -200,7 +182,6 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
             <Th sorted={null} reversed={null} onSort={null}>
               Slot End
             </Th>
-
           </tr>
         </thead>
         <tbody>{rows}</tbody>
@@ -275,7 +256,9 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           </Button>
         </div>
       </div>
-      {isShownListRequest && listRequest.length > 0 ? <ListRequestBySlot /> : null}
+      {isShownListRequest && listRequest.length > 0 ? (
+        <ListRequestBySlot />
+      ) : null}
     </Modal>
   );
 };

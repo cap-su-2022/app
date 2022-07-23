@@ -1,6 +1,6 @@
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
 import { Slot } from '../models/slot.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { PaginationParams } from '../controllers/pagination.model';
 import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
 import { Accounts } from '../models';
@@ -72,13 +72,13 @@ export class SlotRepository extends Repository<Slot> {
       .addSelect('s.time_end', 'timeEnd')
       .addSelect('a.username', 'createdBy')
       .addSelect('s.created_at', 'createdAt')
+      .addSelect('s.deleted_at', 'deletedAt')
       .addSelect('aa.username', 'updatedBy')
       .addSelect('s.updated_at', 'updatedAt')
       .addSelect('s.description', 'description')
       .innerJoin(Accounts, 'a', 'a.id = s.created_by')
       .leftJoin(Accounts, 'aa', 'aa.id = s.updated_by')
-      .where('s.deleted_at IS NULL')
-      .andWhere('s.id = :id', { id: id })
+      .where('s.id = :id', { id: id })
       .getRawOne<Slot>();
   }
 
@@ -114,22 +114,12 @@ export class SlotRepository extends Repository<Slot> {
     );
   }
 
-  async deleteById(accountId: string, id: string) {
-    const isDeleted = await this.createQueryBuilder('slot')
-      .update({
-        deletedAt: new Date(),
-        deletedBy: accountId,
-      })
-      .where('slot.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-    if (isDeleted.affected > 0) {
-      return this.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
-    }
+  async deleteById(accountId: string, id: string, queryRunner: QueryRunner) {
+    return await queryRunner.manager.save(Slot, {
+      id: id,
+      deletedBy: accountId,
+      deletedAt: new Date(),
+    });
   }
 
   findDeletedByPagination(search: string): Promise<Slot[]> {
@@ -148,14 +138,14 @@ export class SlotRepository extends Repository<Slot> {
   }
 
   async restoreDeletedById(accountId: string, id: string) {
-    const isRestored = await this.createQueryBuilder('sl')
+    const isRestored = await this.createQueryBuilder('slot')
       .update({
         updatedAt: new Date(),
         updatedBy: accountId,
         deletedAt: null,
         deletedBy: null,
       })
-      .where('sl.id = :id', { id: id })
+      .where('slot.id = :id', { id: id })
       .useTransaction(true)
       .execute();
     if (isRestored.affected > 0) {
