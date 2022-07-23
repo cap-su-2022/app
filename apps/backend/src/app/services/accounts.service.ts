@@ -302,7 +302,7 @@ export class AccountsService {
     try {
       console.log(image);
       const user = await this.repository.findById(id);
-      if (!user.deletedAt || !user.disabledAt) {
+      if (user.deletedAt || user.disabledAt) {
         throw new BadRequestException('This account has been disabled');
       }
       const imageId = randomUUID();
