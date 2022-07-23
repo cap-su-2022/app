@@ -1,4 +1,11 @@
-import { BadRequestException, Injectable, Logger, Scope } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+  Scope,
+} from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { BookingRoomRepository } from '../repositories';
 import { BookingRoomResponseDTO } from '../dto/booking-room.response.dto';
@@ -18,7 +25,7 @@ import { BookingRequestAddRequestPayload } from '../payload/request/booking-requ
 import { BookingRequestHistService } from './booking-room-hist.service';
 import { SlotService } from './slot.service';
 import dayjs = require('dayjs');
-import { DataSource } from 'typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
 import { BookingRoomDevicesService } from './booking-request-devices.service';
 import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
 
@@ -34,6 +41,7 @@ export class BookingRoomService {
     private readonly deviceService: DevicesService,
     private readonly roomWishlistService: RoomWishlistService,
     private readonly accountService: AccountsService,
+    @Inject(forwardRef(() => SlotService))
     private readonly slotService: SlotService,
     private readonly bookingRoomDeviceService: BookingRoomDevicesService,
 
@@ -236,8 +244,6 @@ export class BookingRoomService {
     }
   }
 
-
-
   async getRequestPendingOfRoomInDay(
     roomId: string,
     requestId: string,
@@ -405,7 +411,6 @@ export class BookingRoomService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      console.log('asss');
       const role = await this.accountService.getRoleOfAccount(userId);
       const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlot);
       const slotOut = await this.slotService.getNumOfSlot(payload.checkoutSlot);
@@ -571,6 +576,33 @@ export class BookingRoomService {
     }
   }
 
+  async cancelRequest(accountId: string, id: string, queryRunner: QueryRunner) {
+    const isExisted = await this.repository.existsById(id);
+    if (!isExisted) {
+      throw new BadRequestException(
+        'Request does not found with the provided id'
+      );
+    }
+    // const isAccepted = await this.repository.isAcceptById(id);
+    // if (isAccepted) {
+    //   throw new BadRequestException('Request already accepted!');
+    // }
+
+    const isCancelled = await this.repository.isCancelledById(id);
+    if (isCancelled) {
+      throw new BadRequestException('Request already cancelled!');
+    }
+
+    const role = await this.accountService.getRoleOfAccount(accountId);
+    const request = await this.repository.cancelRoomBookingById(
+      accountId,
+      id,
+      role.role_name,
+      queryRunner
+    );
+
+    return request;
+  }
   async cancelRoomBookingById(accountId: string, id: string) {
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -578,29 +610,7 @@ export class BookingRoomService {
     await queryRunner.startTransaction();
 
     try {
-      const isExisted = await this.repository.existsById(id);
-      if (!isExisted) {
-        throw new BadRequestException(
-          'Request does not found with the provided id'
-        );
-      }
-      const isAccepted = await this.repository.isAcceptById(id);
-      if (isAccepted) {
-        throw new BadRequestException('Request already accepted!');
-      }
-
-      const isCancelled = await this.repository.isCancelledById(id);
-      if (isCancelled) {
-        throw new BadRequestException('Request already cancelled!');
-      }
-
-      const role = await this.accountService.getRoleOfAccount(accountId);
-      const request = await this.repository.cancelRoomBookingById(
-        accountId,
-        id,
-        role.role_name,
-        queryRunner
-      );
+      const request = await this.cancelRequest(accountId, id, queryRunner);
 
       await queryRunner.commitTransaction();
       return request;

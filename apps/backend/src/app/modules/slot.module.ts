@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import { SlotRepository } from '../repositories/slot.repository';
 import { SlotController } from '../controllers/slots.controller';
@@ -8,12 +8,14 @@ import { HttpModule } from '@nestjs/axios';
 import ConfigModule from './global/config.module';
 import { AccountsModule } from './accounts.module';
 import { BookingRoomRepository } from '../repositories';
+import { BookingRoomModule } from './booking-room.module';
 
 @Module({
   imports: [
     ConfigModule,
     HttpModule,
     AccountsModule,
+    forwardRef(() => BookingRoomModule),
     TypeOrmExModule.forCustomRepository([
       SlotRepository,
     ]),

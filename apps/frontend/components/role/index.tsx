@@ -264,7 +264,7 @@ const ManageRole: React.FC<any> = () => {
       description: 'Role name',
       inputtype: InputTypes.TextInput,
       label: 'Role name',
-      readOnly: false,
+      readOnly: true,
       required: true,
       value: role.name,
     },

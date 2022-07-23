@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { BookingRoomController } from '../controllers';
 import { BookingRoomService } from '../services';
 import { AccountRepository, BookingRoomRepository } from '../repositories';
@@ -15,26 +15,17 @@ import { BookingRequestHistRepository } from '../repositories/booking-request-hi
 import { SlotModule } from './slot.module';
 import { BookingRoomDevicesService } from '../services/booking-request-devices.service';
 import { BookingRoomDevicesRepository } from '../repositories/booking-request-devices.repository';
+import { SlotService } from '../services/slot.service';
+import { BookingRoomModule } from './booking-room.module';
+import { SlotController } from '../controllers/slots.controller';
 
 @Module({
   imports: [
-    DevicesModule,
-    RoomWishlistModule,
-    KeycloakModule,
-    RoomsModule,
-    AccountsModule,
-    RoomTypeModule,
-    forwardRef(() => SlotModule),
-
-    TypeOrmExModule.forCustomRepository([
-      BookingRoomRepository,
-      AccountRepository,
-      BookingRequestHistRepository,
-      BookingRoomDevicesRepository
-    ]),
+    BookingRoomModule,
+    SlotModule,
   ],
-  controllers: [BookingRoomController],
-  providers: [BookingRoomService, TasksService, BookingRequestHistService, BookingRoomDevicesService],
-  exports: [BookingRoomService, BookingRequestHistService, BookingRoomDevicesService],
+  controllers: [BookingRoomController, SlotController],
+  providers: [BookingRoomService, SlotService],
+  exports: [BookingRoomService, SlotService],
 })
-export class BookingRoomModule {}
+export class RequestSlotModule {}

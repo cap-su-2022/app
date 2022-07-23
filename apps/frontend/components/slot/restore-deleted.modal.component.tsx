@@ -11,16 +11,14 @@ import {
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {Check, RotateClockwise, Search, X} from 'tabler-icons-react';
-import {
-  fetchDeletedDeviceTypes,
-  fetchDeviceTypes,
-} from '../../redux/features/device-type';
 import { PaginationParams } from '../../models/pagination-params.model';
 import dayjs from 'dayjs';
 import { showNotification } from '@mantine/notifications';
 import NoDataFound from "../no-data-found";
 import { useDebouncedValue } from '@mantine/hooks';
 import { restoreDeletedSlotById } from '../../redux/features/slot/thunk/restore-delete-slot-by-id.thunk';
+import { fetchAllSlots } from '../../redux/features/slot';
+import { fetchDeletedSlots } from '../../redux/features/slot/thunk/fetch-deleted-device-types';
 
 
 interface RestoreDeletedModalProps {
@@ -40,7 +38,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   const [searchDebounced] = useDebouncedValue<string>(search, 400);
 
   useEffect(() => {
-    dispatch(fetchDeletedDeviceTypes(search));
+    dispatch(fetchDeletedSlots(search));
   }, [searchDebounced]);
 
 
@@ -69,8 +67,8 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
       )
       .then(() => {
         props.toggleShown();
-        dispatch(fetchDeletedDeviceTypes(''));
-        dispatch(fetchDeviceTypes(props.pagination));
+        dispatch(fetchDeletedSlots(''));
+        dispatch(fetchAllSlots(props.pagination));
       })
   };
 

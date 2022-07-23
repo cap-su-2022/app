@@ -109,7 +109,6 @@ export class RolesRepository extends Repository<Roles> {
       {
         ...oldData,
         id: id,
-        name: payload.name.trim(),
         description: payload.description,
         updatedBy: accountId,
         updatedAt: new Date(),

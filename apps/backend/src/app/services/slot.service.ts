@@ -1,17 +1,26 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { SlotRepository } from '../repositories/slot.repository';
 import { PaginationParams } from '../controllers/pagination.model';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { Slot } from '../models/slot.entity';
 import { BookingRoomService } from './booking-room.service';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class SlotService {
   private readonly logger = new Logger(SlotService.name);
 
   constructor(
+    private readonly dataSource: DataSource,
     private readonly repository: SlotRepository,
-    // private readonly bookingRoomService: BookingRoomService
+    @Inject(forwardRef(() => BookingRoomService))
+    private readonly bookingRoomService: BookingRoomService
   ) {}
 
   async getAllByPagination(
@@ -73,10 +82,9 @@ export class SlotService {
           `Already have slot with name '${payload.name}' active. Try other name or delete slot have name '${payload.name}' before add new`
         );
       }
-      const slot = await this.repository.addNew(accountId, payload);
+        const slot = await this.repository.addNew(accountId, payload);
       // await this.histService.createNew(slot);
       return slot;
-      return null
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);
@@ -84,6 +92,10 @@ export class SlotService {
   }
 
   async deleteSlotById(accountId: string, id: string) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -96,20 +108,21 @@ export class SlotService {
         throw new BadRequestException('This slot is already deleted');
       }
 
-      // const listRequestBySlot = await this.bookingRoomService.getBookingBySlot(
-      //   id
-      // );
-      // if (listRequestBySlot?.length > 0) {
-      //   throw new BadRequestException(
-      //     'Chưa xử lý vụ delete slot đã có người book'
-      //   );
-      // }
+      const listRequestBySlot =
+        await this.bookingRoomService.getRequestBySlotId(id);
+      if (listRequestBySlot?.length > 0) {
+        for(let i = 0; i < listRequestBySlot.length; i++) {
+          this.bookingRoomService.cancelRequest(accountId, listRequestBySlot[i].id, queryRunner)
+        }
+      }
 
-      const slot = await this.repository.deleteById(accountId, id);
+      const slot = await this.repository.deleteById(accountId, id, queryRunner);
       // await this.histService.createNew(slot);
+      await queryRunner.commitTransaction();
       return slot;
     } catch (e) {
       this.logger.error(e);
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
     }
   }
@@ -133,7 +146,7 @@ export class SlotService {
         );
       }
       const data = await this.repository.findById(id);
-      if (data !== undefined) {
+      if (!data.deletedAt) {
         throw new BadRequestException(
           'This slot ID is now active. Cannot restore it'
         );
