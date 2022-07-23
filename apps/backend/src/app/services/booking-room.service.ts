@@ -50,6 +50,82 @@ export class BookingRoomService {
     private readonly histService: BookingRequestHistService
   ) {}
 
+  async getStatistics() {
+    const result = {
+      totalTime: {
+        total: 0,
+        booked: 0,
+        cancelled: 0,
+      },
+      month: {
+        total: 0,
+        booked: 0,
+        cancelled: 0,
+      },
+      week: {
+        total: 0,
+        booked: 0,
+        cancelled: 0,
+      },
+      day: {
+        total: 0,
+        booked: 0,
+        cancelled: 0,
+      },
+    };
+    const today = new Date().setHours(0, 0, 0, 0);
+    const curr = new Date();
+    const firstDayInWeek = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+    const lastDayInWeek = firstDayInWeek + 6; // last day is the first day + 6
+    const sunday = new Date(curr.setDate(firstDayInWeek)).setHours(0, 0, 0, 0);
+    const satuday = new Date(curr.setDate(lastDayInWeek)).setHours(0, 0, 0, 0);
+    const firstDayInMonth = new Date(curr.setDate(1)).setHours(0, 0, 0, 0)
+    const lastDayInMonth = new Date(curr.getFullYear(), curr.getMonth() + 1, 0).setHours(0, 0, 0, 0)
+    const allRequest = await this.repository.getAllRequest();
+    for (let i = 0; i < allRequest.length; i++) {
+      const checkinDate = allRequest[i].checkinDate.setHours(0, 0, 0, 0);
+      if (checkinDate === today) {
+        result.day.total += 1;
+      }
+      if (checkinDate >= sunday && checkinDate <= satuday) {
+        result.week.total += 1;
+      }
+      if (checkinDate >= firstDayInMonth && checkinDate <= lastDayInMonth) {
+        result.month.total += 1;
+      }
+      result.totalTime.total += 1;
+      if (
+        allRequest[i].status === 'BOOKED' ||
+        allRequest[i].status === 'CHECKED_ID' ||
+        allRequest[i].status === 'CHECKED_OUT'
+      ) {
+        if (checkinDate === today) {
+          result.day.booked += 1;
+        }
+        if (checkinDate >= sunday && checkinDate <= satuday) {
+          result.week.booked += 1;
+        }
+        if (checkinDate >= firstDayInMonth && checkinDate <= lastDayInMonth) {
+          result.month.booked += 1;
+        }
+        result.totalTime.booked += 1;
+      } else {
+        if (checkinDate === today) {
+          result.day.cancelled += 1;
+        }
+        if (checkinDate >= sunday && checkinDate <= satuday) {
+          result.week.cancelled += 1;
+        }
+        if (checkinDate >= firstDayInMonth && checkinDate <= lastDayInMonth) {
+          result.month.cancelled += 1;
+        }
+        result.totalTime.cancelled += 1;
+      }
+    }
+    console.log('TODAY: ', dayjs(today).format('DD-MM_YYYY'));
+    return result;
+  }
+
   async getBookingRooms(
     payload: BookingRoomsFilterRequestPayload
   ): Promise<BookingRoomResponseDTO[]> {

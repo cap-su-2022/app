@@ -21,6 +21,16 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getMany();
   }
 
+  getAllRequest() {
+    return this.createQueryBuilder('booking_request')
+      .select('booking_request.checkin_Date', 'checkinDate')
+      .addSelect('booking_request.id', 'id')
+      .addSelect('booking_request.room_id', 'roomId')
+      .addSelect('booking_request.status', 'status')
+      .where(`booking_request.status IN ('BOOKED', 'CHECKED_IN', 'CHECKED_OUT', 'CANCELLED')`)
+      .getRawMany();
+  }
+
   findByPaginationPayload(payload: GetBookingRoomsPaginationPayload) {
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.checkin_Date', 'checkinDate')
