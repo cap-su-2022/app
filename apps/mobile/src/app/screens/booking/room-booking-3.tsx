@@ -9,10 +9,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { FPT_ORANGE_COLOR, RED, WHITE } from '@app/constants';
+import {
+  BLACK,
+  FPT_ORANGE_COLOR,
+  GRAY,
+  INPUT_GRAY_COLOR,
+  RED,
+  WHITE,
+} from '@app/constants';
 import { deviceHeight, deviceWidth } from '../../utils/device';
 import {
   ChevronDoubleLeftIcon,
+  ExclamationIcon,
   TicketIcon,
 } from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
@@ -23,6 +31,7 @@ import { fetchAllBookingReason } from '../../redux/features/booking-reason/thunk
 import { BookingRoomReason } from '../../redux/models/booking-reason-response';
 import SelectBookingReason from './request-room-booking/select-booking-reason';
 import { Device } from '../../redux/models/device.model';
+import Divider from '../../components/text/divider';
 
 export const RoomBooking3: React.FC = () => {
   const navigate = useAppNavigation();
@@ -89,20 +98,13 @@ export const RoomBooking3: React.FC = () => {
 
   const InfoDetail = (title, detail) => {
     return (
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-        }}
-      >
-        <Text style={styles.title}>{title}</Text>
-        <View style={styles.bookingNowContainer}>
-          <Text style={styles.bookingNowButtonText}>
-            {detail ? detail : 'N/A'}
-          </Text>
+      <>
+        <View style={styles.dataRowContainer}>
+          <Text style={styles.titleText}>{title}</Text>
+          <Text style={styles.valueText}>{detail}</Text>
         </View>
-      </View>
+        <Divider num={deviceWidth / 8} />
+      </>
     );
   };
 
@@ -124,48 +126,61 @@ export const RoomBooking3: React.FC = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.bigTitle}>Review Your Booking Information</Text>
-          <View style={styles.bookingInformationContainer}>
-            {InfoDetail('Start Day:', roomBooking.fromDay)}
-            {InfoDetail('Slot', `Slot ${roomBooking.toSlotNum}`)}
-            {InfoDetail('Room Name:', roomBooking.roomName)}
-            <Text style={styles.title}>List Device</Text>
-            {/*<FlatList*/}
-            {/*  data={roomBooking.devices}*/}
-            {/*  renderItem={(device) => Device(device)}*/}
-            {/*/>*/}
-            {roomBooking.devices.map((device) => (
-              <Device device={device} />
-            ))}
-          </View>
-          <Text style={styles.bigTitle}>Additional Booking Information</Text>
-          <View style={styles.bookingInformationContainer}>
-            <SelectBookingReason
-              handleSetBookingRoomReason={(val) => setBookingReason(val)}
-              bookingReason={bookingReason}
-              bookingReasonSelections={bookingReasonSelections}
+          <View style={styles.warningMessageContainer}>
+            <ExclamationIcon
+              color={FPT_ORANGE_COLOR}
+              size={deviceWidth / 14}
+              style={styles.warningMessageIcon}
             />
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <Text style={styles.title}>Description</Text>
-              <View style={styles.bookingDescriptionContainer}>
-                <TextInput
-                  onChangeText={(val) => setDescription(val)}
-                  numberOfLines={5}
-                  multiline={true}
-                  maxLength={250}
-                  value={description}
-                  placeholder="Your description ..."
-                  keyboardType="default"
-                />
+            <Text style={styles.warningMessageText}>
+              Read the booking request information carefully before proceeding
+              the next step!
+            </Text>
+          </View>
+          <Text style={styles.informationHeaderTitle}>BOOKING INFORMATION</Text>
+         <View style={{padding: 10}}>
+           <View style={styles.bookingInformationContainer}>
+             {InfoDetail('Start Day:', roomBooking.fromDay)}
+             {InfoDetail('Slot', `Slot ${roomBooking.toSlotNum}`)}
+             {InfoDetail('Room Name:', roomBooking.roomName)}
+             <Text style={[styles.titleText, { margin: 10 }]}>List Device</Text>
+             {roomBooking.devices.map((device) => (
+               <Device device={device} />
+             ))}
+           </View>
+         </View>
+          <Text style={styles.informationHeaderTitle}>ADDITIONAL BOOKING INFORMATION</Text>
+          <View style={{ padding: 10}}>
+            <View style={styles.bookingInformationContainer}>
+              <SelectBookingReason
+                handleSetBookingRoomReason={(val) => setBookingReason(val)}
+                bookingReason={bookingReason}
+                bookingReasonSelections={bookingReasonSelections}
+              />
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={styles.title}>Description</Text>
+                <View style={styles.bookingDescriptionContainer}>
+                  <TextInput
+                    onChangeText={(val) => setDescription(val)}
+                    numberOfLines={5}
+                    multiline={true}
+                    maxLength={250}
+                    value={description}
+                    placeholder="Your description ..."
+                    keyboardType="default"
+                  />
+                </View>
               </View>
             </View>
+
           </View>
+
 
           <View style={styles.footerContainer}>
             <TouchableOpacity
@@ -175,7 +190,6 @@ export const RoomBooking3: React.FC = () => {
               <ChevronDoubleLeftIcon color={RED} />
               <Text style={styles.reviewAgainText}>Review again</Text>
             </TouchableOpacity>
-
             <TouchableOpacity
               onPress={() => handleNextStep()}
               style={styles.bookNowButton}
@@ -201,7 +215,6 @@ export const RoomBooking3: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
-    padding: 20,
     flexDirection: 'column',
     justifyContent: 'space-between',
     flexGrow: 1,
@@ -230,7 +243,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'rgba(240, 110, 40, 0.2)',
+    backgroundColor: '#f2f2f2',
   },
   bookingNowButtonText: {
     fontSize: deviceWidth / 25,
@@ -264,7 +277,7 @@ const styles = StyleSheet.create({
   },
   slotPicker: {
     margin: 5,
-    backgroundColor: 'rgba(240, 110, 40, 0.2)',
+    backgroundColor: '#f2f2f2',
     height: 50,
     width: deviceWidth / 1.5,
     display: 'flex',
@@ -280,10 +293,6 @@ const styles = StyleSheet.create({
     fontSize: deviceWidth / 23,
     fontWeight: '700',
     marginBottom: 5,
-  },
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
   },
   checkBox: {
     alignSelf: 'center',
@@ -348,6 +357,85 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: 'rgba(240, 110, 40, 0.2)',
+    backgroundColor: '#f2f2f2',
+  },
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backNavigation: {
+    marginTop: -10,
+    marginLeft: 20,
+  },
+  textStatus: {
+    fontWeight: '500',
+    fontSize: deviceWidth / 23,
+    alignSelf: 'center',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  headerTitleText: {
+    color: BLACK,
+    fontWeight: '600',
+    fontSize: deviceWidth / 18,
+    marginBottom: 20,
+    marginTop: 10,
+    marginLeft: 30,
+  },
+  warningMessageContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginLeft: 20,
+    marginRight: 20,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: FPT_ORANGE_COLOR,
+  },
+  warningMessageIcon: {
+    marginTop: 10,
+    marginLeft: 10,
+  },
+  warningMessageText: {
+    color: FPT_ORANGE_COLOR,
+    fontSize: deviceWidth / 25,
+    fontWeight: '600',
+    margin: 10,
+  },
+  informationHeaderTitle: {
+    marginTop: 20,
+    color: GRAY,
+    fontSize: deviceWidth / 23,
+    fontWeight: '600',
+    marginLeft: 20,
+  },
+  dataRowContainer: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 10,
+    flexWrap: 'wrap',
+  },
+  titleText: {
+    color: GRAY,
+    fontWeight: '400',
+    fontSize: deviceWidth / 23,
+  },
+  valueText: {
+    color: BLACK,
+    fontSize: deviceWidth / 23,
+    fontWeight: '500',
+  },
+  signatureView: {
+    marginTop: 10,
+    display: 'flex',
+    width: deviceWidth / 1.1,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: INPUT_GRAY_COLOR,
+    alignSelf: 'center',
+    height: 150,
   },
 });

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, {useMemo, useState} from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CalendarIcon } from 'react-native-heroicons/outline';
 import { FPT_ORANGE_COLOR, GRAY, WHITE } from '@app/constants';
@@ -6,7 +6,8 @@ import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
 import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
 import { deviceWidth } from '../../../../utils/device';
 import DateSelectMultiDateCheckbox from './multi-date';
-import dayjs from 'dayjs';
+import {useAppSelector} from "../../../../hooks/use-app-selector.hook";
+import dayjs from "dayjs";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface RequestRoomBookingDateSelectProps {
@@ -21,16 +22,11 @@ const RequestRoomBookingDateSelect: React.FC<
   const Today = useMemo(() => {
     return dayjs(new Date()).format('ddd DD/MM/YYYY');
   }, []);
+  const roomBooking = useAppSelector(
+    (state) => state.roomBooking.addRoomBooking
+  );
 
-  /*
-* props.route.params
-                ? props.route.params.dayStart
-                  ? props.route.params.dayStart.length > 1
-                    ? props.route.params.dayStart
-                    : Today
-                  : Today
-                : Today
-* */
+
   return (
     <View>
       <View style={styles.startDayContainer}>
@@ -42,7 +38,7 @@ const RequestRoomBookingDateSelect: React.FC<
               navigate.navigate('ROOM_BOOKING_CHOOSE_START_DAY');
             }}
           >
-            <Text style={styles.bookingNowButtonText}>{Today}</Text>
+            <Text style={styles.bookingNowButtonText}>{roomBooking.fromDay || Today}</Text>
             <CalendarIcon size={25} color={FPT_ORANGE_COLOR} />
           </TouchableOpacity>
         </View>
@@ -61,7 +57,7 @@ const RequestRoomBookingDateSelect: React.FC<
               navigate.navigate('ROOM_BOOKING_CHOOSE_END_DAY');
             }}
           >
-            <Text style={styles.bookingNowButtonText}>{Today}</Text>
+            <Text style={styles.bookingNowButtonText}>{roomBooking.toDay || Today}</Text>
             <CalendarIcon size={25} color={FPT_ORANGE_COLOR} />
           </TouchableOpacity>
         </>
@@ -75,6 +71,7 @@ const styles = StyleSheet.create({
     fontSize: deviceWidth / 23,
     fontWeight: '600',
     marginBottom: 6,
+    marginLeft: 5,
   },
   startDayContainer: {
     display: 'flex',
@@ -88,9 +85,11 @@ const styles = StyleSheet.create({
     width: deviceWidth / 1.5,
     height: 50,
     paddingHorizontal: 10,
+    borderWidth: 2,
+    borderColor: WHITE,
     fontSize: 20,
     fontWeight: '600',
-    borderRadius: 8,
+    borderRadius: 10,
     marginBottom: 10,
     display: 'flex',
     flexDirection: 'row',

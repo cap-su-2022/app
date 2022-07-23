@@ -9,29 +9,47 @@ import {
   ClockIcon,
   HomeIcon,
 } from 'react-native-heroicons/outline';
+import { LOCAL_STORAGE } from '../../../../utils/local-storage';
 
 const RequestRoomBookingRecentlySearch: React.FC<any> = () => {
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
+  const user = LOCAL_STORAGE.getString('user');
+  const historySearch = LOCAL_STORAGE.getString(JSON.parse(user).username);
+
+  let historyArray = [];
+  if (typeof historySearch !== 'undefined') {
+    historyArray = new Function('return [' + historySearch + '];')();
+  }
+
+  const RecentlyHistory = (props, index) => {
+    return (
+      <View style={styles.itemContainer} key={index}>
+        <View style={styles.itemWrapper}>
+          <HomeIcon color={BLACK} size={deviceWidth / 16} />
+          <Text style={styles.textContent}>{props.roomName}</Text>
+        </View>
+        <View style={styles.rowContent}>
+          <CalendarIcon color={BLACK} size={deviceWidth / 16} />
+          <Text style={styles.textContent}>{props.fromDay}</Text>
+        </View>
+        <View style={styles.rowContent}>
+          <ClockIcon color={BLACK} size={deviceWidth / 16} />
+          <Text style={styles.textContent}>{props.slotName || 'N/A'}</Text>
+        </View>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.headerTitle}>Recently search</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View style={styles.itemContainer}>
-          <View style={styles.itemWrapper}>
-            <HomeIcon color={BLACK} size={deviceWidth / 16} />
-            <Text style={styles.textContent}>Room LB01</Text>
-          </View>
-          <View style={styles.rowContent}>
-            <CalendarIcon color={BLACK} size={deviceWidth / 16} />
-            <Text style={styles.textContent}>1/1/2022</Text>
-          </View>
-          <View style={styles.rowContent}>
-            <ClockIcon color={BLACK} size={deviceWidth / 16} />
-            <Text style={styles.textContent}>Slot 1 - 2</Text>
-          </View>
-        </View>
+        {typeof historySearch !== 'undefined'
+          ? historyArray.map((history, index) => {
+              return RecentlyHistory(history, index);
+            })
+          : null}
       </ScrollView>
     </View>
   );

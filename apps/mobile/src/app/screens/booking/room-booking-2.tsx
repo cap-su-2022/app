@@ -37,26 +37,23 @@ import { Device } from '../../redux/models/device.model';
 import { step3ScheduleRoomBooking } from '../../redux/features/room-booking/slice';
 import AlertModal from '../../components/modals/alert-modal.component';
 import { LOCAL_STORAGE } from '../../utils/local-storage';
+import { fetchAllDevices } from '../../redux/features/devices/thunk/fetch-all';
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
 
-  const devices = useAppSelector((state) => state.roomBooking.devices);
+  const devices = useAppSelector((state) => state.device.devices);
   const dispatch = useAppDispatch();
 
   const [deviceIds, setDeviceIds] = useState<string[]>([]);
   const [deviceNames, setDeviceNames] = useState<string[]>([]);
-
   const [search, setSearch] = useState<string>('');
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
   useEffect(() => {
-    dispatch(
-      fetchBookingRoomDevices({
-        name: search,
-        sort: sort,
-      })
-    );
+    dispatch(fetchAllDevices())
+      .unwrap()
+      .then((e) => console.log(e.length));
   }, [search, sort, dispatch]);
 
   const handleNextStep = () => {
@@ -245,15 +242,9 @@ const RoomBooking2: React.FC = () => {
       <View style={styles.container}>
         <ScrollView>
           <Filtering />
-          {/*<VirtualizedList*/}
-          {/*  getItemCount={(data) => data.length}*/}
-          {/*  getItem={(data, index) => data[index]}*/}
-          {/*  renderItem={(item: ListRenderItemInfo<Device>) => (*/}
-          {/*    <DeviceRenderItem device={item.item} />*/}
-          {/*  )}*/}
-          {/*  data={devices}*/}
-          {/*/>*/}
-          {devices.map(device => <DeviceRenderItem device={device}/>) }
+          {devices.map((device) => (
+            <DeviceRenderItem device={device} />
+          ))}
         </ScrollView>
         <View style={styles.footerContainer}>
           <TouchableOpacity
@@ -466,7 +457,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: WHITE,
-
   },
   filterContainer: {
     display: 'flex',

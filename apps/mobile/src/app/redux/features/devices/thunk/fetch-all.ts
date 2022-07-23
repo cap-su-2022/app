@@ -17,7 +17,7 @@ export const fetchAllDevices = createAsyncThunk<
 >('device/fetch-all', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.post(`${API_URL}/devices`);
+    const response = await axios.get(`${API_URL}/devices/name`);
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue(e.message);
