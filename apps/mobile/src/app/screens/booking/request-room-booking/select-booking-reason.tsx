@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   },
   slotPicker: {
     margin: 5,
-    backgroundColor: 'rgba(240, 110, 40, 0.2)',
+    backgroundColor: '#f2f2f2',
     height: 50,
     width: deviceWidth / 1.5,
     display: 'flex',
