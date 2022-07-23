@@ -1,4 +1,11 @@
-import { Brackets, In, Like, Repository, UpdateResult } from 'typeorm';
+import {
+  Brackets,
+  In,
+  Like,
+  QueryRunner,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import { RepositoryPaginationPayload } from '../models/search-pagination.payload';
 import { Rooms } from '../models';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
@@ -120,23 +127,19 @@ export class RoomsRepository extends Repository<Rooms> {
 
   createNewRoom(
     payload: DataAddRequestPayload,
-    userId: string
-  ): Promise<Devices> {
+    userId: string,
+    queryRunner: QueryRunner
+  ): Promise<Rooms> {
     if (payload.isDisabled) {
-      return this.save(
-        {
-          name: payload.name.trim(),
-          description: payload.description,
-          type: payload.type,
-          createdBy: userId,
-          createdAt: new Date(),
-          disabledBy: userId,
-          disabledAt: new Date(),
-        },
-        {
-          transaction: true,
-        }
-      );
+      return queryRunner.manager.save(Rooms, {
+        name: payload.name.trim(),
+        description: payload.description,
+        type: payload.type,
+        createdBy: userId,
+        createdAt: new Date(),
+        disabledBy: userId,
+        disabledAt: new Date(),
+      });
     } else {
       return this.save(
         {
@@ -156,14 +159,16 @@ export class RoomsRepository extends Repository<Rooms> {
   async updateById(
     accountId: string,
     roomId: string,
-    payload: DataAddRequestPayload
+    payload: DataAddRequestPayload,
+    queryRunner: QueryRunner
   ) {
     const oldData = await this.findOneOrFail({
       where: {
         id: roomId,
       },
     });
-    return this.save(
+    return queryRunner.manager.save(
+      Rooms,
       {
         ...oldData,
         id: roomId,
@@ -208,62 +213,51 @@ export class RoomsRepository extends Repository<Rooms> {
       .getRawMany<Rooms>();
   }
 
-  async disableById(accountId: string, id: string) {
-    const isDisabled = await this.createQueryBuilder('rooms')
-      .update({
-        disabledBy: accountId,
-        disabledAt: new Date(),
-      })
-      .where('rooms.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-    if (isDisabled.affected > 0) {
-      return this.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
-    }
+  async disableById(accountId: string, id: string, queryRunner: QueryRunner) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: id,
+      },
+    });
+    return queryRunner.manager.save(Rooms, {
+      ...oldData,
+      disabledBy: accountId,
+      disabledAt: new Date(),
+    });
   }
 
-  async restoreDisabledRoomById(accountId: string, id: string) {
-    const isRestored = await this.createQueryBuilder('rooms')
-      .update({
-        disabledAt: null,
-        disabledBy: null,
-        updatedBy: accountId,
-        updatedAt: new Date(),
-      })
-      .where('rooms.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-    if (isRestored.affected > 0) {
-      return this.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
-    }
+  async restoreDisabledRoomById(
+    accountId: string,
+    id: string,
+    queryRunner: QueryRunner
+  ) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: id,
+      },
+    });
+    return queryRunner.manager.save(Rooms, {
+      ...oldData,
+      disabledBy: null,
+      disabledAt: null,
+      updatedBy: accountId,
+      updatedAt: new Date(),
+    });
   }
 
-  async deleteById(accountId: string, id: string){
-    const isDeleted = await this.createQueryBuilder('rooms')
-      .update({
-        deletedAt: new Date(),
-        deletedBy: accountId,
-        disabledAt: null,
-        disabledBy: null,
-      })
-      .where('rooms.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-    if (isDeleted.affected > 0) {
-      return this.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
-    }
+  async deleteById(accountId: string, id: string, queryRunner: QueryRunner) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: id,
+      },
+    });
+    return queryRunner.manager.save(Rooms, {
+      ...oldData,
+      deletedAt: new Date(),
+      deletedBy: accountId,
+      disabledAt: null,
+      disabledBy: null,
+    });
   }
 
   findDeletedRooms(search: string) {
@@ -281,23 +275,19 @@ export class RoomsRepository extends Repository<Rooms> {
       .getRawMany<Rooms>();
   }
 
-  async restoreDeletedRoomById(accountId: string, id: string){
-    const isRestored = await this.createQueryBuilder('rooms')
-      .update({
-        deletedAt: null,
-        deletedBy: null,
-        updatedAt: new Date(),
-        updatedBy: accountId,
-      })
-      .where('rooms.id = :id', { id: id })
-      .execute();
-      if (isRestored.affected > 0) {
-        return this.findOneOrFail({
-          where: {
-            id: id,
-          },
-        });
-      }
+  async restoreDeletedRoomById(accountId: string, id: string, queryRunner: QueryRunner) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: id,
+      },
+    });
+    return queryRunner.manager.save(Rooms, {
+      ...oldData,
+      deletedBy: null,
+      deletedAt: null,
+      updatedBy: accountId,
+      updatedAt: new Date(),
+    });
   }
 
   getAllRoomsForElasticIndex(): Promise<Rooms[]> {
@@ -319,14 +309,15 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('rooms.type', 'type')
       .where('rooms.disabled_at IS NULL')
       .andWhere('rooms.deleted_at IS NULL')
-      .andWhere('rooms.name ILIKE :name', { name: `%${payload.roomName.name}%` })
+      .andWhere('rooms.name ILIKE :name', {
+        name: `%${payload.roomName.name}%`,
+      })
       .orderBy('rooms.name', payload.roomName.sort)
-      .addOrderBy('rooms.type', payload.roomType.sort)
-      if(payload.roomType.name.length > 0){
-        query.andWhere('rooms.type = :type', { type: payload.roomType.name })
-
-      }
-      return query.getRawMany<Rooms>();
+      .addOrderBy('rooms.type', payload.roomType.sort);
+    if (payload.roomType.name.length > 0) {
+      query.andWhere('rooms.type = :type', { type: payload.roomType.name });
+    }
+    return query.getRawMany<Rooms>();
   }
 
   filterRoomFreeByRoomBooked(listIdRoomBooked: string[]) {
@@ -339,7 +330,9 @@ export class RoomsRepository extends Repository<Rooms> {
       .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
       .where('rooms.disabled_at IS NULL')
       .andWhere('rooms.deleted_at IS NULL')
-      .andWhere('rooms.id NOT IN (:...listIdRoomBooked)', { listIdRoomBooked: listIdRoomBooked })
-      return query.getRawMany<Rooms>();
+      .andWhere('rooms.id NOT IN (:...listIdRoomBooked)', {
+        listIdRoomBooked: listIdRoomBooked,
+      });
+    return query.getRawMany<Rooms>();
   }
 }

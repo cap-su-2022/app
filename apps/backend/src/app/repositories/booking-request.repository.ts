@@ -279,6 +279,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getRawOne<BookingRequest>();
   }
   getRequestByRoomId(roomId: string) {
+    console.log("IDDDDDDDDDDDDDD: " + roomId)
     const date = new Date();
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
@@ -308,7 +309,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .where('booking_request.checkinDate >= :toDay', {
         toDay: date,
       })
-      .andWhere('booking_request.roomId = :roomId', {
+      .andWhere('booking_request.room_id = :roomId', {
         roomId: roomId,
       })
       .andWhere("booking_request.status IN ('PENDING', 'BOOKED')")

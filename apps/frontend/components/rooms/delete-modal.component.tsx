@@ -36,16 +36,16 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const handleDeleteRoom = () => {
-    if (listRequest.length > 0) {
-      showNotification({
-        id: 'delete-data',
-        color: 'red',
-        title: 'Error while delete room',
-        message: 'Chưa xử lý vụ delete room đã có người book',
-        icon: <X />,
-        autoClose: 3000,
-      });
-    } else {
+    // if (listRequest.length > 0) {
+    //   showNotification({
+    //     id: 'delete-data',
+    //     color: 'red',
+    //     title: 'Error while delete room',
+    //     message: 'Chưa xử lý vụ delete room đã có người book',
+    //     icon: <X />,
+    //     autoClose: 3000,
+    //   });
+    // } else {
       dispatch(deleteRoomById(selectedRoomId))
         .catch((e) =>
           showNotification({
@@ -73,7 +73,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
           dispatch(fetchDeletedRooms(''));
           listRequest.map((request) => dispatch(cancelBooking(request.id)));
         });
-    }
+    // }
   };
 
   useEffect(() => {

@@ -71,7 +71,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
         dispatch(fetchAllSlots(props.pagination));
       })
   };
-
+console.log(deletedSlots)
 
   const rows = deletedSlots?.map((row, index) => (
     <tr key={row.id}>

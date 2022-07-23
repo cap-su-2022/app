@@ -205,7 +205,7 @@ function RoomsManagement(props: any) {
           pagination={pagination}
         />
 
-        {rooms.items ? (
+        {rooms?.items ? (
           <>
             <TableBody
               actionButtonCb={handleActionsCb}

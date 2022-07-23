@@ -36,13 +36,15 @@ export class BookingRoomService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly repository: BookingRoomRepository,
-    private readonly roomService: RoomsService,
-    private readonly roomTypeService: RoomTypeService,
     private readonly deviceService: DevicesService,
     private readonly roomWishlistService: RoomWishlistService,
     private readonly accountService: AccountsService,
     @Inject(forwardRef(() => SlotService))
     private readonly slotService: SlotService,
+    @Inject(forwardRef(() => RoomsService))
+    private readonly roomService: RoomsService,
+    @Inject(forwardRef(() => RoomTypeService))
+    private readonly roomTypeService: RoomTypeService,
     private readonly bookingRoomDeviceService: BookingRoomDevicesService,
 
     private readonly histService: BookingRequestHistService
@@ -80,11 +82,11 @@ export class BookingRoomService {
     }
   }
 
-  async getRequestByRoomId(roomId: string): Promise<BookingRequest[]> {
+  getRequestByRoomId(roomId: string) {
     try {
-      return await this.repository.getRequestByRoomId(roomId);
+      return this.repository.getRequestByRoomId(roomId);
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e.message);
       throw new BadRequestException(
         'An error occurred while getting request by room id ' + roomId
       );
@@ -577,32 +579,38 @@ export class BookingRoomService {
   }
 
   async cancelRequest(accountId: string, id: string, queryRunner: QueryRunner) {
-    const isExisted = await this.repository.existsById(id);
-    if (!isExisted) {
-      throw new BadRequestException(
-        'Request does not found with the provided id'
+    try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Request does not found with the provided id'
+        );
+      }
+      // const isAccepted = await this.repository.isAcceptById(id);
+      // if (isAccepted) {
+      //   throw new BadRequestException('Request already accepted!');
+      // }
+
+      const isCancelled = await this.repository.isCancelledById(id);
+      if (isCancelled) {
+        throw new BadRequestException('Request already cancelled!');
+      }
+
+      const role = await this.accountService.getRoleOfAccount(accountId);
+      const request = await this.repository.cancelRoomBookingById(
+        accountId,
+        id,
+        role.role_name,
+        queryRunner
       );
+
+      return request;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
     }
-    // const isAccepted = await this.repository.isAcceptById(id);
-    // if (isAccepted) {
-    //   throw new BadRequestException('Request already accepted!');
-    // }
-
-    const isCancelled = await this.repository.isCancelledById(id);
-    if (isCancelled) {
-      throw new BadRequestException('Request already cancelled!');
-    }
-
-    const role = await this.accountService.getRoleOfAccount(accountId);
-    const request = await this.repository.cancelRoomBookingById(
-      accountId,
-      id,
-      role.role_name,
-      queryRunner
-    );
-
-    return request;
   }
+
   async cancelRoomBookingById(accountId: string, id: string) {
     const queryRunner = this.dataSource.createQueryRunner();
 

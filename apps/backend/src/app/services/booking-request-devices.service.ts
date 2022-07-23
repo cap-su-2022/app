@@ -32,7 +32,7 @@ export class BookingRoomDevicesService {
       if (payload) {
         const bookingRequestDevices: BookingRequestDevices[] = [];
         for (let i=0; i< payload.length; i++) {
-          const result = await await this.repository.addDeviceToRequest(
+          const result = await this.repository.addDeviceToRequest(
             bookingRequestId,
             payload[i].value,
             payload[i].quantity,
