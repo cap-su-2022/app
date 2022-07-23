@@ -21,9 +21,9 @@ import { BookingRoomDevicesRepository } from '../repositories/booking-request-de
     DevicesModule,
     RoomWishlistModule,
     KeycloakModule,
-    RoomsModule,
     AccountsModule,
-    RoomTypeModule,
+    forwardRef(() => RoomTypeModule),
+    forwardRef(() => RoomsModule),
     forwardRef(() => SlotModule),
 
     TypeOrmExModule.forCustomRepository([

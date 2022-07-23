@@ -35,16 +35,16 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const handleDisableSelectedRoom = () => {
-    if (listRequest.length > 0) {
-      showNotification({
-        id: 'disable-data',
-        color: 'red',
-        title: 'Error while disable room',
-        message: 'Chưa xử lý vụ disable room đã có người book',
-        icon: <X />,
-        autoClose: 3000,
-      });
-    } else {
+    // if (listRequest.length > 0) {
+    //   showNotification({
+    //     id: 'disable-data',
+    //     color: 'red',
+    //     title: 'Error while disable room',
+    //     message: 'Chưa xử lý vụ disable room đã có người book',
+    //     icon: <X />,
+    //     autoClose: 3000,
+    //   });
+    // } else {
       dispatch(disableRoomById(selectedRoomId))
         .catch((e) =>
           showNotification({
@@ -72,7 +72,7 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
           dispatch(fetchDisabledRooms(''));
           dispatch(fetchRooms(props.pagination));
         });
-    }
+    // }
   };
   useEffect(() => {
     if (selectedRoomId) {

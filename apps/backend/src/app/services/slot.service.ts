@@ -72,7 +72,13 @@ export class SlotService {
 
   async addNewSlot(
     accountId: string,
-    payload: { name: string; slotNum: number; timeStart: string, timeEnd: string, description: string }
+    payload: {
+      name: string;
+      slotNum: number;
+      timeStart: string;
+      timeEnd: string;
+      description: string;
+    }
   ) {
     try {
       const isHaveSlotSameNameActive =
@@ -82,7 +88,14 @@ export class SlotService {
           `Already have slot with name '${payload.name}' active. Try other name or delete slot have name '${payload.name}' before add new`
         );
       }
-        const slot = await this.repository.addNew(accountId, payload);
+      const isHaveSlotSameNumActive =
+        await this.repository.isHaveSlotSameNumActive(payload.slotNum);
+      if (isHaveSlotSameNumActive) {
+        throw new BadRequestException(
+          `There already exists a slot with the same sequence number active.`
+        );
+      }
+      const slot = await this.repository.addNew(accountId, payload);
       // await this.histService.createNew(slot);
       return slot;
     } catch (e) {
@@ -111,8 +124,12 @@ export class SlotService {
       const listRequestBySlot =
         await this.bookingRoomService.getRequestBySlotId(id);
       if (listRequestBySlot?.length > 0) {
-        for(let i = 0; i < listRequestBySlot.length; i++) {
-          this.bookingRoomService.cancelRequest(accountId, listRequestBySlot[i].id, queryRunner)
+        for (let i = 0; i < listRequestBySlot.length; i++) {
+          this.bookingRoomService.cancelRequest(
+            accountId,
+            listRequestBySlot[i].id,
+            queryRunner
+          );
         }
       }
 
@@ -157,6 +174,14 @@ export class SlotService {
           throw new BadRequestException(
             `Already have slot with name '${data.name}' active.
             Try other name or delete slot have name '${data.name}' before restore`
+          );
+        }
+
+        const isHaveSlotSameNumActive =
+          await this.repository.isHaveSlotSameNumActive(data.slotNum);
+        if (isHaveSlotSameNumActive) {
+          throw new BadRequestException(
+            `There already exists a slot with the same sequence number active.`
           );
         }
       }

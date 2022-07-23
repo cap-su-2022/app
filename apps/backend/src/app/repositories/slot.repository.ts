@@ -25,6 +25,16 @@ export class SlotRepository extends Repository<Slot> {
       .then((data) => data?.count > 0);
   }
 
+  isHaveSlotSameNumActive(slotNum: number): Promise<boolean> {
+    return this.createQueryBuilder('sl')
+      .select('COUNT(1)', 'count')
+      .where('sl.slotNum = :slotNum', { slotNum: slotNum })
+      .andWhere('sl.deleted_by IS NULL')
+      .andWhere('sl.deleted_at IS NULL')
+      .getRawOne()
+      .then((data) => data?.count > 0);
+  }
+
   findByPagination(params: PaginationParams): Promise<Pagination<Slot>> {
     const query = this.createQueryBuilder('s')
       .select('s.id', 'id')
@@ -127,7 +137,7 @@ export class SlotRepository extends Repository<Slot> {
       .select('sl.id', 'id')
       .addSelect('sl.name', 'name')
       .addSelect('sl.time_start', 'timeStart')
-      .addSelect('sl.time_end', 'timEnd')
+      .addSelect('sl.time_end', 'timeEnd')
       .addSelect('sl.deleted_at', 'deletedAt')
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'a.id = sl.deleted_by')

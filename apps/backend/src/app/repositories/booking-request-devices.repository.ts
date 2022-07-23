@@ -7,7 +7,6 @@ import { BadRequestException } from '@nestjs/common';
 @CustomRepository(BookingRequestDevices)
 export class BookingRoomDevicesRepository extends Repository<BookingRequestDevices> {
   async findByRequestId(id: string): Promise<BookingRequestDevices[]> {
-    console.log("ID REQUESTTTT:", id)
     return this.createQueryBuilder('brd')
       .select('brd.id', 'id')
       .addSelect('brd.booking_request_id', 'bookingRequestId')

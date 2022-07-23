@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { PaginationParams } from '../controllers/pagination.model';
 import { RoomTypeRepository } from '../repositories/room-type.repository';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
@@ -12,13 +18,14 @@ export class RoomTypeService {
   private readonly logger = new Logger(RoomTypeService.name);
 
   constructor(
-    private readonly repository: RoomTypeRepository,
+    @Inject(forwardRef(() => RoomsService))
     private readonly roomService: RoomsService,
+    private readonly repository: RoomTypeRepository,
     private readonly histService: RoomTypeHistService
   ) {}
 
   async existsById(id: string): Promise<boolean> {
-    return await this.repository.existsById(id)
+    return await this.repository.existsById(id);
   }
 
   async getRoomTypesWithPagination(
@@ -51,9 +58,7 @@ export class RoomTypeService {
       }
       const data = await this.repository.findById(id);
       if (data === undefined) {
-        throw new BadRequestException(
-          'This room is already deleted'
-        );
+        throw new BadRequestException('This room is already deleted');
       }
       return data;
     } catch (e) {
@@ -90,9 +95,7 @@ export class RoomTypeService {
       }
       const data = await this.repository.findById(id);
       if (data === undefined) {
-        throw new BadRequestException(
-          'This room is already deleted'
-        );
+        throw new BadRequestException('This room is already deleted');
       }
       const roomType = await this.repository.updateById(
         accountId,
