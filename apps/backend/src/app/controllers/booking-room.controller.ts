@@ -103,9 +103,7 @@ export class BookingRoomController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getRequestByRoomId(
-    @Query('roomId') roomId = ''
-  ): Promise<BookingRequest[]> {
+  getRequestByRoomId(@Query('roomId') roomId = ''): Promise<BookingRequest[]> {
     return this.service.getRequestByRoomId(roomId);
   }
 
@@ -297,6 +295,32 @@ export class BookingRoomController {
   })
   getCountRequestBookingPending() {
     return this.service.getCountRequestBookingPending();
+  }
+
+  @Get('/statistics')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Retrieving a statistic of booking rooms',
+    description: 'Retrieving a statistic of booking rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully retrieved a statistic of booking rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while retrieving a statistic of booking rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getStatistics() {
+    return this.service.getStatistics();
   }
 
   @Get()
