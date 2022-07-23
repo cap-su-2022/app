@@ -72,13 +72,7 @@ export class SlotService {
 
   async addNewSlot(
     accountId: string,
-    payload: {
-      name: string;
-      slotNum: number;
-      timeStart: string;
-      timeEnd: string;
-      description: string;
-    }
+    payload: { name: string; slotNum: number; timeStart: string, timeEnd: string, description: string }
   ) {
     try {
       const isHaveSlotSameNameActive =
@@ -88,10 +82,9 @@ export class SlotService {
           `Already have slot with name '${payload.name}' active. Try other name or delete slot have name '${payload.name}' before add new`
         );
       }
-      const slot = await this.repository.addNew(accountId, payload);
+        const slot = await this.repository.addNew(accountId, payload);
       // await this.histService.createNew(slot);
       return slot;
-      return null;
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);
