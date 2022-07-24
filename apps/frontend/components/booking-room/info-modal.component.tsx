@@ -74,7 +74,7 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
 
   const ModalHeaderTitle: React.FC = () => {
     return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', width: 500}}>
         <Text className={classes.modalHeaderTitle}>
           Request Booking Information
         </Text>
@@ -90,7 +90,7 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
                 {requestBooking.status}
               </div>
               <span className={classes.acceptedByDiv}>
-                Accepted by <b>{requestBooking.acceptedBy || 'auto'}</b>
+                Accepted by <b>{requestBooking.acceptedBy || 'system'}</b>
               </span>
             </div>
           ) : requestBooking.status === 'CHECKED_IN' ? (

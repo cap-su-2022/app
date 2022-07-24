@@ -208,7 +208,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
       .where(`rooms.deleted_at IS NULL`)
       .andWhere(`rooms.disabled_at IS NULL`)
-      .andWhere('rooms.type = :type', { type: roomTypeId })
+      .where('rooms.type = :type', { type: roomTypeId })
 
       .getRawMany<Rooms>();
   }

@@ -323,6 +323,32 @@ export class BookingRoomController {
     return this.service.getStatistics();
   }
 
+  @Get('/count-request/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Retrieving a count of booking rooms',
+    description: 'Retrieving a count of booking rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully retrieved a count of booking rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while retrieving a count of booking rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getCountRequestInWeekOfUser(@Param() payload: { id: string }) {
+    return this.service.getCountRequestInWeekOfUser(payload.id);
+  }
+
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
