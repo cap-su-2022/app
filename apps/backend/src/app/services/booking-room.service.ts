@@ -79,8 +79,12 @@ export class BookingRoomService {
     const lastDayInWeek = firstDayInWeek + 6; // last day is the first day + 6
     const sunday = new Date(curr.setDate(firstDayInWeek)).setHours(0, 0, 0, 0);
     const satuday = new Date(curr.setDate(lastDayInWeek)).setHours(0, 0, 0, 0);
-    const firstDayInMonth = new Date(curr.setDate(1)).setHours(0, 0, 0, 0)
-    const lastDayInMonth = new Date(curr.getFullYear(), curr.getMonth() + 1, 0).setHours(0, 0, 0, 0)
+    const firstDayInMonth = new Date(curr.setDate(1)).setHours(0, 0, 0, 0);
+    const lastDayInMonth = new Date(
+      curr.getFullYear(),
+      curr.getMonth() + 1,
+      0
+    ).setHours(0, 0, 0, 0);
     const allRequest = await this.repository.getAllRequest();
     for (let i = 0; i < allRequest.length; i++) {
       const checkinDate = allRequest[i].checkinDate.setHours(0, 0, 0, 0);
@@ -125,6 +129,22 @@ export class BookingRoomService {
     console.log('TODAY: ', dayjs(today).format('DD-MM_YYYY'));
     return result;
   }
+
+  getCountRequestInWeekOfUser = async (id: string) => {
+    try {
+      const result = {
+        usedBookingTime: 0,
+        totalBookingTime: 3,
+      };
+      result.usedBookingTime = Number(
+        await this.repository.getCountRequestInWeekOfUser(id)
+      );
+      return result;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException('Error while getting booking rooms');
+    }
+  };
 
   async getBookingRooms(
     payload: BookingRoomsFilterRequestPayload
@@ -492,17 +512,50 @@ export class BookingRoomService {
       const role = await this.accountService.getRoleOfAccount(userId);
       const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlot);
       const slotOut = await this.slotService.getNumOfSlot(payload.checkoutSlot);
+
+      let alreadyBookedOtherRoom = '';
+      const listRequestBookedInDayOfUser =
+        await this.repository.getRequestBookedInDayOfUser(
+          payload.checkinDate,
+          userId
+        );
+      if (listRequestBookedInDayOfUser.length > 0) {
+        listRequestBookedInDayOfUser.map(async (request) => {
+          for (let j = request.slotIn; j <= request.slotOut; j++) {
+            if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+              alreadyBookedOtherRoom = request.roomName;
+              break;
+            }
+          }
+        });
+      }
+      if (alreadyBookedOtherRoom !== '') {
+        throw new BadRequestException(
+          `You already have bookings for ${alreadyBookedOtherRoom} at same slot!`
+        );
+      }
+
       const listRequestPeningAndBookedInDay =
-        await this.repository.getBookingPendingAndBookedByDay(
+        await this.repository.getBookingPendingAndBookedInDay(
           payload.checkinDate,
           payload.roomId
         );
-      console.log('book');
+
       let status = 'PENDING';
       let haveRequestBooked = false;
 
       if (role.role_name === 'Librarian' || role.role_name === 'System Admin') {
         status = 'BOOKED';
+      }
+      if (role.role_name === 'Staff') {
+        const countRequestInWeek = Number(
+          await this.repository.getCountRequestInWeekOfUser(userId)
+        );
+        if (countRequestInWeek >= 3) {
+          throw new BadRequestException(
+            'You have run out of bookings for this week'
+          );
+        }
       }
       if (listRequestPeningAndBookedInDay.length > 0) {
         listRequestPeningAndBookedInDay.map(async (request) => {

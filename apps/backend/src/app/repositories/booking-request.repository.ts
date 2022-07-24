@@ -1,6 +1,12 @@
 import { Entity } from 'typeorm';
 import { DataSource, QueryRunner, Repository, UpdateResult } from 'typeorm';
-import { Accounts, BookingRequest, BookingRequestDevices, Rooms, RoomType } from '../models';
+import {
+  Accounts,
+  BookingRequest,
+  BookingRequestDevices,
+  Rooms,
+  RoomType,
+} from '../models';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
 import { BookingRoomStatus } from '../enum/booking-room-status.enum';
 import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
@@ -27,8 +33,30 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.id', 'id')
       .addSelect('booking_request.room_id', 'roomId')
       .addSelect('booking_request.status', 'status')
-      .where(`booking_request.status IN ('BOOKED', 'CHECKED_IN', 'CHECKED_OUT', 'CANCELLED')`)
+      .where(
+        `booking_request.status IN ('BOOKED', 'CHECKED_IN', 'CHECKED_OUT', 'CANCELLED')`
+      )
       .getRawMany();
+  }
+
+  getCountRequestInWeekOfUser(id: string) {
+    const curr = new Date(); // get current date
+    const firstDay = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+    const lastDay = firstDay + 6; // last day is the first day + 6
+    const sunday = new Date(curr.setDate(firstDay));
+    const satuday = new Date(curr.setDate(lastDay));
+    return this.createQueryBuilder('booking_request')
+      .select('COUNT(1)', 'count')
+      .where('booking_request.requested_by = :id', { id: id })
+      .andWhere('booking_request.checkin_date >= :sunday', {
+        sunday: sunday,
+      })
+      .andWhere('booking_request.checkin_date <= :satuday', {
+        satuday: satuday,
+      })
+      .andWhere(`booking_request.status NOT LIKE 'CANCELLED'`)
+      .getRawOne()
+      .then((data) => data?.count);
   }
 
   findByPaginationPayload(payload: GetBookingRoomsPaginationPayload) {
@@ -84,8 +112,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     const lastDay = firstDay + 6; // last day is the first day + 6
     const sunday = new Date(curr.setDate(firstDay));
     const satuday = new Date(curr.setDate(lastDay));
-    console.log('SUNNNNN: ', sunday);
-    console.log('SATTTTT: ', satuday);
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('booking_request.checkin_Date', 'checkinDate')
@@ -202,7 +228,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     );
   }
 
-  getBookingPendingAndBookedByDay(
+  getBookingPendingAndBookedInDay(
     date: string,
     roomId: string
   ): Promise<
@@ -213,7 +239,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       status: string;
     }[]
   > {
-    console.log('DATEEEE: ' + date);
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('slot_in.slot_num', 'slotIn')
@@ -236,6 +261,49 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       );
     return query.getRawMany<{
       id: string;
+      slotIn: number;
+      slotOut: number;
+      status: string;
+    }>();
+  }
+
+  getRequestBookedInDayOfUser(
+    date: string,
+    userId: string,
+  ): Promise<
+    {
+      id: string;
+      roomName: string;
+      slotIn: number;
+      slotOut: number;
+      status: string;
+    }[]
+  > {
+    const query = this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('slot_in.slot_num', 'slotIn')
+      .addSelect('slot_out.slot_num', 'slotOut')
+      .addSelect('r.name', 'roomName')
+      .addSelect('booking_request.status', 'status')
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
+      .innerJoin(
+        Slot,
+        'slot_out',
+        'slot_out.id = booking_request.checkout_slot'
+      )
+      .where('booking_request.checkinDate = :checkinDate', {
+        checkinDate: date,
+      })
+      .andWhere('booking_request.requested_by = :userId', {
+        userId: userId,
+      })
+      .andWhere(
+        "booking_request.status = 'BOOKED'"
+      );
+    return query.getRawMany<{
+      id: string;
+      roomName: string;
       slotIn: number;
       slotOut: number;
       status: string;
@@ -289,7 +357,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getRawOne<BookingRequest>();
   }
   getRequestByRoomId(roomId: string) {
-    console.log("IDDDDDDDDDDDDDD: " + roomId)
+    console.log('IDDDDDDDDDDDDDD: ' + roomId);
     const date = new Date();
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
@@ -391,7 +459,11 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.status', 'status')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
-      .innerJoin(BookingRequestDevices, 'brd', 'brd.booking_request_id = booking_request.id')
+      .innerJoin(
+        BookingRequestDevices,
+        'brd',
+        'brd.booking_request_id = booking_request.id'
+      )
       .innerJoin(
         BookingReason,
         'br',
