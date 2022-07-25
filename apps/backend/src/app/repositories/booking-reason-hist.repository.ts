@@ -1,6 +1,6 @@
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
 import { Repository } from 'typeorm';
-import { BookingReasonHist } from '../models/booking-reason-hist.entity';
+import { BookingReasonHist } from '../models';
 import { BookingReason } from '../models/booking-reason.entity';
 
 @CustomRepository(BookingReasonHist)

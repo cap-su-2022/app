@@ -1,5 +1,12 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
 import { BLACK, FPT_ORANGE_COLOR } from '@app/constants';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
@@ -47,6 +54,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     marginBottom: 10,
+    marginTop: Platform.OS === 'android' ? 20 : 5,
   },
   titleText: {
     fontSize: deviceWidth / 21,

@@ -15,7 +15,9 @@ const RequestRoomBookingRecentlySearch: React.FC<any> = () => {
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
   const user = LOCAL_STORAGE.getString('user');
-  const historySearch = LOCAL_STORAGE.getString(JSON.parse(user).username);
+  const historySearch = user
+    ? LOCAL_STORAGE.getString(JSON.parse(user).username)
+    : undefined;
 
   let historyArray = [];
   if (typeof historySearch !== 'undefined') {
@@ -41,6 +43,9 @@ const RequestRoomBookingRecentlySearch: React.FC<any> = () => {
     );
   };
 
+  if (!historySearch) {
+    return <></>;
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.headerTitle}>Recently search</Text>

@@ -9,6 +9,7 @@ import { OAuth2Client } from 'google-auth-library';
 import Exception from '../constants/exception.constant';
 import { ConfigService } from '@nestjs/config';
 import { Accounts } from '../models';
+import { RoleService } from './role.service';
 
 @Injectable()
 export class AuthenticationService {
@@ -80,6 +81,8 @@ export class AuthenticationService {
         );
       }
 
+      // const roleName = this.roleService.getRoleNameByAccountId(user.id);
+
       return {
         accessToken: keycloakUser.access_token,
         refreshToken: keycloakUser.refresh_token,
@@ -89,7 +92,7 @@ export class AuthenticationService {
         email: user.email,
         phone: user.phone,
         googleId: user.googleId,
-        role: user.roleId,
+        role: '',
         fullname: user.fullname,
         avatar: user.avatar,
       };

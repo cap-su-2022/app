@@ -5,32 +5,37 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('notification')
-export class Notification {
+@Entity('booking_room_feedback')
+export class BookingRoomFeedback {
   @PrimaryGeneratedColumn('uuid', {
     name: 'id',
   })
   id?: string;
 
   @Column({
-    name: 'title',
-    type: 'varchar',
-    length: 100,
-  })
-  title?: string;
-
-  @Column({
-    name: 'message',
+    name: 'feedback_msg',
     type: 'varchar',
     length: 500,
   })
-  message?: string;
+  feedbackMessage?: string;
 
   @Column({
-    name: 'created_by',
+    name: 'feedback_type',
     type: 'uuid',
   })
-  createdBy?: string;
+  feedbackType?: string;
+
+  @Column({
+    name: 'rate_num',
+    type: 'smallint',
+  })
+  rateNum?: string;
+
+  @Column({
+    name: 'booking_room_id',
+    type: 'uuid',
+  })
+  bookingRoomId?: string;
 
   @CreateDateColumn({
     name: 'created_at',
@@ -39,14 +44,8 @@ export class Notification {
   createdAt?: string;
 
   @Column({
-    name: 'deleted_by',
+    name: 'created_by',
     type: 'uuid',
   })
-  deletedBy?: string;
-
-  @Column({
-    name: 'deleted_at',
-    type: 'timestamptz',
-  })
-  deletedAt?: Date;
+  createdBy?: string;
 }

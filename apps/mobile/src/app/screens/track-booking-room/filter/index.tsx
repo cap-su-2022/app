@@ -358,6 +358,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderRightWidth: 2,
     width: deviceWidth / 1.23,
+    paddingHorizontal: 10,
   },
   leftIconSlotFilter: {
     height: 35,

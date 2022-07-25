@@ -10,6 +10,7 @@ import { PaginationParams } from '../controllers/pagination.model';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { Slot } from '../models/slot.entity';
 import { BookingRoomService } from './booking-room.service';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 @Injectable()
@@ -17,7 +18,7 @@ export class SlotService {
   private readonly logger = new Logger(SlotService.name);
 
   constructor(
-    private readonly dataSource: DataSource,
+    @InjectDataSource() private readonly dataSource: DataSource,
     private readonly repository: SlotRepository,
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService

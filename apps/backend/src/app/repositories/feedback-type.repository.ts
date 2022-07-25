@@ -1,3 +1,6 @@
 import { Repository } from 'typeorm';
+import { CustomRepository } from '../decorators/typeorm-ex.decorator';
+import { FeedbackType } from '../models/feedback-type.entity';
 
-export class FeedbackType extends Repository<any> {}
+@CustomRepository(FeedbackType)
+export class FeedbackTypeRepository extends Repository<FeedbackType> {}

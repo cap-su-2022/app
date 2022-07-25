@@ -1,11 +1,9 @@
-import { randomUUID } from 'crypto';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { PaginationParams } from '../controllers/pagination.model';
 import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
 import { BookingReason } from '../models/booking-reason.entity';
 import { Accounts } from '../models';
-import { update } from 'react-spring';
 import { BadRequestException } from '@nestjs/common';
 
 @CustomRepository(BookingReason)
