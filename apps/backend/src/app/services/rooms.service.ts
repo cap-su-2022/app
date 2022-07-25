@@ -186,13 +186,16 @@ export class RoomsService {
           'This room is already deleted, can not disable'
         );
       }
+      const data = await this.repository.findById(id);
       const listRequestBooked =
         await this.bookingRoomService.getRequestByRoomId(id);
       if (listRequestBooked.length > 0) {
+        const reason = `Room ${data?.name} was deleted. Request in this room was auto cancelled`
         for (let i = 0; i < listRequestBooked.length; i++) {
           await this.bookingRoomService.cancelRequest(
             accountId,
             listRequestBooked[i].id,
+            reason,
             queryRunner
           );
         }
@@ -283,13 +286,17 @@ export class RoomsService {
       if (isDeleted) {
         throw new BadRequestException('This room is already deleted');
       }
+      const data = await this.repository.findById(id);
+
       const listRequestBooked =
         await this.bookingRoomService.getRequestByRoomId(id);
       if (listRequestBooked.length > 0) {
+        const reason = `Room ${data?.name} was deleted. Request in this room was auto cancelled`
         for (let i = 0; i < listRequestBooked.length; i++) {
           await this.bookingRoomService.cancelRequest(
             accountId,
             listRequestBooked[i].id,
+            reason,
             queryRunner
           );
         }

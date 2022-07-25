@@ -144,7 +144,11 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               />
             </InputWrapper>
 
-            <InputWrapper label="Request by" className={classes.inputWrapper} style={{flex: 1}}>
+            <InputWrapper
+              label="Request by"
+              className={classes.inputWrapper}
+              style={{ flex: 1 }}
+            >
               <TextInput
                 icon={<ClipboardText />}
                 radius="md"
@@ -153,8 +157,28 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               />
             </InputWrapper>
           </div>
+          {requestBooking.status === "CANCELLED" ? (
+            <>
+              <InputWrapper
+                label="Reason Cancel"
+                className={classes.inputWrapper}
+                sx={() => ({
+                  "label": {
+                    color: 'red',
+                  }
+                })}
+              >
+                <TextInput
+                  icon={<ClipboardText />}
+                  radius="md"
+                  readOnly
+                  value={requestBooking.cancelReason}
+                />
+              </InputWrapper>
+            </>
+          ) : null}
 
-          <InputWrapper label="Reason" className={classes.inputWrapper}>
+          <InputWrapper label="Reason Booking" className={classes.inputWrapper}>
             <TextInput
               icon={<ClipboardText />}
               radius="md"

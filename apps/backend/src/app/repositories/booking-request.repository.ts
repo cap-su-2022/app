@@ -12,7 +12,7 @@ import { BookingRoomStatus } from '../enum/booking-room-status.enum';
 import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
 import { IPaginationMeta, paginateRaw } from 'nestjs-typeorm-paginate';
 import { Slot } from '../models/slot.entity';
-import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.request.payload';
+import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
 import { BookingReason } from '../models/booking-reason.entity';
 import { BadRequestException } from '@nestjs/common';
 import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
@@ -562,6 +562,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('br.cancelled_at', 'cancelledAt')
       .addSelect('aaa.username', 'cancelledBy')
       .addSelect('aaaa.username', 'acceptedBy')
+      .addSelect('br.cancel_reason', 'cancelReason')
       .addSelect('br.accepted_at', 'acceptedAt')
       .addSelect('s.name', 'checkinSlot')
       .addSelect('ss.name', 'checkoutSlot')
@@ -601,6 +602,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   async cancelRoomBookingById(
     accountId: string,
     id: string,
+    reason: string,
     role: string,
     queryRunner: QueryRunner
   ) {
@@ -619,6 +621,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         {
           ...oldData,
           status: 'CANCELLED',
+          cancelReason: reason,
           updatedBy: accountId,
           updatedAt: new Date(),
           cancelledBy: accountId,

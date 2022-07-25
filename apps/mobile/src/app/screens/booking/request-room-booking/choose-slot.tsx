@@ -164,7 +164,7 @@ const ChooseSlot: React.FC<any> = (props) => {
       step1ScheduleRoomBooking({
         fromSlot: item.slotId,
         fromDay: selectedDay,
-        roomId: item.roomID,
+        roomId: item.roomId,
         roomName: item.roomName,
       })
     );

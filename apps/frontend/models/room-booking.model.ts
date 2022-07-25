@@ -1,4 +1,5 @@
 export interface RoomBooking {
+  cancelReason: string;
   listDevice: any[];
   roomId: string;
   checkinSlotId: string;
@@ -6,8 +7,8 @@ export interface RoomBooking {
   acceptedBy: string;
   requestedById: string;
   checkinDate: string;
-  checkoutSlot: string | number | readonly string[];
-  checkinSlot: string | number | readonly string[];
+  checkoutSlot: string;
+  checkinSlot: string;
   stt: number;
   id: string;
   roomid: string;

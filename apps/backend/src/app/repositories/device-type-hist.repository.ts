@@ -11,7 +11,6 @@ export class DeviceTypeHistRepository extends Repository<any> {
       deviceTypeId: deviceTypeId,
       ...payload,
     });
-    console.log("AAAAAAAAAAAA: ", data);
     return data;
   }
 

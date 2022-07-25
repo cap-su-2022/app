@@ -168,7 +168,7 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
           formik={props.formik}
           handleSubmit={props.handleSubmit}
           handleNextConfirm={handleNextConfirm}
-          handleBackChooseSlot={handleBackChooseSlot}
+          handleBack={handleBackChooseSlot}
         />
       )}
       {showConfirm && (
