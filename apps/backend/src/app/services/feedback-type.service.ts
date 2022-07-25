@@ -10,7 +10,7 @@ export class FeedbackTypeService {
 
   constructor(
     private readonly repository: FeedbackTypeRepository,
-    private readonly feedbackService: FeedbackService
+    // private readonly feedbackService: FeedbackService
   ) {}
   async getAllFeedbackTypes(param: PaginationParams) {
     try {
