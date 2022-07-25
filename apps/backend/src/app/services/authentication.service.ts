@@ -21,8 +21,7 @@ export class AuthenticationService {
   constructor(
     private readonly accountService: AccountsService,
     private readonly configService: ConfigService,
-    private readonly keycloakService: KeycloakService,
-    private readonly roleService: RoleService
+    private readonly keycloakService: KeycloakService
   ) {
     this.oAuthClientId = this.configService.get<string>(
       'firebase.oauth.clientId'
