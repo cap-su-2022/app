@@ -66,7 +66,7 @@ export class FeedbackController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  addNewDeviceType(
+  addNewFeedbackType(
     @User() user: KeycloakUserInstance,
     @Body() payload: FeedbackSendRequestPayload
   ) {
