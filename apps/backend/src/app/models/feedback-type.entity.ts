@@ -36,9 +36,8 @@ export class FeedbackType {
 
   @CreateDateColumn({
     name: 'created_at',
-    type: 'timestamptz',
   })
-  createdAt?: string;
+  createdAt?: Date;
 
   @Column({
     name: 'updated_by',
