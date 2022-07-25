@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CalendarProvider, WeekCalendar } from 'react-native-calendars';
 import {
+  ListRenderItemInfo,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -9,8 +10,6 @@ import {
   VirtualizedList,
 } from 'react-native';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
-import { BookingRoom } from '../../../redux/models/booking-room.model';
-import { getTimeDetailBySlotNumber } from '../../../utils/slot-resolver.util';
 import {
   HeartIcon,
   LibraryIcon,
@@ -32,6 +31,87 @@ import { step1ScheduleRoomBooking } from '../../../redux/features/room-booking/s
 import { fetchBookedRequestByDayAndSlot } from '../../../redux/features/room-booking-v2/thunk/fetch-booked-request.thunk';
 import { fetchAllRooms } from '../../../redux/features/room/thunk/fetch-all';
 import { LOCAL_STORAGE } from '../../../utils/local-storage';
+import { BookedRequest } from '../../../redux/models/booked-request.model';
+import { RoomModel } from '../../../redux/models/room.model';
+import ChooseSlotHeader from './choose-slot/header';
+import ChooseSlotItem from './choose-slot/item';
+
+const transformToData = (bookedRequest) => {
+  const result = [];
+  for (let i = 0; i < bookedRequest.length; i++) {
+    const data = bookedRequest[i];
+    for (let j = data.slotStart; j <= data.slotEnd; j++) {
+      result.push({
+        roomName: data.roomName,
+        roomId: data.id,
+        slot: j,
+      });
+    }
+  }
+  return result;
+};
+
+const filterBookingRoom = (bookedData, slotsFromState, roomsFromState) => {
+  const result = [];
+
+  for (let i = 0; i < slotsFromState.length; i++) {
+    for (let j = 0; j < roomsFromState.length; j++) {
+      if (
+        bookedData.some(
+          (data) =>
+            data.slot !== slotsFromState[i] &&
+            data.roomName !== roomsFromState[j].name
+        )
+      ) {
+        result.push({
+          roomName: roomsFromState[j].name,
+          roomId: roomsFromState[j].id,
+          slotId: slotsFromState[i].id,
+          slotName: slotsFromState[i].name,
+        });
+      }
+    }
+  }
+  return result;
+};
+
+const filterBookingRoomElse = (slotsFromState, roomsFromState) => {
+  const result = [];
+  for (let i = 0; i < roomsFromState.length; i++) {
+    for (let j = 0; j < slotsFromState.length; j++) {
+      result.push({
+        roomName: roomsFromState[i].name,
+        roomId: roomsFromState[i].id,
+        slotId: slotsFromState[j].id,
+        slotName: slotsFromState[j].name,
+      });
+    }
+  }
+  return result;
+};
+const addRecentlySearchRoom = (item, username, selectedDay) => {
+  const historySearch = LOCAL_STORAGE.getString(username);
+  const historyArray = historySearch.split(',');
+  historyArray.push(
+    JSON.stringify({
+      fromDay: selectedDay,
+      roomName: item.roomName,
+      slotName: item.slotName,
+    })
+  );
+  LOCAL_STORAGE.set(username, historyArray.toString());
+};
+
+const firstAddRoomRecentlySearch = (item, username, selectedDay) => {
+  LOCAL_STORAGE.set(
+    username,
+    JSON.stringify({
+      fromDay: selectedDay,
+      roomName: item.roomName,
+      slotName: item.slotName,
+    })
+  );
+};
 
 const ChooseSlot: React.FC<any> = (props) => {
   const fromSlotId = useAppSelector(
@@ -40,9 +120,7 @@ const ChooseSlot: React.FC<any> = (props) => {
   const addRoomBooking = useAppSelector(
     (state) => state.roomBooking.addRoomBooking
   );
-  const bookedRequest = useAppSelector(
-    (state) => state.bookedRequest.bookedRequests
-  );
+
   const slotsFromState = useAppSelector((state) => state.slot.slots);
   const roomsFromState = useAppSelector((state) => state.room.rooms);
   const dispatch = useAppDispatch();
@@ -56,6 +134,28 @@ const ChooseSlot: React.FC<any> = (props) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [slotAndRoom, setSlotAndRoom] = useState([]);
 
+  const handleTransformBookingRoomData = (
+    bookingRooms: BookedRequest[],
+    rooms: RoomModel[]
+  ) => {
+    const bookedData = transformToData(bookingRooms);
+
+    let result;
+    if (bookingRooms.length > 1) {
+      result = filterBookingRoom(bookedData, slotsFromState, rooms);
+    } else {
+      result = filterBookingRoomElse(slotsFromState, rooms);
+    }
+
+    setSlotAndRoom(result);
+  };
+
+  const handleFetchAllRooms = (bookedRequests) => {
+    dispatch(fetchAllRooms())
+      .unwrap()
+      .then((rooms) => handleTransformBookingRoomData(bookedRequests, rooms));
+  };
+
   useEffect(() => {
     dispatch(
       fetchBookedRequestByDayAndSlot({
@@ -65,64 +165,7 @@ const ChooseSlot: React.FC<any> = (props) => {
       })
     )
       .unwrap()
-      .then((val) => {
-        dispatch(fetchAllRooms())
-          .unwrap()
-          .then((val) => {
-            console.log('2');
-          })
-          .then(() => {
-            const transformToData = () => {
-              const result = [];
-              for (let i = 0; i < bookedRequest.length; i++) {
-                const data = bookedRequest[i];
-                for (let j = data.slotStart; j <= data.slotEnd; j++) {
-                  result.push({
-                    roomName: data.roomName,
-                    roomId: data.id,
-                    slot: j,
-                  });
-                }
-              }
-              return result;
-            };
-            const bookedData = transformToData();
-            const result = [];
-            if (bookedRequest.length > 1) {
-              for (let i = 0; i < slotsFromState.length; i++) {
-                for (let j = 0; j < roomsFromState.length; j++) {
-                  if (
-                    bookedData.some(
-                      (data) =>
-                        data.slot !== slotsFromState[i] &&
-                        data.roomName !== roomsFromState[j].name
-                    )
-                  ) {
-                    result.push({
-                      roomName: roomsFromState[j].name,
-                      roomId: roomsFromState[j].id,
-                      slotId: slotsFromState[i].id,
-                      slotName: slotsFromState[i].name,
-                    });
-                  }
-                }
-              }
-              setSlotAndRoom(result);
-            } else {
-              for (let i = 0; i < roomsFromState.length; i++) {
-                for (let j = 0; j < slotsFromState.length; j++) {
-                  result.push({
-                    roomName: roomsFromState[i].name,
-                    roomId: roomsFromState[i].id,
-                    slotId: slotsFromState[j].id,
-                    slotName: slotsFromState[j].name,
-                  });
-                }
-              }
-              setSlotAndRoom(result);
-            }
-          });
-      });
+      .then((val) => handleFetchAllRooms(val));
   }, [selectedDay]);
 
   const handleAddToWishlist = (roomId, slotId) => {
@@ -135,29 +178,18 @@ const ChooseSlot: React.FC<any> = (props) => {
       });
   };
 
-  const handleBookRoom = (item) => {
+  const handleAddRoomRecentlySearch = (item) => {
     const user = LOCAL_STORAGE.getString('user');
+    const username = JSON.parse(user).username;
     const historySearch = LOCAL_STORAGE.getString(JSON.parse(user).username);
-    if (typeof historySearch !== 'undefined') {
-      const historyArray = historySearch.split(',');
-      historyArray.push(
-        JSON.stringify({
-          fromDay: selectedDay,
-          roomName: item.roomName,
-          slotName: item.slotName,
-        })
-      );
-      LOCAL_STORAGE.set(JSON.parse(user).username, historyArray.toString());
-    } else {
-      LOCAL_STORAGE.set(
-        JSON.parse(user).username,
-        JSON.stringify({
-          fromDay: selectedDay,
-          roomName: item.roomName,
-          slotName: item.slotName,
-        })
-      );
-    }
+
+    return typeof historySearch !== 'undefined'
+      ? addRecentlySearchRoom(item, username, selectedDay)
+      : firstAddRoomRecentlySearch(item, username, selectedDay);
+  };
+
+  const handleBookRoom = (item) => {
+    handleAddRoomRecentlySearch(item);
     dispatch(
       step1ScheduleRoomBooking({
         fromSlot: item.slotId,
@@ -171,83 +203,6 @@ const ChooseSlot: React.FC<any> = (props) => {
     }, 0);
   };
 
-  const SlotAndRoom = ({ item }) => {
-    return (
-      <View
-        key={`${item.roomId} ${item.slotId}`}
-        style={styles.roomBookingItemContainer}
-      >
-        <View style={styles.roomBookingItem}>
-          <View style={styles.libraryIconContainer}>
-            <LibraryIcon color={FPT_ORANGE_COLOR} />
-          </View>
-          <View style={styles.roomBookingDetail}>
-            <Text style={styles.roomText}>Library Room</Text>
-            <Text style={styles.roomCodeOuterText}>
-              Room Code: {item.roomName}
-            </Text>
-            <Text
-              style={{
-                fontSize: 18,
-              }}
-            >
-              Time:
-              <Text
-                style={{
-                  fontWeight: '600',
-                }}
-              >
-                {item.slotName}
-              </Text>
-            </Text>
-          </View>
-        </View>
-        <View style={styles.roomBookActionContainer}>
-          <TouchableOpacity
-            onPress={() => handleAddToWishlist(item.roomId, item.slotId)}
-            style={styles.addToWishListContainer}
-          >
-            <View style={styles.addToWishListButtonContainer}>
-              <HeartIcon color={PINK} />
-              <Text style={styles.addToWishListButtonText}>
-                Add to wish list
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              handleBookRoom(item);
-            }}
-            style={styles.bookNowContainer}
-          >
-            <View style={styles.bookNowButtonContainer}>
-              <TicketIcon color={WHITE} />
-              <Text style={styles.bookNowButtonText}>Book this room now</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  };
-
-  const WeekAgendaScreen = () => (
-    <CalendarProvider
-      date={selectedDay || addRoomBooking.fromDay || Today}
-      style={{ marginBottom: -450 }}
-    >
-      <WeekCalendar
-        minDate={addRoomBooking.fromDay || Today}
-        maxDate={addRoomBooking.toDay}
-        onDayPress={(day) => setSelectedDay(day.dateString)}
-        firstDay={1}
-        showsHorizontalScrollIndicator={true}
-        pagingEnabled={true}
-        animateScroll={true}
-      />
-    </CalendarProvider>
-  );
-
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -258,15 +213,27 @@ const ChooseSlot: React.FC<any> = (props) => {
           flexDirection: 'column',
         }}
       >
-        <WeekAgendaScreen />
+        <ChooseSlotHeader
+          currentDate={selectedDay || addRoomBooking.fromDay || Today}
+          minDate={addRoomBooking.fromDay || Today}
+          maxDate={addRoomBooking.toDay}
+          handleOnDayPress={(val) => setSelectedDay(val)}
+        />
 
         <VirtualizedList
           style={{ flex: 1 }}
           getItemCount={(data) => data.length}
           getItem={(data, index) => data[index]}
           data={slotAndRoom}
-          renderItem={(item) => (
-            <SlotAndRoom key={item.index} item={item.item} />
+          renderItem={(item: ListRenderItemInfo<any>) => (
+            <ChooseSlotItem
+              handleAddWishlist={() =>
+                handleAddToWishlist(item.item.roomId, item.item.slotId)
+              }
+              handleRequestRoomBooking={() => handleBookRoom(item.item)}
+              key={item.index}
+              item={item.item}
+            />
           )}
           keyExtractor={(item, index) => index.toString()}
         />
