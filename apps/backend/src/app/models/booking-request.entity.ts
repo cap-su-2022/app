@@ -1,103 +1,101 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { BaseEntity } from "./base/base.entity";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-
-@Entity("booking_request")
-export class BookingRequest{
-  @PrimaryGeneratedColumn("uuid", {
-    name: "id",
-    comment: "ID of the Booking Request"
+@Entity('booking_request')
+export class BookingRequest {
+  @PrimaryGeneratedColumn('uuid', {
+    name: 'id',
+    comment: 'ID of the Booking Request',
   })
   id?: string;
 
   @Column({
-    name: "room_id",
+    name: 'room_id',
     nullable: false,
   })
   roomId?: string;
 
   @Column({
-    name: "requested_by",
-    type: "uuid",
+    name: 'requested_by',
+    type: 'uuid',
   })
   requestedBy?: string;
 
   @Column({
-    name: "requested_at",
+    name: 'requested_at',
     nullable: false,
-    type: "timestamptz",
-    default: () => "CURRENT_TIMESTAMP"
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
   })
   requestedAt?: Date;
 
   @Column({
-    name: "status",
-    nullable: false
+    name: 'status',
+    nullable: false,
   })
   status?: string;
 
   @Column({
-    name: "booking_reason_id",
-    nullable: false
+    name: 'booking_reason_id',
+    nullable: false,
   })
   bookingReasonId?: string;
 
   @Column({
-    name: "cancelled_by",
-    type: "uuid",
+    name: 'cancelled_by',
+    type: 'uuid',
   })
   cancelledBy?: string;
 
   @Column({
-    name: "cancelled_at",
+    name: 'cancelled_at',
     nullable: false,
-    type: "timestamptz",
-    default: () => "CURRENT_TIMESTAMP"
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
   })
   cancelledAt?: Date;
 
   @Column({
-    name: "updated_by",
-    type: "uuid",
+    name: 'updated_by',
+    type: 'uuid',
   })
   updatedBy?: string;
 
   @Column({
-    name: "updated_at",
+    name: 'updated_at',
     nullable: false,
-    type: "timestamptz",
-    default: () => "CURRENT_TIMESTAMP"
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt?: Date;
 
   @Column({
-    name: "accepted_by",
-    type: "uuid",
+    name: 'accepted_by',
+    type: 'uuid',
   })
   acceptedBy?: string;
 
   @Column({
-    name: "accepted_at",
+    name: 'accepted_at',
     nullable: false,
-    type: "timestamptz",
-    default: () => "CURRENT_TIMESTAMP"
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
   })
   acceptedAt?: Date;
 
   @Column({
-    name: "checkin_slot",
+    name: 'checkin_slot',
     nullable: false,
   })
   checkinSlot?: string;
 
   @Column({
-    name: "checkout_slot",
+    name: 'checkout_slot',
     nullable: false,
   })
   checkoutSlot?: string;
 
   @Column({
-    name: "checkin_date",
+    name: 'checkin_date',
     nullable: false,
   })
   checkinDate?: string;
@@ -110,16 +108,16 @@ export class BookingRequest{
   // checkoutDate?: Date;
 
   @Column({
-    name: "checkedin_at",
+    name: 'checkedin_at',
     nullable: false,
-    type: "timestamptz"
+    type: 'timestamptz',
   })
   checkedinAt?: Date;
 
   @Column({
-    name: "checkedout_at",
+    name: 'checkedout_at',
     nullable: false,
-    type: "timestamptz"
+    type: 'timestamptz',
   })
   checkedoutAt?: Date;
 
@@ -129,5 +127,4 @@ export class BookingRequest{
     length: 500,
   })
   description?: string;
-
 }

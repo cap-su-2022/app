@@ -1,4 +1,4 @@
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Environment } from '@app/constants';
 import {
@@ -10,21 +10,26 @@ import {
   DeviceHist,
   Rooms,
   RoomWishlist,
-  UsersOTP,
-  UsersWarningFlag,
-  UsersWarningFlagHistory,
   BookingReasonHist,
   RoomHist,
   RoomTypeHist,
   DeviceTypeHist,
   BookingRequestDevices,
+  RoomWishlistHist,
 } from '../../models';
 import { Roles } from '../../models/role.entity';
 import { RoomType } from '../../models';
-import { DeviceType } from '../../models/device-type.entity';
+import { DeviceType } from '../../models';
 import { BookingReason } from '../../models/booking-reason.entity';
 import { Slot } from '../../models/slot.entity';
 import { RoleHist } from '../../models/role-hist.entity';
+import { AccountNotification } from '../../models';
+import { BookingRoomFeedback } from '../../models';
+import { Feedback } from '../../models';
+import { FeedbackType } from '../../models';
+import { FeedbackHist } from '../../models';
+import { Notification } from '../../models';
+import { NotificationType } from '../../models';
 
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
@@ -38,26 +43,31 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
     entities: [
       Accounts,
       AccountHist,
-      Rooms,
-      RoomHist,
-      RoomType,
-      RoomTypeHist,
+      AccountNotification,
+      BookingReason,
+      BookingReasonHist,
+      BookingRequest,
+      BookingRequestHist,
+      BookingRequestDevices,
+      BookingRoomFeedback,
       Devices,
       DeviceType,
       DeviceHist,
       DeviceTypeHist,
-      BookingRequest,
-      BookingRequestHist,
+      Feedback,
+      FeedbackType,
+      FeedbackHist,
+      Notification,
+      NotificationType,
+      Rooms,
+      RoomHist,
+      RoomType,
+      RoomTypeHist,
+      RoomWishlistHist,
       RoomWishlist,
-      UsersOTP,
-      UsersWarningFlag,
-      UsersWarningFlagHistory,
       Roles,
       RoleHist,
-      BookingReason,
       Slot,
-      BookingReasonHist,
-      BookingRequestDevices,
     ],
     synchronize: configService.get<boolean>(
       Environment.db.postgres.synchronize

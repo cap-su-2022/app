@@ -1,7 +1,7 @@
 import { Column, Entity, Generated, PrimaryColumn } from 'typeorm';
-import { BaseEntity, BaseEntityWithDisabled } from './base/base.entity';
+import { BaseEntityWithDisabled } from './base/base.entity';
 
-@Entity(Accounts.name.toLocaleLowerCase())
+@Entity('accounts')
 export class Accounts extends BaseEntityWithDisabled {
   @PrimaryColumn('uuid', {
     name: 'id',

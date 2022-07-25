@@ -1,3 +1,6 @@
 import { Repository } from 'typeorm';
+import { CustomRepository } from '../decorators/typeorm-ex.decorator';
+import { Notification } from '../models/notification.entity';
 
-export class NotificationRepository extends Repository<any> {}
+@CustomRepository(Notification)
+export class NotificationRepository extends Repository<Notification> {}

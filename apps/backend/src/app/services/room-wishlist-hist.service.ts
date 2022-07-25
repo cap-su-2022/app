@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RoomWishlistHistRepository } from '../repositories/room-wishlist-hist.repository';
+import { RoomWishlistHistRepository } from '../repositories';
 
 @Injectable()
 export class RoomWishlistHistService {

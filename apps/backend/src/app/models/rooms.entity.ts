@@ -1,8 +1,8 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { RoomType } from '../enum/room-type.enum';
-import { BaseEntity, BaseEntityWithDisabled } from './base/base.entity';
+import { BaseEntityWithDisabled } from './base/base.entity';
 
-@Entity(Rooms.name.toLowerCase())
+@Entity('rooms')
 export class Rooms extends BaseEntityWithDisabled {
   @PrimaryGeneratedColumn('uuid', {
     name: 'id',

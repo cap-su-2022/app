@@ -5,7 +5,6 @@ import { RoomsModule } from './rooms.module';
 import { HealthCheckModule } from './health-check.module';
 import { AccountsModule } from './accounts.module';
 import { DevicesModule } from './devices.module';
-import { UsersWarningFlagModule } from './users-warning-flag.module';
 import GlobalCacheModule from './global/cache.module';
 import GlobalConfigModule from './global/config.module';
 import GlobalTypeOrmModule from './global/typeorm.module';
@@ -20,6 +19,10 @@ import { RoomTypeModule } from './room-type.module';
 import { DeviceTypeModule } from './device-type.module';
 import { BookingReasonModule } from './booking-reason.module';
 import { SlotModule } from './slot.module';
+import { FeedbackModule } from './feedback.module';
+import { FeedbackTypeModule } from './feedback-type.module';
+import { NotificationModule } from './notification.module';
+import { NotificationTypeModule } from './notification-type.module';
 
 @Global()
 export class AppModule {
@@ -36,8 +39,11 @@ export class AppModule {
         KeycloakModule,
         RoomsModule,
         AccountsModule,
+        FeedbackModule,
+        FeedbackTypeModule,
+        NotificationModule,
+        NotificationTypeModule,
         DevicesModule,
-        UsersWarningFlagModule,
         BookingRoomModule,
         RoomTypeModule,
         DeviceTypeModule,
@@ -53,7 +59,7 @@ export class AppModule {
           provide: APP_GUARD,
           useClass: RolesGuard,
           scope: Scope.REQUEST,
-          inject: [KeycloakModule],
+          inject: KeycloakModule as never,
         },
       ],
     };

@@ -6,8 +6,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('feedback_type')
-export class FeedbackType {
+@Entity('notification_type')
+export class NotificationType {
   @PrimaryGeneratedColumn('uuid', {
     name: 'id',
   })

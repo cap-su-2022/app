@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity, BaseEntityWithDisabled } from './base/base.entity';
 
-@Entity(Devices.name.toLowerCase())
+@Entity('devices')
 export class Devices extends BaseEntityWithDisabled {
   @PrimaryGeneratedColumn('uuid', {
     name: 'id',
