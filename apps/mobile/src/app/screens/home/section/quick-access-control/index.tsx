@@ -4,7 +4,7 @@ import {
   INPUT_GRAY_COLOR,
   WHITE,
 } from '@app/constants';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -28,58 +28,52 @@ import {
   XIcon,
 } from 'react-native-heroicons/outline';
 import Divider from '../../../../components/text/divider';
-
-const selectedData = [
-  {
-    id: 1,
-    name: 'Request for room booking',
-    icon: <ClipboardCopyIcon color={WHITE} size={deviceWidth / 16} />,
-  },
-  {
-    id: 2,
-    name: 'Check-out room booking',
-    icon: <ClipboardCheckIcon color={WHITE} size={deviceWidth / 16} />,
-  },
-  {
-    id: 3,
-    name: 'Track for booking requests',
-    icon: <ClipboardListIcon color={WHITE} size={deviceWidth / 16} />,
-  },
-  {
-    id: 4,
-    name: 'Resolve feedbacks',
-    icon: <ChatAlt2Icon color={WHITE} size={deviceWidth / 16} />,
-  },
-];
-
-const availableData = [
-  {
-    id: 1,
-    name: 'Check-in room booking',
-    icon: <ClipboardIcon color={WHITE} size={deviceWidth / 16} />,
-  },
-  {
-    id: 2,
-    name: 'My profile',
-    icon: <UserIcon color={WHITE} size={deviceWidth / 16} />,
-  },
-  {
-    id: 3,
-    name: 'Booking rooms wishlist',
-    icon: <HeartIcon color={WHITE} size={deviceWidth / 16} />,
-  },
-  {
-    id: 4,
-    name: 'My notifications',
-    icon: <BellIcon color={WHITE} size={deviceWidth / 16} />,
-  },
-];
+import { LOCAL_STORAGE } from '../../../../utils/local-storage';
+import {
+  setQuickAccessData,
+  toggleNotification,
+} from '../../../../redux/features/system/system.slice';
+import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
+import { QUICK_ACCESS_NAVIGATION_DATA } from '../../../../constants/quick-access-navigation.constant';
+import { useAppSelector } from '../../../../hooks/use-app-selector.hook';
 
 const QuickAccessControlScreen: React.FC<any> = () => {
-  const handleRemoveQuickAccess = (id: number) => {};
+  const dispatch = useAppDispatch();
 
-  const [isNotificationBellShown, setNotificationBellShown] =
-    useState<boolean>(false);
+  const [selectedActions, _] = useState(
+    JSON.parse(LOCAL_STORAGE.getString('QUICK_ACCESS'))
+  );
+
+  const availableData = useMemo(() => QUICK_ACCESS_NAVIGATION_DATA, []);
+
+  const handleAddQuickAccess = (id: number) => {
+    dispatch(
+      setQuickAccessData([
+        ...selectedActions,
+        availableData.find((data) => data.id === id),
+      ])
+    );
+  };
+
+  const handleRemoveQuickAccess = (id: number) => {
+    if (selectedActions.length < 2) {
+      return alert(
+        'There must be at least one quick access. Please add another quick access so as to remove this.'
+      );
+    }
+    dispatch(
+      setQuickAccessData(selectedActions.filter((data) => data.id !== id))
+    );
+  };
+
+  const [isNotificationBellShown, setNotificationBellShown] = useState<boolean>(
+    LOCAL_STORAGE.getBoolean('NOTIFICATION_BELL').valueOf()
+  );
+
+  useEffect(() => {
+    LOCAL_STORAGE.set('NOTIFICATION_BELL', isNotificationBellShown);
+    dispatch(toggleNotification(isNotificationBellShown));
+  }, [isNotificationBellShown]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
@@ -113,17 +107,19 @@ const QuickAccessControlScreen: React.FC<any> = () => {
         <View style={styles.container}>
           <Text style={styles.headerTitle}>Included Quick Accesses</Text>
           <View style={styles.includedQAContainer}>
-            {selectedData.map((data, index) => (
+            {selectedActions.map((data, index) => (
               <>
                 <View
+                  key={index}
                   style={[
                     styles.includedQARow,
-                    selectedData.length - 1 === index
+                    selectedActions.length - 1 === index
                       ? { marginBottom: 10 }
                       : null,
                   ]}
                 >
                   <TouchableOpacity
+                    key={index}
                     onPress={() => handleRemoveQuickAccess(data.id)}
                     style={styles.removeQAIcon}
                   >
@@ -132,8 +128,8 @@ const QuickAccessControlScreen: React.FC<any> = () => {
                   <View style={styles.QAIcon}>{data.icon}</View>
                   <Text style={styles.QAName}>{data.name}</Text>
                 </View>
-                {selectedData.length > 0 &&
-                selectedData.length - 1 !== index ? (
+                {selectedActions.length > 0 &&
+                selectedActions.length - 1 !== index ? (
                   <Divider num={deviceWidth / 9} />
                 ) : null}
               </>
@@ -141,34 +137,40 @@ const QuickAccessControlScreen: React.FC<any> = () => {
           </View>
         </View>
 
-        <View style={styles.container}>
+        <View style={[styles.container, { marginBottom: 30 }]}>
           <Text style={styles.headerTitle}>Available Quick Accesses</Text>
           <View style={styles.includedQAContainer}>
-            {availableData.map((data, index) => (
-              <>
-                <View
-                  style={[
-                    styles.includedQARow,
-                    selectedData.length - 1 === index
-                      ? { marginBottom: 10 }
-                      : null,
-                  ]}
-                >
-                  <TouchableOpacity
-                    onPress={() => handleRemoveQuickAccess(data.id)}
-                    style={styles.removeQAIcon}
+            {availableData
+              .filter(
+                (data, index) =>
+                  !selectedActions.some((val) => val.name === data.name)
+              )
+              .map((data, index) => (
+                <>
+                  <View
+                    key={index}
+                    style={[
+                      styles.includedQARow,
+                      availableData.length - 1 === index
+                        ? { marginBottom: 10 }
+                        : null,
+                    ]}
                   >
-                    <PlusIcon color={WHITE} size={deviceWidth / 20} />
-                  </TouchableOpacity>
-                  <View style={styles.QAIcon}>{data.icon}</View>
-                  <Text style={styles.QAName}>{data.name}</Text>
-                </View>
-                {selectedData.length > 0 &&
-                selectedData.length - 1 !== index ? (
-                  <Divider num={deviceWidth / 9} />
-                ) : null}
-              </>
-            ))}
+                    <TouchableOpacity
+                      onPress={() => handleAddQuickAccess(data.id)}
+                      style={styles.removeQAIcon}
+                    >
+                      <PlusIcon color={WHITE} size={deviceWidth / 20} />
+                    </TouchableOpacity>
+                    <View style={styles.QAIcon}>{data.icon}</View>
+                    <Text style={styles.QAName}>{data.name}</Text>
+                  </View>
+                  {availableData.length > 0 &&
+                  availableData.length - 1 !== index ? (
+                    <Divider num={deviceWidth / 9} />
+                  ) : null}
+                </>
+              ))}
           </View>
         </View>
       </ScrollView>

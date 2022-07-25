@@ -8,6 +8,8 @@ import TrackBookingRoomNavigator from './track-booking-room';
 import RoomBookingCheckoutNavigator from '../room-booking/checkout';
 import HomeScreen from '../../screens/home';
 import QuickAccessControlScreen from '../../screens/home/section/quick-access-control';
+import RoomBookingWishlistNavigator from '../room-booking/room-booking-wishlist.navigator';
+import NotificationNavigator from './notification';
 
 const HomeNavigator: React.FC = () => {
   const navigate = useAppNavigation();
@@ -50,6 +52,11 @@ const HomeNavigator: React.FC = () => {
         }}
         component={TrackBookingRoomNavigator}
       />
+      <StackScreen
+        name="BOOKING_ROOM_WISHLIST"
+        component={RoomBookingWishlistNavigator}
+      />
+      <StackScreen name="NOTIFICATION" component={NotificationNavigator} />
     </StackNavigator>
   );
 };
