@@ -275,7 +275,11 @@ export class RoomsRepository extends Repository<Rooms> {
       .getRawMany<Rooms>();
   }
 
-  async restoreDeletedRoomById(accountId: string, id: string, queryRunner: QueryRunner) {
+  async restoreDeletedRoomById(
+    accountId: string,
+    id: string,
+    queryRunner: QueryRunner
+  ) {
     const oldData = await this.findOneOrFail({
       where: {
         id: id,
@@ -321,6 +325,7 @@ export class RoomsRepository extends Repository<Rooms> {
   }
 
   filterRoomFreeByRoomBooked(listIdRoomBooked: string[]) {
+    console.log('AAAAAAAAa: ', listIdRoomBooked);
     const query = this.createQueryBuilder('rooms')
       .select('rooms.id', 'id')
       .addSelect('rooms.name', 'name')
@@ -329,10 +334,12 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('rt.name', 'type')
       .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
       .where('rooms.disabled_at IS NULL')
-      .andWhere('rooms.deleted_at IS NULL')
-      .andWhere('rooms.id NOT IN (:...listIdRoomBooked)', {
+      .andWhere('rooms.deleted_at IS NULL');
+    if (listIdRoomBooked?.length > 0) {
+      query.andWhere('rooms.id NOT IN (:...listIdRoomBooked)', {
         listIdRoomBooked: listIdRoomBooked,
       });
+    }
     return query.getRawMany<Rooms>();
   }
 }

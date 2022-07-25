@@ -16,13 +16,12 @@ import { showNotification } from '@mantine/notifications';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import autoAnimate from '@formkit/auto-animate';
 import { useAppSelector } from '../../redux/hooks';
-import ConfirmModal from './confirm-modal.component';
 
 interface ChooseDeviceModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
   handleNextConfirm(): void;
-  handleBackChooseSlot(): void;
+  handleBack(): void;
 }
 const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   const { classes } = useStyles();
@@ -278,7 +277,7 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
 
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button
-            onClick={() => props.handleBackChooseSlot()}
+            onClick={() => props.handleBack()}
             // leftIcon={<Pencil />}
             color="green"
           >

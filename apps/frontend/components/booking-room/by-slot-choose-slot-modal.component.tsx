@@ -14,6 +14,8 @@ import { showNotification } from '@mantine/notifications';
 import { DatePicker } from '@mantine/dates';
 import dayjs from 'dayjs';
 import BySlotChooseRoomModal from './by-slot-choose-room-modal.component';
+import ChooseDeviceModal from './choose-device-modal.component';
+import ConfirmModal from './confirm-modal.component';
 
 interface ChooseSlotModalProps {
   formik: FormikProps<any>;
@@ -24,6 +26,8 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   // const { classes } = useStyles();
   const [showChooseRoom, setShowChooseRoom] = useState(false);
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(true);
+  const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const [slotNames, setSlotNames] = useState<any[]>();
   const [slotInName, setSlotInName] = useState('')
   const [slotOutName, setSlotOutName] = useState('')
@@ -133,19 +137,29 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     }
   };
 
-  // const handleNextChooseDevice = () => {
-  //   setShowChooseSlot(false);
-  //   setShowChooseDevice(true);
-  // };
+  const handleNextChooseDevice = () => {
+    setShowChooseRoom(false);
+    setShowChooseDevice(true);
+  };
+
+  const handleNextConfirm = () => {
+    setShowConfirm(true);
+    setShowChooseDevice(false);
+  };
 
   const handleBackChooseRoom = () => {
     setShowChooseRoom(true);
-    setShowChooseSlot(false);
+    setShowChooseDevice(false);
   };
 
   const handleBackChooseSlot = () => {
     setShowChooseSlot(true);
     setShowChooseRoom(false);
+  };
+
+  const handleBackChooseDevice = () => {
+    setShowChooseDevice(true);
+    setShowConfirm(false);
   };
 
   const ChooseSlot = (
@@ -227,19 +241,26 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           formik={props.formik}
           handleSubmit={props.handleSubmit}
           handleBackChooseSlot={handleBackChooseSlot}
+          handleNextChooseDevice={handleNextChooseDevice}
           slotInName={slotInName}
           slotOutName={slotOutName}
         />
       )}
-      {/* {showChooseDevice && (
+      {showChooseDevice && (
         <ChooseDeviceModal
           formik={props.formik}
           handleSubmit={props.handleSubmit}
-          handleBackChooseSlot={handleBackChooseSlot}
-          deviceNames={props.deviceNames}
-          reasonNames={props.reasonNames}
+          handleNextConfirm={handleNextConfirm}
+          handleBack={handleBackChooseRoom}
         />
-      )} */}
+      )}
+      {showConfirm && (
+        <ConfirmModal
+          formik={props.formik}
+          handleSubmit={props.handleSubmit}
+          handleBackChooseDevice={handleBackChooseDevice}
+        />
+      )}
     </>
   );
 };

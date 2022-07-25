@@ -436,17 +436,17 @@ export class BookingRoomService {
     try {
       const listRequestBookedInDaySameSlot =
         await this.getListRequestBookedInDayAndSlot(payload);
-      if (listRequestBookedInDaySameSlot.length > 0) {
-        const listRoomBookedInDaySameSlot = [];
+      const listRoomBookedInDaySameSlot = [];
+      if (listRequestBookedInDaySameSlot?.length > 0) {
         listRequestBookedInDaySameSlot.map((request) => {
           listRoomBookedInDaySameSlot.push(request.roomId);
         });
-        const result = await this.roomService.filterRoomFreeByRoomBooked(
-          listRoomBookedInDaySameSlot
-        );
-        console.log('LIST ROOM FREE: ', result);
-        return result;
       }
+      const result = await this.roomService.filterRoomFreeByRoomBooked(
+        listRoomBookedInDaySameSlot
+      );
+      console.log('LIST ROOM FREE: ', result);
+      return result;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

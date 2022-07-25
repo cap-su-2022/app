@@ -12,22 +12,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useWindowDimensions } from '../../hooks/use-window-dimensions';
-import {
-  Alarm,
-  Archive,
-  BuildingWarehouse,
-  CalendarStats,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsRight,
-  ClipboardText,
-  Clock,
-  FileDescription,
-  Id,
-  Search,
-  User,
-  X,
-} from 'tabler-icons-react';
+import { Search, X } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
 import autoAnimate from '@formkit/auto-animate';
@@ -37,11 +22,13 @@ import { showNotification } from '@mantine/notifications';
 import { fetchListBookingByRoomInWeek } from '../../redux/features/room-booking/thunk/fetch-list-booking-by-room-in-week.thunk';
 import { fetchRoomFreeAtTime } from '../../redux/features/room-booking/thunk/fetch-room-free-at-time';
 import { FPT_ORANGE_COLOR } from '@app/constants';
+import { getRoomById } from '../../redux/features/room/thunk/get-room-by-id';
 
 interface ChooseSlotModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
   handleBackChooseSlot(): void;
+  handleNextChooseDevice(): void;
   slotInName: string;
   slotOutName: string;
 }
@@ -64,7 +51,24 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
   }, []);
 
   const handleNextStep = () => {
-    console.log(props.formik);
+    if (!props.formik.values.roomId) {
+      showNotification({
+        id: 'miss-data',
+        color: 'red',
+        title: 'Miss some filed',
+        message: 'Please room before to next step',
+        icon: <X />,
+        autoClose: 3000,
+      });
+    } else {
+      dispatch(getRoomById(props.formik.values.roomId)).unwrap();
+      props.handleNextChooseDevice();
+    }
+  };
+
+  const handleBack = () => {
+    props.formik.setFieldValue('roomId', null);
+    props.handleBackChooseSlot();
   };
 
   const [search, setSearch] = useState('');
@@ -96,13 +100,12 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
               return (
                 <div
                   key={room.id}
-                  style={{
-                    border: '1px solid',
-                    height: '100px',
-                    width: '40%',
-                    margin: '5%',
-                    borderRadius: 5,
-                  }}
+                  className={
+                    room.id === props.formik.values.roomId
+                      ? classes.roomChoosedDiv
+                      : classes.roomDiv
+                  }
+                  onClick={() => props.formik.setFieldValue('roomId', room.id)}
                 >
                   <div
                     style={{
@@ -124,14 +127,18 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
         </ScrollArea>
         <div style={{ padding: 10 }}>
           All room free at{' '}
-          {dayjs(props.formik.values.checkinDate).format('DD-MM-YYYY')}{', '}
-          {props.slotInName}{' --> '}
-          {props.slotOutName}
+          {dayjs(props.formik.values.checkinDate).format('DD-MM-YYYY')}
+          {', '}
+          {props.slotInName === props.slotOutName
+            ? props.slotInName
+            : props.slotInName + ' --> ' + props.slotOutName}
+          {/* {props.slotInName}{' --> '}
+          {props.slotOutName} */}
         </div>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button onClick={() => props.handleBackChooseSlot()} color="green">
+        <Button onClick={() => handleBack()} color="green">
           Back
         </Button>
 
@@ -157,64 +164,23 @@ const useStyles = createStyles({
     paddingTop: '10px',
     marginTop: '20px',
   },
-  thDiv: {
-    textAlign: 'center',
-  },
-  tdDiv: {
-    margin: 'auto',
-  },
-  dayPassed: {
-    backgroundColor: '#a6a6a6',
-    height: 20,
-    width: 50,
+  roomDiv: {
+    border: '1px solid',
+    height: '100px',
+    width: '40%',
+    margin: '5%',
     borderRadius: 5,
-    margin: 'auto',
+    cursor: 'pointer',
   },
-  slotFree: {
-    backgroundColor: '#6bce6b',
-    height: 20,
-    width: 50,
+  roomChoosedDiv: {
+    border: '1px solid',
+    height: '100px',
+    width: '40%',
+    margin: '5%',
     borderRadius: 5,
-    margin: 'auto',
-  },
-  slotPending: {
-    backgroundColor: '#7373d0',
-    height: 20,
-    width: 50,
-    borderRadius: 5,
-    margin: 'auto',
-  },
-  slotBooked: {
-    backgroundColor: '#fd6262',
-    height: 20,
-    width: 50,
-    borderRadius: 5,
-    margin: 'auto',
-  },
-  noteSlotBooked: {
-    backgroundColor: '#fd6262',
-    height: 15,
-    width: 30,
-    margin: 0,
-    borderRadius: 5,
-    marginRight: 5,
-    marginLeft: 20,
-  },
-  noteSlotPending: {
-    backgroundColor: '#7373d0',
-    height: 15,
-    width: 30,
-    margin: 0,
-    borderRadius: 5,
-    marginRight: 5,
-  },
-  noteSlotFree: {
-    backgroundColor: '#6bce6b',
-    height: 15,
-    width: 30,
-    margin: 0,
-    borderRadius: 5,
-    marginRight: 5,
+    cursor: 'pointer',
+    boxShadow:
+      'rgb(85, 91, 255) 0px 0px 0px 3px, rgb(31, 193, 27) 0px 0px 0px 6px, rgb(255, 217, 19) 0px 0px 0px 9px, rgb(255, 156, 85) 0px 0px 0px 12px, rgb(255, 85, 85) 0px 0px 0px 15px',
   },
 });
 
