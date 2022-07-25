@@ -122,7 +122,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
             <ChevronsRight
               size={40}
               strokeWidth={2}
-              color={'white'}
+              color={'black'}
               style={{}}
             />
             <div className={classes.slotArea}>
