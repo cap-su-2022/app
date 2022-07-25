@@ -5,6 +5,7 @@ import { AccountsService } from './accounts.service';
 import { RoomWishlist } from '../models';
 import { RemoveWishlistRequest } from '../payload/request/remove-from-booking-room-wishlist.request.payload';
 import { RoomWishlistHistService } from './room-wishlist-hist.service';
+import { SlotService } from './slot.service';
 
 @Injectable()
 export class RoomWishlistService {
@@ -13,41 +14,40 @@ export class RoomWishlistService {
   constructor(
     private readonly repository: RoomWishlistRepository,
     private readonly accountService: AccountsService,
-    private readonly histService: RoomWishlistHistService
+    private readonly histService: RoomWishlistHistService,
+    private readonly slotService: SlotService
   ) {}
 
-  findAllWishlistBookingRoomsByKeycloakUserId(
+  findAllWishlistBookingRooms(
     roomName: string,
     slotFrom: number,
     slotTo: number,
-    keycloakUserId: string
+    accountId: string
   ) {
-    return this.repository.findAllByKeycloakUserId(
-      roomName,
-      slotFrom,
-      slotTo,
-      keycloakUserId
-    );
+    return this.repository.findAll(roomName, slotFrom, slotTo, accountId);
   }
 
   async addToWishlist(
-    keycloakUserId: string,
+    accountId: string,
     wishlist: WishlistBookingRoomRequestDTO
   ) {
+    console.log(wishlist.slotId);
+    const slot = await this.slotService.getNumOfSlot(wishlist.slotId);
+    console.log(slot);
     const isWishlistExisted = await this.repository.checkIfWishlistAlreadyExist(
-      wishlist
+      {
+        ...wishlist,
+        slot: slot.slotNum,
+      }
     );
     if (isWishlistExisted) {
       throw new BadRequestException('This room wishlist is already existed!');
     }
-    const accountId = await this.accountService.getUserIdByKeycloakId(
-      keycloakUserId
-    );
 
     const entity: Partial<RoomWishlist> = {
       createdBy: accountId,
       roomId: wishlist.roomId,
-      slotNum: wishlist.slot,
+      slotNum: slot.slotNum,
     };
 
     return this.repository.save(entity, {

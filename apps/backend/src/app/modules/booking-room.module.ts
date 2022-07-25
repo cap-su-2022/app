@@ -14,7 +14,7 @@ import { BookingRequestHistService } from '../services/booking-room-hist.service
 import { BookingRequestHistRepository } from '../repositories/booking-request-hist.repository';
 import { SlotModule } from './slot.module';
 import { BookingRoomDevicesService } from '../services/booking-request-devices.service';
-import { BookingRoomDevicesRepository } from '../repositories/booking-request-devices.repository';
+import { BookingRoomDevicesRepository } from '../repositories';
 
 @Module({
   imports: [
@@ -30,11 +30,20 @@ import { BookingRoomDevicesRepository } from '../repositories/booking-request-de
       BookingRoomRepository,
       AccountRepository,
       BookingRequestHistRepository,
-      BookingRoomDevicesRepository
+      BookingRoomDevicesRepository,
     ]),
   ],
   controllers: [BookingRoomController],
-  providers: [BookingRoomService, TasksService, BookingRequestHistService, BookingRoomDevicesService],
-  exports: [BookingRoomService, BookingRequestHistService, BookingRoomDevicesService],
+  providers: [
+    BookingRoomService,
+    TasksService,
+    BookingRequestHistService,
+    BookingRoomDevicesService,
+  ],
+  exports: [
+    BookingRoomService,
+    BookingRequestHistService,
+    BookingRoomDevicesService,
+  ],
 })
 export class BookingRoomModule {}

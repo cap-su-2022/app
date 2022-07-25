@@ -235,14 +235,14 @@ export class BookingRoomService {
     roomName: string,
     slotFrom: number,
     slotTo: number,
-    keycloakUser: KeycloakUserInstance
+    accountId: string
   ): Promise<WishlistBookingRoomResponseDTO[]> {
     try {
-      return this.roomWishlistService.findAllWishlistBookingRoomsByKeycloakUserId(
+      return this.roomWishlistService.findAllWishlistBookingRooms(
         roomName,
         slotFrom,
         slotTo,
-        keycloakUser.sub
+        accountId
       );
     } catch (e) {
       this.logger.error(e);
@@ -251,11 +251,11 @@ export class BookingRoomService {
   }
 
   async addToBookingRoomWishlist(
-    user: KeycloakUserInstance,
+    accountId: string,
     wishlist: WishlistBookingRoomRequestDTO
   ) {
     try {
-      return await this.roomWishlistService.addToWishlist(user.sub, wishlist);
+      return await this.roomWishlistService.addToWishlist(accountId, wishlist);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(
@@ -707,7 +707,12 @@ export class BookingRoomService {
     }
   }
 
-  async cancelRequest(accountId: string, id: string, reason: string, queryRunner: QueryRunner) {
+  async cancelRequest(
+    accountId: string,
+    id: string,
+    reason: string,
+    queryRunner: QueryRunner
+  ) {
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -743,7 +748,12 @@ export class BookingRoomService {
     await queryRunner.startTransaction();
 
     try {
-      const request = await this.cancelRequest(accountId, id, reason, queryRunner);
+      const request = await this.cancelRequest(
+        accountId,
+        id,
+        reason,
+        queryRunner
+      );
 
       await queryRunner.commitTransaction();
       return request;

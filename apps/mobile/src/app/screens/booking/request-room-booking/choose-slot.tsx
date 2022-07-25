@@ -123,11 +123,10 @@ const ChooseSlot: React.FC<any> = (props) => {
             }
           });
       });
-
   }, [selectedDay]);
 
-  const handleAddToWishlist = (roomId, slot) => {
-    dispatch(addToRoomBookingWishlist({ roomId, slot }))
+  const handleAddToWishlist = (roomId, slotId) => {
+    dispatch(addToRoomBookingWishlist({ roomId, slotId }))
       .unwrap()
       .then(() => alert('success'))
       .catch((e) => {
@@ -158,7 +157,8 @@ const ChooseSlot: React.FC<any> = (props) => {
           slotName: item.slotName,
         })
       );
-    }dispatch(
+    }
+    dispatch(
       step1ScheduleRoomBooking({
         fromSlot: item.slotId,
         fromDay: selectedDay,
@@ -204,7 +204,7 @@ const ChooseSlot: React.FC<any> = (props) => {
         </View>
         <View style={styles.roomBookActionContainer}>
           <TouchableOpacity
-            onPress={() => handleAddToWishlist(item.roomId, item.slot)}
+            onPress={() => handleAddToWishlist(item.roomId, item.slotId)}
             style={styles.addToWishListContainer}
           >
             <View style={styles.addToWishListButtonContainer}>
