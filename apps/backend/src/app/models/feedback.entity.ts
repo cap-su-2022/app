@@ -74,4 +74,16 @@ export class Feedback {
     type: 'uuid',
   })
   deletedBy?: string;
+
+  @Column({
+    name: 'rejected_at',
+    type: 'timestamptz',
+  })
+  rejectedAt?: Date;
+
+  @Column({
+    name: 'rejected_by',
+    type: 'uuid',
+  })
+  rejectedBy?: string;
 }

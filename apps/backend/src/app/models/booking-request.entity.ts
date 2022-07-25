@@ -131,10 +131,30 @@ export class BookingRequest{
   description?: string;
 
   @Column({
-    name: 'reason_cancel',
+    name: 'cancel_reason',
     type: 'varchar',
     length: 100,
   })
-  reasonCancel?: string;
+  cancelReason?: string;
+
+  @Column({
+    name: 'signature_checkin',
+    type: 'varchar',
+    length: 256,
+  })
+  signatureCheckin?: string;
+
+  @Column({
+    name: 'signature_checkout',
+    type: 'varchar',
+    length: 256,
+  })
+  signatureCheckout?: string;
+
+  @Column({
+    name: 'booked_for',
+    type: 'uuid',
+  })
+  bookedFor?: string;
 
 }

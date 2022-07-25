@@ -172,7 +172,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                   icon={<ClipboardText />}
                   radius="md"
                   readOnly
-                  value={requestBooking.reasonCancel}
+                  value={requestBooking.cancelReason}
                 />
               </InputWrapper>
             </>

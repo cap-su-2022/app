@@ -562,7 +562,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('br.cancelled_at', 'cancelledAt')
       .addSelect('aaa.username', 'cancelledBy')
       .addSelect('aaaa.username', 'acceptedBy')
-      .addSelect('br.reason_cancel', 'reasonCancel')
+      .addSelect('br.cancel_reason', 'cancelReason')
       .addSelect('br.accepted_at', 'acceptedAt')
       .addSelect('s.name', 'checkinSlot')
       .addSelect('ss.name', 'checkoutSlot')
@@ -621,7 +621,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         {
           ...oldData,
           status: 'CANCELLED',
-          reasonCancel: reason,
+          cancelReason: reason,
           updatedBy: accountId,
           updatedAt: new Date(),
           cancelledBy: accountId,
