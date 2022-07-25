@@ -1,7 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { axiosGetAPICall, axiosPostAPICall } from '../../../api-call';
+import { axiosPostAPICall } from '../../../api-call';
 import { API_URL } from '../../../../constants/constant';
-import { axiosPost } from '../../../../../../../frontend/utils/api';
 
 export const checkOutBookingRoom = createAsyncThunk<
   any,

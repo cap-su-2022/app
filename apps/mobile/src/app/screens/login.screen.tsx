@@ -18,15 +18,23 @@ import CheckAlive from '../components/check-alive.component';
 import { Formik } from 'formik';
 import LoginErrorModal from '../components/modals/login-error.component';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../redux/features/spinner';
-import { BLACK, FPT_ORANGE_COLOR } from '@app/constants';
+import {
+  BLACK,
+  FPT_ORANGE_COLOR,
+  INPUT_GRAY_COLOR,
+  WHITE,
+} from '@app/constants';
 import { doLogin } from '../redux/features/auth/thunk/login.thunk';
 import { isUserSessionExisted } from '../utils/local-storage';
 import { validateAccessToken } from '../redux/features/auth/thunk/validate-access-token.thunk';
-import { deviceWidth } from '../utils/device';
+import { deviceHeight, deviceWidth } from '../utils/device';
 import { useAppDispatch } from '../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../hooks/use-app-navigation.hook';
 import BookLogo from '../components/book-logo';
 import { doGoogleLogin } from '../redux/features/auth/thunk/google-login.thunk';
+import { boxShadow } from '../utils/box-shadow.util';
+import AlertModal from '../components/modals/alert-modal.component';
+import { ExclamationCircleIcon } from 'react-native-heroicons/outline';
 
 const LoginScreen = () => {
   const dispatch = useAppDispatch();
@@ -81,6 +89,7 @@ const LoginScreen = () => {
         navigate.navigate('MAIN');
       })
       .catch((e) => {
+        setLoginErrMsg(e);
         setLoginFailure(true);
       });
   };
@@ -88,7 +97,7 @@ const LoginScreen = () => {
   return (
     <SafeAreaView style={[styles.container]}>
       <Background style={[styles.background]} />
-      <View style={[styles.loginContainer, styles.shadowProp]}>
+      <View style={[styles.loginContainer, boxShadow(styles)]}>
         <View style={[styles.logoContainer]}>
           <FPTULogo height={deviceWidth / 3} width={deviceWidth / 3} />
           <BookLogo />
@@ -108,8 +117,10 @@ const LoginScreen = () => {
                   onBlur={handleBlur('username')}
                   onChangeText={handleChange('username')}
                   autoCapitalize="none"
+                  autoComplete={null}
                   autoCorrect={false}
                   value={values.username}
+                  placeholderTextColor={INPUT_GRAY_COLOR}
                   placeholder="Username"
                   style={[styles.inputField]}
                 />
@@ -123,10 +134,12 @@ const LoginScreen = () => {
                   onBlur={handleBlur('password')}
                   onChangeText={handleChange('password')}
                   autoCapitalize="none"
+                  autoComplete={null}
                   value={values.password}
                   autoCorrect={false}
                   secureTextEntry={true}
                   placeholder="Password"
+                  placeholderTextColor={INPUT_GRAY_COLOR}
                   style={[styles.inputField]}
                 />
               </View>
@@ -140,9 +153,9 @@ const LoginScreen = () => {
           )}
         </Formik>
 
-        <TouchableOpacity>
+        {/*<TouchableOpacity>
           <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>*/}
 
         <View style={[styles.loginDividerContainer]}>
           <Divider num={10} />
@@ -161,12 +174,79 @@ const LoginScreen = () => {
         </TouchableOpacity>
       </View>
       {isLoginFailure ? (
-        <LoginErrorModal
-          isFailure={isLoginFailure}
-          title={loginErrMsg}
-          description={'Please try again later'}
-          handleCancelModal={setLoginFailure}
-        />
+        <AlertModal
+          height={deviceHeight / 4}
+          width={deviceWidth / 1.15}
+          toggleShown={() => setLoginFailure(!isLoginFailure)}
+          isOpened={isLoginFailure}
+        >
+          <View
+            style={{
+              flex: 0.85,
+              display: 'flex',
+              justifyContent: 'space-between',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <View
+              style={{
+                flex: 0.8,
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <ExclamationCircleIcon
+                size={deviceWidth / 8}
+                color={FPT_ORANGE_COLOR}
+              />
+              <Text
+                style={{
+                  color: BLACK,
+                  fontSize: deviceWidth / 19,
+                  fontWeight: '600',
+                }}
+              >
+                Error encountered while signing in
+              </Text>
+              <Text
+                style={{
+                  color: BLACK,
+                  fontSize: deviceWidth / 23,
+                  fontWeight: '400',
+                }}
+              >
+                {loginErrMsg}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                setLoginFailure(!isLoginFailure);
+              }}
+              style={{
+                height: 50,
+                backgroundColor: FPT_ORANGE_COLOR,
+                borderRadius: 50,
+                width: deviceWidth / 1.35,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  color: WHITE,
+                  fontSize: deviceWidth / 19,
+                  fontWeight: '600',
+                }}
+              >
+                Try again
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </AlertModal>
       ) : null}
       {isError ? <CheckAlive /> : null}
     </SafeAreaView>
@@ -185,7 +265,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     backgroundColor: 'rgb(248, 249, 250)',
-    width: 350,
+    width: deviceWidth / 1.1,
+    height: deviceHeight / 1.9,
   },
   background: {
     position: 'absolute',
@@ -205,11 +286,12 @@ const styles = StyleSheet.create({
   },
   inputField: {
     margin: 10,
-    width: 270,
+    width: deviceWidth / 1.3,
     height: 35,
     borderWidth: 1,
     borderColor: 'rgb(206, 212, 218)',
     borderRadius: 5,
+    paddingHorizontal: 10,
   },
   loginBtn: {
     margin: 10,
@@ -217,15 +299,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: FPT_ORANGE_COLOR,
-    width: 280,
-    height: 40,
-    borderColor: '#fff',
+    width: deviceWidth / 1.3,
+    height: 50,
     borderRadius: 50,
-    borderWidth: 1,
   },
   loginBtnText: {
-    fontSize: 16,
-    color: '#fff',
+    fontSize: deviceWidth / 20,
+    color: WHITE,
     fontWeight: '500',
   },
   loginGoogleBtn: {
@@ -234,7 +314,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
-    width: 120,
+    width: deviceWidth / 3.3,
     height: 40,
     borderColor: 'rgb(206, 212, 218)',
     borderRadius: 50,

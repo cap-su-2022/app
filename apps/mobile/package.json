@@ -52,6 +52,7 @@
     "next-redux-wrapper": "*",
     "redux-logger": "*",
     "@react-native-picker/picker": "*",
-    "@formkit/auto-animate": "*"
+    "@formkit/auto-animate": "*",
+    "@nestjs/common": "*"
   }
 }

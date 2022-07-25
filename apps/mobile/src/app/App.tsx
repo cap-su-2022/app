@@ -18,16 +18,44 @@ import axios from 'axios';
 import { API_URL } from './constants/constant';
 import { toggleSpinnerOff, toggleSpinnerOn } from './redux/features/spinner';
 import CannotConnectToServer from './components/cannot-connect-server.component';
+import { LOCAL_STORAGE } from './utils/local-storage';
+import { useAppDispatch } from './hooks/use-app-dispatch.hook';
+import {
+  setQuickAccessData,
+  toggleNotification,
+} from './redux/features/system/system.slice';
+import { DEFAULT_QUICK_ACCESS } from './constants/quick-access-navigation.constant';
 
 export const App = () => {
   const user = useSelector((state: RootState) => state.user);
   const isSpinnerLoading = useSelector(
     (state: RootState) => state.spinner.isLoading
   );
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [isPingTimedOut, setPingTimedOut] = useState<boolean>(false);
 
   const [initialRoute, setInitialRoute] = useState<string>('LOGIN_SCREEN');
+
+  useEffect(() => {
+    if (!LOCAL_STORAGE.contains('QUICK_ACCESS')) {
+      LOCAL_STORAGE.set('QUICK_ACCESS', JSON.stringify(DEFAULT_QUICK_ACCESS));
+      dispatch(setQuickAccessData([]));
+    } else {
+      dispatch(
+        setQuickAccessData(JSON.parse(LOCAL_STORAGE.getString('QUICK_ACCESS')))
+      );
+    }
+
+    if (!LOCAL_STORAGE.contains('NOTIFICATION_BELL')) {
+      LOCAL_STORAGE.set('NOTIFICATION_BELL', true);
+    } else {
+      dispatch(
+        toggleNotification(
+          LOCAL_STORAGE.getBoolean('NOTIFICATION_BELL').valueOf()
+        )
+      );
+    }
+  }, []);
 
   useLayoutEffect(() => {
     dispatch(toggleSpinnerOn());
