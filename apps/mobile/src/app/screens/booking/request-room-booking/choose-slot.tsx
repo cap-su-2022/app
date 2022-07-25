@@ -204,7 +204,7 @@ const ChooseSlot: React.FC<any> = (props) => {
         </View>
         <View style={styles.roomBookActionContainer}>
           <TouchableOpacity
-            onPress={() => handleAddToWishlist(item.roomName, item.slot)}
+            onPress={() => handleAddToWishlist(item.roomId, item.slot)}
             style={styles.addToWishListContainer}
           >
             <View style={styles.addToWishListButtonContainer}>
