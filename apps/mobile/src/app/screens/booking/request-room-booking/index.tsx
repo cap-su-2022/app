@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   View,
   ScrollView,
+  Platform,
 } from 'react-native';
 import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
@@ -185,6 +186,7 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     marginRight: 16,
     borderRadius: 8,
+    marginBottom: 10,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: WHITE,

@@ -30,7 +30,9 @@ const ChooseRoomBookingFooter: React.FC<ChooseRoomBookingFooterProps> = (
 ) => {
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
   const user = LOCAL_STORAGE.getString('user');
-  const historySearch = LOCAL_STORAGE.getString(JSON.parse(user).username);
+  const historySearch = user
+    ? LOCAL_STORAGE.getString(JSON.parse(user).username)
+    : null;
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
   const handleNextStep = () => {
