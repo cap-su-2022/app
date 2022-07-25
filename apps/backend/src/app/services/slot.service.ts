@@ -124,10 +124,12 @@ export class SlotService {
       const listRequestBySlot =
         await this.bookingRoomService.getRequestBySlotId(id);
       if (listRequestBySlot?.length > 0) {
+        const reason = `${data.name} was deleted. Request in this slot was auto cancelled`
         for (let i = 0; i < listRequestBySlot.length; i++) {
           this.bookingRoomService.cancelRequest(
             accountId,
             listRequestBySlot[i].id,
+            reason,
             queryRunner
           );
         }

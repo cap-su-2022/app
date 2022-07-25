@@ -21,7 +21,7 @@ import { ChooseBookingRoomFilterPayload } from '../payload/request/choose-bookin
 import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
 import { BookingRequest, Devices } from '../models';
 import { RoomTypeService } from './room-type.service';
-import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.request.payload';
+import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
 import { BookingRequestHistService } from './booking-room-hist.service';
 import { SlotService } from './slot.service';
 import dayjs = require('dayjs');
@@ -707,7 +707,7 @@ export class BookingRoomService {
     }
   }
 
-  async cancelRequest(accountId: string, id: string, queryRunner: QueryRunner) {
+  async cancelRequest(accountId: string, id: string, reason: string, queryRunner: QueryRunner) {
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -715,11 +715,6 @@ export class BookingRoomService {
           'Request does not found with the provided id'
         );
       }
-      // const isAccepted = await this.repository.isAcceptById(id);
-      // if (isAccepted) {
-      //   throw new BadRequestException('Request already accepted!');
-      // }
-
       const isCancelled = await this.repository.isCancelledById(id);
       if (isCancelled) {
         throw new BadRequestException('Request already cancelled!');
@@ -729,6 +724,7 @@ export class BookingRoomService {
       const request = await this.repository.cancelRoomBookingById(
         accountId,
         id,
+        reason,
         role.role_name,
         queryRunner
       );
@@ -740,14 +736,14 @@ export class BookingRoomService {
     }
   }
 
-  async cancelRoomBookingById(accountId: string, id: string) {
+  async cancelRoomBookingById(accountId: string, id: string, reason: string) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const request = await this.cancelRequest(accountId, id, queryRunner);
+      const request = await this.cancelRequest(accountId, id, reason, queryRunner);
 
       await queryRunner.commitTransaction();
       return request;

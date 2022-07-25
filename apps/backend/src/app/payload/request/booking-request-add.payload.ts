@@ -1,15 +1,12 @@
 import { PaginationParams } from '../../controllers/pagination.model';
 import {
   IsArray,
-  IsBoolean,
   IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
-  MinLength,
 } from 'class-validator';
 import { Transform, TransformFnParams } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class BookingRequestAddRequestPayload extends PaginationParams {
   @Transform(({ value }: TransformFnParams) => value?.trim())

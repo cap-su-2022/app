@@ -130,4 +130,11 @@ export class BookingRequest{
   })
   description?: string;
 
+  @Column({
+    name: 'reason_cancel',
+    type: 'varchar',
+    length: 100,
+  })
+  reasonCancel?: string;
+
 }

@@ -31,8 +31,9 @@ import { Role } from '../enum/roles.enum';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
 import { BookingRequest } from '../models';
-import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.request.payload';
+import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
 import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
+import { CancelRequestPayload } from '../payload/request/booking-request-cancel.payload';
 
 @Controller('/v1/booking-room')
 @ApiTags('Booking Room')
@@ -481,10 +482,11 @@ export class BookingRoomController {
   @Put('cancel/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   cancelRoomBookingById(
-    @User() user: KeycloakUserInstance,
-    @Param() payload: { id: string }
+    @Param('id') id: string,
+    @Body() payload: CancelRequestPayload,
+    @User() user: KeycloakUserInstance
   ) {
-    return this.service.cancelRoomBookingById(user.account_id, payload.id);
+    return this.service.cancelRoomBookingById(user.account_id, id, payload.reason);
   }
 
   @Get('accounts-name')
