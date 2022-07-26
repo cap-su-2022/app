@@ -142,7 +142,7 @@ const roomBookingSlice = createSlice({
         roomName: payload.roomName,
         fromDay: payload.fromDay,
         fromSlot: payload.fromSlot,
-        toSlot: payload.toSlot
+        toSlot: payload.toSlot,
       };
     },
     step2ScheduleRoomBooking(state, { payload }) {
@@ -157,6 +157,14 @@ const roomBookingSlice = createSlice({
         ...state.addRoomBooking,
         devices: payload.devices,
         deviceNames: payload.deviceNames,
+      };
+    },
+    step1BookRoomFromWishList(state, { payload }) {
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        roomId: payload.roomId,
+        roomName: payload.roomName,
+        fromSlot: payload.fromSlot,
       };
     },
     setGlobalDateStart(state, { payload }) {
@@ -237,4 +245,5 @@ export const {
   setGlobalDateEnd,
   resetGlobalDateStart,
   resetGlobalDateEnd,
+  step1BookRoomFromWishList,
 } = roomBookingSlice.actions;
