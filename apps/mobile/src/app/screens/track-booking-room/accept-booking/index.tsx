@@ -218,15 +218,16 @@ const AcceptBooking: React.FC<any> = () => {
               </>
             ) : null}
 
-            <View
-              style={{
-                marginTop: 20,
-              }}
-            >
+            <View>
               <Text style={styles.informationHeaderTitle}>
                 MORE INFORMATION
               </Text>
-              <View style={styles.bookingInformationContainer}>
+              <View
+                style={[
+                  styles.bookingInformationContainer,
+                  { marginBottom: 20 },
+                ]}
+              >
                 <View style={styles.dataRowContainer}>
                   <Text style={styles.titleText}>Booking ID</Text>
                   <Text style={styles.valueText}>{bookingRoom.id}</Text>

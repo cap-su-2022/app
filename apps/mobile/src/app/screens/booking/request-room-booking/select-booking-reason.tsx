@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     margin: 5,
     backgroundColor: '#f2f2f2',
     height: 50,
-    width: deviceWidth / 1.5,
+    width: deviceWidth / 1.15,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -59,8 +59,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   title: {
-    fontSize: deviceWidth / 23,
-    fontWeight: '700',
+    fontSize: deviceWidth / 26,
+    fontWeight: '500',
     marginBottom: 5,
   },
   container: {

@@ -33,6 +33,8 @@ import { BookingRoomReason } from '../../redux/models/booking-reason-response';
 import SelectBookingReason from './request-room-booking/select-booking-reason';
 import { Device } from '../../redux/models/device.model';
 import Divider from '../../components/text/divider';
+import dayjs from 'dayjs';
+import { boxShadow } from '../../utils/box-shadow.util';
 
 export const RoomBooking3: React.FC = () => {
   const navigate = useAppNavigation();
@@ -104,7 +106,7 @@ export const RoomBooking3: React.FC = () => {
           <Text style={styles.titleText}>{title}</Text>
           <Text style={styles.valueText}>{detail}</Text>
         </View>
-        <Divider num={deviceWidth / 8} />
+        <Divider num={deviceWidth / 9} />
       </>
     );
   };
@@ -125,6 +127,17 @@ export const RoomBooking3: React.FC = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
+      <Text
+        style={{
+          alignSelf: 'center',
+          color: BLACK,
+          fontSize: deviceWidth / 19,
+          fontWeight: '600',
+          paddingVertical: 10,
+        }}
+      >
+        Proceed to book
+      </Text>
       <ScrollView
         style={{
           marginTop: Platform.OS === 'android' ? 20 : 0,
@@ -144,10 +157,15 @@ export const RoomBooking3: React.FC = () => {
           </View>
           <Text style={styles.informationHeaderTitle}>BOOKING INFORMATION</Text>
           <View style={{ padding: 10 }}>
-            <View style={styles.bookingInformationContainer}>
-              {InfoDetail('Start Day:', roomBooking.fromDay)}
+            <View
+              style={[styles.bookingInformationContainer, boxShadow(styles)]}
+            >
+              {InfoDetail(
+                'Start Day',
+                dayjs(roomBooking.fromDay).format('ddd DD/MM/YYYY')
+              )}
               {InfoDetail('Slot', `Slot ${roomBooking.toSlotNum}`)}
-              {InfoDetail('Room Name:', roomBooking.roomName)}
+              {InfoDetail('Room Name', roomBooking.roomName)}
               <Text style={[styles.titleText, { margin: 10 }]}>
                 List Device
               </Text>
@@ -159,8 +177,10 @@ export const RoomBooking3: React.FC = () => {
           <Text style={styles.informationHeaderTitle}>
             ADDITIONAL BOOKING INFORMATION
           </Text>
-          <View style={{ padding: 10 }}>
-            <View style={styles.bookingInformationContainer}>
+          <View style={{ padding: 10, backgroundColor: WHITE }}>
+            <View
+              style={[styles.bookingInformationContainer, boxShadow(styles)]}
+            >
               <SelectBookingReason
                 handleSetBookingRoomReason={(val) => setBookingReason(val)}
                 bookingReason={bookingReason}
@@ -189,33 +209,32 @@ export const RoomBooking3: React.FC = () => {
               </View>
             </View>
           </View>
-
-          <View style={styles.footerContainer}>
-            <TouchableOpacity
-              onPress={() => navigate.pop()}
-              style={styles.reviewAgainContainer}
-            >
-              <ChevronDoubleLeftIcon color={RED} />
-              <Text style={styles.reviewAgainText}>Review again</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleNextStep()}
-              style={styles.bookNowButton}
-            >
-              <TicketIcon color={WHITE} />
-              <Text
-                style={{
-                  color: WHITE,
-                  fontSize: deviceWidth / 18,
-                  fontWeight: '600',
-                }}
-              >
-                Book Now
-              </Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </ScrollView>
+      <View style={styles.footerContainer}>
+        <TouchableOpacity
+          onPress={() => navigate.pop()}
+          style={styles.reviewAgainContainer}
+        >
+          <ChevronDoubleLeftIcon color={RED} />
+          <Text style={styles.reviewAgainText}>Review again</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleNextStep()}
+          style={styles.bookNowButton}
+        >
+          <TicketIcon color={WHITE} />
+          <Text
+            style={{
+              color: WHITE,
+              fontSize: deviceWidth / 18,
+              fontWeight: '600',
+            }}
+          >
+            Book Now
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -298,8 +317,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   title: {
-    fontSize: deviceWidth / 23,
-    fontWeight: '700',
+    fontSize: deviceWidth / 26,
+    fontWeight: '500',
     marginBottom: 5,
   },
   checkBox: {
@@ -310,6 +329,8 @@ const styles = StyleSheet.create({
   },
   footerContainer: {
     height: 80,
+    borderTopWidth: 1,
+    borderTopColor: INPUT_GRAY_COLOR,
     backgroundColor: WHITE,
     display: 'flex',
     flexDirection: 'row',
@@ -339,23 +360,15 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   bookingInformationContainer: {
-    padding: 20,
-    borderWidth: 1,
+    backgroundColor: WHITE,
+    padding: 10,
     borderRadius: 15,
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    shadowOffset: {
-      height: 1,
-      width: 1,
-    },
-    borderColor: FPT_ORANGE_COLOR,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
   },
   bookingDescriptionContainer: {
     flex: 1,
-    height: '100%',
     paddingHorizontal: 10,
     borderWidth: 2,
     borderColor: WHITE,
@@ -366,6 +379,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     backgroundColor: '#f2f2f2',
+    height: Platform.OS === 'android' ? 0 : deviceHeight / 5.5,
   },
   header: {
     display: 'flex',

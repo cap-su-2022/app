@@ -13,11 +13,8 @@ import FPTULogo from '../components/LogoFPTU.svg';
 import Asterik from '../components/text/asterik';
 import Divider from '../components/text/divider';
 import GoogleIcon from '../components/google-icon.svg';
-import { persistGoogleIdToken } from '../redux/userSlice';
 import CheckAlive from '../components/check-alive.component';
 import { Formik } from 'formik';
-import LoginErrorModal from '../components/modals/login-error.component';
-import { toggleSpinnerOff, toggleSpinnerOn } from '../redux/features/spinner';
 import {
   BLACK,
   FPT_ORANGE_COLOR,
