@@ -28,6 +28,7 @@ import dayjs = require('dayjs');
 import { DataSource, QueryRunner } from 'typeorm';
 import { BookingRoomDevicesService } from './booking-request-devices.service';
 import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
+import { NotificationService } from './notification.service';
 
 @Injectable()
 export class BookingRoomService {
@@ -36,7 +37,7 @@ export class BookingRoomService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly repository: BookingRoomRepository,
-    private readonly deviceService: DevicesService,
+    private readonly notificationService: NotificationService,
     private readonly roomWishlistService: RoomWishlistService,
     private readonly accountService: AccountsService,
     @Inject(forwardRef(() => SlotService))
@@ -324,9 +325,14 @@ export class BookingRoomService {
     }
   }
 
-  getAllBookingRoomsPagination(payload: GetBookingRoomsPaginationPayload) {
+  async getAllBookingRoomsPagination(payload: GetBookingRoomsPaginationPayload, accountId) {
     try {
-      return this.repository.findByPaginationPayload(payload);
+      const role = await this.accountService.getRoleOfAccount(accountId);
+      let filterByAccountId = null
+      if(role.role_name === "Staff"){
+        filterByAccountId = accountId;
+      }
+      return this.repository.findByPaginationPayload(payload, filterByAccountId);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -567,7 +573,14 @@ export class BookingRoomService {
                   role.role_name === 'Librarian' ||
                   role.role_name === 'System Admin'
                 ) {
-                  this.repository.rejectById(userId, request.id, queryRunner);
+                  const reason =
+                    'This room is given priority for another request';
+                  this.repository.rejectById(
+                    userId,
+                    request.id,
+                    reason,
+                    queryRunner
+                  );
                   break;
                 }
               } else if (request.status === 'BOOKED') {
@@ -617,11 +630,7 @@ export class BookingRoomService {
     await queryRunner.startTransaction();
 
     try {
-      const request = await this.repository.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
+      const request = await this.repository.getRequest(id);
       if (!request) {
         throw new BadRequestException(
           'Request does not found with the provided id'
@@ -641,12 +650,18 @@ export class BookingRoomService {
         roomId: request.roomId,
         date: dayjs(request.checkinDate).format('YYYY-MM-DD'),
         requestId: request.id,
-        checkinSlotId: request.checkinSlot,
-        checkoutSlotId: request.checkoutSlot,
+        checkinSlotId: request.checkinSlotId,
+        checkoutSlotId: request.checkoutSlotId,
       });
       if (listRequestSameSlot) {
+        const reason = 'This room is given priority for another request';
         listRequestSameSlot.map((request) => {
-          return this.repository.rejectById(accountId, request.id, queryRunner);
+          return this.repository.rejectById(
+            accountId,
+            request.id,
+            reason,
+            queryRunner
+          );
         });
       }
       const requestAccepted = await this.repository.acceptById(
@@ -654,7 +669,16 @@ export class BookingRoomService {
         id,
         queryRunner
       );
-      console.log(requestAccepted);
+
+      this.notificationService.sendAcceptRequestNotification(
+        dayjs(request.checkinDate).format('DD-MM-YYYY'),
+        request.checkinSlotName,
+        request.checkoutSlotName,
+        request.roomName,
+        request.requestedBy,
+        queryRunner
+      );
+
       // await this.histService.createNew(requestAccepted);
       await queryRunner.commitTransaction();
       return requestAccepted;
@@ -667,7 +691,7 @@ export class BookingRoomService {
     }
   }
 
-  async rejectById(accountId: string, id: string) {
+  async rejectById(accountId: string, id: string,  reason: string) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -689,14 +713,28 @@ export class BookingRoomService {
       if (isCancelled) {
         throw new BadRequestException('Request already cancelled!');
       }
-      const requestAccepted = await this.repository.rejectById(
+      const requestRejected = await this.repository.rejectById(
         accountId,
         id,
+        reason,
         queryRunner
       );
+
+      const request = await this.repository.getRequest(id);
+      
+      this.notificationService.sendRejectRequestNotification(
+        dayjs(request.checkinDate).format('DD-MM-YYYY'),
+        request.checkinSlotName,
+        request.checkoutSlotName,
+        request.roomName,
+        reason,
+        request.requestedBy,
+        queryRunner
+      );
+
       await queryRunner.commitTransaction();
-      // await this.histService.createNew(requestAccepted);
-      return requestAccepted;
+      // await this.histService.createNew(requestRejected);
+      return requestRejected;
     } catch (e) {
       this.logger.error(e);
       await queryRunner.rollbackTransaction();
@@ -726,7 +764,7 @@ export class BookingRoomService {
       }
 
       const role = await this.accountService.getRoleOfAccount(accountId);
-      const request = await this.repository.cancelRoomBookingById(
+      const requestCancelled = await this.repository.cancelRoomBookingById(
         accountId,
         id,
         reason,
@@ -734,7 +772,19 @@ export class BookingRoomService {
         queryRunner
       );
 
-      return request;
+      const request = await this.repository.getRequest(id);
+
+      this.notificationService.sendCancelRequestNotification(
+        dayjs(request.checkinDate).format('DD-MM-YYYY'),
+        request.checkinSlotName,
+        request.checkoutSlotName,
+        request.roomName,
+        reason,
+        request.requestedBy,
+        queryRunner
+      );
+
+      return requestCancelled;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

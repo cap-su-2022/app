@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { PaginationParams } from '../controllers/pagination.model';
+import { Feedback } from '../models';
 import { FeedbackResolveRequestPayload } from '../payload/request/feedback-resolve.request.payload';
 import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
 import { FeedbackRepository } from '../repositories';
@@ -33,6 +34,22 @@ export class FeedbackService {
       return feedback;
     } catch (e) {
       this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getFeedbackById(id: string): Promise<Feedback> {
+    try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Feedback does not found with the provided id'
+        );
+      }
+      const data = await this.repository.findById(id);
+      return data;
+    } catch (e) {
+      this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }

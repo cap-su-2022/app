@@ -15,6 +15,7 @@ import { BookingRequestHistRepository } from '../repositories/booking-request-hi
 import { SlotModule } from './slot.module';
 import { BookingRoomDevicesService } from '../services/booking-request-devices.service';
 import { BookingRoomDevicesRepository } from '../repositories';
+import { NotificationModule } from './notification.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { BookingRoomDevicesRepository } from '../repositories';
     RoomWishlistModule,
     KeycloakModule,
     AccountsModule,
+    NotificationModule,
     forwardRef(() => RoomTypeModule),
     forwardRef(() => RoomsModule),
     forwardRef(() => SlotModule),

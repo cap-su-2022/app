@@ -134,7 +134,7 @@ export class AuthenticationService {
     );
     console.log(2);
     const user = await this.accountService.findByKeycloakId(keycloakUser.sub);
-    console.log(3);
+    console.log(user);
 
     return {
       accessToken: keycloakToken.access_token,

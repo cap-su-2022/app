@@ -43,6 +43,32 @@ export class FeedbackController {
     return this.service.getAllFeedbacks(payload as PaginationParams);
   }
 
+  @Get(':id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched feedback by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get feedback by id',
+    description: 'Get feedback by id',
+  })
+  getFeedbackById(@Param('id') id: string) {
+    return this.service.getFeedbackById(id);
+  }
+
   @Post('send-feedback')
   @Roles(Role.APP_STAFF, Role.APP_LIBRARIAN)
   @HttpCode(HttpStatus.OK)

@@ -19,6 +19,8 @@ import { deviceTypeReducer } from './features/device-type';
 import { roleReducer } from './features/role';
 import { bookingReasonReducer } from './features/booking-reason';
 import { slotReducer } from './features/slot/slot.slice';
+import { notificationReducer } from './features/notification/notification.slice';
+import { feedbackReducer } from './features/feedback/feedback.slice';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -31,6 +33,8 @@ const combinedReducer = combineReducers({
   system: systemReducer,
   account: accountReducer,
   roomType: roomTypeReducer,
+  notification: notificationReducer,
+  feedback: feedbackReducer,
   deviceType: deviceTypeReducer,
   role: roleReducer,
   bookingReason: bookingReasonReducer,
