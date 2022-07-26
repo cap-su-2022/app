@@ -17,7 +17,7 @@ const RequestRoomBookingRecentlySearch: React.FC<any> = () => {
   const dispatch = useAppDispatch();
   const user = LOCAL_STORAGE.getString('user');
   const historySearch = user
-    ? LOCAL_STORAGE.getString(JSON.parse(user).usernamjke)
+    ? LOCAL_STORAGE.getString(JSON.parse(user).username)
     : undefined;
 
   let historyArray = [];
