@@ -118,12 +118,17 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
   };
 
   const handleBookThisRoom = (roomId, slot, roomName) => {
-    const slotId = slotSelections.find(item => item.slotNum === slot)
+    const mySlot = slotSelections.find(item => item.slotNum === slot)
     dispatch(step1BookRoomFromWishList({
       roomId: roomId,
       roomName: roomName,
-      fromSlot: slotId.id
+      fromSlot: mySlot.id,
+      toSlotNum: mySlot.slotNum,
+      toSlot: mySlot.id,
     }))
+    setTimeout(() => {
+      navigate.navigate("BOOKING_WISHLIST_CHOOSE_DAY");
+    }, 0);
   };
 
   const handleSetSlotStart = (value) => {

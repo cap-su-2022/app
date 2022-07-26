@@ -40,8 +40,8 @@ const RequestRoomBookingRecentlySearch: React.FC<any> = () => {
 
   const RecentlyHistory = (props, index) => {
     return (
-      <TouchableOpacity onPress={() => handleBookAgain(props)}>
-        <View style={styles.itemContainer} key={index}>
+      <TouchableOpacity onPress={() => handleBookAgain(props)} key={index}>
+        <View style={styles.itemContainer} >
           <View style={styles.itemWrapper}>
             <HomeIcon color={BLACK} size={deviceWidth / 16} />
             <Text style={styles.textContent}>{props.roomName}</Text>
