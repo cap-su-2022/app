@@ -1,15 +1,16 @@
 import React from 'react';
 import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
 import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
-import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import { deviceHeight, deviceWidth } from '../../../../utils/device';
-import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
+import { BLACK, WHITE } from '@app/constants';
 import {
   CalendarIcon,
   ClockIcon,
   HomeIcon,
 } from 'react-native-heroicons/outline';
 import { LOCAL_STORAGE } from '../../../../utils/local-storage';
+import {step1ScheduleRoomBooking} from "../../../../redux/features/room-booking/slice";
 
 const RequestRoomBookingRecentlySearch: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -24,28 +25,44 @@ const RequestRoomBookingRecentlySearch: React.FC<any> = () => {
     historyArray = new Function('return [' + historySearch + '];')();
   }
 
+  const handleBookAgain = (props) => {
+    dispatch(step1ScheduleRoomBooking({
+      roomId: props.roomId,
+      roomName: props.roomName,
+      fromDay: props.fromDay,
+      fromSlot: props.slotId,
+      toSlot: props.slotId
+    }))
+    setTimeout(() => {
+      navigate.navigate('ROOM_BOOKING_2');
+    }, 0);
+  }
+
   const RecentlyHistory = (props, index) => {
     return (
-      <View style={styles.itemContainer} key={index}>
-        <View style={styles.itemWrapper}>
-          <HomeIcon color={BLACK} size={deviceWidth / 16} />
-          <Text style={styles.textContent}>{props.roomName}</Text>
+      <TouchableOpacity onPress={() => handleBookAgain(props)}>
+        <View style={styles.itemContainer} key={index}>
+          <View style={styles.itemWrapper}>
+            <HomeIcon color={BLACK} size={deviceWidth / 16} />
+            <Text style={styles.textContent}>{props.roomName}</Text>
+          </View>
+          <View style={styles.rowContent}>
+            <CalendarIcon color={BLACK} size={deviceWidth / 16} />
+            <Text style={styles.textContent}>{props.fromDay}</Text>
+          </View>
+          <View style={styles.rowContent}>
+            <ClockIcon color={BLACK} size={deviceWidth / 16} />
+            <Text style={styles.textContent}>{props.slotName || 'N/A'}</Text>
+          </View>
         </View>
-        <View style={styles.rowContent}>
-          <CalendarIcon color={BLACK} size={deviceWidth / 16} />
-          <Text style={styles.textContent}>{props.fromDay}</Text>
-        </View>
-        <View style={styles.rowContent}>
-          <ClockIcon color={BLACK} size={deviceWidth / 16} />
-          <Text style={styles.textContent}>{props.slotName || 'N/A'}</Text>
-        </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
   if (!historySearch) {
     return <></>;
   }
+
   return (
     <View style={styles.container}>
       <Text style={styles.headerTitle}>Recently search</Text>

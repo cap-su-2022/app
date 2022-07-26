@@ -97,6 +97,8 @@ const addRecentlySearchRoom = (item, username, selectedDay) => {
     JSON.stringify({
       fromDay: selectedDay,
       roomName: item.roomName,
+      roomId: item.roomId,
+      slotId: item.slotId,
       slotName: item.slotName,
     })
   );
@@ -110,6 +112,8 @@ const firstAddRoomRecentlySearch = (item, username, selectedDay) => {
       fromDay: selectedDay,
       roomName: item.roomName,
       slotName: item.slotName,
+      roomId: item.roomId,
+      slotId: item.slotId,
     })
   );
 };
@@ -136,6 +140,7 @@ const ChooseSlot: React.FC<any> = (props) => {
   const [isModalOpened, setModalOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [slotAndRoom, setSlotAndRoom] = useState([]);
+  const [slotAndRoomFilter, setSlotAndRoomFilter] = useState([]);
 
   const handleTransformBookingRoomData = (
     bookingRooms: BookedRequest[],
@@ -185,7 +190,6 @@ const ChooseSlot: React.FC<any> = (props) => {
     const user = LOCAL_STORAGE.getString('user');
     const username = JSON.parse(user).username;
     const historySearch = LOCAL_STORAGE.getString(JSON.parse(user).username);
-
     return typeof historySearch !== 'undefined'
       ? addRecentlySearchRoom(item, username, selectedDay)
       : firstAddRoomRecentlySearch(item, username, selectedDay);
@@ -207,7 +211,21 @@ const ChooseSlot: React.FC<any> = (props) => {
   };
 
   useEffect(() => {
-    alert(filteredRoomId);
+    dispatch(
+      fetchBookedRequestByDayAndSlot({
+        checkoutSlotId: addRoomBooking.toSlot || addRoomBooking.fromSlot,
+        date: Today,
+        checkinSlotId: addRoomBooking.fromSlot,
+      })
+    )
+      .unwrap()
+      .then((val) => {
+        handleFetchAllRooms(val);
+        const filterArrayByRoom = slotAndRoom.filter(
+          (room) => room.roomId === filteredRoomId
+        );
+        setSlotAndRoomFilter(filterArrayByRoom);
+      });
   }, [filteredRoomId]);
 
   return (
@@ -223,6 +241,7 @@ const ChooseSlot: React.FC<any> = (props) => {
         <>
           <ChooseSlotHeader
             handleSetFilterRoomId={(val) => setFilteredRoomId(val)}
+            handleClear={() => setSlotAndRoomFilter([])}
             currentDate={selectedDay || addRoomBooking.fromDay || Today}
             minDate={addRoomBooking.fromDay || Today}
             maxDate={addRoomBooking.toDay}
@@ -233,7 +252,9 @@ const ChooseSlot: React.FC<any> = (props) => {
             style={{ flex: 1 }}
             getItemCount={(data) => data.length}
             getItem={(data, index) => data[index]}
-            data={slotAndRoom}
+            data={
+              slotAndRoomFilter.length === 0 ? slotAndRoom : slotAndRoomFilter
+            }
             renderItem={(item: ListRenderItemInfo<any>) => (
               <ChooseSlotItem
                 handleAddWishlist={() =>
