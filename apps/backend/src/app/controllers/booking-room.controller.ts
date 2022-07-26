@@ -488,7 +488,11 @@ export class BookingRoomController {
     @Body() payload: CancelRequestPayload,
     @User() user: KeycloakUserInstance
   ) {
-    return this.service.cancelRoomBookingById(user.account_id, id, payload.reason);
+    return this.service.cancelRoomBookingById(
+      user.account_id,
+      id,
+      payload.reason
+    );
   }
 
   @Get('accounts-name')
@@ -550,7 +554,7 @@ export class BookingRoomController {
       roomName,
       slotFrom,
       slotTo,
-      user
+      user.account_id
     );
   }
 
@@ -580,7 +584,10 @@ export class BookingRoomController {
     @User() user: KeycloakUserInstance,
     @Body() bookingRoomWishlist: WishlistBookingRoomRequestDTO
   ): Promise<any> {
-    return this.service.addToBookingRoomWishlist(user, bookingRoomWishlist);
+    return this.service.addToBookingRoomWishlist(
+      user.account_id,
+      bookingRoomWishlist
+    );
   }
 
   @Delete('remove-from-wishlist')

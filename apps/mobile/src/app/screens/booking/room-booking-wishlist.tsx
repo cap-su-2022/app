@@ -41,6 +41,9 @@ import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
 import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector.hook';
 import { SLOTS } from '../../constants/slot.constant';
+import { boxShadow } from '../../utils/box-shadow.util';
+import { fetchAllSlots } from '../../redux/features/slot';
+import {step1BookRoomFromWishList} from "../../redux/features/room-booking/slice";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface RoomBookingWishlistProps {}
@@ -60,6 +63,7 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
   }>(null);
 
   const [searchRoomName, setSearchRoomName] = useState<string>('');
+  const [slotSelections, setSlotSelections] = useState([]);
 
   const [slotStart, setSlotStart] = useState<number>(1);
   const [slotEnd, setSlotEnd] = useState<number>(6);
@@ -72,8 +76,19 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
           from: slotStart,
           to: slotEnd,
         })
-      );
+      )
+        .unwrap()
+        .then(() => {
+          dispatch(fetchAllSlots())
+            .unwrap()
+            .then((value) => {
+              setSlotSelections(value);
+            });
+        });
     }, 400);
+    return () => {
+      setSlotSelections([]);
+    };
   }, [searchRoomName, slotStart, slotEnd, dispatch]);
 
   const handleRemoveBookingRoomFromWishlist = async (
@@ -102,6 +117,20 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
       );
   };
 
+  const handleBookThisRoom = (roomId, slot, roomName) => {
+    const mySlot = slotSelections.find(item => item.slotNum === slot)
+    dispatch(step1BookRoomFromWishList({
+      roomId: roomId,
+      roomName: roomName,
+      fromSlot: mySlot.id,
+      toSlotNum: mySlot.slotNum,
+      toSlot: mySlot.id,
+    }))
+    setTimeout(() => {
+      navigate.navigate("BOOKING_WISHLIST_CHOOSE_DAY");
+    }, 0);
+  };
+
   const handleSetSlotStart = (value) => {
     if (!value) {
       setSlotStart(1);
@@ -119,7 +148,7 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
   const RoomWishlistItem: React.FC<RoomWishListResponse> = (item) => {
     const duration = getTimeDetailBySlotNumber(item.slot);
     return (
-      <View style={styles.roomWishlistContainer}>
+      <View style={[styles.roomWishlistContainer, boxShadow(styles)]}>
         <View style={styles.libraryHeaderContainer}>
           <View style={styles.roomLibraryIconContainer}>
             <LibraryIcon color={FPT_ORANGE_COLOR} />
@@ -146,7 +175,10 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
               Remove from wishlist
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.bookThisRoomButtonContainer}>
+          <TouchableOpacity
+            style={styles.bookThisRoomButtonContainer}
+            onPress={() => handleBookThisRoom(item.roomid, item.slot, item.roomname)}
+          >
             <TicketIcon color={WHITE} size={deviceWidth / 15} />
             <Text style={styles.bookThisRoomButtonText}>
               Book this room now

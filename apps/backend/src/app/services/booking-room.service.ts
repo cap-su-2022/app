@@ -236,14 +236,14 @@ export class BookingRoomService {
     roomName: string,
     slotFrom: number,
     slotTo: number,
-    keycloakUser: KeycloakUserInstance
+    accountId: string
   ): Promise<WishlistBookingRoomResponseDTO[]> {
     try {
-      return this.roomWishlistService.findAllWishlistBookingRoomsByKeycloakUserId(
+      return this.roomWishlistService.findAllWishlistBookingRooms(
         roomName,
         slotFrom,
         slotTo,
-        keycloakUser.sub
+        accountId
       );
     } catch (e) {
       this.logger.error(e);
@@ -252,11 +252,11 @@ export class BookingRoomService {
   }
 
   async addToBookingRoomWishlist(
-    user: KeycloakUserInstance,
+    accountId: string,
     wishlist: WishlistBookingRoomRequestDTO
   ) {
     try {
-      return await this.roomWishlistService.addToWishlist(user.sub, wishlist);
+      return await this.roomWishlistService.addToWishlist(accountId, wishlist);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(

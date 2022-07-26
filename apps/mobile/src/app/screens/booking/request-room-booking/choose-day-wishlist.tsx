@@ -13,32 +13,32 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from 'react-native-heroicons/outline';
-import { saveEndDay } from '../../../redux/features/room-booking/slice';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
+import { saveStartDay } from '../../../redux/features/room-booking/slice';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
+import {useAppNavigation} from "../../../hooks/use-app-navigation.hook";
 
-const EndDayCalendar: React.FC<any> = (props) => {
-  const Today = new Date().toJSON().slice(0, 10);
-  const [dayEnd, setDayEnd] = useState<string>('');
-  const currentDate = new Date().toJSON().slice(0, 10);
+const ChooseDayWishList: React.FC<any> = (props) => {
   const dispatch = useAppDispatch();
-  const fromDay = useAppSelector(
-    (state) => state.roomBooking.addRoomBooking.fromDay
-  );
+  const [dayStart, setDayStart] = useState<string>('');
+  const currentDate = new Date().toJSON().slice(0, 10);
+  const today = useAppSelector((state) => state.roomBooking.today);
+  const navigate = useAppNavigation();
+
   const handleDayPress = (day) => {
-    setDayEnd(day.dateString);
-    dispatch(saveEndDay({ toDay: day.dateString }));
+    setDayStart(day.dateString);
+    dispatch(saveStartDay({ fromDay: day.dateString }));
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
         <Calendar
-          minDate={fromDay || Today}
           initialDate={currentDate}
+          minDate={today}
           onDayPress={(day) => handleDayPress(day)}
           markedDates={{
-            [dayEnd]: {
+            [dayStart]: {
               marked: true,
               selected: true,
               selectedColor: FPT_ORANGE_COLOR,
@@ -62,7 +62,6 @@ const EndDayCalendar: React.FC<any> = (props) => {
           }}
           theme={{
             indicatorColor: FPT_ORANGE_COLOR,
-            textDayFontFamily: '',
             textDayFontWeight: '300',
             textMonthFontWeight: 'bold',
             textDayHeaderFontWeight: '300',
@@ -75,7 +74,9 @@ const EndDayCalendar: React.FC<any> = (props) => {
         <TouchableOpacity
           style={styles.bookingNowContainer}
           onPress={() => {
-            props.navigation.navigate('ROOM_BOOKING_LATER', { dayEnd });
+            setTimeout(() => {
+              navigate.navigate('ROOM_BOOKING_2');
+            }, 0);
           }}
         >
           <Text style={styles.bookingNowButtonText}>Continue</Text>
@@ -84,7 +85,7 @@ const EndDayCalendar: React.FC<any> = (props) => {
     </SafeAreaView>
   );
 };
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
@@ -134,4 +135,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-export default EndDayCalendar;
+export default ChooseDayWishList;

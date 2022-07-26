@@ -4,16 +4,16 @@ import RNPickerSelect from 'react-native-picker-select';
 import { deviceWidth } from '../../../utils/device';
 import { FPT_ORANGE_COLOR, GRAY } from '@app/constants';
 
-const SelectSlots: React.FC<any> = (props) => {
+const SelectFeedbackTypes: React.FC<any> = (props) => {
   return (
     <View style={styles.container}>
       <View style={styles.slotStart}>
         <View style={styles.container}>
-          <Text style={styles.title}>Booking Reason</Text>
+          <Text style={styles.title}>Feedback Type</Text>
           <View style={styles.slotPicker}>
             <RNPickerSelect
               fixAndroidTouchableBug={true}
-              items={props.bookingReasonSelections}
+              items={props.feedbackTypesSelections}
               style={{
                 inputAndroid: {
                   fontSize: deviceWidth / 21,
@@ -28,9 +28,9 @@ const SelectSlots: React.FC<any> = (props) => {
                 },
               }}
               useNativeAndroidPickerStyle={false}
-              value={props.bookingReason}
+              value={props.feedbackType}
               onValueChange={(value) => {
-                props.handleSetBookingRoomReason(value);
+                props.handleSetFeedbackType(value);
               }}
             />
           </View>
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     margin: 5,
     backgroundColor: '#f2f2f2',
     height: 50,
-    width: deviceWidth / 1.15,
+    width: deviceWidth / 1.5,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -59,8 +59,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   title: {
-    fontSize: deviceWidth / 26,
-    fontWeight: '500',
+    fontSize: deviceWidth / 23,
+    fontWeight: '700',
     marginBottom: 5,
   },
   container: {
@@ -75,4 +75,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(SelectSlots);
+export default React.memo(SelectFeedbackTypes);
