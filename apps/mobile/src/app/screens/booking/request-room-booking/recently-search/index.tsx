@@ -17,7 +17,7 @@ const RequestRoomBookingRecentlySearch: React.FC<any> = () => {
   const dispatch = useAppDispatch();
   const user = LOCAL_STORAGE.getString('user');
   const historySearch = user
-    ? LOCAL_STORAGE.getString(JSON.parse(user).username)
+    ? LOCAL_STORAGE.getString(JSON.parse(user).usernamjke)
     : undefined;
 
   let historyArray = [];
@@ -40,8 +40,8 @@ const RequestRoomBookingRecentlySearch: React.FC<any> = () => {
 
   const RecentlyHistory = (props, index) => {
     return (
-      <TouchableOpacity onPress={() => handleBookAgain(props)} key={index}>
-        <View style={styles.itemContainer} >
+      <TouchableOpacity onPress={() => handleBookAgain(props)}>
+        <View style={styles.itemContainer} key={index}>
           <View style={styles.itemWrapper}>
             <HomeIcon color={BLACK} size={deviceWidth / 16} />
             <Text style={styles.textContent}>{props.roomName}</Text>

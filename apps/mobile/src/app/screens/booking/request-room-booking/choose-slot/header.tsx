@@ -12,13 +12,14 @@ interface ChooseSlotHeaderProps {
   maxDate: string;
   handleOnDayPress(val: string): void;
   handleSetFilterRoomId(val: string): void;
+  handleClear(): void;
 }
 
 const ChooseSlotHeader: React.FC<ChooseSlotHeaderProps> = (props) => {
   const { rooms } = useAppSelector((state) => state.room);
 
   return (
-    <CalendarProvider date={props.currentDate} style={{ marginBottom: -250 }}>
+    <CalendarProvider date={props.currentDate} style={{ marginBottom: -140 }}>
       <WeekCalendar
         minDate={props.minDate}
         maxDate={props.maxDate}
@@ -28,23 +29,40 @@ const ChooseSlotHeader: React.FC<ChooseSlotHeaderProps> = (props) => {
         pagingEnabled={true}
         animateScroll={true}
       />
+      <View>
+        <Text
+          style={{
+            fontSize: deviceWidth / 21,
+            fontWeight: '600',
+            marginTop: 10,
+            marginHorizontal: 10,
+          }}
+        >
+          FILTER ROOM
+        </Text>
+      </View>
       <View
         style={{
-          height: 80,
           backgroundColor: WHITE,
           display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          marginHorizontal: 10,
+          marginTop: 10,
+          paddingVertical: 10,
+          borderRadius: 8
         }}
       >
+
         <RNPickerSelect
           style={{
             viewContainer: {
               width: deviceWidth / 1.5,
-              backgroundColor: GRAY,
+              backgroundColor: '#f2f2f2',
               borderRadius: 8,
               height: 50,
               alignSelf: 'center',
+              marginTop: 10,
             },
           }}
           onValueChange={(e) => props.handleSetFilterRoomId(e)}
@@ -55,28 +73,6 @@ const ChooseSlotHeader: React.FC<ChooseSlotHeaderProps> = (props) => {
             };
           })}
         />
-        <TouchableOpacity
-          style={{
-            height: 35,
-            width: 70,
-            backgroundColor: FPT_ORANGE_COLOR,
-            borderRadius: 8,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          onPress={() => props.handleSetFilterRoomId(undefined)}
-        >
-          <Text
-            style={{
-              fontSize: deviceWidth / 26,
-              fontWeight: '500',
-              color: WHITE,
-            }}
-          >
-            Clear
-          </Text>
-        </TouchableOpacity>
       </View>
     </CalendarProvider>
   );
