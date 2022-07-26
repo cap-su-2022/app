@@ -40,7 +40,7 @@ export class RoomsController {
   @Get()
   @UsePipes(new RoomsValidation())
   @HttpCode(HttpStatus.OK)
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',

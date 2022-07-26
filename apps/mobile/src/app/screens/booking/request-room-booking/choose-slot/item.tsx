@@ -7,6 +7,7 @@ import {
 } from 'react-native-heroicons/outline';
 import { FPT_ORANGE_COLOR, PINK, WHITE } from '@app/constants';
 import { styles } from '../choose-slot';
+import { boxShadow } from '../../../../utils/box-shadow.util';
 
 interface ChooseSlotItemProps {
   item: any;
@@ -18,7 +19,7 @@ const ChooseSlotItem: React.FC<ChooseSlotItemProps> = (props) => {
   return (
     <View
       key={`${props.item.roomId}-${props.item.slotId}`}
-      style={styles.roomBookingItemContainer}
+      style={[styles.roomBookingItemContainer, boxShadow(styles)]}
     >
       <View style={styles.roomBookingItem}>
         <View style={styles.libraryIconContainer}>

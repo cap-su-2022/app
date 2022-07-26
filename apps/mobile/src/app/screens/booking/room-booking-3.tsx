@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   FlatList,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -123,8 +124,12 @@ export const RoomBooking3: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
+      <ScrollView
+        style={{
+          marginTop: Platform.OS === 'android' ? 20 : 0,
+        }}
+      >
         <View style={styles.container}>
           <View style={styles.warningMessageContainer}>
             <ExclamationIcon
@@ -138,19 +143,23 @@ export const RoomBooking3: React.FC = () => {
             </Text>
           </View>
           <Text style={styles.informationHeaderTitle}>BOOKING INFORMATION</Text>
-         <View style={{padding: 10}}>
-           <View style={styles.bookingInformationContainer}>
-             {InfoDetail('Start Day:', roomBooking.fromDay)}
-             {InfoDetail('Slot', `Slot ${roomBooking.toSlotNum}`)}
-             {InfoDetail('Room Name:', roomBooking.roomName)}
-             <Text style={[styles.titleText, { margin: 10 }]}>List Device</Text>
-             {roomBooking.devices.map((device) => (
-               <Device device={device} />
-             ))}
-           </View>
-         </View>
-          <Text style={styles.informationHeaderTitle}>ADDITIONAL BOOKING INFORMATION</Text>
-          <View style={{ padding: 10}}>
+          <View style={{ padding: 10 }}>
+            <View style={styles.bookingInformationContainer}>
+              {InfoDetail('Start Day:', roomBooking.fromDay)}
+              {InfoDetail('Slot', `Slot ${roomBooking.toSlotNum}`)}
+              {InfoDetail('Room Name:', roomBooking.roomName)}
+              <Text style={[styles.titleText, { margin: 10 }]}>
+                List Device
+              </Text>
+              {roomBooking.devices.map((device) => (
+                <Device device={device} />
+              ))}
+            </View>
+          </View>
+          <Text style={styles.informationHeaderTitle}>
+            ADDITIONAL BOOKING INFORMATION
+          </Text>
+          <View style={{ padding: 10 }}>
             <View style={styles.bookingInformationContainer}>
               <SelectBookingReason
                 handleSetBookingRoomReason={(val) => setBookingReason(val)}
@@ -171,6 +180,7 @@ export const RoomBooking3: React.FC = () => {
                     numberOfLines={5}
                     multiline={true}
                     maxLength={250}
+                    style={{ textAlignVertical: 'top' }}
                     value={description}
                     placeholder="Your description ..."
                     keyboardType="default"
@@ -178,9 +188,7 @@ export const RoomBooking3: React.FC = () => {
                 </View>
               </View>
             </View>
-
           </View>
-
 
           <View style={styles.footerContainer}>
             <TouchableOpacity
