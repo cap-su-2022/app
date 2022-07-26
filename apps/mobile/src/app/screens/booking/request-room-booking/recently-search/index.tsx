@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
 import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { deviceHeight, deviceWidth } from '../../../../utils/device';
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import {
@@ -75,6 +75,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     marginLeft: 10,
     marginBottom: 10,
+    marginRight: Platform.OS === 'android' ? 10 : 0,
+
     height: deviceHeight / 7.8,
     width: deviceWidth / 2,
     backgroundColor: WHITE,

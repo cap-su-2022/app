@@ -116,11 +116,20 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
 
   const getContainerHeightBasedOnMultiChecks = () => {
     if (!isMultiDateChecked && !isMultiSlotChecked) {
-      return { height: deviceHeight / 3.2 };
+      return {
+        height:
+          Platform.OS === 'android' ? deviceHeight / 3 : deviceHeight / 3.2,
+      };
     } else if (isMultiDateChecked && isMultiSlotChecked) {
-      return { height: deviceHeight / 1.7 };
+      return {
+        height:
+          Platform.OS === 'android' ? deviceHeight / 1.6 : deviceHeight / 1.7,
+      };
     } else if (isMultiDateChecked || isMultiSlotChecked) {
-      return { height: deviceHeight / 2.4 };
+      return {
+        height:
+          Platform.OS === 'android' ? deviceHeight / 2.2 : deviceHeight / 2.4,
+      };
     }
   };
 

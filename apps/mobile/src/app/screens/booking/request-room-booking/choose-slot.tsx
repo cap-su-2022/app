@@ -19,6 +19,7 @@ import {
   BLACK,
   FPT_ORANGE_COLOR,
   GRAY,
+  INPUT_GRAY_COLOR,
   LIGHT_GRAY,
   PINK,
   WHITE,
@@ -121,6 +122,8 @@ const ChooseSlot: React.FC<any> = (props) => {
     (state) => state.roomBooking.addRoomBooking
   );
 
+  const [filteredRoomId, setFilteredRoomId] = useState<string>();
+
   const slotsFromState = useAppSelector((state) => state.slot.slots);
   const roomsFromState = useAppSelector((state) => state.room.rooms);
   const dispatch = useAppDispatch();
@@ -203,6 +206,10 @@ const ChooseSlot: React.FC<any> = (props) => {
     }, 0);
   };
 
+  useEffect(() => {
+    alert(filteredRoomId);
+  }, [filteredRoomId]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -213,30 +220,66 @@ const ChooseSlot: React.FC<any> = (props) => {
           flexDirection: 'column',
         }}
       >
-        <ChooseSlotHeader
-          currentDate={selectedDay || addRoomBooking.fromDay || Today}
-          minDate={addRoomBooking.fromDay || Today}
-          maxDate={addRoomBooking.toDay}
-          handleOnDayPress={(val) => setSelectedDay(val)}
-        />
+        <>
+          <ChooseSlotHeader
+            handleSetFilterRoomId={(val) => setFilteredRoomId(val)}
+            currentDate={selectedDay || addRoomBooking.fromDay || Today}
+            minDate={addRoomBooking.fromDay || Today}
+            maxDate={addRoomBooking.toDay}
+            handleOnDayPress={(val) => setSelectedDay(val)}
+          />
 
-        <VirtualizedList
-          style={{ flex: 1 }}
-          getItemCount={(data) => data.length}
-          getItem={(data, index) => data[index]}
-          data={slotAndRoom}
-          renderItem={(item: ListRenderItemInfo<any>) => (
-            <ChooseSlotItem
-              handleAddWishlist={() =>
-                handleAddToWishlist(item.item.roomId, item.item.slotId)
-              }
-              handleRequestRoomBooking={() => handleBookRoom(item.item)}
-              key={item.index}
-              item={item.item}
-            />
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
+          <VirtualizedList
+            style={{ flex: 1 }}
+            getItemCount={(data) => data.length}
+            getItem={(data, index) => data[index]}
+            data={slotAndRoom}
+            renderItem={(item: ListRenderItemInfo<any>) => (
+              <ChooseSlotItem
+                handleAddWishlist={() =>
+                  handleAddToWishlist(item.item.roomId, item.item.slotId)
+                }
+                handleRequestRoomBooking={() => handleBookRoom(item.item)}
+                key={item.index}
+                item={item.item}
+              />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </>
+        <View
+          style={{
+            height: 80,
+            backgroundColor: WHITE,
+            borderTopWidth: 1,
+            borderTopColor: INPUT_GRAY_COLOR,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => navigate.pop()}
+            style={{
+              borderRadius: 8,
+              backgroundColor: FPT_ORANGE_COLOR,
+              height: 50,
+              width: deviceWidth / 1.35,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                color: WHITE,
+                fontSize: deviceWidth / 19,
+              }}
+            >
+              Back
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
