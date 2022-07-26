@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     backgroundColor: '#f2f2f2',
-    height: Platform.OS === 'android' ? 0 : deviceHeight / 5.5,
+    height: Platform.OS === 'android' ? undefined : deviceHeight / 5.5,
   },
   header: {
     display: 'flex',

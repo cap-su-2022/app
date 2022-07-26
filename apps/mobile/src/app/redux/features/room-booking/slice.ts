@@ -165,6 +165,8 @@ const roomBookingSlice = createSlice({
         roomId: payload.roomId,
         roomName: payload.roomName,
         fromSlot: payload.fromSlot,
+        toSlotNum: payload.toSlotNum,
+        toSlot: payload.toSlot
       };
     },
     setGlobalDateStart(state, { payload }) {
