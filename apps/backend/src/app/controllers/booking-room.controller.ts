@@ -54,19 +54,22 @@ export class BookingRoomController {
     @Query('checkOutAt', new DefaultValuePipe('')) checkOutAt: string,
     @Query('status', new DefaultValuePipe('')) status: string,
     @Query('dir', new DefaultValuePipe('ASC')) dir: string,
-    @User() user: KeycloakUserInstance,
+    @User() user: KeycloakUserInstance
   ) {
-    return this.service.getAllBookingRoomsPagination({
-      checkOutAt: checkOutAt,
-      checkInAt: checkInAt,
-      search: search,
-      dir: dir,
-      page: page,
-      sort: sort,
-      limit: limit,
-      reasonType: reasonType,
-      status: status,
-    } as GetBookingRoomsPaginationPayload, user.account_id);
+    return this.service.getAllBookingRoomsPagination(
+      {
+        checkOutAt: checkOutAt,
+        checkInAt: checkInAt,
+        search: search,
+        dir: dir,
+        page: page,
+        sort: sort,
+        limit: limit,
+        reasonType: reasonType,
+        status: status,
+      } as GetBookingRoomsPaginationPayload,
+      user.account_id
+    );
   }
 
   @Get('list-booking-by-room-in-week')
@@ -451,6 +454,44 @@ export class BookingRoomController {
     return this.service.acceptById(user.account_id, payload.id);
   }
 
+  @Put('accept-checkin/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  acceptCheckInBookingRequestById(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string }
+  ) {
+    return this.service.acceptCheckinById(user.account_id, payload.id);
+  }
+
+  @Put('reject-checkin/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  rejectCheckinRequestById(
+    @Param('id') id: string,
+    @Body() payload: CancelRequestPayload,
+    @User() user: KeycloakUserInstance
+  ) {
+    return this.service.rejectCheckinById(user.account_id, id, payload.reason);
+  }
+
+  @Put('accept-checkout/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  acceptCheckOutBookingRequestById(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string }
+  ) {
+    return this.service.acceptCheckoutById(user.account_id, payload.id);
+  }
+
+  @Put('reject-checkout/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  rejectCheckOutRequestById(
+    @Param('id') id: string,
+    @Body() payload: CancelRequestPayload,
+    @User() user: KeycloakUserInstance
+  ) {
+    return this.service.rejectCheckoutById(user.account_id, id, payload.reason);
+  }
+
   @Put('reject/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
@@ -610,9 +651,46 @@ export class BookingRoomController {
     return this.service.getAllBookingRoomsRequestsByFilter(filters);
   }
 
+  @Get('check-in')
+  getCurrentBookingCheckin(@User() user: KeycloakUserInstance) {
+    return this.service.getCurrentBookingCheckin(user.account_id);
+  }
+
+  @Post('attempt-checkin/:id')
+  attemptCheckin(
+    @User() user: KeycloakUserInstance,
+    @Param('id') bookingRequestId: string,
+    @Body()
+    checkinSignature: {
+      signature: string;
+    }
+  ) {
+    return this.service.attemptCheckin(
+      user.account_id,
+      bookingRequestId,
+      checkinSignature
+    );
+  }
+
   @Get('check-out')
   getCurrenBookingCheckoutInformation(@User() user: KeycloakUserInstance) {
     return this.service.getCurrentBookingCheckoutInformation(user.account_id);
+  }
+
+  @Post('attempt-checkout/:id')
+  attemptCheckout(
+    @User() user: KeycloakUserInstance,
+    @Param('id') bookingRequestId: string,
+    @Body()
+    checkinSignature: {
+      signature: string;
+    }
+  ) {
+    return this.service.attemptCheckout(
+      user.account_id,
+      bookingRequestId,
+      checkinSignature
+    );
   }
 
   @Post('check-out/:id')

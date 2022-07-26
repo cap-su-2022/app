@@ -3,7 +3,6 @@ import { QueryRunner } from 'typeorm';
 import { NotificationRepository } from '../repositories/notification.repository';
 import { Notification } from '../models/notification.entity';
 
-
 @Injectable()
 export class NotificationService {
   private readonly logger = new Logger(NotificationService.name);
@@ -15,20 +14,20 @@ export class NotificationService {
     checkinSlotName: string,
     checkoutSlotName: string,
     roomName: string,
-    receiver: string, 
+    receiver: string,
     queryRunner: QueryRunner
   ) {
     try {
       const notification = {
         title: 'Your request booking was accepted',
-        message: `Your reservation request on ${checkinDate}, ${checkinSlotName} to ${
-          checkoutSlotName
-        } for room ${
-          roomName
-        } has been accepted.${' '}Please present the QR code at the reception to perform the check-in step`,
+        message: `Your reservation request on ${checkinDate}, ${checkinSlotName} to ${checkoutSlotName} for room ${roomName} has been accepted.${' '}Please present the QR code at the reception to perform the check-in step`,
       };
 
-      return this.repository.sendNotification(notification, receiver, queryRunner);
+      return this.repository.sendNotification(
+        notification,
+        receiver,
+        queryRunner
+      );
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
@@ -37,23 +36,25 @@ export class NotificationService {
     }
   }
 
-  sendRejectRequestNotification(
+  async sendRejectRequestNotification(
     checkinDate: string,
     checkinSlotName: string,
     checkoutSlotName: string,
     roomName: string,
     reason: string,
-    receiver: string, 
+    receiver: string,
     queryRunner: QueryRunner
   ) {
     try {
       const notification = {
         title: 'Your request booking was rejected',
-        message: `Your reservation request on ${checkinDate}, ${checkinSlotName} to ${
-          checkoutSlotName
-        } for room ${roomName} has been rejected. Reason is ${reason}`,
+        message: `Your reservation request on ${checkinDate}, ${checkinSlotName} to ${checkoutSlotName} for room ${roomName} has been rejected. Reason is ${reason}`,
       };
-      return this.repository.sendNotification(notification, receiver, queryRunner);
+      return await this.repository.sendNotification(
+        notification,
+        receiver,
+        queryRunner
+      );
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(
@@ -62,23 +63,25 @@ export class NotificationService {
     }
   }
 
-  sendCancelRequestNotification(
+  async sendCancelRequestNotification(
     checkinDate: string,
     checkinSlotName: string,
     checkoutSlotName: string,
     roomName: string,
     reason: string,
-    receiver: string, 
+    receiver: string,
     queryRunner: QueryRunner
   ) {
     try {
       const notification = {
         title: 'Your request booking was cancelled',
-        message: `Your reservation request on ${checkinDate}, ${checkinSlotName} to ${
-          checkoutSlotName
-        } for room ${roomName} has been cancelled. Reason is ${reason}`,
+        message: `Your reservation request on ${checkinDate}, ${checkinSlotName} to ${checkoutSlotName} for room ${roomName} has been cancelled. Reason is ${reason}`,
       };
-      return this.repository.sendNotification(notification, receiver, queryRunner);
+      return await this.repository.sendNotification(
+        notification,
+        receiver,
+        queryRunner
+      );
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(

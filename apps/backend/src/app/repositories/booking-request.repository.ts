@@ -77,7 +77,10 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .then((data) => data?.count);
   }
 
-  findByPaginationPayload(payload: GetBookingRoomsPaginationPayload, accountId) {
+  findByPaginationPayload(
+    payload: GetBookingRoomsPaginationPayload,
+    accountId
+  ) {
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.checkin_Date', 'checkinDate')
       .addSelect('booking_request.room_id', 'roomId')
@@ -637,18 +640,15 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       role === 'Librarian' ||
       role === 'System Admin'
     ) {
-      return await queryRunner.manager.save(
-        BookingRequest,
-        {
-          ...oldData,
-          status: 'CANCELLED',
-          cancelReason: reason,
-          updatedBy: accountId,
-          updatedAt: new Date(),
-          cancelledBy: accountId,
-          cancelledAt: new Date(),
-        }
-      );
+      return await queryRunner.manager.save(BookingRequest, {
+        ...oldData,
+        status: 'CANCELLED',
+        cancelReason: reason,
+        updatedBy: accountId,
+        updatedAt: new Date(),
+        cancelledBy: accountId,
+        cancelledAt: new Date(),
+      });
     } else {
       throw new BadRequestException(
         "You are not allowed to cancel someone else's request"
@@ -688,17 +688,14 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         id: roomId,
       },
     });
-    return await queryRunner.manager.save(
-      BookingRequest,
-      {
-        ...oldData,
-        status: 'BOOKED',
-        updatedBy: accountId,
-        updatedAt: new Date(),
-        acceptedBy: accountId,
-        acceptedAt: new Date(),
-      }
-    );
+    return await queryRunner.manager.save(BookingRequest, {
+      ...oldData,
+      status: 'BOOKED',
+      updatedBy: accountId,
+      updatedAt: new Date(),
+      acceptedBy: accountId,
+      acceptedAt: new Date(),
+    });
   }
 
   async rejectById(
@@ -712,18 +709,15 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         id: roomId,
       },
     });
-    return await queryRunner.manager.save(
-      BookingRequest,
-      {
-        ...oldData,
-        status: 'CANCELLED',
-        updatedBy: accountId,
-        updatedAt: new Date(),
-        cancelReason: reason,
-        cancelledBy: accountId,
-        cancelledAt: new Date(),
-      }
-    );
+    return await queryRunner.manager.save(BookingRequest, {
+      ...oldData,
+      status: 'CANCELLED',
+      updatedBy: accountId,
+      updatedAt: new Date(),
+      cancelReason: reason,
+      cancelledBy: accountId,
+      cancelledAt: new Date(),
+    });
   }
 
   findBookingRoomRequestsByFilter(
@@ -794,6 +788,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         accountId: accountId,
       })
       .andWhere('booking_request.status = :status', { status: 'CHECKED_IN' })
+      .andWhere('booking_request.checkedout_at IS NULL')
       .andWhere('booking_request.checkedin_at IS NOT NULL')
       .andWhere('booking_request.accepted_by IS NOT NULL')
       .andWhere('booking_request.accepted_at IS NOT NULL')
@@ -852,5 +847,133 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       });
     }
     return query.getRawMany();
+  }
+
+  findCurrentCheckinInformation(accountId: string) {
+    return this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('booking_request.room_id', 'roomId')
+      .addSelect('a.username', 'requestedBy')
+      .addSelect('booking_request.requested_at', 'requestedAt')
+      .addSelect('booking_request.description', 'description')
+      .addSelect('br.name', 'bookingReason')
+      .addSelect('r.name', 'roomName')
+      .addSelect('booking_request.checkin_date', 'checkinDate')
+      .addSelect('st.slot_num', 'checkinSlot')
+      .addSelect('se.slot_num', 'checkoutSlot')
+      .addSelect('booking_request.accepted_at', 'acceptedAt')
+      .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
+      .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
+      .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
+      .innerJoin(Rooms, 'r', 'booking_request.room_id = r.id')
+      .innerJoin(
+        BookingReason,
+        'br',
+        'br.id = booking_request.booking_reason_id'
+      )
+      .where('booking_request.requested_by = :requestedBy', {
+        requestedBy: accountId,
+      })
+      .andWhere('booking_request.status = :status', { status: 'BOOKED' })
+      .andWhere('booking_request.cancelled_by IS NULL')
+      .andWhere('booking_request.cancelled_at IS NULL')
+      .andWhere('booking_request.checkedin_at IS NULL')
+      .andWhere('booking_request.checkedout_at IS NULL')
+      .orderBy('booking_request.accepted_at', 'DESC')
+      .limit(1)
+      .getRawOne();
+  }
+
+  attemptCheckinBookingRoom(
+    accountId: string,
+    bookingRequestId: string,
+    signature: string
+  ) {
+    return this.createQueryBuilder('booking_request')
+      .update({
+        signatureCheckin: signature,
+        updatedAt: new Date(),
+        updatedBy: accountId,
+      })
+      .where('booking_request.id = :id', { id: bookingRequestId })
+      .andWhere('booking_request.status = :status', { status: 'BOOKED' })
+      .andWhere('booking_request.checkedout_at IS NULL')
+      .andWhere('booking_request.checkedin_at IS NULL')
+      .useTransaction(true)
+      .execute();
+  }
+
+  async attemptCheckoutBookingRoom(
+    accountId: string,
+    bookingRequestId: string,
+    signature: string
+  ) {
+    return this.createQueryBuilder('booking_request')
+      .update({
+        signatureCheckout: signature,
+        updatedAt: new Date(),
+        updatedBy: accountId,
+      })
+      .where('booking_request.id = :id', { id: bookingRequestId })
+      .andWhere('booking_request.status = :status', { status: 'CHECKED_IN' })
+      .andWhere('booking_request.checkedout_at IS NULL')
+      .useTransaction(true)
+      .execute();
+  }
+
+  async acceptCheckinById(accountId: string, id: string) {
+    return this.createQueryBuilder('booking_request')
+      .update({
+        updatedBy: accountId,
+        updatedAt: new Date(),
+        checkedinAt: new Date(),
+        status: 'CHECKED_IN',
+      })
+      .where('booking_request.id = :id', { id: id })
+      .andWhere('booking_request.status = :status', { status: 'BOOKED' })
+      .andWhere('booking_request.checkedin_at IS NULL')
+      .useTransaction(true)
+      .execute();
+  }
+
+  async rejectCheckinById(accountId: string, id: string) {
+    return this.createQueryBuilder('booking_request')
+      .update({
+        updatedBy: accountId,
+        updatedAt: new Date(),
+        checkedoutAt: new Date(),
+        status: 'CHECKED_OUT',
+      })
+      .where('booking_request.id = :id', { id: id })
+      .andWhere('booking_request.status = :status', { status: 'CHECKED_IN' })
+      .andWhere('booking_request.checkedout_at IS NULL')
+      .useTransaction(true)
+      .execute();
+  }
+
+  async acceptCheckoutById(accountId: string, id: string) {
+    return this.createQueryBuilder('booking_request')
+      .update({
+        updatedAt: new Date(),
+        updatedBy: accountId,
+        status: 'CHECKED_OUT',
+        checkedoutAt: new Date(),
+      })
+      .where('booking_request.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
+  }
+
+  async rejectCheckoutById(accountId: string, id: string) {
+    return this.createQueryBuilder('booking_request')
+      .update({
+        updatedAt: new Date(),
+        updatedBy: accountId,
+        status: 'CANCELLED',
+        checkedoutAt: new Date(),
+      })
+      .where('booking_request.id = :id', { id: id })
+      .useTransaction(true)
+      .execute();
   }
 }

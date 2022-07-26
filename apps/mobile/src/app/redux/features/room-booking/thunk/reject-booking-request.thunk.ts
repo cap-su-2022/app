@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { axiosPutAPICall } from '../../../api-call';
 import { API_URL } from '../../../../constants/constant';
 
-export const rejectCheckinBookingRequest = createAsyncThunk<
+export const rejectBookingRequest = createAsyncThunk<
   any,
   string,
   {
@@ -10,9 +10,9 @@ export const rejectCheckinBookingRequest = createAsyncThunk<
       message: string;
     };
   }
->('booking-room/reject-checkin-booking-request', async (payload, thunkAPI) => {
+>('booking-room/reject-booking-request', async (payload, thunkAPI) => {
   return await axiosPutAPICall(
-    `${API_URL}/booking-room/reject-checkin/${payload}`,
+    `${API_URL}/booking-room/reject/${payload}`,
     undefined,
     thunkAPI
   );

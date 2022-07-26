@@ -37,27 +37,53 @@ import dayjs from 'dayjs';
 import AcceptBookingFooter from './footer';
 import { acceptCheckinBookingRequest } from '../../../redux/features/room-booking/thunk/accept-checkin-booking-request.thunk';
 import { rejectCheckinBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkin-booking-request.thunk';
+import { acceptBookingRequest } from '../../../redux/features/room-booking/thunk/accept-booking-request.thunk';
+import { rejectBookingRequest } from '../../../redux/features/room-booking/thunk/reject-booking-request.thunk';
+import { acceptCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/accept-checkout-booking-request.thunk';
+import { rejectCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkout-booking-request.thunk';
 
 const AcceptBooking: React.FC<any> = () => {
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
   const { bookingRoom } = useAppSelector((state) => state.roomBooking);
 
-  const handleRejectBookingRequest = () => {};
+  const handleRejectBookingRequest = () => {
+    dispatch(rejectBookingRequest(bookingRoom.id))
+      .unwrap()
+      .then(() => navigate.replace('TRACK_BOOKING_ROOM'))
+      .catch(() =>
+        alert('Error while processing your request. Please try again')
+      );
+  };
 
-  const handleAcceptBookingRequest = () => {};
+  const handleAcceptBookingRequest = () => {
+    dispatch(acceptBookingRequest(bookingRoom.id))
+      .unwrap()
+      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
+      .catch((e) => alert(e.message));
+  };
 
-  const handleRejectCheckout = () => {};
+  const handleRejectCheckout = () => {
+    dispatch(rejectCheckoutBookingRequest(bookingRoom.id))
+      .unwrap()
+      .then(() => navigate.replace('TRACK_BOOKING_ROOM'))
+      .catch(() =>
+        alert('Error while processing your request. Please try again')
+      );
+  };
 
-  const handleAcceptCheckout = () => {};
+  const handleAcceptCheckout = () => {
+    dispatch(acceptCheckoutBookingRequest(bookingRoom.id))
+      .unwrap()
+      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
+      .catch((e) => alert(e.message));
+  };
 
   const handleAcceptCheckin = () => {
     dispatch(acceptCheckinBookingRequest(bookingRoom.id))
       .unwrap()
       .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
-      .catch(() =>
-        alert('Error while processing your request. Please try again')
-      );
+      .catch((e) => alert(e.message));
   };
 
   const handleRejectCheckin = () => {
@@ -67,6 +93,26 @@ const AcceptBooking: React.FC<any> = () => {
       .catch(() =>
         alert('Error while processing your request. Please try again')
       );
+  };
+
+  const handleAcceptAction = () => {
+    if (bookingRoom.status === BOOKED) {
+      return handleAcceptCheckin();
+    } else if (bookingRoom.status === PENDING) {
+      return handleAcceptBookingRequest();
+    } else {
+      return handleAcceptCheckout();
+    }
+  };
+
+  const handleRejectAction = () => {
+    if (bookingRoom.status === BOOKED) {
+      return handleRejectCheckin();
+    } else if (bookingRoom.status === PENDING) {
+      return handleRejectBookingRequest();
+    } else {
+      return handleRejectCheckout();
+    }
   };
 
   const handleStatusMessageConvert = () => {
@@ -290,8 +336,8 @@ const AcceptBooking: React.FC<any> = () => {
         {bookingRoom.status !== CANCELLED &&
         bookingRoom.status !== CHECKED_OUT ? (
           <AcceptBookingFooter
-            handleReject={() => handleRejectCheckin()}
-            handleAccept={() => handleAcceptCheckin()}
+            handleReject={() => handleRejectAction()}
+            handleAccept={() => handleAcceptAction()}
           />
         ) : null}
       </View>

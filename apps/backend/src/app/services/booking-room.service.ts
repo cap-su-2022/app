@@ -325,14 +325,20 @@ export class BookingRoomService {
     }
   }
 
-  async getAllBookingRoomsPagination(payload: GetBookingRoomsPaginationPayload, accountId) {
+  async getAllBookingRoomsPagination(
+    payload: GetBookingRoomsPaginationPayload,
+    accountId
+  ) {
     try {
       const role = await this.accountService.getRoleOfAccount(accountId);
-      let filterByAccountId = null
-      if(role.role_name === "Staff"){
+      let filterByAccountId = null;
+      if (role.role_name === 'Staff') {
         filterByAccountId = accountId;
       }
-      return this.repository.findByPaginationPayload(payload, filterByAccountId);
+      return this.repository.findByPaginationPayload(
+        payload,
+        filterByAccountId
+      );
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -670,7 +676,7 @@ export class BookingRoomService {
         queryRunner
       );
 
-      this.notificationService.sendAcceptRequestNotification(
+      await this.notificationService.sendAcceptRequestNotification(
         dayjs(request.checkinDate).format('DD-MM-YYYY'),
         request.checkinSlotName,
         request.checkoutSlotName,
@@ -691,7 +697,7 @@ export class BookingRoomService {
     }
   }
 
-  async rejectById(accountId: string, id: string,  reason: string) {
+  async rejectById(accountId: string, id: string, reason: string) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -721,7 +727,7 @@ export class BookingRoomService {
       );
 
       const request = await this.repository.getRequest(id);
-      
+
       this.notificationService.sendRejectRequestNotification(
         dayjs(request.checkinDate).format('DD-MM-YYYY'),
         request.checkinSlotName,
@@ -774,7 +780,7 @@ export class BookingRoomService {
 
       const request = await this.repository.getRequest(id);
 
-      this.notificationService.sendCancelRequestNotification(
+      await this.notificationService.sendCancelRequestNotification(
         dayjs(request.checkinDate).format('DD-MM-YYYY'),
         request.checkinSlotName,
         request.checkoutSlotName,
@@ -818,8 +824,13 @@ export class BookingRoomService {
     return this.repository.findBookingRoomRequestsByFilter(filters);
   }
 
-  getCurrentBookingCheckoutInformation(accountId: string) {
-    return this.repository.findCurrentCheckoutInformation(accountId);
+  async getCurrentBookingCheckoutInformation(accountId: string) {
+    try {
+      return await this.repository.findCurrentCheckoutInformation(accountId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 
   checkOutBookingRoom(bookingRequestId: string, accountId: string) {
@@ -831,5 +842,80 @@ export class BookingRoomService {
     filters: GetAllBookingRequestsFilter
   ) {
     return this.repository.findBookingRoomHistory(accountId, filters);
+  }
+
+  getCurrentBookingCheckin(accountId: string) {
+    return this.repository.findCurrentCheckinInformation(accountId);
+  }
+
+  async attemptCheckin(
+    accountId: string,
+    bookingRequestId: string,
+    checkinSignature: { signature: string }
+  ) {
+    try {
+      await this.repository.attemptCheckinBookingRoom(
+        accountId,
+        bookingRequestId,
+        checkinSignature.signature
+      );
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async attemptCheckout(
+    accountId: string,
+    bookingRequestId: string,
+    checkinSignature: { signature: string }
+  ) {
+    try {
+      await this.repository.attemptCheckoutBookingRoom(
+        accountId,
+        bookingRequestId,
+        checkinSignature.signature
+      );
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async acceptCheckinById(accountId: string, id: string) {
+    try {
+      console.error('assss');
+      await this.repository.acceptCheckinById(accountId, id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async rejectCheckinById(accountId: string, id: string, reason: string) {
+    try {
+      await this.repository.rejectCheckinById(accountId, id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async acceptCheckoutById(accountId: string, id: string) {
+    try {
+      await this.repository.acceptCheckoutById(accountId, id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async rejectCheckoutById(accountId: string, id: string, reason: string) {
+    try {
+      await this.repository.rejectCheckoutById(accountId, id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 }

@@ -11,12 +11,17 @@ import { deviceWidth } from '../../../../utils/device';
 import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
 import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
+import { fetchCurrentCheckinInformation } from '../../../../redux/features/room-booking/thunk/fetch-current-checkin-information.thunk';
 
 const HomeScreenSectionRoomCheckin: React.FC<any> = () => {
   const navigate = useAppNavigation();
+  const dispatch = useAppDispatch();
 
   const handleNavigateTrackBookingRoom = () => {
-    navigate.navigate('CHECK_IN');
+    dispatch(fetchCurrentCheckinInformation())
+      .unwrap()
+      .then(() => navigate.navigate('CHECK_IN'))
+      .catch(() => alert('Failed to fetch check-in information'));
   };
 
   return (
