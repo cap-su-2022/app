@@ -43,7 +43,7 @@ export class BookingRoomController {
   constructor(private readonly service: BookingRoomService) {}
 
   @Get('search')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getAllBookingRoomsPagination(
     @Query('search', new DefaultValuePipe('')) search: string,
     @Query('sort', new DefaultValuePipe('requested_at')) sort: string,
@@ -53,7 +53,8 @@ export class BookingRoomController {
     @Query('checkInAt', new DefaultValuePipe('')) checkInAt: string,
     @Query('checkOutAt', new DefaultValuePipe('')) checkOutAt: string,
     @Query('status', new DefaultValuePipe('')) status: string,
-    @Query('dir', new DefaultValuePipe('ASC')) dir: string
+    @Query('dir', new DefaultValuePipe('ASC')) dir: string,
+    @User() user: KeycloakUserInstance,
   ) {
     return this.service.getAllBookingRoomsPagination({
       checkOutAt: checkOutAt,
@@ -65,7 +66,7 @@ export class BookingRoomController {
       limit: limit,
       reasonType: reasonType,
       status: status,
-    } as GetBookingRoomsPaginationPayload);
+    } as GetBookingRoomsPaginationPayload, user.account_id);
   }
 
   @Get('list-booking-by-room-in-week')
@@ -227,7 +228,7 @@ export class BookingRoomController {
   }
 
   @Get(':id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Retrieving booking room detail',
     description: 'Retrieving a booking room detail',
@@ -473,10 +474,11 @@ export class BookingRoomController {
     description: 'Insufficient privileges',
   })
   rejectRequestById(
-    @User() user: KeycloakUserInstance,
-    @Param() payload: { id: string }
+    @Param('id') id: string,
+    @Body() payload: CancelRequestPayload,
+    @User() user: KeycloakUserInstance
   ) {
-    return this.service.rejectById(user.account_id, payload.id);
+    return this.service.rejectById(user.account_id, id, payload.reason);
   }
 
   @Put('cancel/:id')

@@ -24,6 +24,7 @@ import Header from '../../components/common/header.component';
 import RequestInfoModal from '../../components/booking-room/info-modal.component';
 import SendBookingModal from './option-booking-modal.component';
 import AcceptRequestModal from './accept-request-modal.component';
+import RejectRequestModal from './reject-request.component';
 
 const defaultPagination = {
   limit: 5,
@@ -42,6 +43,7 @@ const BookingRoom = () => {
   const [isInfoShown, setInfoShown] = useState<boolean>(false);
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isCancelShown, setCancelShown] = useState<boolean>(false);
+  const [isRejectShown, setRejectShown] = useState<boolean>(false);
   const [isAcceptShown, setAcceptShown] = useState<boolean>(false);
   //   const roomBooking = useAppSelector((state) => state.roomBooking.roomBooking);
 
@@ -229,7 +231,14 @@ const BookingRoom = () => {
             toggleShown={() => setInfoShown(!isInfoShown)}
             isShown={isInfoShown}
             toggleCancelModalShown={() => setCancelShown(!isCancelShown)}
+            toggleRejectModalShown={() => setRejectShown(!isRejectShown)}
             toggleAcceptModalShown={() => setAcceptShown(!isAcceptShown)}
+          />
+          <RejectRequestModal
+            isShown={isRejectShown}
+            toggleShown={() => setRejectShown(!isRejectShown)}
+            toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+            pagination={pagination}
           />
           <CancelRequestModal
             isShown={isCancelShown}

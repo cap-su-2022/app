@@ -1,23 +1,19 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
-import { RoomBooking } from '../../../../models/room-booking.model';
 
-export const rejectBooking = createAsyncThunk<
-  RoomBooking,
-  {
-    id: string;
-    reason: string;
-  },
-  {
-    rejectValue: {
-      message: string;
-    };
-  }
->('room-booking/reject-by-id', async (payload, thunkAPI) => {
+export const fetchNotifications = createAsyncThunk<
+any[],
+void,
+{
+  rejectValue: {
+    message: string;
+  };
+}
+>('notifications/own-notifications', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.put(`api/booking-room/reject/${payload.id}`, payload);
+    const response = await axios.get('api/notifications/own-notifications');
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({
@@ -27,3 +23,6 @@ export const rejectBooking = createAsyncThunk<
     thunkAPI.dispatch(toggleSpinnerOff());
   }
 });
+
+
+

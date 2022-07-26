@@ -39,6 +39,24 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getRawMany();
   }
 
+  getRequest(id: string) {
+    return this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('r.name', 'roomName')
+      .addSelect('booking_request.checkin_Date', 'checkinDate')
+      .addSelect('booking_request.checkin_slot', 'checkinSlotId')
+      .addSelect('booking_request.checkout_slot', 'checkoutSlotId')
+      .addSelect('booking_request.requested_by', 'requestedBy')
+      .addSelect('s.name', 'checkinSlotName')
+      .addSelect('ss.name', 'checkoutSlotName')
+      .addSelect('booking_request.status', 'status')
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .leftJoin(Slot, 's', 's.id = booking_request.checkin_slot')
+      .leftJoin(Slot, 'ss', 'ss.id = booking_request.checkout_slot')
+      .where('booking_request.id = :id', { id: id })
+      .getRawOne();
+  }
+
   getCountRequestInWeekOfUser(id: string) {
     const curr = new Date(); // get current date
     const firstDay = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
@@ -59,7 +77,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .then((data) => data?.count);
   }
 
-  findByPaginationPayload(payload: GetBookingRoomsPaginationPayload) {
+  findByPaginationPayload(payload: GetBookingRoomsPaginationPayload, accountId) {
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.checkin_Date', 'checkinDate')
       .addSelect('booking_request.room_id', 'roomId')
@@ -98,6 +116,11 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     if (payload.reasonType && payload.reasonType !== '') {
       query.andWhere('booking_request.booking_reason_id = :reason', {
         reason: payload.reasonType,
+      });
+    }
+    if (accountId) {
+      query.andWhere('booking_request.requested_by = :accountId', {
+        accountId: accountId,
       });
     }
     return paginateRaw<BookingRequest, IPaginationMeta>(query, {
@@ -269,7 +292,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
 
   getRequestBookedInDayOfUser(
     date: string,
-    userId: string,
+    userId: string
   ): Promise<
     {
       id: string;
@@ -298,9 +321,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .andWhere('booking_request.requested_by = :userId', {
         userId: userId,
       })
-      .andWhere(
-        "booking_request.status = 'BOOKED'"
-      );
+      .andWhere("booking_request.status = 'BOOKED'");
     return query.getRawMany<{
       id: string;
       roomName: string;
@@ -626,9 +647,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
           updatedAt: new Date(),
           cancelledBy: accountId,
           cancelledAt: new Date(),
-        },
-        {
-          transaction: true,
         }
       );
     } else {
@@ -679,9 +697,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         updatedAt: new Date(),
         acceptedBy: accountId,
         acceptedAt: new Date(),
-      },
-      {
-        transaction: true,
       }
     );
   }
@@ -689,6 +704,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   async rejectById(
     accountId: string,
     roomId: string,
+    reason: string,
     queryRunner: QueryRunner
   ) {
     const oldData = await this.findOneOrFail({
@@ -703,11 +719,9 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         status: 'CANCELLED',
         updatedBy: accountId,
         updatedAt: new Date(),
+        cancelReason: reason,
         cancelledBy: accountId,
         cancelledAt: new Date(),
-      },
-      {
-        transaction: true,
       }
     );
   }
