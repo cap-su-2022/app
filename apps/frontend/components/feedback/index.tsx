@@ -160,9 +160,9 @@ const ManageFeedback: React.FC<any> = () => {
   const handleActionsCb = {
     info: (id) => {
       setId(id);
+      console.log("IDDDDDDDD: ", id)
       handleFetchById(id)
         .unwrap()
-        .then((res) => console.log(res))
         .then(() => setInfoShown(!isInfoShown));
     },
     delete: (id) => {

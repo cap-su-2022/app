@@ -254,6 +254,50 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     );
   }
 
+  getRequestBookedInMultiDay(dateStart: string, dateEnd: string): Promise<
+  {
+    id: string;
+    roomId: string;
+    roomName: string;
+    slotStart: number;
+    slotEnd: number;
+  }[]
+> {
+  return (
+    this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('booking_request.room_id', 'roomId')
+      .addSelect('r.name', 'roomName')
+      .addSelect('slot_start.slot_num', 'slotStart')
+      .addSelect('slot_end.slot_num', 'slotEnd')
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(
+        Slot,
+        'slot_start',
+        'slot_start.id = booking_request.checkin_slot'
+      )
+      .innerJoin(
+        Slot,
+        'slot_end',
+        'slot_end.id = booking_request.checkout_slot'
+      )
+      .where('booking_request.checkinDate >= :dateStart', {
+        dateStart: dateStart,
+      })
+      .where('booking_request.checkinDate <= :dateEnd', {
+        dateEnd: dateEnd,
+      })
+      .andWhere("(booking_request.status = 'BOOKED')")
+      .getRawMany<{
+        id: string;
+        roomId: string;
+        roomName: string;
+        slotStart: number;
+        slotEnd: number;
+      }>()
+  );
+}
+
   getBookingPendingAndBookedInDay(
     date: string,
     roomId: string

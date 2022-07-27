@@ -168,6 +168,22 @@ export class BookingRoomController {
     });
   }
 
+  @Get('list-room-free-at-multi-date')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  getRoomFreeAtMultiDate(
+    @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
+    @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
+    @Query('dateStart', new DefaultValuePipe('')) dateStart: string,
+    @Query('dateEnd', new DefaultValuePipe('')) dateEnd: string
+  ) {
+    return this.service.getRoomFreeAtMultiDate({
+      dateStart: dateStart,
+      dateEnd: dateEnd,
+      checkinSlotId: checkinSlotId,
+      checkoutSlotId: checkoutSlotId,
+    });
+  }
+
   @Get('get-booked-requests')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getListRequestBookedInDayAndSlot(
@@ -419,6 +435,36 @@ export class BookingRoomController {
     description: 'Insufficient privileges',
   })
   addNewRequest(
+    @User() user: KeycloakUserInstance,
+    @Body() request: BookingRequestAddRequestPayload
+  ) {
+    return this.service.addNewRequest(request, user.account_id);
+  }
+
+  @Post('multi-booking')
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Create a multi request',
+    description: 'Create multi request with the provided payload',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully created a multi request',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request payload for request is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  addMultiRequest(
     @User() user: KeycloakUserInstance,
     @Body() request: BookingRequestAddRequestPayload
   ) {

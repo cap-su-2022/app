@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   createStyles,
@@ -25,15 +25,163 @@ interface InfoModalProps {
   toggleShown(): void;
 }
 
+interface UserInfoModel {
+  avatar: string;
+  fullname: string;
+  role: string;
+  phone: string;
+  email: string;
+  username: string;
+  id: string;
+  googleId: string;
+  keycloakId: string;
+  effdate: string;
+  description: string;
+  img: File;
+}
+
 const InfoModal: React.FC<InfoModalProps> = (props) => {
   const { classes } = useStyles();
   const feedback = useAppSelector((state) => state.feedback.feedback);
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
+
+  console.log('USER INFOR: ', userInfo);
+
+  const HeaderTitle: React.FC = () => {
+    return (
+      <div style={{ display: 'flex'}}>
+        <div className={classes.headerTitle}>{props.header}</div>
+        <div style={{ marginLeft: 10 }}>
+          {feedback.status === 'PENDING' ? (
+            <div className={classes.pendingDisplay}>{feedback.status}</div>
+          ) : feedback.status === 'RESOLVED' ? (
+            <div style={{ display: 'flex' }}>
+              <div className={classes.resolvedDisplay}>{feedback.status}</div>
+              <span className={classes.resolvedByDiv}>
+                Resolved by <b>{feedback.resolvedBy || 'system'}</b>
+              </span>
+            </div>
+          ) : feedback.status === 'REJECTED' ? (
+            <div style={{ display: 'flex' }}>
+              <div className={classes.rejectedDisplay}>{feedback.status}</div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    );
+  };
+
+  const Infor: React.FC = () => {
+    return (
+      <>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <InputWrapper label="Created at" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={dayjs(feedback.createdAt).format('DD-MM-YYYY')}
+              />
+            </InputWrapper>
+            <InputWrapper label="Created by" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={feedback.createdBy}
+              />
+            </InputWrapper>
+          </div>
+          <InputWrapper
+            label="Feedback message"
+            className={classes.inputWrapper}
+          >
+            <Textarea
+              icon={<ClipboardText />}
+              radius="md"
+              readOnly
+              value={feedback.feedbackMess}
+            />
+          </InputWrapper>
+        </div>
+      </>
+    );
+  };
+
+  const InforResolved: React.FC = () => {
+    return (
+      <>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <InputWrapper label="Resolved at" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={dayjs(feedback.resolvedAt).format('DD-MM-YYYY')}
+              />
+            </InputWrapper>
+            <InputWrapper label="Resolved by" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={feedback.resolvedBy}
+              />
+            </InputWrapper>
+          </div>
+          <InputWrapper
+            label="Resolve message"
+            className={classes.inputWrapper}
+          >
+            <Textarea
+              icon={<ClipboardText />}
+              radius="md"
+              readOnly
+              value={feedback.resolvedMess}
+            />
+          </InputWrapper>
+        </div>
+      </>
+    );
+  };
+
+  const InforRejected: React.FC = () => {
+    return (
+      <>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <InputWrapper label="Rejected at" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={dayjs(feedback.rejectedAt).format('DD-MM-YYYY')}
+              />
+            </InputWrapper>
+            <InputWrapper label="Rejected by" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={feedback.rejectedBy}
+              />
+            </InputWrapper>
+          </div>
+        </div>
+      </>
+    );
+  };
 
   return (
     <Modal
       size="lg"
       centered
-      title={<div className={classes.headerTitle}>{props.header}</div>}
+      title={<HeaderTitle />}
       padding="lg"
       transition="pop"
       withinPortal
@@ -45,33 +193,10 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
       onClose={() => props.toggleShown()}
     >
       <div className={classes.body}>
-        <div className={classes.inner}>
-          <InputWrapper label="Created at" className={classes.inputWrapper}>
-            <TextInput
-              icon={<ClipboardText />}
-              radius="md"
-              readOnly
-              value={dayjs(feedback.createdAt).format('DD-MM-YYYY')}
-            />
-          </InputWrapper>
-          <InputWrapper label="Created by" className={classes.inputWrapper}>
-            <TextInput
-              icon={<ClipboardText />}
-              radius="md"
-              readOnly
-              value={feedback.createdBy}
-            />
-          </InputWrapper>
-          <InputWrapper label="Feedback message" className={classes.inputWrapper}>
-            <Textarea
-              icon={<ClipboardText />}
-              radius="md"
-              readOnly
-              value={feedback.feedbackMess}
-            />
-          </InputWrapper>
-          
-        </div>
+        <Infor />
+        {feedback.status === "RESOLVED" && <InforResolved />}
+        {feedback.status === "REJECTED" && <InforRejected />}
+
         <div className={classes.footer}>
           <Button
             leftIcon={<X />}
@@ -93,11 +218,6 @@ const useStyles = createStyles({
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
-  inner: {
-    display: 'grid',
-    gridTemplateColumns: 'auto auto',
-    columnGap: 50,
-  },
   inputWrapper: {
     margin: 10,
     '&:nth-of-type(1)': {
@@ -112,6 +232,45 @@ const useStyles = createStyles({
       gridColumnStart: 1,
       gridColumnEnd: 3,
     },
+  },
+  pendingDisplay: {
+    color: '#228be6',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#0000ff1c',
+    fontWeight: 600,
+  },
+  rejectedDisplay: {
+    color: 'red',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#ff00001c',
+    fontWeight: 600,
+    marginRight: 5,
+  },
+  resolvedDisplay: {
+    color: '#40c057',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#00800024',
+    fontWeight: 600,
+    marginRight: 5,
+  },
+  resolvedByDiv: {
+    backgroundColor: '#00800024',
+    padding: '0 5px',
+    borderRadius: 10,
+    color: '#40c057',
+    fontSize: 15,
+  },
+  rejectedByDiv: {
+    backgroundColor: '#ffe3e3',
+    padding: '0 5px',
+    borderRadius: 10,
+    color: 'red',
   },
   footer: {
     display: 'flex',
