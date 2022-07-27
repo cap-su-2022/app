@@ -8,7 +8,14 @@ import {
   View,
 } from 'react-native';
 import { BanIcon } from 'react-native-heroicons/outline';
-import { BLACK, FPT_ORANGE_COLOR, GRAY, RED, WHITE } from '@app/constants';
+import {
+  BLACK,
+  FPT_ORANGE_COLOR,
+  GRAY,
+  INPUT_GRAY_COLOR,
+  RED,
+  WHITE,
+} from '@app/constants';
 import { deviceWidth } from '../utils/device';
 import Divider from '../components/text/divider';
 import { LockClosedIcon } from 'react-native-heroicons/solid';
@@ -45,12 +52,12 @@ const EditProfile = () => {
               <Text style={styles.profileTitle}>User ID</Text>
               <Text style={styles.profileValue}>{authUser.id}</Text>
             </View>
-            <Divider num={deviceWidth / 7} />
+            <Divider num={deviceWidth / 10} />
             <View style={styles.inputWrapper}>
               <Text style={styles.profileTitle}>Username</Text>
               <Text style={styles.profileValue}>{authUser.username}</Text>
             </View>
-            <Divider num={deviceWidth / 7} />
+            <Divider num={deviceWidth / 10} />
             <View style={styles.inputWrapper}>
               <Text style={styles.profileTitle}>Email</Text>
               <Text style={styles.profileValue}>{authUser.email}</Text>
@@ -69,7 +76,7 @@ const EditProfile = () => {
               <Text style={styles.profileTitle}>Phone</Text>
               <Text style={styles.profileValue}>{authUser.phone}</Text>
             </View>
-            <Divider num={deviceWidth / 7} />
+            <Divider num={deviceWidth / 10} />
             <View style={styles.inputWrapper}>
               <Text style={styles.profileTitle}>Role</Text>
               <Text style={styles.profileValue}>{authUser.role}</Text>
@@ -132,9 +139,11 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
   },
   footerContainer: {
+    borderTopColor: INPUT_GRAY_COLOR,
+    borderTopWidth: 1,
     marginTop: 20,
     backgroundColor: WHITE,
-    height: 130,
+    height: 140,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-evenly',
@@ -146,8 +155,7 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginLeft: 10,
-    marginRight: 10,
+    paddingHorizontal: 10,
   },
   container: {
     height: 140,
