@@ -1,50 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
-  Button,
   createStyles,
-  InputWrapper,
   Modal,
   Text,
-  Textarea,
-  TextInput,
 } from '@mantine/core';
-import { useWindowDimensions } from '../../hooks/use-window-dimensions';
-import {
-  Archive,
-  CalendarStats,
-  Check,
-  ChevronsRight,
-  ClipboardText,
-  Clock,
-  FileDescription,
-  Id,
-  User,
-  X,
-} from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import dayjs from 'dayjs';
+import {  useAppSelector } from '../../redux/hooks';
 import autoAnimate from '@formkit/auto-animate';
 import RequestInfoComponent from './info-component.component';
-
-interface UserInfoModel {
-  avatar: string;
-  fullname: string;
-  role: string;
-  phone: string;
-  email: string;
-  username: string;
-  id: string;
-  googleId: string;
-  keycloakId: string;
-  effdate: string;
-  description: string;
-  img: File;
-}
 
 interface RequestInfoModalProps {
   isShown: boolean;
   toggleShown(): void;
   toggleCancelModalShown(): void;
+  toggleRejectModalShown(): void;
   toggleAcceptModalShown(): void;
 }
 
@@ -53,24 +21,12 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
   const requestBooking = useAppSelector(
     (state) => state.roomBooking.roomBooking
   );
-  const [isShowListDevice, setShowListDevice] = useState(false);
   const parent = useRef(null);
 
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
 
-  const reveal = () => setShowListDevice(!isShowListDevice);
-
-  console.log(requestBooking);
-  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
-  useEffect(() => {
-    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
-  }, []);
-
-  useEffect(() => {
-    console.log(requestBooking);
-  }, []);
 
   const ModalHeaderTitle: React.FC = () => {
     return (
@@ -116,16 +72,6 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
     );
   };
 
-  const listDeviceDiv =
-    requestBooking.listDevice && requestBooking.listDevice.length > 0
-      ? requestBooking.listDevice.map((device) => (
-          <div key={device.id} className={classes.deviceRow}>
-            <p className={classes.col1}>{device.deviceName}</p>
-            <p className={classes.col2}>{device.deviceQuantity}</p>
-          </div>
-        ))
-      : null;
-
   return (
     <>
       <Modal
@@ -137,6 +83,7 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
       >
         <RequestInfoComponent
           toggleCancelModalShown={props.toggleCancelModalShown}
+          toggleRejectModalShown={props.toggleRejectModalShown}
           toggleAcceptModalShown={props.toggleAcceptModalShown}
         />
       </Modal>

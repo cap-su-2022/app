@@ -10,6 +10,7 @@ import { PencilIcon, ViewGridIcon } from 'react-native-heroicons/outline';
 import { deviceWidth } from '../../../utils/device';
 import { boxShadow } from '../../../utils/box-shadow.util';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
+import HomeScreenSectionRoomCheckin from './room-checkin';
 
 const HomeScreenSection: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -48,6 +49,7 @@ const HomeScreenSection: React.FC<any> = () => {
           <HomeScreenSectionRoomCheckout />
           <HomeScreenSectionTrackBookingRoom />
           <HomeScreenSectionResolveFeedback />
+          <HomeScreenSectionRoomCheckin />
         </View>
       </View>
     </View>

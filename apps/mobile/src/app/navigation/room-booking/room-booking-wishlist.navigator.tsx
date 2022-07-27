@@ -3,6 +3,7 @@ import { StyleSheet, Text } from "react-native";
 import { BLACK } from "@app/constants";
 import RoomBookingWishlist from "../../screens/booking/room-booking-wishlist";
 import React from "react";
+import ChooseDayWishlist from "../../screens/booking/request-room-booking/choose-day-wishlist";
 
 const RoomBookingWishlistNavigator = () => {
   return (
@@ -13,6 +14,7 @@ const RoomBookingWishlistNavigator = () => {
       headerRight: () => null
     }} initialRouteName={"BOOKING_WISHLIST"}>
       <StackScreen name={"BOOKING_WISHLIST"} component={RoomBookingWishlist} />
+      <StackScreen name={"BOOKING_WISHLIST_CHOOSE_DAY"} component={ChooseDayWishlist} />
     </StackNavigator>
   );
 };

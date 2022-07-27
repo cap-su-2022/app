@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -37,27 +37,55 @@ import dayjs from 'dayjs';
 import AcceptBookingFooter from './footer';
 import { acceptCheckinBookingRequest } from '../../../redux/features/room-booking/thunk/accept-checkin-booking-request.thunk';
 import { rejectCheckinBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkin-booking-request.thunk';
+import { acceptBookingRequest } from '../../../redux/features/room-booking/thunk/accept-booking-request.thunk';
+import { rejectBookingRequest } from '../../../redux/features/room-booking/thunk/reject-booking-request.thunk';
+import { acceptCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/accept-checkout-booking-request.thunk';
+import { rejectCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkout-booking-request.thunk';
+import { fetchDeviceInUseByBookingRequestId } from '../../../redux/features/room-booking/thunk/fetch-devices-in-use-by-booking-request-id.thunk';
 
 const AcceptBooking: React.FC<any> = () => {
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
   const { bookingRoom } = useAppSelector((state) => state.roomBooking);
+  const authUser = useAppSelector((state) => state.auth.authUser);
 
-  const handleRejectBookingRequest = () => {};
+  const handleRejectBookingRequest = () => {
+    dispatch(rejectBookingRequest(bookingRoom.id))
+      .unwrap()
+      .then(() => navigate.replace('TRACK_BOOKING_ROOM'))
+      .catch(() =>
+        alert('Error while processing your request. Please try again')
+      );
+  };
 
-  const handleAcceptBookingRequest = () => {};
+  const handleAcceptBookingRequest = () => {
+    dispatch(acceptBookingRequest(bookingRoom.id))
+      .unwrap()
+      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
+      .catch((e) => alert(e.message));
+  };
 
-  const handleRejectCheckout = () => {};
+  const handleRejectCheckout = () => {
+    dispatch(rejectCheckoutBookingRequest(bookingRoom.id))
+      .unwrap()
+      .then(() => navigate.replace('TRACK_BOOKING_ROOM'))
+      .catch(() =>
+        alert('Error while processing your request. Please try again')
+      );
+  };
 
-  const handleAcceptCheckout = () => {};
+  const handleAcceptCheckout = () => {
+    dispatch(acceptCheckoutBookingRequest(bookingRoom.id))
+      .unwrap()
+      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
+      .catch((e) => alert(e.message));
+  };
 
   const handleAcceptCheckin = () => {
     dispatch(acceptCheckinBookingRequest(bookingRoom.id))
       .unwrap()
       .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
-      .catch(() =>
-        alert('Error while processing your request. Please try again')
-      );
+      .catch((e) => alert(e.message));
   };
 
   const handleRejectCheckin = () => {
@@ -67,6 +95,34 @@ const AcceptBooking: React.FC<any> = () => {
       .catch(() =>
         alert('Error while processing your request. Please try again')
       );
+  };
+
+  const handleAcceptAction = () => {
+    if (bookingRoom.status === BOOKED) {
+      return handleAcceptCheckin();
+    } else if (bookingRoom.status === PENDING) {
+      return handleAcceptBookingRequest();
+    } else {
+      return handleAcceptCheckout();
+    }
+  };
+
+  const handleViewDevices = (id) => {
+    dispatch(fetchDeviceInUseByBookingRequestId(id))
+      .unwrap()
+      .then((val) => {
+        navigate.navigate('ACCEPT_BOOKING_LIST_DEVICES');
+      });
+  };
+
+  const handleRejectAction = () => {
+    if (bookingRoom.status === BOOKED) {
+      return handleRejectCheckin();
+    } else if (bookingRoom.status === PENDING) {
+      return handleRejectBookingRequest();
+    } else {
+      return handleRejectCheckout();
+    }
   };
 
   const handleStatusMessageConvert = () => {
@@ -80,9 +136,49 @@ const AcceptBooking: React.FC<any> = () => {
     }
   };
 
+  const renderFooter = () => {
+    if (
+      authUser.role === 'Staff' &&
+      (bookingRoom.status === 'BOOKED' || bookingRoom.status === 'PENDING')
+    ) {
+      return (
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.cancelBookingRequestButton}>
+            <XIcon size={deviceWidth / 14} color={WHITE} />
+            <Text style={styles.cancelBookingRequestButtonText}>
+              Cancel booking request
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return bookingRoom.status !== CANCELLED &&
+      bookingRoom.status !== CHECKED_OUT ? (
+      <AcceptBookingFooter
+        handleReject={() => handleRejectAction()}
+        handleAccept={() => handleAcceptAction()}
+      />
+    ) : null;
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
       <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigate.pop()}>
+            <ChevronLeftIcon
+              style={styles.backNavigation}
+              size={deviceWidth / 14}
+              color={FPT_ORANGE_COLOR}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerTitleText}>
+            {bookingRoom.status !== CANCELLED &&
+            bookingRoom.status !== CHECKED_OUT
+              ? 'Incoming Booking Request'
+              : 'Review booking request'}
+          </Text>
+        </View>
         <ScrollView
           style={{
             backgroundColor: WHITE,
@@ -90,22 +186,8 @@ const AcceptBooking: React.FC<any> = () => {
           showsVerticalScrollIndicator={false}
         >
           <View>
-            <View style={styles.header}>
-              <TouchableOpacity onPress={() => navigate.pop()}>
-                <ChevronLeftIcon
-                  style={styles.backNavigation}
-                  size={deviceWidth / 14}
-                  color={FPT_ORANGE_COLOR}
-                />
-              </TouchableOpacity>
-              <Text style={styles.headerTitleText}>
-                {bookingRoom.status !== CANCELLED &&
-                bookingRoom.status !== CHECKED_OUT
-                  ? 'Incoming Booking Request'
-                  : 'Review booking request'}
-              </Text>
-            </View>
-            {bookingRoom.status !== CANCELLED &&
+            {authUser.role !== 'Staff' &&
+            bookingRoom.status !== CANCELLED &&
             bookingRoom.status !== CHECKED_OUT ? (
               <View style={styles.warningMessageContainer}>
                 <ExclamationIcon
@@ -119,7 +201,8 @@ const AcceptBooking: React.FC<any> = () => {
                 </Text>
               </View>
             ) : null}
-            {bookingRoom.status !== CANCELLED &&
+            {authUser.role !== 'Staff' &&
+            bookingRoom.status !== CANCELLED &&
             bookingRoom.status !== CHECKED_OUT ? (
               <Text style={styles.textStatus}>
                 {bookingRoom.requestedBy} wants to{' '}
@@ -169,9 +252,7 @@ const AcceptBooking: React.FC<any> = () => {
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Requested devices</Text>
                 <TouchableOpacity
-                  onPress={() =>
-                    navigate.navigate('ACCEPT_BOOKING_LIST_DEVICES')
-                  }
+                  onPress={() => handleViewDevices(bookingRoom.id)}
                   style={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -218,30 +299,22 @@ const AcceptBooking: React.FC<any> = () => {
               </>
             ) : null}
 
-            <View
-              style={{
-                marginTop: 20,
-              }}
-            >
+            <View>
               <Text style={styles.informationHeaderTitle}>
                 MORE INFORMATION
               </Text>
-              <View style={styles.bookingInformationContainer}>
+              <View
+                style={[
+                  styles.bookingInformationContainer,
+                  { marginBottom: 20 },
+                ]}
+              >
                 <View style={styles.dataRowContainer}>
                   <Text style={styles.titleText}>Booking ID</Text>
                   <Text style={styles.valueText}>{bookingRoom.id}</Text>
                 </View>
                 <Divider num={deviceWidth / 10} />
-                <View
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    margin: 10,
-                    flexWrap: 'wrap',
-                  }}
-                >
+                <View style={styles.dataRowContainer}>
                   <Text style={styles.titleText}>Requested At</Text>
                   <Text style={styles.valueText}>
                     {dayjs(new Date(bookingRoom.requestedAt)).format(
@@ -286,13 +359,7 @@ const AcceptBooking: React.FC<any> = () => {
             </View>
           </View>
         </ScrollView>
-        {bookingRoom.status !== CANCELLED &&
-        bookingRoom.status !== CHECKED_OUT ? (
-          <AcceptBookingFooter
-            handleReject={() => handleRejectCheckin()}
-            handleAccept={() => handleAcceptCheckin()}
-          />
-        ) : null}
+        {renderFooter()}
       </View>
     </SafeAreaView>
   );
@@ -392,6 +459,30 @@ const styles = StyleSheet.create({
     borderColor: INPUT_GRAY_COLOR,
     alignSelf: 'center',
     height: 150,
+  },
+  footer: {
+    height: 80,
+    backgroundColor: WHITE,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopColor: INPUT_GRAY_COLOR,
+    borderTopWidth: 1,
+  },
+  cancelBookingRequestButton: {
+    height: 50,
+    width: deviceWidth / 1.35,
+    borderRadius: 8,
+    backgroundColor: FPT_ORANGE_COLOR,
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  cancelBookingRequestButtonText: {
+    fontWeight: '600',
+    fontSize: deviceWidth / 20,
+    color: WHITE,
   },
 });
 

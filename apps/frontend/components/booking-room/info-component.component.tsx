@@ -3,26 +3,19 @@ import {
   Button,
   createStyles,
   InputWrapper,
-  Modal,
-  Text,
+
   Textarea,
   TextInput,
 } from '@mantine/core';
-import { useWindowDimensions } from '../../hooks/use-window-dimensions';
 import {
   Archive,
-  CalendarStats,
   Check,
   ChevronsRight,
   ClipboardText,
-  Clock,
   Devices,
-  FileDescription,
   Id,
-  User,
-  X,
 } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {  useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
 import autoAnimate from '@formkit/auto-animate';
 
@@ -43,6 +36,7 @@ interface UserInfoModel {
 
 interface RequestInfoComponentProps {
   toggleCancelModalShown(): void;
+  toggleRejectModalShown(): void;
   toggleAcceptModalShown(): void;
 }
 
@@ -66,9 +60,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
-  useEffect(() => {
-    console.log(requestBooking);
-  }, []);
+  console.log("AAAAAAa: ", userInfo)
 
   const listDeviceDiv =
     requestBooking.listDevice && requestBooking.listDevice.length > 0
@@ -212,7 +204,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
           ) : requestBooking.status === 'PENDING' &&
             userInfo.id !== requestBooking.requestedById ? (
             <Button
-              onClick={() => props.toggleCancelModalShown()}
+              onClick={() => props.toggleRejectModalShown()}
               variant="outline"
               color={'red'}
               leftIcon={<Archive />}
@@ -278,61 +270,6 @@ const useStyles = createStyles({
   },
   inputWrapper: {
     margin: 10,
-  },
-  pendingDisplay: {
-    color: '#228be6',
-    textAlign: 'center',
-    borderRadius: 50,
-    width: 100,
-    backgroundColor: '#0000ff1c',
-    fontWeight: 600,
-  },
-  checkedOutDisplay: {
-    color: '#fd7e14',
-    textAlign: 'center',
-    borderRadius: 50,
-    width: 100,
-    backgroundColor: '#fd7e1442',
-    fontWeight: 600,
-  },
-  canceledDisplay: {
-    color: 'red',
-    textAlign: 'center',
-    borderRadius: 50,
-    width: 100,
-    backgroundColor: '#ff00001c',
-    fontWeight: 600,
-    marginRight: 5,
-  },
-  bookedDisplay: {
-    color: '#40c057',
-    textAlign: 'center',
-    borderRadius: 50,
-    width: 100,
-    backgroundColor: '#00800024',
-    fontWeight: 600,
-    marginRight: 5,
-  },
-  checkedInDisplay: {
-    color: '#fd7e14',
-    textAlign: 'center',
-    borderRadius: 50,
-    width: 100,
-    backgroundColor: '#fd7e1430',
-    fontWeight: 600,
-  },
-  cancelledByDiv: {
-    backgroundColor: '#ffe3e3',
-    padding: '0 5px',
-    borderRadius: 10,
-    color: 'red',
-  },
-  acceptedByDiv: {
-    backgroundColor: '#00800024',
-    padding: '0 5px',
-    borderRadius: 10,
-    color: '#40c057',
-    fontSize: 15,
   },
   deviceRow: {
     borderRadius: '3px',

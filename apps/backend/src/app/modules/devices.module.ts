@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { DevicesController } from '../controllers';
-// import { EquipmentsHistoryController } from '../controllers';
 import { DevicesService } from '../services';
 import { DeviceHistService } from '../services';
 import { DevicesRepository } from '../repositories';

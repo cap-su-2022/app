@@ -10,6 +10,7 @@ import HomeScreen from '../../screens/home';
 import QuickAccessControlScreen from '../../screens/home/section/quick-access-control';
 import RoomBookingWishlistNavigator from '../room-booking/room-booking-wishlist.navigator';
 import NotificationNavigator from './notification';
+import CheckinBookingRoomNavigator from './check-in-booking-room';
 
 const HomeNavigator: React.FC = () => {
   const navigate = useAppNavigation();
@@ -57,6 +58,13 @@ const HomeNavigator: React.FC = () => {
         component={RoomBookingWishlistNavigator}
       />
       <StackScreen name="NOTIFICATION" component={NotificationNavigator} />
+      <StackScreen
+        options={{
+          headerShown: false,
+        }}
+        name="CHECK_IN"
+        component={CheckinBookingRoomNavigator}
+      />
     </StackNavigator>
   );
 };

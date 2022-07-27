@@ -1,34 +1,75 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
-import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import FeedbackIcon from '../../../icons/feedback_1.svg';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
-import {
-  BLACK,
-  FPT_ORANGE_COLOR,
-  GRAY,
-  INPUT_GRAY_COLOR,
-  LIGHT_GRAY,
-  WHITE,
-} from '@app/constants';
-import RNPickerSelect from 'react-native-picker-select';
+import { BLACK, INPUT_GRAY_COLOR, WHITE } from '@app/constants';
 import FeedbackFooter from './feedback.footer';
+import SelectFeedbackTypes from './select-feedback-type';
+import { fetchAllFeedBackTypes } from '../../../redux/features/feed-back-type/thunk/fetch-all-feed-back-types.thunk';
+import FeedbackTypeModel from '../../../redux/models/feedback-type.model';
+import { addNewFeedback } from '../../../redux/features/feedback/thunk/Add-new-feedback.thunk';
 
 const FeedbackScreen: React.FC<any> = () => {
   const dispatch = useAppDispatch();
-  const navigate = useAppNavigation();
-
-  const [severity, setSeverity] = useState<string>('MEDIUM');
   const [selectedFeedbackType, setSelectedFeedbackType] = useState<string>();
+  const [selectedFeedbackTypeSelections, setSelectedFeedbackTypeSelections] =
+    useState([]);
+  const [descriptions, setDescriptions] = useState('');
+  useEffect(() => {
+    dispatch(fetchAllFeedBackTypes())
+      .unwrap()
+      .then((value) => {
+        transformFeedbackTypeToFeedbackTypePicker(value);
+      });
+    return () => {
+      setSelectedFeedbackTypeSelections([]);
+    };
+  }, []);
+
+  const transformFeedbackTypeToFeedbackTypePicker = (
+    value: FeedbackTypeModel[]
+  ) => {
+    const feedbackTypeSelections = value.map((feedbackType) => {
+      return {
+        value: feedbackType.id,
+        label: feedbackType.name,
+      };
+    });
+    setSelectedFeedbackTypeSelections(feedbackTypeSelections);
+    handleSetFeedbackType(feedbackTypeSelections[0].value);
+  };
+
+  const handleSetFeedbackType = (value) => {
+    if (!value) {
+      return setSelectedFeedbackType('Feedback room');
+    }
+    setSelectedFeedbackType(value);
+  };
+
+  const handleSendFeedback = () => {
+    dispatch(
+      addNewFeedback({
+        message: descriptions,
+        feedbackTypeId: selectedFeedbackType,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        alert('Success');
+      })
+      .catch((e) => {
+        console.log(e)
+        alert(e);
+      });
+  };
 
   return (
     <SafeAreaView
@@ -61,95 +102,13 @@ const FeedbackScreen: React.FC<any> = () => {
                 marginBottom: 20,
               }}
             >
-              <View
-                style={{
-                  marginBottom: 10,
-                }}
-              >
-                <Text
-                  style={{
-                    color: BLACK,
-                    fontSize: deviceWidth / 23,
-                    fontWeight: '600',
-                  }}
-                >
-                  Feedback Type
-                </Text>
-              </View>
               <View>
-                <RNPickerSelect
-                  style={{
-                    inputIOS: {
-                      width: deviceWidth / 1.05,
-                      height: 40,
-                      borderColor: INPUT_GRAY_COLOR,
-                      borderWidth: 1,
-                      borderRadius: 8,
-                    },
-                  }}
-                  onValueChange={(val) => setSelectedFeedbackType(val)}
-                  value={selectedFeedbackType}
-                  items={[
-                    {
-                      label: 'School Facilities',
-                      value: 'SCHOOL_FACILITIES',
-                    },
-                  ]}
-                />
-              </View>
-            </View>
-
-            <View
-              style={{
-                marginBottom: 20,
-              }}
-            >
-              <View
-                style={{
-                  marginBottom: 10,
-                }}
-              >
-                <Text
-                  style={{
-                    color: BLACK,
-                    fontSize: deviceWidth / 23,
-                    fontWeight: '600',
-                  }}
-                >
-                  Severity
-                </Text>
-              </View>
-              <View>
-                <RNPickerSelect
-                  style={{
-                    inputIOS: {
-                      width: deviceWidth / 1.05,
-                      height: 40,
-                      borderColor: INPUT_GRAY_COLOR,
-                      borderWidth: 1,
-                      borderRadius: 8,
-                    },
-                  }}
-                  onValueChange={(val) => setSeverity(val)}
-                  value={severity}
-                  items={[
-                    {
-                      label: 'Low',
-                      value: 'LOW',
-                    },
-                    {
-                      label: 'Medium',
-                      value: 'MEDIUM',
-                    },
-                    {
-                      label: 'High',
-                      value: 'HIGH',
-                    },
-                    {
-                      label: 'Urgent',
-                      value: 'Urgent',
-                    },
-                  ]}
+                <SelectFeedbackTypes
+                  feedbackTypesSelections={selectedFeedbackTypeSelections}
+                  feedbackType={selectedFeedbackType}
+                  handleSetFeedbackType={(value) =>
+                    setSelectedFeedbackType(value)
+                  }
                 />
               </View>
             </View>
@@ -176,18 +135,25 @@ const FeedbackScreen: React.FC<any> = () => {
               multiline
               numberOfLines={10}
               style={{
+                paddingHorizontal: 10,
                 borderRadius: 8,
                 borderWidth: 1,
                 borderColor: INPUT_GRAY_COLOR,
                 width: deviceWidth / 1.05,
                 height: deviceHeight / 6,
+                backgroundColor: '#f2f2f2',
+                textDecorationColor: BLACK,
+                fontSize: deviceWidth / 25,
               }}
               placeholder="We want to know more about your experience"
+              textAlignVertical={'top'}
+              onChangeText={(value) => setDescriptions(value)}
+              value={descriptions}
             />
           </View>
         </View>
       </ScrollView>
-      <FeedbackFooter handlePress={() => null} />
+      <FeedbackFooter handlePress={() => handleSendFeedback()} />
     </SafeAreaView>
   );
 };

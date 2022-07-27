@@ -28,6 +28,7 @@ import dayjs = require('dayjs');
 import { DataSource, QueryRunner } from 'typeorm';
 import { BookingRoomDevicesService } from './booking-request-devices.service';
 import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
+import { NotificationService } from './notification.service';
 
 @Injectable()
 export class BookingRoomService {
@@ -36,7 +37,7 @@ export class BookingRoomService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly repository: BookingRoomRepository,
-    private readonly deviceService: DevicesService,
+    private readonly notificationService: NotificationService,
     private readonly roomWishlistService: RoomWishlistService,
     private readonly accountService: AccountsService,
     @Inject(forwardRef(() => SlotService))
@@ -235,14 +236,14 @@ export class BookingRoomService {
     roomName: string,
     slotFrom: number,
     slotTo: number,
-    keycloakUser: KeycloakUserInstance
+    accountId: string
   ): Promise<WishlistBookingRoomResponseDTO[]> {
     try {
-      return this.roomWishlistService.findAllWishlistBookingRoomsByKeycloakUserId(
+      return this.roomWishlistService.findAllWishlistBookingRooms(
         roomName,
         slotFrom,
         slotTo,
-        keycloakUser.sub
+        accountId
       );
     } catch (e) {
       this.logger.error(e);
@@ -251,11 +252,11 @@ export class BookingRoomService {
   }
 
   async addToBookingRoomWishlist(
-    user: KeycloakUserInstance,
+    accountId: string,
     wishlist: WishlistBookingRoomRequestDTO
   ) {
     try {
-      return await this.roomWishlistService.addToWishlist(user.sub, wishlist);
+      return await this.roomWishlistService.addToWishlist(accountId, wishlist);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(
@@ -324,9 +325,20 @@ export class BookingRoomService {
     }
   }
 
-  getAllBookingRoomsPagination(payload: GetBookingRoomsPaginationPayload) {
+  async getAllBookingRoomsPagination(
+    payload: GetBookingRoomsPaginationPayload,
+    accountId
+  ) {
     try {
-      return this.repository.findByPaginationPayload(payload);
+      const role = await this.accountService.getRoleOfAccount(accountId);
+      let filterByAccountId = null;
+      if (role.role_name === 'Staff') {
+        filterByAccountId = accountId;
+      }
+      return this.repository.findByPaginationPayload(
+        payload,
+        filterByAccountId
+      );
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -428,6 +440,34 @@ export class BookingRoomService {
     }
   }
 
+  async getListRequestBookedInMultiDay(payload: {
+    dateStart: string;
+    dateEnd: string;
+    checkinSlot: number;
+    checkoutSlot: number;
+  }) {
+    try {
+      const listRequestBookedInMultiDay =
+        await this.repository.getRequestBookedInMultiDay(payload.dateStart, payload.dateEnd);
+
+      if (listRequestBookedInMultiDay.length > 0) {
+        const listRequestBookedInMultiDayAndSlot = listRequestBookedInMultiDay.filter(
+          (request) => {
+            for (let j = request.slotStart; j <= request.slotEnd; j++) {
+              if (j >= payload.checkinSlot && j <= payload.checkoutSlot) {
+                return request;
+              }
+            }
+          }
+        );
+        return listRequestBookedInMultiDayAndSlot;
+    }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async getRoomFreeAtTime(payload: {
     date: string;
     checkinSlotId: string;
@@ -446,6 +486,31 @@ export class BookingRoomService {
         listRoomBookedInDaySameSlot
       );
       console.log('LIST ROOM FREE: ', result);
+      return result;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getRoomFreeAtMultiDate(payload: {
+    dateStart: string;
+    dateEnd: string;
+    checkinSlot: number;
+    checkoutSlot: number;
+  }) {
+    try {
+      const listRequestBookedInMultiDay =
+        await this.getListRequestBookedInMultiDay(payload);
+      const listRoomBookedInMultiDaySameSlot = [];
+      if (listRequestBookedInMultiDay?.length > 0) {
+        listRequestBookedInMultiDay.map((request) => {
+          listRoomBookedInMultiDaySameSlot.push(request.roomId);
+        });
+      }
+      const result = await this.roomService.filterRoomFreeByRoomBooked(
+        listRoomBookedInMultiDaySameSlot
+      );
       return result;
     } catch (e) {
       this.logger.error(e.message);
@@ -567,7 +632,14 @@ export class BookingRoomService {
                   role.role_name === 'Librarian' ||
                   role.role_name === 'System Admin'
                 ) {
-                  this.repository.rejectById(userId, request.id, queryRunner);
+                  const reason =
+                    'This room is given priority for another request';
+                  this.repository.rejectById(
+                    userId,
+                    request.id,
+                    reason,
+                    queryRunner
+                  );
                   break;
                 }
               } else if (request.status === 'BOOKED') {
@@ -610,6 +682,152 @@ export class BookingRoomService {
     }
   }
 
+  async addMultiRequest(
+    payload: BookingRequestAddRequestPayload,
+    userId: string
+  ): Promise<BookingRequest> {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const role = await this.accountService.getRoleOfAccount(userId);
+      const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlot);
+      const slotOut = await this.slotService.getNumOfSlot(payload.checkoutSlot);
+
+      const fromDate = new Date(payload.checkinDate)
+      const toDate = new Date(payload.checkoutDate)
+
+      let alreadyBookedOtherRoom = '';
+      const listRequestBookedInDayOfUser = []
+      for(let i = fromDate; i <= toDate; i.setDate(i.getDate() + 1)){
+        const result = await this.repository.getRequestBookedInDayOfUser(
+          dayjs(i).format("YYYY-MM-DD"),
+          userId
+        );
+        if(result.length > 0){
+          listRequestBookedInDayOfUser.push(...result)
+        }
+      }
+      console.log(listRequestBookedInDayOfUser)
+      if (listRequestBookedInDayOfUser.length > 0) {
+        listRequestBookedInDayOfUser.map(async (request) => {
+          console.log(request.slotIn, request.slotOut)
+          for (let j = request.slotIn; j <= request.slotOut; j++) {
+            if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+              console.log("NAME: ", request.roomName)
+              alreadyBookedOtherRoom = request.roomName;
+              break;
+            }
+          }
+        });
+      }
+
+      // let alreadyBookedOtherRoom = '';
+      // const listRequestBookedInDayOfUser =
+      //   await this.repository.getRequestBookedInDayOfUser(
+      //     payload.checkinDate,
+      //     userId
+      //   );
+      // if (listRequestBookedInDayOfUser.length > 0) {
+      //   listRequestBookedInDayOfUser.map(async (request) => {
+      //     for (let j = request.slotIn; j <= request.slotOut; j++) {
+      //       if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+      //         alreadyBookedOtherRoom = request.roomName;
+      //         break;
+      //       }
+      //     }
+      //   });
+      // }
+      // if (alreadyBookedOtherRoom !== '') {
+      //   throw new BadRequestException(
+      //     `You already have bookings for ${alreadyBookedOtherRoom} at same slot!`
+      //   );
+      // }
+
+      // const listRequestPeningAndBookedInDay =
+      //   await this.repository.getBookingPendingAndBookedInDay(
+      //     payload.checkinDate,
+      //     payload.roomId
+      //   );
+
+      // let status = 'PENDING';
+      // let haveRequestBooked = false;
+
+      // if (role.role_name === 'Librarian' || role.role_name === 'System Admin') {
+      //   status = 'BOOKED';
+      // }
+      // if (role.role_name === 'Staff') {
+      //   const countRequestInWeek = Number(
+      //     await this.repository.getCountRequestInWeekOfUser(userId)
+      //   );
+      //   if (countRequestInWeek >= 3) {
+      //     throw new BadRequestException(
+      //       'You have run out of bookings for this week'
+      //     );
+      //   }
+      // }
+      // if (listRequestPeningAndBookedInDay.length > 0) {
+      //   listRequestPeningAndBookedInDay.map(async (request) => {
+      //     for (let j = request.slotIn; j <= request.slotOut; j++) {
+      //       if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+      //         if (request.status === 'PENDING') {
+      //           // j is slot of request pending
+      //           if (
+      //             role.role_name === 'Librarian' ||
+      //             role.role_name === 'System Admin'
+      //           ) {
+      //             const reason =
+      //               'This room is given priority for another request';
+      //             this.repository.rejectById(
+      //               userId,
+      //               request.id,
+      //               reason,
+      //               queryRunner
+      //             );
+      //             break;
+      //           }
+      //         } else if (request.status === 'BOOKED') {
+      //           haveRequestBooked = true;
+      //           break;
+      //         }
+      //       }
+      //     }
+      //   });
+      // }
+
+      // if (haveRequestBooked) {
+      //   throw new BadRequestException(
+      //     'Already have request booked in this slot, try another slot'
+      //   );
+      // }
+
+      // const request = await this.repository.createNewRequest(
+      //   payload,
+      //   userId,
+      //   status,
+      //   queryRunner
+      // );
+
+      // await this.bookingRoomDeviceService.addDeviceToRequest(
+      //   request.id,
+      //   payload.listDevice,
+      //   queryRunner
+      // );
+
+      // // await this.histService.createNew(request, queryRunner);
+
+      // await queryRunner.commitTransaction();
+
+      // return request;
+      return null;
+    } catch (e) {
+      this.logger.error(e.message);
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async acceptById(accountId: string, id: string) {
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -617,11 +835,7 @@ export class BookingRoomService {
     await queryRunner.startTransaction();
 
     try {
-      const request = await this.repository.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
+      const request = await this.repository.getRequest(id);
       if (!request) {
         throw new BadRequestException(
           'Request does not found with the provided id'
@@ -641,12 +855,18 @@ export class BookingRoomService {
         roomId: request.roomId,
         date: dayjs(request.checkinDate).format('YYYY-MM-DD'),
         requestId: request.id,
-        checkinSlotId: request.checkinSlot,
-        checkoutSlotId: request.checkoutSlot,
+        checkinSlotId: request.checkinSlotId,
+        checkoutSlotId: request.checkoutSlotId,
       });
       if (listRequestSameSlot) {
+        const reason = 'This room is given priority for another request';
         listRequestSameSlot.map((request) => {
-          return this.repository.rejectById(accountId, request.id, queryRunner);
+          return this.repository.rejectById(
+            accountId,
+            request.id,
+            reason,
+            queryRunner
+          );
         });
       }
       const requestAccepted = await this.repository.acceptById(
@@ -654,7 +874,16 @@ export class BookingRoomService {
         id,
         queryRunner
       );
-      console.log(requestAccepted);
+
+      await this.notificationService.sendAcceptRequestNotification(
+        dayjs(request.checkinDate).format('DD-MM-YYYY'),
+        request.checkinSlotName,
+        request.checkoutSlotName,
+        request.roomName,
+        request.requestedBy,
+        queryRunner
+      );
+
       // await this.histService.createNew(requestAccepted);
       await queryRunner.commitTransaction();
       return requestAccepted;
@@ -667,7 +896,7 @@ export class BookingRoomService {
     }
   }
 
-  async rejectById(accountId: string, id: string) {
+  async rejectById(accountId: string, id: string, reason: string) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -689,14 +918,28 @@ export class BookingRoomService {
       if (isCancelled) {
         throw new BadRequestException('Request already cancelled!');
       }
-      const requestAccepted = await this.repository.rejectById(
+      const requestRejected = await this.repository.rejectById(
         accountId,
         id,
+        reason,
         queryRunner
       );
+
+      const request = await this.repository.getRequest(id);
+
+      this.notificationService.sendRejectRequestNotification(
+        dayjs(request.checkinDate).format('DD-MM-YYYY'),
+        request.checkinSlotName,
+        request.checkoutSlotName,
+        request.roomName,
+        reason,
+        request.requestedBy,
+        queryRunner
+      );
+
       await queryRunner.commitTransaction();
-      // await this.histService.createNew(requestAccepted);
-      return requestAccepted;
+      // await this.histService.createNew(requestRejected);
+      return requestRejected;
     } catch (e) {
       this.logger.error(e);
       await queryRunner.rollbackTransaction();
@@ -707,7 +950,12 @@ export class BookingRoomService {
     }
   }
 
-  async cancelRequest(accountId: string, id: string, reason: string, queryRunner: QueryRunner) {
+  async cancelRequest(
+    accountId: string,
+    id: string,
+    reason: string,
+    queryRunner: QueryRunner
+  ) {
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -721,7 +969,7 @@ export class BookingRoomService {
       }
 
       const role = await this.accountService.getRoleOfAccount(accountId);
-      const request = await this.repository.cancelRoomBookingById(
+      const requestCancelled = await this.repository.cancelRoomBookingById(
         accountId,
         id,
         reason,
@@ -729,7 +977,19 @@ export class BookingRoomService {
         queryRunner
       );
 
-      return request;
+      const request = await this.repository.getRequest(id);
+
+      await this.notificationService.sendCancelRequestNotification(
+        dayjs(request.checkinDate).format('DD-MM-YYYY'),
+        request.checkinSlotName,
+        request.checkoutSlotName,
+        request.roomName,
+        reason,
+        request.requestedBy,
+        queryRunner
+      );
+
+      return requestCancelled;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -743,7 +1003,12 @@ export class BookingRoomService {
     await queryRunner.startTransaction();
 
     try {
-      const request = await this.cancelRequest(accountId, id, reason, queryRunner);
+      const request = await this.cancelRequest(
+        accountId,
+        id,
+        reason,
+        queryRunner
+      );
 
       await queryRunner.commitTransaction();
       return request;
@@ -754,12 +1019,32 @@ export class BookingRoomService {
     }
   }
 
-  getAllBookingRoomsRequestsByFilter(filters: GetAllBookingRequestsFilter) {
-    return this.repository.findBookingRoomRequestsByFilter(filters);
+  async getAllBookingRoomsRequestsByFilter(
+    accountId: string,
+    filters: GetAllBookingRequestsFilter
+  ) {
+    try {
+      const roleName = await this.accountService.getAccountRoleById(accountId);
+      if (roleName === 'System Admin' || roleName === 'Librarian') {
+        return await this.repository.findBookingRoomRequestsByFilter(filters);
+      }
+      return await this.repository.findBookingRequestsByFilterAndRequestedBy(
+        filters,
+        accountId
+      );
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 
-  getCurrentBookingCheckoutInformation(accountId: string) {
-    return this.repository.findCurrentCheckoutInformation(accountId);
+  async getCurrentBookingCheckoutInformation(accountId: string) {
+    try {
+      return await this.repository.findCurrentCheckoutInformation(accountId);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 
   checkOutBookingRoom(bookingRequestId: string, accountId: string) {
@@ -771,5 +1056,80 @@ export class BookingRoomService {
     filters: GetAllBookingRequestsFilter
   ) {
     return this.repository.findBookingRoomHistory(accountId, filters);
+  }
+
+  getCurrentBookingCheckin(accountId: string) {
+    return this.repository.findCurrentCheckinInformation(accountId);
+  }
+
+  async attemptCheckin(
+    accountId: string,
+    bookingRequestId: string,
+    checkinSignature: { signature: string }
+  ) {
+    try {
+      await this.repository.attemptCheckinBookingRoom(
+        accountId,
+        bookingRequestId,
+        checkinSignature.signature
+      );
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async attemptCheckout(
+    accountId: string,
+    bookingRequestId: string,
+    checkinSignature: { signature: string }
+  ) {
+    try {
+      await this.repository.attemptCheckoutBookingRoom(
+        accountId,
+        bookingRequestId,
+        checkinSignature.signature
+      );
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async acceptCheckinById(accountId: string, id: string) {
+    try {
+      console.error('assss');
+      await this.repository.acceptCheckinById(accountId, id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async rejectCheckinById(accountId: string, id: string, reason: string) {
+    try {
+      await this.repository.rejectCheckinById(accountId, id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async acceptCheckoutById(accountId: string, id: string) {
+    try {
+      await this.repository.acceptCheckoutById(accountId, id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async rejectCheckoutById(accountId: string, id: string, reason: string) {
+    try {
+      await this.repository.rejectCheckoutById(accountId, id);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 }

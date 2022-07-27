@@ -18,10 +18,13 @@ import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 
 const EndDayCalendar: React.FC<any> = (props) => {
+  const Today = new Date().toJSON().slice(0, 10);
   const [dayEnd, setDayEnd] = useState<string>('');
   const currentDate = new Date().toJSON().slice(0, 10);
   const dispatch = useAppDispatch();
-
+  const fromDay = useAppSelector(
+    (state) => state.roomBooking.addRoomBooking.fromDay
+  );
   const handleDayPress = (day) => {
     setDayEnd(day.dateString);
     dispatch(saveEndDay({ toDay: day.dateString }));
@@ -31,6 +34,7 @@ const EndDayCalendar: React.FC<any> = (props) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
         <Calendar
+          minDate={fromDay || Today}
           initialDate={currentDate}
           onDayPress={(day) => handleDayPress(day)}
           markedDates={{

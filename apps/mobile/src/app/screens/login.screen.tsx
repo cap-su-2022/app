@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -13,11 +14,8 @@ import FPTULogo from '../components/LogoFPTU.svg';
 import Asterik from '../components/text/asterik';
 import Divider from '../components/text/divider';
 import GoogleIcon from '../components/google-icon.svg';
-import { persistGoogleIdToken } from '../redux/userSlice';
 import CheckAlive from '../components/check-alive.component';
 import { Formik } from 'formik';
-import LoginErrorModal from '../components/modals/login-error.component';
-import { toggleSpinnerOff, toggleSpinnerOn } from '../redux/features/spinner';
 import {
   BLACK,
   FPT_ORANGE_COLOR,
@@ -99,7 +97,7 @@ const LoginScreen = () => {
       <Background style={[styles.background]} />
       <View style={[styles.loginContainer, boxShadow(styles)]}>
         <View style={[styles.logoContainer]}>
-          <FPTULogo height={deviceWidth / 3} width={deviceWidth / 3} />
+          <FPTULogo height={deviceWidth / 4} width={deviceWidth / 3} />
           <BookLogo />
         </View>
         <Formik
@@ -266,7 +264,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: 'rgb(248, 249, 250)',
     width: deviceWidth / 1.1,
-    height: deviceHeight / 1.9,
+    height: 400,
   },
   background: {
     position: 'absolute',

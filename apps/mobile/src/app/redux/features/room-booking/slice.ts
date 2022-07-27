@@ -18,6 +18,9 @@ import dayjs from 'dayjs';
 import { addNewRequestBooking } from './thunk/add-new-request-booking';
 import { NewRequestBookingResponseModel } from '../../models/new-request-booking-response.model';
 import { fetchCurrentCheckoutInformation } from './thunk/fetch-current-checkout-information.thunk';
+import { CurrentCheckinInformation } from '../../models/current-checkin-information.model';
+import { fetchCurrentCheckinInformation } from './thunk/fetch-current-checkin-information.thunk';
+import { fetchDeviceInUseByBookingRequestId } from './thunk/fetch-devices-in-use-by-booking-request-id.thunk';
 
 interface RoomBookingState {
   roomBookingCheckout: RoomBookingCheckout;
@@ -34,6 +37,7 @@ interface RoomBookingState {
   globalDateStart: string;
   globalDateEnd: string;
   response: NewRequestBookingResponseModel;
+  currentCheckinInformation: CurrentCheckinInformation;
 }
 
 interface BookingDevice {
@@ -90,6 +94,7 @@ const initialState: RoomBookingState = {
   currentBookingRoom: {} as CurrentBookingRoom,
   today: '',
   response: {} as NewRequestBookingResponseModel,
+  currentCheckinInformation: {} as CurrentCheckinInformation,
 };
 
 const roomBookingSlice = createSlice({
@@ -142,7 +147,7 @@ const roomBookingSlice = createSlice({
         roomName: payload.roomName,
         fromDay: payload.fromDay,
         fromSlot: payload.fromSlot,
-        toSlot: payload.toSlot
+        toSlot: payload.toSlot,
       };
     },
     step2ScheduleRoomBooking(state, { payload }) {
@@ -157,6 +162,16 @@ const roomBookingSlice = createSlice({
         ...state.addRoomBooking,
         devices: payload.devices,
         deviceNames: payload.deviceNames,
+      };
+    },
+    step1BookRoomFromWishList(state, { payload }) {
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        roomId: payload.roomId,
+        roomName: payload.roomName,
+        fromSlot: payload.fromSlot,
+        toSlotNum: payload.toSlotNum,
+        toSlot: payload.toSlot,
       };
     },
     setGlobalDateStart(state, { payload }) {
@@ -218,6 +233,18 @@ const roomBookingSlice = createSlice({
         state.roomBookingCheckout = payload;
       }
     );
+    builder.addCase(
+      fetchCurrentCheckinInformation.fulfilled,
+      (state, { payload }) => {
+        state.currentCheckinInformation = payload;
+      }
+    );
+    builder.addCase(
+      fetchDeviceInUseByBookingRequestId.fulfilled,
+      (state, { payload }) => {
+        state.currentCheckinInformation.devices = payload;
+      }
+    );
   },
 });
 
@@ -237,4 +264,5 @@ export const {
   setGlobalDateEnd,
   resetGlobalDateStart,
   resetGlobalDateEnd,
+  step1BookRoomFromWishList,
 } = roomBookingSlice.actions;

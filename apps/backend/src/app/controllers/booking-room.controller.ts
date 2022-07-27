@@ -43,7 +43,7 @@ export class BookingRoomController {
   constructor(private readonly service: BookingRoomService) {}
 
   @Get('search')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getAllBookingRoomsPagination(
     @Query('search', new DefaultValuePipe('')) search: string,
     @Query('sort', new DefaultValuePipe('requested_at')) sort: string,
@@ -53,19 +53,23 @@ export class BookingRoomController {
     @Query('checkInAt', new DefaultValuePipe('')) checkInAt: string,
     @Query('checkOutAt', new DefaultValuePipe('')) checkOutAt: string,
     @Query('status', new DefaultValuePipe('')) status: string,
-    @Query('dir', new DefaultValuePipe('ASC')) dir: string
+    @Query('dir', new DefaultValuePipe('ASC')) dir: string,
+    @User() user: KeycloakUserInstance
   ) {
-    return this.service.getAllBookingRoomsPagination({
-      checkOutAt: checkOutAt,
-      checkInAt: checkInAt,
-      search: search,
-      dir: dir,
-      page: page,
-      sort: sort,
-      limit: limit,
-      reasonType: reasonType,
-      status: status,
-    } as GetBookingRoomsPaginationPayload);
+    return this.service.getAllBookingRoomsPagination(
+      {
+        checkOutAt: checkOutAt,
+        checkInAt: checkInAt,
+        search: search,
+        dir: dir,
+        page: page,
+        sort: sort,
+        limit: limit,
+        reasonType: reasonType,
+        status: status,
+      } as GetBookingRoomsPaginationPayload,
+      user.account_id
+    );
   }
 
   @Get('list-booking-by-room-in-week')
@@ -164,6 +168,22 @@ export class BookingRoomController {
     });
   }
 
+  @Get('list-room-free-at-multi-date')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  getRoomFreeAtMultiDate(
+    @Query('checkinSlot', new DefaultValuePipe('')) checkinSlot: number,
+    @Query('checkoutSlot', new DefaultValuePipe('')) checkoutSlot: number,
+    @Query('dateStart', new DefaultValuePipe('')) dateStart: string,
+    @Query('dateEnd', new DefaultValuePipe('')) dateEnd: string
+  ) {
+    return this.service.getRoomFreeAtMultiDate({
+      dateStart: dateStart,
+      dateEnd: dateEnd,
+      checkinSlot: checkinSlot,
+      checkoutSlot: checkoutSlot,
+    });
+  }
+
   @Get('get-booked-requests')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getListRequestBookedInDayAndSlot(
@@ -227,7 +247,7 @@ export class BookingRoomController {
   }
 
   @Get(':id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Retrieving booking room detail',
     description: 'Retrieving a booking room detail',
@@ -421,6 +441,36 @@ export class BookingRoomController {
     return this.service.addNewRequest(request, user.account_id);
   }
 
+  @Post('multi-booking')
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Create a multi request',
+    description: 'Create multi request with the provided payload',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully created a multi request',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request payload for request is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  addMultiRequest(
+    @User() user: KeycloakUserInstance,
+    @Body() request: BookingRequestAddRequestPayload
+  ) {
+    return this.service.addMultiRequest(request, user.account_id);
+  }
+
   @Put('accept/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
@@ -450,6 +500,44 @@ export class BookingRoomController {
     return this.service.acceptById(user.account_id, payload.id);
   }
 
+  @Put('accept-checkin/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  acceptCheckInBookingRequestById(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string }
+  ) {
+    return this.service.acceptCheckinById(user.account_id, payload.id);
+  }
+
+  @Put('reject-checkin/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  rejectCheckinRequestById(
+    @Param('id') id: string,
+    @Body() payload: CancelRequestPayload,
+    @User() user: KeycloakUserInstance
+  ) {
+    return this.service.rejectCheckinById(user.account_id, id, payload.reason);
+  }
+
+  @Put('accept-checkout/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  acceptCheckOutBookingRequestById(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string }
+  ) {
+    return this.service.acceptCheckoutById(user.account_id, payload.id);
+  }
+
+  @Put('reject-checkout/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  rejectCheckOutRequestById(
+    @Param('id') id: string,
+    @Body() payload: CancelRequestPayload,
+    @User() user: KeycloakUserInstance
+  ) {
+    return this.service.rejectCheckoutById(user.account_id, id, payload.reason);
+  }
+
   @Put('reject/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
@@ -473,10 +561,11 @@ export class BookingRoomController {
     description: 'Insufficient privileges',
   })
   rejectRequestById(
-    @User() user: KeycloakUserInstance,
-    @Param() payload: { id: string }
+    @Param('id') id: string,
+    @Body() payload: CancelRequestPayload,
+    @User() user: KeycloakUserInstance
   ) {
-    return this.service.rejectById(user.account_id, payload.id);
+    return this.service.rejectById(user.account_id, id, payload.reason);
   }
 
   @Put('cancel/:id')
@@ -486,7 +575,11 @@ export class BookingRoomController {
     @Body() payload: CancelRequestPayload,
     @User() user: KeycloakUserInstance
   ) {
-    return this.service.cancelRoomBookingById(user.account_id, id, payload.reason);
+    return this.service.cancelRoomBookingById(
+      user.account_id,
+      id,
+      payload.reason
+    );
   }
 
   @Get('accounts-name')
@@ -510,7 +603,7 @@ export class BookingRoomController {
   // }
 
   @Get('wishlist')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Retrieving a list of booking rooms in wishlist',
     description: 'Retrieving a list of booking rooms in wishlist',
@@ -546,9 +639,10 @@ export class BookingRoomController {
   ): Promise<WishlistBookingRoomResponseDTO[]> {
     return this.service.getWishlistBookingRooms(
       roomName,
+
       slotFrom,
       slotTo,
-      user
+      user.account_id
     );
   }
 
@@ -578,7 +672,10 @@ export class BookingRoomController {
     @User() user: KeycloakUserInstance,
     @Body() bookingRoomWishlist: WishlistBookingRoomRequestDTO
   ): Promise<any> {
-    return this.service.addToBookingRoomWishlist(user, bookingRoomWishlist);
+    return this.service.addToBookingRoomWishlist(
+      user.account_id,
+      bookingRoomWishlist
+    );
   }
 
   @Delete('remove-from-wishlist')
@@ -596,14 +693,55 @@ export class BookingRoomController {
 
   @Get('filter')
   getAllBookingRoomRequestsByFilter(
-    @Query() filters: GetAllBookingRequestsFilter
+    @Query() filters: GetAllBookingRequestsFilter,
+    @User() user: KeycloakUserInstance
   ) {
-    return this.service.getAllBookingRoomsRequestsByFilter(filters);
+    return this.service.getAllBookingRoomsRequestsByFilter(
+      user.account_id,
+      filters
+    );
+  }
+
+  @Get('check-in')
+  getCurrentBookingCheckin(@User() user: KeycloakUserInstance) {
+    return this.service.getCurrentBookingCheckin(user.account_id);
+  }
+
+  @Post('attempt-checkin/:id')
+  attemptCheckin(
+    @User() user: KeycloakUserInstance,
+    @Param('id') bookingRequestId: string,
+    @Body()
+    checkinSignature: {
+      signature: string;
+    }
+  ) {
+    return this.service.attemptCheckin(
+      user.account_id,
+      bookingRequestId,
+      checkinSignature
+    );
   }
 
   @Get('check-out')
   getCurrenBookingCheckoutInformation(@User() user: KeycloakUserInstance) {
     return this.service.getCurrentBookingCheckoutInformation(user.account_id);
+  }
+
+  @Post('attempt-checkout/:id')
+  attemptCheckout(
+    @User() user: KeycloakUserInstance,
+    @Param('id') bookingRequestId: string,
+    @Body()
+    checkinSignature: {
+      signature: string;
+    }
+  ) {
+    return this.service.attemptCheckout(
+      user.account_id,
+      bookingRequestId,
+      checkinSignature
+    );
   }
 
   @Post('check-out/:id')

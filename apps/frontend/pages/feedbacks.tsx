@@ -1,17 +1,11 @@
-import { createStyles } from '@mantine/core';
-import { useAppDispatch } from '../redux/hooks';
-import AdminLayout from '../components/layout/admin.layout';
+import ManageFeedback from "../components/feedback";
 
-function FeedbacksPage() {
-  const { classes } = useStyle();
-
-  const dispatch = useAppDispatch();
-
-  return <AdminLayout></AdminLayout>;
+function Feedback() {
+  return (
+    <>
+      <ManageFeedback/>
+    </>
+  );
 }
 
-const useStyle = createStyles((theme) => {
-  return {};
-});
-
-export default FeedbacksPage;
+export default Feedback;

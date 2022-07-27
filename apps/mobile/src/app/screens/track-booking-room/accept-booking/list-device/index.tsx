@@ -15,6 +15,7 @@ import {
   DeviceMobileIcon,
 } from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
+import {useAppSelector} from "../../../../hooks/use-app-selector.hook";
 
 const devices = [
   {
@@ -22,33 +23,34 @@ const devices = [
     name: 'Phone',
   },
   {
-    id: 1,
-    name: 'Phone',
-  },
-  {
-    id: 1,
-    name: 'Phone',
-  },
-  {
-    id: 1,
-    name: 'Phone',
-  },
-  {
-    id: 1,
-    name: 'Phone',
-  },
-  {
-    id: 1,
-    name: 'Phone',
-  },
-  {
     id: 2,
+    name: 'Phone',
+  },
+  {
+    id: 3,
+    name: 'Phone',
+  },
+  {
+    id: 4,
+    name: 'Phone',
+  },
+  {
+    id: 5,
+    name: 'Phone',
+  },
+  {
+    id: 6,
+    name: 'Phone',
+  },
+  {
+    id: 7,
     name: 'Laptop',
   },
 ];
 
 const ListDevice: React.FC<any> = () => {
   const navigate = useAppNavigation();
+  const devices = useAppSelector(state => state.roomBooking.currentCheckinInformation.devices)
 
   const Device: React.FC<any> = (props) => {
     return (
@@ -103,7 +105,7 @@ const ListDevice: React.FC<any> = () => {
                 fontWeight: '600',
               }}
             >
-              {props.item.name}
+              {props.item.deviceName}
             </Text>
             <Text
               style={{

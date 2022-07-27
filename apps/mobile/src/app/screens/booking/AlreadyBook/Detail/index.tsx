@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { SearchIcon, TagIcon } from 'react-native-heroicons/outline';
 import { BLACK, LIGHT_GRAY, WHITE } from '@app/constants';
 import DelayInput from 'react-native-debounce-input';
-import { deviceWidth } from '../../../utils/device';
+import { deviceWidth } from '../../../../utils/device';
 import RNPickerSelect from 'react-native-picker-select';
 
 interface AlreadyBookFilterProps {
@@ -27,7 +27,6 @@ const AlreadyBookFilter: React.FC<AlreadyBookFilterProps> = (props) => {
           flexGrow: 1,
         }}
       >
-
         <View style={styles.searchContainer}>
           <View style={styles.searchIconContainer}>
             <SearchIcon color={BLACK} />

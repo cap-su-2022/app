@@ -36,7 +36,7 @@ export class Notification {
     name: 'created_at',
     type: 'timestamptz',
   })
-  createdAt?: string;
+  createdAt?: Date;
 
   @Column({
     name: 'deleted_by',
@@ -49,4 +49,10 @@ export class Notification {
     type: 'timestamptz',
   })
   deletedAt?: Date;
+
+  @Column({
+    name: 'receiver',
+    type: 'uuid',
+  })
+  receiver?: string;
 }
