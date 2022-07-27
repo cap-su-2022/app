@@ -55,8 +55,16 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
       <td>{row.createdByName}</td>
-      <td>{dayjs(row.createdAt).format("DD-MM-YYYY")}</td>
-      <td>{row.status}</td>
+      <td>{dayjs(row.createdAt).format('DD-MM-YYYY')}</td>
+      <td>
+        {row.status === 'PENDING' ? (
+          <div className={classes.pendingDisplay}>{row.status}</div>
+        ) : row.status === 'RESOLVED' ? (
+          <div className={classes.resolvedDisplay}>{row.status}</div>
+        )  : row.status === 'REJECTED' ? (
+          <div className={classes.rejectedDisplay}>{row.status}</div>
+        ) : null}
+      </td>
       <td className={classes.actionButtonContainer}>
         <Button
           variant="outline"
@@ -86,7 +94,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{ tableLayout: 'fixed'}}
+      sx={{ tableLayout: 'fixed' }}
     >
       <thead>
         <tr>
@@ -112,23 +120,20 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             Sender
           </Th>
 
-          <Th
-            sorted={null}
-            reversed={null}
-            onSort={null}
-          >
+          <Th sorted={null} reversed={null} onSort={null}>
             Sended at
           </Th>
 
-          <Th
-            sorted={null}
-            reversed={null}
-            onSort={null}
-          >
+          <Th sorted={null} reversed={null} onSort={null}>
             Status
           </Th>
 
-          <Th sorted={null} reversed={reverseSortDirection} onSort={null} style={{width: 220}}>
+          <Th
+            sorted={null}
+            reversed={reverseSortDirection}
+            onSort={null}
+            style={{ width: 220 }}
+          >
             Actions
           </Th>
         </tr>
@@ -177,5 +182,29 @@ const useStyles = createStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  pendingDisplay: {
+    color: '#228be6',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#0000ff1c',
+    fontWeight: 600,
+  },
+  rejectedDisplay: {
+    color: 'red',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#ff00001c',
+    fontWeight: 600,
+  },
+  resolvedDisplay: {
+    color: '#40c057',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#00800024',
+    fontWeight: 600,
   },
 }));
