@@ -20,6 +20,7 @@ import { NewRequestBookingResponseModel } from '../../models/new-request-booking
 import { fetchCurrentCheckoutInformation } from './thunk/fetch-current-checkout-information.thunk';
 import { CurrentCheckinInformation } from '../../models/current-checkin-information.model';
 import { fetchCurrentCheckinInformation } from './thunk/fetch-current-checkin-information.thunk';
+import { fetchDeviceInUseByBookingRequestId } from './thunk/fetch-devices-in-use-by-booking-request-id.thunk';
 
 interface RoomBookingState {
   roomBookingCheckout: RoomBookingCheckout;
@@ -236,6 +237,12 @@ const roomBookingSlice = createSlice({
       fetchCurrentCheckinInformation.fulfilled,
       (state, { payload }) => {
         state.currentCheckinInformation = payload;
+      }
+    );
+    builder.addCase(
+      fetchDeviceInUseByBookingRequestId.fulfilled,
+      (state, { payload }) => {
+        state.currentCheckinInformation.devices = payload;
       }
     );
   },
