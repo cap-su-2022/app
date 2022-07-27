@@ -33,12 +33,7 @@ import { FastifyFileInterceptor } from '../interceptors/fastify-file.interceptor
 import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
 import { AccountsPaginationParams } from './accounts-pagination.model';
 import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
-import {
-  AccountUpdateProfilePayload
-} from '../payload/request/account-update-profile.request.payload';
-
-
-
+import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
 
 @Controller('v1/accounts')
 @ApiBearerAuth()
@@ -230,7 +225,7 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-    @ApiResponse({
+  @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully created a new user',
     type: Accounts,
@@ -422,8 +417,6 @@ export class AccountsController {
     );
   }
 
-
-
   @Put('update/upload-avatar/:id')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FastifyFileInterceptor)
@@ -451,7 +444,7 @@ export class AccountsController {
   @Put('update/upload-avatar/profile')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FastifyFileInterceptor('file', {}))
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Update account avatar by account id',
     description: 'Update account avatar by account id',
@@ -515,6 +508,4 @@ export class AccountsController {
       requestPayload.password
     );
   }
-
-
 }

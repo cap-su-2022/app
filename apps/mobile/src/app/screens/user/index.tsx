@@ -1,31 +1,41 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  Image, ImagePickerIOS,
+  Image,
+  ImagePickerIOS,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
-} from "react-native";
-import {ChatAlt2Icon, DocumentSearchIcon, LogoutIcon, UserCircleIcon} from "react-native-heroicons/outline";
-import * as Icon from "react-native-heroicons/solid";
-import { BLACK, FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE } from "@app/constants";
-import { LOCAL_STORAGE, revokeUserSession } from "../../utils/local-storage";
-import axios from "axios";
-import { API_URL } from "../../constants/constant";
-import { launchImageLibrary } from "react-native-image-picker";
-import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
-import {FEEDBACK_INITIAL_SCREEN, FEEDBACK_SCREEN} from "../../route";
+  View,
+} from 'react-native';
+import {
+  ChatAlt2Icon,
+  DocumentSearchIcon,
+  LogoutIcon,
+  UserCircleIcon,
+} from 'react-native-heroicons/outline';
+import * as Icon from 'react-native-heroicons/solid';
+import { BLACK, FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE } from '@app/constants';
+import { LOCAL_STORAGE, revokeUserSession } from '../../utils/local-storage';
+import axios from 'axios';
+import { API_URL } from '../../constants/constant';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
+import { FEEDBACK_INITIAL_SCREEN, FEEDBACK_SCREEN } from '../../route';
+import { useAppSelector } from '../../hooks/use-app-selector.hook';
+import { deviceWidth } from '../../utils/device';
 
 const SettingsScreen = () => {
   const scrollViewRef = useRef<null | ScrollView>(null);
   const navigate = useAppNavigation();
 
+  const authUser = useAppSelector((state) => state.auth.authUser);
+
   const handleLogout = () => {
     revokeUserSession();
     setTimeout(() => {
-      navigate.replace("LOGIN_SCREEN");
+      navigate.replace('LOGIN_SCREEN');
     }, 0);
   };
 
@@ -38,8 +48,8 @@ const SettingsScreen = () => {
   const getAvatarURL = async () => {
     const response = await axios.get(`${API_URL}/accounts/avatar`, {
       headers: {
-        "Authorization": LOCAL_STORAGE.getString("accessToken")
-      }
+        Authorization: LOCAL_STORAGE.getString('accessToken'),
+      },
     });
     const data = await response.data;
     console.log(data);
@@ -50,24 +60,31 @@ const SettingsScreen = () => {
     const result = await launchImageLibrary({
       maxHeight: 500,
       maxWidth: 500,
-      mediaType: "photo"
+      mediaType: 'photo',
     });
     console.log(result.assets[0].uri);
     const formData = new FormData();
-    formData.append("file", JSON.stringify({
-      uri: result.assets[0].uri,
-      name: "123.png",
-      type: "image/jpeg"
-    }));
+    formData.append(
+      'file',
+      JSON.stringify({
+        uri: result.assets[0].uri,
+        name: '123.png',
+        type: 'image/jpeg',
+      })
+    );
 
     try {
-      const response = await axios.put(`${API_URL}/accounts/update/upload-avatar/profile`, {
-        body: formData
-      }, {
-        headers: {
-          "Authorization": LOCAL_STORAGE.getString("accessToken")
+      const response = await axios.put(
+        `${API_URL}/accounts/update/upload-avatar/profile`,
+        {
+          body: formData,
+        },
+        {
+          headers: {
+            Authorization: LOCAL_STORAGE.getString('accessToken'),
+          },
         }
-      });
+      );
       const data = await response.data;
       console.log(data);
       getAvatarURL();
@@ -85,43 +102,46 @@ const SettingsScreen = () => {
         contentInsetAdjustmentBehavior="automatic"
       >
         <View style={[styles.header]}>
-          <View style={[styles.headerTitle]}>
-            {/*<TouchableOpacity
-              onPress={() => navigate.navigate('EditUserProfile')}
-              style={{
-                height: 40,
-                width: deviceWidth / 3,
-                borderRadius: 50,
-                borderWidth: 2,
-                borderColor: FPT_ORANGE_COLOR,
-                display: 'flex',
-                justifyContent: 'flex-start',
-                flexDirection: 'row',
-                alignItems: 'center'
-            }}>
-              <IconOutline.UserCircleIcon
-                color={FPT_ORANGE_COLOR}
-                size={40}/>
-              <Text style={{
-                fontSize: deviceWidth / 23,
-                fontWeight: '600',
-                color: FPT_ORANGE_COLOR
-              }}>
-                Profile
-              </Text>
-            </TouchableOpacity>*/}
-          </View>
           <View style={[styles.headerBody]}>
-            {avatarURL ? <TouchableOpacity onPress={() => openImageLibrary()}>
-              <Image source={{ uri: avatarURL }} style={{
-                height: 80,
-                width: 80,
-                borderRadius: 50
-              }
-              } />
-            </TouchableOpacity> : <Icon.UserCircleIcon size={80} color="#f06e28" />}
-            <Text style={[styles.userAvatarname]}>Ngô Nguyên Bằng</Text>
-            <Text style={[styles.userEmail]}>bangnnse140937@fpt.edu.vn</Text>
+            {avatarURL ? (
+              <TouchableOpacity onPress={() => openImageLibrary()}>
+                <Image
+                  source={{ uri: avatarURL }}
+                  style={{
+                    height: 80,
+                    width: 80,
+                    borderRadius: 50,
+                  }}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => openImageLibrary()}>
+                <Icon.UserCircleIcon size={80} color="#f06e28" />
+              </TouchableOpacity>
+            )}
+            <Text style={[styles.userAvatarname]}>{authUser.fullname}</Text>
+            <Text style={[styles.userEmail]}>{authUser.email}</Text>
+            <View
+              style={{
+                width: deviceWidth / 5,
+                height: 30,
+                backgroundColor: FPT_ORANGE_COLOR,
+                borderRadius: 50,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  color: WHITE,
+                  fontWeight: '600',
+                  fontSize: deviceWidth / 23,
+                }}
+              >
+                {authUser.role}
+              </Text>
+            </View>
           </View>
         </View>
         <View style={styles.logoutContainer}>
@@ -237,6 +257,6 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     height: 30,
     marginLeft: 10,
-    marginTop: 10
+    marginTop: 10,
   },
 });

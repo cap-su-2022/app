@@ -15,6 +15,7 @@ import HomeNavigator from './home';
 import UserNavigator from './user';
 import BookingQRScan from '../screens/track-booking-room/booking-qr-scan';
 import AcceptBookingNavigator from './home/track-booking-room/accept-booking';
+import { deviceHeight } from '../utils/device';
 
 const MainNavigator = () => {
   return (
