@@ -825,7 +825,14 @@ export class BookingRoomService {
     filters: GetAllBookingRequestsFilter
   ) {
     try {
-      return await this.repository.findBookingRoomRequestsByFilter(filters);
+      const roleName = await this.accountService.getAccountRoleById(accountId);
+      if (roleName === 'System Admin' || roleName === 'Librarian') {
+        return await this.repository.findBookingRoomRequestsByFilter(filters);
+      }
+      return await this.repository.findBookingRequestsByFilterAndRequestedBy(
+        filters,
+        accountId
+      );
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

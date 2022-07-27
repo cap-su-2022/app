@@ -976,4 +976,45 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .useTransaction(true)
       .execute();
   }
+
+  async findBookingRequestsByFilterAndRequestedBy(
+    filters: GetAllBookingRequestsFilter,
+    accountId: string
+  ) {
+    const query = this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('r.name', 'roomName')
+      .addSelect('rt.name', 'roomType')
+      .addSelect('booking_request.checkin_date', 'checkinDate')
+      .addSelect('st.slot_num', 'slotStart')
+      .addSelect('se.slot_num', 'slotEnd')
+      .addSelect('booking_request.status', 'status')
+      .addSelect('a.username', 'requestedBy')
+      .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(RoomType, 'rt', 'rt.id = r.type')
+      .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
+      .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
+
+      .where('r.name LIKE :name', { name: `%${filters.roomName}%` })
+      .andWhere('a.id = :accountId', { accountId: accountId })
+      .andWhere('booking_request.checkin_date >= :dateStart', {
+        dateStart: filters.dateStart,
+      })
+      .andWhere('booking_request.checkin_date <= :dateEnd', {
+        dateEnd: filters.dateEnd,
+      })
+      .andWhere('st.slot_num >= :slotStart', {
+        slotStart: filters.slotStart,
+      })
+      .andWhere('se.slot_num <= :slotEnd', {
+        slotEnd: filters.slotEnd,
+      });
+    if (filters.status) {
+      query.andWhere('booking_request.status IN (:...status)', {
+        status: JSON.parse(filters.status),
+      });
+    }
+    return query.getRawMany<BookingRequest>();
+  }
 }
