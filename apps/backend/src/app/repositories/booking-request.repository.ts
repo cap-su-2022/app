@@ -57,12 +57,13 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getRawOne();
   }
 
-  getCountRequestInWeekOfUser(id: string) {
-    const curr = new Date(); // get current date
+  getCountRequestInWeekOfUser(id: string, date: string) {
+    const curr = new Date(date); // get current date
+    console.log(date)
     const firstDay = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
     const lastDay = firstDay + 6; // last day is the first day + 6
     const sunday = new Date(curr.setDate(firstDay));
-    const satuday = new Date(curr.setDate(lastDay));
+    const satuday = new Date(curr.setDate(curr.getDate() + lastDay));
     return this.createQueryBuilder('booking_request')
       .select('COUNT(1)', 'count')
       .where('booking_request.requested_by = :id', { id: id })
@@ -137,7 +138,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     const firstDay = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
     const lastDay = firstDay + 6; // last day is the first day + 6
     const sunday = new Date(curr.setDate(firstDay));
-    const satuday = new Date(curr.setDate(lastDay));
+    const satuday = new Date(curr.setDate(curr.getDate() + lastDay));
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('booking_request.checkin_Date', 'checkinDate')
@@ -322,6 +323,49 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       )
       .where('booking_request.checkinDate = :checkinDate', {
         checkinDate: date,
+      })
+      .andWhere('booking_request.room_id = :roomId', {
+        roomId: roomId,
+      })
+      .andWhere(
+        "(booking_request.status = 'PENDING' OR booking_request.status = 'BOOKED')"
+      );
+    return query.getRawMany<{
+      id: string;
+      slotIn: number;
+      slotOut: number;
+      status: string;
+    }>();
+  }
+
+  getBookingPendingAndBookedInMultiDay(
+    dateStart: string,
+    dateEnd: string,
+    roomId: string
+  ): Promise<
+    {
+      id: string;
+      slotIn: number;
+      slotOut: number;
+      status: string;
+    }[]
+  > {
+    const query = this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('slot_in.slot_num', 'slotIn')
+      .addSelect('slot_out.slot_num', 'slotOut')
+      .addSelect('booking_request.status', 'status')
+      .innerJoin(Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
+      .innerJoin(
+        Slot,
+        'slot_out',
+        'slot_out.id = booking_request.checkout_slot'
+      )
+      .where('booking_request.checkinDate >= :dateStart', {
+        dateStart: dateStart,
+      })
+      .andWhere('booking_request.checkinDate <= :dateEnd', {
+        dateEnd: dateEnd,
       })
       .andWhere('booking_request.room_id = :roomId', {
         roomId: roomId,
