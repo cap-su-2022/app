@@ -21,6 +21,8 @@ import { fetchCurrentCheckoutInformation } from './thunk/fetch-current-checkout-
 import { CurrentCheckinInformation } from '../../models/current-checkin-information.model';
 import { fetchCurrentCheckinInformation } from './thunk/fetch-current-checkin-information.thunk';
 import { fetchDeviceInUseByBookingRequestId } from './thunk/fetch-devices-in-use-by-booking-request-id.thunk';
+import { fetchRoomFreeByMultiSlotAndDay } from './thunk/fetch-room-free-by-multi-day-and-slot.thunk';
+import {addNewLongTermRequestBooking} from "./thunk/add-long-term-request-booking";
 
 interface RoomBookingState {
   roomBookingCheckout: RoomBookingCheckout;
@@ -46,6 +48,13 @@ interface BookingDevice {
   label: string;
 }
 
+interface Room {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+}
+
 interface AddRoomBookingPayload {
   fromDay: string;
   toDay: string;
@@ -60,6 +69,8 @@ interface AddRoomBookingPayload {
   devices: BookingDevice[];
   deviceNames: string[];
   isMultiSLot: boolean;
+  rooms: Room[];
+  isMultiLongTerm: boolean
 }
 
 interface RoomBookingCheckout {
@@ -186,12 +197,26 @@ const roomBookingSlice = createSlice({
     resetGlobalDateEnd(state) {
       state.globalDateEnd = dayjs(dayjs().endOf('year')).format('YYYY-MM-DD');
     },
+    step1BookingLongTerm(state, { payload }) {
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        roomId: payload.roomId,
+        roomName: payload.roomName,
+        fromDay: payload.fromDay,
+        fromSlot: payload.fromSlot,
+        toSlot: payload.toSlot,
+        isMultiLongTerm: payload.isMultiLongTerm
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAllBookingRooms.fulfilled, (state, { payload }) => {
       state.bookingRooms = payload;
     });
     builder.addCase(addNewRequestBooking.fulfilled, (state, { payload }) => {
+      state.response = payload;
+    });
+    builder.addCase(addNewLongTermRequestBooking.fulfilled, (state, { payload }) => {
       state.response = payload;
     });
     builder.addCase(fetchAllWishlistRooms.fulfilled, (state, { payload }) => {
@@ -245,6 +270,12 @@ const roomBookingSlice = createSlice({
         state.currentCheckinInformation.devices = payload;
       }
     );
+    builder.addCase(
+      fetchRoomFreeByMultiSlotAndDay.fulfilled,
+      (state, { payload }) => {
+        state.addRoomBooking.rooms = payload;
+      }
+    );
   },
 });
 
@@ -265,4 +296,5 @@ export const {
   resetGlobalDateStart,
   resetGlobalDateEnd,
   step1BookRoomFromWishList,
+  step1BookingLongTerm
 } = roomBookingSlice.actions;
