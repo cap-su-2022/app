@@ -557,7 +557,7 @@ export class BookingRoomController {
   // }
 
   @Get('wishlist')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Retrieving a list of booking rooms in wishlist',
     description: 'Retrieving a list of booking rooms in wishlist',
@@ -593,6 +593,7 @@ export class BookingRoomController {
   ): Promise<WishlistBookingRoomResponseDTO[]> {
     return this.service.getWishlistBookingRooms(
       roomName,
+
       slotFrom,
       slotTo,
       user.account_id
