@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -47,6 +47,7 @@ const AcceptBooking: React.FC<any> = () => {
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
   const { bookingRoom } = useAppSelector((state) => state.roomBooking);
+  const authUser = useAppSelector((state) => state.auth.authUser);
 
   const handleRejectBookingRequest = () => {
     dispatch(rejectBookingRequest(bookingRoom.id))
@@ -135,9 +136,49 @@ const AcceptBooking: React.FC<any> = () => {
     }
   };
 
+  const renderFooter = () => {
+    if (
+      authUser.role === 'Staff' &&
+      (bookingRoom.status === 'BOOKED' || bookingRoom.status === 'PENDING')
+    ) {
+      return (
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.cancelBookingRequestButton}>
+            <XIcon size={deviceWidth / 14} color={WHITE} />
+            <Text style={styles.cancelBookingRequestButtonText}>
+              Cancel booking request
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return bookingRoom.status !== CANCELLED &&
+      bookingRoom.status !== CHECKED_OUT ? (
+      <AcceptBookingFooter
+        handleReject={() => handleRejectAction()}
+        handleAccept={() => handleAcceptAction()}
+      />
+    ) : null;
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
       <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigate.pop()}>
+            <ChevronLeftIcon
+              style={styles.backNavigation}
+              size={deviceWidth / 14}
+              color={FPT_ORANGE_COLOR}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerTitleText}>
+            {bookingRoom.status !== CANCELLED &&
+            bookingRoom.status !== CHECKED_OUT
+              ? 'Incoming Booking Request'
+              : 'Review booking request'}
+          </Text>
+        </View>
         <ScrollView
           style={{
             backgroundColor: WHITE,
@@ -145,22 +186,8 @@ const AcceptBooking: React.FC<any> = () => {
           showsVerticalScrollIndicator={false}
         >
           <View>
-            <View style={styles.header}>
-              <TouchableOpacity onPress={() => navigate.pop()}>
-                <ChevronLeftIcon
-                  style={styles.backNavigation}
-                  size={deviceWidth / 14}
-                  color={FPT_ORANGE_COLOR}
-                />
-              </TouchableOpacity>
-              <Text style={styles.headerTitleText}>
-                {bookingRoom.status !== CANCELLED &&
-                bookingRoom.status !== CHECKED_OUT
-                  ? 'Incoming Booking Request'
-                  : 'Review booking request'}
-              </Text>
-            </View>
-            {bookingRoom.status !== CANCELLED &&
+            {authUser.role !== 'Staff' &&
+            bookingRoom.status !== CANCELLED &&
             bookingRoom.status !== CHECKED_OUT ? (
               <View style={styles.warningMessageContainer}>
                 <ExclamationIcon
@@ -174,7 +201,8 @@ const AcceptBooking: React.FC<any> = () => {
                 </Text>
               </View>
             ) : null}
-            {bookingRoom.status !== CANCELLED &&
+            {authUser.role !== 'Staff' &&
+            bookingRoom.status !== CANCELLED &&
             bookingRoom.status !== CHECKED_OUT ? (
               <Text style={styles.textStatus}>
                 {bookingRoom.requestedBy} wants to{' '}
@@ -286,16 +314,7 @@ const AcceptBooking: React.FC<any> = () => {
                   <Text style={styles.valueText}>{bookingRoom.id}</Text>
                 </View>
                 <Divider num={deviceWidth / 10} />
-                <View
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    margin: 10,
-                    flexWrap: 'wrap',
-                  }}
-                >
+                <View style={styles.dataRowContainer}>
                   <Text style={styles.titleText}>Requested At</Text>
                   <Text style={styles.valueText}>
                     {dayjs(new Date(bookingRoom.requestedAt)).format(
@@ -340,13 +359,7 @@ const AcceptBooking: React.FC<any> = () => {
             </View>
           </View>
         </ScrollView>
-        {bookingRoom.status !== CANCELLED &&
-        bookingRoom.status !== CHECKED_OUT ? (
-          <AcceptBookingFooter
-            handleReject={() => handleRejectAction()}
-            handleAccept={() => handleAcceptAction()}
-          />
-        ) : null}
+        {renderFooter()}
       </View>
     </SafeAreaView>
   );
@@ -446,6 +459,30 @@ const styles = StyleSheet.create({
     borderColor: INPUT_GRAY_COLOR,
     alignSelf: 'center',
     height: 150,
+  },
+  footer: {
+    height: 80,
+    backgroundColor: WHITE,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopColor: INPUT_GRAY_COLOR,
+    borderTopWidth: 1,
+  },
+  cancelBookingRequestButton: {
+    height: 50,
+    width: deviceWidth / 1.35,
+    borderRadius: 8,
+    backgroundColor: FPT_ORANGE_COLOR,
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  cancelBookingRequestButtonText: {
+    fontWeight: '600',
+    fontSize: deviceWidth / 20,
+    color: WHITE,
   },
 });
 

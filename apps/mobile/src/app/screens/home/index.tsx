@@ -9,6 +9,7 @@ const HomeScreen: React.FC = () => {
   return (
     <SafeAreaView>
       <ScrollView
+        showsVerticalScrollIndicator={false}
         ref={(ref) => {
           scrollViewRef.current = ref;
         }}
