@@ -41,6 +41,7 @@ import { acceptBookingRequest } from '../../../redux/features/room-booking/thunk
 import { rejectBookingRequest } from '../../../redux/features/room-booking/thunk/reject-booking-request.thunk';
 import { acceptCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/accept-checkout-booking-request.thunk';
 import { rejectCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkout-booking-request.thunk';
+import { fetchDeviceInUseByBookingRequestId } from '../../../redux/features/room-booking/thunk/fetch-devices-in-use-by-booking-request-id.thunk';
 
 const AcceptBooking: React.FC<any> = () => {
   const dispatch = useAppDispatch();
@@ -103,6 +104,14 @@ const AcceptBooking: React.FC<any> = () => {
     } else {
       return handleAcceptCheckout();
     }
+  };
+
+  const handleViewDevices = (id) => {
+    dispatch(fetchDeviceInUseByBookingRequestId(id))
+      .unwrap()
+      .then((val) => {
+        navigate.navigate('ACCEPT_BOOKING_LIST_DEVICES');
+      });
   };
 
   const handleRejectAction = () => {
@@ -215,9 +224,7 @@ const AcceptBooking: React.FC<any> = () => {
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Requested devices</Text>
                 <TouchableOpacity
-                  onPress={() =>
-                    navigate.navigate('ACCEPT_BOOKING_LIST_DEVICES')
-                  }
+                  onPress={() => handleViewDevices(bookingRoom.id)}
                   style={{
                     display: 'flex',
                     flexDirection: 'row',

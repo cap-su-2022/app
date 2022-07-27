@@ -1,3 +1,11 @@
+interface Device {
+  id: string;
+  deviceName: string;
+  bookingRequestId: string;
+  deviceId: string;
+  deviceQuantity: number;
+}
+
 export interface CurrentCheckinInformation {
   id: string;
   description: string;
@@ -11,4 +19,5 @@ export interface CurrentCheckinInformation {
   checkoutSlot: number;
   acceptedAt: string;
   checkinDate: string;
+  devices: Device[];
 }
