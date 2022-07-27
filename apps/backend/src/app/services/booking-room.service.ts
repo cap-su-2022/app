@@ -820,8 +820,16 @@ export class BookingRoomService {
     }
   }
 
-  getAllBookingRoomsRequestsByFilter(filters: GetAllBookingRequestsFilter) {
-    return this.repository.findBookingRoomRequestsByFilter(filters);
+  async getAllBookingRoomsRequestsByFilter(
+    accountId: string,
+    filters: GetAllBookingRequestsFilter
+  ) {
+    try {
+      return await this.repository.findBookingRoomRequestsByFilter(filters);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 
   async getCurrentBookingCheckoutInformation(accountId: string) {

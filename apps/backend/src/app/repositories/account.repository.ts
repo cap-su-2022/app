@@ -10,7 +10,7 @@ import {
 import { Roles } from '../models/role.entity';
 import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
 import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
-import {AccountUpdateProfilePayload} from "../payload/request/account-update-profile.request.payload";
+import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
 
 @CustomRepository(Accounts)
 export class AccountRepository extends Repository<Accounts> {
@@ -22,7 +22,7 @@ export class AccountRepository extends Repository<Accounts> {
       .then((data) => data['count'] > 0);
   }
 
-  async getRoleOfAccount(id: string): Promise<{ role_name: string}> {
+  async getRoleOfAccount(id: string): Promise<{ role_name: string }> {
     return this.createQueryBuilder('account')
       .select('role.name')
       .innerJoin(Roles, 'role', 'role.id = account.role_id')
@@ -480,5 +480,14 @@ export class AccountRepository extends Repository<Accounts> {
       .andWhere('accounts.deleted_at IS NULL')
       .getRawMany<{ username: string }>()
       .then((data) => data.map((acc) => acc.username));
+  }
+
+  async findRoleNameById(id: string): Promise<string> {
+    return this.createQueryBuilder('accounts')
+      .select('r.name', 'name')
+      .innerJoin(Roles, 'r', 'r.id = accounts.role_id')
+      .where('accounts.id = :id', { id: id })
+      .getRawOne()
+      .then((data) => data['name']);
   }
 }

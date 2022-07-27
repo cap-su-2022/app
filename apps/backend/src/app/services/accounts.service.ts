@@ -45,7 +45,7 @@ export class AccountsService {
   async getRoleOfAccount(id: string) {
     try {
       const role = await this.repository.getRoleOfAccount(id);
-      return role
+      return role;
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException('One or more parameters is invalid');
@@ -218,7 +218,10 @@ export class AccountsService {
           'This account ID is now active. Cannot restore it'
         );
       }
-      const account = await this.repository.restoreDisabledAccountById(accountId, id);
+      const account = await this.repository.restoreDisabledAccountById(
+        accountId,
+        id
+      );
       await this.histService.createNew(account);
       return account;
     } catch (e) {
@@ -376,7 +379,7 @@ export class AccountsService {
 
   async updateMyProfile(
     keycloakUser: KeycloakUserInstance,
-    body: AccountUpdateProfilePayload,
+    body: AccountUpdateProfilePayload
   ): Promise<Accounts> {
     try {
       const user = await this.repository.findByKeycloakId(keycloakUser.sub);
@@ -506,5 +509,14 @@ export class AccountsService {
 
   async getAccountIdByKeycloakId(keycloakId: string) {
     return this.repository.findIdByKeycloakId(keycloakId);
+  }
+
+  async getAccountRoleById(id: string) {
+    try {
+      return await this.repository.findRoleNameById(id);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
   }
 }

@@ -647,9 +647,13 @@ export class BookingRoomController {
 
   @Get('filter')
   getAllBookingRoomRequestsByFilter(
-    @Query() filters: GetAllBookingRequestsFilter
+    @Query() filters: GetAllBookingRequestsFilter,
+    @User() user: KeycloakUserInstance
   ) {
-    return this.service.getAllBookingRoomsRequestsByFilter(filters);
+    return this.service.getAllBookingRoomsRequestsByFilter(
+      user.account_id,
+      filters
+    );
   }
 
   @Get('check-in')

@@ -81,7 +81,7 @@ export class AuthenticationService {
         );
       }
 
-      // const roleName = this.roleService.getRoleNameByAccountId(user.id);
+      const roleName = await this.accountService.getAccountRoleById(user.id);
 
       return {
         accessToken: keycloakUser.access_token,
@@ -92,7 +92,7 @@ export class AuthenticationService {
         email: user.email,
         phone: user.phone,
         googleId: user.googleId,
-        role: '',
+        role: roleName,
         fullname: user.fullname,
         avatar: user.avatar,
       };
@@ -128,13 +128,13 @@ export class AuthenticationService {
       credentials.username,
       credentials.password
     );
-    console.log(1);
+
     const keycloakUser = await this.keycloakService.getUserInfo(
       keycloakToken.access_token
     );
-    console.log(2);
+
     const user = await this.accountService.findByKeycloakId(keycloakUser.sub);
-    console.log(user);
+    const roleName = await this.accountService.getAccountRoleById(user.id);
 
     return {
       accessToken: keycloakToken.access_token,
@@ -145,7 +145,7 @@ export class AuthenticationService {
       email: user.email,
       phone: user.phone,
       googleId: user.googleId,
-      role: user.roleId,
+      role: roleName,
       fullname: user.fullname,
       avatar: user.avatar,
     };
