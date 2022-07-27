@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  FlatList,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -35,6 +34,7 @@ import { Device } from '../../redux/models/device.model';
 import Divider from '../../components/text/divider';
 import dayjs from 'dayjs';
 import { boxShadow } from '../../utils/box-shadow.util';
+import { addNewLongTermRequestBooking } from '../../redux/features/room-booking/thunk/add-long-term-request-booking';
 
 export const RoomBooking3: React.FC = () => {
   const navigate = useAppNavigation();
@@ -78,7 +78,7 @@ export const RoomBooking3: React.FC = () => {
     }
   };
 
-  const handleNextStep = () => {
+  const handleNewRequestBooking = () => {
     dispatch(
       addNewRequestBooking({
         bookingReasonId: bookingReason,
@@ -97,6 +97,36 @@ export const RoomBooking3: React.FC = () => {
         alert('This room has already been booked. Please book another room');
         navigate.pop(2);
       });
+  };
+
+  const handleNewLongTermRequestBooking = () => {
+    dispatch(
+      addNewLongTermRequestBooking({
+        bookingReasonId: bookingReason,
+        checkinDate: roomBooking.fromDay,
+        checkoutDate: roomBooking.toDay,
+        checkinSlot: roomBooking.fromSlot,
+        checkoutSlot: roomBooking.toSlot,
+        description: description,
+        listDevice: roomBooking.devices,
+        roomId: roomBooking.roomId,
+      })
+    )
+      .unwrap()
+      .then((e) => console.log(e))
+      .then(() => {
+        alert('Book thanh cong');
+      })
+      .catch(() => {
+        alert('This room has already been booked. Please book another room');
+        navigate.pop(2);
+      });
+  };
+
+  const handleNextStep = () => {
+    roomBooking.isMultiLongTerm
+      ? handleNewLongTermRequestBooking()
+      : handleNewRequestBooking();
   };
 
   const InfoDetail = (title, detail) => {
@@ -164,7 +194,19 @@ export const RoomBooking3: React.FC = () => {
                 'Start Day',
                 dayjs(roomBooking.fromDay).format('ddd DD/MM/YYYY')
               )}
-              {InfoDetail('Slot', `Slot ${roomBooking.toSlotNum}`)}
+              {roomBooking.isMultiLongTerm
+                ? InfoDetail(
+                    'End Day',
+                    dayjs(roomBooking.toDay).format('ddd DD/MM/YYYY')
+                  )
+                : null}
+              {InfoDetail(
+                roomBooking.isMultiLongTerm ? 'From Slot' : 'Slot',
+                `Slot ${roomBooking.fromSlotNum}`
+              )}
+              {roomBooking.isMultiLongTerm
+                ? InfoDetail('To Slot', `Slot ${roomBooking.toSlotNum}`)
+                : null}
               {InfoDetail('Room Name', roomBooking.roomName)}
               <Text style={[styles.titleText, { margin: 10 }]}>
                 List Device
