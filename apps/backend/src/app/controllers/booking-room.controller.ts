@@ -171,16 +171,16 @@ export class BookingRoomController {
   @Get('list-room-free-at-multi-date')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getRoomFreeAtMultiDate(
-    @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
-    @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
+    @Query('checkinSlot', new DefaultValuePipe('')) checkinSlot: number,
+    @Query('checkoutSlot', new DefaultValuePipe('')) checkoutSlot: number,
     @Query('dateStart', new DefaultValuePipe('')) dateStart: string,
     @Query('dateEnd', new DefaultValuePipe('')) dateEnd: string
   ) {
     return this.service.getRoomFreeAtMultiDate({
       dateStart: dateStart,
       dateEnd: dateEnd,
-      checkinSlotId: checkinSlotId,
-      checkoutSlotId: checkoutSlotId,
+      checkinSlot: checkinSlot,
+      checkoutSlot: checkoutSlot,
     });
   }
 
@@ -468,7 +468,7 @@ export class BookingRoomController {
     @User() user: KeycloakUserInstance,
     @Body() request: BookingRequestAddRequestPayload
   ) {
-    return this.service.addNewRequest(request, user.account_id);
+    return this.service.addMultiRequest(request, user.account_id);
   }
 
   @Put('accept/:id')
