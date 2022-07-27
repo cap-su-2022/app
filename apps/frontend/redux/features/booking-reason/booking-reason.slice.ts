@@ -13,14 +13,11 @@ interface InitialState {
   deletedBookingReasons: BookingReason[];
   reasonNames: {value: string, label: string}[]
 }
-
 const initialState: InitialState = {
   bookingReasons: {} as PaginationResponse<BookingReason>,
   bookingReason: {} as BookingReason,
   deletedBookingReasons: [],
   reasonNames: {} as {value: string, label: string}[],
-
-
 };
 
 export const bookingReasonSlice = createSlice({

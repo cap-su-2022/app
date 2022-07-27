@@ -13,7 +13,7 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { AccountsService } from '../services';
+import {AccountsService} from '../services';
 import {
   ApiBearerAuth,
   ApiConsumes,
@@ -22,22 +22,20 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { UsersValidation } from '../pipes/validation/users.validation';
-import { User } from '../decorators/keycloak-user.decorator';
-import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import { Accounts } from '../models';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { FastifyFileInterceptor } from '../interceptors/fastify-file.interceptor';
-import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
-import { AccountsPaginationParams } from './accounts-pagination.model';
-import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
+import {UsersValidation} from '../pipes/validation/users.validation';
+import {User} from '../decorators/keycloak-user.decorator';
+import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
+import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum/roles.enum';
+import {Accounts} from '../models';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {FastifyFileInterceptor} from '../interceptors/fastify-file.interceptor';
+import {ChangeProfilePasswordRequest} from '../payload/request/change-password.request.payload';
+import {AccountsPaginationParams} from './accounts-pagination.model';
+import {AccountAddRequestPayload} from '../payload/request/account-add.request.payload';
 import {
   AccountUpdateProfilePayload
 } from '../payload/request/account-update-profile.request.payload';
-
-
 
 
 @Controller('v1/accounts')
@@ -45,7 +43,8 @@ import {
 @ApiTags('Accounts')
 @UseInterceptors(new PathLoggerInterceptor(AccountsController.name))
 export class AccountsController {
-  constructor(private readonly service: AccountsService) {}
+  constructor(private readonly service: AccountsService) {
+  }
 
   @Get()
   @UsePipes(new UsersValidation())
@@ -230,7 +229,7 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-    @ApiResponse({
+  @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully created a new user',
     type: Accounts,
@@ -243,7 +242,7 @@ export class AccountsController {
           properties: {
             results: {
               type: 'object',
-              items: { $ref: getSchemaPath(Accounts) },
+              items: {$ref: getSchemaPath(Accounts)},
             },
           },
         },
@@ -259,6 +258,10 @@ export class AccountsController {
 
   @Put('update/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Update account by id',
+    description: 'Update account by provided id',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalid',
@@ -405,12 +408,25 @@ export class AccountsController {
   @Put('restore-deleted/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully restored deleted account by id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description:
+      'Request params for deleted deleted account is not validated',
+  })
+  @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalid',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
+  })
+  @ApiOperation({
+    summary: 'Successfully restored deleted account by id',
+    description: 'Successfully restored deleted account by id',
   })
   restoreDeletedUserById(
     @User() user: KeycloakUserInstance,
@@ -423,10 +439,9 @@ export class AccountsController {
   }
 
 
-
   @Put('update/upload-avatar/:id')
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FastifyFileInterceptor)
+  @UseInterceptors(FastifyFileInterceptor('file', {}))
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Update account avatar by account id',

@@ -1,10 +1,10 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { BookingReasonRepository } from '../repositories/booking-reason.repository';
-import { BookingReasonHistService } from './booking-reason-hist.service';
-import { PaginationParams } from '../controllers/pagination.model';
-import { BookingReason } from '../models/booking-reason.entity';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { BookingReasonUpdateRequestPayload } from '../payload/request/booking-reason.request.payload';
+import {BadRequestException, Body, Injectable, Logger} from '@nestjs/common';
+import {BookingReasonRepository} from '../repositories/booking-reason.repository';
+import {BookingReasonHistService} from './booking-reason-hist.service';
+import {PaginationParams} from '../controllers/pagination.model';
+import {BookingReason} from '../models/booking-reason.entity';
+import {BookingReasonUpdateRequestPayload} from '../payload/request/booking-reason.request.payload';
+
 
 @Injectable()
 export class BookingReasonService {
@@ -13,7 +13,8 @@ export class BookingReasonService {
   constructor(
     private readonly repository: BookingReasonRepository,
     private readonly histService: BookingReasonHistService
-  ) {}
+  ) {
+  }
 
   async getBookingReasonTypesWithPagination(pagination: PaginationParams) {
     try {
@@ -37,24 +38,38 @@ export class BookingReasonService {
     }
   }
 
+
   async getBookingReasonById(id: string): Promise<BookingReason> {
     try {
-      return await this.repository.findById(id);
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Booking reason does not found with the provided id'
+        );
+      }
+      const result = await this.repository.findById(id);
+      if (!result) {
+        throw new BadRequestException(
+          'This booking reason is already deleted'
+        );
+      }
+      return result;
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException(e.message);
+      throw new BadRequestException(e.message ?? 'An error occurred while retrieving this booking reason');
     }
   }
 
   async createNewBookingReason(
     accountId: string,
-    payload: BookingReason
+    payload: BookingReasonUpdateRequestPayload
   ): Promise<BookingReason> {
+    const isExisted = await this.repository.isExistedByName(payload.name);
+    if (isExisted) {
+      throw new BadRequestException('Booking reason name is duplicated!');
+    }
     try {
-      const bookingReason = await this.repository.createNew(accountId, {
-        name: payload.name,
-        description: payload.description,
-      });
+      const bookingReason = await this.repository.createNew(accountId, payload);
 
       await this.histService.createNew(bookingReason);
       return bookingReason;
@@ -68,13 +83,15 @@ export class BookingReasonService {
     accountId: string,
     updatePayload: BookingReasonUpdateRequestPayload,
     id: string
-  ) {
+  ): Promise<BookingReason> {
     try {
-      const isExisted = await this.repository.existsById(id);
-      if (!isExisted) {
-        throw new BadRequestException(
-          'Room type does not found with the provided id'
-        );
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException('This reason already deleted!');
+      }
+      const isExisted = await this.repository.isExistedByName(updatePayload.name);
+      if (isExisted) {
+        throw new BadRequestException('Booking reason name is duplicated!');
       }
       const bookingReason = await this.repository.updateById(
         accountId,
@@ -93,7 +110,7 @@ export class BookingReasonService {
     try {
       const data = await this.repository.findById(id);
       if (data === undefined) {
-        throw new BadRequestException('This reason already deleted!');
+        throw new BadRequestException('This reason is already deleted!');
       }
       const reason = await this.repository.deleteById(accountId, id);
       await this.histService.createNew(reason);
@@ -115,16 +132,16 @@ export class BookingReasonService {
 
   async restoreDeletedReasonById(accountId: string, id: string) {
     try {
-      const isExisted = this.repository.existsById(id);
+      const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
         throw new BadRequestException(
-          'Reason does not exist with the provided id'
+          'This reason does not exist with the provided id'
         );
       }
-      const data = await this.repository.findById(id);
-      if (data !== undefined) {
+      const isActive = await this.repository.findById(id);
+      if (isActive !== undefined) {
         throw new BadRequestException(
-          'This reason ID is now active. Cannot restore'
+          'This reason ID is now active. Cannot restore it'
         );
       }
       const reason = await this.repository.restoreDeletedById(accountId, id);
@@ -132,7 +149,7 @@ export class BookingReasonService {
       return reason;
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException(e.message);
+      throw new BadRequestException(e.message ?? 'Error occurred while restore the deleted status of this boôking reason');
     }
   }
 
@@ -141,7 +158,7 @@ export class BookingReasonService {
       const data = await this.repository.findById(id);
       if (data !== undefined) {
         throw new BadRequestException(
-          'Please delete this type after permanently delete'
+          'Please delete this reason after permanently delete'
         );
       } else {
         await this.histService.deleteAllHist(id);

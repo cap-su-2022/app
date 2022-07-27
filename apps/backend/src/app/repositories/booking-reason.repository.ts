@@ -1,19 +1,20 @@
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Repository } from 'typeorm';
-import { PaginationParams } from '../controllers/pagination.model';
-import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
-import { BookingReason } from '../models/booking-reason.entity';
-import { Accounts } from '../models';
-import { BadRequestException } from '@nestjs/common';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {Repository} from 'typeorm';
+import {PaginationParams} from '../controllers/pagination.model';
+import {paginateRaw, Pagination} from 'nestjs-typeorm-paginate';
+import {BookingReason} from '../models/booking-reason.entity';
+import {Accounts} from '../models';
+import {BadRequestException} from '@nestjs/common';
+import {BookingReasonUpdateRequestPayload} from "../payload/request/booking-reason.request.payload";
 
 @CustomRepository(BookingReason)
 export class BookingReasonRepository extends Repository<BookingReason> {
   existsById(id: string): Promise<boolean> {
-    return this.createQueryBuilder('rt')
+    return this.createQueryBuilder('br')
       .select('COUNT(1)', 'count')
-      .where('rt.id = :id', { id: id })
+      .where('br.id = :id', {id: id})
       .getRawOne()
-      .then((data) => data?.count > 0);
+      .then((data) => data['count'] > 0);
   }
 
   async findByPagination(
@@ -55,9 +56,17 @@ export class BookingReasonRepository extends Repository<BookingReason> {
       .leftJoin(Accounts, 'a', 'a.id = br.created_by')
       .leftJoin(Accounts, 'aa', 'aa.id = br.updated_by')
       .leftJoin(Accounts, 'aaa', 'aaa.id = br.deleted_by')
-      .where('br.id = :id', { id: id })
+      .where('br.id = :id', {id: id})
       .andWhere('br.deleted_at IS NULL')
       .getRawOne<BookingReason>();
+  }
+
+  async isExistedByName(name: string): Promise<boolean> {
+    return this.createQueryBuilder('booking_reason')
+      .select('COUNT(booking_reason.name)')
+      .where('booking_reason.name = :name', {name})
+      .getRawOne()
+      .then((data) => data['count'] > 0);
   }
 
   async createNew(
@@ -122,7 +131,7 @@ export class BookingReasonRepository extends Repository<BookingReason> {
         deletedBy: accountId,
         deletedAt: new Date(),
       })
-      .where('booking_reason.id = :id', { id: id })
+      .where('booking_reason.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isDeleted.affected > 0) {
@@ -141,7 +150,7 @@ export class BookingReasonRepository extends Repository<BookingReason> {
       .addSelect('br.deleted_at', 'deletedAt')
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'a.id = br.deleted_by')
-      .where('br.name ILIKE :search', { search: `%${search.trim()}%` })
+      .where('br.name ILIKE :search', {search: `%${search.trim()}%`})
       .andWhere('br.deleted_at IS NOT NULL')
       .orderBy('br.deleted_at', 'DESC')
       .getRawMany<BookingReason>();
@@ -155,7 +164,7 @@ export class BookingReasonRepository extends Repository<BookingReason> {
         updatedBy: accountId,
         updatedAt: new Date(),
       })
-      .where('booking_reason.id = :id', { id: id })
+      .where('booking_reason.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isRestored.affected > 0) {
@@ -170,7 +179,7 @@ export class BookingReasonRepository extends Repository<BookingReason> {
   async permanentlyDeleteById(id: string) {
     return this.createQueryBuilder('booking_reason')
       .delete()
-      .where('booking_reason.id = :id', { id: id })
+      .where('booking_reason.id = :id', {id: id})
       .useTransaction(true)
       .execute();
   }

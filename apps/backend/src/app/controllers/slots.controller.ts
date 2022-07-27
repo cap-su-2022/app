@@ -52,11 +52,11 @@ export class SlotController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully added slot type',
+    description: 'Successfully added slot',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Request params for slots is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -81,7 +81,7 @@ export class SlotController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Request params for slots is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -107,7 +107,7 @@ export class SlotController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Request params for slots is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
