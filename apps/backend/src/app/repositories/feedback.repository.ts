@@ -51,7 +51,7 @@ export class FeedbackRepository extends Repository<Feedback> {
       .addSelect('fb.created_at', 'createdAt')
       .addSelect('aaa.username', 'rejectedBy')
       .addSelect('fb.rejected_at', 'rejectedAt')
-      .innerJoin(Accounts, 'a', 'a.id = fb.resolved_by')
+      .leftJoin(Accounts, 'a', 'a.id = fb.resolved_by')
       .leftJoin(Accounts, 'aa', 'aa.id = fb.created_by')
       .leftJoin(Accounts, 'aaa', 'aaa.id = fb.rejected_by')
       .where('fb.id = :id', { id: id })

@@ -440,6 +440,42 @@ export class BookingRoomService {
     }
   }
 
+  async getListRequestBookedInMultiDay(payload: {
+    dateStart: string;
+    dateEnd: string;
+    checkinSlotId: string;
+    checkoutSlotId: string;
+  }) {
+    try {
+      console.log(payload.dateStart)
+      console.log(payload.dateEnd)
+      const listRequestBookedInMultiDay =
+        await this.repository.getRequestBookedInMultiDay(payload.dateStart, payload.dateEnd);
+
+      if (listRequestBookedInMultiDay.length > 0) {
+        const slotIn = await this.slotService.getNumOfSlot(
+          payload.checkinSlotId
+        );
+        const slotOut = await this.slotService.getNumOfSlot(
+          payload.checkoutSlotId
+        );
+        const listRequestBookedInMultiDayAndSlot = listRequestBookedInMultiDay.filter(
+          (request) => {
+            for (let j = request.slotStart; j <= request.slotEnd; j++) {
+              if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+                return request;
+              }
+            }
+          }
+        );
+        return listRequestBookedInMultiDayAndSlot;
+    }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async getRoomFreeAtTime(payload: {
     date: string;
     checkinSlotId: string;
@@ -458,6 +494,32 @@ export class BookingRoomService {
         listRoomBookedInDaySameSlot
       );
       console.log('LIST ROOM FREE: ', result);
+      return result;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getRoomFreeAtMultiDate(payload: {
+    dateStart: string;
+    dateEnd: string;
+    checkinSlotId: string;
+    checkoutSlotId: string;
+  }) {
+    try {
+      const listRequestBookedInMultiDay =
+        await this.getListRequestBookedInMultiDay(payload);
+      const listRoomBookedInMultiDaySameSlot = [];
+      if (listRequestBookedInMultiDay?.length > 0) {
+        listRequestBookedInMultiDay.map((request) => {
+          listRoomBookedInMultiDaySameSlot.push(request.roomId);
+        });
+      }
+      const result = await this.roomService.filterRoomFreeByRoomBooked(
+        listRoomBookedInMultiDaySameSlot
+      );
+      console.log('LIST ROOM BOOKED: ', listRequestBookedInMultiDay);
       return result;
     } catch (e) {
       this.logger.error(e.message);
