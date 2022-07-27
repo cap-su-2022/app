@@ -366,8 +366,11 @@ export class BookingRoomController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getCountRequestInWeekOfUser(@Param() payload: { id: string }) {
-    return this.service.getCountRequestInWeekOfUser(payload.id);
+  getCountRequestInWeekOfUser(
+    @Param() payload: { id: string },
+    @Query('date') date: string
+  ) {
+    return this.service.getCountRequestInWeekOfUser(payload.id, date);
   }
 
   @Get()
