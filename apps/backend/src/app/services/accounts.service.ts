@@ -43,6 +43,15 @@ export class AccountsService {
     }
   }
 
+  async getUserNames() {
+    try {
+      return await this.repository.findUserNames();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async getRoleOfAccount(id: string) {
     try {
       const role = await this.repository.getRoleOfAccount(id);

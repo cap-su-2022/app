@@ -75,6 +75,27 @@ export class AccountsController {
     return this.service.getAll(payload);
   }
 
+  @Get('name')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully get user name',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get user name',
+    description: 'Get user name',
+  })
+  getUserNames() {
+    return this.service.getUserNames();
+  }
+
   @Get('syncKeycloak')
   @UsePipes(new UsersValidation())
   @HttpCode(HttpStatus.OK)

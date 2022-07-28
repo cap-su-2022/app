@@ -676,6 +676,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('aaaa.username', 'acceptedBy')
       .addSelect('br.cancel_reason', 'cancelReason')
       .addSelect('br.accepted_at', 'acceptedAt')
+      .addSelect('bf.username', 'bookedFor')
       .addSelect('s.name', 'checkinSlot')
       .addSelect('ss.name', 'checkoutSlot')
       .addSelect('br.checkin_slot', 'checkinSlotId')
@@ -685,6 +686,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .leftJoin(Accounts, 'aa', 'aa.id = br.updated_by')
       .leftJoin(Accounts, 'aaa', 'aaa.id = br.cancelled_by')
       .leftJoin(Accounts, 'aaaa', 'aaaa.id = br.accepted_by')
+      .leftJoin(Accounts, 'bf', 'bf.id = br.booked_for')
       .leftJoin(Slot, 's', 's.id = br.checkin_slot')
       .leftJoin(Slot, 'ss', 'ss.id = br.checkout_slot')
       .innerJoin(BookingReason, 'bkr', 'bkr.id = br.booking_reason_id')
@@ -708,6 +710,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       checkinSlot: payload.checkinSlot,
       checkoutSlot: payload.checkoutSlot,
       checkinDate: payload.checkinDate,
+      bookedFor: payload.bookedFor || userId,
     });
   }
 

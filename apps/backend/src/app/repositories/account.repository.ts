@@ -32,6 +32,16 @@ export class AccountRepository extends Repository<Accounts> {
       .getRawOne();
   }
 
+  async findUserNames(): Promise<Accounts[]> {
+    return this.createQueryBuilder('a')
+      .select('a.username', 'name')
+      .addSelect('a.id', 'id')
+      .where('a.disabled_at IS NULL')
+      .andWhere('a.deleted_at IS NULL')
+      .orderBy('a.username', 'ASC')
+      .getRawMany<Accounts>();
+  }
+
   async checkIfAccountIsDeletedById(id: string): Promise<boolean> {
     return this.createQueryBuilder('accounts')
       .select('accounts.deleted_at')

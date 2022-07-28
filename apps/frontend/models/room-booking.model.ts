@@ -1,4 +1,5 @@
 export interface RoomBooking {
+  bookedFor: string;
   cancelReason: string;
   listDevice: any[];
   roomId: string;
