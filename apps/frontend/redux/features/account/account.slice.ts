@@ -5,6 +5,7 @@ import { PaginationResponse } from '../../../models/pagination-response.payload'
 import { Account } from '../../../models/account.model';
 import { fetchDisabledAccounts } from './thunk/fetch-disabled.thunk';
 import { fetchDeletedAccounts } from './thunk/fetch-deleted.thunk';
+import { fetchListusernames } from './thunk/fetch-user-names.thunk';
 
 // import { updateRoomBookingById } from "./thunk/update-room-booking-by-id";
 // import { addRoomBooking } from "./thunk/add-room-booking";
@@ -14,6 +15,7 @@ interface InitialState {
   account: Account;
   disabledAccounts: Account[];
   deletedAccounts: Account[];
+  userNames: {value: string; label: string}[];
 }
 
 const initialState: InitialState = {
@@ -21,6 +23,7 @@ const initialState: InitialState = {
   account: {} as Account,
   disabledAccounts: [],
   deletedAccounts: [],
+  userNames: [],
 };
 
 export const accountSlice = createSlice({
@@ -44,6 +47,9 @@ export const accountSlice = createSlice({
     });
     builder.addCase(fetchDeletedAccounts.fulfilled, (state, { payload }) => {
       state.deletedAccounts = payload;
+    });
+    builder.addCase(fetchListusernames.fulfilled, (state, { payload }) => {
+      state.userNames = payload;
     });
     //   builder.addCase(updateRoomBookingById.fulfilled, (state, {payload}) => {
     //     console.log("updateRoomBookingById.fulfilled")

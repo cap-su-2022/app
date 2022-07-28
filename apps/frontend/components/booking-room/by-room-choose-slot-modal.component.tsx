@@ -33,7 +33,6 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const [days, setDays] = useState<any[]>();
   const [listRequest, setListRequest] = useState([]);
 
-  console.log('LISSSSS: ', listRequest);
   const handleNextStep = () => {
     if (
       props.formik.values.checkinDate === null ||
@@ -197,6 +196,9 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
                 <td key={indexSlot + '' + index}>
                   {listRequest?.length > 0
                     ? listRequest?.map((request) => {
+                        if (day < curr.setHours(0, 0, 0, 0)) {
+                          isPassed = true;
+                        }
                         if (
                           // request.checkinSlot === request.checkoutSlot &&
                           request.checkinDate === day.getDate()
@@ -209,9 +211,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
                               : (isPending = true)
                             : null;
                         }
-                        if (day < curr.setHours(0, 0, 0, 0)) {
-                          isPassed = true;
-                        }
+
                         if (
                           day.getDay() ===
                           curr.getDate() - curr.getDay() + 6
@@ -227,7 +227,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
                         //   isFree = false;
                         // }
                       })
-                    : day < curr
+                    : day < curr.setHours(0, 0, 0, 0)
                     ? (isPassed = true)
                     : null}
                   {!isOverSlot ? (
