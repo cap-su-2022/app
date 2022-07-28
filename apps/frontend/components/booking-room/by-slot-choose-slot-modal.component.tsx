@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  createStyles,
-  Select,
-} from '@mantine/core';
-import {
-  ChevronsRight,
-  X,
-} from 'tabler-icons-react';
-import {  useAppSelector } from '../../redux/hooks';
+import { Button, createStyles, Select } from '@mantine/core';
+import { ChevronsRight, X } from 'tabler-icons-react';
+import { useAppSelector } from '../../redux/hooks';
 import { FormikProps } from 'formik';
 import { showNotification } from '@mantine/notifications';
 import { DatePicker } from '@mantine/dates';
@@ -20,6 +13,22 @@ import ConfirmModal from './confirm-modal.component';
 interface ChooseSlotModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
+  listUsernames: any[];
+}
+
+interface UserInfoModel {
+  avatar: string;
+  fullname: string;
+  role: string;
+  phone: string;
+  email: string;
+  username: string;
+  id: string;
+  googleId: string;
+  keycloakId: string;
+  effdate: string;
+  description: string;
+  img: File;
 }
 
 const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
@@ -29,9 +38,15 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const [slotNames, setSlotNames] = useState<any[]>();
-  const [slotInName, setSlotInName] = useState('')
-  const [slotOutName, setSlotOutName] = useState('')
+  const [slotInName, setSlotInName] = useState('');
+  const [slotOutName, setSlotOutName] = useState('');
   const slotInfors = useAppSelector((state) => state.slot.slotInfor);
+
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
+
   useEffect(() => {
     const result = slotInfors?.map((slot) => {
       return { value: slot.id, label: slot.name };
@@ -49,8 +64,8 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
         (slot) => slot.id === props.formik.values.checkoutSlot
       );
       if (slotIn.slotNum > slotOut.slotNum) {
-        setSlotInName(slotOut.name)
-        setSlotOutName(slotIn.name)
+        setSlotInName(slotOut.name);
+        setSlotOutName(slotIn.name);
         const tmp = props.formik.values.checkinSlot;
         props.formik.setFieldValue(
           'checkinSlot',
@@ -58,8 +73,8 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
         );
         props.formik.setFieldValue('checkoutSlot', tmp);
       } else {
-        setSlotOutName(slotOut.name)
-        setSlotInName(slotIn.name)
+        setSlotOutName(slotOut.name);
+        setSlotInName(slotIn.name);
       }
     }
   }, [props.formik.values.checkinSlot, props.formik.values.checkoutSlot]);
@@ -225,6 +240,19 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           value={props.formik.values.checkoutSlot}
         />
       </div>
+      {userInfo.role !== 'Staff' ? (
+        <Select
+          id="bookedFor"
+          name="bookedFor"
+          label="Who use room"
+          placeholder="If not choose, the room's user auto is you"
+          data={props.listUsernames}
+          value={props.formik.values.bookedFor || undefined}
+          error={props.formik.errors.bookedFor}
+          onChange={props.formik.handleChange('bookedFor')}
+          searchable={true}
+        />
+      ) : null}
       <div style={{ display: 'flex', justifyContent: 'flex-end', margin: 10 }}>
         <Button onClick={() => handleNextChooseRoom()} color="green">
           Next

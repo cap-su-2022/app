@@ -411,7 +411,6 @@ export class BookingRoomService {
     checkoutSlotId: string;
   }) {
     try {
-      
       const listRequestBookedInDay =
         await this.repository.getRequestBookedInDay(payload.date);
 
@@ -581,11 +580,17 @@ export class BookingRoomService {
       const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlot);
       const slotOut = await this.slotService.getNumOfSlot(payload.checkoutSlot);
 
+      if(payload.bookedFor !== userId && role.role_name === "Staff"){
+        throw new BadRequestException(
+          'You are not authorized to make a booking for other users'
+        );
+      }
+
       let alreadyBookedOtherRoom = '';
       const listRequestBookedInDayOfUser =
         await this.repository.getRequestBookedInDayOfUser(
           payload.checkinDate,
-          userId
+          payload.bookedFor || userId
         );
       if (listRequestBookedInDayOfUser.length > 0) {
         listRequestBookedInDayOfUser.map(async (request) => {
@@ -599,7 +604,9 @@ export class BookingRoomService {
       }
       if (alreadyBookedOtherRoom !== '') {
         throw new BadRequestException(
-          `You already have bookings for ${alreadyBookedOtherRoom} at same slot!`
+          payload.bookedFor
+            ? `This user have bookings for ${alreadyBookedOtherRoom} at same slot!`
+            : `You already have bookings for ${alreadyBookedOtherRoom} at same slot!`
         );
       }
 
@@ -706,7 +713,11 @@ export class BookingRoomService {
 
       let alreadyBookedOtherRoom = [];
       const listRequestBookedInDayOfUser = [];
-      for (let i = new Date(fromDate); i <= toDate; i.setDate(i.getDate() + 1)) {
+      for (
+        let i = new Date(fromDate);
+        i <= toDate;
+        i.setDate(i.getDate() + 1)
+      ) {
         const result = await this.repository.getRequestBookedInDayOfUser(
           dayjs(i).format('YYYY-MM-DD'),
           userId
@@ -715,7 +726,6 @@ export class BookingRoomService {
           listRequestBookedInDayOfUser.push(...result);
         }
       }
-
 
       if (listRequestBookedInDayOfUser.length > 0) {
         listRequestBookedInDayOfUser.map(async (request) => {
@@ -743,7 +753,11 @@ export class BookingRoomService {
           payload.roomId
         );
 
-      for (let i = new Date(fromDate); i <= toDate; i.setDate(i.getDate() + 1)) {
+      for (
+        let i = new Date(fromDate);
+        i <= toDate;
+        i.setDate(i.getDate() + 1)
+      ) {
         const result = await this.repository.getRequestBookedInDayOfUser(
           dayjs(i).format('YYYY-MM-DD'),
           userId
@@ -752,8 +766,6 @@ export class BookingRoomService {
           listRequestBookedInDayOfUser.push(...result);
         }
       }
-
-
 
       let status = 'PENDING';
       let haveRequestBooked = false;
@@ -797,9 +809,13 @@ export class BookingRoomService {
         );
       }
 
-      const listRequestAdded = []
+      const listRequestAdded = [];
 
-      for (let z = new Date(fromDate); z <= toDate; z.setDate(z.getDate() + 1)) {
+      for (
+        let z = new Date(fromDate);
+        z <= toDate;
+        z.setDate(z.getDate() + 1)
+      ) {
         const newPayload = {
           ...payload,
           checkinDate: dayjs(z).format('YYYY-MM-DD'),
@@ -811,7 +827,7 @@ export class BookingRoomService {
           status,
           queryRunner
         );
-        listRequestAdded.push(request)
+        listRequestAdded.push(request);
         await this.bookingRoomDeviceService.addDeviceToRequest(
           request.id,
           payload.listDevice,
@@ -819,7 +835,6 @@ export class BookingRoomService {
         );
         // await this.histService.createNew(request, queryRunner);
       }
-
 
       await queryRunner.commitTransaction();
 

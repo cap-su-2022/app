@@ -30,14 +30,24 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
   const { classes } = useStyles();
   const room = useAppSelector((state) => state.room.room);
   const slotInfors = useAppSelector((state) => state.slot.slotInfor);
-  const deviceNames = useAppSelector((state) => state.device.deviceNames);
+  const userNames = useAppSelector((state) => state.account.userNames);
   const reasonNames = useAppSelector(
     (state) => state.bookingReason.reasonNames
   );
 
   const [slotIn, setSlotIn] = useState<Slot>();
   const [slotOut, setSlotOut] = useState<Slot>();
+  const [roomUser, setRoomUser] = useState<string>();
   const [reason, setReason] = useState<{ value: string; label: string }>();
+
+  useEffect(() => {
+    if (props.formik.values.bookedFor) {
+      const result = userNames?.filter(
+        (user) => user.value === props.formik.values.bookedFor
+      );
+      setRoomUser(result[0]?.label);
+    }
+  }, []);
 
   useEffect(() => {
     const result = slotInfors?.filter(
@@ -135,6 +145,22 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
               </div>
             </div>
           </div>
+
+          <div className={classes.nameAndDateDiv}>
+            <b style={{ marginRight: 10, flexBasis: '30%' }}>Room user:</b>
+            <div
+              style={{
+                backgroundColor: 'white',
+                padding: 5,
+                borderRadius: 5,
+                flexBasis: '70%',
+                color: 'black',
+              }}
+            >
+              {roomUser || "It's you"}
+            </div>
+          </div>
+
           <div className={classes.otherDiv}>
             <div style={{ flexBasis: '30%' }}>
               <b>List device:</b>
@@ -203,6 +229,7 @@ const useStyles = createStyles({
       'rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px',
     width: '80%',
     borderRadius: '5px',
+    alignItems: 'center'
   },
   otherDiv: {
     padding: 10,

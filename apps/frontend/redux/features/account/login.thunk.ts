@@ -17,7 +17,7 @@ export const doLogin = createAsyncThunk<
     const response = await axios.post("/api/v1/login", {
       username: credentials.username,
       password: credentials.password
-    }).then(() => axios.get(`/api/accounts/my-profile`, {}));
+    });
 
     const data = await response.data;
     window.localStorage.setItem("user", JSON.stringify(data));

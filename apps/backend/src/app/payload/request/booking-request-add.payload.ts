@@ -44,6 +44,10 @@ export class BookingRequestAddRequestPayload extends PaginationParams {
   @IsString()
   description?: string;
 
+  @IsOptional()
+  @IsString()
+  bookedFor?: string;
+
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsNotEmpty({
     message: 'Reason type can not be empty',

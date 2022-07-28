@@ -14,6 +14,7 @@ import { showNotification } from '@mantine/notifications';
 import { BookingRequestParams } from '../../models/pagination-params/booking-room-params.model';
 import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
 import BySlotChooseSlotModal from './by-slot-choose-slot-modal.component';
+import { fetchListusernames } from '../../redux/features/account/thunk/fetch-user-names.thunk';
 
 interface SendBookingModalProps {
   isShown: boolean;
@@ -26,10 +27,17 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
 
   const dispatch = useAppDispatch();
   const [roomNames, setRoomNames] = useState([]);
+  const [listUsernames, setListUsernames] = useState([]);
   useEffect(() => {
     dispatch(fetchRoomNames())
       .unwrap()
       .then((roomNames) => setRoomNames(roomNames));
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetchListusernames())
+      .unwrap()
+      .then((listUsernames) => setListUsernames(listUsernames));
   }, []);
 
   useEffect(() => {
@@ -119,6 +127,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
         bookingReasonId: '',
         listDevice: [],
         description: '',
+        bookedFor: null,
       },
       enableReinitialize: true,
       onSubmit: (e) => handleSubmit(e),
@@ -156,6 +165,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
               formik={formik}
               handleSubmit={() => formik.handleSubmit()}
               roomNames={roomNames}
+              listUsernames={listUsernames}
             />
           )}
         </div>
@@ -165,6 +175,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
             <BySlotChooseSlotModal
               formik={formik}
               handleSubmit={() => formik.handleSubmit()}
+              listUsernames={listUsernames}
             />
           )}
         </div>
