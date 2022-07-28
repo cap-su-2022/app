@@ -10,6 +10,7 @@ interface AddRequestPayload {
   checkoutSlot: string;
   description: string;
   bookingReasonId: string;
+  bookedFor: string;
   listDevice: any[];
 }
 
@@ -34,6 +35,7 @@ export const addNewRequest = createAsyncThunk<
       checkoutSlot: payload.checkoutSlot,
       description: payload.description,
       bookingReasonId: payload.bookingReasonId,
+      bookedFor: payload.bookedFor,
       listDevice: payload.listDevice,
     });
     return await response.data;

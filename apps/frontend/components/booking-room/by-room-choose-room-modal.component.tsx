@@ -20,6 +20,22 @@ interface ChooseRoomModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
   roomNames: any[];
+  listUsernames: any[];
+}
+
+interface UserInfoModel {
+  avatar: string;
+  fullname: string;
+  role: string;
+  phone: string;
+  email: string;
+  username: string;
+  id: string;
+  googleId: string;
+  keycloakId: string;
+  effdate: string;
+  description: string;
+  img: File;
 }
 
 const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
@@ -29,6 +45,11 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(false);
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
+
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -93,49 +114,65 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
           error={props.formik.errors.roomId}
           onChange={props.formik.handleChange('roomId')}
           required={true}
+          searchable={true}
         />
-        {room ? (
-          <div className={classes.divInfor}>
-            <div className={classes.divHeader}>
-              <h3 style={{ margin: 0 }}>Room information</h3>
-            </div>
-            <div className={classes.modalBody}>
-              <InputWrapper label="Room name" description="Unique room name">
-                <TextInput
-                  icon={<ClipboardText />}
-                  className={classes.textInput}
-                  radius="md"
-                  readOnly
-                  value={room.name}
-                />
-              </InputWrapper>
-              <InputWrapper
-                label="Room type"
-                description="Type of library in separated"
-              >
-                <TextInput
-                  icon={<ClipboardText />}
-                  className={classes.textInput}
-                  radius="md"
-                  readOnly
-                  value={room.roomTypeName}
-                />
-              </InputWrapper>
-              <InputWrapper
-                label="Room description"
-                description="Additional information of the room"
-              >
-                <Textarea
-                  icon={<FileDescription />}
-                  className={classes.textInput}
-                  radius="md"
-                  readOnly
-                  value={room.description}
-                />
-              </InputWrapper>
-            </div>
-          </div>
+        {userInfo.role !== 'Staff' ? (
+          <Select
+            id="bookedFor"
+            name="bookedFor"
+            label="Who use room"
+            placeholder="If not choose, the room's user auto is you"
+            data={props.listUsernames}
+            value={props.formik.values.bookedFor || undefined}
+            error={props.formik.errors.bookedFor}
+            onChange={props.formik.handleChange('bookedFor')}
+            searchable={true}
+          />
         ) : null}
+        <div className={classes.divInfor}>
+          {room ? (
+            <>
+              <div className={classes.divHeader}>
+                <h3 style={{ margin: 0 }}>Room information</h3>
+              </div>
+              <div className={classes.modalBody}>
+                <InputWrapper label="Room name" description="Unique room name">
+                  <TextInput
+                    icon={<ClipboardText />}
+                    className={classes.textInput}
+                    radius="md"
+                    readOnly
+                    value={room.name}
+                  />
+                </InputWrapper>
+                <InputWrapper
+                  label="Room type"
+                  description="Type of library in separated"
+                >
+                  <TextInput
+                    icon={<ClipboardText />}
+                    className={classes.textInput}
+                    radius="md"
+                    readOnly
+                    value={room.roomTypeName}
+                  />
+                </InputWrapper>
+                <InputWrapper
+                  label="Room description"
+                  description="Additional information of the room"
+                >
+                  <Textarea
+                    icon={<FileDescription />}
+                    className={classes.textInput}
+                    radius="md"
+                    readOnly
+                    value={room.description}
+                  />
+                </InputWrapper>
+              </div>
+            </>
+          ) : null}
+        </div>
         <div
           style={{ display: 'flex', justifyContent: 'flex-end', margin: 10 }}
         >

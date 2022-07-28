@@ -3,7 +3,6 @@ import {
   Button,
   createStyles,
   InputWrapper,
-
   Textarea,
   TextInput,
 } from '@mantine/core';
@@ -15,7 +14,7 @@ import {
   Devices,
   Id,
 } from 'tabler-icons-react';
-import {  useAppSelector } from '../../redux/hooks';
+import { useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
 import autoAnimate from '@formkit/auto-animate';
 
@@ -60,7 +59,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
-  console.log("AAAAAAa: ", userInfo)
+  console.log('AAAAAAa: ', userInfo);
 
   const listDeviceDiv =
     requestBooking.listDevice && requestBooking.listDevice.length > 0
@@ -84,14 +83,56 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               value={requestBooking.id}
             />
           </InputWrapper>
-          <InputWrapper label="Room name" className={classes.inputWrapper}>
-            <TextInput
-              icon={<ClipboardText />}
-              radius="md"
-              readOnly
-              value={requestBooking.roomName}
-            />
-          </InputWrapper>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <InputWrapper label="Room name" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={requestBooking.roomName}
+              />
+            </InputWrapper>
+            <InputWrapper
+              label="Room user"
+              className={classes.inputWrapper}
+              style={{ flex: 1 }}
+            >
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={requestBooking.bookedFor}
+              />
+            </InputWrapper>
+          </div>
+
+          
+          <div style={{ display: 'flex' }}>
+            <InputWrapper label="Request at" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={dayjs(requestBooking.requestedAt).format(
+                  'HH:mm DD/MM/YYYY'
+                )}
+              />
+            </InputWrapper>
+
+            <InputWrapper
+              label="Request by"
+              className={classes.inputWrapper}
+              style={{ flex: 1 }}
+            >
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={requestBooking.requestedBy}
+              />
+            </InputWrapper>
+          </div>
+
           <div style={{ display: 'flex' }}>
             <InputWrapper label="Day use" className={classes.inputWrapper}>
               <TextInput
@@ -124,40 +165,15 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               />
             </InputWrapper>
           </div>
-          <div style={{ display: 'flex' }}>
-            <InputWrapper label="Request at" className={classes.inputWrapper}>
-              <TextInput
-                icon={<ClipboardText />}
-                radius="md"
-                readOnly
-                value={dayjs(requestBooking.requestedAt).format(
-                  'HH:mm DD/MM/YYYY'
-                )}
-              />
-            </InputWrapper>
-
-            <InputWrapper
-              label="Request by"
-              className={classes.inputWrapper}
-              style={{ flex: 1 }}
-            >
-              <TextInput
-                icon={<ClipboardText />}
-                radius="md"
-                readOnly
-                value={requestBooking.requestedBy}
-              />
-            </InputWrapper>
-          </div>
-          {requestBooking.status === "CANCELLED" ? (
+          {requestBooking.status === 'CANCELLED' ? (
             <>
               <InputWrapper
                 label="Reason Cancel"
                 className={classes.inputWrapper}
                 sx={() => ({
-                  "label": {
+                  label: {
                     color: 'red',
-                  }
+                  },
                 })}
               >
                 <TextInput
@@ -202,7 +218,8 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               Cancel request
             </Button>
           ) : requestBooking.status === 'PENDING' &&
-            userInfo.id !== requestBooking.requestedById ? (
+            userInfo.id !== requestBooking.requestedById &&
+            userInfo.role !== 'Staff' ? (
             <Button
               onClick={() => props.toggleRejectModalShown()}
               variant="outline"
@@ -214,7 +231,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
           ) : (
             <div></div>
           )}
-          {requestBooking.status === 'PENDING' ? (
+          {requestBooking.status === 'PENDING' && userInfo.role !== 'Staff' ? (
             <Button
               onClick={() => props.toggleAcceptModalShown()}
               variant="outline"

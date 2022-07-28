@@ -33,7 +33,7 @@ const defaultPagination = {
   reasonType: '',
   checkInAt: '',
   checkOutAt: '',
-  sort: 'checkin_date',
+  sort: 'requested_at',
   dir: 'DESC',
   status: '',
 };
