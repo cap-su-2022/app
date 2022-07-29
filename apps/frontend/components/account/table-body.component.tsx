@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from 'react';
+import React, {CSSProperties, useEffect, useState} from 'react';
 import {
   createStyles,
   Table,
@@ -20,6 +20,7 @@ import NoDataFound from '../../components/no-data-found';
 import moment from 'moment';
 import Th from '../../components/table/th.table.component';
 
+
 interface RowData {
   name: string;
   booked_at: string;
@@ -27,7 +28,9 @@ interface RowData {
 
 interface TableBodyProps {
   data: any[];
+
   toggleSortDirection(label): void;
+
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
@@ -37,12 +40,18 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
     props.toggleSortDirection(field);
   };
+
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  })
 
   const rows = props.data.map((row, index) => (
     <tr key={index}>
@@ -58,22 +67,30 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           variant="outline"
           onClick={() => props.actionButtonCb.info(row.id)}
         >
-          <InfoCircle />
+          <InfoCircle/>
         </Button>
-        <Button
-          variant="outline"
-          color="green"
-          onClick={() => props.actionButtonCb.update(row.id)}
-        >
-          <Pencil />
-        </Button>
-        <Button
-          variant="outline"
-          color="red"
-          onClick={() => props.actionButtonCb.delete(row.id)}
-        >
-          <Trash />
-        </Button>
+
+
+        {userInfo.id !== row.id ?
+
+          <Button
+            variant="outline"
+            color="green"
+            onClick={() => props.actionButtonCb.update(row.id)}
+          >
+            <Pencil/>
+          </Button> : null}
+
+        {
+          userInfo.id !== row.id ? <Button
+            variant="outline"
+            color="red"
+            onClick={() => props.actionButtonCb.delete(row.id)}
+          >
+            <Trash/>
+          </Button> : null
+        }
+
       </td>
     </tr>
   ));
@@ -82,51 +99,51 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{ tableLayout: 'fixed'}}
+      sx={{tableLayout: 'fixed'}}
     >
       <thead>
-        <tr>
-          <Th
-            style={{
-              width: '50px',
-            }}
-            sorted={null}
-            reversed={reverseSortDirection}
-            onSort={null}
-          >
-            STT
-          </Th>
+      <tr>
+        <Th
+          style={{
+            width: '50px',
+          }}
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+        >
+          STT
+        </Th>
 
-          <Th
-            sorted={sortBy === 'name'}
-            reversed={reverseSortDirection}
-            onSort={() => setSorting('name')}
-          >
-            Fullname
-          </Th>
+        <Th
+          sorted={sortBy === 'name'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('name')}
+        >
+          Fullname
+        </Th>
 
-          <Th
-            sorted={sortBy === 'booked_at'}
-            reversed={reverseSortDirection}
-            onSort={() => setSorting('booked_at')}
-          >
-            Email
-          </Th>
+        <Th
+          sorted={sortBy === 'booked_at'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('booked_at')}
+        >
+          Email
+        </Th>
 
-          <Th
-            sorted={null}
-            reversed={reverseSortDirection}
-            onSort={null}
-            style={{width: 220}}
-          >
-            Actions
-          </Th>
-        </tr>
+        <Th
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+          style={{width: 220}}
+        >
+          Actions
+        </Th>
+      </tr>
       </thead>
       <tbody>{rows}</tbody>
     </Table>
   ) : (
-    <NoDataFound />
+    <NoDataFound/>
   );
 };
 

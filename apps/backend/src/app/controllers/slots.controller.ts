@@ -16,12 +16,14 @@ import { PaginationParams } from './pagination.model';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
 import { Slot } from '../models/slot.entity';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import { User } from '../decorators/keycloak-user.decorator';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 
 @Controller('/v1/slots')
+@ApiBearerAuth()
+@ApiTags('Slots')
 export class SlotController {
   constructor(private readonly service: SlotService) {}
 

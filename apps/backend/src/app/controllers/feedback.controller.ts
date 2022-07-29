@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Query } 
 import { FeedbackService } from '../services';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import { PaginationParams } from './pagination.model';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { Feedback } from '../models';
@@ -13,6 +13,8 @@ import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve
 import { FeedbackPaginationPayload } from '../payload/request/feedback-pagination.payload';
 
 @Controller('/v1/feedbacks')
+@ApiBearerAuth()
+@ApiTags('Feedbacks')
 export class FeedbackController {
   constructor(private readonly service: FeedbackService) {}
 

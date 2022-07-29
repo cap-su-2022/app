@@ -15,7 +15,7 @@ interface BookingRoom {
   roomBooking: RoomBooking;
   statistics: Statistics;
   bookingRoomStatistics: BookingRoomStatistics
-} // ua nay la cai gi v
+}
 
 const initialState: BookingRoom = {
   roomBookings: {} as PaginationResponse<RoomBooking>,

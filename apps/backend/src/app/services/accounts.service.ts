@@ -138,6 +138,9 @@ export class AccountsService {
   ) {
     let account;
     try {
+      if (accountId === id) {
+        throw new BadRequestException('Cannot update your own account')
+      }
       account = await this.repository.findOneOrFail({
         where: {
           id: id,
@@ -173,8 +176,11 @@ export class AccountsService {
     }
   }
 
-  async disableById(accountId: string, id: string): Promise<any> {
+  async disableById(accountId: string, id: string, user: KeycloakUserInstance): Promise<any> {
     try {
+      if (accountId === id) {
+        throw new BadRequestException('Cannot disable your own account');
+      }
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
         throw new BadRequestException(
@@ -245,6 +251,9 @@ export class AccountsService {
 
   async deleteById(accountId: string, id: string) {
     try {
+      if (accountId === id) {
+        throw new BadRequestException('Cannot delete your own account');
+      }
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
         throw new BadRequestException(

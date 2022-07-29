@@ -11,18 +11,18 @@ import {
   Request,
   Res, UseInterceptors
 } from "@nestjs/common";
-import { KeycloakService } from "../services";
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { KEYCLOAK_PATH } from "../constants/controllers/keycloak/path.constant";
-import { AUTHORIZATION_LOWERCASE } from "../constants/network/headers.constant";
-import { AuthenticationService } from "../services";
-import { UsernamePasswordLoginResponse } from "@app/models";
-import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
-import { AccessTokenResponsePayload } from "../payload/response/refresh_token.response.payload";
-import { RefreshTokenPayload } from "../payload/response/refresh-token.request.payload";
-import { Roles } from "../decorators/role.decorator";
-import { Role } from "../enum/roles.enum";
-import { FastifyReply } from "fastify";
+import {KeycloakService} from "../services";
+import {ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiTags} from "@nestjs/swagger";
+import {KEYCLOAK_PATH} from "../constants/controllers/keycloak/path.constant";
+import {AUTHORIZATION_LOWERCASE} from "../constants/network/headers.constant";
+import {AuthenticationService} from "../services";
+import {UsernamePasswordLoginResponse} from "@app/models";
+import {PathLoggerInterceptor} from "../interceptors/path-logger.interceptor";
+import {AccessTokenResponsePayload} from "../payload/response/refresh_token.response.payload";
+import {RefreshTokenPayload} from "../payload/response/refresh-token.request.payload";
+import {Roles} from "../decorators/role.decorator";
+import {Role} from "../enum/roles.enum";
+import {FastifyRequest, FastifyReply} from "fastify";
 
 export class AuthenticationRequest {
   @ApiProperty({
@@ -55,8 +55,27 @@ export class AuthenticationController {
               private readonly authenticationService: AuthenticationService) {
   }
 
-  @HttpCode(HttpStatus.OK)
   @Post("info")
+  @ApiOperation({
+    summary: 'Get information of keycloak account',
+    description: 'Get information of keycloak account\'',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got information from Keycloak account to current DB',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting information from Keycloak account ',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   async validateTokenAndGetUserInfo(@Body() payload: { token: string }) {
     if (Object.keys(payload).length < 1) {
       throw new BadRequestException("Must provide access token");
@@ -64,21 +83,34 @@ export class AuthenticationController {
     return this.service.getUserInfo(payload.token);
   }
 
+
+  @Post(KEYCLOAK_PATH.signIn)
   @ApiOperation({
-    summary: "Username password login",
-    description: "Login into the system using provided username and password"
+    summary: "Sign in by keycloak id",
+    description: "Sign into the system using provided username and password"
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully signed in by keycloak id',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while signing in by keycloak id',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
   })
   @ApiBody({
     required: true,
     description: "Contains the username and password value.",
     type: AuthenticationRequest
   })
-  @ApiResponse({
-    status: HttpStatus.OK
-  })
-  @HttpCode(HttpStatus.OK)
-  @Post(KEYCLOAK_PATH.signIn)
-  async signIn(@Res({ passthrough: true }) httpResponse: FastifyReply,
+  async signIn(@Res({passthrough: true}) httpResponse: FastifyReply,
                @Body() account: { username: string, password: string }): Promise<Partial<UsernamePasswordLoginResponse>> {
     const resp = await this.authenticationService.handleUsernamePasswordLogin(account);
     httpResponse.header("Authorization", resp.accessToken);
@@ -117,9 +149,13 @@ export class AuthenticationController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "User"
+    description: "Error while signing with Google ID Token"
   })
-  async signInWithGoogle(@Res({ passthrough: true }) httpResponse: FastifyReply,
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  async signInWithGoogle(@Res({passthrough: true}) httpResponse: FastifyReply,
                          @Body() request: GoogleIDTokenRequest) {
     const resp = await this.authenticationService.handleGoogleSignin(request.token);
     httpResponse.header("Authorization", resp.accessToken);
@@ -141,20 +177,28 @@ export class AuthenticationController {
   }
 
   @Post(KEYCLOAK_PATH.refreshAccessToken)
-  @HttpCode(HttpStatus.OK)
+
   @ApiOperation({
     summary: "Refresh access token using provided refresh token",
     description: "Provide new access token and new refresh token by using provided refresh token"
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Successfully provides new access and refresh token"
+    description: "Successfully refreshed access token"
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: "Failed to validate provided refresh token"
   })
-  async refreshAccessToken(@Res({ passthrough: true }) res,
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: "Error while refresh accessing token"
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  async refreshAccessToken(@Res({passthrough: true}) res,
                            @Body() payload: RefreshTokenPayload): Promise<AccessTokenResponsePayload> {
     const response = await this.service.refreshAccessToken(payload);
     res.cookie("accessToken", response.accessToken);

@@ -15,9 +15,9 @@ import {
 } from '@nestjs/common';
 import {AccountsService} from '../services';
 import {
-  ApiBearerAuth,
+  ApiBearerAuth, ApiBody,
   ApiConsumes,
-  ApiOperation,
+  ApiOperation, ApiParam,
   ApiResponse,
   ApiTags,
   getSchemaPath,
@@ -101,7 +101,24 @@ export class AccountsController {
   @HttpCode(HttpStatus.OK)
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
+    summary: 'Sync users from Keycloak to current DB',
     description: 'Sync users from Keycloak to current DB',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully synchronized users from Keycloak to current DB',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while synchronizing users from Keycloak to current DB',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
   })
   syncUsersFromKeycloak() {
     return this.service.syncUsersFromKeycloak();
@@ -128,6 +145,13 @@ export class AccountsController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active account",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   getAccountById(@Param() payload: { id: string }) {
     return this.service.getById(payload.id);
@@ -175,6 +199,14 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully retrieved own avatar account',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while retrieving own avatar account',
+  })
   getMyAvatarURL(@User() keycloakUser: KeycloakUserInstance) {
     return this.service.getAvatarURLByAccountId(keycloakUser.account_id);
   }
@@ -201,12 +233,23 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of Keycloak account",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   getAccountByKeycloakId(@Param() payload: { id: string }) {
     return this.service.getAccountByKeycloakId(payload.id);
   }
 
   @Get('by-role')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get active accounts by role',
+    description: 'Use role_id to get account based on each of roles',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
@@ -222,6 +265,13 @@ export class AccountsController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of role",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   getAccountsByRoleId(@Query('role') roleId = ''): Promise<Accounts[]> {
     return this.service.getAccountsByRoleId(roleId);
@@ -280,8 +330,16 @@ export class AccountsController {
   @Put('update/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Update account by id',
-    description: 'Update account by provided id',
+    summary: 'Update account by ID',
+    description: 'Update account by provided ID',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully updated account by ID',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while updating account by ID',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -290,6 +348,13 @@ export class AccountsController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active account to update",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   updateAccountById(
     @User() user: KeycloakUserInstance,
@@ -301,6 +366,18 @@ export class AccountsController {
 
   @Put('update-profile')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Update own profile',
+    description: 'Update own profile based on provided credentials',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully updated own profile',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while updating own profile',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalid',
@@ -338,11 +415,18 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active account",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   disableAccountById(
     @User() user: KeycloakUserInstance,
     @Param('id') id: string
   ) {
-    return this.service.disableById(user.account_id, id);
+    return this.service.disableById(user.account_id, id, user);
   }
 
   @Get('disabled')
@@ -385,6 +469,13 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of disabled account",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   restoreDisabledAccountById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string }
@@ -397,6 +488,18 @@ export class AccountsController {
 
   @Delete(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Delete the account by id',
+    description: 'Delete the account by active or disabled account ID',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully deleted account',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while delete the account',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalid',
@@ -404,6 +507,13 @@ export class AccountsController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active or disabled account",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   deleteAccountById(
     @User() user: KeycloakUserInstance,
@@ -414,6 +524,18 @@ export class AccountsController {
 
   @Get('deleted')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get the list of deleted accounts',
+    description: 'Get the list of deleted accounts',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched deleted accounts',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while retrieving deleted account',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalid',
@@ -428,6 +550,10 @@ export class AccountsController {
 
   @Put('restore-deleted/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Successfully restored deleted account by id',
+    description: 'Successfully restored deleted account by id',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully restored deleted account by id',
@@ -445,9 +571,12 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-  @ApiOperation({
-    summary: 'Successfully restored deleted account by id',
-    description: 'Successfully restored deleted account by id',
+  @ApiParam({
+    name: 'id',
+    description: "The ID of deleted account",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   restoreDeletedUserById(
     @User() user: KeycloakUserInstance,
@@ -469,12 +598,41 @@ export class AccountsController {
     description: 'Update account avatar by account id',
   })
   @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully updated avatar account',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description:
+      'Error while updating avatar for account',
+  })
+  @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalid',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active account",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        comment: {type: 'string'},
+        outletId: {type: 'integer'},
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
   })
   updateAccountUploadAvatarById(
     @User() user: KeycloakUserInstance,
@@ -489,8 +647,12 @@ export class AccountsController {
   @UseInterceptors(FastifyFileInterceptor('file', {}))
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Update account avatar by account id',
-    description: 'Update account avatar by account id',
+    summary: 'Update profile avatar',
+    description: 'Update profile avatar',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully updated profile account',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -499,6 +661,24 @@ export class AccountsController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description:
+      'Error while updating avatar for account',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        comment: {type: 'string'},
+        outletId: {type: 'integer'},
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
   })
   updateCurrentProfileAvatar(
     @User() user: KeycloakUserInstance,
@@ -512,6 +692,15 @@ export class AccountsController {
   @ApiOperation({
     summary: 'Change password by current profile',
     description: 'Change password by current profile',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully changed password',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description:
+      'Error while changing password for account',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -531,8 +720,17 @@ export class AccountsController {
   @Put('update/change-password/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Change password by keycloak id',
-    description: 'Change password by keycloak id',
+    summary: 'Change password by keycloak ID',
+    description: 'Change password by keycloak ID',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully changed password by keycloak ID',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description:
+      'Error while changing password by keycloak ID',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -541,6 +739,13 @@ export class AccountsController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of keycloak ID",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   changePasswordByKeycloakId(
     @Param() payload: { id: string },

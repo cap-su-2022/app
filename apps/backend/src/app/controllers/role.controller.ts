@@ -29,7 +29,7 @@ import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.
 
 @Controller('/v1/roles')
 @ApiBearerAuth()
-@ApiTags('Role')
+@ApiTags('Roles')
 @UseInterceptors(new PathLoggerInterceptor(RoleController.name))
 export class RoleController {
   constructor(private readonly service: RoleService) {}
