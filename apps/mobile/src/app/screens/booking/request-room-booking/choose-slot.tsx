@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { CalendarProvider, WeekCalendar } from 'react-native-calendars';
 import {
   ListRenderItemInfo,
   SafeAreaView,
@@ -10,11 +9,6 @@ import {
   VirtualizedList,
 } from 'react-native';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
-import {
-  HeartIcon,
-  LibraryIcon,
-  TicketIcon,
-} from 'react-native-heroicons/outline';
 import {
   BLACK,
   FPT_ORANGE_COLOR,
@@ -54,7 +48,6 @@ const transformToData = (bookedRequest) => {
 
 const filterBookingRoom = (bookedData, slotsFromState, roomsFromState) => {
   const result = [];
-
   for (let i = 0; i < slotsFromState.length; i++) {
     for (let j = 0; j < roomsFromState.length; j++) {
       if (
@@ -69,6 +62,7 @@ const filterBookingRoom = (bookedData, slotsFromState, roomsFromState) => {
           roomId: roomsFromState[j].id,
           slotId: slotsFromState[i].id,
           slotName: slotsFromState[i].name,
+          slotNum: slotsFromState[i].slotNum,
         });
       }
     }
@@ -78,6 +72,7 @@ const filterBookingRoom = (bookedData, slotsFromState, roomsFromState) => {
 
 const filterBookingRoomElse = (slotsFromState, roomsFromState) => {
   const result = [];
+
   for (let i = 0; i < roomsFromState.length; i++) {
     for (let j = 0; j < slotsFromState.length; j++) {
       result.push({
@@ -85,6 +80,7 @@ const filterBookingRoomElse = (slotsFromState, roomsFromState) => {
         roomId: roomsFromState[i].id,
         slotId: slotsFromState[j].id,
         slotName: slotsFromState[j].name,
+        slotNum: slotsFromState[j].slotNum,
       });
     }
   }
@@ -125,10 +121,10 @@ const ChooseSlot: React.FC<any> = (props) => {
   const addRoomBooking = useAppSelector(
     (state) => state.roomBooking.addRoomBooking
   );
-
   const [filteredRoomId, setFilteredRoomId] = useState<string>();
 
   const slotsFromState = useAppSelector((state) => state.slot.slots);
+
   const roomsFromState = useAppSelector((state) => state.room.rooms);
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
@@ -144,24 +140,34 @@ const ChooseSlot: React.FC<any> = (props) => {
 
   const handleTransformBookingRoomData = (
     bookingRooms: BookedRequest[],
-    rooms: RoomModel[]
+    rooms: RoomModel[],
+    slotStart,
+    slotEnd
   ) => {
     const bookedData = transformToData(bookingRooms);
-
     let result;
     if (bookingRooms.length > 1) {
       result = filterBookingRoom(bookedData, slotsFromState, rooms);
     } else {
       result = filterBookingRoomElse(slotsFromState, rooms);
     }
-
-    setSlotAndRoom(result);
+    const finalResult = result.filter(
+      (item) => item.slotNum >= slotStart && item.slotNum <= slotEnd
+    );
+    setSlotAndRoom(finalResult);
   };
 
   const handleFetchAllRooms = (bookedRequests) => {
     dispatch(fetchAllRooms())
       .unwrap()
-      .then((rooms) => handleTransformBookingRoomData(bookedRequests, rooms));
+      .then((rooms) =>
+        handleTransformBookingRoomData(
+          bookedRequests,
+          rooms,
+          addRoomBooking.fromSlotNum,
+          addRoomBooking.toSlotNum
+        )
+      );
   };
 
   useEffect(() => {
@@ -224,7 +230,12 @@ const ChooseSlot: React.FC<any> = (props) => {
         const filterArrayByRoom = slotAndRoom.filter(
           (room) => room.roomId === filteredRoomId
         );
-        setSlotAndRoomFilter(filterArrayByRoom);
+        const finalResult = filterArrayByRoom.filter(
+          (item) =>
+            item.slotNum >= addRoomBooking.fromSlotNum &&
+            item.slotNum <= addRoomBooking.toSlotNum
+        );
+        setSlotAndRoomFilter(finalResult);
       });
   }, [filteredRoomId]);
 
