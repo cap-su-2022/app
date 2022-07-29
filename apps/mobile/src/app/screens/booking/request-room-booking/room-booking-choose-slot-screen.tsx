@@ -30,6 +30,7 @@ import { BookedRequest } from '../../../redux/models/booked-request.model';
 import { RoomModel } from '../../../redux/models/room.model';
 import ChooseSlotHeader from './choose-slot/header';
 import ChooseSlotItem from './choose-slot/item';
+import dayjs from 'dayjs';
 
 const transformToData = (bookedRequest) => {
   const result = [];
@@ -239,6 +240,15 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
       });
   }, [filteredRoomId]);
 
+  const handleSetSelectedDate = (val: string) => {
+    const selectedDate = dayjs(val);
+    const todayDate = dayjs(new Date().toDateString());
+    console.log(selectedDate.diff(todayDate));
+    if (selectedDate.diff(todayDate) >= 0) {
+      setSelectedDay(val);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -257,7 +267,7 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
             currentDate={selectedDay || addRoomBooking.fromDay || Today}
             minDate={addRoomBooking.fromDay || Today}
             maxDate={addRoomBooking.toDay}
-            handleOnDayPress={(val) => setSelectedDay(val)}
+            handleOnDayPress={(val) => handleSetSelectedDate(val)}
           />
 
           <VirtualizedList
