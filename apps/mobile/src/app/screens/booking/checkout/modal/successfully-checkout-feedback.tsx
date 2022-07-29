@@ -1,10 +1,10 @@
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
-import { useAppNavigation } from 'apps/mobile/src/app/hooks/use-app-navigation.hook';
-import { deviceWidth } from 'apps/mobile/src/app/utils/device';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import AlertModal from '../../../../components/modals/alert-modal.component';
 import { CheckCircleIcon } from 'react-native-heroicons/outline';
+import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
+import { deviceWidth } from '../../../../utils/device';
 
 interface SuccessfullyCheckedOutFeedbackProps {
   isOpened: boolean;
@@ -22,8 +22,8 @@ const SuccessfullyCheckedOutFeedback: React.FC<
   return (
     <AlertModal
       isOpened={props.isOpened}
-      height={deviceWidth / 2.2}
-      width={deviceWidth / 1.3}
+      height={deviceWidth / 2}
+      width={deviceWidth / 1.2}
       toggleShown={() => props.setOpened(!props.isOpened)}
     >
       <View style={styles.container}>
@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     flex: 1,
+    paddingHorizontal: 10,
   },
   body: {
     display: 'flex',

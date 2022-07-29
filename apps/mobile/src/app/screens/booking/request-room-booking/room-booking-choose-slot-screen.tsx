@@ -118,7 +118,7 @@ const firstAddRoomRecentlySearch = (item, username, selectedDay) => {
   );
 };
 
-const ChooseSlot: React.FC<any> = (props) => {
+const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
   const fromSlotId = useAppSelector(
     (state) => state.roomBooking.addRoomBooking.fromSlot
   );
@@ -240,6 +240,7 @@ const ChooseSlot: React.FC<any> = (props) => {
       >
         <>
           <ChooseSlotHeader
+            filteredRoomId={filteredRoomId}
             handleSetFilterRoomId={(val) => setFilteredRoomId(val)}
             handleClear={() => setSlotAndRoomFilter([])}
             currentDate={selectedDay || addRoomBooking.fromDay || Today}
@@ -295,6 +296,7 @@ const ChooseSlot: React.FC<any> = (props) => {
               style={{
                 color: WHITE,
                 fontSize: deviceWidth / 19,
+                fontWeight: '600',
               }}
             >
               Back
@@ -457,4 +459,4 @@ export const styles = StyleSheet.create({
   },
 });
 
-export default ChooseSlot;
+export default RoomBookingChooseSlotScreen;
