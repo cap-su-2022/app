@@ -250,6 +250,19 @@ export class AccountsService {
           'Account does not found with the provided id'
         );
       }
+
+      if (accountId === id) {
+        throw new BadRequestException("You can't delete yourself");
+      }
+
+      const userDelete = await this.repository.getRoleOfAccount(accountId);
+      const userBeDeleted = await this.repository.getRoleOfAccount(id);
+
+      if (userDelete?.role_name === userBeDeleted?.role_name) {
+        throw new BadRequestException(
+          "You can't delete user have same role with you"
+        );
+      }
       const isDeleted = await this.repository.checkIfAccountIsDeletedById(id);
       if (isDeleted) {
         throw new BadRequestException('This account is already deleted');

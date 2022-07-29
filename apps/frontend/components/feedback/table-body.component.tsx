@@ -79,13 +79,13 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
         >
           <Pencil />
         </Button>
-        <Button
+        {/* <Button
           variant="outline"
           color="red"
           onClick={() => props.actionButtonCb.delete(row.id)}
         >
           <Trash />
-        </Button>
+        </Button> */}
       </td>
     </tr>
   ));
@@ -132,7 +132,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             sorted={null}
             reversed={reverseSortDirection}
             onSort={null}
-            style={{ width: 220 }}
+            style={{ width: 160 }}
           >
             Actions
           </Th>

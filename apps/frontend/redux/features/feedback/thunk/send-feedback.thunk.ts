@@ -1,23 +1,23 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
-import { Feedback } from '../../../../models/feedback.model';
 
-export const rejectFeedback = createAsyncThunk<
-  Feedback,
+export const sendFeedback = createAsyncThunk<
+  void,
   {
-    id: string;
-    replyMessage: string;
+    feedback?: string;
   },
   {
     rejectValue: {
       message: string;
     };
   }
->('feedbacks/reject-by-id', async (payload, thunkAPI) => {
+>('feedback/add', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.put(`api/feedbacks/reject/${payload.id}`, payload);
+    const response = await axios.post(`api/feedbacks/send-feedback`, {
+      message: payload.feedback,
+    });
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

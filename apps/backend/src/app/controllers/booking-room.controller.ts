@@ -16,7 +16,7 @@ import {
 import { BookingRoomService } from '../services';
 import { BookingRoomResponseDTO } from '../dto/booking-room.response.dto';
 import { WishlistBookingRoomResponseDTO } from '../dto/wishlist-booking-room.response.dto';
-import { KeycloakUser, User } from '../decorators/keycloak-user.decorator';
+import { User } from '../decorators/keycloak-user.decorator';
 import { WishlistBookingRoomRequestDTO } from '../dto/wishlist-booking-room.request.dto';
 import {
   ApiBearerAuth,

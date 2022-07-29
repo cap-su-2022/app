@@ -480,7 +480,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getRawOne<BookingRequest>();
   }
   getRequestByRoomId(roomId: string) {
-    console.log('IDDDDDDDDDDDDDD: ' + roomId);
     const date = new Date();
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')

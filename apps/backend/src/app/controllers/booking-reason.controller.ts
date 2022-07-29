@@ -1,18 +1,15 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Post,
   Put,
   Query,
 } from '@nestjs/common';
 import { BookingReasonService } from '../services/booking-reason.service';
-import { BookingReason } from '../models/booking-reason.entity';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
