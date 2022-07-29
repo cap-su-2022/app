@@ -6,7 +6,7 @@ import {
   TicketIcon,
 } from 'react-native-heroicons/outline';
 import { FPT_ORANGE_COLOR, PINK, WHITE } from '@app/constants';
-import { styles } from '../choose-slot';
+import { styles } from '../room-booking-choose-slot-screen';
 import { boxShadow } from '../../../../utils/box-shadow.util';
 
 interface ChooseSlotItemProps {

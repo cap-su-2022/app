@@ -20,9 +20,7 @@ import RoomBookingAlreadyBook from '../../screens/booking/checkin/room-booking-a
 import ScheduleRoomBookingLater from '../../screens/booking/request-room-booking';
 import StartDayCalendar from '../../screens/booking/request-room-booking/choose-start-day';
 import EndDayCalendar from '../../screens/booking/request-room-booking/choose-end-day';
-import AcceptBookingNavigator from '../home/track-booking-room/accept-booking';
-import ChooseSlot from '../../screens/booking/request-room-booking/choose-slot';
-import ChooseRoomBookingLongTerm from '../../screens/booking/request-room-booking/choose-room-long-term-booking';
+import RoomBookingChooseSlotScreen from '../../screens/booking/request-room-booking/room-booking-choose-slot-screen';
 
 const RoomBookingNavigator: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
@@ -126,10 +124,12 @@ const RoomBookingNavigator: React.FC = () => {
           }}
           component={RoomBookingWishlistNavigator}
         />
-        <StackScreen name="ROOM_BOOKING_CHOOSE_SLOT" component={ChooseSlot} />
         <StackScreen
-          name="ROOM_BOOKING_LONG_TERM_CHOOSE_ROOM"
-          component={ChooseRoomBookingLongTerm}
+          options={{
+            headerShown: false,
+          }}
+          name="ROOM_BOOKING_CHOOSE_SLOT"
+          component={RoomBookingChooseSlotScreen}
         />
       </StackNavigator>
     </>
