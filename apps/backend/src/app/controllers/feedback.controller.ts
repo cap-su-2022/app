@@ -9,7 +9,7 @@ import { Feedback } from '../models';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { User } from '../decorators/keycloak-user.decorator';
 import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
-import { FeedbackResolveRequestPayload } from '../payload/request/feedback-resolve.request.payload';
+import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
 
 @Controller('/v1/feedbacks')
 export class FeedbackController {
@@ -123,7 +123,7 @@ export class FeedbackController {
   })
   resolveFeedbackById(
     @Param('id') id: string,
-    @Body() payload: FeedbackResolveRequestPayload,
+    @Body() payload: FeedbackReplyRequestPayload,
     @User() user: KeycloakUserInstance
   ) {
     return this.service.resolveFeedbackById(user.account_id, id, payload);
@@ -153,8 +153,9 @@ export class FeedbackController {
   })
   rejectFeedbackById(
     @Param('id') id: string,
+    @Body() payload: FeedbackReplyRequestPayload,
     @User() user: KeycloakUserInstance
   ) {
-    return this.service.rejectFeedbackById(user.account_id, id);
+    return this.service.rejectFeedbackById(user.account_id, id, payload);
   }
 }

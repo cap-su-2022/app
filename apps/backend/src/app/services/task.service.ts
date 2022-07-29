@@ -8,15 +8,30 @@ import * as dayjs from "dayjs";
 export class TasksService {
   private readonly logger = new Logger(TasksService.name);
 
-  constructor(private readonly repository: BookingRoomRepository) {
+  constructor(private readonly repositoryBooking: BookingRoomRepository) {
   }
 
   //@Cron(CronExpression.EVERY_10_SECONDS)
   async handleCheckRoomBookingStillInProgress() {
     const currentTime = new Date().getTime() + 25200000;
     const next5Mins = new Date(currentTime + (1000 * 60 * 5));
-    const result = await this.repository.findByBookingStatus(BookingRoomStatus.Booking, next5Mins);
+    const result = await this.repositoryBooking.findByBookingStatus(BookingRoomStatus.Booking, next5Mins);
     console.log(result);
 
   }
+
+    // @Cron(CronExpression.EVERY_10_SECONDS)
+    async handleAutoCancelBookedRequest() {
+      const currDate = dayjs(new Date()).format("YYYY-MM-DD")
+      const currTime = dayjs(new Date()).format("HH:mm:ss")
+      const result = await this.repositoryBooking.getRequestBookedInDay(currDate);
+      result.map(re => {
+        console.log(re.timeEnd)
+        if(re.timeEnd < currTime){
+          console.log("CANCEl NÓOOOO")
+        }
+      })
+
+    }
 }
+

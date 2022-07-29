@@ -1,4 +1,5 @@
 export interface Feedback {
+  replyMess: string;
   id?: string;
   feedbackMess?: string;
   status?: string;
@@ -8,7 +9,6 @@ export interface Feedback {
   createdAt: string;
   deletedAt: string;
   deletedBy: string;
-  resolvedMess: string;
   rejectedBy: string;
   rejectedAt: string;
 }

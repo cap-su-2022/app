@@ -1,18 +1,24 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { PaginationParams } from '../controllers/pagination.model';
 import { Feedback } from '../models';
-import { FeedbackResolveRequestPayload } from '../payload/request/feedback-resolve.request.payload';
+import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
 import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
 import { FeedbackRepository } from '../repositories';
+import { AccountsService } from './accounts.service';
 import { FeedbackHistService } from './feedback-hist.service';
+import { NotificationService } from './notification.service';
 
 @Injectable()
 export class FeedbackService {
   private readonly logger = new Logger(FeedbackService.name);
 
   constructor(
+    private readonly dataSource: DataSource,
     private readonly repository: FeedbackRepository,
-    private readonly histService: FeedbackHistService
+    private readonly histService: FeedbackHistService,
+    private readonly notificationService: NotificationService,
+    private readonly accountService: AccountsService,
   ) {}
 
   getAllFeedbacks(param: PaginationParams) {
@@ -24,16 +30,25 @@ export class FeedbackService {
     }
   }
 
-  async addNewFeedback(
-    accountId: string,
-    payload: FeedbackSendRequestPayload
-  ) {
+  async addNewFeedback(accountId: string, payload: FeedbackSendRequestPayload) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
-      const feedback = await this.repository.addNew(accountId, payload);
-      await this.histService.createNew(feedback);
+      const feedback = await this.repository.addNew(
+        accountId,
+        payload,
+        queryRunner
+      );
+      await this.histService.createNew(feedback, queryRunner);
+
+      await queryRunner.commitTransaction();
       return feedback;
     } catch (e) {
       this.logger.error(e);
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
     }
   }
@@ -57,8 +72,13 @@ export class FeedbackService {
   async resolveFeedbackById(
     accountId: string,
     id: string,
-    payload: FeedbackResolveRequestPayload
+    payload: FeedbackReplyRequestPayload
   ) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -69,22 +89,37 @@ export class FeedbackService {
       const data = await this.repository.findOneOrFail({
         where: {
           id: id,
-        }
+        },
       });
-      if(data.status === "RESOLVED"){
-        throw new BadRequestException(
-          'Feedback was resolved!'
-        );
+      if (data.status === 'RESOLVED') {
+        throw new BadRequestException('Feedback was resolved!');
+      } else if (data.status === 'REJECTED') {
+        throw new BadRequestException('Feedback was rejected!');
       }
       const feedback = await this.repository.resolveById(
         accountId,
         id,
-        payload
+        payload,
+        queryRunner
       );
-      await this.histService.createNew(feedback);
+      await this.histService.createNew(feedback, queryRunner);
+
+      const user = await this.accountService.getRoleOfAccount(accountId);
+      await this.notificationService.sendReplyFeedbackNotification(
+        {
+          status: 'REJECT',
+          replier: user.username,
+          receiver: feedback.createdBy,
+          replyMess: payload.replyMessage,
+        },
+        queryRunner
+      );
+
+      await queryRunner.commitTransaction();
       return feedback;
     } catch (e) {
       this.logger.error(e);
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
     }
   }
@@ -92,7 +127,13 @@ export class FeedbackService {
   async rejectFeedbackById(
     accountId: string,
     id: string,
+    payload: FeedbackReplyRequestPayload
   ) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -103,21 +144,35 @@ export class FeedbackService {
       const data = await this.repository.findOneOrFail({
         where: {
           id: id,
-        }
+        },
       });
-      if(data.status === "RESOLVED"){
-        throw new BadRequestException(
-          'Feedback was resolved!'
-        );
+      if (data.status === 'RESOLVED') {
+        throw new BadRequestException('Feedback was resolved!');
       }
       const feedback = await this.repository.rejectById(
         accountId,
         id,
+        payload,
+        queryRunner
       );
-      await this.histService.createNew(feedback);
+      await this.histService.createNew(feedback, queryRunner);
+
+      const user = await this.accountService.getRoleOfAccount(accountId);
+      await this.notificationService.sendReplyFeedbackNotification(
+        {
+          status: 'RESOLVE',
+          replier: user.username,
+          receiver: feedback.createdBy,
+          replyMess: payload.replyMessage,
+        },
+        queryRunner
+      );
+
+      await queryRunner.commitTransaction();
       return feedback;
     } catch (e) {
       this.logger.error(e);
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
     }
   }
