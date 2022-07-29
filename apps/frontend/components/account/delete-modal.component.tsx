@@ -8,7 +8,7 @@ import {
   Table,
   Text,
 } from '@mantine/core';
-import { Archive, ScanEye, Trash, X } from 'tabler-icons-react';
+import { Archive, Check, ScanEye, Trash, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
@@ -23,6 +23,7 @@ import { deleteAccountById } from '../../redux/features/account/thunk/delete-by-
 import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 import { fetchDeletedAccounts } from '../../redux/features/account/thunk/fetch-deleted.thunk';
 import { fetchRequestByAccountId } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-account';
+import { showNotification } from '@mantine/notifications';
 
 interface DeleteModalProps {
   isShown: boolean;
@@ -40,12 +41,35 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const handleDeleteAccount = () => {
-    dispatch(deleteAccountById(selectedAccountId)).then(() => {
-      props.toggleShown();
-      dispatch(fetchAccounts(props.pagination));
-      dispatch(fetchDeletedAccounts(''));
-      listRequest.map((request) => dispatch(cancelBooking(request.id)));
-    });
+    dispatch(deleteAccountById(selectedAccountId))
+      .unwrap()
+      .catch((e) =>
+        showNotification({
+          id: 'delete-account',
+          color: 'red',
+          title: 'Error while delete account',
+          message: e.message ?? 'Failed to delete account',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'delete-account',
+          color: 'teal',
+          title: 'Account was deleted',
+          message: 'Account was successfully deleted',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+
+      .then(() => {
+        props.toggleShown();
+        dispatch(fetchAccounts(props.pagination));
+        dispatch(fetchDeletedAccounts(''));
+        listRequest.map((request) => dispatch(cancelBooking(request.id)));
+      });
   };
 
   useEffect(() => {

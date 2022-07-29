@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { PaginationParams } from '../controllers/pagination.model';
 import { Feedback } from '../models';
+import { FeedbackPaginationPayload } from '../payload/request/feedback-pagination.payload';
 import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
 import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
 import { FeedbackRepository } from '../repositories';
@@ -21,7 +22,7 @@ export class FeedbackService {
     private readonly accountService: AccountsService,
   ) {}
 
-  getAllFeedbacks(param: PaginationParams) {
+  getAllFeedbacks(param: FeedbackPaginationPayload) {
     try {
       return this.repository.findByPagination(param);
     } catch (e) {

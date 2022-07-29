@@ -2,12 +2,12 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
 import { PaginationResponse } from '../../../../models/pagination-response.payload';
-import { PaginationParams } from '../../../../models/pagination-params.model';
 import { Feedback } from '../../../../models/feedback.model';
+import { FeedbackPaginationParams } from '../../../../models/pagination-params/feedback-paging-params.model';
 
 export const fetchFeedbacks = createAsyncThunk<
   PaginationResponse<Feedback>,
-  PaginationParams,
+  FeedbackPaginationParams,
   {
     rejectValue: {
       message: string;
@@ -22,6 +22,7 @@ export const fetchFeedbacks = createAsyncThunk<
         limit: payload.limit,
         search: payload.search,
         sort: payload.sort,
+        status: payload.status,
         dir: payload.dir,
       },
     });

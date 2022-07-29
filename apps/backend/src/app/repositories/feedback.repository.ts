@@ -4,6 +4,7 @@ import { PaginationParams } from '../controllers/pagination.model';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
 import { Accounts } from '../models';
 import { Feedback } from '../models/feedback.entity';
+import { FeedbackPaginationPayload } from '../payload/request/feedback-pagination.payload';
 import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
 import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
 
@@ -18,7 +19,7 @@ export class FeedbackRepository extends Repository<Feedback> {
   }
 
   findByPagination(
-    pagination: PaginationParams
+    pagination: FeedbackPaginationPayload
   ): Promise<Pagination<Feedback>> {
     const query = this.createQueryBuilder('f')
       .select('f.id', 'id')
@@ -28,6 +29,9 @@ export class FeedbackRepository extends Repository<Feedback> {
       .addSelect('a.username', 'createdByName')
       .innerJoin(Accounts, 'a', 'a.id = f.created_by')
       .where('f.deleted_at IS NULL')
+      .andWhere('f.status LIKE :status', {
+        status: `%${pagination.status}%`,
+      })
       //   .andWhere('f.name ILIKE :search', {
       //     search: `%${pagination.search.trim()}%`,
       //   })

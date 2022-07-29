@@ -29,7 +29,7 @@ export class BookingRoomFeedback {
     name: 'rate_num',
     type: 'smallint',
   })
-  rateNum?: string;
+  rateNum?: number;
 
   @Column({
     name: 'booking_room_id',
@@ -41,7 +41,7 @@ export class BookingRoomFeedback {
     name: 'created_at',
     type: 'timestamptz',
   })
-  createdAt?: string;
+  createdAt?: Date;
 
   @Column({
     name: 'created_by',

@@ -16,12 +16,13 @@ import * as Yup from 'yup';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import { fetchFeedbacks } from '../../redux/features/feedback/thunk/fetch-feedback';
 import { rejectFeedback } from '../../redux/features/feedback/thunk/reject-feedback';
+import { FeedbackPaginationParams } from '../../models/pagination-params/feedback-paging-params.model';
 
 interface RejectFeedbackModalProps {
   isShown: boolean;
   toggleShown(): void;
   toggleInforModalShown(): void;
-  pagination: PagingParams;
+  pagination: FeedbackPaginationParams;
 }
 
 const validation = Yup.object().shape({

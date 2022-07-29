@@ -52,8 +52,6 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
-  console.log('USER INFOR: ', userInfo);
-
   const HeaderTitle: React.FC = () => {
     return (
       <div style={{ display: 'flex' }}>

@@ -11,20 +11,19 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import {BookingReasonService} from '../services/booking-reason.service';
-import {BookingReason} from '../models/booking-reason.entity';
-import {ApiOperation, ApiResponse} from '@nestjs/swagger';
-import {Roles} from '../decorators/role.decorator';
-import {Role} from '../enum/roles.enum';
-import {User} from '../decorators/keycloak-user.decorator';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {BookingReasonUpdateRequestPayload} from '../payload/request/booking-reason.request.payload';
-import {PaginationParams} from './pagination.model';
+import { BookingReasonService } from '../services/booking-reason.service';
+import { BookingReason } from '../models/booking-reason.entity';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Roles } from '../decorators/role.decorator';
+import { Role } from '../enum/roles.enum';
+import { User } from '../decorators/keycloak-user.decorator';
+import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { BookingReasonUpdateRequestPayload } from '../payload/request/booking-reason.request.payload';
+import { PaginationParams } from './pagination.model';
 
 @Controller('/v1/booking-reasons')
 export class BookingReasonController {
-  constructor(private readonly service: BookingReasonService) {
-  }
+  constructor(private readonly service: BookingReasonService) {}
 
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -34,7 +33,7 @@ export class BookingReasonController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for booking reason is not validated',
+    description: 'Request params for roles is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -61,7 +60,7 @@ export class BookingReasonController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for booking reason is not validated',
+    description: 'Request params for roles is not validated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
@@ -124,7 +123,7 @@ export class BookingReasonController {
   })
   addNewBookingReason(
     @User() user: KeycloakUserInstance,
-    @Body() payload: BookingReasonUpdateRequestPayload
+    @Body() payload: { name: string; description: string }
   ) {
     return this.service.createNewBookingReason(user.account_id, payload);
   }
@@ -167,7 +166,7 @@ export class BookingReasonController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for deleted booking reason is not validated',
+    description: 'Request params for roles is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -196,7 +195,7 @@ export class BookingReasonController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for booking reason is not validated',
+    description: 'Request params for roles is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -223,7 +222,7 @@ export class BookingReasonController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description:
-      'Request params for deleted booking reason is not validated',
+      'Request params for deleted booking reason type is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -234,12 +233,12 @@ export class BookingReasonController {
     description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: 'Successfully restored deleted booking reason by id',
-    description: 'Successfully restored deleted booking reason by id',
+    summary: 'Successfully restored deleted booking reason type by id',
+    description: 'Successfully restored deleted booking reason type by id',
   })
   restoreDeletedReasonById(
-    @User() keycloakUser: KeycloakUserInstance,
-    @Param('id') id: string
+    @Param('id') id: string,
+    @User() keycloakUser: KeycloakUserInstance
   ) {
     return this.service.restoreDeletedReasonById(keycloakUser.account_id, id);
   }
@@ -248,12 +247,12 @@ export class BookingReasonController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully permanent booking reason by id',
+    description: 'Successfully permanent deleted room type by id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description:
-      'Request params for permanent booking reason is not validated',
+      'Request params for permanent delete room type is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -264,8 +263,8 @@ export class BookingReasonController {
     description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: 'Permanently delete booking reason by id',
-    description: 'Permanently delete booking reason by id',
+    summary: 'Permanently delete room type by id',
+    description: 'Permanently delete room type by id',
   })
   permanentlyDeleteReasonById(@Param('id') id: string) {
     return this.service.permanentlyDeleteReasonById(id);
