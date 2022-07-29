@@ -1,10 +1,10 @@
 import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { PaginationParams } from '../controllers/pagination.model';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
 import { Accounts } from '../models';
 import { Feedback } from '../models/feedback.entity';
-import { FeedbackResolveRequestPayload } from '../payload/request/feedback-resolve.request.payload';
+import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
 import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
 
 @CustomRepository(Feedback)
@@ -44,7 +44,7 @@ export class FeedbackRepository extends Repository<Feedback> {
       .select('fb.id', 'id')
       .addSelect('fb.feedback_msg', 'feedbackMess')
       .addSelect('fb.status', 'status')
-      .addSelect('fb.resolved_msg', 'resolvedMess')
+      .addSelect('fb.reply_msg', 'replyMess')
       .addSelect('a.username', 'resolvedBy')
       .addSelect('fb.resolved_at', 'resolvedAt')
       .addSelect('aa.username', 'createdBy')
@@ -61,9 +61,11 @@ export class FeedbackRepository extends Repository<Feedback> {
 
   async addNew(
     accountId: string,
-    payload: FeedbackSendRequestPayload
+    payload: FeedbackSendRequestPayload,
+    queryRunner: QueryRunner
   ): Promise<Feedback> {
-    return this.save<Feedback>(
+    return queryRunner.manager.save(
+      Feedback,
       {
         feedbackMessage: payload.message,
         feedbackTypeId: payload.type,
@@ -80,18 +82,20 @@ export class FeedbackRepository extends Repository<Feedback> {
   async resolveById(
     accountId: string,
     feedbackId: string,
-    payload: FeedbackResolveRequestPayload
+    payload: FeedbackReplyRequestPayload,
+    queryRunner: QueryRunner
   ) {
     const oldData = await this.findOneOrFail({
       where: {
         id: feedbackId,
-      }
-    })
-    return this.save(
+      },
+    });
+    return queryRunner.manager.save(
+      Feedback,
       {
         ...oldData,
         id: feedbackId,
-        resolvedMessage: payload.resolveMessage,
+        replyMessage: payload.replyMessage,
         status: 'RESOLVED',
         resolvedBy: accountId,
         resolvedAt: new Date(),
@@ -105,16 +109,20 @@ export class FeedbackRepository extends Repository<Feedback> {
   async rejectById(
     accountId: string,
     feedbackId: string,
+    payload: FeedbackReplyRequestPayload,
+    queryRunner: QueryRunner
   ) {
     const oldData = await this.findOneOrFail({
       where: {
         id: feedbackId,
-      }
-    })
-    return this.save(
+      },
+    });
+    return queryRunner.manager.save(
+      Feedback,
       {
         ...oldData,
         id: feedbackId,
+        replyMessage: payload.replyMessage,
         status: 'REJECTED',
         rejectedBy: accountId,
         rejectedAt: new Date(),

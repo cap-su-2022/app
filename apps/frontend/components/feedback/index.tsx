@@ -27,6 +27,8 @@ import dayjs from 'dayjs';
 import NoDataFound from '../no-data-found';
 import { fetchFeedbacks } from '../../redux/features/feedback/thunk/fetch-feedback';
 import { fetchFeedbackById } from '../../redux/features/feedback/thunk/fetch-feedback-by-id.thunk';
+import RejectFeedbackModal from './reject-feedback.component';
+import ResolveFeedbackModal from './resolve-feedback.component';
 
 const AddRoomTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -48,20 +50,10 @@ const defaultPaginationParams: PaginationParams = {
   sort: 'created_at',
 };
 
-// const UpdateRoomTypeValidation = Yup.object().shape({
-//   name: Yup.string()
-//     .trim()
-//     .min(1, 'Minimum room type name is 1 character')
-//     .max(100, 'Maximum room type name is 100 characters.')
-//     .required('Room type name is required'),
-//   description: Yup.string().max(
-//     500,
-//     'Maximum room type description is 500 characters'
-//   ),
-// });
-
 const ManageFeedback: React.FC<any> = () => {
   const styles = useStyles();
+  const [isRejectShown, setRejectShown] = useState<boolean>(false);
+  const [isResolveShown, setResolveShown] = useState<boolean>(false);
   const feedbacks = useAppSelector((state) => state.feedback.feedbacks);
   const [pagination, setPagination] = useState<PaginationParams>(
     defaultPaginationParams
@@ -160,7 +152,7 @@ const ManageFeedback: React.FC<any> = () => {
   const handleActionsCb = {
     info: (id) => {
       setId(id);
-      console.log("IDDDDDDDD: ", id)
+      console.log('IDDDDDDDD: ', id);
       handleFetchById(id)
         .unwrap()
         .then(() => setInfoShown(!isInfoShown));
@@ -256,8 +248,23 @@ const ManageFeedback: React.FC<any> = () => {
             header="Feedback Information"
             toggleShown={() => setInfoShown(!isInfoShown)}
             isShown={isInfoShown}
+            toggleRejectModalShown={() => setRejectShown(!isRejectShown)}
+            toggleResolveModalShown={() => setResolveShown(!isResolveShown)}
           />
 
+          <RejectFeedbackModal
+            isShown={isRejectShown}
+            toggleShown={() => setRejectShown(!isRejectShown)}
+            toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+            pagination={pagination}
+          />
+
+          <ResolveFeedbackModal
+            isShown={isResolveShown}
+            toggleShown={() => setResolveShown(!isResolveShown)}
+            toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+            pagination={pagination}
+          />
           {/* <DeleteModal
             isShown={isDeleteShown}
             toggleShown={() => setDeleteShown(!isDeleteShown)}

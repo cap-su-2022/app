@@ -704,6 +704,19 @@ export class BookingRoomService {
         queryRunner
       );
 
+      if(payload.bookedFor && payload.bookedFor !== userId){
+        const roomName = await this.roomService.getRoomName(request.roomId)
+        await this.notificationService.sendBookedForNotification(
+          dayjs(request.checkinDate).format('DD-MM-YYYY'),
+          slotIn.name,
+          slotOut.name,
+          roomName.name,
+          role.username,
+          request.bookedFor,
+          queryRunner
+        );
+      }
+
       // await this.histService.createNew(request, queryRunner);
 
       await queryRunner.commitTransaction();

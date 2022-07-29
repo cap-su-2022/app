@@ -105,6 +105,14 @@ export class RoomsRepository extends Repository<Rooms> {
       .getRawMany<Rooms>();
   }
 
+
+  async getRoomName(id: string): Promise<{name: string}> {
+    return this.createQueryBuilder('rooms')
+      .select('rooms.name', 'name')
+      .andWhere('rooms.id = :roomId', { roomId: id })
+      .getRawOne();
+  }
+
   async findById(id: string): Promise<Rooms> {
     return this.createQueryBuilder('rooms')
       .select('rooms.id', 'id')

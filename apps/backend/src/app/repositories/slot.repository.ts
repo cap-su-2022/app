@@ -53,10 +53,11 @@ export class SlotRepository extends Repository<Slot> {
     });
   }
 
-  async getNumOfSlot(id: string): Promise<{ slotNum: number, timeStart: string }> {
+  async getNumOfSlot(id: string): Promise<{ slotNum: number, timeStart: string, name: string }> {
     return this.createQueryBuilder('slot')
       .select('slot.slot_num', 'slotNum')
       .addSelect('slot.time_start', 'timeStart')
+      .addSelect('slot.name', 'name')
       .where('slot.id = :slotId', { slotId: id })
       .getRawOne();
   }

@@ -57,6 +57,17 @@ export class RoomsService {
     }
   }
 
+  async getRoomName(id: string) {
+    try {
+      return await this.repository.getRoomName(id);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        e.message ?? 'An error occurred while retrieving this room'
+      );
+    }
+  }
+
   async findById(id: string): Promise<Rooms> {
     try {
       const isExisted = await this.repository.existsById(id);

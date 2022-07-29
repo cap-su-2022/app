@@ -46,33 +46,33 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
     //     autoClose: 3000,
     //   });
     // } else {
-      dispatch(deleteRoomById(selectedRoomId))
-        .catch((e) =>
-          showNotification({
-            id: 'delete-data',
-            color: 'red',
-            title: 'Error while delete room',
-            message: e.message ?? 'Failed to delete room',
-            icon: <X />,
-            autoClose: 3000,
-          })
-        )
-        .then(() =>
-          showNotification({
-            id: 'delete-data',
-            color: 'teal',
-            title: 'Room was deleted',
-            message: 'Room was successfully deleted',
-            icon: <Check />,
-            autoClose: 3000,
-          })
-        )
-        .then(() => {
-          props.toggleShown();
-          dispatch(fetchRooms(props.pagination));
-          dispatch(fetchDeletedRooms(''));
-          listRequest.map((request) => dispatch(cancelBooking(request.id)));
-        });
+    dispatch(deleteRoomById(selectedRoomId))
+      .catch((e) =>
+        showNotification({
+          id: 'delete-data',
+          color: 'red',
+          title: 'Error while delete room',
+          message: e.message ?? 'Failed to delete room',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'delete-data',
+          color: 'teal',
+          title: 'Room was deleted',
+          message: 'Room was successfully deleted',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .then(() => {
+        props.toggleShown();
+        dispatch(fetchRooms(props.pagination));
+        dispatch(fetchDeletedRooms(''));
+        listRequest.map((request) => dispatch(cancelBooking(request.id)));
+      });
     // }
   };
 
@@ -95,12 +95,18 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
       listRequest && listRequest.length > 0
         ? listRequest.map((row, index) => (
             <tr key={row.id}>
-              <td>{index + 1}</td>
               <td>{row.roomName}</td>
               <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
               <td>{row.requestedBy}</td>
               <td>{row.checkinSlot}</td>
               <td>{row.checkoutSlot}</td>
+              <td>
+                {row.status === 'PENDING' ? (
+                  <div className={classes.pendingDisplay}>{row.status}</div>
+                ) : row.status === 'BOOKED' ? (
+                  <div className={classes.bookedDisplay}>{row.status}</div>
+                ) : null}
+              </td>
             </tr>
           ))
         : null;
@@ -115,17 +121,6 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
             className={cx(classes.header, { [classes.scrolled]: scrolled })}
           >
             <tr>
-              <Th
-                style={{
-                  width: '60px',
-                }}
-                sorted={null}
-                reversed={null}
-                onSort={null}
-              >
-                STT
-              </Th>
-
               <Th sorted={null} reversed={null} onSort={null}>
                 Name
               </Th>
@@ -141,6 +136,9 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
                 Slot End
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Status
               </Th>
             </tr>
           </thead>
@@ -247,6 +245,22 @@ const useStyles = createStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  pendingDisplay: {
+    color: '#228be6',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#0000ff1c',
+    fontWeight: 600,
+  },
+  bookedDisplay: {
+    color: '#40c057',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#00800024',
+    fontWeight: 600,
   },
   header: {
     position: 'sticky',

@@ -10,12 +10,14 @@ import { FeedbackHistRepository, FeedbackRepository } from '../repositories';
 import { FeedbackController } from '../controllers/feedback.controller';
 import ConfigModule from './global/config.module';
 import { AccountsModule } from './accounts.module';
+import { NotificationModule } from './notification.module';
 
 @Module({
   imports: [
     ConfigModule,
     HttpModule,
     AccountsModule,
+    NotificationModule,
     TypeOrmExModule.forCustomRepository([
       FeedbackRepository,
       FeedbackHistRepository,
