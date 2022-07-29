@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
-import { Feedback } from 'apps/frontend/models/feedback.model';
+import { Feedback } from '../../../../models/feedback.model';
 
 export const resolveFeedback = createAsyncThunk<
   Feedback,

@@ -22,7 +22,7 @@ import { AccessTokenResponsePayload } from "../payload/response/refresh_token.re
 import { RefreshTokenPayload } from "../payload/response/refresh-token.request.payload";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enum/roles.enum";
-import { FastifyRequest, FastifyReply } from "fastify";
+import { FastifyReply } from "fastify";
 
 export class AuthenticationRequest {
   @ApiProperty({

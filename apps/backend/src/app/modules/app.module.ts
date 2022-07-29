@@ -23,6 +23,7 @@ import { FeedbackModule } from './feedback.module';
 import { FeedbackTypeModule } from './feedback-type.module';
 import { NotificationModule } from './notification.module';
 import { NotificationTypeModule } from './notification-type.module';
+import { BookingFeedbackModule } from './booking-feedback.module';
 
 @Global()
 export class AppModule {
@@ -40,6 +41,7 @@ export class AppModule {
         RoomsModule,
         AccountsModule,
         FeedbackModule,
+        BookingFeedbackModule,
         FeedbackTypeModule,
         NotificationModule,
         NotificationTypeModule,

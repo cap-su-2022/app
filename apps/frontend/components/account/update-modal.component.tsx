@@ -36,16 +36,23 @@ interface UpdateModalProps {
   role: any[];
 }
 
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const UpdateAccountValidation = Yup.object().shape({
   fullname: Yup.string()
     .trim()
     .min(2, 'Fullname must be at least 2 characters')
     .max(100, 'Fullname can only maximum at 100 characters')
     .required('Fullname is required'),
-  description: Yup.string().max(
-    500,
-    'Description can only maximum at 500 characters'
-  ),
+  description: Yup.string()
+    .nullable()
+    .max(500, 'Description can only maximum at 500 characters'),
+  phone: Yup.string()
+    .required()
+    .nullable()
+    .matches(phoneRegExp, 'Phone number is not valid')
+    .min(10)
+    .max(10)
 });
 
 const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
@@ -96,7 +103,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
       .then(() => dispatch(fetchAccounts(props.pagination)))
       .finally(() => {
         formik.resetForm();
-        setRole(account.roleId)
+        setRole(account.roleId);
       });
   };
 
@@ -119,14 +126,15 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
     if (
       formik.initialValues.fullname === formik.values.fullname &&
       formik.initialValues.description === formik.values.description &&
-      formik.initialValues.roleId === formik.values.roleId
+      formik.initialValues.roleId === formik.values.roleId && 
+      formik.initialValues.phone === formik.values.phone
     ) {
       setUpdateDisabled(true);
     } else {
       setUpdateDisabled(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formik.values.description, formik.values.fullname, formik.values.roleId]);
+  }, [formik.values.description, formik.values.fullname, formik.values.roleId, formik.values.phone]);
 
   const ModalHeaderTitle: React.FC = () => {
     return (
@@ -218,10 +226,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   />
                 </InputWrapper>
               </div>
-              <InputWrapper
-                required
-                label="Role"
-              >
+              <InputWrapper required label="Role">
                 <Select
                   onChange={(e) => {
                     setUpdateDisabled(false);
@@ -291,8 +296,8 @@ const useStyles = createStyles({
   displayGrid: {
     display: 'grid',
     gridTemplateColumns: 'auto auto',
-    alignItems: 'center',
     columnGap: '20px',
+    alignItems: 'start',
   },
   textInput: {
     marginTop: 10,
