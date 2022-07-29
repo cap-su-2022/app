@@ -26,11 +26,11 @@ export class Feedback {
   feedbackTypeId?: string;
 
   @Column({
-    name: 'resolved_msg',
+    name: 'reply_msg',
     type: 'varchar',
     length: 500,
   })
-  resolvedMessage?: string;
+  replyMessage?: string;
 
   @Column({
     name: 'status',

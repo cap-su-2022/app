@@ -31,7 +31,8 @@ function NotificationManagement(props: any) {
                 onClick={() => console.log(notification.id)}
               >
                 <div style={{ marginRight: 10 }}>
-                  {notification.title.includes('accepted') ? (
+                  {notification.title.includes('accepted') ||
+                  notification.title.includes('resolved') ? (
                     <CircleCheck size={48} strokeWidth={2} color={'#40bf59'} />
                   ) : notification.title.includes('cancelled') ||
                     notification.title.includes('rejected') ? (

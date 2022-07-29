@@ -59,7 +59,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
 
   getCountRequestInWeekOfUser(id: string, date: string) {
     const curr = new Date(date); // get current date
-    console.log(date)
+    console.log(date);
     const firstDay = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
     const lastDay = firstDay + 6; // last day is the first day + 6
     const sunday = new Date(curr.setDate(firstDay));
@@ -124,6 +124,10 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     }
     if (accountId) {
       query.andWhere('booking_request.requested_by = :accountId', {
+        accountId: accountId,
+      });
+
+      query.orWhere('booking_request.booked_for = :accountId', {
         accountId: accountId,
       });
     }
@@ -218,7 +222,9 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       roomId: string;
       roomName: string;
       slotStart: number;
+      timeStart: string;
       slotEnd: number;
+      timeEnd: string;
     }[]
   > {
     return (
@@ -227,7 +233,9 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         .addSelect('booking_request.room_id', 'roomId')
         .addSelect('r.name', 'roomName')
         .addSelect('slot_start.slot_num', 'slotStart')
+        .addSelect('slot_start.time_start', 'timeStart')
         .addSelect('slot_end.slot_num', 'slotEnd')
+        .addSelect('slot_end.time_end', 'timeEnd')
         // .addSelect('slot_start.name', 'slotStart')
         // .addSelect('slot_end.name', 'slotEnd')
         .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
@@ -250,22 +258,26 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
           roomId: string;
           roomName: string;
           slotStart: number;
+          timeStart: string;
           slotEnd: number;
+          timeEnd: string;
         }>()
     );
   }
 
-  getRequestBookedInMultiDay(dateStart: string, dateEnd: string): Promise<
-  {
-    id: string;
-    roomId: string;
-    roomName: string;
-    slotStart: number;
-    slotEnd: number;
-  }[]
-> {
-  return (
-    this.createQueryBuilder('booking_request')
+  getRequestBookedInMultiDay(
+    dateStart: string,
+    dateEnd: string
+  ): Promise<
+    {
+      id: string;
+      roomId: string;
+      roomName: string;
+      slotStart: number;
+      slotEnd: number;
+    }[]
+  > {
+    return this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('booking_request.room_id', 'roomId')
       .addSelect('r.name', 'roomName')
@@ -295,9 +307,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         roomName: string;
         slotStart: number;
         slotEnd: number;
-      }>()
-  );
-}
+      }>();
+  }
 
   getBookingPendingAndBookedInDay(
     date: string,

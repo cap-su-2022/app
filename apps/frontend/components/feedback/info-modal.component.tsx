@@ -8,7 +8,9 @@ import {
   TextInput,
 } from '@mantine/core';
 import {
+  Archive,
   CalendarStats,
+  Checks,
   ClipboardText,
   FileDescription,
   Id,
@@ -23,6 +25,8 @@ interface InfoModalProps {
   header: React.ReactNode;
   isShown: boolean;
   toggleShown(): void;
+  toggleRejectModalShown(): void;
+  toggleResolveModalShown(): void;
 }
 
 interface UserInfoModel {
@@ -52,7 +56,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
 
   const HeaderTitle: React.FC = () => {
     return (
-      <div style={{ display: 'flex'}}>
+      <div style={{ display: 'flex' }}>
         <div className={classes.headerTitle}>{props.header}</div>
         <div style={{ marginLeft: 10 }}>
           {feedback.status === 'PENDING' ? (
@@ -142,7 +146,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
               icon={<ClipboardText />}
               radius="md"
               readOnly
-              value={feedback.resolvedMess}
+              value={feedback.replyMess}
             />
           </InputWrapper>
         </div>
@@ -172,6 +176,17 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
               />
             </InputWrapper>
           </div>
+          <InputWrapper
+            label="Resolve message"
+            className={classes.inputWrapper}
+          >
+            <Textarea
+              icon={<ClipboardText />}
+              radius="md"
+              readOnly
+              value={feedback.replyMess}
+            />
+          </InputWrapper>
         </div>
       </>
     );
@@ -194,10 +209,34 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
     >
       <div className={classes.body}>
         <Infor />
-        {feedback.status === "RESOLVED" && <InforResolved />}
-        {feedback.status === "REJECTED" && <InforRejected />}
+        {feedback.status === 'RESOLVED' && <InforResolved />}
+        {feedback.status === 'REJECTED' && <InforRejected />}
 
         <div className={classes.footer}>
+          {feedback.status === 'PENDING' &&
+          userInfo.id !== feedback.createdBy ? (
+            <>
+              <Button
+                onClick={() => props.toggleResolveModalShown()}
+                variant="outline"
+                color={'green'}
+                leftIcon={<Checks />}
+              >
+                Resolve feebback
+              </Button>
+
+              <Button
+                onClick={() => props.toggleRejectModalShown()}
+                variant="outline"
+                color={'red'}
+                leftIcon={<X />}
+              >
+                Reject feebback
+              </Button>
+            </>
+          ) : (
+            <div></div>
+          )}
           <Button
             leftIcon={<X />}
             color="orange"
@@ -275,7 +314,7 @@ const useStyles = createStyles({
   footer: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     marginTop: 20,
   },
 });

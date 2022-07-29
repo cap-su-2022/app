@@ -287,11 +287,11 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
             >
               {days[0].getDate() +
                 '/' +
-                days[0].getMonth() +
+                (days[0].getMonth() + 1) +
                 '  -  ' +
                 days[5].getDate() +
                 '/' +
-                days[5].getMonth()}
+                (days[5].getMonth() + 1)}
             </h4>
           ) : null}
           <Button

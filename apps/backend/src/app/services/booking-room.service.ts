@@ -580,9 +580,30 @@ export class BookingRoomService {
       const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlot);
       const slotOut = await this.slotService.getNumOfSlot(payload.checkoutSlot);
 
-      if(payload.bookedFor !== userId && role.role_name === "Staff"){
+      const dateChoosed = new Date(payload.checkinDate).setHours(0, 0, 0, 0);
+      const today = new Date().setHours(0, 0, 0, 0);
+
+      if (dateChoosed < today) {
         throw new BadRequestException(
-          'You are not authorized to make a booking for other users'
+          'Are you trying to make a booking in the past? Are you crazy?'
+        );
+      } else if (dateChoosed === today) {
+        const timeCheckin = slotIn.timeStart;
+        const timeNow = dayjs(new Date()).format('HH:mm:ss');
+
+        if (timeCheckin < timeNow) {
+          throw new BadRequestException('The slot you chose is now over!');
+        }
+      }
+      if (slotIn.slotNum > slotOut.slotNum) {
+        throw new BadRequestException(
+          'Have error when booking, slot start > slot end'
+        );
+      }
+
+      if (payload.bookedFor !== userId && role.role_name === 'Staff') {
+        throw new BadRequestException(
+          'You are not authorized to make a booking for other users!'
         );
       }
 
@@ -683,6 +704,19 @@ export class BookingRoomService {
         queryRunner
       );
 
+      if(payload.bookedFor && payload.bookedFor !== userId){
+        const roomName = await this.roomService.getRoomName(request.roomId)
+        await this.notificationService.sendBookedForNotification(
+          dayjs(request.checkinDate).format('DD-MM-YYYY'),
+          slotIn.name,
+          slotOut.name,
+          roomName.name,
+          role.username,
+          request.bookedFor,
+          queryRunner
+        );
+      }
+
       // await this.histService.createNew(request, queryRunner);
 
       await queryRunner.commitTransaction();
@@ -708,8 +742,35 @@ export class BookingRoomService {
       const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlot);
       const slotOut = await this.slotService.getNumOfSlot(payload.checkoutSlot);
 
+      const dateChoosed = new Date(payload.checkinDate).setHours(0, 0, 0, 0);
+      const today = new Date().setHours(0, 0, 0, 0);
+
+      if (dateChoosed < today) {
+        throw new BadRequestException(
+          'Are you trying to make a booking in the past? Are you crazy?'
+        );
+      } else if (dateChoosed === today) {
+        const timeCheckin = slotIn.timeStart;
+        const timeNow = dayjs(new Date()).format('HH:mm:ss');
+
+        if (timeCheckin < timeNow) {
+          throw new BadRequestException('The slot you chose is now over!');
+        }
+      }
+      if (slotIn.slotNum > slotOut.slotNum) {
+        throw new BadRequestException(
+          'Have error when booking, slot start > slot end'
+        );
+      }
+
       const fromDate = new Date(payload.checkinDate);
       const toDate = new Date(payload.checkoutDate);
+
+      if (fromDate > toDate) {
+        throw new BadRequestException(
+          'Have error when booking, from date > to date'
+        );
+      }
 
       let alreadyBookedOtherRoom = [];
       const listRequestBookedInDayOfUser = [];

@@ -22,9 +22,10 @@ export class AccountRepository extends Repository<Accounts> {
       .then((data) => data['count'] > 0);
   }
 
-  async getRoleOfAccount(id: string): Promise<{ role_name: string }> {
+  async getRoleOfAccount(id: string): Promise<{ role_name: string, username: string }> {
     return this.createQueryBuilder('account')
-      .select('role.name')
+      .select('role.name', 'role_name')
+      .addSelect('account.username', "username")
       .innerJoin(Roles, 'role', 'role.id = account.role_id')
       .where('account.disabled_at IS NULL')
       .andWhere('account.deleted_at IS NULL')
