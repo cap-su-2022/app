@@ -13,6 +13,10 @@ import { ChevronRightIcon } from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
 import { CurrentCheckinInformation } from '../../../../redux/models/current-checkin-information.model';
 import { useAppSelector } from '../../../../hooks/use-app-selector.hook';
+import {
+  fetchDeviceInUseByBookingRequestId
+} from "../../../../redux/features/room-booking/thunk/fetch-devices-in-use-by-booking-request-id.thunk";
+import {useAppDispatch} from "../../../../hooks/use-app-dispatch.hook";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface ReadyToCheckinBookingInformationProps {}
@@ -21,9 +25,19 @@ const ReadyToCheckinBookingInformation: React.FC<
   ReadyToCheckinBookingInformationProps
 > = (props) => {
   const navigate = useAppNavigation();
+  const dispatch = useAppDispatch()
   const { currentCheckinInformation } = useAppSelector(
     (state) => state.roomBooking
   );
+
+  const handleViewDevices = (id) => {
+    dispatch(fetchDeviceInUseByBookingRequestId(id))
+      .unwrap()
+      .then((val) => {
+        navigate.navigate('ACCEPT_BOOKING_LIST_DEVICES');
+      });
+  };
+
   return (
     <>
       <Text style={styles.informationHeaderTitle}>BOOKING INFORMATION</Text>
@@ -70,7 +84,7 @@ const ReadyToCheckinBookingInformation: React.FC<
         <View style={styles.dataRowContainer}>
           <Text style={styles.titleText}>Requested devices</Text>
           <TouchableOpacity
-            onPress={() => navigate.navigate('ACCEPT_BOOKING_LIST_DEVICES')}
+            onPress={() => handleViewDevices(currentCheckinInformation.id)}
             style={styles.viewDevicesContainer}
           >
             <Text style={styles.viewDevicesText}>View devices</Text>
