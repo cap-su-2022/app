@@ -18,6 +18,7 @@ import { bookingReasonReducer } from './features/booking-reason/slice';
 import { bookedRequestReducer } from './features/room-booking-v2/slice';
 import { systemReducer } from './features/system/system.slice';
 import {feedbackTypeReducer} from "./features/feed-back-type/feedback-types.slice";
+import {feedbackReducer} from "./features/feedback/feedback.slice";
 
 const combinedReducer = combineReducers({
   system: systemReducer,
@@ -32,7 +33,8 @@ const combinedReducer = combineReducers({
   slot: slotReducer,
   bookingReason: bookingReasonReducer,
   bookedRequest: bookedRequestReducer,
-  feedbackTypes: feedbackTypeReducer
+  feedbackTypes: feedbackTypeReducer,
+  feedback: feedbackReducer,
 });
 const reducer = (
   state: ReturnType<typeof combinedReducer>,

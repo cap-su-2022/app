@@ -1,9 +1,8 @@
 import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
 import { QueryRunner, Repository } from 'typeorm';
-import { PaginationParams } from '../controllers/pagination.model';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Accounts } from '../models';
-import { Feedback } from '../models/feedback.entity';
+import {Accounts, FeedbackType} from '../models';
+import { Feedback } from '../models';
 import { FeedbackPaginationPayload } from '../payload/request/feedback-pagination.payload';
 import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
 import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
@@ -19,23 +18,49 @@ export class FeedbackRepository extends Repository<Feedback> {
   }
 
   findByPagination(
+    accountId: string,
     pagination: FeedbackPaginationPayload
-  ): Promise<Pagination<Feedback>> {
+  ): Promise<Pagination<Feedback> | Feedback[]> {
     const query = this.createQueryBuilder('f')
       .select('f.id', 'id')
       .addSelect('f.created_by', 'createdBy')
       .addSelect('f.created_at', 'createdAt')
       .addSelect('f.status', 'status')
       .addSelect('a.username', 'createdByName')
+      .addSelect('f.resolved_at', 'resolvedAt')
+      .addSelect('f.rejected_at', 'rejectedAt')
+      .addSelect('ft.name', 'feedbackTypeName')
       .innerJoin(Accounts, 'a', 'a.id = f.created_by')
+      .leftJoin(FeedbackType, 'ft', 'ft.id = f.feedback_type_id')
       .where('f.deleted_at IS NULL')
-      .andWhere('f.status LIKE :status', {
-        status: `%${pagination.status}%`,
-      })
+      .andWhere('f.deleted_by IS NULL')
       //   .andWhere('f.name ILIKE :search', {
       //     search: `%${pagination.search.trim()}%`,
       //   })
       .orderBy('f.created_at', 'DESC');
+
+    if (pagination.fromDate && pagination.toDate) {
+      query.andWhere('f.created_at >= :fromDate', {fromDate: pagination.fromDate});
+      query.andWhere('f.created_at <= :toDate', {toDate: pagination.toDate});
+    }
+
+    if (accountId) {
+      query.andWhere('f.created_by = :createdBy', {createdBy: accountId})
+    }
+
+  if (pagination.status) {
+    query.andWhere('f.status IN (:...status)', {
+      status: JSON.parse(pagination.status)
+    })
+  }
+
+  if (pagination.type) {
+    query.andWhere('ft.name = :feedbackTypeName', {feedbackTypeName: pagination.type})
+  }
+
+  if (!pagination || !pagination.page) {
+    return query.getRawMany();
+  }
 
     return paginateRaw<Feedback>(query, {
       page: pagination.page,

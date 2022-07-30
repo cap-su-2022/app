@@ -29,7 +29,7 @@ const RoomBookingNavigator: React.FC = () => {
     <>
       <StatusBar hidden />
       <StackNavigator
-        initialRouteName={'ACCEPT_BOOKING_ROOM'}
+        initialRouteName={'ROOM_BOOKING_LATER'}
         screenOptions={{
           headerTitle: () => (
             <Text style={styles.headerText}>Request for Room Booking</Text>

@@ -63,7 +63,7 @@ export const QUICK_ACCESS_NAVIGATION_DATA = [
   },
   {
     id: 8,
-    name: 'Resolve feedbacks',
+    name: 'Track feedbacks',
     icon: <ChatAlt2Icon color={WHITE} size={deviceWidth / 16} />,
     path: 'FEEDBACK',
   },
@@ -91,7 +91,7 @@ export const DEFAULT_QUICK_ACCESS = [
   },
   {
     id: 8,
-    name: 'Resolve feedbacks',
+    name: 'Track feedbacks',
     icon: <ChatAlt2Icon color={WHITE} size={deviceWidth / 16} />,
     path: 'FEEDBACK',
   },

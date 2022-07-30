@@ -19,7 +19,7 @@ export class FeedbackController {
   constructor(private readonly service: FeedbackService) {}
 
   @Get()
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully got get all feedback',
@@ -41,9 +41,10 @@ export class FeedbackController {
     description: 'Get all feedback',
   })
   getAllFeedbacks(
-    @Query() payload: FeedbackPaginationPayload
-  ): Promise<Pagination<Feedback>> {
-    return this.service.getAllFeedbacks(payload as FeedbackPaginationPayload);
+    @Query() payload: FeedbackPaginationPayload,
+    @User() user: KeycloakUserInstance,
+  ): Promise<Pagination<Feedback> | Feedback[]> {
+    return this.service.getAllFeedbacks(user.account_id, payload);
   }
 
   @Get(':id')

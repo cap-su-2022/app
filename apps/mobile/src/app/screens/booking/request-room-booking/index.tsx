@@ -155,11 +155,11 @@ const ScheduleRoomBookingLater: React.FC<any> = (props) => {
       };
     } else if (isMultiDateChecked && isMultiSlotChecked) {
       return {
-        height: Platform.OS === 'android' ? deviceHeight / 1.6 : 470,
+        height: Platform.OS === 'android' ? deviceHeight / 1.6 : 490,
       };
     } else if (isMultiDateChecked || isMultiSlotChecked) {
       return {
-        height: Platform.OS === 'android' ? deviceHeight / 2.2 : 330,
+        height: Platform.OS === 'android' ? deviceHeight / 2.2 : 340,
       };
     }
   };
