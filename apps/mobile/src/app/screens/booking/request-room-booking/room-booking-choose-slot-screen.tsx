@@ -243,7 +243,6 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
   const handleSetSelectedDate = (val: string) => {
     const selectedDate = dayjs(val);
     const todayDate = dayjs(new Date().toDateString());
-    console.log(selectedDate.diff(todayDate));
     if (selectedDate.diff(todayDate) >= 0) {
       setSelectedDay(val);
     }

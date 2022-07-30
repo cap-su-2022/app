@@ -16,7 +16,7 @@ const HomeScreenSectionResolveFeedback: React.FC<any> = () => {
   const navigate = useAppNavigation();
 
   const handleNavigateTrackBookingRoom = () => {
-    navigate.navigate('TRACK_BOOKING_ROOM');
+    navigate.navigate('TRACK_FEEDBACK');
   };
 
   return (
@@ -26,7 +26,7 @@ const HomeScreenSectionResolveFeedback: React.FC<any> = () => {
     >
       <View style={styles.wrapper}>
         <ChatAlt2Icon size={deviceWidth / 13} color={WHITE} />
-        <Text style={styles.text}>Resolve feedbacks</Text>
+        <Text style={styles.text}>Track feedbacks</Text>
       </View>
     </TouchableOpacity>
   );

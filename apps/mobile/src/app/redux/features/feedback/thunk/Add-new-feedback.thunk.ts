@@ -19,7 +19,7 @@ export const addNewFeedback = createAsyncThunk<
   {
     rejectValue: RejectValue;
   }
->('feedbacks/send-feedback', async (payload, thunkAPI) => {
+>('feedback/send-feedback', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
     console.log('payload: ', payload);

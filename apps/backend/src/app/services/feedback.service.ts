@@ -22,9 +22,16 @@ export class FeedbackService {
     private readonly accountService: AccountsService,
   ) {}
 
-  getAllFeedbacks(param: FeedbackPaginationPayload) {
+  async getAllFeedbacks(accountId: string, param: FeedbackPaginationPayload) {
     try {
-      return this.repository.findByPagination(param);
+      if (!param || !param.page) {
+        const roleName = await this.accountService.getAccountRoleById(accountId);
+        if (roleName === 'Staff') {
+          return await this.repository.findByPagination(accountId, param);
+        } else {
+          return await this.repository.findByPagination(undefined, param);
+        }
+      }
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);
