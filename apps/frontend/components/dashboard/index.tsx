@@ -6,6 +6,7 @@ import {
   ScrollArea,
   SimpleGrid,
   Space,
+  Tabs,
   Text,
   Title,
 } from '@mantine/core';
@@ -113,66 +114,20 @@ function Dashboard() {
 
   return (
     <AdminLayout>
-      <ScrollArea
-        style={{
-          height: '85vh',
-          borderRadius: 5,
-         }}
-      >
-        <div className={classes.root}>
-          <Title order={5}>TOTAL TIME</Title>
-          <Space h="xl" />
-          <SimpleGrid
-            cols={3}
-            breakpoints={[
-              { maxWidth: 'md', cols: 2 },
-              { maxWidth: 'xs', cols: 1 },
-            ]}
-          >
-            {stats ? getStatisticsData(totalTime) : null}
-          </SimpleGrid>
-          <Space h="xl" />
-
-          <Title order={5}>MONTH </Title>
-          <Space h="xl" />
-          <SimpleGrid
-            cols={3}
-            breakpoints={[
-              { maxWidth: 'md', cols: 2 },
-              { maxWidth: 'xs', cols: 1 },
-            ]}
-          >
-            {stats ? getStatisticsData(month) : null}
-          </SimpleGrid>
-          <Space h="xl" />
-
-          <Title order={5}>WEEK </Title>
-          <Space h="xl" />
-          <SimpleGrid
-            cols={3}
-            breakpoints={[
-              { maxWidth: 'md', cols: 2 },
-              { maxWidth: 'xs', cols: 1 },
-            ]}
-          >
-            {stats ? getStatisticsData(week) : null}
-          </SimpleGrid>
-          <Space h="xl" />
-
-          <Title order={5}>DAY</Title>
-          <Space h="xl" />
-          <SimpleGrid
-            cols={3}
-            breakpoints={[
-              { maxWidth: 'md', cols: 2 },
-              { maxWidth: 'xs', cols: 1 },
-            ]}
-          >
-            {stats ? getStatisticsData(day) : null}
-          </SimpleGrid>
-          <Space h="xl" />
-        </div>
-      </ScrollArea>
+      <Tabs defaultValue="gallery">
+        <Tabs.Tab title="Total time" label="Total time" value="totalTime">
+          {stats ? getStatisticsData(totalTime) : null}
+        </Tabs.Tab>
+        <Tabs.Tab label="Month" value="month">
+          {stats ? getStatisticsData(month) : null}
+        </Tabs.Tab>
+        <Tabs.Tab label="Week" value="week">
+          {stats ? getStatisticsData(week) : null}
+        </Tabs.Tab>
+        <Tabs.Tab label="Day" value="day">
+          {stats ? getStatisticsData(day) : null}
+        </Tabs.Tab>
+      </Tabs>
     </AdminLayout>
   );
 }

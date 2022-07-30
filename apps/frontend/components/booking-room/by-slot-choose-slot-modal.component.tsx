@@ -36,6 +36,8 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const [showChooseRoom, setShowChooseRoom] = useState(false);
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(true);
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
+  const [timeStart, setTimeStart] = useState('');
+  const [timeEnd, setTimeEnd] = useState('');
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const [slotNames, setSlotNames] = useState<any[]>();
   const [slotInName, setSlotInName] = useState('');
@@ -78,6 +80,30 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       }
     }
   }, [props.formik.values.checkinSlot, props.formik.values.checkoutSlot]);
+
+  useEffect(() => {
+    if (props.formik.values.checkinSlot) {
+      const slotIn = slotInfors.find(
+        (slot) => slot.id === props.formik.values.checkinSlot
+      );
+
+      setTimeStart(slotIn.timeStart);
+    } else {
+      setTimeStart('');
+    }
+  }, [props.formik.values.checkinSlot]);
+
+  useEffect(() => {
+    if (props.formik.values.checkoutSlot) {
+      const slotOut = slotInfors.find(
+        (slot) => slot.id === props.formik.values.checkoutSlot
+      );
+
+      setTimeEnd(slotOut.timeEnd);
+    } else {
+      setTimeEnd('');
+    }
+  }, [props.formik.values.checkoutSlot]);
 
   useEffect(() => {
     props.formik.values.checkinSlot = null;
@@ -182,14 +208,14 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       <div
         style={{
           display: 'flex',
-          alignItems: 'flex-end',
+          alignItems: 'flex-start',
           justifyContent: 'center',
-          marginBottom: 20,
+          margin: "20px 0",
         }}
       >
         <DatePicker
           id="checkinDate"
-          style={{ width: '200px', marginRight: 20, marginTop: 10 }}
+          style={{ width: '200px', marginRight: 20 }}
           label="Book date"
           placeholder="Select date"
           radius="md"
@@ -197,48 +223,54 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           inputFormat="DD/MM/YYYY"
           value={props.formik.values.checkinDate}
           minDate={dayjs(new Date()).toDate()}
-          maxDate={dayjs(new Date()).add(3, 'weeks').toDate()}
+          maxDate={dayjs(new Date()).startOf('weeks').add(21, 'days').toDate()}
           // onChange={(date) => setbookDate(date)}
           onChange={(date) => {
             props.formik.setFieldValue('checkinDate', date);
           }}
           excludeDate={(date) => date.getDay() === 0 || date.getDay() === 7}
         />
-
-        <Select
-          id="checkinSlot"
-          style={{ marginRight: 20, width: '140px' }}
-          label="From slot"
-          required
-          transition="pop-top-left"
-          transitionDuration={80}
-          transitionTimingFunction="ease"
-          dropdownPosition="top"
-          radius="md"
-          data={slotNames || []}
-          onChange={props.formik.handleChange('checkinSlot')}
-          value={props.formik.values.checkinSlot}
-        />
+        <div>
+          <Select
+            id="checkinSlot"
+            style={{ marginRight: 20, width: '140px' }}
+            label="From slot"
+            required
+            transition="pop-top-left"
+            transitionDuration={80}
+            transitionTimingFunction="ease"
+            dropdownPosition="top"
+            radius="md"
+            data={slotNames || []}
+            onChange={props.formik.handleChange('checkinSlot')}
+            value={props.formik.values.checkinSlot}
+          />
+          <div style={{paddingLeft: 10, fontSize: 15}}>{timeStart.slice(0, 5)}</div>
+        </div>
         <ChevronsRight
           size={28}
           strokeWidth={2}
           color={'black'}
-          style={{ marginRight: 20 }}
+          style={{ margin: 'auto' }}
         />
-        <Select
-          id="checkoutSlot"
-          style={{ width: '140px' }}
-          label="To slot"
-          required
-          transition="pop-top-left"
-          transitionDuration={80}
-          transitionTimingFunction="ease"
-          dropdownPosition="top"
-          radius="md"
-          data={slotNames || []}
-          onChange={props.formik.handleChange('checkoutSlot')}
-          value={props.formik.values.checkoutSlot}
-        />
+
+        <div>
+          <Select
+            id="checkoutSlot"
+            style={{ width: '140px' }}
+            label="To slot"
+            required
+            transition="pop-top-left"
+            transitionDuration={80}
+            transitionTimingFunction="ease"
+            dropdownPosition="top"
+            radius="md"
+            data={slotNames || []}
+            onChange={props.formik.handleChange('checkoutSlot')}
+            value={props.formik.values.checkoutSlot}
+          />
+          <div style={{paddingLeft: 10, fontSize: 15}}>{timeEnd.slice(0, 5)}</div>
+        </div>
       </div>
       {userInfo.role !== 'Staff' ? (
         <Select

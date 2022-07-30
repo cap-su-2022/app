@@ -3,6 +3,7 @@ import { Button, createStyles, Select, Table } from '@mantine/core';
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronsDown,
   ChevronsRight,
   X,
 } from 'tabler-icons-react';
@@ -115,7 +116,6 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
 
       const result = slotInfors?.map((slot, indexSlot) => {
         let isFree = true;
-        let isOverSlot = false;
 
         if (choosedDay === curr.getDate() && currTime > slot.timeStart) {
           isFree = false;
@@ -129,27 +129,14 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
               ? (isFree = false)
               : null;
           }
-          if (choosedDay === curr.getDate() - curr.getDay() + 6) {
-            if (indexSlot > 2) {
-              isOverSlot = true;
-            }
-          }
         });
 
-        if (!isOverSlot) {
-          if (isFree) {
-            return {
-              value: slot.id,
-              label: slot.name,
-              disabled: false,
-            };
-          } else {
-            return {
-              value: slot.id,
-              label: slot.name,
-              disabled: true,
-            };
-          }
+        if (isFree) {
+          return {
+            value: slot.id,
+            label: slot.name,
+            disabled: false,
+          };
         } else {
           return {
             value: slot.id,
@@ -170,7 +157,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   useEffect(() => {
     const tmpArr = [];
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 7; i++) {
       const test = new Date(dayShowShecule);
       tmpArr[i] = new Date(test.setDate(sun + i + 1));
     }
@@ -182,16 +169,27 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     let isBooked = false;
     let isPending = false;
     let isPassed = false;
-    let isOverSlot = false;
     return (
       <tr key={slot.id}>
-        <td>{slot.name}</td>
+        <td style={{ padding: '2px 10px' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            {slot.name}
+            <div style={{ display: 'flex', fontSize: 10 }}>
+              {slot.timeStart.slice(0, 5)} -{slot.timeEnd.slice(0, 5)}
+            </div>
+          </div>
+        </td>
         {days
           ? days.map((day, index) => {
               isBooked = false;
               isPending = false;
               isPassed = false;
-              isOverSlot = false;
               return (
                 <td key={indexSlot + '' + index}>
                   {listRequest?.length > 0
@@ -211,15 +209,6 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
                               : (isPending = true)
                             : null;
                         }
-
-                        if (
-                          day.getDay() ===
-                          curr.getDate() - curr.getDay() + 6
-                        ) {
-                          if (indexSlot > 2) {
-                            isOverSlot = true;
-                          }
-                        }
                         // if (
                         //   slotInThisDayBeBooked === day &&
                         //   slotBeBooked !== slot.id
@@ -230,23 +219,17 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
                     : day < curr.setHours(0, 0, 0, 0)
                     ? (isPassed = true)
                     : null}
-                  {!isOverSlot ? (
-                    !isPassed ? (
-                      isPending ? (
-                        <div className={classes.slotPending}>
-                          {day.getDate()}
-                        </div>
-                      ) : isBooked ? (
-                        <div className={classes.slotBooked}>
-                          {day.getDate()}
-                        </div>
-                      ) : (
-                        <div className={classes.slotFree}>{day.getDate()}</div>
-                      )
+                  {!isPassed ? (
+                    isPending ? (
+                      <div className={classes.slotPending}></div>
+                    ) : isBooked ? (
+                      <div className={classes.slotBooked}></div>
                     ) : (
-                      <div className={classes.dayPassed}>{day.getDate()}</div>
+                      <div className={classes.slotFree}></div>
                     )
-                  ) : null}
+                  ) : (
+                    <div className={classes.dayPassed}></div>
+                  )}
                 </td>
               );
             })
@@ -256,179 +239,197 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   });
 
   return (
-    <div>
-      <div className={classes.divInfor}>
-        <div className={classes.divHeader}>
-          <h3 style={{ margin: 0 }}>Choose time to book</h3>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Button
-            onClick={() => toLastWeek()}
-            color="orange"
-            size="xs"
-            variant="subtle"
-            disabled={
-              dayShowShecule.setHours(0, 0, 0, 0) == curr.setHours(0, 0, 0, 0)
-                ? true
-                : false
-            }
-          >
-            <ChevronLeft />
-          </Button>
-          {days ? (
-            <h4
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                margin: '0',
-                justifyContent: 'center',
-                width: 100,
-              }}
+    <div style={{ display: 'flex' }}>
+      <div>
+        <div className={classes.divInfor}>
+          <div className={classes.divHeader}>
+            <h3 style={{ margin: 0 }}>Choose time to book</h3>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button
+              onClick={() => toLastWeek()}
+              color="orange"
+              size="xs"
+              variant="subtle"
+              disabled={
+                dayShowShecule.setHours(0, 0, 0, 0) == curr.setHours(0, 0, 0, 0)
+                  ? true
+                  : false
+              }
             >
-              {days[0].getDate() +
-                '/' +
-                (days[0].getMonth() + 1) +
-                '  -  ' +
-                days[5].getDate() +
-                '/' +
-                (days[5].getMonth() + 1)}
-            </h4>
-          ) : null}
-          <Button
-            onClick={() => toNextWeek()}
-            color="orange"
-            size="xs"
-            variant="subtle"
-            disabled={
-              dayShowShecule.setHours(0, 0, 0, 0) ==
-              new Date(curr.getTime() + 2 * 7 * 24 * 60 * 60 * 1000).setHours(
-                0,
-                0,
-                0,
-                0
-              )
-                ? true
-                : false
-            }
+              <ChevronLeft />
+            </Button>
+            {days ? (
+              <h4
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  margin: '0',
+                  justifyContent: 'center',
+                  width: 100,
+                }}
+              >
+                {days[0].getDate() +
+                  '/' +
+                  (days[0].getMonth() + 1) +
+                  '  -  ' +
+                  days[6].getDate() +
+                  '/' +
+                  (days[6].getMonth() + 1)}
+              </h4>
+            ) : null}
+            <Button
+              onClick={() => toNextWeek()}
+              color="orange"
+              size="xs"
+              variant="subtle"
+              disabled={
+                dayShowShecule.setHours(0, 0, 0, 0) ==
+                new Date(curr.getTime() + 2 * 7 * 24 * 60 * 60 * 1000).setHours(
+                  0,
+                  0,
+                  0,
+                  0
+                )
+                  ? true
+                  : false
+              }
+            >
+              <ChevronRight />
+            </Button>
+          </div>
+          <Table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>
+                  <div className={classes.thDiv}>Mon</div>
+                </th>
+                <th>
+                  <div className={classes.thDiv}>Tue</div>
+                </th>
+                <th>
+                  <div className={classes.thDiv}>Wed</div>
+                </th>
+                <th>
+                  <div className={classes.thDiv}>Thu</div>
+                </th>
+                <th>
+                  <div className={classes.thDiv}>Fri</div>
+                </th>
+                <th>
+                  <div className={classes.thDiv}>Sat</div>
+                </th>
+                <th>
+                  <div className={classes.thDiv}>Sun</div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>{rows}</tbody>
+          </Table>
+        </div>
+        <div style={{ display: 'flex' }}>
+          <div
+            style={{ display: 'flex', alignItems: 'center', marginRight: 30 }}
           >
-            <ChevronRight />
-          </Button>
-        </div>
-        <Table>
-          <thead>
-            <tr>
-              <th></th>
-              {/* <th className={classes.thDiv}>CN</th> */}
-              <th>
-                <div className={classes.thDiv}>Mon</div>
-              </th>
-              <th>
-                <div className={classes.thDiv}>Tue</div>
-              </th>
-              <th>
-                <div className={classes.thDiv}>Wed</div>
-              </th>
-              <th>
-                <div className={classes.thDiv}>Thu</div>
-              </th>
-              <th>
-                <div className={classes.thDiv}>Fri</div>
-              </th>
-              <th>
-                <div className={classes.thDiv}>Sat</div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </div>
-      <div style={{ display: 'flex' }}>
-        <div style={{ display: 'flex', alignItems: 'center', marginRight: 30 }}>
-          <div className={classes.noteSlotBooked}>.</div>
-          <p>Slot was booked</p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', marginRight: 30 }}>
-          <div className={classes.noteSlotPending}>.</div>
-          <p>Slot have request pending</p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', marginRight: 30 }}>
-          <div className={classes.noteSlotFree}>.</div>
-          <p>Slot free</p>
+            <div className={classes.noteSlotBooked}>.</div>
+            <p>Slot was booked</p>
+          </div>
+          <div
+            style={{ display: 'flex', alignItems: 'center', marginRight: 30 }}
+          >
+            <div className={classes.noteSlotPending}>.</div>
+            <p>Slot have request pending</p>
+          </div>
+          <div
+            style={{ display: 'flex', alignItems: 'center', marginRight: 30 }}
+          >
+            <div className={classes.noteSlotFree}>.</div>
+            <p>Slot free</p>
+          </div>
         </div>
       </div>
       <div
         style={{
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'center',
-          marginBottom: 20,
+          paddingLeft: 20,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
         }}
       >
-        <DatePicker
-          id="checkinDate"
-          style={{ width: '200px', marginRight: 20, marginTop: 10 }}
-          label="Book date"
-          placeholder="Select date"
-          radius="md"
-          required
-          inputFormat="DD/MM/YYYY"
-          value={props.formik.values.checkinDate}
-          minDate={dayjs(new Date()).toDate()}
-          maxDate={dayjs(new Date()).add(3, 'weeks').toDate()}
-          // onChange={(date) => setbookDate(date)}
-          onChange={(date) => {
-            props.formik.setFieldValue('checkinDate', date);
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: 20,
           }}
-          excludeDate={(date) => date.getDay() === 0 || date.getDay() === 7}
-        />
-
-        <Select
-          id="checkinSlot"
-          style={{ marginRight: 20, width: '140px' }}
-          label="From slot"
-          required
-          transition="pop-top-left"
-          transitionDuration={80}
-          transitionTimingFunction="ease"
-          dropdownPosition="top"
-          radius="md"
-          data={slotNames || []}
-          onChange={props.formik.handleChange('checkinSlot')}
-          value={props.formik.values.checkinSlot}
-        />
-        <ChevronsRight
-          size={28}
-          strokeWidth={2}
-          color={'black'}
-          style={{ marginRight: 20 }}
-        />
-        <Select
-          id="checkoutSlot"
-          style={{ width: '140px' }}
-          label="To slot"
-          required
-          transition="pop-top-left"
-          transitionDuration={80}
-          transitionTimingFunction="ease"
-          dropdownPosition="top"
-          radius="md"
-          data={slotNames || []}
-          onChange={props.formik.handleChange('checkoutSlot')}
-          value={props.formik.values.checkoutSlot}
-        />
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button
-          onClick={() => props.handleBackChooseRoom()}
-          // leftIcon={<Pencil />}
-          color="green"
         >
-          Back
-        </Button>
+          <DatePicker
+            id="checkinDate"
+            style={{ width: '200px', paddingBottom: 20 }}
+            label="Book date"
+            placeholder="Select date"
+            radius="md"
+            required
+            inputFormat="DD/MM/YYYY"
+            value={props.formik.values.checkinDate}
+            minDate={dayjs(new Date()).toDate()}
+            maxDate={dayjs(new Date())
+              .startOf('weeks')
+              .add(21, 'days')
+              .toDate()}
+            // onChange={(date) => setbookDate(date)}
+            onChange={(date) => {
+              props.formik.setFieldValue('checkinDate', date);
+            }}
+            // excludeDate={(date) => date.getDay() === 0 || date.getDay() === 7}
+          />
 
-        <Button onClick={() => handleNextStep()} color="green">
-          Next
-        </Button>
+          <Select
+            id="checkinSlot"
+            style={{ width: '140px', paddingBottom: 10 }}
+            label="From slot"
+            required
+            transition="pop-top-left"
+            transitionDuration={80}
+            transitionTimingFunction="ease"
+            dropdownPosition="top"
+            radius="md"
+            data={slotNames || []}
+            onChange={props.formik.handleChange('checkinSlot')}
+            value={props.formik.values.checkinSlot}
+          />
+          <ChevronsDown size={28} strokeWidth={2} color={'black'} />
+          <Select
+            id="checkoutSlot"
+            style={{ width: '140px' }}
+            label="To slot"
+            required
+            transition="pop-top-left"
+            transitionDuration={80}
+            transitionTimingFunction="ease"
+            dropdownPosition="top"
+            radius="md"
+            data={slotNames || []}
+            onChange={props.formik.handleChange('checkoutSlot')}
+            value={props.formik.values.checkoutSlot}
+          />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Button
+            onClick={() => props.handleBackChooseRoom()}
+            // leftIcon={<Pencil />}
+            color="green"
+          >
+            Back
+          </Button>
+
+          <Button onClick={() => handleNextStep()} color="green">
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -440,7 +441,7 @@ const useStyles = createStyles({
     paddingBottom: 10,
     borderRadius: 10,
     marginBottom: 10,
-    height: 400,
+    // height: 400,
   },
   divHeader: {
     display: 'flex',

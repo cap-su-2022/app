@@ -22,7 +22,7 @@ function NotificationManagement(props: any) {
 
   const NotificationDiv: React.FC = () => {
     return (
-      <ScrollArea style={{ height: 450, borderRadius: 5 }}>
+      <ScrollArea style={{ height: '60vh', borderRadius: 5 }}>
         {notifications?.length > 0
           ? notifications.map((notification) => (
               <div
