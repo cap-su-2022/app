@@ -114,7 +114,7 @@ function LayoutSidebar() {
         {links}
       </Navbar.Section>
 
-      <Navbar.Section className={classes.footer}>
+      {/* <Navbar.Section className={classes.footer}>
         <a
           href="apps/frontend/components/layout/NavBar#"
           className={classes.link}
@@ -150,7 +150,7 @@ function LayoutSidebar() {
             />
           ) : null}
         </>
-      </Navbar.Section>
+      </Navbar.Section> */}
     </Navbar>
   );
 }

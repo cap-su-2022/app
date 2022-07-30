@@ -254,17 +254,14 @@ export class AccountsService {
       if (accountId === id) {
         throw new BadRequestException('Cannot delete your own account');
       }
+
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
         throw new BadRequestException(
           'Account does not found with the provided id'
         );
       }
-
-      if (accountId === id) {
-        throw new BadRequestException("You can't delete yourself");
-      }
-
+      
       const userDelete = await this.repository.getRoleOfAccount(accountId);
       const userBeDeleted = await this.repository.getRoleOfAccount(id);
 

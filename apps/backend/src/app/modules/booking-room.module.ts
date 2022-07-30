@@ -19,12 +19,12 @@ import { NotificationModule } from './notification.module';
 
 @Module({
   imports: [
-    DevicesModule,
     RoomWishlistModule,
     KeycloakModule,
     AccountsModule,
     NotificationModule,
     forwardRef(() => RoomTypeModule),
+    forwardRef(() => DevicesModule),
     forwardRef(() => RoomsModule),
     forwardRef(() => SlotModule),
 

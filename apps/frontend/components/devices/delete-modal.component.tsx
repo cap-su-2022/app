@@ -36,43 +36,32 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const handleDeleteDevice = () => {
-    if (listRequest.length > 0) {
-      showNotification({
-        id: 'delete-data',
-        color: 'red',
-        title: 'Error while delete device',
-        message: 'Chưa xử lý vụ delete device đã có người book',
-        icon: <X />,
-        autoClose: 3000,
+    dispatch(deleteDeviceById(selectedDeviceId))
+      .catch((e) =>
+        showNotification({
+          id: 'delete-data',
+          color: 'red',
+          title: 'Error while delete device',
+          message: e.message ?? 'Failed to delete device',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'delete-data',
+          color: 'teal',
+          title: 'Device was deleted',
+          message: 'Device was successfully deleted',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .then(() => {
+        props.toggleShown();
+        dispatch(fetchDevices(props.pagination));
+        dispatch(fetchDeletedDevices(''));
       });
-    } else {
-      dispatch(deleteDeviceById(selectedDeviceId))
-        .catch((e) =>
-          showNotification({
-            id: 'delete-data',
-            color: 'red',
-            title: 'Error while delete device',
-            message: e.message ?? 'Failed to delete device',
-            icon: <X />,
-            autoClose: 3000,
-          })
-        )
-        .then(() =>
-          showNotification({
-            id: 'delete-data',
-            color: 'teal',
-            title: 'Device was deleted',
-            message: 'Device was successfully deleted',
-            icon: <Check />,
-            autoClose: 3000,
-          })
-        )
-        .then(() => {
-          props.toggleShown();
-          dispatch(fetchDevices(props.pagination));
-          dispatch(fetchDeletedDevices(''));
-        });
-    }
   };
 
   useEffect(() => {
@@ -94,17 +83,23 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
       listRequest && listRequest.length > 0
         ? listRequest.map((row, index) => (
             <tr key={row.id}>
-              <td>{index + 1}</td>
               <td>{row.roomName}</td>
               <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
               <td>{row.requestedBy}</td>
               <td>{row.checkinSlot}</td>
               <td>{row.checkoutSlot}</td>
+              <td>
+                {row.status === 'PENDING' ? (
+                  <div className={classes.pendingDisplay}>{row.status}</div>
+                ) : row.status === 'BOOKED' ? (
+                  <div className={classes.bookedDisplay}>{row.status}</div>
+                ) : null}
+              </td>
             </tr>
           ))
         : null;
     return listRequest && listRequest.length > 0 ? (
-      <ScrollArea sx={{ height: 200 }}>
+      <ScrollArea sx={{ height: 340 }}>
         <Table
           horizontalSpacing="md"
           verticalSpacing="xs"
@@ -114,17 +109,6 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
             className={cx(classes.header, { [classes.scrolled]: scrolled })}
           >
             <tr>
-              <Th
-                style={{
-                  width: '60px',
-                }}
-                sorted={null}
-                reversed={null}
-                onSort={null}
-              >
-                STT
-              </Th>
-
               <Th sorted={null} reversed={null} onSort={null}>
                 Name
               </Th>
@@ -140,6 +124,9 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
                 Slot End
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Status
               </Th>
             </tr>
           </thead>
@@ -234,6 +221,22 @@ const useStyles = createStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
+  },
+  pendingDisplay: {
+    color: '#228be6',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#0000ff1c',
+    fontWeight: 600,
+  },
+  bookedDisplay: {
+    color: '#40c057',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#00800024',
+    fontWeight: 600,
   },
   actionButtonContainer: {
     display: 'flex',

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { DeviceTypeRepository } from '../repositories/device-type.repository';
 import { PaginationParams } from '../controllers/pagination.model';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
@@ -12,7 +12,7 @@ export class DeviceTypeService {
   constructor(
     private readonly repository: DeviceTypeRepository,
     private readonly deviceService: DevicesService,
-    private readonly histService: DeviceTypeHistService
+    private readonly histService: DeviceTypeHistService,
   ) {}
   async getAllDeviceTypes(param: PaginationParams) {
     try {
@@ -104,6 +104,7 @@ export class DeviceTypeService {
           'Device type does not found with the provided id'
         );
       }
+
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException(

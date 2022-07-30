@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { DevicesRepository } from '../repositories/devices.repository';
 import { DevicesResponsePayload } from '../payload/response/devices.payload';
 import { AddDeviceRequest, UpdateDeviceRequest } from '@app/models';
@@ -9,14 +15,19 @@ import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.
 import { DeviceHistService } from './devices-hist.service';
 import { DevicesPaginationParams } from '../controllers/devices-pagination.model';
 import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
+import { BookingRoomService } from './booking-room.service';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class DevicesService {
   private readonly logger = new Logger(DevicesService.name);
 
   constructor(
+    private readonly dataSource: DataSource,
     private readonly repository: DevicesRepository,
-    private readonly histService: DeviceHistService
+    private readonly histService: DeviceHistService,
+    @Inject(forwardRef(() => BookingRoomService))
+    private readonly bookingRoomService: BookingRoomService
   ) {}
 
   async getAll(request: DevicesPaginationParams) {
@@ -82,19 +93,26 @@ export class DevicesService {
   }
 
   async add(payload: AddDeviceRequest, userId: string): Promise<Devices> {
-    const isExisted = await this.repository.isExistedByName(payload.name);
-    if (isExisted) {
-      throw new BadRequestException('Device name is duplicated!');
-    }
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
+      const isExisted = await this.repository.isExistedByName(payload.name);
+      if (isExisted) {
+        throw new BadRequestException('Device name is duplicated!');
+      }
       const deviceAdded = await this.repository.createNewDevice(
         payload,
         userId
       );
-      await this.histService.createNew(deviceAdded);
+      await this.histService.createNew(deviceAdded, queryRunner);
+
+      await queryRunner.commitTransaction();
       return deviceAdded;
     } catch (e) {
       this.logger.error(e.message);
+      await queryRunner.rollbackTransaction();
       if (
         e.message.includes('constraint') &&
         e.message.includes('devices_device_type_id_fk')
@@ -112,28 +130,35 @@ export class DevicesService {
   // }
 
   async updateById(accountId: string, id: string, body: DataAddRequestPayload) {
-    const isExisted = await this.repository.existsById(id);
-    if (!isExisted) {
-      throw new BadRequestException(
-        'Device does not found with the provided id'
-      );
-    }
-    const data = await this.repository.findById(id);
-    if (data === undefined) {
-      throw new BadRequestException(
-        'This device is already deleted or disabled'
-      );
-    }
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Device does not found with the provided id'
+        );
+      }
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException(
+          'This device is already deleted or disabled'
+        );
+      }
       const deviceUpdated = await this.repository.updateById(
         accountId,
         id,
         body
       );
-      await this.histService.createNew(deviceUpdated);
+      await this.histService.createNew(deviceUpdated, queryRunner);
+
+      await queryRunner.commitTransaction();
       return deviceUpdated;
     } catch (e) {
       this.logger.error(e);
+      await queryRunner.rollbackTransaction();
       if (
         e.message.includes('constraint') &&
         e.message.includes('devices_device_type_id_fk')
@@ -147,6 +172,10 @@ export class DevicesService {
   }
 
   async disableById(accountId: string, id: string) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -160,13 +189,17 @@ export class DevicesService {
       }
       const isDeleted = await this.repository.checkIfDeviceIsDeletedById(id);
       if (isDeleted) {
-        throw new BadRequestException('This device is already deleted, can not disable');
+        throw new BadRequestException(
+          'This device is already deleted, can not disable'
+        );
       }
       const device = await this.repository.disableById(accountId, id);
-      await this.histService.createNew(device);
+      await this.histService.createNew(device, queryRunner);
+      await queryRunner.commitTransaction();
       return device;
     } catch (e) {
       this.logger.error(e.message);
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
     }
   }
@@ -181,6 +214,10 @@ export class DevicesService {
   }
 
   async handleRestoreDisabledDeviceById(accountId: string, id: string) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -198,16 +235,27 @@ export class DevicesService {
           'This device ID is now active. Cannot restore it'
         );
       }
-      const device = await this.repository.restoreDisabledDeviceById(accountId, id);
-      await this.histService.createNew(device);
+      const device = await this.repository.restoreDisabledDeviceById(
+        accountId,
+        id
+      );
+      await this.histService.createNew(device, queryRunner);
+
+      await queryRunner.commitTransaction();
       return device;
     } catch (e) {
       this.logger.error(e.message);
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
     }
   }
 
   async deleteById(accountId: string, id: string) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -215,15 +263,44 @@ export class DevicesService {
           'Device does not found with the provided id'
         );
       }
+
+      const device = await this.repository.findById(id);
+
+      const listRequestUseDevice =
+        await this.bookingRoomService.getRequestByDeviceId(id);
+
+      for (let i = 0; i < listRequestUseDevice.length; i++) {
+        if (listRequestUseDevice[i].status === 'BOOKED') {
+          throw new BadRequestException(
+            'There are already request in BOOKED state using this device. You cannot delete it.'
+          );
+        } else {
+          const reason = `your request using device ${device.name} but it has been erased. So your request was auto rejected`;
+          this.bookingRoomService.reject(
+            accountId,
+            listRequestUseDevice[i].id,
+            reason,
+            queryRunner
+          );
+        }
+      }
+
       const isDeleted = await this.repository.checkIfDeviceIsDeletedById(id);
       if (isDeleted) {
         throw new BadRequestException('This device is already deleted');
       }
-      const device = await this.repository.deleteById(accountId, id);
-      await this.histService.createNew(device);
-      return device;
+      const deviceDeleted = await this.repository.deleteById(
+        accountId,
+        id,
+        queryRunner
+      );
+      await this.histService.createNew(deviceDeleted, queryRunner);
+
+      await queryRunner.commitTransaction();
+      return deviceDeleted;
     } catch (e) {
       this.logger.error(e.message);
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
     }
   }
@@ -238,6 +315,11 @@ export class DevicesService {
   }
 
   async handleRestoreDeletedDeviceById(id: string) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -257,10 +339,13 @@ export class DevicesService {
       }
 
       const device = await this.repository.restoreDeletedDeviceById(id);
-      await this.histService.createNew(device);
+      await this.histService.createNew(device, queryRunner);
+
+      await queryRunner.commitTransaction();
       return device;
     } catch (e) {
       this.logger.error(e.message);
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
     }
   }
