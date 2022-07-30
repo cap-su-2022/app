@@ -78,7 +78,7 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
   };
 
   return (
-    <div>
+    <div style={{maxWidth: '90vh'}}>
       <div className={classes.divInfor}>
         <div className={classes.divHeader}>
           <h3 style={{ margin: 0 }}>Choose room to book</h3>
@@ -113,6 +113,7 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
                       backgroundColor: FPT_ORANGE_COLOR,
                       borderRadius: '5px 5px 0 0',
                       minHeight: 35,
+                      color: "#fff"
                     }}
                   >
                     <b>{room.name}</b>
@@ -165,7 +166,7 @@ const useStyles = createStyles({
     marginTop: '20px',
   },
   roomDiv: {
-    border: '1px solid',
+    border: '1px solid #fff',
     height: '100px',
     width: '40%',
     margin: '5%',
@@ -173,14 +174,14 @@ const useStyles = createStyles({
     cursor: 'pointer',
   },
   roomChoosedDiv: {
-    border: '1px solid',
+    border: '1px solid #fff',
     height: '100px',
     width: '40%',
     margin: '5%',
     borderRadius: 5,
     cursor: 'pointer',
     boxShadow:
-      'rgb(85, 91, 255) 0px 0px 0px 3px, rgb(31, 193, 27) 0px 0px 0px 6px, rgb(255, 217, 19) 0px 0px 0px 9px, rgb(255, 156, 85) 0px 0px 0px 12px, rgb(255, 85, 85) 0px 0px 0px 15px',
+      'rgba(255 127 22 / 35%) 0px 5px 15px',
   },
 });
 

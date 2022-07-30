@@ -14,6 +14,8 @@ interface RequestInfoModalProps {
   toggleCancelModalShown(): void;
   toggleRejectModalShown(): void;
   toggleAcceptModalShown(): void;
+  toggleCheckinModalShown(): void;
+  toggleCheckoutModalShown(): void;
 }
 
 const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
@@ -85,6 +87,8 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
           toggleCancelModalShown={props.toggleCancelModalShown}
           toggleRejectModalShown={props.toggleRejectModalShown}
           toggleAcceptModalShown={props.toggleAcceptModalShown}
+          toggleCheckinModalShown={props.toggleCheckinModalShown}
+          toggleCheckoutModalShown={props.toggleCheckoutModalShown}
         />
       </Modal>
     </>
@@ -127,7 +131,7 @@ const useStyles = createStyles({
     color: '#fd7e14',
     textAlign: 'center',
     borderRadius: 50,
-    width: 100,
+    width: 130,
     backgroundColor: '#fd7e1442',
     fontWeight: 600,
   },

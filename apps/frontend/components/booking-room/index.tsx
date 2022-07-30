@@ -25,6 +25,8 @@ import RequestInfoModal from '../../components/booking-room/info-modal.component
 import SendBookingModal from './option-booking-modal.component';
 import AcceptRequestModal from './accept-request-modal.component';
 import RejectRequestModal from './reject-request.component';
+import CheckinRequestModal from './checkin-request.component';
+import CheckoutRequestModal from './checkout-request.component';
 
 const defaultPagination = {
   limit: 5,
@@ -45,6 +47,8 @@ const BookingRoom = () => {
   const [isCancelShown, setCancelShown] = useState<boolean>(false);
   const [isRejectShown, setRejectShown] = useState<boolean>(false);
   const [isAcceptShown, setAcceptShown] = useState<boolean>(false);
+  const [isCheckinShown, setCheckinShown] = useState<boolean>(false);
+  const [isCheckoutShown, setCheckoutShown] = useState<boolean>(false);
   //   const roomBooking = useAppSelector((state) => state.roomBooking.roomBooking);
 
   const roomBookingList = useAppSelector(
@@ -233,6 +237,8 @@ const BookingRoom = () => {
             toggleCancelModalShown={() => setCancelShown(!isCancelShown)}
             toggleRejectModalShown={() => setRejectShown(!isRejectShown)}
             toggleAcceptModalShown={() => setAcceptShown(!isAcceptShown)}
+            toggleCheckinModalShown={() => setCheckinShown(!isCheckinShown)}
+            toggleCheckoutModalShown={() => setCheckoutShown(!isCheckoutShown)}
           />
           <RejectRequestModal
             isShown={isRejectShown}
@@ -249,6 +255,18 @@ const BookingRoom = () => {
           <AcceptRequestModal
             isShown={isAcceptShown}
             toggleShown={() => setAcceptShown(!isAcceptShown)}
+            toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+            pagination={pagination}
+          />
+          <CheckinRequestModal
+            isShown={isCheckinShown}
+            toggleShown={() => setCheckinShown(!isCheckinShown)}
+            toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+            pagination={pagination}
+          />
+          <CheckoutRequestModal
+            isShown={isCheckoutShown}
+            toggleShown={() => setCheckoutShown(!isCheckoutShown)}
             toggleInforModalShown={() => setInfoShown(!isInfoShown)}
             pagination={pagination}
           />

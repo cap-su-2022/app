@@ -188,12 +188,12 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
       <Modal
         title={<ModalHeaderTitle />}
         closeOnClickOutside={false}
-        size="lg"
+        size="auto"
         centered
         opened={props.isShown}
         onClose={() => props.toggleShown()}
       >
-        <div>
+        <div style={{minWidth: 600}}>
           <Dropdown />
         </div>
       </Modal>

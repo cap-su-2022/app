@@ -10,9 +10,11 @@ import {
   Archive,
   Check,
   ChevronsRight,
+  CircleCheck,
   ClipboardText,
   Devices,
   Id,
+  X,
 } from 'tabler-icons-react';
 import { useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
@@ -37,6 +39,8 @@ interface RequestInfoComponentProps {
   toggleCancelModalShown(): void;
   toggleRejectModalShown(): void;
   toggleAcceptModalShown(): void;
+  toggleCheckinModalShown(): void;
+  toggleCheckoutModalShown(): void;
 }
 
 const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
@@ -106,7 +110,6 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
             </InputWrapper>
           </div>
 
-          
           <div style={{ display: 'flex' }}>
             <InputWrapper label="Request at" className={classes.inputWrapper}>
               <TextInput
@@ -213,7 +216,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               onClick={() => props.toggleCancelModalShown()}
               variant="outline"
               color={'red'}
-              leftIcon={<Archive />}
+              leftIcon={<X />}
             >
               Cancel request
             </Button>
@@ -224,9 +227,28 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               onClick={() => props.toggleRejectModalShown()}
               variant="outline"
               color={'red'}
-              leftIcon={<Archive />}
+              leftIcon={<X />}
             >
               Reject request
+            </Button>
+          ) : requestBooking.status === 'CHECKED_IN' && userInfo.role !== 'Staff' ? (
+            <Button
+              onClick={() => props.toggleCheckoutModalShown()}
+              variant="outline"
+              color={'green'}
+              leftIcon={<CircleCheck />}
+            >
+              Check out
+            </Button>
+          ) : requestBooking.status === 'BOOKED' &&
+            userInfo.role !== 'Staff' ? (
+            <Button
+              onClick={() => props.toggleCheckinModalShown()}
+              variant="outline"
+              color={'green'}
+              leftIcon={<CircleCheck />}
+            >
+              Check in
             </Button>
           ) : (
             <div></div>
@@ -240,9 +262,19 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
             >
               Accept request
             </Button>
-          ) : (
-            <div></div>
-          )}
+          ) : null}
+
+          {requestBooking.status === 'BOOKED' &&
+            userInfo.role !== 'Staff' ? (
+            <Button
+              onClick={() => props.toggleCheckinModalShown()}
+              variant="outline"
+              color={'green'}
+              leftIcon={<CircleCheck />}
+            >
+              Check in
+            </Button>
+          ) : null}
           {requestBooking.listDevice && requestBooking.listDevice.length > 0 && (
             <Button onClick={reveal} leftIcon={<Devices />}>
               Devices

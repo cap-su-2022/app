@@ -603,7 +603,11 @@ export class BookingRoomService {
         );
       }
 
-      if (payload.bookedFor && payload.bookedFor !== userId && role.role_name === 'Staff') {
+      if (
+        payload.bookedFor &&
+        payload.bookedFor !== userId &&
+        role.role_name === 'Staff'
+      ) {
         throw new BadRequestException(
           'You are not authorized to make a booking for other users!'
         );
@@ -645,19 +649,19 @@ export class BookingRoomService {
       if (role.role_name === 'Librarian' || role.role_name === 'System Admin') {
         status = 'BOOKED';
       }
-      if (role.role_name === 'Staff') {
-        const countRequestInWeek = Number(
-          await this.repository.getCountRequestInWeekOfUser(
-            userId,
-            payload.checkinDate
-          )
-        );
-        if (countRequestInWeek >= 3) {
-          throw new BadRequestException(
-            'You have run out of bookings for this week'
-          );
-        }
-      }
+      // if (role.role_name === 'Staff') {
+      //   const countRequestInWeek = Number(
+      //     await this.repository.getCountRequestInWeekOfUser(
+      //       userId,
+      //       payload.checkinDate
+      //     )
+      //   );
+      //   if (countRequestInWeek >= 3) {
+      //     throw new BadRequestException(
+      //       'You have run out of bookings for this week'
+      //     );
+      //   }
+      // }
       if (listRequestPeningAndBookedInDay.length > 0) {
         listRequestPeningAndBookedInDay.map(async (request) => {
           for (let j = request.slotIn; j <= request.slotOut; j++) {
@@ -1002,7 +1006,7 @@ export class BookingRoomService {
       queryRunner
     );
 
-    return requestRejected
+    return requestRejected;
   }
 
   async rejectById(accountId: string, id: string, reason: string) {
