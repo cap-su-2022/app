@@ -374,6 +374,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+
   },
   switchIconContainer: {
     height: 35,
@@ -406,7 +407,7 @@ const slotFilterContainer: PickerStyle = {
   },
   inputAndroid: {
     color: GRAY,
-    marginLeft: 10,
+    marginLeft: -10,
     fontWeight: '500',
     fontSize: deviceWidth / 32,
   },

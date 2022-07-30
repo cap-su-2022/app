@@ -37,6 +37,8 @@ const ChooseSlotHeader: React.FC<ChooseSlotHeaderProps> = (props) => {
             <LibraryIcon color={GRAY} size={deviceWidth / 10} />
           </View>
           <RNPickerSelect
+            fixAndroidTouchableBug={true}
+            useNativeAndroidPickerStyle={false}
             style={pickerStyle}
             value={props.filteredRoomId}
             onValueChange={(e) => props.handleSetFilterRoomId(e)}
@@ -83,25 +85,27 @@ const ChooseSlotHeader: React.FC<ChooseSlotHeaderProps> = (props) => {
 };
 
 const pickerStyle: PickerStyle = {
-  viewContainer: {
-    width: deviceWidth / 1.4,
-    backgroundColor: '#f2f2f2',
-    alignSelf: 'center',
-    borderTopRightRadius: 8,
+  inputAndroidContainer: {
+    width: deviceWidth / 1.75,
+    backgroundColor: LIGHT_GRAY,
     borderBottomRightRadius: 8,
-    height: 50,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderTopRightRadius: 8,
+  },
+  inputAndroid: {
+    fontSize: deviceWidth / 25,
+    fontWeight: '600',
+    color: GRAY,
+    alignSelf: 'center',
   },
   inputIOS: {
-    color: BLACK,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignSelf: 'center',
+    fontSize: deviceWidth / 25,
+    fontWeight: '600',
+    color: GRAY,
   },
 
   placeholder: {
-    color: GRAY,
+    color: BLACK,
     alignSelf: 'center',
     fontWeight: '500',
     fontSize: deviceWidth / 19,
