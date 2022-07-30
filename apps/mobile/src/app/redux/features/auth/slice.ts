@@ -15,7 +15,11 @@ const initialState: AuthState = {
 const authSlice = createSlice({
   name: 'auth',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    addUserAfterCloseApp(state, { payload }) {
+      state.authUser = payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(doLogin.fulfilled, (state, { payload }) => {
       state.authUser = payload;
@@ -30,3 +34,7 @@ const authSlice = createSlice({
 });
 
 export const authReducer = authSlice.reducer;
+
+export const {
+  addUserAfterCloseApp
+} = authSlice.actions
