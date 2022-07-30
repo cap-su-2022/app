@@ -31,20 +31,16 @@ const SlotSelect: React.FC<SelectSlotsProps> = (props) => {
     let slotEndSelections = [];
     let slotStartSelections = [];
 
-    if (props.isChecked) {
-      slotEndSelections = props.slotSelections.filter(
-        (slot) => slot.slotNum > slotStartNum.slotNum
-      );
-      slotStartSelections = props.slotSelections.filter(
-        (slot) => slot.slotNum < slotEndNum.slotNum
-      );
-    } else {
+
+    if (typeof slotEndNum !== "undefined" && typeof slotStartNum !== "undefined") {
       slotEndSelections = props.slotSelections.filter(
         (slot) => slot.slotNum >= slotStartNum.slotNum
       );
       slotStartSelections = props.slotSelections.filter(
         (slot) => slot.slotNum <= slotEndNum.slotNum
       );
+    } else {
+      slotStartSelections = props.slotSelections
     }
 
     setSlotStartSelections(slotStartSelections);
