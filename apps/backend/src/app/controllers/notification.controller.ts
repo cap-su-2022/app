@@ -3,11 +3,13 @@ import { Controller, Get, HttpStatus, Param, Query } from '@nestjs/common';
 import { NotificationService } from '../services';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import { User } from '../decorators/keycloak-user.decorator';
 import { Notification } from '../models';
 
 @Controller('/v1/notifications')
+@ApiBearerAuth()
+@ApiTags('Notification')
 export class NotificationController {
 
   constructor(private readonly service: NotificationService) {}

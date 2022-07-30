@@ -21,20 +21,7 @@ import ChangePassword from './change-password.component';
 import { useTransition, animated } from 'react-spring';
 // interface UserInfoPreferneceProps {}
 
-interface UserInfoModel {
-  avatar: string;
-  fullname: string;
-  role: string;
-  phone: string;
-  email: string;
-  username: string;
-  id: string;
-  googleId: string;
-  keycloakId: string;
-  effdate: string;
-  description: string;
-  img: File;
-}
+
 const data = [
   { link: '', label: 'Profile', icon: User },
   { link: '', label: 'Authentication', icon: Key },
@@ -69,6 +56,8 @@ const UserInfoPreference: React.FC = () => {
     const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
     return new Date(string).toLocaleDateString(undefined, options as unknown);
   }
+
+
 
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));

@@ -126,7 +126,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
     if (
       formik.initialValues.fullname === formik.values.fullname &&
       formik.initialValues.description === formik.values.description &&
-      formik.initialValues.roleId === formik.values.roleId && 
+      formik.initialValues.roleId === formik.values.roleId &&
       formik.initialValues.phone === formik.values.phone
     ) {
       setUpdateDisabled(true);
@@ -259,7 +259,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
             <div className={classes.modalFooter}>
               <Button
                 color="green"
-                disabled={isUpdateDisabled}
+                // disabled={isUpdateDisabled}
                 onClick={() => formik.submitForm()}
                 leftIcon={<Pencil />}
               >

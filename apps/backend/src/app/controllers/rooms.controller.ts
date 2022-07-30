@@ -12,35 +12,41 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { RoomsService } from '../services';
-import { RoomsValidation } from '../pipes/validation/rooms.validation';
-import { Rooms } from '../models';
+import {RoomsService} from '../services';
+import {RoomsValidation} from '../pipes/validation/rooms.validation';
+import {Rooms} from '../models';
 import {
-  ApiBearerAuth,
-  ApiOperation,
+  ApiBearerAuth, ApiBody,
+  ApiOperation, ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import { AddRoomValidation } from '../pipes/validation/add-room.validation';
-import { User } from '../decorators/keycloak-user.decorator';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { RoomsPaginationParams } from './rooms-pagination.model';
-import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
+import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
+import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum/roles.enum';
+import {AddRoomValidation} from '../pipes/validation/add-room.validation';
+import {User} from '../decorators/keycloak-user.decorator';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {RoomsPaginationParams} from './rooms-pagination.model';
+import {DataAddRequestPayload} from '../payload/request/data-add.request.payload';
 
 @Controller('/v1/rooms')
 @ApiBearerAuth()
 @ApiTags('Rooms')
 @UseInterceptors(new PathLoggerInterceptor(RoomsController.name))
 export class RoomsController {
-  constructor(private readonly service: RoomsService) {}
+  constructor(private readonly service: RoomsService) {
+  }
 
   @Get()
   @UsePipes(new RoomsValidation())
   @HttpCode(HttpStatus.OK)
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get the list of active rooms',
+    description:
+      'Get the list of active rooms with the provided pagination payload',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
@@ -67,6 +73,11 @@ export class RoomsController {
 
   @Get('by-room-type')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get the list of active room types',
+    description:
+      'Get the list of active rooms with the provided pagination payload',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
@@ -77,7 +88,7 @@ export class RoomsController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully fetched deleted rooms',
+    description: 'Successfully fetched active room types',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
@@ -88,21 +99,22 @@ export class RoomsController {
   }
 
   @Get('name')
+  @ApiOperation({
+    summary: 'Get the list of active room name',
+    description:
+      'Get the list of active room name',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully get role name',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Error while retrieving the library room names',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
-  })
-  @ApiOperation({
-    summary: 'Get room name',
-    description: 'Get room name',
   })
   getRoomNames() {
     return this.service.getRoomNames();
@@ -130,6 +142,13 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active room",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   getRoomById(@Param() payload: { id: string }): Promise<Rooms> {
     return this.service.findById(payload.id);
   }
@@ -147,7 +166,7 @@ export class RoomsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request payload for libary room is not validated',
+    description: 'Request payload for library room is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -186,6 +205,13 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active room",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   updateRoomById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string },
@@ -216,12 +242,23 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active room",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   disableRoomById(@User() user: KeycloakUserInstance, @Param('id') id: string) {
     return this.service.disableById(user.account_id, id);
   }
 
   @Get('disabled')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get the list of disabled accounts',
+    description: 'Get the list of disabled accounts',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
@@ -264,6 +301,13 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of disabled room",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   restoreDisabledRoomById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string }
@@ -296,6 +340,13 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active or disabled room",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   deleteRoomById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string }
@@ -305,6 +356,10 @@ export class RoomsController {
 
   @Get('deleted')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get the list of deleted library rooms',
+    description: 'Get the list of deleted library rooms',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
@@ -337,7 +392,7 @@ export class RoomsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Error while restoring the deleted the library room',
+    description: 'Error while restoring the deleted library room',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -346,6 +401,13 @@ export class RoomsController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of deleted room",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   restoreDeletedRoomById(
     @Param() payload: { id: string },

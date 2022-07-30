@@ -1,4 +1,4 @@
-import { PaginationParams } from '../../controllers/pagination.model';
+import {PaginationParams} from '../../controllers/pagination.model';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -7,12 +7,20 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { Transform, TransformFnParams } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import {Transform, TransformFnParams} from 'class-transformer';
+import {ApiProperty} from '@nestjs/swagger';
 
 export class DataAddRequestPayload extends PaginationParams {
-  @Transform(({ value }: TransformFnParams) => value?.trim())
+  @Transform(({value}: TransformFnParams) => value?.trim())
   @MaxLength(100)
+  @ApiProperty({
+    name: 'name',
+    description: 'Name to be added',
+    maxLength: 500,
+    minLength: 0,
+    type: String,
+    example: 'New entity',
+  })
   @IsNotEmpty({
     message: 'Name can not be empty',
   })
@@ -41,7 +49,15 @@ export class DataAddRequestPayload extends PaginationParams {
   @IsBoolean()
   isDisabled?: boolean;
 
-  @Transform(({ value }: TransformFnParams) => value?.trim())
+  @ApiProperty({
+    name: 'type',
+    description: 'Room type ID to be added',
+    maxLength: 500,
+    minLength: 0,
+    type: String,
+    example: 'New entity',
+  })
+  @Transform(({value}: TransformFnParams) => value?.trim())
   @IsNotEmpty({
     message: 'Type can not be empty',
   })

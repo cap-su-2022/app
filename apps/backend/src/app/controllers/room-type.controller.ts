@@ -13,25 +13,26 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiOperation,
+  ApiOperation, ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoomTypeService } from '../services/room-type.service';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
-import { User } from '../decorators/keycloak-user.decorator';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import { PaginationParams } from './pagination.model';
+import {RoomTypeService} from '../services/room-type.service';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
+import {User} from '../decorators/keycloak-user.decorator';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
+import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum/roles.enum';
+import {PaginationParams} from './pagination.model';
 
 @Controller('/v1/room-type')
 @ApiBearerAuth()
-@ApiTags('Room Type')
+@ApiTags('Room Types')
 @UseInterceptors(new PathLoggerInterceptor(RoomTypeService.name))
 export class RoomTypeController {
-  constructor(private readonly service: RoomTypeService) {}
+  constructor(private readonly service: RoomTypeService) {
+  }
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -42,7 +43,7 @@ export class RoomTypeController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Error while retrieving the lists of room types',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -69,6 +70,10 @@ export class RoomTypeController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Request params for roles is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
@@ -103,6 +108,13 @@ export class RoomTypeController {
   @ApiOperation({
     summary: 'Get room type by id',
     description: 'Get room type by id',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active room type",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   getRoomTypeById(@Param('id') id: string) {
     return this.service.getRoomTypeById(id);
