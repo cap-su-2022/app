@@ -583,6 +583,8 @@ export class BookingRoomService {
       const dateChoosed = new Date(payload.checkinDate).setHours(0, 0, 0, 0);
       const today = new Date().setHours(0, 0, 0, 0);
 
+      await this.roomService.findById(payload.roomId);
+
       if (dateChoosed < today) {
         throw new BadRequestException(
           'Are you trying to make a booking in the past? Are you crazy?'
@@ -601,7 +603,7 @@ export class BookingRoomService {
         );
       }
 
-      if (payload.bookedFor !== userId && role.role_name === 'Staff') {
+      if (payload.bookedFor && payload.bookedFor !== userId && role.role_name === 'Staff') {
         throw new BadRequestException(
           'You are not authorized to make a booking for other users!'
         );
@@ -704,8 +706,8 @@ export class BookingRoomService {
         queryRunner
       );
 
-      if(payload.bookedFor && payload.bookedFor !== userId){
-        const roomName = await this.roomService.getRoomName(request.roomId)
+      if (payload.bookedFor && payload.bookedFor !== userId) {
+        const roomName = await this.roomService.getRoomName(request.roomId);
         await this.notificationService.sendBookedForNotification(
           dayjs(request.checkinDate).format('DD-MM-YYYY'),
           slotIn.name,
@@ -975,6 +977,34 @@ export class BookingRoomService {
     }
   }
 
+  async reject(
+    accountId: string,
+    id: string,
+    reason: string,
+    queryRunner: QueryRunner
+  ) {
+    const requestRejected = await this.repository.rejectById(
+      accountId,
+      id,
+      reason,
+      queryRunner
+    );
+
+    const request = await this.repository.getRequest(id);
+
+    this.notificationService.sendRejectRequestNotification(
+      dayjs(request.checkinDate).format('DD-MM-YYYY'),
+      request.checkinSlotName,
+      request.checkoutSlotName,
+      request.roomName,
+      reason,
+      request.requestedBy,
+      queryRunner
+    );
+
+    return requestRejected
+  }
+
   async rejectById(accountId: string, id: string, reason: string) {
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -997,24 +1027,8 @@ export class BookingRoomService {
       if (isCancelled) {
         throw new BadRequestException('Request already cancelled!');
       }
-      const requestRejected = await this.repository.rejectById(
-        accountId,
-        id,
-        reason,
-        queryRunner
-      );
 
-      const request = await this.repository.getRequest(id);
-
-      this.notificationService.sendRejectRequestNotification(
-        dayjs(request.checkinDate).format('DD-MM-YYYY'),
-        request.checkinSlotName,
-        request.checkoutSlotName,
-        request.roomName,
-        reason,
-        request.requestedBy,
-        queryRunner
-      );
+      const requestRejected = this.reject(accountId, id, reason, queryRunner);
 
       await queryRunner.commitTransaction();
       // await this.histService.createNew(requestRejected);

@@ -1,16 +1,25 @@
-import React, {useEffect} from 'react';
-import {createStyles, Group, Paper, SimpleGrid, Space, Text, Title} from '@mantine/core';
+import React, { useEffect } from 'react';
+import {
+  createStyles,
+  Group,
+  Paper,
+  ScrollArea,
+  SimpleGrid,
+  Space,
+  Text,
+  Title,
+} from '@mantine/core';
 import {
   UserPlus,
   ArrowUpRight,
   ArrowDownRight,
   Bookmark,
-  BookmarksOff
+  BookmarksOff,
 } from 'tabler-icons-react';
 import AdminLayout from '../../components/layout/admin.layout';
-import {fetchStatistic} from '../../redux/features/room-booking/thunk/fetch-statistics.thunk'
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {map} from "rxjs";
+import { fetchStatistic } from '../../redux/features/room-booking/thunk/fetch-statistics.thunk';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { map } from 'rxjs';
 
 interface StatsGridProps {
   data: {
@@ -27,55 +36,19 @@ const icons = {
   cancelled: BookmarksOff,
 };
 
-const getStatisticsData = (stats) => {
-  const result = [];
-
-  console.log('stats inside', stats)
-
-  for (const key in stats) {
-    result.push({
-      [key]: {
-        diff: stats[key].booked - stats[key].cancelled,
-        icon: 'total',
-        title: 'Total',
-        value: stats[key]
-      },
-      [key]: {
-        diff: stats[key].booked - stats[key].cancelled,
-        icon: 'booked',
-        title: `${key}`,
-        value: stats[key]
-      },
-      [key]: {
-        diff: stats[key].cancelled - stats[key].booked,
-        icon: 'cancelled',
-        title: `${key}`,
-        value: stats[key]
-      },
-    });
-  }
-  console.log(JSON.stringify(result) + " getStatiscticData")
-  return result;
-
-}
-
 function Dashboard() {
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   const dispatch = useAppDispatch();
-  const stats = useAppSelector(state => state.roomBooking.bookingRoomStatistics);
-  const {totalTime, month, week, day} = stats;
-
+  const stats = useAppSelector(
+    (state) => state.roomBooking.bookingRoomStatistics
+  );
+  const { totalTime, month, week, day } = stats;
 
   useEffect(() => {
     dispatch(fetchStatistic()).unwrap();
-  }, [])
+  }, []);
 
-
-
-  const StatRender: React.FC<any> = ({stat}) => {
-    //console.warn(stat.icon);
-    //  const Icon = icons[stat.icon];
-    console.log(JSON.stringify(stat) + " đủ rồi")
+  const StatRender: React.FC<any> = ({ stat }) => {
     const DiffIcon = stat.diff > 0 ? ArrowUpRight : ArrowDownRight;
 
     return (
@@ -96,7 +69,7 @@ function Dashboard() {
             className={classes.diff}
           >
             <span>{stat.diff}%</span>
-            <DiffIcon size={16}/>
+            <DiffIcon size={16} />
           </Text>
         </Group>
 
@@ -105,68 +78,103 @@ function Dashboard() {
         </Text>
       </Paper>
     );
-  }
+  };
+
+  const getStatisticsData = (stats) => {
+    const statsFormated = {
+      total: {
+        diff: stats?.['booked'] - stats?.['cancelled'],
+        icon: 'total',
+        title: 'Total',
+        value: stats?.['total'],
+      },
+      booked: {
+        diff: stats?.['booked'] - stats?.['cancelled'],
+        icon: 'booked',
+        title: `Booked`,
+        value: stats?.['booked'],
+      },
+      cancelled: {
+        diff: stats?.['cancelled'] - stats?.['booked'],
+        icon: 'cancelled',
+        title: `Cancelled`,
+        value: stats?.['cancelled'],
+      },
+    };
+
+    const result = [];
+
+    for (const key in statsFormated) {
+      result.push(<StatRender key={key} stat={statsFormated[key]} />);
+    }
+
+    return result;
+  };
 
   return (
     <AdminLayout>
-      <div className={classes.root}>
-        <Title order={5}>TOTAL TIME</Title>
-        <Space h="xl"/>
-        <SimpleGrid
-          cols={3}
-          breakpoints={[
-            {maxWidth: 'md', cols: 2},
-            {maxWidth: 'xs', cols: 1},
-          ]}
-        >
-          {stats ? getStatisticsData(totalTime).map((stat) => <StatRender key={stat.key} stat={stat}/>) : null}
-        </SimpleGrid>
-        <Space h="xl"/>
+      <ScrollArea
+        style={{
+          height: '85vh',
+          borderRadius: 5,
+         }}
+      >
+        <div className={classes.root}>
+          <Title order={5}>TOTAL TIME</Title>
+          <Space h="xl" />
+          <SimpleGrid
+            cols={3}
+            breakpoints={[
+              { maxWidth: 'md', cols: 2 },
+              { maxWidth: 'xs', cols: 1 },
+            ]}
+          >
+            {stats ? getStatisticsData(totalTime) : null}
+          </SimpleGrid>
+          <Space h="xl" />
 
-        < Title order={5}>MONTH </Title>
-        <Space h="xl"/>
-        <SimpleGrid
-          cols={3}
-          breakpoints={[
-            {maxWidth: 'md', cols: 2},
-            {maxWidth: 'xs', cols: 1},
-          ]}
-        >
-          {stats ? getStatisticsData(month).map((stat) => <StatRender key={stat.key} stat={stat}/>) : null}
-        </SimpleGrid>
-        <Space h="xl"/>
+          <Title order={5}>MONTH </Title>
+          <Space h="xl" />
+          <SimpleGrid
+            cols={3}
+            breakpoints={[
+              { maxWidth: 'md', cols: 2 },
+              { maxWidth: 'xs', cols: 1 },
+            ]}
+          >
+            {stats ? getStatisticsData(month) : null}
+          </SimpleGrid>
+          <Space h="xl" />
 
-        < Title order={5}>WEEK </Title>
-        <Space h="xl"/>
-        <SimpleGrid
-          cols={3}
-          breakpoints={[
-            {maxWidth: 'md', cols: 2},
-            {maxWidth: 'xs', cols: 1},
-          ]}
-        >
-          {stats ? getStatisticsData(week).map((stat) => <StatRender key={stat.key} stat={stat}/>) : null}
-        </SimpleGrid>
-        <Space h="xl"/>
+          <Title order={5}>WEEK </Title>
+          <Space h="xl" />
+          <SimpleGrid
+            cols={3}
+            breakpoints={[
+              { maxWidth: 'md', cols: 2 },
+              { maxWidth: 'xs', cols: 1 },
+            ]}
+          >
+            {stats ? getStatisticsData(week) : null}
+          </SimpleGrid>
+          <Space h="xl" />
 
-        < Title order={5}>DAY</Title>
-        <Space h="xl"/>
-        <SimpleGrid
-          cols={3}
-          breakpoints={[
-            {maxWidth: 'md', cols: 2},
-            {maxWidth: 'xs', cols: 1},
-          ]}
-        >
-          {stats ? getStatisticsData(day).map((stat) => <StatRender key={stat.key} stat={stat}/>) : null}
-        </SimpleGrid>
-        <Space h="xl"/>
-
-
-      </div>
+          <Title order={5}>DAY</Title>
+          <Space h="xl" />
+          <SimpleGrid
+            cols={3}
+            breakpoints={[
+              { maxWidth: 'md', cols: 2 },
+              { maxWidth: 'xs', cols: 1 },
+            ]}
+          >
+            {stats ? getStatisticsData(day) : null}
+          </SimpleGrid>
+          <Space h="xl" />
+        </div>
+      </ScrollArea>
     </AdminLayout>
-  )
-    ;
+  );
 }
 
 const useStyles = createStyles((theme) => ({

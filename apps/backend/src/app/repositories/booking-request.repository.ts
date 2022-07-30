@@ -611,6 +611,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       slotIn: number;
       slotOut: number;
       status: string;
+      roomName: string;
       requestedBy: string;
     }>();
   }

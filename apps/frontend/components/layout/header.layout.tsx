@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   createStyles,
   Header,
@@ -6,23 +6,11 @@ import {
   Group,
   Burger,
   Button,
-  Select,
-  ScrollArea,
   Text,
+  Avatar,
 } from '@mantine/core';
-import { useBooleanToggle, useHover } from '@mantine/hooks';
-import {
-  Bell,
-  BuildingWarehouse,
-  ChevronDown,
-  Dashboard,
-  Devices,
-  Logout,
-  Messages,
-  Search,
-  User,
-  Users,
-} from 'tabler-icons-react';
+import { useBooleanToggle } from '@mantine/hooks';
+import { Bell, ChevronDown, Logout, User } from 'tabler-icons-react';
 import {
   BLACK,
   FPT_ORANGE_COLOR,
@@ -31,16 +19,46 @@ import {
   WHITE,
 } from '@app/constants';
 import { useOuterClick } from '../../hooks/use-outer-clickk';
+import PreferencesModal from '../preferences.modal.component';
+import LogoutModal from '../logout.modal';
+import { useRouter } from 'next/router';
 
+interface UserInfoModel {
+  avatar: string;
+  fullname: string;
+  role: string;
+  phone: string;
+  email: string;
+  username: string;
+  id: string;
+  googleId: string;
+  keycloakId: string;
+  effdate: string;
+  description: string;
+  img: File;
+}
 interface HeaderSearchProps {
   links: { link: string; label: string }[];
 }
 
 export function LayoutHeader() {
   const [opened, toggleOpened] = useBooleanToggle(false);
+  const router = useRouter();
   const { classes } = useStyles();
 
   const [isNotificationShown, setNotificationShown] = useState<boolean>(false);
+  const [isPreferencesShown, setPreferencesShown] = useState<boolean>(false);
+  const [isLogoutModalShown, setLogoutModalShown] = useState<boolean>(false);
+
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
+
+  const handleLogoutSubmit = async () => {
+    setLogoutModalShown(!isLogoutModalShown);
+  };
 
   const toggleNotificationShown = () => {
     setNotificationShown(!isNotificationShown);
@@ -58,9 +76,12 @@ export function LayoutHeader() {
 
         <Group>
           <Group ml={50} spacing={5}>
-            <Button className={classes.avatarContainer}>
+            <Button
+              className={classes.avatarContainer}
+              onClick={() => setPreferencesShown(!isPreferencesShown)}
+            >
               <div className={classes.avatarImage}>
-                <User />
+                <Avatar src={userInfo?.avatar} radius="md" />
               </div>
               <Text
                 style={{
@@ -68,7 +89,7 @@ export function LayoutHeader() {
                   fontSize: 18,
                 }}
               >
-                Bằng
+                {userInfo?.username}
               </Text>
             </Button>
             <Button
@@ -721,11 +742,29 @@ export function LayoutHeader() {
             <Button className={classes.button}>
               <ChevronDown className={classes.innerButton} />
             </Button>
-            <Button className={classes.button}>
+            <Button
+              className={classes.button}
+              onClick={() => handleLogoutSubmit()}
+            >
               <Logout color={BLACK} />
             </Button>
           </Group>
         </Group>
+
+        {isPreferencesShown ? (
+          <PreferencesModal
+            isShown={isPreferencesShown}
+            toggleShown={() => setPreferencesShown(!isPreferencesShown)}
+          />
+        ) : null}
+
+        {isLogoutModalShown ? (
+          <LogoutModal
+            isOpened={isLogoutModalShown}
+            handleRouterReload={router.reload}
+            handleClose={() => setLogoutModalShown(!isLogoutModalShown)}
+          />
+        ) : null}
       </div>
     </Header>
   );

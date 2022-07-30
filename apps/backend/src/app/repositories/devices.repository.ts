@@ -1,4 +1,4 @@
-import { FindOneOptions, Repository, UpdateResult } from 'typeorm';
+import { FindOneOptions, QueryRunner, Repository, UpdateResult } from 'typeorm';
 import { Accounts, Devices, Rooms, RoomType } from '../models';
 import { RepositoryPaginationPayload } from '../models/search-pagination.payload';
 import { AddDeviceRequest, UpdateDeviceRequest } from '@app/models';
@@ -224,24 +224,19 @@ export class DevicesRepository extends Repository<Devices> {
     }
   }
 
-  async deleteById(accountId: string, id: string) {
-    const isDeleted = await this.createQueryBuilder('devices')
-      .update({
-        deletedAt: new Date(),
-        deletedBy: accountId,
-        disabledAt: null,
-        disabledBy: null,
-      })
-      .where('devices.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-    if (isDeleted.affected > 0) {
-      return this.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
-    }
+  async deleteById(accountId: string, id: string, queryRunner: QueryRunner) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: id,
+      },
+    });
+    return queryRunner.manager.save(Devices, {
+      ...oldData,
+      deletedAt: new Date(),
+      deletedBy: accountId,
+      disabledAt: null,
+      disabledBy: null,
+    });
   }
 
   getDeletedDevices(search: string) {

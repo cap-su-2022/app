@@ -94,17 +94,23 @@ const DisableDeviceModal: React.FC<DisableDeviceModalProps> = (props) => {
       listRequest && listRequest.length > 0
         ? listRequest.map((row, index) => (
             <tr key={row.id}>
-              <td>{index + 1}</td>
               <td>{row.roomName}</td>
               <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
               <td>{row.requestedBy}</td>
               <td>{row.checkinSlot}</td>
               <td>{row.checkoutSlot}</td>
+              <td>
+                {row.status === 'PENDING' ? (
+                  <div className={classes.pendingDisplay}>{row.status}</div>
+                ) : row.status === 'BOOKED' ? (
+                  <div className={classes.bookedDisplay}>{row.status}</div>
+                ) : null}
+              </td>
             </tr>
           ))
         : null;
     return listRequest && listRequest.length > 0 ? (
-      <ScrollArea sx={{ height: 200 }}>
+      <ScrollArea sx={{ height: 340 }}>
         <Table
           horizontalSpacing="md"
           verticalSpacing="xs"
@@ -112,17 +118,6 @@ const DisableDeviceModal: React.FC<DisableDeviceModalProps> = (props) => {
         >
           <thead className={classes.header}>
             <tr>
-              <Th
-                style={{
-                  width: '60px',
-                }}
-                sorted={null}
-                reversed={null}
-                onSort={null}
-              >
-                STT
-              </Th>
-
               <Th sorted={null} reversed={null} onSort={null}>
                 Name
               </Th>
@@ -138,6 +133,9 @@ const DisableDeviceModal: React.FC<DisableDeviceModalProps> = (props) => {
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
                 Slot End
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Status
               </Th>
             </tr>
           </thead>
@@ -224,6 +222,22 @@ const useStyles = createStyles((theme) => ({
   },
   modalBody: {
     margin: 10,
+  },
+  pendingDisplay: {
+    color: '#228be6',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#0000ff1c',
+    fontWeight: 600,
+  },
+  bookedDisplay: {
+    color: '#40c057',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#00800024',
+    fontWeight: 600,
   },
   modalFooter: {
     display: 'flex',

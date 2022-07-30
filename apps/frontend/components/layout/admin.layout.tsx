@@ -20,7 +20,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = (props) => {
           <div className={classes.wrapper}>{props.children}</div>
         </div>
       </div>
-      <LayoutFooter links={[]} />
+      {/* <LayoutFooter links={[]} /> */}
     </>
   );
 };
