@@ -294,36 +294,36 @@ export class BookingRoomService {
     return this.roomService.getRoomNames();
   }
 
-  async getChoosingBookingRooms(filter: string) {
-    try {
-      const payload = filter
-        ? (JSON.parse(filter) as ChooseBookingRoomFilterPayload)
-        : ({
-            roomName: {
-              name: '',
-              sort: 'ASC',
-            },
-            roomType: {
-              name: 'e6f085ec',
-              sort: 'ASC',
-            },
-          } as ChooseBookingRoomFilterPayload);
-      if (payload.roomType.name.length > 0) {
-        const isExisted = await this.roomTypeService.existsById(
-          payload.roomType.name
-        );
-        if (!isExisted) {
-          throw new BadRequestException(
-            'Room type does not exist with provided id'
-          );
-        }
-      }
-      return this.roomService.getRoomsFilterByNameAndType(payload);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async getChoosingBookingRooms(filter: string) {
+  //   try {
+  //     const payload = filter
+  //       ? (JSON.parse(filter) as ChooseBookingRoomFilterPayload)
+  //       : ({
+  //           roomName: {
+  //             name: '',
+  //             sort: 'ASC',
+  //           },
+  //           roomType: {
+  //             name: 'e6f085ec',
+  //             sort: 'ASC',
+  //           },
+  //         } as ChooseBookingRoomFilterPayload);
+  //     if (payload.roomType.name.length > 0) {
+  //       const isExisted = await this.roomTypeService.existsById(
+  //         payload.roomType.name
+  //       );
+  //       if (!isExisted) {
+  //         throw new BadRequestException(
+  //           'Room type does not exist with provided id'
+  //         );
+  //       }
+  //     }
+  //     return this.roomService.getRoomsFilterByNameAndType(payload);
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
   async getAllBookingRoomsPagination(
     payload: GetBookingRoomsPaginationPayload,
@@ -549,14 +549,14 @@ export class BookingRoomService {
     }
   }
 
-  getCurrentRoomBookingDetail(accountId: string, id: string) {
-    try {
-      return this.repository.findByIdAndAccountId(accountId, id);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // getCurrentRoomBookingDetail(accountId: string, id: string) {
+  //   try {
+  //     return this.repository.findByIdAndAccountId(accountId, id);
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
   async getBookingRoomById(id: string) {
     try {

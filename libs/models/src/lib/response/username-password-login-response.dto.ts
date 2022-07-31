@@ -10,4 +10,5 @@ export interface UsernamePasswordLoginResponse {
   role: string;
   fullname: string;
   avatar: string;
+  description: string;
 }

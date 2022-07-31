@@ -76,9 +76,11 @@ export class AccountsService {
     return this.repository.findIdByKeycloakId(keycloakId);
   }
 
-  findByKeycloakId(keycloakId: string): Promise<Accounts> {
+  async findByKeycloakId(keycloakId: string): Promise<Accounts> {
     try {
-      return this.repository.findByKeycloakId(keycloakId);
+      const a = await this.repository.findByKeycloakId(keycloakId);
+      console.log("AAAAAAAAa", a);
+      return a;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
