@@ -4,7 +4,6 @@ import { WHITE } from '@app/constants';
 import { deviceWidth } from '../../../utils/device';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
-import { fetchRoomBookingById } from '../../../redux/features/room-booking/thunk/fetch-room-booking-by-id.thunk';
 import TrackFeedbackItemContent from './content';
 import TrackingBookingRequestItemNavigation from './navigation';
 import { boxShadow } from '../../../utils/box-shadow.util';
@@ -40,7 +39,7 @@ const styles = StyleSheet.create({
     backgroundColor: WHITE,
     width: deviceWidth / 1.05,
     borderRadius: 8,
-    marginTop: 10,
+    marginBottom: 10,
     alignSelf: 'center',
     display: 'flex',
     justifyContent: 'space-between',

@@ -35,6 +35,10 @@ const TrackFeedbackScreen: React.FC<any> = () => {
       <VirtualizedList
         showsVerticalScrollIndicator={false}
         data={feedbacks}
+        style={{
+          paddingTop: 10,
+          marginBottom: 20,
+        }}
         getItemCount={(data) => data.length}
         getItem={(data, index) => data[index]}
         renderItem={(
