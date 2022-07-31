@@ -13,13 +13,13 @@ import {
 } from '@nestjs/common';
 import {BookingReasonService} from '../services/booking-reason.service';
 import {BookingReason} from '../models/booking-reason.entity';
-import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {ApiOperation, ApiParam, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {Roles} from '../decorators/role.decorator';
 import {Role} from '../enum/roles.enum';
 import {User} from '../decorators/keycloak-user.decorator';
 import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {BookingReasonUpdateRequestPayload} from '../payload/request/booking-reason.request.payload';
 import {PaginationParams} from './pagination.model';
+import {MasterDataAddRequestPayload} from "../payload/request/master-data-add.request.payload";
 
 @Controller('/v1/booking-reasons')
 @ApiTags('Booking Reason')
@@ -69,6 +69,10 @@ export class BookingReasonController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   @ApiOperation({
     summary: 'Get booking reason',
     description: 'Get booking reason',
@@ -99,14 +103,21 @@ export class BookingReasonController {
     summary: 'Get booking-reason by id',
     description: 'Get booking-reason by id',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of booking reason",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   getBookingReasonById(@Param('id') id: string) {
     return this.service.getBookingReasonById(id);
   }
 
   @Post()
   @ApiOperation({
-    summary: 'Add booking reason',
-    description: 'Add booking reason',
+    summary: 'Add a new booking reason',
+    description: 'Add a new booking reason',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -126,7 +137,7 @@ export class BookingReasonController {
   })
   addNewBookingReason(
     @User() user: KeycloakUserInstance,
-    @Body() payload: BookingReasonUpdateRequestPayload
+    @Body() payload: MasterDataAddRequestPayload
   ) {
     return this.service.createNewBookingReason(user.account_id, payload);
   }
@@ -153,8 +164,15 @@ export class BookingReasonController {
     summary: 'Update booking-reason by id',
     description: 'Update booking-reason by id',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of booking room",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   updateBookingReasonById(
-    @Body() payload: BookingReasonUpdateRequestPayload,
+    @Body() payload: MasterDataAddRequestPayload,
     @Param('id') id: string,
     @User() user: KeycloakUserInstance
   ) {
@@ -180,8 +198,15 @@ export class BookingReasonController {
     description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: 'Deleted booking reason',
-    description: 'Deleted booking reason',
+    summary: 'Deleted booking reason by ID',
+    description: 'Use booking-reason-id to delete booking reason',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of booking reason",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   deleteBookingReasonById(
     @Param('id') id: string,
@@ -194,7 +219,7 @@ export class BookingReasonController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully deleted reason',
+    description: 'Successfully got the list of deleted reasons',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -239,6 +264,13 @@ export class BookingReasonController {
     summary: 'Successfully restored deleted booking reason by id',
     description: 'Successfully restored deleted booking reason by id',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of deleted booking reason",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   restoreDeletedReasonById(
     @User() keycloakUser: KeycloakUserInstance,
     @Param('id') id: string
@@ -268,6 +300,13 @@ export class BookingReasonController {
   @ApiOperation({
     summary: 'Permanently delete booking reason by id',
     description: 'Permanently delete booking reason by id',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of deleted booking reason",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   permanentlyDeleteReasonById(@Param('id') id: string) {
     return this.service.permanentlyDeleteReasonById(id);

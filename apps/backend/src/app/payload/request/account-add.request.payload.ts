@@ -1,4 +1,3 @@
-import {PaginationParams} from '../../controllers/pagination.model';
 import {
   IsBoolean, IsEmail,
   IsNotEmpty,
@@ -10,7 +9,7 @@ import {
 import {Transform, TransformFnParams} from 'class-transformer';
 import {ApiProperty} from '@nestjs/swagger';
 
-export class AccountAddRequestPayload extends PaginationParams {
+export class AccountAddRequestPayload {
   @Transform(({value}: TransformFnParams) => value?.trim())
   @MinLength(8)
   @MaxLength(100)
@@ -109,12 +108,12 @@ export class AccountAddRequestPayload extends PaginationParams {
     message: 'Role can not be empty',
   })
   @ApiProperty({
-    name: 'Role ID',
+    name: 'roleId',
     description: 'Role ID to be added',
     required: true,
     type: String,
     title: 'Role ID',
-    example: '',
+    example: '23dc0f4f-77f8-47c8-a78f-bcad84e5edee',
     minLength: 1,
     maxLength: 256,
   })

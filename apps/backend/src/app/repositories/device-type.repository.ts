@@ -1,17 +1,17 @@
-import { Repository } from 'typeorm';
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { DeviceType } from '../models/device-type.entity';
-import { PaginationParams } from '../controllers/pagination.model';
-import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
-import { Accounts } from '../models';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
+import {Repository} from 'typeorm';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {DeviceType} from '../models/device-type.entity';
+import {PaginationParams} from '../controllers/pagination.model';
+import {paginateRaw, Pagination} from 'nestjs-typeorm-paginate';
+import {Accounts} from '../models';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
 
 @CustomRepository(DeviceType)
 export class DeviceTypeRepository extends Repository<DeviceType> {
   existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('rt')
       .select('COUNT(1)', 'count')
-      .where('rt.id = :id', { id: id })
+      .where('rt.id = :id', {id: id})
       .getRawOne()
       .then((data) => data?.count > 0);
   }
@@ -53,18 +53,18 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .addSelect('dt.updated_at', 'updatedAt')
       .innerJoin(Accounts, 'a', 'a.id = dt.created_by')
       .leftJoin(Accounts, 'aa', 'aa.id = dt.updated_by')
-      .where('dt.id = :id', { id: id })
+      .where('dt.id = :id', {id: id})
       .andWhere('dt.deleted_at IS NULL')
       .getRawOne<DeviceType>();
   }
 
   async addNew(
     accountId: string,
-    payload: { name: string; description: string }
+    payload: MasterDataAddRequestPayload
   ): Promise<DeviceType> {
     return this.save<DeviceType>(
       {
-        name: payload.name.trim(),
+        name: payload.name,
         description: payload.description,
         createdBy: accountId,
         createdAt: new Date(),
@@ -106,7 +106,7 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
         deletedAt: new Date(),
         deletedBy: accountId,
       })
-      .where('device_type.id = :id', { id: id })
+      .where('device_type.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isDeleted.affected > 0) {
@@ -125,7 +125,7 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .addSelect('device_type.deleted_at', 'deletedAt')
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'a.id = device_type.deleted_by')
-      .where('device_type.name ILIKE :search', { search: `%${search.trim()}%` })
+      .where('device_type.name ILIKE :search', {search: `%${search.trim()}%`})
       .andWhere('device_type.deleted_at IS NOT NULL')
       .orderBy('device_type.deleted_at', 'DESC')
       .getRawMany<DeviceType>();
@@ -139,7 +139,7 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
         deletedAt: null,
         deletedBy: null,
       })
-      .where('device_type.id = :id', { id: id })
+      .where('device_type.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isRestored.affected > 0) {
@@ -154,7 +154,7 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   async permanentlyDeleteById(id: string) {
     return this.createQueryBuilder('device_type')
       .delete()
-      .where('device_type.id = :id', { id: id })
+      .where('device_type.id = :id', {id: id})
       .useTransaction(true)
       .execute();
   }
@@ -184,7 +184,7 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
   //     .execute();
   // }
 
-    // async get(id: string): Promise<DeviceType> {
+  // async get(id: string): Promise<DeviceType> {
   //   return this.createQueryBuilder('dt')
   //     .select('dt.id', 'id')
   //     .addSelect('dt.name', 'name')
