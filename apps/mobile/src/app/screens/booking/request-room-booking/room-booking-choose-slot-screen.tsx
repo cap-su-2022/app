@@ -31,6 +31,8 @@ import { RoomModel } from '../../../redux/models/room.model';
 import ChooseSlotHeader from './choose-slot/header';
 import ChooseSlotItem from './choose-slot/item';
 import dayjs from 'dayjs';
+import AlertModal from '../../../components/modals/alert-modal.component';
+import { ExclamationCircleIcon } from 'react-native-heroicons/outline';
 
 const transformToData = (bookedRequest) => {
   const result = [];
@@ -116,9 +118,7 @@ const firstAddRoomRecentlySearch = (item, username, selectedDay) => {
 };
 
 const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
-  const fromSlotId = useAppSelector(
-    (state) => state.roomBooking.addRoomBooking.fromSlot
-  );
+
   const addRoomBooking = useAppSelector(
     (state) => state.roomBooking.addRoomBooking
   );
@@ -126,7 +126,6 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
 
   const slotsFromState = useAppSelector((state) => state.slot.slots);
 
-  const roomsFromState = useAppSelector((state) => state.room.rooms);
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
   const Today = new Date().toJSON().slice(0, 10);
@@ -135,7 +134,6 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
     addRoomBooking.fromDay || Today
   );
   const [isModalOpened, setModalOpen] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
   const [slotAndRoom, setSlotAndRoom] = useState([]);
   const [slotAndRoomFilter, setSlotAndRoomFilter] = useState([]);
 
@@ -188,7 +186,6 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
       .unwrap()
       .then(() => alert('success'))
       .catch((e) => {
-        setErrorMessage(e.message.message);
         setModalOpen(true);
       });
   };
@@ -322,6 +319,66 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
               Back
             </Text>
           </TouchableOpacity>
+          <AlertModal
+            isOpened={isModalOpened}
+            height={deviceWidth / 1.7}
+            width={deviceWidth / 1.3}
+            toggleShown={() => setModalOpen(!isModalOpened)}
+          >
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                flex: 1,
+              }}
+            >
+              <View
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <ExclamationCircleIcon
+                  size={deviceWidth / 8}
+                  color={FPT_ORANGE_COLOR}
+                />
+                <Text
+                  style={{
+                    color: BLACK,
+                    fontWeight: '500',
+                    fontSize: deviceWidth / 23,
+                    textAlign: 'center',
+                  }}
+                >
+                  You already add this room to wishlist
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: 40,
+                  width: deviceWidth / 1.7,
+                  backgroundColor: FPT_ORANGE_COLOR,
+                  borderRadius: 8,
+                }}
+                onPress={() => setModalOpen(false)}
+              >
+                <Text
+                  style={{
+                    color: WHITE,
+                    fontSize: deviceWidth / 23,
+                    fontWeight: '600',
+                  }}
+                >
+                  I understand
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </AlertModal>
         </View>
       </View>
     </SafeAreaView>

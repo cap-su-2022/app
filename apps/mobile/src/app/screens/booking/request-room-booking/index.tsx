@@ -69,8 +69,9 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     const slotSelections = val.map((slot) => {
       return {
         value: slot.id,
-        label: slot.name,
+        label: `${slot.name}(${slot.timeStart.slice(0,5)} - ${slot.timeEnd.slice(0,5)})`,
         slotNum: slot.slotNum,
+
       };
     });
     setSlotSelections(slotSelections);
@@ -140,8 +141,8 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     );
 
     dispatch(fetchRoomFreeByMultiSlotAndDay({
-      dateStart: fromDay,
-      dateEnd: toDay,
+      dateStart: fromDay || Today,
+      dateEnd: toDay|| Today,
       checkinSlot: slotStart,
       checkoutSlot: slotEnd
     })).unwrap().then(() => {
