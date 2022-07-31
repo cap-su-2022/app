@@ -23,6 +23,8 @@ import {RefreshTokenPayload} from "../payload/response/refresh-token.request.pay
 import {Roles} from "../decorators/role.decorator";
 import {Role} from "../enum/roles.enum";
 import {FastifyRequest, FastifyReply} from "fastify";
+import {AccountAddRequestPayload} from "../payload/request/account-add.request.payload";
+import {ChangeProfilePasswordRequest} from "../payload/request/change-password.request.payload";
 
 export class AuthenticationRequest {
   @ApiProperty({
@@ -179,7 +181,6 @@ export class AuthenticationController {
   }
 
   @Post(KEYCLOAK_PATH.refreshAccessToken)
-
   @ApiOperation({
     summary: "Refresh access token using provided refresh token",
     description: "Provide new access token and new refresh token by using provided refresh token"
@@ -209,21 +210,101 @@ export class AuthenticationController {
   }
 
   @Post(KEYCLOAK_PATH.signOut)
+  @ApiOperation({
+    summary: "Sign out ",
+    description: "Sign out by keycloak ID"
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Successfully signed out the system"
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Failed to validate provided refresh token"
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: "Error while signing out the system"
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   signOut(@Request() req: Request, @Param("id") id: string) {
     return this.service.signOutKeycloakUser(req.headers[AUTHORIZATION_LOWERCASE], id);
   }
 
+  @ApiOperation({
+    summary: "Count the number of users authenticated in this system ",
+    description: "Count how many users are authenticated in this system"
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Successfully signed out the system"
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Invalid access token"
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: "Error while signing out the system"
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   @Get(KEYCLOAK_PATH.countUsers)
   countUsers(@Request() request: Request) {
     return this.service.countUsers(request.headers[AUTHORIZATION_LOWERCASE]);
   }
 
+  @ApiOperation({
+    summary: "Get all users by keycloak ",
+    description: "Get the list of users from keycloak"
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Successfully got the users from keycloak"
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Invalid access token"
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: "Error while getting all users"
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   @Get(KEYCLOAK_PATH.getUsers)
   getAllKeycloakUsers(@Request() req: Request) {
     return this.service.getAllUsers(req.headers[AUTHORIZATION_LOWERCASE]);
   }
 
   @Get(KEYCLOAK_PATH.getUserById)
+  @ApiOperation({
+    summary: "Get user by keycloak ID",
+    description: "Use keycloak ID to get the information of a user"
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Successfully got the users from keycloak"
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Invalid access token"
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: "Error while retrieving a user"
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   @ApiParam({
     name: 'id',
     description: "The ID of the existed keycloak user",
@@ -236,11 +317,54 @@ export class AuthenticationController {
   }
 
   @Post(KEYCLOAK_PATH.createNewUser)
-  createUser(@Body() user, @Request() req: Request) {
+  @ApiOperation({
+    summary: "Create a new user",
+    description: "Add a new user into the system"
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Successfully added a new user"
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Invalid access token"
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: "Error while creating a new user"
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  createUser(@Body() user: AccountAddRequestPayload, @Request() req: Request) {
     return this.service.createKeycloakUser(req.headers[AUTHORIZATION_LOWERCASE], user);
   }
 
+
+
+
   @Put(KEYCLOAK_PATH.refreshUserPasswordById)
+  @ApiOperation({
+    summary: "Refresh user password by ID",
+    description: "Use ID to refresh user password"
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Successfully refreshed user password"
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Invalid access token"
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: "Error while refreshing user password"
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   @ApiParam({
     name: "id",
     description: "The ID of the existed keycloak user",
@@ -248,8 +372,20 @@ export class AuthenticationController {
     required: true,
     example: "ABCD1234"
   })
+  @ApiBody({
+      schema: {
+        type: 'string',
+        items: {
+          type: 'string',
+          items: {
+            type: 'number',
+          },
+        }
+      }
+    }
+  )
   @Roles(Role.APP_STAFF)
-  resetKeycloakUserPassword(@Request() req: Request, @Param("id") id, @Body() password) {
-    return this.service.resetKeycloakUserById(req, id, password.rawPasswword);
+  resetKeycloakUserPassword(@Request() req: Request, @Param("id") id, @Body() password: ChangeProfilePasswordRequest) {
+    return this.service.resetKeycloakUserById(req, id, password.newPassword);
   }
 }

@@ -5,13 +5,14 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { SlotRepository } from '../repositories/slot.repository';
-import { PaginationParams } from '../controllers/pagination.model';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { Slot } from '../models/slot.entity';
-import { BookingRoomService } from './booking-room.service';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import {SlotRepository} from '../repositories/slot.repository';
+import {PaginationParams} from '../controllers/pagination.model';
+import {Pagination} from 'nestjs-typeorm-paginate';
+import {Slot} from '../models/slot.entity';
+import {BookingRoomService} from './booking-room.service';
+import {InjectDataSource} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
+import {SlotsRequestPayload} from '../payload/request/slot-add.request.payload';
 
 @Injectable()
 export class SlotService {
@@ -22,7 +23,8 @@ export class SlotService {
     private readonly repository: SlotRepository,
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService
-  ) {}
+  ) {
+  }
 
   async getAllByPagination(
     params: PaginationParams
@@ -73,13 +75,7 @@ export class SlotService {
 
   async addNewSlot(
     accountId: string,
-    payload: {
-      name: string;
-      slotNum: number;
-      timeStart: string;
-      timeEnd: string;
-      description: string;
-    }
+    payload: SlotsRequestPayload
   ) {
     try {
       const isHaveSlotSameNameActive =

@@ -10,8 +10,8 @@ import {
 import {Transform, TransformFnParams} from 'class-transformer';
 import {ApiProperty} from '@nestjs/swagger';
 
-export class DataAddRequestPayload extends PaginationParams {
-  @Transform(({value}: TransformFnParams) => value?.trim())
+export class DataAddRequestPayload {
+
   @MaxLength(100)
   @ApiProperty({
     name: 'name',
@@ -24,7 +24,8 @@ export class DataAddRequestPayload extends PaginationParams {
   @IsNotEmpty({
     message: 'Name can not be empty',
   })
-  name: string;
+  name?: string;
+
 
   @ApiProperty({
     name: 'description',
@@ -39,27 +40,28 @@ export class DataAddRequestPayload extends PaginationParams {
   @IsString()
   description?: string;
 
+
+  @IsOptional()
+  @IsBoolean()
   @ApiProperty({
     name: 'isDisabled',
-    description: 'Is the room should be disabled',
+    description: 'Should be disabled',
     type: Boolean,
     example: true,
   })
-  @IsOptional()
-  @IsBoolean()
   isDisabled?: boolean;
+
 
   @ApiProperty({
     name: 'type',
-    description: 'Room type ID to be added',
+    description: 'Type to be added',
     maxLength: 500,
     minLength: 0,
     type: String,
     example: 'New entity',
   })
-  @Transform(({value}: TransformFnParams) => value?.trim())
   @IsNotEmpty({
     message: 'Type can not be empty',
   })
-  type: string;
+  type?: string;
 }

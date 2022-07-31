@@ -1,4 +1,3 @@
-import {PaginationParams} from '../../controllers/pagination.model';
 import {
   IsBoolean, IsEmail,
   IsNotEmpty,
@@ -10,8 +9,8 @@ import {
 import {Transform, TransformFnParams} from 'class-transformer';
 import {ApiProperty} from '@nestjs/swagger';
 
-export class AccountAddRequestPayload extends PaginationParams {
-  @Transform(({value}: TransformFnParams) => value?.trim())
+export class AccountAddRequestPayload {
+
   @MinLength(8)
   @MaxLength(100)
   @IsString()
@@ -30,7 +29,7 @@ export class AccountAddRequestPayload extends PaginationParams {
   })
   username: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @MinLength(8)
   @MaxLength(100)
   @IsString()
@@ -49,7 +48,7 @@ export class AccountAddRequestPayload extends PaginationParams {
   })
   fullname: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @MinLength(11)
   @MaxLength(11)
   @IsString()
@@ -69,7 +68,7 @@ export class AccountAddRequestPayload extends PaginationParams {
   })
   phone: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @MinLength(11)
   @MaxLength(11)
   @IsString()
@@ -87,7 +86,7 @@ export class AccountAddRequestPayload extends PaginationParams {
   })
   email?: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @MaxLength(100)
   @IsString()
   @IsOptional()
@@ -103,24 +102,24 @@ export class AccountAddRequestPayload extends PaginationParams {
   })
   description?: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @IsString()
   @IsNotEmpty({
     message: 'Role can not be empty',
   })
   @ApiProperty({
-    name: 'Role ID',
+    name: 'roleId',
     description: 'Role ID to be added',
     required: true,
     type: String,
     title: 'Role ID',
-    example: '',
+    example: '23dc0f4f-77f8-47c8-a78f-bcad84e5edee',
     minLength: 1,
     maxLength: 256,
   })
   roleId: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @IsString()
   @ApiProperty({
     name: 'avatar',
@@ -134,7 +133,7 @@ export class AccountAddRequestPayload extends PaginationParams {
   })
   avatar: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @ApiProperty({
     name: 'isDisabled',
     description: 'Is the account should be disabled',

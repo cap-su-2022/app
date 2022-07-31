@@ -17,12 +17,11 @@ import {AccountsService} from '../services';
 import {
   ApiBearerAuth, ApiBody,
   ApiConsumes,
-  ApiOperation, ApiParam,
+  ApiOperation, ApiParam, ApiProperty, ApiQuery,
   ApiResponse,
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger';
-import {UsersValidation} from '../pipes/validation/users.validation';
 import {User} from '../decorators/keycloak-user.decorator';
 import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
 import {Roles} from '../decorators/role.decorator';
@@ -47,11 +46,10 @@ export class AccountsController {
   }
 
   @Get()
-  @UsePipes(new UsersValidation())
   @HttpCode(HttpStatus.OK)
   @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Get the list of accounts',
+    summary: 'Get the list of accounts by pagination',
     description:
       'Get the list of accounts with the provided pagination payload',
   })
@@ -71,7 +69,8 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-  getAll(@Query() payload: AccountsPaginationParams) {
+  getAll(
+    @Query() payload: AccountsPaginationParams) {
     return this.service.getAll(payload);
   }
 
@@ -97,7 +96,6 @@ export class AccountsController {
   }
 
   @Get('syncKeycloak')
-  @UsePipes(new UsersValidation())
   @HttpCode(HttpStatus.OK)
   @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
@@ -207,6 +205,13 @@ export class AccountsController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Error while retrieving own avatar account',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of keycloak ",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   getMyAvatarURL(@User() keycloakUser: KeycloakUserInstance) {
     return this.service.getAvatarURLByAccountId(keycloakUser.account_id);
   }
@@ -303,22 +308,6 @@ export class AccountsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully created a new user',
-    type: Accounts,
-    schema: {
-      allOf: [
-        {
-          $ref: getSchemaPath(Accounts),
-        },
-        {
-          properties: {
-            results: {
-              type: 'object',
-              items: {$ref: getSchemaPath(Accounts)},
-            },
-          },
-        },
-      ],
-    },
   })
   createNewUser(
     @User() user: KeycloakUserInstance,
@@ -359,8 +348,9 @@ export class AccountsController {
   updateAccountById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string },
-    @Body() body: AccountUpdateProfilePayload
+    @Body() body: AccountAddRequestPayload
   ) {
+    console.log(body + " ở đây nè");
     return this.service.updateById(user.account_id, payload.id, body);
   }
 
@@ -442,7 +432,15 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
+
   @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiParam({
+    name: 'search',
+    description: "Search disabled accounts",
+    type: String,
+    required: false,
+    example: 'Staff',
+  })
   getDisabledAccounts(@Query('search') search = '') {
     return this.service.getDisabledAccounts(search);
   }
@@ -543,6 +541,13 @@ export class AccountsController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
+  })
+  @ApiParam({
+    name: 'search',
+    description: "Search deleted accounts",
+    type: String,
+    required: false,
+    example: 'Staff',
   })
   getDeletedAccounts(@Query('search') search = '') {
     return this.service.getDeletedAccounts(search);
@@ -747,9 +752,11 @@ export class AccountsController {
     required: true,
     example: 'ABCD1234',
   })
+
+
   changePasswordByKeycloakId(
     @Param() payload: { id: string },
-    @Body() requestPayload: { password: string }
+    @Body() requestPayload: ChangeProfilePasswordRequest
   ) {
     return this.service.changePasswordByKeycloakId(
       payload.id,

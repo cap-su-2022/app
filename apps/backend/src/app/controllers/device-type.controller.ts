@@ -10,22 +10,23 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { DeviceType } from '../models/device-type.entity';
-import { DeviceTypeService } from '../services/device-type.service';
-import { User } from '../decorators/keycloak-user.decorator';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import { PaginationParams } from './pagination.model';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
+import {Pagination} from 'nestjs-typeorm-paginate';
+import {DeviceType} from '../models/device-type.entity';
+import {DeviceTypeService} from '../services/device-type.service';
+import {User} from '../decorators/keycloak-user.decorator';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum/roles.enum';
+import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {PaginationParams} from './pagination.model';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
 
 @Controller('/v1/device-type')
 @ApiBearerAuth()
 @ApiTags('Device Types')
 export class DeviceTypeController {
-  constructor(private readonly service: DeviceTypeService) {}
+  constructor(private readonly service: DeviceTypeService) {
+  }
 
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -68,9 +69,13 @@ export class DeviceTypeController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
   @ApiOperation({
-    summary: 'Get device type name',
-    description: 'Get device type name',
+    summary: 'Get all device type name',
+    description: 'Get all device type name',
   })
   getDeviceTypeNames() {
     return this.service.getDeviceTypeNames();
@@ -98,6 +103,13 @@ export class DeviceTypeController {
     summary: 'Get device type by id',
     description: 'Get device type by id',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active device type",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   getDeviceTypeById(@Param('id') id: string): Promise<DeviceType> {
     return this.service.getDeviceTypeById(id);
   }
@@ -106,8 +118,8 @@ export class DeviceTypeController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Add device type',
-    description: 'Add device type',
+    summary: 'Add a new device type',
+    description: 'Add a new device type',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -154,6 +166,13 @@ export class DeviceTypeController {
     summary: 'Update device type by id',
     description: 'Update device type by id',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active device type",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   updateDeviceTypeById(
     @Param('id') id: string,
     @Body() payload: MasterDataAddRequestPayload,
@@ -184,6 +203,13 @@ export class DeviceTypeController {
     summary: 'Deleted device types',
     description: 'Deleted device types',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active device type",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   deleteDeviceTypeById(
     @Param('id') id: string,
     @User() user: KeycloakUserInstance
@@ -213,6 +239,13 @@ export class DeviceTypeController {
     summary: 'Get deleted device types',
     description: 'Get deleted device types',
   })
+  @ApiParam({
+    name: 'search',
+    description: "Search deleted device types",
+    type: String,
+    required: false,
+    example: 'Can borrow a lot',
+  })
   getDeletedDeviceTypes(@Query('search') search: string) {
     return this.service.getDeletedDeviceTypes(search);
   }
@@ -239,6 +272,13 @@ export class DeviceTypeController {
   @ApiOperation({
     summary: 'Successfully restored deleted device type by id',
     description: 'Successfully restored deleted device type by id',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of deleted device type",
+    type: String,
+    required: true,
+    example: 'ABCD1234-123',
   })
   restoreDeletedTypeById(
     @Param('id') id: string,
@@ -269,6 +309,13 @@ export class DeviceTypeController {
   @ApiOperation({
     summary: 'Permanently delete device type by id',
     description: 'Permanently delete device type by id',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of deleted device type",
+    type: String,
+    required: true,
+    example: 'Can borrow a lot',
   })
   permanentlyDeleteDeviceTypeById(@Param('id') id: string) {
     return this.service.permanentlyDeleteDeviceTypeById(id);

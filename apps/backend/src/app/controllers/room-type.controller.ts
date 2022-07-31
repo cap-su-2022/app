@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiOperation, ApiParam,
+  ApiOperation, ApiParam, ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -25,6 +25,7 @@ import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
 import {Roles} from '../decorators/role.decorator';
 import {Role} from '../enum/roles.enum';
 import {PaginationParams} from './pagination.model';
+
 
 @Controller('/v1/room-type')
 @ApiBearerAuth()
@@ -57,7 +58,6 @@ export class RoomTypeController {
     summary: 'Get room type by pagination',
     description: 'Get room type by pagination',
   })
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   getRoomTypes(@Query() payload: PaginationParams) {
     return this.service.getRoomTypesWithPagination(payload);
   }
@@ -95,7 +95,7 @@ export class RoomTypeController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Request params for room type is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -124,8 +124,8 @@ export class RoomTypeController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Add room type',
-    description: 'Add room type',
+    summary: 'Add a new room type',
+    description: 'Add a new room type',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -133,7 +133,7 @@ export class RoomTypeController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Request params for room type is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -152,13 +152,17 @@ export class RoomTypeController {
 
   @Put(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Update room type by id',
+    description: 'Update room type by id',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully updated room type by id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Request params for room type is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -168,9 +172,12 @@ export class RoomTypeController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  @ApiOperation({
-    summary: 'Update room type by id',
-    description: 'Update room type by id',
+  @ApiParam({
+    name: 'id',
+    description: "The ID of room type",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   updateRoomTypeById(
     @Param('id') id: string,
@@ -205,6 +212,13 @@ export class RoomTypeController {
   @ApiOperation({
     summary: 'Delete room type by id',
     description: 'Delete room type by id',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active  room type",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   deleteRoomTypeById(
     @Param('id') id: string,
@@ -261,6 +275,13 @@ export class RoomTypeController {
     summary: 'Successfully restored deleted room type by id',
     description: 'Successfully restored deleted room type by id',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of deleted room type",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   restoreDeletedRoomTypeById(
     @Param('id') id: string,
     @User() keycloakUser: KeycloakUserInstance
@@ -290,6 +311,13 @@ export class RoomTypeController {
   @ApiOperation({
     summary: 'Permanently delete room type by id',
     description: 'Permanently delete room type by id',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of deleted room type",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   permanentDeleteRoomTypeById(@Param('id') id: string) {
     return this.service.permanentDeleteRoomTypeById(id);

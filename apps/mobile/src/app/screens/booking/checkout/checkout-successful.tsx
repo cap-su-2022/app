@@ -34,40 +34,53 @@ import SuccessfullyCheckedOutFeedback from './modal/successfully-checkout-feedba
 import { FormikValues, useFormik } from 'formik';
 import { boxShadow } from '../../../utils/box-shadow.util';
 import AlertModal from '../../../components/modals/alert-modal.component';
-
-const feedbackTypeData = [
-  {
-    label: 'Room facilities',
-    value: 'ROOM_FACILITY',
-  },
-  {
-    label: 'Outside room',
-    value: 'OUTSIDE_ROOM',
-  },
-  {
-    label: 'Device problems',
-    value: 'DEVICE_PROBLEMS',
-  },
-  {
-    label: 'Check-in Procedures',
-    value: 'CHECK_IN_PROCEDURES',
-  },
-  {
-    label: 'Check-out Procedures',
-    value: 'CHECK_OUT_PROCEDURES',
-  },
-  {
-    label: 'Other',
-    value: 'OTHER',
-  },
-];
+import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
+import { fetchAllFeedBackTypes } from '../../../redux/features/feed-back-type/thunk/fetch-all-feed-back-types.thunk';
+import FeedbackTypeModel from '../../../redux/models/feedback-type.model';
+import { addNewFeedbackAfterCheckout } from '../../../redux/features/feedback/thunk/Add-new-feedback-after-checkout.thunk';
+import {useAppSelector} from "../../../hooks/use-app-selector.hook";
 
 const CheckoutSuccessfully: React.FC<any> = () => {
   const navigate = useAppNavigation();
   const [rating, setRating] = useState<number>(0);
   const [isFeedbackModalOpen, setFeedbackModalOpen] = useState<boolean>(false);
   const [isFeedbackSent, setFeedbackSent] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const [selectedFeedbackTypeSelections, setSelectedFeedbackTypeSelections] =
+    useState([]);
+  const [selectedFeedbackType, setSelectedFeedbackType] = useState<string>();
+  const { roomBookingCheckout } = useAppSelector((state) => state.roomBooking);
 
+  useEffect(() => {
+    dispatch(fetchAllFeedBackTypes())
+      .unwrap()
+      .then((value) => {
+        transformFeedbackTypeToFeedbackTypePicker(value);
+      });
+    return () => {
+      setSelectedFeedbackTypeSelections([]);
+    };
+  }, []);
+
+  const transformFeedbackTypeToFeedbackTypePicker = (
+    value: FeedbackTypeModel[]
+  ) => {
+    const feedbackTypeSelections = value.map((feedbackType) => {
+      return {
+        value: feedbackType.id,
+        label: feedbackType.name,
+      };
+    });
+    setSelectedFeedbackTypeSelections(feedbackTypeSelections);
+    handleSetFeedbackType(feedbackTypeSelections[0].value);
+  };
+
+  const handleSetFeedbackType = (value) => {
+    if (!value) {
+      return setSelectedFeedbackType('Feedback room');
+    }
+    setSelectedFeedbackType(value);
+  };
   const Header = () => {
     return (
       <View
@@ -98,8 +111,19 @@ const CheckoutSuccessfully: React.FC<any> = () => {
     if (!values.feedbackType) {
       return alert('Please select a feedback type!');
     }
-    alert(JSON.stringify(values));
-
+    dispatch(
+      addNewFeedbackAfterCheckout({
+        message: values.description,
+        rateNum: values.rateNum,
+        feedbackTypeId: values.feedbackType,
+        bookingRoomId: roomBookingCheckout.id,
+      })
+    )
+      .unwrap()
+      .then(() => alert('Feed Back Successful! Thank you for your feedback'))
+      .catch((e) => {
+        alert(JSON.stringify(e));
+      });
     // setFeedbackModalOpen(true);
   };
 
@@ -207,7 +231,9 @@ const CheckoutSuccessfully: React.FC<any> = () => {
             <View style={[styles.ratingContainer, boxShadow(styles)]}>
               <StarRating
                 rating={formik.values.rateNum}
-                setRating={(rate) => setRating(rate)}
+                setRating={(rate) => {
+                  setRating(rate);
+                }}
               />
             </View>
           </View>
@@ -219,6 +245,8 @@ const CheckoutSuccessfully: React.FC<any> = () => {
               placeholder="Share your thought..."
               multiline
               numberOfLines={4}
+              value={formik.values.description}
+              onChangeText={formik.handleChange('description')}
             />
           </View>
 
@@ -228,7 +256,7 @@ const CheckoutSuccessfully: React.FC<any> = () => {
               value={formik.values.feedbackType}
               style={pickerStyle}
               onValueChange={(e) => formik.setFieldValue('feedbackType', e)}
-              items={feedbackTypeData}
+              items={selectedFeedbackTypeSelections}
             />
           </View>
 
