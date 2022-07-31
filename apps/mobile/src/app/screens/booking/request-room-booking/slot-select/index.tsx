@@ -54,7 +54,7 @@ const SlotSelect: React.FC<SelectSlotsProps> = (props) => {
     <View style={styles.container}>
       <View style={styles.slotStart}>
         <View style={styles.container}>
-          <Text style={styles.title}>From Slot</Text>
+          <Text style={styles.title}>{props.isChecked ? 'From Slot' : 'Slot'}</Text>
           <View style={styles.slotPicker}>
             <RNPickerSelect
               fixAndroidTouchableBug={true}
@@ -97,14 +97,14 @@ const SlotSelect: React.FC<SelectSlotsProps> = (props) => {
 
 const pickerStyles: PickerStyle = {
   inputAndroid: {
-    fontSize: deviceWidth / 21,
+    fontSize: deviceWidth / 23,
     fontWeight: '600',
     color: GRAY,
     alignSelf: 'center',
   },
   inputIOS: {
     alignSelf: 'center',
-    fontSize: deviceWidth / 21,
+    fontSize: deviceWidth / 23,
     fontWeight: '600',
     color: GRAY,
   },

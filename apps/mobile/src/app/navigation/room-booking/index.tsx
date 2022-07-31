@@ -111,10 +111,16 @@ const RoomBookingNavigator: React.FC = () => {
           component={AlreadyBookDetail}
         />
         <StackScreen
+          options={{
+            headerShown: false,
+          }}
           name="ROOM_BOOKING_CHOOSE_START_DAY"
           component={StartDayCalendar}
         />
         <StackScreen
+          options={{
+            headerShown: false,
+          }}
           name="ROOM_BOOKING_CHOOSE_END_DAY"
           component={EndDayCalendar}
         />

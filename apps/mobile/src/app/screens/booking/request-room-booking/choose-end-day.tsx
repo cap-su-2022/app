@@ -35,7 +35,7 @@ const EndDayCalendar: React.FC<any> = (props) => {
       <View style={styles.container}>
         <Calendar
           minDate={fromDay || Today}
-          initialDate={currentDate}
+          initialDate={fromDay || currentDate}
           onDayPress={(day) => handleDayPress(day)}
           markedDates={{
             [dayEnd]: {
@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: FPT_ORANGE_COLOR,
+    alignSelf: 'center'
   },
   bookingNowButtonText: {
     fontSize: deviceWidth / 21,

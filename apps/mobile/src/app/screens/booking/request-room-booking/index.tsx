@@ -95,6 +95,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
         toDay: isMultiDateChecked ? toDay : null,
         fromSlot: slotStart,
         toSlot: slotEnd,
+        isMultiSlotChecked: isMultiSlotChecked
       })
     );
     setTimeout(() => {
@@ -136,7 +137,8 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
         toDay: isMultiDateChecked ? toDay : null,
         fromSlot: slotStart,
         toSlot: slotEnd,
-        isMultiLongTerm: true
+        isMultiLongTerm: true,
+        isMultiSlotChecked: isMultiSlotChecked
       })
     );
 

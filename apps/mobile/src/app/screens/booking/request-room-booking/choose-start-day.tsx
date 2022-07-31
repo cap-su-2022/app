@@ -22,7 +22,6 @@ const StartDayCalendar: React.FC<any> = (props) => {
   const [dayStart, setDayStart] = useState<string>('');
   const currentDate = new Date().toJSON().slice(0, 10);
   const today = useAppSelector((state) => state.roomBooking.today);
-
   const handleDayPress = (day) => {
     setDayStart(day.dateString);
     dispatch(saveStartDay({ fromDay: day.dateString }));
@@ -34,6 +33,7 @@ const StartDayCalendar: React.FC<any> = (props) => {
         <Calendar
           initialDate={currentDate}
           minDate={today}
+          maxDate={today}
           onDayPress={(day) => handleDayPress(day)}
           markedDates={{
             [dayStart]: {
@@ -124,6 +124,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: FPT_ORANGE_COLOR,
+    alignSelf: 'center'
   },
   bookingNowButtonText: {
     fontSize: deviceWidth / 21,

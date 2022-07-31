@@ -154,9 +154,17 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
     } else {
       result = filterBookingRoomElse(slotsFromState, rooms);
     }
-    const finalResult = result.filter(
-      (item) => item.slotNum >= slotStart && item.slotNum <= slotEnd
-    );
+    let finalResult = []
+
+   if (addRoomBooking.isMultiSlot){
+      finalResult = result.filter(
+       (item) => item.slotNum >= slotStart && item.slotNum <= slotEnd
+     );
+   } else {
+     finalResult = result.filter(
+       (item) => item.slotNum === slotStart
+     )
+   }
     setSlotAndRoom(finalResult);
   };
 
