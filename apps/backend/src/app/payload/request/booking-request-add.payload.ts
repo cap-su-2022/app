@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { Transform, TransformFnParams } from 'class-transformer';
 
-export class BookingRequestAddRequestPayload extends PaginationParams {
+export class BookingRequestAddRequestPayload  {
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @MaxLength(100)
   @IsNotEmpty({

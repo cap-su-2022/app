@@ -14,7 +14,7 @@ export const fetchAllBookingReason = createAsyncThunk<BookingRoomReason[], void,
 }>("bookingReason/fetch-all", async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.get(`${API_URL}/booking-reasons`);
+    const response = await axios.get(`${API_URL}/booking-reasons/name`);
     return response.data
   } catch (e) {
     return thunkAPI.rejectWithValue(e.message);

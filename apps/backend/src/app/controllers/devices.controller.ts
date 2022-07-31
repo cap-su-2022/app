@@ -13,12 +13,7 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import {DevicesService} from '../services';
-import {
-  ApiBearerAuth,
-  ApiOperation, ApiParam, ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags,} from '@nestjs/swagger';
 import {DevicesValidation} from '../pipes/validation/devices.validation';
 import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
 import {Roles} from '../decorators/role.decorator';
@@ -67,7 +62,7 @@ export class DevicesController {
   }
 
   @Get('name')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Get names of devices',
     description: 'Get the list of names of devices',
