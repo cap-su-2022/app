@@ -75,6 +75,7 @@ export const App = () => {
     if (!isEmpty(authUser)) {
       const user = LOCAL_STORAGE.getString('user');
       if(typeof user !== "undefined"){
+
         dispatch(addUserAfterCloseApp(JSON.parse(user)));
       }
     }
