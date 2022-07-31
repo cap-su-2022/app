@@ -314,23 +314,23 @@ export class RoomsRepository extends Repository<Rooms> {
       .getMany();
   }
 
-  filterByNameAndType(payload: ChooseBookingRoomFilterPayload) {
-    const query = this.createQueryBuilder('rooms')
-      .select('rooms.id', 'id')
-      .addSelect('rooms.name', 'name')
-      .addSelect('rooms.type', 'type')
-      .where('rooms.disabled_at IS NULL')
-      .andWhere('rooms.deleted_at IS NULL')
-      .andWhere('rooms.name ILIKE :name', {
-        name: `%${payload.roomName.name}%`,
-      })
-      .orderBy('rooms.name', payload.roomName.sort)
-      .addOrderBy('rooms.type', payload.roomType.sort);
-    if (payload.roomType.name.length > 0) {
-      query.andWhere('rooms.type = :type', { type: payload.roomType.name });
-    }
-    return query.getRawMany<Rooms>();
-  }
+  // filterByNameAndType(payload: ChooseBookingRoomFilterPayload) {
+  //   const query = this.createQueryBuilder('rooms')
+  //     .select('rooms.id', 'id')
+  //     .addSelect('rooms.name', 'name')
+  //     .addSelect('rooms.type', 'type')
+  //     .where('rooms.disabled_at IS NULL')
+  //     .andWhere('rooms.deleted_at IS NULL')
+  //     .andWhere('rooms.name ILIKE :name', {
+  //       name: `%${payload.roomName.name}%`,
+  //     })
+  //     .orderBy('rooms.name', payload.roomName.sort)
+  //     .addOrderBy('rooms.type', payload.roomType.sort);
+  //   if (payload.roomType.name.length > 0) {
+  //     query.andWhere('rooms.type = :type', { type: payload.roomType.name });
+  //   }
+  //   return query.getRawMany<Rooms>();
+  // }
 
   filterRoomFreeByRoomBooked(listIdRoomBooked: string[]) {
     console.log('AAAAAAAAa: ', listIdRoomBooked);

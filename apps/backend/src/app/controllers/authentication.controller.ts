@@ -129,7 +129,8 @@ export class AuthenticationController {
       keycloakId: resp.keycloakId,
       role: resp.role,
       fullname: resp.fullname,
-      avatar: resp.avatar
+      avatar: resp.avatar,
+      description: resp.description
     };
   }
 
@@ -172,7 +173,8 @@ export class AuthenticationController {
       username: resp.username,
       keycloakId: resp.keycloakId,
       role: resp.role,
-      fullname: resp.fullname
+      fullname: resp.fullname,
+      description: resp.description
     };
   }
 

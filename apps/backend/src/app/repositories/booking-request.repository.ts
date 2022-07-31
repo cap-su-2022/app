@@ -98,6 +98,9 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .where('r.name ILIKE :roomName', {
         roomName: `%${payload.search}%`,
       })
+      .orWhere('a.username ILIKE :username', {
+        username: `%${payload.search}%`,
+      })
       .andWhere('booking_request.status LIKE :status', {
         status: `%${payload.status}%`,
       })
@@ -105,11 +108,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     if (payload.checkInAt && payload.checkInAt !== '') {
       query.andWhere('booking_request.checkedin_at >= :checkInAt', {
         checkInAt: payload.checkInAt,
-      });
-    }
-    if (payload.checkOutAt && payload.checkOutAt !== '') {
-      query.andWhere('booking_request.checkout_at >= :checkOutAt', {
-        checkOutAt: payload.checkOutAt,
       });
     }
     if (payload.checkinDate && payload.checkinDate !== '') {
@@ -460,29 +458,29 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getRawMany<BookingRequest>();
   }
 
-  findByIdAndAccountId(accountId: string, id: string): Promise<BookingRequest> {
-    return this.createQueryBuilder('booking_request')
-      .select('booking_request.id', 'id')
-      .addSelect('booking_request.status', 'status')
-      .addSelect('booking_request.checkin_Date', 'checkinDate')
-      .addSelect('booking_request.booking_reason_id', 'reasonType')
-      .addSelect('booking_request.description', 'description')
-      .addSelect('booking_request.requested_at', 'requestedAt')
-      .addSelect('booking_request.requested_by', 'requestedBy')
-      .addSelect('booking_request.updated_at', 'updatedAt')
-      .addSelect('booking_request.requested_at', 'bookedAt')
-      .addSelect('r.type', 'roomType')
-      .addSelect('r.id', 'roomId')
-      .addSelect('r.name', 'roomName')
+  // findByIdAndAccountId(accountId: string, id: string): Promise<BookingRequest> {
+  //   return this.createQueryBuilder('booking_request')
+  //     .select('booking_request.id', 'id')
+  //     .addSelect('booking_request.status', 'status')
+  //     .addSelect('booking_request.checkin_Date', 'checkinDate')
+  //     .addSelect('booking_request.booking_reason_id', 'reasonType')
+  //     .addSelect('booking_request.description', 'description')
+  //     .addSelect('booking_request.requested_at', 'requestedAt')
+  //     .addSelect('booking_request.requested_by', 'requestedBy')
+  //     .addSelect('booking_request.updated_at', 'updatedAt')
+  //     .addSelect('booking_request.requested_at', 'bookedAt')
+  //     .addSelect('r.type', 'roomType')
+  //     .addSelect('r.id', 'roomId')
+  //     .addSelect('r.name', 'roomName')
 
-      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
-      .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
-      .where('booking_request.requested_by = :accountId', {
-        accountId: accountId,
-      })
-      .andWhere('booking_request.id = :id', { id: id })
-      .getRawOne<BookingRequest>();
-  }
+  //     .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+  //     .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
+  //     .where('booking_request.requested_by = :accountId', {
+  //       accountId: accountId,
+  //     })
+  //     .andWhere('booking_request.id = :id', { id: id })
+  //     .getRawOne<BookingRequest>();
+  // }
   getRequestByRoomId(roomId: string) {
     const date = new Date();
     const query = this.createQueryBuilder('booking_request')

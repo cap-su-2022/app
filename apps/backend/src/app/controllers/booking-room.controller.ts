@@ -284,11 +284,11 @@ export class BookingRoomController {
     return this.service.getBookingRoomById(id);
   }
 
-  @Get('rooms')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  getChoosingBookingRooms(@Query('filter') filter: string) {
-    return this.service.getChoosingBookingRooms(filter);
-  }
+  // @Get('rooms')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // getChoosingBookingRooms(@Query('filter') filter: string) {
+  //   return this.service.getChoosingBookingRooms(filter);
+  // }
 
   @Get('current-booking-list')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -296,17 +296,17 @@ export class BookingRoomController {
     return this.service.getCurrentRoomBookingList(user.account_id);
   }
 
-  @Get('current-booking/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  getCurrentRoomBookingDetail(
-    @User() user: KeycloakUserInstance,
-    @Param() payload: { id: string }
-  ) {
-    return this.service.getCurrentRoomBookingDetail(
-      user.account_id,
-      payload.id
-    );
-  }
+  // @Get('current-booking/:id')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // getCurrentRoomBookingDetail(
+  //   @User() user: KeycloakUserInstance,
+  //   @Param() payload: { id: string }
+  // ) {
+  //   return this.service.getCurrentRoomBookingDetail(
+  //     user.account_id,
+  //     payload.id
+  //   );
+  // }
 
   @Get('count-pending')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)

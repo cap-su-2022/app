@@ -95,6 +95,7 @@ export class AuthenticationService {
         role: roleName,
         fullname: user.fullname,
         avatar: user.avatar,
+        description: user.description,
       };
     } catch (e) {
       this.logger.error(e);
@@ -134,6 +135,7 @@ export class AuthenticationService {
     );
 
     const user = await this.accountService.findByKeycloakId(keycloakUser.sub);
+    console.log("AAAA: ", user)
     const roleName = await this.accountService.getAccountRoleById(user.id);
 
     return {
@@ -148,6 +150,7 @@ export class AuthenticationService {
       role: roleName,
       fullname: user.fullname,
       avatar: user.avatar,
+      description: user.description,
     };
   }
 }

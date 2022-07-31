@@ -112,6 +112,8 @@ const UserInfoPreference: React.FC = () => {
       description: userInfo.description,
     };
 
+    console.log("USERINFOR: ", userInfo)
+
     const UpdateSchema = Yup.object().shape({
       email: Yup.string().email('Invalid email').required('Required'),
       fullname: Yup.string()

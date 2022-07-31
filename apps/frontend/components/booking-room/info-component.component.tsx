@@ -137,7 +137,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
           </div>
 
           <div style={{ display: 'flex' }}>
-            <InputWrapper label="Day use" className={classes.inputWrapper}>
+            <InputWrapper label="Checkin date" className={classes.inputWrapper}>
               <TextInput
                 icon={<ClipboardText />}
                 radius="md"
