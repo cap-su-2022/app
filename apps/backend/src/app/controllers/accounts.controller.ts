@@ -313,7 +313,6 @@ export class AccountsController {
     @User() user: KeycloakUserInstance,
     @Body() account: AccountAddRequestPayload
   ): Promise<Accounts> {
-    console.log(account);
     return this.service.add(account, user.account_id);
   }
 

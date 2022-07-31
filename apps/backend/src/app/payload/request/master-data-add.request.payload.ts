@@ -4,7 +4,7 @@ import {Transform, TransformFnParams} from 'class-transformer';
 import {ApiProperty} from "@nestjs/swagger";
 
 export class MasterDataAddRequestPayload {
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @IsNotEmpty({
     message: 'Name can not be empty',
   })

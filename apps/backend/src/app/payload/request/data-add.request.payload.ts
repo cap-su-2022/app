@@ -11,7 +11,7 @@ import {Transform, TransformFnParams} from 'class-transformer';
 import {ApiProperty} from '@nestjs/swagger';
 
 export class DataAddRequestPayload {
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @MaxLength(100)
   @ApiProperty({
     name: 'name',
@@ -26,7 +26,7 @@ export class DataAddRequestPayload {
   })
   name?: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @ApiProperty({
     name: 'description',
     description: 'Description to be added',
@@ -40,7 +40,7 @@ export class DataAddRequestPayload {
   @IsString()
   description?: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @IsOptional()
   @IsBoolean()
   @ApiProperty({
@@ -51,7 +51,7 @@ export class DataAddRequestPayload {
   })
   isDisabled?: boolean;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @ApiProperty({
     name: 'type',
     description: 'Type to be added',

@@ -17,6 +17,7 @@ import {validationConfig} from '../pipes/validation/global.validator';
 import {ApiProperty} from "@nestjs/swagger";
 
 export class PaginationParams {
+
   @Transform((val) => Number.parseInt(val.value))
   @IsInt({
     message: 'Page number must be integer',
@@ -46,7 +47,7 @@ export class PaginationParams {
   @ApiProperty({default: 5, required: true})
   limit: number;
 
-
+  // @Transform((val) => Number.parseInt(val.value))
   @IsString({
     message: 'Dir value must be a string',
   })
@@ -56,8 +57,8 @@ export class PaginationParams {
   @ApiProperty({default: 'ASC', required: true})
   dir: string;
 
+  // @Transform((val) => Number.parseInt(val.value))
   @IsOptional()
-  @Transform(({value}: TransformFnParams) => value?.trim())
   @IsString({
     message: 'Search value must be a string',
   })
@@ -67,7 +68,6 @@ export class PaginationParams {
   @ApiProperty({default: '', required: false})
   search: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
   @IsNotEmpty({
     message: 'Sorting field must not be empty',
   })

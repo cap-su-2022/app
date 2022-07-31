@@ -10,7 +10,7 @@ import {Transform, TransformFnParams} from 'class-transformer';
 import {ApiProperty} from '@nestjs/swagger';
 
 export class AccountAddRequestPayload {
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @MinLength(8)
   @MaxLength(100)
   @IsString()
@@ -29,7 +29,7 @@ export class AccountAddRequestPayload {
   })
   username: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @MinLength(8)
   @MaxLength(100)
   @IsString()
@@ -48,7 +48,7 @@ export class AccountAddRequestPayload {
   })
   fullname: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @MinLength(11)
   @MaxLength(11)
   @IsString()
@@ -68,7 +68,7 @@ export class AccountAddRequestPayload {
   })
   phone: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @MinLength(11)
   @MaxLength(11)
   @IsString()
@@ -86,7 +86,7 @@ export class AccountAddRequestPayload {
   })
   email?: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @MaxLength(100)
   @IsString()
   @IsOptional()
@@ -102,7 +102,7 @@ export class AccountAddRequestPayload {
   })
   description?: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @IsString()
   @IsNotEmpty({
     message: 'Role can not be empty',
@@ -119,7 +119,7 @@ export class AccountAddRequestPayload {
   })
   roleId: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @IsString()
   @ApiProperty({
     name: 'avatar',
@@ -133,7 +133,7 @@ export class AccountAddRequestPayload {
   })
   avatar: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
+
   @ApiProperty({
     name: 'isDisabled',
     description: 'Is the account should be disabled',
