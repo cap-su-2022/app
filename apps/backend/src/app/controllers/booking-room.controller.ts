@@ -72,6 +72,18 @@ export class BookingRoomController {
     );
   }
 
+  @Get('check-slot-over-time')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  checkSlotOverTime(
+    @Query('slotin', new DefaultValuePipe('')) slotin: string,
+    @Query('date', new DefaultValuePipe('')) date: string
+  ) {
+    return this.service.checkSlotOverTime({
+      slotin: slotin,
+      date: date,
+    });
+  }
+
   @Get('list-booking-by-room-in-week')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getBookingByRoomInWeek(

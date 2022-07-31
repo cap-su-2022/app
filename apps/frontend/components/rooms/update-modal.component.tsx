@@ -135,7 +135,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
     <>
       <Modal
         title={<ModalHeaderTitle />}
-        size={dimension.width / 2}
+        size='lg'
         centered
         opened={props.isShown}
         onClose={() => {
@@ -147,9 +147,8 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
           <Form onSubmit={formik.handleSubmit}>
             <div className={classes.modalBody}>
               <InputWrapper
-                required
                 label="Room ID"
-                description="Room ID is unique"
+                style={{marginBottom: 20}}
               >
                 <TextInput
                   icon={<Id />}
@@ -165,7 +164,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
               <InputWrapper
                 required
                 label="Room name"
-                description="Room name is unique. Maximum length is 100 characters"
+                style={{marginBottom: 20}}
               >
                 <TextInput
                   icon={<ClipboardText />}
@@ -181,7 +180,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
               <InputWrapper
                 required
                 label="Room Type"
-                description="Separate libray room type"
+                style={{marginBottom: 20}}
               >
                 <Select
                   onChange={(e) => {
@@ -197,7 +196,6 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 />
               </InputWrapper>
               <InputWrapper
-                description="(Optional) Maximum length is 500 characters."
                 label="Room Description"
               >
                 <Textarea
@@ -207,6 +205,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   error={formik.errors.description}
                   onChange={formik.handleChange}
                   radius="md"
+                  minRows={4}
                   value={formik.values.description}
                 />
               </InputWrapper>

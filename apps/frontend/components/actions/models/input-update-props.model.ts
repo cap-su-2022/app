@@ -5,9 +5,9 @@ export interface InputUpdateProps {
   name: string;
   required: boolean;
   label: string;
-  description: string;
   inputtype: string;
   readOnly: boolean;
   data?: any[];
   value: string;
+  disabled: boolean;
 }

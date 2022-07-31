@@ -345,9 +345,29 @@ export class BookingRoomService {
     }
   }
 
-  getBookingByRoomInWeek(payload: { roomId: string; date: string }) {
+  async checkSlotOverTime(payload: { slotin: string; date: string }) {
     try {
-      return this.repository.getBookingByRoomInWeek(payload);
+      const today = dayjs(new Date()).format('DD-MM-YYYY');
+      const currTime = dayjs(new Date()).format('HH:mm:ss');
+      if (today === payload.date) {
+        const slot = await this.slotService.getById(payload.slotin);
+        if (currTime > slot.timeStart) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getBookingByRoomInWeek(payload: { roomId: string; date: string }) {
+    try {
+      return await this.repository.getBookingByRoomInWeek(payload);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

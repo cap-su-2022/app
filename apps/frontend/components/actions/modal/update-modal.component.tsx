@@ -40,8 +40,8 @@ const UpdateModal: React.FC<UpdateModalProps> = (props) => {
               <InputWrapper
                 key={index}
                 label={field.label}
-                description={field.description}
                 required={field.required}
+                style={{marginBottom: 20}}
               >
                 <InputType
                   readOnly={field.readOnly}
@@ -55,6 +55,7 @@ const UpdateModal: React.FC<UpdateModalProps> = (props) => {
                   inputtype={field.inputtype}
                   data={field.data}
                   value={props.formik.values[field.id] || ""}
+                  disabled={field.disabled}
                 />
               </InputWrapper>
             ))}

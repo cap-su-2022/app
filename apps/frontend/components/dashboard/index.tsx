@@ -20,16 +20,6 @@ import {
 import AdminLayout from '../../components/layout/admin.layout';
 import { fetchStatistic } from '../../redux/features/room-booking/thunk/fetch-statistics.thunk';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { map } from 'rxjs';
-
-interface StatsGridProps {
-  data: {
-    title: string;
-    icon: keyof typeof icons;
-    value: number;
-    diff: number;
-  }[];
-}
 
 const icons = {
   total: UserPlus,
@@ -63,7 +53,7 @@ function Dashboard() {
 
         <Group align="flex-end" spacing="xs" mt={25}>
           <Text className={classes.value}>{stat.value}</Text>
-          <Text
+          {/* <Text
             color={stat.diff > 0 ? 'teal' : 'red'}
             size="sm"
             weight={500}
@@ -71,12 +61,8 @@ function Dashboard() {
           >
             <span>{stat.diff}%</span>
             <DiffIcon size={16} />
-          </Text>
+          </Text> */}
         </Group>
-
-        <Text size="xs" color="dimmed" mt={7}>
-          Compared to {stat.title}
-        </Text>
       </Paper>
     );
   };
@@ -84,19 +70,19 @@ function Dashboard() {
   const getStatisticsData = (stats) => {
     const statsFormated = {
       total: {
-        diff: stats?.['booked'] - stats?.['cancelled'],
+        // diff: stats?.['booked'] - stats?.['cancelled'],
         icon: 'total',
         title: 'Total',
         value: stats?.['total'],
       },
       booked: {
-        diff: stats?.['booked'] - stats?.['cancelled'],
+        // diff: stats?.['booked'] - stats?.['cancelled'],
         icon: 'booked',
         title: `Booked`,
         value: stats?.['booked'],
       },
       cancelled: {
-        diff: stats?.['cancelled'] - stats?.['booked'],
+        // diff: stats?.['cancelled'] - stats?.['booked'],
         icon: 'cancelled',
         title: `Cancelled`,
         value: stats?.['cancelled'],

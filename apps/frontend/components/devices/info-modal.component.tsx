@@ -54,30 +54,30 @@ const DeviceInfoModal: React.FC<DeviceInfoModalProps> = (props) => {
               value={device.id}
             />
           </InputWrapper>
-          <InputWrapper label="Device name" description="Unique device name">
-            <TextInput
-              icon={<ClipboardText />}
-              className={classes.textInput}
-              radius="md"
-              readOnly
-              value={device.name}
-            />
-          </InputWrapper>
-          <InputWrapper
-            label="Device type"
-            description="Type of library in separated"
-          >
-            <TextInput
-              icon={<ClipboardText />}
-              className={classes.textInput}
-              radius="md"
-              readOnly
-              value={device.deviceTypeName}
-            />
-          </InputWrapper>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <InputWrapper label="Device name" description="Unique device name">
+              <TextInput
+                icon={<ClipboardText />}
+                className={classes.textInput}
+                radius="md"
+                readOnly
+                value={device.name}
+              />
+            </InputWrapper>
+            <InputWrapper
+              label="Device type"
+            >
+              <TextInput
+                icon={<ClipboardText />}
+                className={classes.textInput}
+                radius="md"
+                readOnly
+                value={device.deviceTypeName}
+              />
+            </InputWrapper>
+          </div>
           <InputWrapper
             label="Device description"
-            description="Additional information of the device"
           >
             <Textarea
               icon={<FileDescription />}
