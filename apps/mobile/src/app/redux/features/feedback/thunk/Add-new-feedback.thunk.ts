@@ -36,7 +36,6 @@ export const addNewFeedback = createAsyncThunk<
         },
       }
     );
-    console.log('respones: ', response.statusText);
     return await response.data;
   } catch (e: AxiosError | any) {
     return thunkAPI.rejectWithValue({

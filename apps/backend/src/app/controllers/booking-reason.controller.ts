@@ -56,6 +56,7 @@ export class BookingReasonController {
   }
 
   @Get('name')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully got booking reason',
