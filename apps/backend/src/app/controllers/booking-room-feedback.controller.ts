@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import { PaginationParams } from './pagination.model';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { Feedback } from '../models';
@@ -11,6 +11,7 @@ import { BookingFeedbackSendRequestPayload } from '../payload/request/booking-fe
 import { BookingFeedbackService } from '../services/booking-feedback.service';
 
 @Controller('/v1/booking-room-feedbacks')
+@ApiTags('Booking Room Feedbacks')
 export class BookingFeedbackController {
   constructor(private readonly service: BookingFeedbackService) {}
 

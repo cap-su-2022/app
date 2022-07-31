@@ -3,7 +3,7 @@ import {BookingReasonRepository} from '../repositories/booking-reason.repository
 import {BookingReasonHistService} from './booking-reason-hist.service';
 import {PaginationParams} from '../controllers/pagination.model';
 import {BookingReason} from '../models/booking-reason.entity';
-import {BookingReasonUpdateRequestPayload} from '../payload/request/booking-reason.request.payload';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
 
 
 @Injectable()
@@ -62,7 +62,7 @@ export class BookingReasonService {
 
   async createNewBookingReason(
     accountId: string,
-    payload: BookingReasonUpdateRequestPayload
+    payload: MasterDataAddRequestPayload
   ): Promise<BookingReason> {
     const isExisted = await this.repository.isExistedByName(payload.name);
     if (isExisted) {
@@ -81,7 +81,7 @@ export class BookingReasonService {
 
   async updateBookingReasonById(
     accountId: string,
-    updatePayload: BookingReasonUpdateRequestPayload,
+    updatePayload: MasterDataAddRequestPayload,
     id: string
   ): Promise<BookingReason> {
     try {

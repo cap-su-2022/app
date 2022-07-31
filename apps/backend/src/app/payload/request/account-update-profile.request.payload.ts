@@ -10,7 +10,7 @@ import {Transform, TransformFnParams} from 'class-transformer';
 import {ApiProperty} from "@nestjs/swagger";
 
 
-export class AccountUpdateProfilePayload extends PaginationParams {
+export class AccountUpdateProfilePayload {
   @Transform(({value}: TransformFnParams) => value?.trim())
   @IsNotEmpty({
     message: 'Full name can not be empty',
@@ -80,13 +80,4 @@ export class AccountUpdateProfilePayload extends PaginationParams {
   })
   description?: string;
 
-  @Transform(({value}: TransformFnParams) => value?.trim())
-  @IsOptional()
-  @ApiProperty({
-    name: 'isDisabled',
-    description: 'Is the account should be disabled',
-    type: Boolean,
-    example: true,
-  })
-  roleId?: string;
 }
