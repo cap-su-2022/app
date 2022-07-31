@@ -135,7 +135,6 @@ export class AuthenticationService {
     );
 
     const user = await this.accountService.findByKeycloakId(keycloakUser.sub);
-    console.log("AAAA: ", user)
     const roleName = await this.accountService.getAccountRoleById(user.id);
 
     return {

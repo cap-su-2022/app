@@ -95,14 +95,11 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.id', 'id')
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
-      .where('r.name ILIKE :roomName', {
-        roomName: `%${payload.search}%`,
-      })
-      .orWhere('a.username ILIKE :username', {
-        username: `%${payload.search}%`,
-      })
-      .andWhere('booking_request.status LIKE :status', {
+      .where('booking_request.status LIKE :status', {
         status: `%${payload.status}%`,
+      })
+      .andWhere("(r.name ILIKE :search OR a.username ILIKE :search)", {
+        search: `%${payload.search}%`,
       })
       .orderBy(payload.sort, payload.dir as 'ASC' | 'DESC');
     if (payload.checkInAt && payload.checkInAt !== '') {
@@ -894,8 +891,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .andWhere('booking_request.status = :status', { status: 'CHECKED_IN' })
       .andWhere('booking_request.checkedout_at IS NULL')
       .andWhere('booking_request.checkedin_at IS NOT NULL')
-      .andWhere('booking_request.accepted_by IS NOT NULL')
-      .andWhere('booking_request.accepted_at IS NOT NULL')
+      // .andWhere('booking_request.accepted_by IS NOT NULL')
+      // .andWhere('booking_request.accepted_at IS NOT NULL')
       .andWhere('booking_request.cancelled_at IS NULL')
       .andWhere('booking_request.cancelled_by IS NULL')
       .getRawOne();
