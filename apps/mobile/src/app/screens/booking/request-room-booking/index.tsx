@@ -69,7 +69,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     const slotSelections = val.map((slot) => {
       return {
         value: slot.id,
-        label: `${slot.name}(${slot.timeStart.slice(0,5)} - ${slot.timeEnd.slice(0,5)})`,
+        label: `${slot.name} (${slot.timeStart.slice(0,5)} - ${slot.timeEnd.slice(0,5)})`,
         slotNum: slot.slotNum,
 
       };
