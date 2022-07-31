@@ -95,6 +95,7 @@ export class AuthenticationService {
         role: roleName,
         fullname: user.fullname,
         avatar: user.avatar,
+        description: user.description,
       };
     } catch (e) {
       this.logger.error(e);
@@ -148,6 +149,7 @@ export class AuthenticationService {
       role: roleName,
       fullname: user.fullname,
       avatar: user.avatar,
+      description: user.description,
     };
   }
 }

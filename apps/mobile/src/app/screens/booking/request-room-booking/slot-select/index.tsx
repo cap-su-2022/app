@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import RNPickerSelect, { PickerStyle } from 'react-native-picker-select';
 import { deviceWidth } from '../../../../utils/device';
@@ -17,16 +17,48 @@ interface SelectSlotsProps {
   handleCheck(): void;
 }
 const SlotSelect: React.FC<SelectSlotsProps> = (props) => {
-  const dispatch = useAppDispatch();
+  const [slotStartSelections, setSlotStartSelections] = useState([]);
+  const [slotEndSelections, setSlotEndSelections] = useState([]);
+
+  useEffect(() => {
+    const slotEndNum = props.slotSelections.find(
+      (slot) => slot.value === props.slotEnd
+    );
+    const slotStartNum = props.slotSelections.find(
+      (slot) => slot.value === props.slotStart
+    );
+
+    let slotEndSelections = [];
+    let slotStartSelections = [];
+
+
+    if (typeof slotEndNum !== "undefined" && typeof slotStartNum !== "undefined" && props.isChecked) {
+      slotEndSelections = props.slotSelections.filter(
+        (slot) => slot.slotNum >= slotStartNum.slotNum
+      );
+      slotStartSelections = props.slotSelections.filter(
+        (slot) => slot.slotNum <= slotEndNum.slotNum
+      );
+    } else {
+      slotStartSelections = props.slotSelections
+      slotEndSelections = props.slotSelections.filter(
+        (slot) => slot.slotNum >= slotStartNum.slotNum
+      );
+    }
+
+    setSlotStartSelections(slotStartSelections);
+    setSlotEndSelections(slotEndSelections);
+  }, [props.slotStart, props.slotEnd]);
+
   return (
     <View style={styles.container}>
       <View style={styles.slotStart}>
         <View style={styles.container}>
-          <Text style={styles.title}>From Slot</Text>
+          <Text style={styles.title}>{props.isChecked ? 'From Slot' : 'Slot'}</Text>
           <View style={styles.slotPicker}>
             <RNPickerSelect
               fixAndroidTouchableBug={true}
-              items={props.slotSelections}
+              items={slotStartSelections}
               style={pickerStyles}
               useNativeAndroidPickerStyle={false}
               value={props.slotStart}
@@ -48,7 +80,7 @@ const SlotSelect: React.FC<SelectSlotsProps> = (props) => {
           <View style={[styles.slotPicker, { width: deviceWidth / 1.2 }]}>
             <RNPickerSelect
               fixAndroidTouchableBug={true}
-              items={props.slotSelections}
+              items={slotEndSelections}
               style={pickerStyles}
               useNativeAndroidPickerStyle={false}
               value={props.slotEnd}
@@ -65,14 +97,14 @@ const SlotSelect: React.FC<SelectSlotsProps> = (props) => {
 
 const pickerStyles: PickerStyle = {
   inputAndroid: {
-    fontSize: deviceWidth / 21,
+    fontSize: deviceWidth / 23,
     fontWeight: '600',
     color: GRAY,
     alignSelf: 'center',
   },
   inputIOS: {
     alignSelf: 'center',
-    fontSize: deviceWidth / 21,
+    fontSize: deviceWidth / 23,
     fontWeight: '600',
     color: GRAY,
   },

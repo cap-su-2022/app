@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import { StackNavigator, StackScreen } from '@app/utils';
-import AcceptBookingNavigator from './accept-booking';
+import AcceptFeedbackNavigator from './accept-feedback';
 import CalendarDateSelect from '../../../screens/track-booking-room/calendar-select';
 import {ChatIcon} from 'react-native-heroicons/outline';
 import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
@@ -10,17 +10,22 @@ import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import BookingQRScan from '../../../screens/track-booking-room/booking-qr-scan';
 import TrackFeedbackScreen from "../../../screens/track-feedback";
 import {PlusCircleIcon} from "react-native-heroicons/solid";
+import FeedbackNavigator from "../../user/feedback";
+import {useAppSelector} from "../../../hooks/use-app-selector.hook";
 
 const TrackFeedbackNavigator: React.FC<any> = () => {
   const navigate = useAppNavigation();
+
+  const authUser = useAppSelector((state) => state.auth.authUser);
+
   return (
     <StackNavigator
       initialRouteName="TRACK_FEEDBACK_ROUTE"
       screenOptions={{
         title: 'Feedbacks',
-        headerRight: () => (
+        headerRight: () => authUser.role === "Staff" ? (
           <TouchableOpacity
-            onPress={() => navigate.navigate('BOOKING_QR_SCAN')}
+            onPress={() => navigate.navigate('ADD_FEEDBACK')}
             style={{
               height: 35,
               width: 35,
@@ -42,7 +47,7 @@ const TrackFeedbackNavigator: React.FC<any> = () => {
               }} color={FPT_ORANGE_COLOR} size={deviceWidth  /14}/>
           </TouchableOpacity>
 
-        ),
+        ) : null,
       }}
     >
       <StackScreen name="TRACK_FEEDBACK_ROUTE" component={TrackFeedbackScreen} />
@@ -50,9 +55,13 @@ const TrackFeedbackNavigator: React.FC<any> = () => {
         options={{
           headerShown: false,
         }}
-        name="ACCEPT_ROOM_BOOKING"
-        component={AcceptBookingNavigator}
+        name="ACCEPT_FEEDBACK_ROUTE"
+        component={AcceptFeedbackNavigator}
       />
+      <StackScreen options={{
+        headerShown: false
+      }} name="ADD_FEEDBACK" component={FeedbackNavigator}/>
+
       <StackScreen name="BOOKING_QR_SCAN" component={BookingQRScan} />
       <StackScreen
         name="CALENDAR_SELECT"

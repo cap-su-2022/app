@@ -197,6 +197,7 @@ const ManageDeviceType: React.FC<any> = () => {
       name: 'id',
       value: deviceType.id,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Name',
@@ -204,6 +205,7 @@ const ManageDeviceType: React.FC<any> = () => {
       name: 'name',
       value: deviceType.name,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Description',
@@ -211,6 +213,7 @@ const ManageDeviceType: React.FC<any> = () => {
       name: 'description',
       value: deviceType.description,
       readOnly: true,
+      inputtype: InputTypes.TextArea,
     },
     {
       label: 'Create at',
@@ -218,6 +221,7 @@ const ManageDeviceType: React.FC<any> = () => {
       name: 'createAt',
       value: dayjs(deviceType.createdAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Create By',
@@ -225,6 +229,7 @@ const ManageDeviceType: React.FC<any> = () => {
       name: 'createBy',
       value: deviceType.createdBy,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Update At',
@@ -232,6 +237,7 @@ const ManageDeviceType: React.FC<any> = () => {
       name: 'updateAt',
       value: dayjs(deviceType.updatedAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Update By',
@@ -239,6 +245,7 @@ const ManageDeviceType: React.FC<any> = () => {
       name: 'updateBy',
       value: deviceType.updatedBy,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
   ];
 
@@ -267,31 +274,31 @@ const ManageDeviceType: React.FC<any> = () => {
     {
       id: 'id',
       name: 'id',
-      description: 'Id of Device type',
       inputtype: InputTypes.TextInput,
       label: 'Id',
       readOnly: true,
       required: false,
       value: deviceType.id,
+      disabled: true,
     },
     {
       id: 'name',
       name: 'name',
-      description: 'Device type name',
       inputtype: InputTypes.TextInput,
       label: 'Device type name',
       readOnly: false,
       required: true,
       value: deviceType.name,
+      disabled: false,
     },
     {
       id: 'description',
       name: 'description',
-      description: 'Device type description',
       inputtype: InputTypes.TextArea,
       label: 'Description',
       readOnly: false,
       required: false,
+      disabled: false,
       value: deviceType.description,
     },
   ];

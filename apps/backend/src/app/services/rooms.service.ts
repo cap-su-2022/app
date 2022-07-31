@@ -374,24 +374,24 @@ export class RoomsService {
     }
   }
 
-  getAllWithoutPagination(): Promise<Rooms[]> {
-    try {
-      return this.repository
-        .createQueryBuilder('rooms')
-        .where('rooms.disabled_at IS NULL')
-        .andWhere('rooms.deleted_at IS NULL')
-        .getMany();
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(
-        e.message ?? 'An error occurred while adding this room'
-      );
-    }
-  }
+  // getAllWithoutPagination(): Promise<Rooms[]> {
+  //   try {
+  //     return this.repository
+  //       .createQueryBuilder('rooms')
+  //       .where('rooms.disabled_at IS NULL')
+  //       .andWhere('rooms.deleted_at IS NULL')
+  //       .getMany();
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new BadRequestException(
+  //       e.message ?? 'An error occurred while adding this room'
+  //     );
+  //   }
+  // }
 
-  getRoomsFilterByNameAndType(payload: ChooseBookingRoomFilterPayload) {
-    return this.repository.filterByNameAndType(payload);
-  }
+  // getRoomsFilterByNameAndType(payload: ChooseBookingRoomFilterPayload) {
+  //   return this.repository.filterByNameAndType(payload);
+  // }
 
   filterRoomFreeByRoomBooked(listIdRoomBooked: string[]) {
     return this.repository.filterRoomFreeByRoomBooked(listIdRoomBooked);

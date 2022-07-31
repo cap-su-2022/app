@@ -14,5 +14,8 @@ export const fetchFeedbacks = createAsyncThunk<FeedbackFilterResponse[], Feedbac
     message: string,
   }
 }>('feedback/fetch-feedbacks', async (payload, thunkAPI) => {
-  return await axiosGetAPICall(`${API_URL}/feedbacks`, payload, thunkAPI);
+  return await axiosGetAPICall(`${API_URL}/feedbacks`, {
+    ...payload,
+    status: JSON.stringify(payload.status)
+  }, thunkAPI);
 });

@@ -2,14 +2,16 @@ import AddNewFeedbackResponseModel from "../../models/add-new-feedback-response.
 import {createSlice} from "@reduxjs/toolkit";
 import {addNewFeedback} from "./thunk/Add-new-feedback.thunk";
 import {fetchFeedbacks} from "./thunk/fetch-feedbacks.thunk";
+import {FeedbackModel} from "../../models/feedback.model";
+import {fetchFeedbackById} from "./thunk/fetch-feedback-by-id.thunk";
 
 interface FeedbackState {
-  feedback: AddNewFeedbackResponseModel;
+  feedback: FeedbackModel;
   feedbacks: FeedbackFilterResponse[];
 }
 
 const initialState: FeedbackState = {
-  feedback: {} as AddNewFeedbackResponseModel,
+  feedback: {} as FeedbackModel,
   feedbacks: [],
 }
 
@@ -18,7 +20,8 @@ const feedbackSlice = createSlice({
   initialState: initialState,
   reducers: {},
   extraReducers: (builder  )=> {
-    builder.addCase(addNewFeedback.fulfilled, (state, {payload}) => {
+    builder.addCase(fetchFeedbackById.fulfilled, (state, {payload}) => {
+      state.feedback = payload;
     });
     builder.addCase(fetchFeedbacks.fulfilled, (state, {payload}) => {
       state.feedbacks = payload;

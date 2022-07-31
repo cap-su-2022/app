@@ -9,7 +9,8 @@ export class FeedbackSendRequestPayload extends PaginationParams {
   })
   message: string;
 
-  @IsOptional()
-  type: string;
-  
+  @IsNotEmpty({
+    message: `Feedback type can't be empty`,
+  })  feedbackTypeId: string;
+
 }

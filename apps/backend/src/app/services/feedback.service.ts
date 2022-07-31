@@ -19,18 +19,16 @@ export class FeedbackService {
     private readonly repository: FeedbackRepository,
     private readonly histService: FeedbackHistService,
     private readonly notificationService: NotificationService,
-    private readonly accountService: AccountsService,
+    private readonly accountService: AccountsService
   ) {}
 
   async getAllFeedbacks(accountId: string, param: FeedbackPaginationPayload) {
     try {
-      if (!param || !param.page) {
-        const roleName = await this.accountService.getAccountRoleById(accountId);
-        if (roleName === 'Staff') {
-          return await this.repository.findByPagination(accountId, param);
-        } else {
-          return await this.repository.findByPagination(undefined, param);
-        }
+      const roleName = await this.accountService.getAccountRoleById(accountId);
+      if (roleName === 'Staff') {
+        return await this.repository.findByPagination(accountId, param);
+      } else {
+        return await this.repository.findByPagination(undefined, param);
       }
     } catch (e) {
       this.logger.error(e);

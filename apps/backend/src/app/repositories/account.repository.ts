@@ -22,10 +22,12 @@ export class AccountRepository extends Repository<Accounts> {
       .then((data) => data['count'] > 0);
   }
 
-  async getRoleOfAccount(id: string): Promise<{ role_name: string, username: string }> {
+  async getRoleOfAccount(
+    id: string
+  ): Promise<{ role_name: string; username: string }> {
     return this.createQueryBuilder('account')
       .select('role.name', 'role_name')
-      .addSelect('account.username', "username")
+      .addSelect('account.username', 'username')
       .innerJoin(Roles, 'role', 'role.id = account.role_id')
       .where('account.disabled_at IS NULL')
       .andWhere('account.deleted_at IS NULL')
@@ -85,22 +87,21 @@ export class AccountRepository extends Repository<Accounts> {
 
   findByKeycloakId(keycloakId: string): Promise<Accounts> {
     return this.createQueryBuilder('accounts')
-      .select([
-        'accounts.id',
-        'accounts.keycloak_id',
-        'accounts.google_id',
-        'accounts.username',
-        'accounts.email',
-        'accounts.fullname',
-        'accounts.phone',
-        'accounts.avatar',
-      ])
+      .select('accounts.id', 'id')
+      .addSelect('accounts.keycloak_id', 'keycloakId')
+      .addSelect('accounts.google_id', 'googleId')
+      .addSelect('accounts.username', 'username')
+      .addSelect('accounts.email', 'email')
+      .addSelect('accounts.fullname', 'fullname')
+      .addSelect('accounts.phone', 'phone')
+      .addSelect('accounts.avatar', 'avatar')
       .addSelect('r.name', 'role')
+      .addSelect('accounts.description', 'description')
       .innerJoin(Roles, 'r', 'r.id = accounts.role_id')
       .where('accounts.keycloak_id = :keycloakId', {keycloakId: keycloakId})
       .andWhere('accounts.disabled_at IS NULL')
       .andWhere('accounts.deleted_at IS NULL')
-      .getOneOrFail();
+      .getRawOne();
   }
 
   findByGoogleId(googleId: string): Promise<Accounts> {

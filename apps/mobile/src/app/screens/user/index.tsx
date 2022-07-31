@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
-  ImagePickerIOS,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -52,7 +51,6 @@ const SettingsScreen = () => {
       },
     });
     const data = await response.data;
-    console.log(data);
     setAvatarURL(data);
   };
 
@@ -62,7 +60,6 @@ const SettingsScreen = () => {
       maxWidth: 500,
       mediaType: 'photo',
     });
-    console.log(result.assets[0].uri);
     const formData = new FormData();
     formData.append(
       'file',
@@ -86,7 +83,6 @@ const SettingsScreen = () => {
         }
       );
       const data = await response.data;
-      console.log(data);
       getAvatarURL();
     } catch (e) {
       console.log(JSON.stringify(e.response));
@@ -123,7 +119,7 @@ const SettingsScreen = () => {
             <Text style={[styles.userEmail]}>{authUser.email}</Text>
             <View
               style={{
-                width: deviceWidth / 5,
+                width: authUser.role === "System Admin" ? deviceWidth/2 : deviceWidth/5,
                 height: 30,
                 backgroundColor: FPT_ORANGE_COLOR,
                 borderRadius: 50,

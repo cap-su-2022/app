@@ -43,14 +43,14 @@ import { acceptCheckoutBookingRequest } from '../../../redux/features/room-booki
 import { rejectCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkout-booking-request.thunk';
 import { fetchDeviceInUseByBookingRequestId } from '../../../redux/features/room-booking/thunk/fetch-devices-in-use-by-booking-request-id.thunk';
 
-const AcceptBooking: React.FC<any> = () => {
+const AcceptFeedback: React.FC<any> = () => {
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
-  const { bookingRoom } = useAppSelector((state) => state.roomBooking);
+  const { feedback } = useAppSelector((state) => state.feedback);
   const authUser = useAppSelector((state) => state.auth.authUser);
 
   const handleRejectBookingRequest = () => {
-    dispatch(rejectBookingRequest(bookingRoom.id))
+    dispatch(rejectBookingRequest(feedback.id))
       .unwrap()
       .then(() => navigate.replace('TRACK_BOOKING_ROOM'))
       .catch(() =>
@@ -59,14 +59,14 @@ const AcceptBooking: React.FC<any> = () => {
   };
 
   const handleAcceptBookingRequest = () => {
-    dispatch(acceptBookingRequest(bookingRoom.id))
+    dispatch(acceptBookingRequest(feedback.id))
       .unwrap()
-      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
+      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_FEEDBACK'))
       .catch((e) => alert(e.message));
   };
 
   const handleRejectCheckout = () => {
-    dispatch(rejectCheckoutBookingRequest(bookingRoom.id))
+    dispatch(rejectCheckoutBookingRequest(feedback.id))
       .unwrap()
       .then(() => navigate.replace('TRACK_BOOKING_ROOM'))
       .catch(() =>
@@ -75,21 +75,21 @@ const AcceptBooking: React.FC<any> = () => {
   };
 
   const handleAcceptCheckout = () => {
-    dispatch(acceptCheckoutBookingRequest(bookingRoom.id))
+    dispatch(acceptCheckoutBookingRequest(feedback.id))
       .unwrap()
-      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
+      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_FEEDBACK'))
       .catch((e) => alert(e.message));
   };
 
   const handleAcceptCheckin = () => {
-    dispatch(acceptCheckinBookingRequest(bookingRoom.id))
+    dispatch(acceptCheckinBookingRequest(feedback.id))
       .unwrap()
-      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
+      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_FEEDBACK'))
       .catch((e) => alert(e.message));
   };
 
   const handleRejectCheckin = () => {
-    dispatch(rejectCheckinBookingRequest(bookingRoom.id))
+    dispatch(rejectCheckinBookingRequest(feedback.id))
       .unwrap()
       .then(() => navigate.replace('TRACK_BOOKING_ROOM'))
       .catch(() =>
@@ -98,9 +98,9 @@ const AcceptBooking: React.FC<any> = () => {
   };
 
   const handleAcceptAction = () => {
-    if (bookingRoom.status === BOOKED) {
+    if (feedback.status === BOOKED) {
       return handleAcceptCheckin();
-    } else if (bookingRoom.status === PENDING) {
+    } else if (feedback.status === PENDING) {
       return handleAcceptBookingRequest();
     } else {
       return handleAcceptCheckout();
@@ -116,9 +116,9 @@ const AcceptBooking: React.FC<any> = () => {
   };
 
   const handleRejectAction = () => {
-    if (bookingRoom.status === BOOKED) {
+    if (feedback.status === BOOKED) {
       return handleRejectCheckin();
-    } else if (bookingRoom.status === PENDING) {
+    } else if (feedback.status === PENDING) {
       return handleRejectBookingRequest();
     } else {
       return handleRejectCheckout();
@@ -126,7 +126,7 @@ const AcceptBooking: React.FC<any> = () => {
   };
 
   const handleStatusMessageConvert = () => {
-    switch (bookingRoom.status) {
+    switch (feedback.status) {
       case PENDING:
         return 'book';
       case BOOKED:
@@ -139,21 +139,14 @@ const AcceptBooking: React.FC<any> = () => {
   const renderFooter = () => {
     if (
       authUser.role === 'Staff' &&
-      (bookingRoom.status === 'BOOKED' || bookingRoom.status === 'PENDING')
+      (feedback.status === 'BOOKED' || feedback.status === 'PENDING')
     ) {
       return (
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.cancelBookingRequestButton}>
-            <XIcon size={deviceWidth / 14} color={WHITE} />
-            <Text style={styles.cancelBookingRequestButtonText}>
-              Cancel booking request
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <></>
       );
     }
-    return bookingRoom.status !== CANCELLED &&
-      bookingRoom.status !== CHECKED_OUT ? (
+    return feedback.status !== CANCELLED &&
+    feedback.status !== CHECKED_OUT ? (
       <AcceptBookingFooter
         handleReject={() => handleRejectAction()}
         handleAccept={() => handleAcceptAction()}
@@ -173,10 +166,10 @@ const AcceptBooking: React.FC<any> = () => {
             />
           </TouchableOpacity>
           <Text style={styles.headerTitleText}>
-            {bookingRoom.status !== CANCELLED &&
-            bookingRoom.status !== CHECKED_OUT
-              ? 'Incoming Booking Request'
-              : 'Review booking request'}
+            {feedback.status !== CANCELLED &&
+            feedback.status !== CHECKED_OUT
+              ? 'Incoming feedback'
+              : 'Review feedback'}
           </Text>
         </View>
         <ScrollView
@@ -187,8 +180,8 @@ const AcceptBooking: React.FC<any> = () => {
         >
           <View>
             {authUser.role !== 'Staff' &&
-            bookingRoom.status !== CANCELLED &&
-            bookingRoom.status !== CHECKED_OUT ? (
+            feedback.status !== CANCELLED &&
+            feedback.status !== CHECKED_OUT ? (
               <View style={styles.warningMessageContainer}>
                 <ExclamationIcon
                   color={FPT_ORANGE_COLOR}
@@ -202,11 +195,10 @@ const AcceptBooking: React.FC<any> = () => {
               </View>
             ) : null}
             {authUser.role !== 'Staff' &&
-            bookingRoom.status !== CANCELLED &&
-            bookingRoom.status !== CHECKED_OUT ? (
+            feedback.status !== CANCELLED &&
+            feedback.status !== CHECKED_OUT ? (
               <Text style={styles.textStatus}>
-                {bookingRoom.requestedBy} wants to{' '}
-                {handleStatusMessageConvert()} the room {bookingRoom.roomName}
+                {feedback.createdBy} sent the feedback
               </Text>
             ) : null}
             <Text style={styles.informationHeaderTitle}>
@@ -214,21 +206,15 @@ const AcceptBooking: React.FC<any> = () => {
             </Text>
             <View style={styles.bookingInformationContainer}>
               <View style={styles.dataRowContainer}>
-                <Text style={styles.titleText}>Requested By</Text>
-                <Text style={styles.valueText}>{bookingRoom.requestedBy}</Text>
+                <Text style={styles.titleText}>Created By</Text>
+                <Text style={styles.valueText}>{feedback.createdBy}</Text>
               </View>
-              <Divider num={deviceWidth / 10} />
-              <View style={styles.dataRowContainer}>
-                <Text style={styles.titleText}>Libary Room</Text>
-                <Text style={styles.valueText}>{bookingRoom.roomName}</Text>
-              </View>
-              <Divider num={deviceWidth / 10} />
 
               <View style={styles.dataRowContainer}>
-                <Text style={styles.titleText}>Check-in Time</Text>
+                <Text style={styles.titleText}>Created at</Text>
                 <Text style={styles.valueText}>
-                  {bookingRoom.checkinSlot} -{' '}
-                  {dayjs(new Date(bookingRoom.checkinDate)).format(
+                  {feedback.createdAt} -{' '}
+                  {dayjs(new Date(feedback.createdAt)).format(
                     'DD/MM/YYYY'
                   )}
                 </Text>
@@ -237,67 +223,11 @@ const AcceptBooking: React.FC<any> = () => {
               <Divider num={deviceWidth / 10} />
 
               <View style={styles.dataRowContainer}>
-                <Text style={styles.titleText}>Check-out Time</Text>
-                <Text style={styles.valueText}>
-                  {' '}
-                  {bookingRoom.checkoutSlot} -{' '}
-                  {dayjs(new Date(bookingRoom.checkinDate)).format(
-                    'DD/MM/YYYY'
-                  )}
-                </Text>
-              </View>
-
-              <Divider num={deviceWidth / 10} />
-
-              <View style={styles.dataRowContainer}>
-                <Text style={styles.titleText}>Requested devices</Text>
-                <TouchableOpacity
-                  onPress={() => handleViewDevices(bookingRoom.id)}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: FPT_ORANGE_COLOR,
-                      fontSize: deviceWidth / 23,
-                      fontWeight: '500',
-                    }}
-                  >
-                    View devices
-                  </Text>
-                  <ChevronRightIcon
-                    color={FPT_ORANGE_COLOR}
-                    size={deviceWidth / 14}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <Divider num={deviceWidth / 10} />
-
-              <View style={styles.dataRowContainer}>
-                <Text style={styles.titleText}>Booking Reason</Text>
-                <Text style={styles.valueText}>{bookingRoom.reason}</Text>
+                <Text style={styles.titleText}>Feedback type</Text>
+                <Text style={styles.valueText}>{feedback.feedbackType}</Text>
               </View>
             </View>
 
-            {bookingRoom.status === CHECKED_OUT ? (
-              <>
-                <Text style={styles.informationHeaderTitle}>
-                  CHECKED OUT INFORMATION
-                </Text>
-                <View style={styles.bookingInformationContainer}>
-                  <View style={styles.dataRowContainer}>
-                    <Text style={styles.titleText}>Checked-out At</Text>
-                    <Text style={styles.valueText}>
-                      {bookingRoom.checkoutSlot}
-                    </Text>
-                  </View>
-                </View>
-              </>
-            ) : null}
 
             <View>
               <Text style={styles.informationHeaderTitle}>
@@ -310,52 +240,21 @@ const AcceptBooking: React.FC<any> = () => {
                 ]}
               >
                 <View style={styles.dataRowContainer}>
-                  <Text style={styles.titleText}>Booking ID</Text>
-                  <Text style={styles.valueText}>{bookingRoom.id}</Text>
+                  <Text style={styles.titleText}>Feeback ID</Text>
+                  <Text style={styles.valueText}>{feedback.id}</Text>
                 </View>
-                <Divider num={deviceWidth / 10} />
-                <View style={styles.dataRowContainer}>
-                  <Text style={styles.titleText}>Requested At</Text>
-                  <Text style={styles.valueText}>
-                    {dayjs(new Date(bookingRoom.requestedAt)).format(
-                      'DD/MM/YYYY HH:mm'
-                    )}
-                  </Text>
-                </View>
-                {bookingRoom.description ? (
+
                   <>
                     <Divider num={deviceWidth / 10} />
                     <View style={styles.dataRowContainer}>
-                      <Text style={styles.titleText}>Description</Text>
+                      <Text style={styles.titleText}>Message</Text>
                       <Text style={styles.valueText}>
-                        {bookingRoom.description}
+                        {feedback.feedbackMess}
                       </Text>
                     </View>
                   </>
-                ) : null}
               </View>
 
-              {bookingRoom.status !== PENDING ? (
-                <View
-                  style={{
-                    marginTop: 20,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: GRAY,
-                      fontSize: deviceWidth / 23,
-                      fontWeight: '600',
-                      marginLeft: 20,
-                    }}
-                  >
-                    SIGNATURE
-                  </Text>
-                  <View style={styles.signatureView}>
-                    <View style={styles.dataRowContainer}></View>
-                  </View>
-                </View>
-              ) : null}
             </View>
           </View>
         </ScrollView>
@@ -486,4 +385,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AcceptBooking;
+export default AcceptFeedback;

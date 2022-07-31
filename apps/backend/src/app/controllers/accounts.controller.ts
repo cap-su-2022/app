@@ -47,7 +47,7 @@ export class AccountsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Get the list of accounts by pagination',
     description:
@@ -97,7 +97,7 @@ export class AccountsController {
 
   @Get('syncKeycloak')
   @HttpCode(HttpStatus.OK)
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Sync users from Keycloak to current DB',
     description: 'Sync users from Keycloak to current DB',
@@ -123,7 +123,7 @@ export class AccountsController {
   }
 
   @Get('find/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Retrieve account information by id',
     description: 'Get account information by id',
@@ -217,7 +217,7 @@ export class AccountsController {
   }
 
   @Get('find-by-keycloak-id/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Get account information by keycloak id',
     description: 'Get account information by keycloak id',
@@ -250,7 +250,7 @@ export class AccountsController {
   }
 
   @Get('by-role')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Get active accounts by role',
     description: 'Use role_id to get account based on each of roles',
@@ -284,7 +284,7 @@ export class AccountsController {
 
   @Post('add')
   @HttpCode(HttpStatus.OK)
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Create a new account',
     description: 'Create a new account with the provided payload',
@@ -318,7 +318,7 @@ export class AccountsController {
   }
 
   @Put('update/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Update account by ID',
     description: 'Update account by provided ID',
@@ -385,7 +385,7 @@ export class AccountsController {
   }
 
   @Put('disable/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Disable account by id',
     description: 'Disable account by provided id',
@@ -433,7 +433,8 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiParam({
     name: 'search',
     description: "Search disabled accounts",
@@ -446,7 +447,7 @@ export class AccountsController {
   }
 
   @Put('restore-disabled/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Restore the disabled account by id',
     description: 'Restore the disabled account by provided id',
@@ -485,7 +486,7 @@ export class AccountsController {
   }
 
   @Delete(':id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Delete the account by id',
     description: 'Delete the account by active or disabled account ID',
@@ -521,7 +522,7 @@ export class AccountsController {
   }
 
   @Get('deleted')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Get the list of deleted accounts',
     description: 'Get the list of deleted accounts',
@@ -554,7 +555,7 @@ export class AccountsController {
   }
 
   @Put('restore-deleted/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Successfully restored deleted account by id',
     description: 'Successfully restored deleted account by id',
@@ -597,7 +598,7 @@ export class AccountsController {
   @Put('update/upload-avatar/:id')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FastifyFileInterceptor('file', {}))
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Update account avatar by account id',
     description: 'Update account avatar by account id',

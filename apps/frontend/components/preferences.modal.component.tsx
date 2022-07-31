@@ -11,11 +11,14 @@ interface PreferencesModalProps {
 
 const PreferencesModal: React.FC<PreferencesModalProps> = (props) => {
   const [isLessThan540px, setIsLessThan540px] = React.useState((window.innerWidth <= 540));
+  const [isLessThan1100px, setIsLessThan1100px] = React.useState((window.innerWidth <= 1100));
   // const { classes, cx } = useStyles();
   React.useEffect(() => {
     function handleResize() {
       if (window.innerWidth <= 540) setIsLessThan540px(true);
+      if (window.innerWidth <= 1100) setIsLessThan1100px(true);
       if (window.innerWidth > 540) setIsLessThan540px(false);
+      if (window.innerWidth > 1100) setIsLessThan1100px(false);
     }
 
     window.addEventListener("resize", handleResize);
@@ -45,7 +48,7 @@ const PreferencesModal: React.FC<PreferencesModalProps> = (props) => {
 
   return (
     <Modal
-      size={isLessThan540px ? "100%" : "70%"}
+      size={isLessThan540px ? "100%" : isLessThan1100px ? "80%" : "50%"}
       title={<ModalHeader />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}

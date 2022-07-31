@@ -6,19 +6,29 @@ import {
   Modal,
   TextInput,
 } from '@mantine/core';
-import { CalendarStats, ClipboardText, FileDescription, Id, PencilOff, User, X } from 'tabler-icons-react';
+import {
+  CalendarStats,
+  ClipboardText,
+  FileDescription,
+  Id,
+  PencilOff,
+  User,
+  X,
+} from 'tabler-icons-react';
 import { InputInfoProps } from '../models/input-info-props.model';
+import InputType from '../common/input-type.component';
 
 interface InfoModalProps {
   header: React.ReactNode;
   isShown: boolean;
   toggleShown(): void;
   fields: InputInfoProps[];
+
 }
 
 const InfoModal: React.FC<InfoModalProps> = (props) => {
   const { classes } = useStyles();
-  console.log("SHOW:  ", props.fields)
+  console.log('SHOW:  ', props.fields);
 
   return (
     <Modal
@@ -43,14 +53,43 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
               label={field.label}
               className={classes.inputWrapper}
             >
-              <TextInput
+              {/* <TextInput
                 id={field.id}
                 name={field.name}
-                icon={(field.id === 'id' ? <Id /> :
-                      field.id === 'name'? <ClipboardText /> :
-                      field.id === 'description'? <FileDescription /> :
-                      (field.id === 'createAt' || field.id === 'updateAt')? <CalendarStats /> :
-                      (field.id === 'createBy' || field.id === 'updateBy')? <User /> : null)}
+                icon={
+                  field.id === 'id' ? (
+                    <Id />
+                  ) : field.id === 'name' ? (
+                    <ClipboardText />
+                  ) : field.id === 'description' ? (
+                    <FileDescription />
+                  ) : field.id === 'createAt' || field.id === 'updateAt' ? (
+                    <CalendarStats />
+                  ) : field.id === 'createBy' || field.id === 'updateBy' ? (
+                    <User />
+                  ) : null
+                }
+                defaultValue={field.value}
+                readOnly={field.readOnly}
+              /> */}
+
+              <InputType
+                id={field.id}
+                name={field.name}
+                inputtype={field.inputtype}
+                icon={
+                  field.id === 'id' ? (
+                    <Id />
+                  ) : field.id === 'name' ? (
+                    <ClipboardText />
+                  ) : field.id === 'description' ? (
+                    <FileDescription />
+                  ) : field.id === 'createAt' || field.id === 'updateAt' ? (
+                    <CalendarStats />
+                  ) : field.id === 'createBy' || field.id === 'updateBy' ? (
+                    <User />
+                  ) : null
+                }
                 defaultValue={field.value}
                 readOnly={field.readOnly}
               />

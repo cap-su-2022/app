@@ -182,6 +182,7 @@ const ManageRole: React.FC<any> = () => {
       name: 'id',
       value: role.id,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Name',
@@ -189,6 +190,7 @@ const ManageRole: React.FC<any> = () => {
       name: 'name',
       value: role.name,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Description',
@@ -196,6 +198,7 @@ const ManageRole: React.FC<any> = () => {
       name: 'description',
       value: role.description,
       readOnly: true,
+      inputtype: InputTypes.TextArea,
     },
     {
       label: 'Create at',
@@ -203,6 +206,7 @@ const ManageRole: React.FC<any> = () => {
       name: 'createAt',
       value: dayjs(role.createdAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Create By',
@@ -210,6 +214,7 @@ const ManageRole: React.FC<any> = () => {
       name: 'createBy',
       value: role.createdBy,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Update At',
@@ -217,6 +222,7 @@ const ManageRole: React.FC<any> = () => {
       name: 'updateAt',
       value: dayjs(role.updatedAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Update By',
@@ -224,6 +230,7 @@ const ManageRole: React.FC<any> = () => {
       name: 'updateBy',
       value: role.updatedBy,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
   ];
 
@@ -251,32 +258,32 @@ const ManageRole: React.FC<any> = () => {
     {
       id: 'id',
       name: 'id',
-      description: 'Id of role',
       inputtype: InputTypes.TextInput,
       label: 'Id',
       readOnly: true,
       required: false,
       value: role.id,
+      disabled: true
     },
     {
       id: 'name',
       name: 'name',
-      description: 'Role name',
       inputtype: InputTypes.TextInput,
       label: 'Role name',
       readOnly: true,
       required: true,
       value: role.name,
+      disabled: false
     },
     {
       id: 'description',
       name: 'description',
-      description: 'Role description',
       inputtype: InputTypes.TextArea,
       label: 'Description',
       readOnly: false,
       required: false,
       value: role.description,
+      disabled: false
     },
   ];
   const handleAddModalClose = () => {

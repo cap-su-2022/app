@@ -9,7 +9,7 @@ const RoomBookingStep2: React.FC<any> = () => {
   return (
     <StackNavigator screenOptions={{
       headerTitle: () => <Text style={styles.headerText}>
-        Select your devices
+        Select your devices (Optional)
       </Text>,
       headerRight: () => null
     }} initialRouteName={"BOOKING_ROOM_STEP2"}>

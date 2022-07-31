@@ -109,9 +109,10 @@ const UserInfoPreference: React.FC = () => {
       fullname: userInfo.fullname,
       email: userInfo.email,
       phone: userInfo.phone,
-      effdate: userInfo.effdate,
       description: userInfo.description,
     };
+
+    console.log("USERINFOR: ", userInfo)
 
     const UpdateSchema = Yup.object().shape({
       email: Yup.string().email('Invalid email').required('Required'),
@@ -282,17 +283,6 @@ const UserInfoPreference: React.FC = () => {
             name="phone"
             placeholder="Set your own phone number"
             className={classes.inputText}
-          />
-
-          <TextInput
-            id="effdate"
-            description="The date the account becomes active"
-            value={formatDate(formik.values.effdate)}
-            label={'Effdate'}
-            required
-            name="effdate"
-            disabled
-            className={classes.fullWidth}
           />
           <Textarea
             id="description"

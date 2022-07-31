@@ -96,6 +96,18 @@ export class BookingRoomController {
     );
   }
 
+  @Get('check-slot-over-time')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  checkSlotOverTime(
+    @Query('slotin', new DefaultValuePipe('')) slotin: string,
+    @Query('date', new DefaultValuePipe('')) date: string
+  ) {
+    return this.service.checkSlotOverTime({
+      slotin: slotin,
+      date: date,
+    });
+  }
+
   @Get('list-booking-by-room-in-week')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getBookingByRoomInWeek(
@@ -296,11 +308,11 @@ export class BookingRoomController {
     return this.service.getBookingRoomById(id);
   }
 
-  @Get('rooms')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  getChoosingBookingRooms(@Query('filter') filter: string) {
-    return this.service.getChoosingBookingRooms(filter);
-  }
+  // @Get('rooms')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // getChoosingBookingRooms(@Query('filter') filter: string) {
+  //   return this.service.getChoosingBookingRooms(filter);
+  // }
 
   @Get('current-booking-list')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -308,17 +320,17 @@ export class BookingRoomController {
     return this.service.getCurrentRoomBookingList(user.account_id);
   }
 
-  @Get('current-booking/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  getCurrentRoomBookingDetail(
-    @User() user: KeycloakUserInstance,
-    @Param() payload: { id: string }
-  ) {
-    return this.service.getCurrentRoomBookingDetail(
-      user.account_id,
-      payload.id
-    );
-  }
+  // @Get('current-booking/:id')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // getCurrentRoomBookingDetail(
+  //   @User() user: KeycloakUserInstance,
+  //   @Param() payload: { id: string }
+  // ) {
+  //   return this.service.getCurrentRoomBookingDetail(
+  //     user.account_id,
+  //     payload.id
+  //   );
+  // }
 
   @Get('count-pending')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -397,46 +409,46 @@ export class BookingRoomController {
     return this.service.getCountRequestInWeekOfUser(payload.id, date);
   }
 
-  @Get()
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Retrieving a list of booking rooms',
-    description: 'Retrieving a list of booking rooms',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully retrieved a list of booking rooms',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while retrieving a list of booking rooms',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @ApiParam({
-    name: 'roomName',
-    description: 'The name of the library room',
-    example: 'LB01',
-    type: String,
-    required: true,
-  })
-  getBookingRooms(
-    @Query('search') search: string,
-    @Query('sorting') sorting: string,
-    @Query('slot') slot: number
-  ): Promise<BookingRoomResponseDTO[]> {
-    return this.service.getBookingRooms({
-      sorting: sorting,
-      search: search,
-      slot: slot,
-    });
-  }
+  // @Get()
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  // @ApiOperation({
+  //   summary: 'Retrieving a list of booking rooms',
+  //   description: 'Retrieving a list of booking rooms',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully retrieved a list of booking rooms',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while retrieving a list of booking rooms',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Invalid access token',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // @ApiParam({
+  //   name: 'roomName',
+  //   description: 'The name of the library room',
+  //   example: 'LB01',
+  //   type: String,
+  //   required: true,
+  // })
+  // getBookingRooms(
+  //   @Query('search') search: string,
+  //   @Query('sorting') sorting: string,
+  //   @Query('slot') slot: number
+  // ): Promise<BookingRoomResponseDTO[]> {
+  //   return this.service.getBookingRooms({
+  //     sorting: sorting,
+  //     search: search,
+  //     slot: slot,
+  //   });
+  // }
 
   @Post('new-request')
   @HttpCode(HttpStatus.OK)

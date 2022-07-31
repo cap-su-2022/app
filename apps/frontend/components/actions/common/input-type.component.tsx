@@ -8,7 +8,7 @@ const InputType: React.FC<any> = (props) => {
     case InputTypes.TextInput:
       return <TextInput {...props} />;
     case InputTypes.TextArea:
-      return <Textarea { ...props.value? {...props} : {...props, value: undefined} } />;
+      return <Textarea minRows={4} { ...props.value? {...props} : {...props, value: undefined}} />;
     case InputTypes.Select:
       return <Select data={props.data} {...props} />;
     case InputTypes.TimeInput:

@@ -38,6 +38,7 @@ import { step3ScheduleRoomBooking } from '../../redux/features/room-booking/slic
 import AlertModal from '../../components/modals/alert-modal.component';
 import { LOCAL_STORAGE } from '../../utils/local-storage';
 import { fetchAllDevices } from '../../redux/features/devices/thunk/fetch-all';
+import RequestRoomBookingHeader from "./request-room-booking/header";
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
@@ -57,9 +58,6 @@ const RoomBooking2: React.FC = () => {
   }, [search, sort, dispatch]);
 
   const handleNextStep = () => {
-    if (deviceIds.length < 1) {
-      setErrorModalShown(true);
-    } else {
       const devices = [];
       for (let i = 0; i < deviceIds.length; i++) {
         devices.push({
@@ -74,7 +72,6 @@ const RoomBooking2: React.FC = () => {
           devices: devices,
         })
       );
-    }
   };
 
   const Filtering: React.FC = () => {
@@ -143,17 +140,6 @@ const RoomBooking2: React.FC = () => {
               }}
             >
               {props.device.name}
-            </Text>
-            <Text
-              style={{
-                fontSize: deviceWidth / 26,
-              }}
-            >
-              Device Code:{' '}
-              {props.device.id.substring(
-                props.device.id.length - 12,
-                props.device.id.length
-              )}
             </Text>
           </View>
 
@@ -240,6 +226,7 @@ const RoomBooking2: React.FC = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
+        <RequestRoomBookingHeader />
         <ScrollView>
           <Filtering />
           {devices.map((device) => (
@@ -354,6 +341,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
+    alignItems: 'center',
     marginLeft: 10,
   },
   deviceContainer: {

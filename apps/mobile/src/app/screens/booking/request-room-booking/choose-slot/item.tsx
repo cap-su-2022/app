@@ -41,7 +41,8 @@ const ChooseSlotItem: React.FC<ChooseSlotItemProps> = (props) => {
                 fontWeight: '600',
               }}
             >
-              {props.item.slotName}
+              {props.item.slotName} ({props.item.timeStart.slice(0, 5)} -{' '}
+              {props.item.timeEnd.slice(0, 5)})
             </Text>
           </Text>
         </View>
