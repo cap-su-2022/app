@@ -45,46 +45,41 @@ const DeviceInfoModal: React.FC<DeviceInfoModalProps> = (props) => {
         onClose={() => props.toggleShown()}
       >
         <div className={classes.modalBody}>
-          <InputWrapper label="Device ID" description="Unique ID of the device">
-            <TextInput
-              icon={<Id />}
-              className={classes.textInput}
-              radius="md"
-              readOnly
-              value={device.id}
-            />
+          <InputWrapper label="Device ID" style={{ marginBottom: 20 }}>
+            <TextInput icon={<Id />} radius="md" readOnly value={device.id} />
           </InputWrapper>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <InputWrapper label="Device name" description="Unique device name">
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginBottom: 20,
+            }}
+          >
+            <InputWrapper label="Device name">
               <TextInput
                 icon={<ClipboardText />}
-                className={classes.textInput}
                 radius="md"
                 readOnly
                 value={device.name}
               />
             </InputWrapper>
-            <InputWrapper
-              label="Device type"
-            >
+            <InputWrapper label="Device type">
               <TextInput
                 icon={<ClipboardText />}
-                className={classes.textInput}
                 radius="md"
                 readOnly
                 value={device.deviceTypeName}
               />
             </InputWrapper>
           </div>
-          <InputWrapper
-            label="Device description"
-          >
+          <InputWrapper label="Device description">
             <Textarea
               icon={<FileDescription />}
-              className={classes.textInput}
               radius="md"
               readOnly
               value={device.description}
+              minRows={4}
+              style={{ marginBottom: 20 }}
             />
           </InputWrapper>
           <div
@@ -97,7 +92,6 @@ const DeviceInfoModal: React.FC<DeviceInfoModalProps> = (props) => {
             <InputWrapper label="Created at">
               <TextInput
                 icon={<Clock />}
-                className={classes.textInput}
                 radius="md"
                 readOnly
                 value={dayjs(device.createdAt).format('HH:mm DD/MM/YYYY')}
@@ -106,7 +100,6 @@ const DeviceInfoModal: React.FC<DeviceInfoModalProps> = (props) => {
             <InputWrapper label="Created by">
               <TextInput
                 icon={<User />}
-                className={classes.textInput}
                 radius="md"
                 readOnly
                 id="device-createdby"
@@ -125,7 +118,6 @@ const DeviceInfoModal: React.FC<DeviceInfoModalProps> = (props) => {
               <TextInput
                 id="device-updatedat"
                 icon={<CalendarStats />}
-                className={classes.textInput}
                 radius="md"
                 readOnly
                 value={dayjs(device.updatedAt).format('HH:mm DD/MM/YYYY')}
@@ -135,7 +127,6 @@ const DeviceInfoModal: React.FC<DeviceInfoModalProps> = (props) => {
               <TextInput
                 id="device-updatedby"
                 icon={<User />}
-                className={classes.textInput}
                 radius="md"
                 readOnly
                 value={device.updatedBy}
@@ -182,9 +173,6 @@ const useStyles = createStyles({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  textInput: {
-    marginTop: 10,
   },
 });
 

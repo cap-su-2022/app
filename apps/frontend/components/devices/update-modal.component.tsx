@@ -118,11 +118,18 @@ const DeviceUpdateModal: React.FC<UpdateModalProps> = (props) => {
     } else {
       setUpdateDisabled(false);
     }
-  }, [formik.values.name, formik.values.description, formik.initialValues.name, formik.initialValues.description]);
+  }, [
+    formik.values.name,
+    formik.values.description,
+    formik.initialValues.name,
+    formik.initialValues.description,
+  ]);
 
   const ModalHeaderTitle: React.FC = () => {
     return (
-      <Text className={classes.modalHeaderTitle}>Update Device Information</Text>
+      <Text className={classes.modalHeaderTitle}>
+        Update Device Information
+      </Text>
     );
   };
 
@@ -130,7 +137,7 @@ const DeviceUpdateModal: React.FC<UpdateModalProps> = (props) => {
     <>
       <Modal
         title={<ModalHeaderTitle />}
-        size={dimension.width / 2}
+        size='lg'
         centered
         opened={props.isShown}
         onClose={() => {
@@ -141,43 +148,29 @@ const DeviceUpdateModal: React.FC<UpdateModalProps> = (props) => {
         <FormikProvider value={formik}>
           <Form onSubmit={formik.handleSubmit}>
             <div className={classes.modalBody}>
-              <InputWrapper
-                required
-                label="Device ID"
-                description="Device ID is unique"
-              >
+              <InputWrapper required label="Device ID" style={{ marginBottom: 20}}>
                 <TextInput
                   icon={<Id />}
                   disabled
                   id="device-id"
                   name="id"
-                  className={classes.textInput}
                   radius="md"
                   readOnly
                   value={formik.values.id}
                 />
               </InputWrapper>
-              <InputWrapper
-                required
-                label="Device name"
-                description="Device name is unique. Maximum length is 100 characters"
-              >
+              <InputWrapper required label="Device name" style={{ marginBottom: 20}}>
                 <TextInput
                   icon={<ClipboardText />}
                   id="device-name"
                   name="name"
                   error={formik.errors.name}
                   onChange={formik.handleChange}
-                  className={classes.textInput}
                   radius="md"
                   value={formik.values.name}
                 />
               </InputWrapper>
-              <InputWrapper
-                required
-                label="Device Type"
-                description="Separate libray device type"
-              >
+              <InputWrapper required label="Device Type" style={{ marginBottom: 20}}>
                 <Select
                   onChange={(e) => {
                     setUpdateDisabled(false);
@@ -191,10 +184,7 @@ const DeviceUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   value={deviceType}
                 />
               </InputWrapper>
-              <InputWrapper
-                description="(Optional) Maximum length is 500 characters."
-                label="Device Description"
-              >
+              <InputWrapper label="Device Description">
                 <Textarea
                   id="device-description"
                   name="description"
@@ -202,6 +192,7 @@ const DeviceUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   error={formik.errors.description}
                   onChange={formik.handleChange}
                   radius="md"
+                  minRows={4}
                   value={formik.values.description}
                 />
               </InputWrapper>
@@ -243,9 +234,6 @@ const useStyles = createStyles({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  textInput: {
-    marginTop: 10,
   },
 });
 
