@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React  from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { BellIcon } from 'react-native-heroicons/solid';
@@ -6,11 +6,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { deviceWidth } from '../../../utils/device';
 import { boxShadow } from '../../../utils/box-shadow.util';
-import { LOCAL_STORAGE } from '../../../utils/local-storage';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 
 const HomeScreenHeader: React.FC<any> = () => {
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.auth.authUser);
   const { isNotificationBellShown } = useAppSelector((state) => state.system);
 
   return (
@@ -33,14 +32,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginLeft: 20,
-    marginRight: 10,
-    marginTop: 10,
+    paddingTop: 10,
+    paddingLeft: 20,
+    paddingRight: 10,
   },
   textLg: {
     color: BLACK,
     fontWeight: '600',
     fontSize: deviceWidth / 21,
+    flexWrap: 'wrap',
   },
   notificationContainer: {
     width: 50,
