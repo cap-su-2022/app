@@ -73,8 +73,10 @@ export const App = () => {
 
   useEffect(() => {
     if (!isEmpty(authUser)) {
-      const user = JSON.parse(LOCAL_STORAGE.getString('user'));
-      dispatch(addUserAfterCloseApp(user));
+      const user = LOCAL_STORAGE.getString('user');
+      if(typeof user !== "undefined"){
+        dispatch(addUserAfterCloseApp(JSON.parse(user)));
+      }
     }
   }, []);
 
