@@ -178,7 +178,10 @@ const AcceptFeedback: React.FC<any> = () => {
           }}
           showsVerticalScrollIndicator={false}
         >
-          <View>
+          <View style={{
+            paddingHorizontal: 20,
+
+          }}>
             {authUser.role !== 'Staff' &&
             feedback.status !== CANCELLED &&
             feedback.status !== CHECKED_OUT ? (
@@ -189,7 +192,7 @@ const AcceptFeedback: React.FC<any> = () => {
                   style={styles.warningMessageIcon}
                 />
                 <Text style={styles.warningMessageText}>
-                  Read the booking request information carefully before
+                  Read the feedback carefully before
                   proceeding the next step!
                 </Text>
               </View>
@@ -308,8 +311,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginLeft: 20,
-    marginRight: 20,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: FPT_ORANGE_COLOR,

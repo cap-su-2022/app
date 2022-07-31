@@ -11,8 +11,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {GRAY, WHITE} from '@app/constants';
-import { deviceWidth } from '../../../utils/device';
+import {GRAY, INPUT_GRAY_COLOR, WHITE} from '@app/constants';
+import {deviceHeight, deviceWidth} from '../../../utils/device';
 import {
   CalendarIcon,
   ChevronDoubleRightIcon, TagIcon,
@@ -155,8 +155,14 @@ const TrackFeedbackFilter: React.ForwardRefRenderFunction<
               borderColor: GRAY,
               display: 'flex',
               width: deviceWidth / 1.23,
-              paddingHorizontal: 10,
               justifyContent: 'center',
+            },
+            inputAndroid: {
+              height: 35,
+              color: GRAY
+            },
+            inputIOSContainer: {
+              paddingHorizontal: 10
             }
           }} onValueChange={(e) => setFeedbackType(e)} items={feedbackTypes.map((type) => {
             return {
