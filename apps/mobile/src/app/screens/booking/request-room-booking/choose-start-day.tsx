@@ -21,7 +21,7 @@ const StartDayCalendar: React.FC<any> = (props) => {
   const dispatch = useAppDispatch();
   const [dayStart, setDayStart] = useState<string>('');
   const currentDate = new Date().toJSON().slice(0, 10);
-  const today = useAppSelector((state) => state.roomBooking.today);
+  const toDay = useAppSelector((state) => state.roomBooking.addRoomBooking.toDay);
   const handleDayPress = (day) => {
     setDayStart(day.dateString);
     dispatch(saveStartDay({ fromDay: day.dateString }));
@@ -32,8 +32,8 @@ const StartDayCalendar: React.FC<any> = (props) => {
       <View style={styles.container}>
         <Calendar
           initialDate={currentDate}
-          minDate={today}
-          maxDate={today}
+          minDate={currentDate}
+          maxDate={toDay}
           onDayPress={(day) => handleDayPress(day)}
           markedDates={{
             [dayStart]: {
