@@ -1,9 +1,9 @@
-import { BadRequestException, forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
-import { DeviceTypeRepository } from '../repositories/device-type.repository';
-import { PaginationParams } from '../controllers/pagination.model';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
-import { DeviceTypeHistService } from './device-type-hist.service';
-import { DevicesService } from './devices.service';
+import {BadRequestException, forwardRef, Inject, Injectable, Logger} from '@nestjs/common';
+import {DeviceTypeRepository} from '../repositories/device-type.repository';
+import {PaginationParams} from '../controllers/pagination.model';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
+import {DeviceTypeHistService} from './device-type-hist.service';
+import {DevicesService} from './devices.service';
 
 @Injectable()
 export class DeviceTypeService {
@@ -13,7 +13,9 @@ export class DeviceTypeService {
     private readonly repository: DeviceTypeRepository,
     private readonly deviceService: DevicesService,
     private readonly histService: DeviceTypeHistService,
-  ) {}
+  ) {
+  }
+
   async getAllDeviceTypes(param: PaginationParams) {
     try {
       return await this.repository.findByPagination(param);
@@ -53,7 +55,7 @@ export class DeviceTypeService {
 
   async addNewDeviceType(
     accountId: string,
-    payload: { name: string; description: string }
+    payload: MasterDataAddRequestPayload
   ) {
     try {
       const deviceType = await this.repository.addNew(accountId, payload);

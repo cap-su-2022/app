@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { BookingReason } from '../../models/booking-reason.entity';
 import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
 import { BookingReasonHist } from '../../models/booking-reason-hist.entity';
+import {MasterDataAddRequestPayload} from "../../payload/request/master-data-add.request.payload";
 
 export type MockType<T> = {
   [P in keyof T]?: jest.Mock<unknown>;
@@ -62,12 +63,12 @@ describe('BookingReasonService', () => {
 
   describe('createNewBookingReason', () => {
     const accountId = 'abc';
-    const payload: BookingReason = {
+    const payload: MasterDataAddRequestPayload = {
       name: 'abc',
       description: 'abc',
     };
     it('should create a new booking reason', async () => {
-      const expected: BookingReason = {
+      const expected: MasterDataAddRequestPayload = {
         name: 'abc',
         description: 'abc',
       };

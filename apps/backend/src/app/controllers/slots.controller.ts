@@ -11,21 +11,23 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { SlotService } from '../services/slot.service';
-import { PaginationParams } from './pagination.model';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import { Slot } from '../models/slot.entity';
+import {SlotService} from '../services/slot.service';
+import {PaginationParams} from './pagination.model';
+import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum/roles.enum';
+import {Slot} from '../models/slot.entity';
 import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import { User } from '../decorators/keycloak-user.decorator';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
+import {User} from '../decorators/keycloak-user.decorator';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
+import {SlotsRequestPayload} from '../payload/request/slot-add.request.payload';
 
 @Controller('/v1/slots')
 @ApiBearerAuth()
 @ApiTags('Slots')
 export class SlotController {
-  constructor(private readonly service: SlotService) {}
+  constructor(private readonly service: SlotService) {
+  }
 
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -70,7 +72,7 @@ export class SlotController {
   })
   addNewSlot(
     @User() user: KeycloakUserInstance,
-    @Body() payload: MasterDataAddRequestPayload
+    @Body() payload: SlotsRequestPayload
   ) {
     return this.service.addNewSlot(user.account_id, payload);
   }
