@@ -12,34 +12,40 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { DevicesService } from '../services';
+import {DevicesService} from '../services';
 import {
   ApiBearerAuth,
-  ApiOperation,
+  ApiOperation, ApiParam, ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { DevicesValidation } from '../pipes/validation/devices.validation';
-import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import { Devices} from '../models';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { User } from '../decorators/keycloak-user.decorator';
-import { DevicesPaginationParams } from './devices-pagination.model';
-import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
+import {DevicesValidation} from '../pipes/validation/devices.validation';
+import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
+import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum/roles.enum';
+import {Devices} from '../models';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {User} from '../decorators/keycloak-user.decorator';
+import {DevicesPaginationParams} from './devices-pagination.model';
+import {DataAddRequestPayload} from '../payload/request/data-add.request.payload';
+
 
 @Controller('/v1/devices')
 @ApiBearerAuth()
 @ApiTags('Devices')
 @UseInterceptors(new PathLoggerInterceptor(DevicesController.name))
 export class DevicesController {
-  constructor(private readonly service: DevicesService) {}
+  constructor(private readonly service: DevicesService) {
+  }
 
   @Get()
   @UsePipes(new DevicesValidation())
   @HttpCode(HttpStatus.OK)
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get all devices',
+    description: 'Get the list of active devices',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
@@ -56,15 +62,16 @@ export class DevicesController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges to access this endpoint',
   })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
   getDevices(@Query() payload: DevicesPaginationParams) {
     return this.service.getAll(payload);
   }
 
   @Get('name')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get names of devices',
+    description: 'Get the list of names of devices',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully got device type name',
@@ -77,9 +84,9 @@ export class DevicesController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  @ApiOperation({
-    summary: 'Get device type name',
-    description: 'Get device type name',
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
   })
   getDeviceNames() {
     return this.service.getDeviceNames();
@@ -87,6 +94,10 @@ export class DevicesController {
 
   @Get('by-device-type')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get devices by device type ID',
+    description: 'Get the list of devices by device typ ID',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
@@ -97,11 +108,18 @@ export class DevicesController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully fetched deleted devices',
+    description: 'Successfully fetched devices by device type',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
+  })
+  @ApiParam({
+    name: 'deviceTypeID',
+    description: "Device type ID",
+    type: String,
+    required: false,
+    example: 'abcdef1234',
   })
   getDevicesByDeviceType(@Query('type') deviceTypeId = ''): Promise<Devices[]> {
     return this.service.getDevicesByDeviceType(deviceTypeId);
@@ -128,6 +146,13 @@ export class DevicesController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active device",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   getDeviceById(@Param() payload: { id: string }): Promise<Devices> {
     return this.service.findById(payload.id);
@@ -185,6 +210,13 @@ export class DevicesController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active device",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   updateDeviceById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string },
@@ -196,16 +228,16 @@ export class DevicesController {
   @Put('disable/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Removing the device by id',
-    description: 'Removing the device by provided id',
+    summary: 'Disable the device by id',
+    description: 'Disable the device by provided id',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully removed the device',
+    description: 'Successfully disabled the device',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Error while removing the device',
+    description: 'Error while disabling the device',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -214,6 +246,13 @@ export class DevicesController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active device",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
   })
   disableDeviceById(
     @User() user: KeycloakUserInstance,
@@ -244,6 +283,13 @@ export class DevicesController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiParam({
+    name: 'search',
+    description: "Search disabled devices",
+    type: String,
+    required: false,
+    example: 'Iphone',
+  })
   getDisableDevices(@Query('search') search = ''): Promise<Devices[]> {
     return this.service.getDisabledDevices(search);
   }
@@ -270,11 +316,18 @@ export class DevicesController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiParam({
+    name: 'id',
+    description: "Restore disabled device",
+    type: String,
+    required: true,
+    example: 'abcdef',
+  })
   restoreDisabledDeviceById(
     @Param() payload: { id: string },
     @User() user: KeycloakUserInstance
   ) {
-    return this.service.handleRestoreDisabledDeviceById( user.account_id, payload.id);
+    return this.service.handleRestoreDisabledDeviceById(user.account_id, payload.id);
   }
 
   @Delete(':id')
@@ -299,6 +352,13 @@ export class DevicesController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active or disabled device",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
   deleteDeviceById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string }
@@ -309,8 +369,8 @@ export class DevicesController {
   @Get('deleted')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Retrieving a list of deleted devices',
-    description: 'Retrieving a list of deleted devices',
+    summary: 'Retrieve a list of deleted devices',
+    description: 'Retrieve a list of deleted devices',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -353,6 +413,13 @@ export class DevicesController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "Restore deleted device",
+    type: String,
+    required: true,
+    example: 'abcdef',
   })
   restoreDeletedDeviceById(@Param() payload: { id: string }) {
     return this.service.handleRestoreDeletedDeviceById(payload.id);

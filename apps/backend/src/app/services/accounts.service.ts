@@ -21,6 +21,7 @@ import {AccountsPaginationParams} from '../controllers/accounts-pagination.model
 import {AccountHistService} from './account-hist.service';
 import {AccountAddRequestPayload} from '../payload/request/account-add.request.payload';
 import {AccountUpdateProfilePayload} from '../payload/request/account-update-profile.request.payload';
+import {PaginationParams} from "../controllers/pagination.model";
 
 @Injectable()
 export class AccountsService {
@@ -134,7 +135,7 @@ export class AccountsService {
   async updateById(
     accountId: string,
     id: string,
-    body: AccountUpdateProfilePayload
+    body: AccountAddRequestPayload
   ) {
     let account;
     try {
@@ -261,7 +262,7 @@ export class AccountsService {
           'Account does not found with the provided id'
         );
       }
-      
+
       const userDelete = await this.repository.getRoleOfAccount(accountId);
       const userBeDeleted = await this.repository.getRoleOfAccount(id);
 

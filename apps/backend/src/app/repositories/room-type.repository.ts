@@ -1,25 +1,26 @@
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Repository, UpdateResult } from 'typeorm';
-import { RoomType } from '../models/room-type.entity';
-import { PaginationParams } from '../controllers/pagination.model';
-import { Accounts } from '../models';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {Repository, UpdateResult} from 'typeorm';
+import {RoomType} from '../models/room-type.entity';
+import {PaginationParams} from '../controllers/pagination.model';
+import {Accounts} from '../models';
 
 import {
   IPaginationMeta,
   paginateRaw,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
-import { BadRequestException, Logger } from '@nestjs/common';
-import { DeviceTypeService } from '../services/device-type.service';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
+import {BadRequestException, Logger} from '@nestjs/common';
+import {DeviceTypeService} from '../services/device-type.service';
 
 @CustomRepository(RoomType)
 export class RoomTypeRepository extends Repository<RoomType> {
   private readonly logger = new Logger(DeviceTypeService.name);
+
   existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('rt')
       .select('COUNT(1)', 'count')
-      .where('rt.id = :id', { id: id })
+      .where('rt.id = :id', {id: id})
       .getRawOne()
       .then((data) => data?.count > 0);
   }
@@ -60,7 +61,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .addSelect('rt.updated_at', 'updatedAt')
       .innerJoin(Accounts, 'a', 'a.id = rt.created_by')
       .leftJoin(Accounts, 'aa', 'aa.id = rt.updated_by')
-      .where('rt.id = :id', { id: id })
+      .where('rt.id = :id', {id: id})
       .andWhere('rt.deleted_at IS NULL')
       .getRawOne<RoomType>();
   }
@@ -83,7 +84,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
 
   async addNew(
     accountId: string,
-    payload: { name: string; description: string }
+    payload: MasterDataAddRequestPayload
   ): Promise<RoomType> {
     try {
       const roomType = await this.save({
@@ -130,7 +131,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
         deletedAt: new Date(),
         deletedBy: accountId,
       })
-      .where('room_type.id = :id', { id: id })
+      .where('room_type.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isDeleted.affected > 0) {
@@ -149,7 +150,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .addSelect('rt.deleted_at', 'deletedAt')
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'a.id = rt.deleted_by')
-      .where('rt.name ILIKE :search', { search: `%${search.trim()}%` })
+      .where('rt.name ILIKE :search', {search: `%${search.trim()}%`})
       .andWhere('rt.deleted_at IS NOT NULL')
       .orderBy('rt.deleted_at', 'DESC')
       .getRawMany<RoomType>();
@@ -163,7 +164,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
         deletedAt: null,
         deletedBy: null,
       })
-      .where('room_type.id = :id', { id: id })
+      .where('room_type.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isRestored.affected > 0) {
@@ -178,7 +179,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
   permanentlyDeleteById(id: string) {
     return this.createQueryBuilder('room_type')
       .delete()
-      .where('room_type.id = :id', { id: id })
+      .where('room_type.id = :id', {id: id})
       .useTransaction(true)
       .execute();
   }

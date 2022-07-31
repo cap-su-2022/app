@@ -13,11 +13,11 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { BookingRoomService } from '../services';
-import { BookingRoomResponseDTO } from '../dto/booking-room.response.dto';
-import { WishlistBookingRoomResponseDTO } from '../dto/wishlist-booking-room.response.dto';
-import { User } from '../decorators/keycloak-user.decorator';
-import { WishlistBookingRoomRequestDTO } from '../dto/wishlist-booking-room.request.dto';
+import {BookingRoomService} from '../services';
+import {BookingRoomResponseDTO} from '../dto/booking-room.response.dto';
+import {WishlistBookingRoomResponseDTO} from '../dto/wishlist-booking-room.response.dto';
+import {User} from '../decorators/keycloak-user.decorator';
+import {WishlistBookingRoomRequestDTO} from '../dto/wishlist-booking-room.request.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -25,25 +25,49 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
-import { BookingRequest } from '../models';
-import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
-import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
-import { CancelRequestPayload } from '../payload/request/booking-request-cancel.payload';
+import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
+import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum/roles.enum';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {GetBookingRoomsPaginationPayload} from '../payload/request/get-booking-rooms-pagination.payload';
+import {BookingRequest} from '../models';
+import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.payload';
+import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
+import {CancelRequestPayload} from '../payload/request/booking-request-cancel.payload';
 
 @Controller('/v1/booking-room')
 @ApiTags('Booking Room')
 @UseInterceptors(new PathLoggerInterceptor(BookingRoomController.name))
 @ApiBearerAuth()
 export class BookingRoomController {
-  constructor(private readonly service: BookingRoomService) {}
+  constructor(private readonly service: BookingRoomService) {
+  }
 
   @Get('search')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get all booking room by pagination',
+    description:
+      'Get the list of booking rooms with the provided pagination payload',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got the list of booking rooms',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting users or request payload is invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Not enough privileges',
+  })
+
+
   getAllBookingRoomsPagination(
     @Query('search', new DefaultValuePipe('')) search: string,
     @Query('sort', new DefaultValuePipe('requested_at')) sort: string,
@@ -53,7 +77,7 @@ export class BookingRoomController {
     @Query('checkInAt', new DefaultValuePipe('')) checkInAt: string,
     @Query('checkOutAt', new DefaultValuePipe('')) checkOutAt: string,
     @Query('status', new DefaultValuePipe('')) status: string,
-    @Query('dir', new DefaultValuePipe('ASC')) dir: string,
+    @Query('sort', new DefaultValuePipe('ASC')) dir: string,
     @User() user: KeycloakUserInstance
   ) {
     return this.service.getAllBookingRoomsPagination(
@@ -715,7 +739,7 @@ export class BookingRoomController {
     @User() user: KeycloakUserInstance,
     @Param('id') bookingRequestId: string,
     @Body()
-    checkinSignature: {
+      checkinSignature: {
       signature: string;
     }
   ) {
@@ -736,7 +760,7 @@ export class BookingRoomController {
     @User() user: KeycloakUserInstance,
     @Param('id') bookingRequestId: string,
     @Body()
-    checkinSignature: {
+      checkinSignature: {
       signature: string;
     }
   ) {

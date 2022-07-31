@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import {IsString} from "class-validator";
 
 export class ChangeProfilePasswordRequest {
   @ApiProperty({
@@ -9,6 +10,7 @@ export class ChangeProfilePasswordRequest {
     minLength: 1,
     maxLength: 100
   })
+  @IsString()
   username: string;
 
   @ApiProperty({
@@ -19,6 +21,7 @@ export class ChangeProfilePasswordRequest {
     minLength: 1,
     maxLength: 100
   })
+  @IsString()
   password: string;
 
   @ApiProperty({
@@ -29,5 +32,6 @@ export class ChangeProfilePasswordRequest {
     minLength: 1,
     maxLength: 100
   })
+  @IsString()
   newPassword: string;
 }

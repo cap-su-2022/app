@@ -5,7 +5,7 @@ import {paginateRaw, Pagination} from 'nestjs-typeorm-paginate';
 import {BookingReason} from '../models/booking-reason.entity';
 import {Accounts} from '../models';
 import {BadRequestException} from '@nestjs/common';
-import {BookingReasonUpdateRequestPayload} from "../payload/request/booking-reason.request.payload";
+
 
 @CustomRepository(BookingReason)
 export class BookingReasonRepository extends Repository<BookingReason> {

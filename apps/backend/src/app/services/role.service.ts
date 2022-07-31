@@ -1,10 +1,10 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { PaginationParams } from '../controllers/pagination.model';
-import { RolesRepository } from '../repositories/roles.repository';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
-import { Roles } from '../models/role.entity';
-import { RoleHistService } from './role-hist.service';
-import { AccountsService } from './accounts.service';
+import {BadRequestException, Injectable, Logger} from '@nestjs/common';
+import {PaginationParams} from '../controllers/pagination.model';
+import {RolesRepository} from '../repositories/roles.repository';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
+import {Roles} from '../models/role.entity';
+import {RoleHistService} from './role-hist.service';
+import {AccountsService} from './accounts.service';
 
 @Injectable()
 export class RoleService {
@@ -14,7 +14,8 @@ export class RoleService {
     private readonly repository: RolesRepository,
     private readonly accountService: AccountsService,
     private readonly histService: RoleHistService
-  ) {}
+  ) {
+  }
 
   getRolesByPagination(payload: PaginationParams) {
     try {
@@ -54,7 +55,7 @@ export class RoleService {
   }
 
   async addRole(
-    body: { name: string; description: string },
+    body: MasterDataAddRequestPayload,
     accountId: string
   ) {
     const isExisted = await this.repository.isExistedByName(body.name);
@@ -149,7 +150,7 @@ export class RoleService {
       this.logger.error(e);
       throw new BadRequestException(
         e.message ??
-          'Error occurred while restore the delete status of this role'
+        'Error occurred while restore the delete status of this role'
       );
     }
   }

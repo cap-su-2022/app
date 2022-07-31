@@ -51,7 +51,7 @@ export class FeedbackTypeService {
 
   addNewFeedbackType(
     accountId: string,
-    payload: { name: string; description: string }
+    payload: MasterDataAddRequestPayload
   ) {
     try {
       return this.repository.addNew(accountId, payload);

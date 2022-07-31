@@ -1,11 +1,11 @@
 import {
   Body,
-  Controller,
+  Controller, DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
   HttpStatus,
-  Param,
+  Param, ParseIntPipe,
   Post,
   Put,
   Query,
@@ -17,7 +17,7 @@ import {RoomsValidation} from '../pipes/validation/rooms.validation';
 import {Rooms} from '../models';
 import {
   ApiBearerAuth, ApiBody,
-  ApiOperation, ApiParam,
+  ApiOperation, ApiParam, ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -30,6 +30,7 @@ import {KeycloakUserInstance} from '../dto/keycloak.user';
 import {RoomsPaginationParams} from './rooms-pagination.model';
 import {DataAddRequestPayload} from '../payload/request/data-add.request.payload';
 
+
 @Controller('/v1/rooms')
 @ApiBearerAuth()
 @ApiTags('Rooms')
@@ -39,11 +40,10 @@ export class RoomsController {
   }
 
   @Get()
-  @UsePipes(new RoomsValidation())
   @HttpCode(HttpStatus.OK)
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
-    summary: 'Get the list of active rooms',
+    summary: 'Get the list of active rooms by pagination',
     description:
       'Get the list of active rooms with the provided pagination payload',
   })
@@ -67,14 +67,15 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getRooms(@Query() payload: RoomsPaginationParams) {
+  getRooms(
+    @Query() payload: RoomsPaginationParams) {
     return this.service.getAll(payload);
   }
 
   @Get('by-room-type')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Get the list of active room types',
+    summary: 'Get the list of active room by room types',
     description:
       'Get the list of active rooms with the provided pagination payload',
   })
@@ -154,7 +155,6 @@ export class RoomsController {
   }
 
   @Post('add')
-  @UsePipes(new AddRoomValidation())
   @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Create a new library room',
@@ -256,8 +256,8 @@ export class RoomsController {
   @Get('disabled')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Get the list of disabled accounts',
-    description: 'Get the list of disabled accounts',
+    summary: 'Get disabled rooms',
+    description: 'Get disabled rooms',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -275,7 +275,16 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getDisableRooms(@Query('search') search = ''): Promise<Rooms[]> {
+  @ApiParam({
+    name: 'search',
+    description: "Search disabled rooms",
+    type: String,
+    required: false,
+    example: 'LB001',
+  })
+  getDisableRooms(
+    @Query('search') search: string,
+  ): Promise<Rooms[]> {
     return this.service.getDisabledRooms(search);
   }
 
@@ -376,7 +385,14 @@ export class RoomsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getDeletedRooms(@Query('search') search = ''): Promise<Rooms[]> {
+  @ApiParam({
+    name: 'search',
+    description: "Search deleted rooms",
+    type: String,
+    required: false,
+    example: 'LB001',
+  })
+  getDeletedRooms(@Query('search') search: string,): Promise<Rooms[]> {
     return this.service.getDeletedRooms(search);
   }
 

@@ -1,23 +1,23 @@
-import { Repository, UpdateResult } from 'typeorm';
-import { Accounts } from '../models';
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { RepositoryPaginationPayload } from '../models/search-pagination.payload';
+import {Repository, UpdateResult} from 'typeorm';
+import {Accounts} from '../models';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {RepositoryPaginationPayload} from '../models/search-pagination.payload';
 import {
   IPaginationMeta,
   paginateRaw,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { Roles } from '../models/role.entity';
-import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
-import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
-import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
+import {Roles} from '../models/role.entity';
+import {AccountsPaginationParams} from '../controllers/accounts-pagination.model';
+import {AccountAddRequestPayload} from '../payload/request/account-add.request.payload';
+import {AccountUpdateProfilePayload} from '../payload/request/account-update-profile.request.payload';
 
 @CustomRepository(Accounts)
 export class AccountRepository extends Repository<Accounts> {
   existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('accounts')
       .select('COUNT(1)', 'count')
-      .where('accounts.id = :id', { id: id })
+      .where('accounts.id = :id', {id: id})
       .getRawOne()
       .then((data) => data['count'] > 0);
   }
@@ -29,7 +29,7 @@ export class AccountRepository extends Repository<Accounts> {
       .innerJoin(Roles, 'role', 'role.id = account.role_id')
       .where('account.disabled_at IS NULL')
       .andWhere('account.deleted_at IS NULL')
-      .andWhere('account.id = :accountId', { accountId: id })
+      .andWhere('account.id = :accountId', {accountId: id})
       .getRawOne();
   }
 
@@ -46,7 +46,7 @@ export class AccountRepository extends Repository<Accounts> {
   async checkIfAccountIsDeletedById(id: string): Promise<boolean> {
     return this.createQueryBuilder('accounts')
       .select('accounts.deleted_at')
-      .where('accounts.id = :id', { id: id })
+      .where('accounts.id = :id', {id: id})
       .getRawOne<boolean>()
       .then((data) => (data ? data['deleted_at'] : true));
   }
@@ -54,7 +54,7 @@ export class AccountRepository extends Repository<Accounts> {
   async checkIfAccountIsDisabledById(id: string): Promise<boolean> {
     return this.createQueryBuilder('accounts')
       .select('accounts.disabled_at')
-      .where('accounts.id = :id', { id: id })
+      .where('accounts.id = :id', {id: id})
       .getRawOne<boolean>()
       .then((data) => (data ? data['disabled_at'] : true));
   }
@@ -62,7 +62,7 @@ export class AccountRepository extends Repository<Accounts> {
   findKeycloakIdByGoogleId(googleId: string): Promise<string> {
     return this.createQueryBuilder('accounts')
       .select('accounts.keycloak_id', 'keycloakId')
-      .where('accounts.google_id = :googleId', { googleId: googleId })
+      .where('accounts.google_id = :googleId', {googleId: googleId})
       .getRawOne()
       .then((data) => data?.keycloakId);
   }
@@ -70,7 +70,7 @@ export class AccountRepository extends Repository<Accounts> {
   async isExistedByUsername(username: string): Promise<boolean> {
     return this.createQueryBuilder('accounts')
       .select('COUNT(accounts.username)')
-      .where('accounts.username = :username', { username })
+      .where('accounts.username = :username', {username})
       .getRawOne()
       .then((data) => data['count'] > 0);
   }
@@ -78,7 +78,7 @@ export class AccountRepository extends Repository<Accounts> {
   async checkIfUserAlreadyHasAvatar(id: string): Promise<boolean> {
     const data = await this.createQueryBuilder('accounts')
       .select('COUNT(accounts.avatar)')
-      .where('accounts.id = :id', { id: id })
+      .where('accounts.id = :id', {id: id})
       .getRawOne<Array<object>>();
     return data.length > 0;
   }
@@ -97,7 +97,7 @@ export class AccountRepository extends Repository<Accounts> {
       ])
       .addSelect('r.name', 'role')
       .innerJoin(Roles, 'r', 'r.id = accounts.role_id')
-      .where('accounts.keycloak_id = :keycloakId', { keycloakId: keycloakId })
+      .where('accounts.keycloak_id = :keycloakId', {keycloakId: keycloakId})
       .andWhere('accounts.disabled_at IS NULL')
       .andWhere('accounts.deleted_at IS NULL')
       .getOneOrFail();
@@ -105,7 +105,7 @@ export class AccountRepository extends Repository<Accounts> {
 
   findByGoogleId(googleId: string): Promise<Accounts> {
     return this.createQueryBuilder('accounts')
-      .where('accounts.googleId = :googleId', { googleId })
+      .where('accounts.googleId = :googleId', {googleId})
       .andWhere('accounts.disabled_at IS NULL')
       .andWhere('accounts.deleted_at IS NULL')
       .getOneOrFail();
@@ -155,7 +155,7 @@ export class AccountRepository extends Repository<Accounts> {
       .innerJoin(Roles, 'r', 'r.id = account.role_id')
       .where(`account.deleted_at IS NULL`)
       .andWhere(`account.disabled_at IS NULL`)
-      .andWhere('account.role_id = :role', { role: roleId })
+      .andWhere('account.role_id = :role', {role: roleId})
 
       .getRawMany<Accounts>();
   }
@@ -196,7 +196,7 @@ export class AccountRepository extends Repository<Accounts> {
   findIdByKeycloakId(keycloakId: string): Promise<string> {
     return this.createQueryBuilder('accounts')
       .select('accounts.id', 'id')
-      .where('accounts.keycloak_id = :keycloakId', { keycloakId: keycloakId })
+      .where('accounts.keycloak_id = :keycloakId', {keycloakId: keycloakId})
       .getRawOne()
       .then((data) => (data ? data['id'] : undefined));
   }
@@ -204,7 +204,7 @@ export class AccountRepository extends Repository<Accounts> {
   findKeycloakIdByAccountId(id: string): Promise<string> {
     return this.createQueryBuilder('accounts')
       .select('accounts.keycloak_id', 'keycloak_id')
-      .where('accounts.id = :id', { id: id })
+      .where('accounts.id = :id', {id: id})
       .getRawOne()
       .then((data) => (data ? data['keycloak_id'] : undefined));
   }
@@ -212,7 +212,7 @@ export class AccountRepository extends Repository<Accounts> {
   async findAvatarURLById(id: string): Promise<string> {
     return this.createQueryBuilder('accounts')
       .select('accounts.avatar', 'avatar')
-      .where('accounts.id = :id', { id: id })
+      .where('accounts.id = :id', {id: id})
       .getRawOne()
       .then((data) => (data ? data['avatar'] : undefined));
   }
@@ -223,7 +223,7 @@ export class AccountRepository extends Repository<Accounts> {
       .set({
         avatar: avatarUrl,
       })
-      .where('accounts.id = :id', { id: id })
+      .where('accounts.id = :id', {id: id})
       .useTransaction(true)
       .execute();
   }
@@ -275,7 +275,7 @@ export class AccountRepository extends Repository<Accounts> {
   }
 
   updatePartially(
-    body: AccountUpdateProfilePayload,
+    body: AccountAddRequestPayload,
     account: Accounts,
     accountId: string
   ): Promise<Accounts> {
@@ -300,7 +300,7 @@ export class AccountRepository extends Repository<Accounts> {
       .update({
         googleId: userGoogleId,
       })
-      .where('accounts.email = :email', { email: email })
+      .where('accounts.email = :email', {email: email})
       .useTransaction(true)
       .execute();
   }
@@ -311,7 +311,7 @@ export class AccountRepository extends Repository<Accounts> {
         disabledBy: accountId,
         disabledAt: new Date(),
       })
-      .where('accounts.id = :id', { id: id })
+      .where('accounts.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isDisabled.affected > 0) {
@@ -337,7 +337,7 @@ export class AccountRepository extends Repository<Accounts> {
       .leftJoin(Accounts, 'a', 'a.id = account.disabled_by')
       .andWhere('account.disabled_at IS NOT NULL')
       .andWhere('account.deleted_at IS NULL')
-      .andWhere('account.username ILIKE :name', { name: `%${search.trim()}%` })
+      .andWhere('account.username ILIKE :name', {name: `%${search.trim()}%`})
 
       .getRawMany<Accounts>();
   }
@@ -350,7 +350,7 @@ export class AccountRepository extends Repository<Accounts> {
         updatedBy: accountId,
         updatedAt: new Date(),
       })
-      .where('accounts.id = :id', { id: id })
+      .where('accounts.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isRestored.affected > 0) {
@@ -370,7 +370,7 @@ export class AccountRepository extends Repository<Accounts> {
         disabledAt: null,
         disabledBy: null,
       })
-      .where('accounts.id = :id', { id: id })
+      .where('accounts.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isDeleted.affected > 0) {
@@ -412,7 +412,7 @@ export class AccountRepository extends Repository<Accounts> {
         updatedAt: new Date(),
         updatedBy: accountId,
       })
-      .where('accounts.id = :id', { id: id })
+      .where('accounts.id = :id', {id: id})
       .execute();
     if (isRestored.affected > 0) {
       return this.findOneOrFail({
@@ -442,7 +442,7 @@ export class AccountRepository extends Repository<Accounts> {
       .innerJoin(Roles, 'role', 'role.id = account.role_id')
       .where('account.disabled_at IS NULL')
       .andWhere('account.deleted_at IS NULL')
-      .andWhere('account.id = :accountId', { accountId: id })
+      .andWhere('account.id = :accountId', {accountId: id})
       .getRawOne<Accounts>();
   }
 
@@ -450,7 +450,7 @@ export class AccountRepository extends Repository<Accounts> {
     return this.createQueryBuilder('accounts')
       .select('r.name', 'role')
       .innerJoin(Roles, 'r', 'r.id = accounts.role_id')
-      .where('accounts.keycloak_id = :keycloakId', { keycloakId: keycloakId })
+      .where('accounts.keycloak_id = :keycloakId', {keycloakId: keycloakId})
       .getRawOne()
       .then((data) => data?.role);
   }
@@ -470,7 +470,7 @@ export class AccountRepository extends Repository<Accounts> {
       ])
       .addSelect('r.name', 'role')
       .innerJoin(Roles, 'r', 'a.role_id = r.id')
-      .where('a.keycloak_id = :keycloakId', { keycloakId })
+      .where('a.keycloak_id = :keycloakId', {keycloakId})
       .andWhere('a.disabled_at IS NULL')
       .andWhere('a.deleted_at IS NULL')
       .getOneOrFail();
@@ -479,7 +479,7 @@ export class AccountRepository extends Repository<Accounts> {
   async findUsernameById(id: string): Promise<string> {
     return this.createQueryBuilder('accounts')
       .select('accounts.username', 'username')
-      .where('accounts.id = :id', { id })
+      .where('accounts.id = :id', {id})
       .getRawOne()
       .then((data) => data['username']);
   }
@@ -497,7 +497,7 @@ export class AccountRepository extends Repository<Accounts> {
     return this.createQueryBuilder('accounts')
       .select('r.name', 'name')
       .innerJoin(Roles, 'r', 'r.id = accounts.role_id')
-      .where('accounts.id = :id', { id: id })
+      .where('accounts.id = :id', {id: id})
       .getRawOne()
       .then((data) => data['name']);
   }
