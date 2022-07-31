@@ -542,7 +542,7 @@ export class BookingRoomService {
 
   getCurrentRoomBookingList(accountId: string) {
     try {
-      return this.repository.findByCurrentBookingListAndAccountId(accountId);
+      return this.repository.findByCurrentBookingListByAccountId(accountId);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

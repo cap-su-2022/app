@@ -42,7 +42,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
-  })
+  }, [])
 
 
   const ModalHeaderTitle: React.FC = () => {

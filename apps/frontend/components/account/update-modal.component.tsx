@@ -52,7 +52,7 @@ const UpdateAccountValidation = Yup.object().shape({
     .nullable()
     .matches(phoneRegExp, 'Phone number is not valid')
     .min(10)
-    .max(10)
+    .max(10),
 });
 
 const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
@@ -134,7 +134,12 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
       setUpdateDisabled(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formik.values.description, formik.values.fullname, formik.values.roleId, formik.values.phone]);
+  }, [
+    formik.values.description,
+    formik.values.fullname,
+    formik.values.roleId,
+    formik.values.phone,
+  ]);
 
   const ModalHeaderTitle: React.FC = () => {
     return (
@@ -148,7 +153,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
     <>
       <Modal
         title={<ModalHeaderTitle />}
-        size={dimension.width / 2}
+        size="lg"
         centered
         opened={props.isShown}
         onClose={() => {
@@ -162,40 +167,45 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
               <InputWrapper
                 required
                 label="Account ID"
-                description="Account ID is unique"
+                style={{ marginBottom: 20 }}
               >
                 <TextInput
                   icon={<Id />}
                   disabled
                   id="account-id"
                   name="id"
-                  className={classes.textInput}
                   radius="md"
                   readOnly
                   value={formik.values.id}
                 />
               </InputWrapper>
-              <div className={classes.displayGrid}>
-                <InputWrapper required label="Username">
+              <div className={classes.displayGrid} style={{ marginBottom: 20 }}>
+                <InputWrapper
+                  required
+                  label="Username"
+                  style={{ marginBottom: 20 }}
+                >
                   <TextInput
                     icon={<Id />}
                     disabled
                     id="username"
                     name="username"
-                    className={classes.textInput}
                     radius="md"
                     readOnly
                     value={formik.values.username}
                   />
                 </InputWrapper>
-                <InputWrapper required label="Fullname">
+                <InputWrapper
+                  required
+                  label="Fullname"
+                  style={{ marginBottom: 20 }}
+                >
                   <TextInput
                     icon={<ClipboardText />}
                     id="fullname"
                     name="fullname"
                     error={formik.errors.fullname}
                     onChange={formik.handleChange}
-                    className={classes.textInput}
                     radius="md"
                     value={formik.values.fullname}
                   />
@@ -207,7 +217,6 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                     name="email"
                     error={formik.errors.email}
                     onChange={formik.handleChange}
-                    className={classes.textInput}
                     radius="md"
                     value={formik.values.email}
                   />
@@ -220,13 +229,12 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                     name="phone"
                     error={formik.errors.phone}
                     onChange={formik.handleChange}
-                    className={classes.textInput}
                     radius="md"
                     value={formik.values.phone}
                   />
                 </InputWrapper>
               </div>
-              <InputWrapper required label="Role">
+              <InputWrapper required label="Role" style={{ marginBottom: 20 }}>
                 <Select
                   onChange={(e) => {
                     setUpdateDisabled(false);
@@ -240,10 +248,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   value={role}
                 />
               </InputWrapper>
-              <InputWrapper
-                description="(Optional) Maximum length is 500 characters."
-                label="Description"
-              >
+              <InputWrapper label="Description">
                 <Textarea
                   id="description"
                   name="description"
@@ -252,6 +257,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   onChange={formik.handleChange}
                   radius="md"
                   value={formik.values.description || undefined}
+                  minRows={4}
                 />
               </InputWrapper>
             </div>
@@ -298,9 +304,6 @@ const useStyles = createStyles({
     gridTemplateColumns: 'auto auto',
     columnGap: '20px',
     alignItems: 'start',
-  },
-  textInput: {
-    marginTop: 10,
   },
 });
 

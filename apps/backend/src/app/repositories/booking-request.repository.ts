@@ -437,7 +437,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     return;
   }
 
-  findByCurrentBookingListAndAccountId(
+  findByCurrentBookingListByAccountId(
     accountId: string
   ): Promise<BookingRequest[]> {
     return this.createQueryBuilder('booking_request')
@@ -445,10 +445,14 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.requested_at', 'bookedAt')
       .addSelect('booking_request.status', 'status')
       .addSelect('r.name', 'roomName')
+      .addSelect('s.slot_num', 'checkinSlotNum')
+      .addSelect('ss.slot_num', 'checkoutSlotNum')
       .addSelect('booking_request.id', 'id')
       .addSelect('booking_request.requested_at', 'requestedAt')
       .addSelect('booking_request.checkedin_at', 'checkinAt')
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(Slot, 's', 's.id = booking_request.checkin_slot')
+      .innerJoin(Slot, 'ss', 'ss.id = booking_request.checkout_slot')
       .where('booking_request.requested_by = :accountId', {
         accountId: accountId,
       })

@@ -51,7 +51,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
 
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
-  })
+  }, [])
 
   const rows = props.data.map((row, index) => (
     <tr key={index}>
