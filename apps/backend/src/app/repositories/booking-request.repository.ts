@@ -59,7 +59,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
 
   getCountRequestInWeekOfUser(id: string, date: string) {
     const curr = new Date(date); // get current date
-    console.log(date);
     const firstDay = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
     const lastDay = firstDay + 6; // last day is the first day + 6
     const sunday = new Date(curr.setDate(firstDay));
@@ -98,7 +97,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .where('booking_request.status LIKE :status', {
         status: `%${payload.status}%`,
       })
-      .andWhere("(r.name ILIKE :search OR a.username ILIKE :search)", {
+      .andWhere('(r.name ILIKE :search OR a.username ILIKE :search)', {
         search: `%${payload.search}%`,
       })
       .orderBy(payload.sort, payload.dir as 'ASC' | 'DESC');
@@ -721,6 +720,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       checkoutSlot: payload.checkoutSlot,
       checkinDate: payload.checkinDate,
       bookedFor: payload.bookedFor || userId,
+      acceptedBy: status === 'BOOKED' ? userId : null,
+      acceptedAt: status === 'BOOKED' ? new Date() : null,
     });
   }
 
@@ -861,41 +862,43 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   }
 
   findCurrentCheckoutInformation(accountId: string) {
-    return this.createQueryBuilder('booking_request')
-      .select('booking_request.id', 'id')
-      .addSelect('a.username', 'requestedBy')
-      .addSelect('booking_request.id', 'description')
-      .addSelect('booking_request.checkedin_at', 'checkedInAt')
-      .addSelect('booking_request.status', 'status')
-      .addSelect('st.slot_num', 'checkinSlot')
-      .addSelect('se.slot_num', 'checkoutSlot')
-      .addSelect('booking_request.checkin_date', 'checkinDate')
-      .addSelect('r.name', 'roomName')
-      .addSelect('rt.name', 'roomType')
-      .addSelect('booking_request.accepted_by', 'acceptedBy')
-      .addSelect('booking_request.accepted_at', 'acceptedAt')
-      .addSelect('br.name', 'bookingReason')
-      .innerJoin(
-        BookingReason,
-        'br',
-        'br.id = booking_request.booking_reason_id'
-      )
-      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
-      .innerJoin(RoomType, 'rt', 'rt.id = r.type')
-      .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
-      .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
-      .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
-      .where('booking_request.requested_by = :accountId', {
-        accountId: accountId,
-      })
-      .andWhere('booking_request.status = :status', { status: 'CHECKED_IN' })
-      .andWhere('booking_request.checkedout_at IS NULL')
-      .andWhere('booking_request.checkedin_at IS NOT NULL')
-      // .andWhere('booking_request.accepted_by IS NOT NULL')
-      // .andWhere('booking_request.accepted_at IS NOT NULL')
-      .andWhere('booking_request.cancelled_at IS NULL')
-      .andWhere('booking_request.cancelled_by IS NULL')
-      .getRawOne();
+    return (
+      this.createQueryBuilder('booking_request')
+        .select('booking_request.id', 'id')
+        .addSelect('a.username', 'requestedBy')
+        .addSelect('booking_request.id', 'description')
+        .addSelect('booking_request.checkedin_at', 'checkedInAt')
+        .addSelect('booking_request.status', 'status')
+        .addSelect('st.slot_num', 'checkinSlot')
+        .addSelect('se.slot_num', 'checkoutSlot')
+        .addSelect('booking_request.checkin_date', 'checkinDate')
+        .addSelect('r.name', 'roomName')
+        .addSelect('rt.name', 'roomType')
+        .addSelect('booking_request.accepted_by', 'acceptedBy')
+        .addSelect('booking_request.accepted_at', 'acceptedAt')
+        .addSelect('br.name', 'bookingReason')
+        .innerJoin(
+          BookingReason,
+          'br',
+          'br.id = booking_request.booking_reason_id'
+        )
+        .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+        .innerJoin(RoomType, 'rt', 'rt.id = r.type')
+        .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
+        .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
+        .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
+        .where('booking_request.requested_by = :accountId', {
+          accountId: accountId,
+        })
+        .andWhere('booking_request.status = :status', { status: 'CHECKED_IN' })
+        .andWhere('booking_request.checkedout_at IS NULL')
+        .andWhere('booking_request.checkedin_at IS NOT NULL')
+        .andWhere('booking_request.accepted_by IS NOT NULL')
+        .andWhere('booking_request.accepted_at IS NOT NULL')
+        .andWhere('booking_request.cancelled_at IS NULL')
+        .andWhere('booking_request.cancelled_by IS NULL')
+        .getRawOne()
+    );
   }
 
   checkoutBookingRoom(id: string, accountId: string) {

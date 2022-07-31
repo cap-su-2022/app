@@ -157,6 +157,7 @@ const ManageSlot: React.FC<any> = () => {
       name: 'id',
       value: slot.id,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Name',
@@ -164,6 +165,7 @@ const ManageSlot: React.FC<any> = () => {
       name: 'name',
       value: slot.name,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Description',
@@ -171,6 +173,7 @@ const ManageSlot: React.FC<any> = () => {
       name: 'description',
       value: slot.description,
       readOnly: true,
+      inputtype: InputTypes.TextArea,
     },
     {
       label: 'Slot num',
@@ -178,6 +181,7 @@ const ManageSlot: React.FC<any> = () => {
       name: 'slotNum',
       value: slot.slotNum + '',
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Time start',
@@ -185,6 +189,7 @@ const ManageSlot: React.FC<any> = () => {
       name: 'timeStart',
       value: slot.timeStart,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
 
     {
@@ -193,6 +198,7 @@ const ManageSlot: React.FC<any> = () => {
       name: 'createAt',
       value: dayjs(slot.createdAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Time end',
@@ -200,6 +206,7 @@ const ManageSlot: React.FC<any> = () => {
       name: 'timeEnd',
       value: slot.timeEnd,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Create By',
@@ -207,6 +214,7 @@ const ManageSlot: React.FC<any> = () => {
       name: 'createBy',
       value: slot.createdBy,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
   ];
 

@@ -1,10 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import {
-  createStyles,
-  Modal,
-  Text,
-} from '@mantine/core';
-import {  useAppSelector } from '../../redux/hooks';
+import React, { useEffect, useRef, useState } from 'react';
+import { createStyles, Modal, Text } from '@mantine/core';
+import { useAppSelector } from '../../redux/hooks';
 import autoAnimate from '@formkit/auto-animate';
 import RequestInfoComponent from './info-component.component';
 
@@ -20,6 +16,7 @@ interface RequestInfoModalProps {
 
 const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
   const { classes } = useStyles();
+
   const requestBooking = useAppSelector(
     (state) => state.roomBooking.roomBooking
   );
@@ -29,10 +26,16 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
 
-
   const ModalHeaderTitle: React.FC = () => {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', width: 500}}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          width: 500,
+        }}
+      >
         <Text className={classes.modalHeaderTitle}>
           Request Booking Information
         </Text>
@@ -48,7 +51,12 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
                 {requestBooking.status}
               </div>
               <span className={classes.acceptedByDiv}>
-                Accepted by <b>{requestBooking.acceptedBy || 'system'}</b>
+                Accepted by{' '}
+                <b>
+                  {requestBooking.acceptedBy !== requestBooking.requestedBy
+                    ? requestBooking.acceptedBy
+                    : 'system'}
+                </b>
               </span>
             </div>
           ) : requestBooking.status === 'CHECKED_IN' ? (

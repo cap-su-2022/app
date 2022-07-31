@@ -127,11 +127,10 @@ export class BookingRoomService {
         result.totalTime.cancelled += 1;
       }
     }
-    console.log('TODAY: ', dayjs(today).format('DD-MM_YYYY'));
     return result;
   }
 
-  getCountRequestInWeekOfUser = async (id: string, date: string) => {
+  async getCountRequestInWeekOfUser(id: string, date: string) {
     try {
       const result = {
         usedBookingTime: 0,
@@ -143,65 +142,77 @@ export class BookingRoomService {
       return result;
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException('Error while getting booking rooms');
-    }
-  };
-
-  async getBookingRooms(
-    payload: BookingRoomsFilterRequestPayload
-  ): Promise<BookingRoomResponseDTO[]> {
-    try {
-      const rooms = await this.roomService.getAllWithoutPagination();
-      const result: BookingRoomResponseDTO[] = [];
-      let counter = 1;
-      for (let i = 0; i < rooms.length; i++) {
-        for (let j = 1; j <= 6; j++) {
-          result.push({
-            stt: counter++,
-            roomId: rooms[i].id,
-            roomName: rooms[i].name,
-            slot: j,
-          });
-        }
-      }
-      console.log(payload.search);
-      console.log(
-        result.filter((bookingRoom) =>
-          bookingRoom.roomName.includes(payload.search)
-        )
+      throw new BadRequestException(
+        e.message || 'Error while getting booking rooms'
       );
-      return result.filter((bookingRoom) =>
-        bookingRoom.roomName.includes(payload.search)
-      );
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException('Error while getting booking rooms');
     }
   }
 
-  getRequestByRoomId(roomId: string) {
+  // async getBookingRooms(
+  //   payload: BookingRoomsFilterRequestPayload
+  // ): Promise<BookingRoomResponseDTO[]> {
+  //   try {
+  //     const rooms = await this.roomService.getAllWithoutPagination();
+  //     const result: BookingRoomResponseDTO[] = [];
+  //     let counter = 1;
+  //     for (let i = 0; i < rooms.length; i++) {
+  //       for (let j = 1; j <= 6; j++) {
+  //         result.push({
+  //           stt: counter++,
+  //           roomId: rooms[i].id,
+  //           roomName: rooms[i].name,
+  //           slot: j,
+  //         });
+  //       }
+  //     }
+  //     console.log(payload.search);
+  //     console.log(
+  //       result.filter((bookingRoom) =>
+  //         bookingRoom.roomName.includes(payload.search)
+  //       )
+  //     );
+  //     return result.filter((bookingRoom) =>
+  //       bookingRoom.roomName.includes(payload.search)
+  //     );
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException('Error while getting booking rooms');
+  //   }
+  // }
+
+  async getRequestByRoomId(roomId: string) {
     try {
-      return this.repository.getRequestByRoomId(roomId);
+      if (roomId === '') {
+        throw new BadRequestException('Please type a room ID');
+      }
+      return await this.repository.getRequestByRoomId(roomId);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(
-        'An error occurred while getting request by room id ' + roomId
+        e.message ||
+          'An error occurred while getting request by room id ' + roomId
       );
     }
   }
 
-  getRequestBySlotId(slotId: string) {
+  async getRequestBySlotId(slotId: string) {
     try {
-      return this.repository.getRequestBySlotId(slotId);
+      if (slotId === '') {
+        throw new BadRequestException('Please type a slot ID');
+      }
+      return await this.repository.getRequestBySlotId(slotId);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
 
-  getRequestByDeviceId(deviceId: string) {
+  async getRequestByDeviceId(deviceId: string) {
     try {
-      return this.repository.getRequestByDeviceId(deviceId);
+      if (deviceId === '') {
+        throw new BadRequestException('Please type a device ID');
+      }
+      return await this.repository.getRequestByDeviceId(deviceId);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -232,14 +243,14 @@ export class BookingRoomService {
     }
   }
 
-  getWishlistBookingRooms(
+  async getWishlistBookingRooms(
     roomName: string,
     slotFrom: number,
     slotTo: number,
     accountId: string
   ): Promise<WishlistBookingRoomResponseDTO[]> {
     try {
-      return this.roomWishlistService.findAllWishlistBookingRooms(
+      return await this.roomWishlistService.findAllWishlistBookingRooms(
         roomName,
         slotFrom,
         slotTo,
@@ -286,12 +297,12 @@ export class BookingRoomService {
   //   return this.deviceService.getBookingRoomDeviceList(name, type, sort);
   // }
 
-  getUsernameList(): Promise<string[]> {
-    return this.accountService.getUsernameList();
+  async getUsernameList(): Promise<string[]> {
+    return await this.accountService.getUsernameList();
   }
 
-  getRoomNames(): Promise<Devices[]> {
-    return this.roomService.getRoomNames();
+  async getRoomNames(): Promise<Devices[]> {
+    return await this.roomService.getRoomNames();
   }
 
   // async getChoosingBookingRooms(filter: string) {
@@ -451,7 +462,6 @@ export class BookingRoomService {
             }
           }
         );
-        console.log('LIST ROOM BOOKED: ', listRequestBookedInDayAndSlot);
         return listRequestBookedInDayAndSlot;
       }
     } catch (e) {
@@ -540,9 +550,11 @@ export class BookingRoomService {
     }
   }
 
-  getCurrentRoomBookingList(accountId: string) {
+  async getCurrentRoomBookingList(accountId: string) {
     try {
-      return this.repository.findByCurrentBookingListByAccountId(accountId);
+      return await this.repository.findByCurrentBookingListByAccountId(
+        accountId
+      );
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -578,9 +590,9 @@ export class BookingRoomService {
     }
   }
 
-  getCountRequestBookingPending() {
+  async getCountRequestBookingPending() {
     try {
-      return this.repository.getCountRequestBookingPending();
+      return await this.repository.getCountRequestBookingPending();
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -1157,29 +1169,29 @@ export class BookingRoomService {
 
   async getCurrentBookingCheckoutInformation(accountId: string) {
     try {
-      const a = await this.repository.findCurrentCheckoutInformation(accountId);
-      console.log(accountId)
-      console.log("AAAAAAAAa: " + a)
-      return a
+      return await this.repository.findCurrentCheckoutInformation(accountId);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
 
-  checkOutBookingRoom(bookingRequestId: string, accountId: string) {
-    return this.repository.checkoutBookingRoom(bookingRequestId, accountId);
+  async checkOutBookingRoom(bookingRequestId: string, accountId: string) {
+    return await this.repository.checkoutBookingRoom(
+      bookingRequestId,
+      accountId
+    );
   }
 
-  getAllBookingRoomHistory(
+  async getAllBookingRoomHistory(
     accountId: string,
     filters: GetAllBookingRequestsFilter
   ) {
-    return this.repository.findBookingRoomHistory(accountId, filters);
+    return await this.repository.findBookingRoomHistory(accountId, filters);
   }
 
-  getCurrentBookingCheckin(accountId: string) {
-    return this.repository.findCurrentCheckinInformation(accountId);
+  async getCurrentBookingCheckin(accountId: string) {
+    return await this.repository.findCurrentCheckinInformation(accountId);
   }
 
   async attemptCheckin(

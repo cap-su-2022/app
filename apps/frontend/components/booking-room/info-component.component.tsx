@@ -55,15 +55,100 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
 
-  const reveal = () => setShowListDevice(!isShowListDevice);
-
-  console.log(requestBooking);
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
-  console.log('AAAAAAa: ', userInfo);
+  const ButtonRender = (status: string) => {
+    switch (status) {
+      case 'PENDING':
+        if (userInfo.id === requestBooking.requestedById) {
+          return (
+            <Button
+              onClick={() => props.toggleCancelModalShown()}
+              variant="outline"
+              color={'red'}
+              leftIcon={<X />}
+            >
+              Cancel request
+            </Button>
+          );
+        } else {
+          return (
+            <>
+              <Button
+                onClick={() => props.toggleRejectModalShown()}
+                variant="outline"
+                color={'red'}
+                leftIcon={<X />}
+              >
+                Reject request
+              </Button>
+
+              <Button
+                onClick={() => props.toggleAcceptModalShown()}
+                variant="outline"
+                color={'green'}
+                leftIcon={<Check />}
+              >
+                Accept request
+              </Button>
+            </>
+          );
+        }
+      case 'BOOKED':
+        if (userInfo.role !== 'Staff') {
+          return (
+            <>
+              <Button
+                onClick={() => props.toggleCancelModalShown()}
+                variant="outline"
+                color={'red'}
+                leftIcon={<X />}
+              >
+                Cancel request
+              </Button>
+              <Button
+                onClick={() => props.toggleCheckinModalShown()}
+                variant="outline"
+                color={'green'}
+                leftIcon={<CircleCheck />}
+              >
+                Check in
+              </Button>
+            </>
+          );
+        } else {
+          return (
+            <Button
+              onClick={() => props.toggleCancelModalShown()}
+              variant="outline"
+              color={'red'}
+              leftIcon={<X />}
+            >
+              Cancel request
+            </Button>
+          );
+        }
+      case 'CHECKED_IN':
+        if (userInfo.role !== 'Staff') {
+          return (
+            <>
+              <div></div>
+              <Button
+                onClick={() => props.toggleCheckoutModalShown()}
+                variant="outline"
+                color={'green'}
+                leftIcon={<CircleCheck />}
+              >
+                Check out
+              </Button>
+            </>
+          );
+        }
+    }
+  };
 
   const listDeviceDiv =
     requestBooking.listDevice && requestBooking.listDevice.length > 0
@@ -209,77 +294,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         </div>
 
         <div className={classes.modalFooter}>
-          {(requestBooking.status === 'PENDING' &&
-            userInfo.id === requestBooking.requestedById) ||
-          requestBooking.status === 'BOOKED' ? (
-            <Button
-              onClick={() => props.toggleCancelModalShown()}
-              variant="outline"
-              color={'red'}
-              leftIcon={<X />}
-            >
-              Cancel request
-            </Button>
-          ) : requestBooking.status === 'PENDING' &&
-            userInfo.id !== requestBooking.requestedById &&
-            userInfo.role !== 'Staff' ? (
-            <Button
-              onClick={() => props.toggleRejectModalShown()}
-              variant="outline"
-              color={'red'}
-              leftIcon={<X />}
-            >
-              Reject request
-            </Button>
-          ) : requestBooking.status === 'CHECKED_IN' && userInfo.role !== 'Staff' ? (
-            <Button
-              onClick={() => props.toggleCheckoutModalShown()}
-              variant="outline"
-              color={'green'}
-              leftIcon={<CircleCheck />}
-            >
-              Check out
-            </Button>
-          ) : requestBooking.status === 'BOOKED' &&
-            userInfo.role !== 'Staff' ? (
-            <Button
-              onClick={() => props.toggleCheckinModalShown()}
-              variant="outline"
-              color={'green'}
-              leftIcon={<CircleCheck />}
-            >
-              Check in
-            </Button>
-          ) : (
-            <div></div>
-          )}
-          {requestBooking.status === 'PENDING' && userInfo.role !== 'Staff' ? (
-            <Button
-              onClick={() => props.toggleAcceptModalShown()}
-              variant="outline"
-              color={'green'}
-              leftIcon={<Check />}
-            >
-              Accept request
-            </Button>
-          ) : null}
-
-          {requestBooking.status === 'BOOKED' &&
-            userInfo.role !== 'Staff' ? (
-            <Button
-              onClick={() => props.toggleCheckinModalShown()}
-              variant="outline"
-              color={'green'}
-              leftIcon={<CircleCheck />}
-            >
-              Check in
-            </Button>
-          ) : null}
-          {requestBooking.listDevice && requestBooking.listDevice.length > 0 && (
-            <Button onClick={reveal} leftIcon={<Devices />}>
-              Devices
-            </Button>
-          )}
+          {ButtonRender(requestBooking.status)}
         </div>
       </div>
       {isShowListDevice &&
