@@ -385,46 +385,46 @@ export class BookingRoomController {
     return this.service.getCountRequestInWeekOfUser(payload.id, date);
   }
 
-  @Get()
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Retrieving a list of booking rooms',
-    description: 'Retrieving a list of booking rooms',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully retrieved a list of booking rooms',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while retrieving a list of booking rooms',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @ApiParam({
-    name: 'roomName',
-    description: 'The name of the library room',
-    example: 'LB01',
-    type: String,
-    required: true,
-  })
-  getBookingRooms(
-    @Query('search') search: string,
-    @Query('sorting') sorting: string,
-    @Query('slot') slot: number
-  ): Promise<BookingRoomResponseDTO[]> {
-    return this.service.getBookingRooms({
-      sorting: sorting,
-      search: search,
-      slot: slot,
-    });
-  }
+  // @Get()
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  // @ApiOperation({
+  //   summary: 'Retrieving a list of booking rooms',
+  //   description: 'Retrieving a list of booking rooms',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully retrieved a list of booking rooms',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while retrieving a list of booking rooms',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Invalid access token',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // @ApiParam({
+  //   name: 'roomName',
+  //   description: 'The name of the library room',
+  //   example: 'LB01',
+  //   type: String,
+  //   required: true,
+  // })
+  // getBookingRooms(
+  //   @Query('search') search: string,
+  //   @Query('sorting') sorting: string,
+  //   @Query('slot') slot: number
+  // ): Promise<BookingRoomResponseDTO[]> {
+  //   return this.service.getBookingRooms({
+  //     sorting: sorting,
+  //     search: search,
+  //     slot: slot,
+  //   });
+  // }
 
   @Post('new-request')
   @HttpCode(HttpStatus.OK)
