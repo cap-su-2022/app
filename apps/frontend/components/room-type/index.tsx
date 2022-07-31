@@ -200,6 +200,7 @@ const ManageRoomType: React.FC<any> = () => {
       name: 'id',
       value: roomType.id,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
     },
     {
       label: 'Room Type Name',
@@ -207,6 +208,8 @@ const ManageRoomType: React.FC<any> = () => {
       name: 'name',
       value: roomType.name,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
+
     },
     {
       label: 'Room Type Description',
@@ -214,6 +217,8 @@ const ManageRoomType: React.FC<any> = () => {
       name: 'description',
       value: roomType.description,
       readOnly: true,
+      inputtype: InputTypes.TextArea,
+
     },
     {
       label: 'Create at',
@@ -221,6 +226,8 @@ const ManageRoomType: React.FC<any> = () => {
       name: 'createAt',
       value: dayjs(roomType.createdAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
+      inputtype: InputTypes.TextInput,
+
     },
     {
       label: 'Create By',
@@ -228,6 +235,8 @@ const ManageRoomType: React.FC<any> = () => {
       name: 'createBy',
       value: roomType.createdBy,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
+
     },
     {
       label: 'Update At',
@@ -235,6 +244,8 @@ const ManageRoomType: React.FC<any> = () => {
       name: 'updateAt',
       value:dayjs(roomType.updatedAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
+      inputtype: InputTypes.TextInput,
+
     },
     {
       label: 'Update By',
@@ -242,6 +253,8 @@ const ManageRoomType: React.FC<any> = () => {
       name: 'updateBy',
       value: roomType.updatedBy,
       readOnly: true,
+      inputtype: InputTypes.TextInput,
+
     },
   ];
 
@@ -270,32 +283,32 @@ const ManageRoomType: React.FC<any> = () => {
     {
       id: 'id',
       name: 'id',
-      description: 'Id of Room type',
       inputtype: InputTypes.TextInput,
       label: 'Id',
       readOnly: true,
       required: false,
       value: roomType.id,
+      disabled: true
     },
     {
       id: 'name',
       name: 'name',
-      description: 'Room type name',
       inputtype: InputTypes.TextInput,
       label: 'Room type name',
       readOnly: false,
       required: true,
       value: roomType.name,
+      disabled: false
     },
     {
       id: 'description',
       name: 'description',
-      description: 'Room type description',
       inputtype: InputTypes.TextArea,
       label: 'Description',
       readOnly: false,
       required: false,
       value: roomType.description,
+      disabled: false
     },
   ];
   const handleAddModalClose = () => {

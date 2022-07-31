@@ -49,45 +49,39 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
         onClose={() => props.toggleShown()}
       >
         <div className={classes.modalBody}>
-          <InputWrapper label="Room ID" description="Unique ID of the room">
-            <TextInput
-              icon={<Id />}
-              className={classes.textInput}
-              radius="md"
-              readOnly
-              value={room.id}
-            />
+          <InputWrapper label="Room ID" style={{ marginBottom: 20 }}>
+            <TextInput icon={<Id />} radius="md" readOnly value={room.id} />
           </InputWrapper>
-          <InputWrapper label="Room name" description="Unique room name">
-            <TextInput
-              icon={<ClipboardText />}
-              className={classes.textInput}
-              radius="md"
-              readOnly
-              value={room.name}
-            />
-          </InputWrapper>
-          <InputWrapper
-            label="Room type"
-            description="Type of library in separated"
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginBottom: 20,
+            }}
           >
-            <TextInput
-              icon={<ClipboardText />}
-              className={classes.textInput}
-              radius="md"
-              readOnly
-              value={room.roomTypeName}
-            />
-          </InputWrapper>
-          <InputWrapper
-            label="Room description"
-            description="Additional information of the room"
-          >
+            <InputWrapper label="Room name">
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={room.name}
+              />
+            </InputWrapper>
+            <InputWrapper label="Room type">
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={room.roomTypeName}
+              />
+            </InputWrapper>
+          </div>
+          <InputWrapper label="Room description" style={{ marginBottom: 20 }}>
             <Textarea
               icon={<FileDescription />}
-              className={classes.textInput}
               radius="md"
               readOnly
+              minRows={4}
               value={room.description}
             />
           </InputWrapper>
@@ -101,7 +95,6 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
             <InputWrapper label="Created at">
               <TextInput
                 icon={<Clock />}
-                className={classes.textInput}
                 radius="md"
                 readOnly
                 value={dayjs(room.createdAt).format('HH:mm DD/MM/YYYY')}
@@ -110,7 +103,6 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
             <InputWrapper label="Created by">
               <TextInput
                 icon={<User />}
-                className={classes.textInput}
                 radius="md"
                 readOnly
                 id="room-createdby"
@@ -129,18 +121,15 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
               <TextInput
                 id="room-updatedat"
                 icon={<CalendarStats />}
-                className={classes.textInput}
                 radius="md"
                 readOnly
                 value={dayjs(room.updatedAt).format('HH:mm DD/MM/YYYY')}
-
               />
             </InputWrapper>
             <InputWrapper label="Updated by">
               <TextInput
                 id="room-updatedby"
                 icon={<User />}
-                className={classes.textInput}
                 radius="md"
                 readOnly
                 value={room.updatedBy}
@@ -187,9 +176,6 @@ const useStyles = createStyles({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  textInput: {
-    marginTop: 10,
   },
 });
 
