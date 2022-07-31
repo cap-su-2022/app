@@ -66,6 +66,8 @@ const filterBookingRoom = (bookedData, slotsFromState, roomsFromState) => {
           slotId: slotsFromState[i].id,
           slotName: slotsFromState[i].name,
           slotNum: slotsFromState[i].slotNum,
+          timeStart: slotsFromState[i].timeStart,
+          timeEnd: slotsFromState[i].timeEnd
         });
       }
     }
@@ -84,6 +86,8 @@ const filterBookingRoomElse = (slotsFromState, roomsFromState) => {
         slotId: slotsFromState[j].id,
         slotName: slotsFromState[j].name,
         slotNum: slotsFromState[j].slotNum,
+        timeStart: slotsFromState[j].timeStart,
+        timeEnd: slotsFromState[j].timeEnd
       });
     }
   }
