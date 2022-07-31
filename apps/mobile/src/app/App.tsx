@@ -25,6 +25,8 @@ import {
   toggleNotification,
 } from './redux/features/system/system.slice';
 import { DEFAULT_QUICK_ACCESS } from './constants/quick-access-navigation.constant';
+import { useAppSelector } from './hooks/use-app-selector.hook';
+import { addUserAfterCloseApp } from './redux/features/auth/slice';
 
 export const App = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -35,6 +37,16 @@ export const App = () => {
   const [isPingTimedOut, setPingTimedOut] = useState<boolean>(false);
 
   const [initialRoute, setInitialRoute] = useState<string>('LOGIN_SCREEN');
+  const authUser = useAppSelector((state) => state.auth.authUser);
+
+  const isEmpty = (user) => {
+    for (const prop in user) {
+      if (Object.prototype.hasOwnProperty.call(user, prop)) {
+        return false;
+      }
+    }
+  };
+
 
   useEffect(() => {
     if (!LOCAL_STORAGE.contains('QUICK_ACCESS')) {
@@ -46,6 +58,8 @@ export const App = () => {
       );
     }
 
+
+
     if (!LOCAL_STORAGE.contains('NOTIFICATION_BELL')) {
       LOCAL_STORAGE.set('NOTIFICATION_BELL', true);
     } else {
@@ -54,6 +68,13 @@ export const App = () => {
           LOCAL_STORAGE.getBoolean('NOTIFICATION_BELL').valueOf()
         )
       );
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isEmpty(authUser)) {
+      const user = JSON.parse(LOCAL_STORAGE.getString('user'));
+      dispatch(addUserAfterCloseApp(user));
     }
   }, []);
 

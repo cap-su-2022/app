@@ -38,7 +38,7 @@ const RequestRoomBookingDateSelect: React.FC<
               navigate.navigate('ROOM_BOOKING_CHOOSE_START_DAY');
             }}
           >
-            <Text style={styles.bookingNowButtonText}>{roomBooking.fromDay || Today}</Text>
+            <Text style={styles.bookingNowButtonText}>{dayjs(roomBooking.fromDay).format('ddd DD/MM/YYYY') || Today}</Text>
             <CalendarIcon size={25} color={FPT_ORANGE_COLOR} />
           </TouchableOpacity>
         </View>
@@ -57,7 +57,7 @@ const RequestRoomBookingDateSelect: React.FC<
               navigate.navigate('ROOM_BOOKING_CHOOSE_END_DAY');
             }}
           >
-            <Text style={styles.bookingNowButtonText}>{roomBooking.toDay || Today}</Text>
+            <Text style={styles.bookingNowButtonText}>{dayjs(roomBooking.toDay).format('ddd DD/MM/YYYY') || Today}</Text>
             <CalendarIcon size={25} color={FPT_ORANGE_COLOR} />
           </TouchableOpacity>
         </>
