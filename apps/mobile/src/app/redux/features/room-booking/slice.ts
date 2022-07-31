@@ -68,7 +68,7 @@ interface AddRoomBookingPayload {
   roomName: string;
   devices: BookingDevice[];
   deviceNames: string[];
-  isMultiSLot: boolean;
+  isMultiSlot: boolean;
   rooms: Room[];
   isMultiLongTerm: boolean
 }
@@ -136,7 +136,7 @@ const roomBookingSlice = createSlice({
     saveMultiSlot(state, { payload }) {
       state.addRoomBooking = {
         ...state.addRoomBooking,
-        isMultiSLot: payload.isMultiSLot,
+        isMultiSlot: payload.isMultiSLot,
       };
     },
     saveFromSlotNum(state, { payload }) {
@@ -159,6 +159,7 @@ const roomBookingSlice = createSlice({
         fromDay: payload.fromDay,
         fromSlot: payload.fromSlot,
         toSlot: payload.toSlot,
+        isMultiSlot: payload.isMultiSlotChecked
       };
     },
     step2ScheduleRoomBooking(state, { payload }) {
