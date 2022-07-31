@@ -2,7 +2,7 @@ import { PaginationParams } from '../../controllers/pagination.model';
 import { IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
 import { Transform, TransformFnParams } from 'class-transformer';
 
-export class BookingFeedbackSendRequestPayload extends PaginationParams {
+export class BookingFeedbackSendRequestPayload {
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsNotEmpty({
     message: `Message can't be empty`,
@@ -21,5 +21,5 @@ export class BookingFeedbackSendRequestPayload extends PaginationParams {
 
   @IsOptional()
   type: string;
-  
+
 }
