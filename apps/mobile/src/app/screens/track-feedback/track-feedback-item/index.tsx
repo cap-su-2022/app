@@ -8,6 +8,7 @@ import { fetchRoomBookingById } from '../../../redux/features/room-booking/thunk
 import TrackFeedbackItemContent from './content';
 import TrackingBookingRequestItemNavigation from './navigation';
 import { boxShadow } from '../../../utils/box-shadow.util';
+import {fetchFeedbackById} from "../../../redux/features/feedback/thunk/fetch-feedback-by-id.thunk";
 
 interface BookingRequestItemProps {
   item: FeedbackFilterResponse;
@@ -17,9 +18,9 @@ const FeedbackItem: React.FC<BookingRequestItemProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const handleFetchBookingRequest = (id: string) => {
-    dispatch(fetchRoomBookingById(id))
+    dispatch(fetchFeedbackById(id))
       .unwrap()
-      .then(() => navigate.navigate('ACCEPT_ROOM_BOOKING'))
+      .then(() => navigate.navigate('ACCEPT_FEEDBACK_ROUTE'))
       .catch(() => alert('Failed while fetching data'));
   };
 

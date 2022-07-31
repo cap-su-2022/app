@@ -80,8 +80,10 @@ export class FeedbackRepository extends Repository<Feedback> {
       .addSelect('fb.created_at', 'createdAt')
       .addSelect('aaa.username', 'rejectedBy')
       .addSelect('fb.rejected_at', 'rejectedAt')
+      .addSelect('ft.name', 'feedbackType')
+      .leftJoin(FeedbackType, 'ft', 'ft.id = fb.feedback_type_id')
       .leftJoin(Accounts, 'a', 'a.id = fb.resolved_by')
-      .leftJoin(Accounts, 'aa', 'aa.id = fb.created_by')
+      .innerJoin(Accounts, 'aa', 'aa.id = fb.created_by')
       .leftJoin(Accounts, 'aaa', 'aaa.id = fb.rejected_by')
       .where('fb.id = :id', { id: id })
       .andWhere('fb.deleted_at IS NULL')
@@ -97,7 +99,7 @@ export class FeedbackRepository extends Repository<Feedback> {
       Feedback,
       {
         feedbackMessage: payload.message,
-        feedbackTypeId: payload.type,
+        feedbackTypeId: payload.feedbackTypeId,
         createdBy: accountId,
         createdAt: new Date(),
         status: 'PENDING',

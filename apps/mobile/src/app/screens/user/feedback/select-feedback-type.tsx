@@ -45,14 +45,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   slotPicker: {
-    margin: 5,
     backgroundColor: '#f2f2f2',
     height: 50,
-    width: deviceWidth / 1.5,
+    width: deviceWidth / 1.05,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
+    marginHorizontal: 10,
   },
   durationButtonText: {
     fontSize: 24,
@@ -60,8 +60,9 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: deviceWidth / 23,
-    fontWeight: '700',
-    marginBottom: 5,
+    fontWeight: '600',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
   },
   container: {
     display: 'flex',

@@ -48,7 +48,7 @@ export class FeedbackController {
   }
 
   @Get(':id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully fetched feedback by id',

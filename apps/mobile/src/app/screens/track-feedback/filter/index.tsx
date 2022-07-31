@@ -31,9 +31,9 @@ import TrackBookingRoomFilterStatusSelection from './status-selection';
 import {fetchAllFeedBackTypes} from "../../../redux/features/feed-back-type/thunk/fetch-all-feed-back-types.thunk";
 
 interface TrackBookingRoomFilterHandler {
-  dateStart: string;
-  dateEnd: string;
-  feedbackType: string;
+  fromDate: string;
+  toDate: string;
+  type: string;
   status: string[] | undefined;
 }
 
@@ -78,9 +78,9 @@ const TrackFeedbackFilter: React.ForwardRefRenderFunction<
   }, [feedbackType]);
 
   useImperativeHandle(ref, () => ({
-    feedbackType: feedbackType,
-    dateStart: globalDateStart,
-    dateEnd: globalDateEnd,
+    type: feedbackType,
+    fromDate: globalDateStart,
+    toDate: globalDateEnd,
     status: status.length > 0 ? status : undefined,
   }));
 
@@ -145,7 +145,7 @@ const TrackFeedbackFilter: React.ForwardRefRenderFunction<
           }}>
             <TagIcon size={deviceWidth / 16} color={GRAY}/>
           </View>
-          <RNPickerSelect style={{
+          <RNPickerSelect  style={{
             viewContainer: {
               borderTopWidth: 2,
               borderRightWidth: 2,
@@ -158,7 +158,7 @@ const TrackFeedbackFilter: React.ForwardRefRenderFunction<
               paddingHorizontal: 10,
               justifyContent: 'center',
             }
-          }} onValueChange={(e) => null} items={feedbackTypes.map((type) => {
+          }} onValueChange={(e) => setFeedbackType(e)} items={feedbackTypes.map((type) => {
             return {
               label: type.name,
               value: type.name
@@ -212,10 +212,7 @@ const TrackFeedbackFilter: React.ForwardRefRenderFunction<
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => {
-              setSlotStart(slotEnd);
-              setSlotEnd(slotStart);
-            }}
+            onPress={() => null}
             style={styles.switchIconContainer}
           >
             <ChevronDoubleRightIcon color={GRAY} size={deviceWidth / 16} />
