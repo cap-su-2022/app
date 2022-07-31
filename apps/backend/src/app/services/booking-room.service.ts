@@ -1157,7 +1157,10 @@ export class BookingRoomService {
 
   async getCurrentBookingCheckoutInformation(accountId: string) {
     try {
-      return await this.repository.findCurrentCheckoutInformation(accountId);
+      const a = await this.repository.findCurrentCheckoutInformation(accountId);
+      console.log(accountId)
+      console.log("AAAAAAAAa: " + a)
+      return a
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

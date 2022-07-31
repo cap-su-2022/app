@@ -1,7 +1,7 @@
 import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
 import { QueryRunner, Repository } from 'typeorm';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import {Accounts, FeedbackType} from '../models';
+import { Accounts, FeedbackType } from '../models';
 import { Feedback } from '../models';
 import { FeedbackPaginationPayload } from '../payload/request/feedback-pagination.payload';
 import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
@@ -40,27 +40,31 @@ export class FeedbackRepository extends Repository<Feedback> {
       .orderBy('f.created_at', 'DESC');
 
     if (pagination.fromDate && pagination.toDate) {
-      query.andWhere('f.created_at >= :fromDate', {fromDate: pagination.fromDate});
-      query.andWhere('f.created_at <= :toDate', {toDate: pagination.toDate});
+      query.andWhere('f.created_at >= :fromDate', {
+        fromDate: pagination.fromDate,
+      });
+      query.andWhere('f.created_at <= :toDate', { toDate: pagination.toDate });
     }
 
     if (accountId) {
-      query.andWhere('f.created_by = :createdBy', {createdBy: accountId})
+      query.andWhere('f.created_by = :createdBy', { createdBy: accountId });
     }
 
-  if (pagination.status) {
-    query.andWhere('f.status IN (:...status)', {
-      status: JSON.parse(pagination.status)
-    })
-  }
+    if (pagination.status) {
+      query.andWhere('f.status = :status', {
+        status: pagination.status,
+      });
+    }
 
-  if (pagination.type) {
-    query.andWhere('ft.name = :feedbackTypeName', {feedbackTypeName: pagination.type})
-  }
+    if (pagination.type) {
+      query.andWhere('ft.name = :feedbackTypeName', {
+        feedbackTypeName: pagination.type,
+      });
+    }
 
-  if (!pagination || !pagination.page) {
-    return query.getRawMany();
-  }
+    if (!pagination || !pagination.page) {
+      return query.getRawMany();
+    }
 
     return paginateRaw<Feedback>(query, {
       page: pagination.page,
