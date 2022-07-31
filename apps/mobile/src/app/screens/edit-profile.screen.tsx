@@ -91,13 +91,6 @@ const EditProfile = () => {
             <LockClosedIcon color={WHITE} />
             <Text style={styles.changePasswordButtonText}>Change password</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.deactiveAccountButton}>
-            <BanIcon color={WHITE} />
-            <Text style={styles.deactiveAccountButtonText}>
-              De-active account
-            </Text>
-          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
@@ -143,7 +136,7 @@ export const styles = StyleSheet.create({
     borderTopWidth: 1,
     marginTop: 20,
     backgroundColor: WHITE,
-    height: 140,
+    paddingVertical: 20,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-evenly',
