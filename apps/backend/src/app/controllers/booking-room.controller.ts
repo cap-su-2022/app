@@ -49,23 +49,19 @@ export class BookingRoomController {
     @Query('sort', new DefaultValuePipe('requested_at')) sort: string,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('reasonType', new DefaultValuePipe('')) reasonType: string,
     @Query('checkInAt', new DefaultValuePipe('')) checkInAt: string,
-    @Query('checkOutAt', new DefaultValuePipe('')) checkOutAt: string,
     @Query('status', new DefaultValuePipe('')) status: string,
     @Query('dir', new DefaultValuePipe('ASC')) dir: string,
     @User() user: KeycloakUserInstance
   ) {
     return this.service.getAllBookingRoomsPagination(
       {
-        checkOutAt: checkOutAt,
         checkInAt: checkInAt,
         search: search,
         dir: dir,
         page: page,
         sort: sort,
         limit: limit,
-        reasonType: reasonType,
         status: status,
       } as GetBookingRoomsPaginationPayload,
       user.account_id
