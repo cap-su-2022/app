@@ -119,7 +119,7 @@ const CheckoutSuccessfully: React.FC<any> = () => {
       .unwrap()
       .then(() => {
         alert('Feed Back Successful! Thank you for your feedback');
-        setTimeout(() => navigate.pop(3), 1000);
+        setTimeout(() => navigate.pop(2), 1000);
       })
       .catch((e) => {
         alert(JSON.stringify(e));

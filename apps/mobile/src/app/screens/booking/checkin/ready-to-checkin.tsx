@@ -72,10 +72,11 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
     };
   }, []);
 
-  const handleGetData = () => {
+  const handleGetData = (e) => {
     dispatch(
       attemptCheckinBookingRoom({
         id: bookingRoom.id,
+        signature: e,
       })
     )
       .unwrap()
@@ -285,11 +286,36 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
         >
           <ReadyToCheckinBookingInformation />
           <ReadyToCheckinMoreInformation />
-
+          <ReadyToCheckinSignature
+            handleScrollViewEnabled={(e) => setScrollEnabled(e)}
+            signatureRef={signature}
+            handleGetSignatureData={(e) => handleGetData(e)}
+            isSignatureBoardHidden={isHidden}
+            handleSignatureBoardHidden={() => setHidden(true)}
+            handleClearSignature={() => {
+              setHidden(true);
+              if (signature) {
+                signature.current.clearSignature();
+                signature.current.draw();
+              }
+            }}
+            handleSignatureEmptyAction={() => {
+              scrollView.current.scrollTo({
+                x: undefined,
+                y: deviceHeight - 100,
+                animated: true,
+              });
+              setErrorMessage(
+                'You must sign first so as to proceed to check in!'
+              );
+              setErrorModalShown(true);
+            }}
+            handleOnFinishSigning={() => setScrollEnabled(true)}
+          />
         </ScrollView>
         <View style={styles.footer}>
           <TouchableOpacity
-            onPress={() => handleGetData()}
+            onPress={() => handleCheckinBookingRoom()}
             style={styles.checkOutButton}
           >
             <Text style={styles.checkOutButtonText}>Proceed to check in</Text>
