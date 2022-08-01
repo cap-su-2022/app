@@ -22,7 +22,8 @@ import { CurrentCheckinInformation } from '../../models/current-checkin-informat
 import { fetchCurrentCheckinInformation } from './thunk/fetch-current-checkin-information.thunk';
 import { fetchDeviceInUseByBookingRequestId } from './thunk/fetch-devices-in-use-by-booking-request-id.thunk';
 import { fetchRoomFreeByMultiSlotAndDay } from './thunk/fetch-room-free-by-multi-day-and-slot.thunk';
-import {addNewLongTermRequestBooking} from "./thunk/add-long-term-request-booking";
+import { addNewLongTermRequestBooking } from './thunk/add-long-term-request-booking';
+import { checkOverSlot } from './thunk/check-over-slot.thunk';
 
 interface RoomBookingState {
   roomBookingCheckout: RoomBookingCheckout;
@@ -71,7 +72,7 @@ interface AddRoomBookingPayload {
   isMultiSlot: boolean;
   isMultiDate: boolean;
   rooms: Room[];
-  isMultiLongTerm: boolean
+  isMultiLongTerm: boolean;
 }
 
 interface RoomBookingCheckout {
@@ -160,7 +161,7 @@ const roomBookingSlice = createSlice({
         fromDay: payload.fromDay,
         fromSlot: payload.fromSlot,
         toSlot: payload.toSlot,
-        isMultiSlot: payload.isMultiSlotChecked
+        isMultiSlot: payload.isMultiSlotChecked,
       };
     },
     step2ScheduleRoomBooking(state, { payload }) {
@@ -207,15 +208,15 @@ const roomBookingSlice = createSlice({
         fromDay: payload.fromDay,
         fromSlot: payload.fromSlot,
         toSlot: payload.toSlot,
-        isMultiLongTerm: payload.isMultiLongTerm
+        isMultiLongTerm: payload.isMultiLongTerm,
       };
     },
-    saveMultiDate(state, {payload}) {
+    saveMultiDate(state, { payload }) {
       state.addRoomBooking = {
         ...state.addRoomBooking,
-        isMultiDate: payload.isMultiDate
-      }
-    }
+        isMultiDate: payload.isMultiDate,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAllBookingRooms.fulfilled, (state, { payload }) => {
@@ -224,9 +225,12 @@ const roomBookingSlice = createSlice({
     builder.addCase(addNewRequestBooking.fulfilled, (state, { payload }) => {
       state.response = payload;
     });
-    builder.addCase(addNewLongTermRequestBooking.fulfilled, (state, { payload }) => {
-      state.response = payload;
-    });
+    builder.addCase(
+      addNewLongTermRequestBooking.fulfilled,
+      (state, { payload }) => {
+        state.response = payload;
+      }
+    );
     builder.addCase(fetchAllWishlistRooms.fulfilled, (state, { payload }) => {
       state.wishlistBookingRooms = payload;
     });
@@ -284,6 +288,7 @@ const roomBookingSlice = createSlice({
         state.addRoomBooking.rooms = payload;
       }
     );
+    builder.addCase(checkOverSlot.fulfilled, (state, { payload }) => {});
   },
 });
 
@@ -305,5 +310,5 @@ export const {
   resetGlobalDateEnd,
   step1BookRoomFromWishList,
   step1BookingLongTerm,
-  saveMultiDate
+  saveMultiDate,
 } = roomBookingSlice.actions;
