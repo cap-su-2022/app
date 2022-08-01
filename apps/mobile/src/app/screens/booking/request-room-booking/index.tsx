@@ -16,10 +16,12 @@ import { fetchAllSlots } from '../../../redux/features/slot';
 import { Slot } from '../../../redux/models/slot.model';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import {
-  saveFromSlotNum, saveMultiDate,
+  saveFromSlotNum,
+  saveMultiDate,
   saveStartDay,
   saveToday,
-  saveToSlotNum, step1BookingLongTerm,
+  saveToSlotNum,
+  step1BookingLongTerm,
   step1ScheduleRoomBooking,
 } from '../../../redux/features/room-booking/slice';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
@@ -27,9 +29,8 @@ import DateSelect from './date-select';
 import RequestRoomBookingHeader from './header';
 import RequestRoomBookingRecentlySearch from './recently-search';
 import SlotSelect from './slot-select';
-import {
-  fetchRoomFreeByMultiSlotAndDay
-} from "../../../redux/features/room-booking/thunk/fetch-room-free-by-multi-day-and-slot.thunk";
+import { fetchRoomFreeByMultiSlotAndDay } from '../../../redux/features/room-booking/thunk/fetch-room-free-by-multi-day-and-slot.thunk';
+import { checkOverSlot } from '../../../redux/features/room-booking/thunk/check-over-slot.thunk';
 
 const ScheduleRoomBookingLater: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -63,15 +64,15 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     };
   }, [isMultiSlotChecked]);
 
-
-
   const transformSlotsToSlotPicker = (val: Slot[]) => {
     const slotSelections = val.map((slot) => {
       return {
         value: slot.id,
-        label: `${slot.name} (${slot.timeStart.slice(0,5)} - ${slot.timeEnd.slice(0,5)})`,
+        label: `${slot.name} (${slot.timeStart.slice(
+          0,
+          5
+        )} - ${slot.timeEnd.slice(0, 5)})`,
         slotNum: slot.slotNum,
-
       };
     });
     setSlotSelections(slotSelections);
@@ -81,26 +82,41 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
 
   const handleNextStep = () => {
     const slotStartName = slotSelections.find(
-      (slot) => slot.value === slotStart
-    ), slotEndName = slotSelections.find((slot) => slot.value === slotEnd), slotStartNum = slotSelections.find(
-      (slot) => slot.value === slotStart
-    ), slotEndNum = slotSelections.find((slot) => slot.value === slotEnd);
-    dispatch(saveFromSlotNum({ fromSlotNum: slotStartNum.slotNum }));
-    dispatch(saveToSlotNum({ toSlotNum: slotEndNum.slotNum }));
+        (slot) => slot.value === slotStart
+      ),
+      slotEndName = slotSelections.find((slot) => slot.value === slotEnd),
+      slotStartNum = slotSelections.find((slot) => slot.value === slotStart),
+      slotEndNum = slotSelections.find((slot) => slot.value === slotEnd);
     dispatch(
-      step1ScheduleRoomBooking({
-        fromSlotName: slotStartName.label,
-        toSlotName: slotEndName.label,
-        fromDay: fromDay,
-        toDay: isMultiDateChecked ? toDay : null,
-        fromSlot: slotStart,
-        toSlot: slotEnd,
-        isMultiSlotChecked: isMultiSlotChecked
+      checkOverSlot({
+        date: fromDay || Today,
+        slotin: slotStartName.value,
       })
-    );
-    setTimeout(() => {
-      navigate.navigate('ROOM_BOOKING_CHOOSE_SLOT');
-    }, 0);
+    )
+      .unwrap()
+      .then((value) => {
+        if (value === true) {
+          alert('This slot is over time! Please choose another slot');
+          return;
+        } else {
+          dispatch(saveFromSlotNum({ fromSlotNum: slotStartNum.slotNum }));
+          dispatch(saveToSlotNum({ toSlotNum: slotEndNum.slotNum }));
+          dispatch(
+            step1ScheduleRoomBooking({
+              fromSlotName: slotStartName.label,
+              toSlotName: slotEndName.label,
+              fromDay: fromDay,
+              toDay: isMultiDateChecked ? toDay : null,
+              fromSlot: slotStart,
+              toSlot: slotEnd,
+              isMultiSlotChecked: isMultiSlotChecked,
+            })
+          );
+          setTimeout(() => {
+            navigate.navigate('ROOM_BOOKING_CHOOSE_SLOT');
+          }, 0);
+        }
+      });
   };
 
   const handleSetSlotEnd = (value) => {
@@ -138,20 +154,23 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
         fromSlot: slotStart,
         toSlot: slotEnd,
         isMultiLongTerm: true,
-        isMultiSlotChecked: isMultiSlotChecked
+        isMultiSlotChecked: isMultiSlotChecked,
       })
     );
 
-    dispatch(fetchRoomFreeByMultiSlotAndDay({
-      dateStart: fromDay || Today,
-      dateEnd: toDay|| Today,
-      checkinSlot: slotStart,
-      checkoutSlot: slotEnd
-    })).unwrap().then(() => {
-      navigate.navigate('ROOM_BOOKING_LONG_TERM_CHOOSE_ROOM');
-    })
-
-  }
+    dispatch(
+      fetchRoomFreeByMultiSlotAndDay({
+        dateStart: fromDay || Today,
+        dateEnd: toDay || Today,
+        checkinSlot: slotStart,
+        checkoutSlot: slotEnd,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        navigate.navigate('ROOM_BOOKING_LONG_TERM_CHOOSE_ROOM');
+      });
+  };
 
   const getContainerHeightBasedOnMultiChecks = () => {
     if (!isMultiDateChecked && !isMultiSlotChecked) {
@@ -188,16 +207,15 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
             <DateSelect
               isChecked={isMultiDateChecked}
               handleCheck={() => {
-                dispatch(saveMultiDate(!isMultiDateChecked))
-                setMultiDateChecked(!isMultiDateChecked)
+                dispatch(saveMultiDate(!isMultiDateChecked));
+                setMultiDateChecked(!isMultiDateChecked);
               }}
             />
             <SlotSelect
               isChecked={isMultiSlotChecked}
               handleCheck={() => setMultiSlotChecked(!isMultiSlotChecked)}
               handleChangeSlotStart={(val) => {
-                console.log(val)
-                setSlotStart(val)
+                setSlotStart(val);
               }}
               handleChangeSlotEnd={(val) => setSlotEnd(val)}
               slotStart={slotStart}

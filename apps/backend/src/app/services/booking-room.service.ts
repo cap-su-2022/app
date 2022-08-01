@@ -359,7 +359,7 @@ export class BookingRoomService {
 
   async checkSlotOverTime(payload: { slotin: string; date: string }) {
     try {
-      const today = dayjs(new Date()).format('DD-MM-YYYY');
+      const today = dayjs(new Date()).format('YYYY-MM-DD');
       const currTime = dayjs(new Date()).format('HH:mm:ss');
       if (today === payload.date) {
         const slot = await this.slotService.getById(payload.slotin);
