@@ -6,6 +6,7 @@ import { Feedback } from '../models';
 import { FeedbackPaginationPayload } from '../payload/request/feedback-pagination.payload';
 import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
 import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
+import dayjs = require("dayjs");
 
 @CustomRepository(Feedback)
 export class FeedbackRepository extends Repository<Feedback> {
@@ -37,16 +38,20 @@ export class FeedbackRepository extends Repository<Feedback> {
       //   .andWhere('f.name ILIKE :search', {
       //     search: `%${pagination.search.trim()}%`,
       //   })
+    if (!pagination || !pagination.page) {
+      query.addOrderBy('f.created_at', 'DESC');
+    }
       if(pagination.sort){
       query.orderBy('f.' + pagination.sort, pagination.dir as 'ASC' | 'DESC');
       }
-
+    console.log(pagination.fromDate);
+      console.log(pagination.toDate)
 
     if (pagination.fromDate && pagination.toDate) {
       query.andWhere('f.created_at >= :fromDate', {
-        fromDate: pagination.fromDate,
-      });
-      query.andWhere('f.created_at <= :toDate', { toDate: pagination.toDate });
+        fromDate: dayjs(pagination.fromDate).startOf('day').toDate(),
+      })
+        .andWhere('f.created_at <= :toDate', { toDate: dayjs(pagination.toDate).endOf('day').toDate() });
     }
 
     if (accountId) {
@@ -54,8 +59,8 @@ export class FeedbackRepository extends Repository<Feedback> {
     }
 
     if (pagination.status) {
-      query.andWhere('f.status = :status', {
-        status: pagination.status,
+      query.andWhere('f.status IN (:...status)', {
+        status: JSON.parse(pagination.status),
       });
     }
 
