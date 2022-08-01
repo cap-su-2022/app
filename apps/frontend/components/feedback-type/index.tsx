@@ -12,13 +12,6 @@ import {
 } from 'tabler-icons-react';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {
-  fetchDeviceTypes,
-  fetchDeviceTypeById,
-  updateDeviceTypeById,
-  deleteDeviceTypeById,
-  addDeviceType,
-} from '../../redux/features/device-type';
-import {
   defaultPaginationParams,
   PaginationParams,
 } from '../../models/pagination-params.model';
@@ -34,38 +27,44 @@ import {InputTypes} from '../../components/actions/models/input-type.constant';
 import InfoModal from '../../components/actions/modal/info-modal.component';
 import UpdateModal from '../../components/actions/modal/update-modal.component';
 import {InputUpdateProps} from '../../components/actions/models/input-update-props.model';
-import RestoreDeletedModal from '../../components/device-type/restore-deleted.modal.component';
-import DeleteModal from '../device-type/delete-modal.component';
+import RestoreDeletedModal from './restore-disabled.modal.component';
+import DeleteModal from './disable-modal.component';
 import {showNotification} from '@mantine/notifications';
 import dayjs from 'dayjs';
-import {fetchDeviceTypeNames} from '../../redux/features/device-type/thunk/fetch-device-type-names.thunk';
+import {fetchFeedbackTypes} from '../../redux/features/feedback-type/thunk/fetch-feedback-types.thunk'
+import {fetchFeedbackTypeNames} from "../../redux/features/feedback-type/thunk/fetch-feedback-type-names.thunk";
+import {updateFeedbackTypeById} from "../../redux/features/feedback-type/thunk/update-feedback-type-by-id.thunk";
+import {log} from "util";
+import {fetchFeedbackTypeById} from "../../redux/features/feedback-type/thunk/fetch-feedback-type-by-id.thunk";
+import {addFeedbackType} from "../../redux/features/feedback-type/thunk/add-feedback-type.thunk";
 
-const AddDeviceTypeValidation = Yup.object().shape({
+
+const AddFeedbackTypeValidation = Yup.object().shape({
   name: Yup.string()
     .trim()
-    .min(1, 'Minimum device type name is 1 character')
-    .max(100, 'Maximum device type name is 100 characters.')
-    .required('Device type name is required'),
+    .min(1, 'Minimum feedback type name is 1 character')
+    .max(100, 'Maximum feedback type name is 100 characters.')
+    .required('Feedback type name is required'),
   description: Yup.string().max(
     500,
-    'Maximum Device type description is 500 characters'
+    'Maximum Feedback type description is 500 characters'
   ),
 });
 
-const UpdateDeviceTypeValidation = Yup.object().shape({
+const UpdateFeedbackTypeValidation = Yup.object().shape({
   name: Yup.string()
     .trim()
-    .min(1, 'Minimum device type name is 1 character')
-    .max(100, 'Maximum device type name is 100 characters.')
-    .required('Device type name is required'),
+    .min(1, 'Minimum feedback type name is 1 character')
+    .max(100, 'Maximum feedback type name is 100 characters.')
+    .required('Feedback type name is required'),
   description: Yup.string()
-    .max(500, 'Maximum device type description is 500 characters')
+    .max(500, 'Maximum feedback type description is 500 characters')
     .nullable(),
 });
 
-const ManageDeviceType: React.FC<any> = () => {
+const ManageFeedbackType: React.FC<any> = () => {
   const styles = useStyles();
-  const deviceTypes = useAppSelector((state) => state.deviceType.deviceTypes);
+  const feedbackTypes = useAppSelector((state) => state.feedbackType.feedbackTypes);
   const [pagination, setPagination] = useState<PaginationParams>(
     defaultPaginationParams
   );
@@ -75,7 +74,7 @@ const ManageDeviceType: React.FC<any> = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchDeviceTypes(pagination));
+    dispatch(fetchFeedbackTypes(pagination));
   }, [
     pagination.page,
     pagination.limit,
@@ -119,7 +118,7 @@ const ManageDeviceType: React.FC<any> = () => {
   };
 
   const handleFetchById = (idVal) => {
-    return dispatch(fetchDeviceTypeById(idVal));
+    return dispatch(fetchFeedbackTypeById(idVal));
   };
 
   const [id, setId] = useState<string>('');
@@ -129,10 +128,10 @@ const ManageDeviceType: React.FC<any> = () => {
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
   const [isRestoreDeletedShown, setRestoreDeletedShown] =
     useState<boolean>(false);
-  const [deviceTypeNames, setDeviceTypeNames] = useState([]);
+  const [feedbackTypeNames, setFeedbackTypeNames] = useState([]);
 
-  const deviceType = useAppSelector((state) => state.deviceType.deviceType);
-
+  const feedbackType = useAppSelector((state) => state.feedbackType.feedbackType);
+  console.log(JSON.stringify(feedbackType) + " ok nè")
   useEffect(() => {
     if (!isUpdateShown) {
       updateFormik.resetForm();
@@ -141,9 +140,9 @@ const ManageDeviceType: React.FC<any> = () => {
   }, [isUpdateShown]);
 
   useEffect(() => {
-    dispatch(fetchDeviceTypeNames())
+    dispatch(fetchFeedbackTypeNames())
       .unwrap()
-      .then((roomTypes) => setDeviceTypeNames(roomTypes));
+      .then((feedbackTypes) => setFeedbackTypeNames(feedbackTypeNames));
   }, []);
 
   const ActionsFilter: React.FC = () => {
@@ -195,7 +194,7 @@ const ManageDeviceType: React.FC<any> = () => {
       label: 'Id',
       id: 'id',
       name: 'id',
-      value: deviceType.id,
+      value: feedbackType.id,
       readOnly: true,
       inputtype: InputTypes.TextInput,
     },
@@ -203,7 +202,7 @@ const ManageDeviceType: React.FC<any> = () => {
       label: 'Name',
       id: 'name',
       name: 'name',
-      value: deviceType.name,
+      value: feedbackType.name,
       readOnly: true,
       inputtype: InputTypes.TextInput,
     },
@@ -211,39 +210,39 @@ const ManageDeviceType: React.FC<any> = () => {
       label: 'Description',
       id: 'description',
       name: 'description',
-      value: deviceType.description,
+      value: feedbackType.description,
       readOnly: true,
       inputtype: InputTypes.TextArea,
     },
     {
-      label: 'Create at',
+      label: 'Created at',
       id: 'createAt',
       name: 'createAt',
-      value: dayjs(deviceType.createdAt).format('HH:mm DD/MM/YYYY'),
+      value: dayjs(feedbackType.createdAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Create By',
+      label: 'Created By',
       id: 'createBy',
       name: 'createBy',
-      value: deviceType.createdBy,
+      value: feedbackType.createdBy,
       readOnly: true,
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Update At',
+      label: 'Updated At',
       id: 'updateAt',
       name: 'updateAt',
-      value: dayjs(deviceType.updatedAt).format('HH:mm DD/MM/YYYY'),
+      value: dayjs(feedbackType.updatedAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Update By',
+      label: 'Updated By',
       id: 'updateBy',
       name: 'updateBy',
-      value: deviceType.updatedBy,
+      value: feedbackType.updatedBy,
       readOnly: true,
       inputtype: InputTypes.TextInput,
     },
@@ -253,7 +252,7 @@ const ManageDeviceType: React.FC<any> = () => {
     {
       label: 'Name',
       description:
-        'Device type name must be unique between others (Max 100 char.)',
+        'Feedback type name must be unique between others (Max 100 char.)',
       id: 'name',
       name: 'name',
       required: true,
@@ -262,7 +261,7 @@ const ManageDeviceType: React.FC<any> = () => {
     {
       label: 'Description',
       description:
-        'Device type description describe additional information (Max 500 char.)',
+        'Feedback type description describe additional information (Max 500 char.)',
       id: 'description',
       name: 'description',
       required: false,
@@ -278,17 +277,17 @@ const ManageDeviceType: React.FC<any> = () => {
       label: 'Id',
       readOnly: true,
       required: false,
-      value: deviceType.id,
+      value: feedbackType.id,
       disabled: true,
     },
     {
       id: 'name',
       name: 'name',
       inputtype: InputTypes.TextInput,
-      label: 'Device type name',
+      label: 'Feedback type name',
       readOnly: false,
       required: true,
-      value: deviceType.name,
+      value: feedbackType.name,
       disabled: false,
     },
     {
@@ -299,7 +298,7 @@ const ManageDeviceType: React.FC<any> = () => {
       readOnly: false,
       required: false,
       disabled: false,
-      value: deviceType.description,
+      value: feedbackType.description,
     },
   ];
   const handleAddModalClose = () => {
@@ -308,7 +307,7 @@ const ManageDeviceType: React.FC<any> = () => {
   };
   const handleAddSubmit = (values: FormikValues) => {
     dispatch(
-      addDeviceType({
+      addFeedbackType({
         name: values.name,
         description: values.description,
       })
@@ -316,10 +315,10 @@ const ManageDeviceType: React.FC<any> = () => {
       .unwrap()
       .then(() =>
         showNotification({
-          id: 'Add-device-type',
+          id: 'Add-feedback-type',
           color: 'teal',
-          title: 'Device type was added',
-          message: 'Device type was successfully added',
+          title: 'Feedback type was added',
+          message: 'Feedback type was successfully added',
           icon: <Check/>,
           autoClose: 3000,
         })
@@ -327,9 +326,9 @@ const ManageDeviceType: React.FC<any> = () => {
       .then((e) => handleAddModalClose())
       .catch((e) => {
         showNotification({
-          id: 'Add-device-type',
+          id: 'Add-feedback-type',
           color: 'red',
-          title: 'Error while Add device type',
+          title: 'Error while adding feedback type',
           message: `${e.message}`,
           icon: <X/>,
           autoClose: 3000,
@@ -339,7 +338,7 @@ const ManageDeviceType: React.FC<any> = () => {
 
   const handleUpdateSubmit = (values: FormikValues) => {
     dispatch(
-      updateDeviceTypeById({
+      updateFeedbackTypeById({
         id: values.id,
         name: values.name,
         description: values.description,
@@ -348,10 +347,10 @@ const ManageDeviceType: React.FC<any> = () => {
       .unwrap()
       .then(() =>
         showNotification({
-          id: 'Update-device-type',
+          id: 'Update-feedback-type',
           color: 'teal',
-          title: 'Device type was updated',
-          message: 'Device type was successfully updated',
+          title: 'Feedback type was updated',
+          message: 'Feedback type was successfully updated',
           icon: <Check/>,
           autoClose: 3000,
         })
@@ -359,9 +358,9 @@ const ManageDeviceType: React.FC<any> = () => {
       .then((e) => handleUpdateModalClose())
       .catch((e) => {
         showNotification({
-          id: 'Update-device-type',
+          id: 'Update-feedback-type',
           color: 'red',
-          title: 'Error while update device type',
+          title: 'Error while updating feedback type',
           message: `${e.message}`,
           icon: <X/>,
           autoClose: 3000,
@@ -370,11 +369,11 @@ const ManageDeviceType: React.FC<any> = () => {
   };
 
   const updateFormik = useFormik({
-    validationSchema: UpdateDeviceTypeValidation,
+    validationSchema: UpdateFeedbackTypeValidation,
     initialValues: {
-      id: deviceType.id,
-      name: deviceType.name,
-      description: deviceType.description,
+      id: feedbackType.id,
+      name: feedbackType.name,
+      description: feedbackType.description,
     },
     enableReinitialize: true,
     onSubmit: (e) => handleUpdateSubmit(e),
@@ -386,7 +385,7 @@ const ManageDeviceType: React.FC<any> = () => {
   };
 
   const addFormik = useFormik({
-    validationSchema: AddDeviceTypeValidation,
+    validationSchema: AddFeedbackTypeValidation,
     initialValues: {
       name: '',
       description: '',
@@ -397,7 +396,7 @@ const ManageDeviceType: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Device Type" icon={<BuildingWarehouse size={50}/>}/>
+      <Header title="Feedback Type" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter/>}
@@ -411,17 +410,18 @@ const ManageDeviceType: React.FC<any> = () => {
         toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
         pagination={pagination}
       />
-      {deviceTypes.items ? (
+      {feedbackTypes.items ? (
+
         <>
           <TableBody
             actionButtonCb={handleActionsCb}
             toggleSortDirection={() => toggleSortDirection()}
-            data={deviceTypes.items}
+            data={feedbackTypes.items}
             page={pagination.page}
             itemsPerPage={pagination.limit}
           />
           <InfoModal
-            header="Device Type Information"
+            header="Feedback Type Information"
             fields={infoFields}
             toggleShown={() => setInfoShown(!isInfoShown)}
             // toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
@@ -432,7 +432,7 @@ const ManageDeviceType: React.FC<any> = () => {
             fields={updateFields}
             formik={updateFormik}
             handleSubmit={() => updateFormik.handleSubmit()}
-            header="Update current device type"
+            header="Update current feedback type"
             isShown={isUpdateShown}
             toggleShown={() => setUpdateShown(!isUpdateShown)}
           />
@@ -440,23 +440,23 @@ const ManageDeviceType: React.FC<any> = () => {
             isShown={isDeleteShown}
             toggleShown={() => setDeleteShown(!isDeleteShown)}
             pagination={pagination}
-            deviceTypes={deviceTypeNames}
+            feedbackTypes={feedbackTypeNames}
           />
         </>
       ) : null}
       <AddModal
-        header="Add new device type"
+        header="Add new feedback type"
         isShown={isAddShown}
         toggleShown={() => handleAddModalClose()}
         formik={addFormik}
         fields={addFields}
         handleSubmit={() => addFormik.handleSubmit()}
       />
-      {deviceTypes.meta ? (
+      {feedbackTypes.meta ? (
         <TableFooter
           handlePageChange={(val) => handlePageChange(val)}
           handleLimitChange={(val) => handleLimitChange(val)}
-          metadata={deviceTypes.meta}
+          metadata={feedbackTypes.meta}
         />
       ) : null}
     </AdminLayout>
@@ -469,4 +469,4 @@ const useStyles = createStyles((theme) => {
   };
 });
 
-export default ManageDeviceType;
+export default ManageFeedbackType;
