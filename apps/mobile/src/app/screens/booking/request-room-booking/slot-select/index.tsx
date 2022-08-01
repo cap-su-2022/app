@@ -16,52 +16,81 @@ interface SelectSlotsProps {
   isChecked: boolean;
   handleCheck(): void;
 }
+
+const filterSlotStartAndSlotEnd = (
+  slotSelections,
+  slotStartId,
+  slotEndId,
+  isChecked
+) => {
+  let slotEndSelectionsArray = [];
+  let slotStartSelectionsArray = [];
+  let slotEndNum = 1;
+  let slotStartNum = 1;
+
+  if (slotStartId) {
+    slotStartNum = slotSelections.find(
+      (slot) => slot.value === slotStartId
+    ).slotNum;
+  } else {
+    slotStartNum = 1
+  }
+
+  if (slotEndId) {
+    slotEndNum = slotSelections.find(
+      (slot) => slot.value === slotEndId
+    ).slotNum;
+  } else {
+    slotEndNum = 1;
+  }
+
+  if (isChecked) {
+    slotEndSelectionsArray = slotSelections.filter(
+      (slot) => {
+        return slot.slotNum >= slotStartNum
+      }
+    );
+    slotStartSelectionsArray = slotSelections.filter(
+      (slot) => {
+       return  slot.slotNum <= slotEndNum
+      }
+    );
+    return [slotStartSelectionsArray, slotEndSelectionsArray];
+  } else {
+    slotStartSelectionsArray = slotSelections;
+    slotEndSelectionsArray = slotSelections
+    return [slotStartSelectionsArray, slotEndSelectionsArray];
+  }
+};
+
 const SlotSelect: React.FC<SelectSlotsProps> = (props) => {
-  const [slotStartSelections, setSlotStartSelections] = useState([]);
-  const [slotEndSelections, setSlotEndSelections] = useState([]);
+  const [slotStartSelections, setSlotStartSelections] = useState(
+    props.slotSelections
+  );
+  const [slotEndSelections, setSlotEndSelections] = useState(
+    props.slotSelections
+  );
 
   useEffect(() => {
-    const slotEndNum = props.slotSelections.find(
-      (slot) => slot.value === props.slotEnd
-    );
-    const slotStartNum = props.slotSelections.find(
-      (slot) => slot.value === props.slotStart
-    );
-
-    let slotEndSelections = [];
-    let slotStartSelections = [];
-
-
-    if (typeof slotEndNum !== "undefined" && typeof slotStartNum !== "undefined" && props.isChecked) {
-      slotEndSelections = props.slotSelections.filter(
-        (slot) => slot.slotNum >= slotStartNum.slotNum
-      );
-      slotStartSelections = props.slotSelections.filter(
-        (slot) => slot.slotNum <= slotEndNum.slotNum
-      );
-    } else {
-      slotStartSelections = props.slotSelections
-      slotEndSelections = props.slotSelections.filter(
-        (slot) => slot.slotNum >= slotStartNum.slotNum
-      );
-    }
-
-    setSlotStartSelections(slotStartSelections);
-    setSlotEndSelections(slotEndSelections);
-  }, [props.slotStart, props.slotEnd]);
+    const result = filterSlotStartAndSlotEnd(props.slotSelections, props.slotStart, props.slotEnd, props.isChecked)
+    setSlotStartSelections(result[0])
+    setSlotEndSelections(result[1])
+  }, [props.isChecked, props.slotEnd, props.slotStart]);
 
   return (
     <View style={styles.container}>
       <View style={styles.slotStart}>
         <View style={styles.container}>
-          <Text style={styles.title}>{props.isChecked ? 'From Slot' : 'Slot'}</Text>
+          <Text style={styles.title}>
+            {props.isChecked ? 'From Slot' : 'Slot'}
+          </Text>
           <View style={styles.slotPicker}>
             <RNPickerSelect
               fixAndroidTouchableBug={true}
               items={slotStartSelections}
               style={pickerStyles}
               useNativeAndroidPickerStyle={false}
-              value={props.slotStart}
+              value={props.slotStart || slotStartSelections[0]}
               onValueChange={(value) => {
                 props.handleChangeSlotStart(value);
               }}
@@ -83,7 +112,7 @@ const SlotSelect: React.FC<SelectSlotsProps> = (props) => {
               items={slotEndSelections}
               style={pickerStyles}
               useNativeAndroidPickerStyle={false}
-              value={props.slotEnd}
+              value={props.slotEnd || slotEndSelections[0]}
               onValueChange={(value) => {
                 props.handleChangeSlotEnd(value);
               }}

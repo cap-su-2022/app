@@ -61,7 +61,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     return () => {
       setSlotSelections([]);
     };
-  }, []);
+  }, [isMultiSlotChecked]);
 
 
 
@@ -192,7 +192,10 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
             <SlotSelect
               isChecked={isMultiSlotChecked}
               handleCheck={() => setMultiSlotChecked(!isMultiSlotChecked)}
-              handleChangeSlotStart={(val) => setSlotStart(val)}
+              handleChangeSlotStart={(val) => {
+                console.log(val)
+                setSlotStart(val)
+              }}
               handleChangeSlotEnd={(val) => setSlotEnd(val)}
               slotStart={slotStart}
               slotEnd={slotEnd}
