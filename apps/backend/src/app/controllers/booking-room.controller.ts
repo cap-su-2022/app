@@ -21,7 +21,7 @@ import {WishlistBookingRoomRequestDTO} from '../dto/wishlist-booking-room.reques
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiParam,
+  ApiParam, ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -29,11 +29,11 @@ import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
 import {Roles} from '../decorators/role.decorator';
 import {Role} from '../enum/roles.enum';
 import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {GetBookingRoomsPaginationPayload} from '../payload/request/get-booking-rooms-pagination.payload';
 import {BookingRequest} from '../models';
 import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.payload';
 import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
 import {CancelRequestPayload} from '../payload/request/booking-request-cancel.payload';
+import {BookingRoomPaginationParams} from "./booking-room-pagination.model";
 
 @Controller('/v1/booking-room')
 @ApiTags('Booking Room')
@@ -66,34 +66,39 @@ export class BookingRoomController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-
-
   getAllBookingRoomsPagination(
-    @Query('search', new DefaultValuePipe('')) search: string,
-    @Query('sort', new DefaultValuePipe('requested_at')) sort: string,
-    @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('checkInAt', new DefaultValuePipe('')) checkInAt: string,
-    @Query('status', new DefaultValuePipe('')) status: string,
-    @Query('sort', new DefaultValuePipe('ASC')) dir: string,
+    @Query() payload: BookingRoomPaginationParams,
     @User() user: KeycloakUserInstance
   ) {
     return this.service.getAllBookingRoomsPagination(
-      {
-        checkInAt: checkInAt,
-        search: search,
-        dir: dir,
-        page: page,
-        sort: sort,
-        limit: limit,
-        status: status,
-      } as GetBookingRoomsPaginationPayload,
+      payload,
       user.account_id
     );
   }
 
   @Get('check-slot-over-time')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Check slot over time',
+    description:
+      'Check slot over time',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully checked slot over time',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while checking slot over time is invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Not enough privileges',
+  })
   checkSlotOverTime(
     @Query('slotin', new DefaultValuePipe('')) slotin: string,
     @Query('date', new DefaultValuePipe('')) date: string
@@ -106,6 +111,27 @@ export class BookingRoomController {
 
   @Get('list-booking-by-room-in-week')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get a list booking by room in week',
+    description:
+      'Get a list booking by room in week',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got slot over time',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting slot over time is invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Not enough privileges',
+  })
   getBookingByRoomInWeek(
     @Query('roomId', new DefaultValuePipe('')) roomId: string,
     @Query('date', new DefaultValuePipe('')) date: string
@@ -117,6 +143,27 @@ export class BookingRoomController {
   }
 
   @Get('list-booking-by-slot')
+  @ApiOperation({
+    summary: 'Get a list booking by slotID',
+    description:
+      'Get a list booking by slotID',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got a list booking by slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting a list booking is invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Not enough privileges',
+  })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getBookingBySlot(@Query('slotId', new DefaultValuePipe('')) slotId: string) {
     return this.service.getRequestBySlotId(slotId);
@@ -124,6 +171,11 @@ export class BookingRoomController {
 
   @Get('list-booking-by-room')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get a list booking by roomID',
+    description:
+      'Get a list booking by roomID',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
@@ -134,7 +186,7 @@ export class BookingRoomController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully fetched deleted rooms',
+    description: 'Successfully fetched a list booking',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
@@ -146,6 +198,11 @@ export class BookingRoomController {
 
   @Get('list-booking-by-device')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get a list booking by deviceID',
+    description:
+      'Get a list booking by deviceID',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
@@ -156,7 +213,7 @@ export class BookingRoomController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully fetched deleted rooms',
+    description: 'Successfully fetched a list booking room by deviceID',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
@@ -170,6 +227,27 @@ export class BookingRoomController {
 
   @Get('list-booking-with-same-slot')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get a list booking with same slot',
+    description:
+      'Get a list booking with same slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched a list booking room with same slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   getRequestWithSameSlot(
     @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
     @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
@@ -188,6 +266,27 @@ export class BookingRoomController {
 
   @Get('list-room-free-at-time')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get a room free at time',
+    description:
+      'Get a room free at time',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched a list room free at time',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   getRoomFreeAtTime(
     @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
     @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
@@ -202,6 +301,27 @@ export class BookingRoomController {
 
   @Get('list-room-free-at-multi-date')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get a list room free a multi date',
+    description:
+      'Get a list room free a multi date',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched a list room free at time',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   getRoomFreeAtMultiDate(
     @Query('checkinSlot', new DefaultValuePipe('')) checkinSlot: number,
     @Query('checkoutSlot', new DefaultValuePipe('')) checkoutSlot: number,
@@ -218,6 +338,27 @@ export class BookingRoomController {
 
   @Get('get-booked-requests')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get booked requests',
+    description:
+      'Get booked requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got booked requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   getListRequestBookedInDayAndSlot(
     @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
     @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
@@ -232,6 +373,11 @@ export class BookingRoomController {
 
   @Get('by-account-id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get booking room by accountID',
+    description:
+      'Get booking room by accountID',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
@@ -256,6 +402,11 @@ export class BookingRoomController {
 
   @Get('devices-use-in-request/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get devices use in request by ID',
+    description:
+      'Get devices use in request by ID',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
@@ -266,7 +417,7 @@ export class BookingRoomController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully fetched device use in request',
+    description: 'Successfully fetched devices use in request',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
@@ -311,6 +462,26 @@ export class BookingRoomController {
   // }
 
   @Get('current-booking-list')
+  @ApiOperation({
+    summary: 'Get current booking list',
+    description: 'Get current booking list',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got a current booking list',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting a current booking list',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getCurrentRoomBookingListOfCurrentUser(@User() user: KeycloakUserInstance) {
     return this.service.getCurrentRoomBookingList(user.account_id);
@@ -330,6 +501,10 @@ export class BookingRoomController {
 
   @Get('count-pending')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get count for booking request pending',
+    description: 'Get count for booking request pending',
+  })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
@@ -537,6 +712,26 @@ export class BookingRoomController {
 
   @Put('accept-checkin/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Accept checking by id',
+    description: 'Accept request by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully accepted the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while accepting the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   acceptCheckInBookingRequestById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string }
@@ -546,6 +741,26 @@ export class BookingRoomController {
 
   @Put('reject-checkin/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Reject checking by id',
+    description: 'Reject request by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully accepted the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while rejecting the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   rejectCheckinRequestById(
     @Param('id') id: string,
     @Body() payload: CancelRequestPayload,
@@ -556,6 +771,26 @@ export class BookingRoomController {
 
   @Put('accept-checkout/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Accept booking room checkout by id',
+    description: 'Accept request checkout by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully accepted the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while rejecting the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   acceptCheckOutBookingRequestById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string }
@@ -565,6 +800,26 @@ export class BookingRoomController {
 
   @Put('reject-checkout/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Reject room checkout by id',
+    description: 'Reject room checkout by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully rejected the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while rejecting the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   rejectCheckOutRequestById(
     @Param('id') id: string,
     @Body() payload: CancelRequestPayload,
@@ -576,16 +831,16 @@ export class BookingRoomController {
   @Put('reject/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Reject request by id',
-    description: 'Reject request by provided id',
+    summary: 'Reject request by ID',
+    description: 'Reject request by provided ID',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully reject the request',
+    description: 'Successfully rejected the request',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Error while reject the request',
+    description: 'Error while rejecting the request',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -605,6 +860,26 @@ export class BookingRoomController {
 
   @Put('cancel/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Cancel request by ID',
+    description: 'Cancel request by provided ID',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully cancelled the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while cancelling the request',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   cancelRoomBookingById(
     @Param('id') id: string,
     @Body() payload: CancelRequestPayload,
@@ -618,6 +893,26 @@ export class BookingRoomController {
   }
 
   @Get('accounts-name')
+  @ApiOperation({
+    summary: 'Get account names',
+    description: 'Get a list of account names',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got account names',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting a list of accounts name',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   getUsernameList() {
     return this.service.getUsernameList();
   }
@@ -684,7 +979,7 @@ export class BookingRoomController {
   @Post('add-to-wishlist')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
-    summary: 'Add booking room to wishlist',
+    summary: 'Add a requested booking room to wishlist',
     description: 'Add requested booking room to wishlist',
   })
   @ApiResponse({
@@ -715,6 +1010,26 @@ export class BookingRoomController {
 
   @Delete('remove-from-wishlist')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Remove a room from wishlist',
+    description: 'Remove a room from provided wishlist',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully removed a room from provided wishlist',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while removing a room from the wishlist',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   removeFromBookingRoomWishlist(
     @User() user: KeycloakUserInstance,
     @Query('roomId') roomId: string,
@@ -727,6 +1042,26 @@ export class BookingRoomController {
   }
 
   @Get('filter')
+  @ApiOperation({
+    summary: 'Get all booking requests by filter',
+    description: 'Get all booking requests by filter',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got all booking request by filter',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting all booking request by filter',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   getAllBookingRoomRequestsByFilter(
     @Query() filters: GetAllBookingRequestsFilter,
     @User() user: KeycloakUserInstance
@@ -738,11 +1073,51 @@ export class BookingRoomController {
   }
 
   @Get('check-in')
+  @ApiOperation({
+    summary: 'Get current booking checked-in requests ',
+    description: 'Get current booking checked-in requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got current booking checked-in requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting current booking checked-in requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   getCurrentBookingCheckin(@User() user: KeycloakUserInstance) {
     return this.service.getCurrentBookingCheckin(user.account_id);
   }
 
   @Post('attempt-checkin/:id')
+  @ApiOperation({
+    summary: 'Attempt checked-in request by ID',
+    description: 'Attempt checked-in request by ID',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully attempted checked-in requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while attempting checkin requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   attemptCheckin(
     @User() user: KeycloakUserInstance,
     @Param('id') bookingRequestId: string,
@@ -759,11 +1134,51 @@ export class BookingRoomController {
   }
 
   @Get('check-out')
+  @ApiOperation({
+    summary: 'Get current checked-out booking requests ',
+    description: 'Get current checked-out booking requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got checked-out requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while checking out requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   getCurrenBookingCheckoutInformation(@User() user: KeycloakUserInstance) {
     return this.service.getCurrentBookingCheckoutInformation(user.account_id);
   }
 
   @Post('attempt-checkout/:id')
+  @ApiOperation({
+    summary: 'Attempt checked-out request by ID',
+    description: 'Attempt checked-out request by ID',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully attempted checked-out requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while attempting check-out requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   attemptCheckout(
     @User() user: KeycloakUserInstance,
     @Param('id') bookingRequestId: string,
@@ -780,6 +1195,26 @@ export class BookingRoomController {
   }
 
   @Post('check-out/:id')
+  @ApiOperation({
+    summary: 'Check out booking room request by ID',
+    description: 'Check out booking room request by provided ID',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully checking out requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while checking out requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   checkoutBookingRoom(
     @Param('id') bookingRoomId: string,
     @User() keycloakUser: KeycloakUserInstance
@@ -791,6 +1226,26 @@ export class BookingRoomController {
   }
 
   @Get('history')
+  @ApiOperation({
+    summary: 'Get all booking room history',
+    description: 'Get all booking room history',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got all booking room history',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting booking room history',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   getAllBookingRoomHistory(
     @User() keycloakUser: KeycloakUserInstance,
     @Query() filters: GetAllBookingRequestsFilter

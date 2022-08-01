@@ -29,6 +29,7 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { BookingRoomDevicesService } from './booking-request-devices.service';
 import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
 import { NotificationService } from './notification.service';
+import {BookingRoomPaginationParams} from "../controllers/booking-room-pagination.model";
 
 @Injectable()
 export class BookingRoomService {
@@ -337,7 +338,7 @@ export class BookingRoomService {
   // }
 
   async getAllBookingRoomsPagination(
-    payload: GetBookingRoomsPaginationPayload,
+    payload: BookingRoomPaginationParams,
     accountId
   ) {
     try {
