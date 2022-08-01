@@ -33,10 +33,13 @@ export class DevicesService {
   async getAll(request: DevicesPaginationParams) {
     try {
       const result = await this.repository.searchDevices(request);
+      if(result.meta.currentPage > result.meta.totalPages){
+        throw new BadRequestException('Current page is over');
+      } 
       return result;
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException('One or more parameters is invalid');
+      throw new BadRequestException(e.message || 'One or more parameters is invalid');
     }
   }
 

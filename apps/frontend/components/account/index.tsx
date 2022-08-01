@@ -249,7 +249,7 @@ function AccountsManagement(props: any) {
           pagination={pagination}
         />
 
-        {accounts.items ? (
+        {accounts?.items ? (
           <>
             <TableBody
               actionButtonCb={handleActionsCb}
@@ -296,7 +296,7 @@ function AccountsManagement(props: any) {
           toggleShown={() => handleAddModalClose()}
           listRole={roleNames}
         />
-        {accounts.meta ? (
+        {accounts?.meta ? (
           <TableFooter
             handlePageChange={(val) => handlePageChange(val)}
             handleLimitChange={(val) => handleLimitChange(val)}

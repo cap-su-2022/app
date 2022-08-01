@@ -51,7 +51,7 @@ export class DevicesRepository extends Repository<Devices> {
       .addSelect('dt.name', 'type')
       .innerJoin(DeviceType, 'dt', 'dt.id = d.type')
       .where('LOWER(d.name) ILIKE LOWER(:search)', {
-        search: `%${payload.search.trim()}%`,
+        search: `%${payload.search?.trim() || ''}%`,
       })
       .andWhere(`d.deleted_at IS NULL`)
       .andWhere(`d.disabled_at IS NULL`)

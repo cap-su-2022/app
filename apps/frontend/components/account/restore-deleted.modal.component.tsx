@@ -126,7 +126,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
           icon={<Search/>}
         />
       </InputWrapper>
-      {deletedAccounts.length > 0 ? (
+      {deletedAccounts?.length > 0 ? (
         <>
           <ScrollArea
             sx={{height: 500}}

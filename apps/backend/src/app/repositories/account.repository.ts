@@ -128,7 +128,7 @@ export class AccountRepository extends Repository<Accounts> {
       .leftJoin(Accounts, 'aa', 'aa.id = account.updated_by')
       .innerJoin(Roles, 'role', 'role.id = account.role_id')
       .where('LOWER(account.fullname) ILIKE LOWER(:search)', {
-        search: `%${payload.search.trim()}%`,
+        search: `%${payload.search?.trim() || ''}%`,
       })
       .andWhere('account.deleted_at IS NULL')
       .andWhere('account.disabled_at IS NULL')

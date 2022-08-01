@@ -1,9 +1,15 @@
-import {BadRequestException, forwardRef, Inject, Injectable, Logger} from '@nestjs/common';
-import {DeviceTypeRepository} from '../repositories/device-type.repository';
-import {PaginationParams} from '../controllers/pagination.model';
-import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
-import {DeviceTypeHistService} from './device-type-hist.service';
-import {DevicesService} from './devices.service';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import { DeviceTypeRepository } from '../repositories/device-type.repository';
+import { PaginationParams } from '../controllers/pagination.model';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
+import { DeviceTypeHistService } from './device-type-hist.service';
+import { DevicesService } from './devices.service';
 
 @Injectable()
 export class DeviceTypeService {
@@ -12,22 +18,25 @@ export class DeviceTypeService {
   constructor(
     private readonly repository: DeviceTypeRepository,
     private readonly deviceService: DevicesService,
-    private readonly histService: DeviceTypeHistService,
-  ) {
-  }
+    private readonly histService: DeviceTypeHistService
+  ) {}
 
   async getAllDeviceTypes(param: PaginationParams) {
     try {
-      return await this.repository.findByPagination(param);
+      const result = await this.repository.findByPagination(param);
+      if(result.meta.currentPage > result.meta.totalPages){
+        throw new BadRequestException('Current page is over');
+      } 
+      return result
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);
     }
   }
 
-  getDeviceTypeNames() {
+  async getDeviceTypeNames() {
     try {
-      return this.repository.findDeviceTypeName();
+      return await this.repository.findDeviceTypeName();
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -81,9 +90,7 @@ export class DeviceTypeService {
       }
       const data = await this.repository.findById(id);
       if (data === undefined) {
-        throw new BadRequestException(
-          'This device type is already deleted'
-        );
+        throw new BadRequestException('This device type is already deleted');
       }
       const deviceType = await this.repository.updateById(
         accountId,
@@ -109,9 +116,7 @@ export class DeviceTypeService {
 
       const data = await this.repository.findById(id);
       if (data === undefined) {
-        throw new BadRequestException(
-          'This type is already deleted'
-        );
+        throw new BadRequestException('This type is already deleted');
       }
       const listDeviceOfThisType =
         await this.deviceService.getDevicesByDeviceType(id);

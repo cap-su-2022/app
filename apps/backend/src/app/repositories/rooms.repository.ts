@@ -79,7 +79,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('aa.username', 'updatedBy')
       .innerJoin(RoomType, 'rt', 'rt.id = r.type')
       .where('LOWER(r.name) LIKE LOWER(:search)', {
-        search: `%${payload.search.trim()}%`,
+        search: `%${payload.search?.trim() || ''}%`,
       })
       .andWhere(`r.deleted_at IS NULL`)
       .andWhere(`r.disabled_at IS NULL`)

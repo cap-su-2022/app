@@ -33,7 +33,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .addSelect('rt.name', 'name')
       .where('rt.deleted_at IS NULL')
       .andWhere('LOWER(rt.name) ILIKE :search', {
-        search: `%${pagination.search.trim()}%`,
+        search: `%${pagination.search?.trim() || ''}%`,
       })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
     return paginateRaw<RoomType>(query, {

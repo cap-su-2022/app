@@ -175,7 +175,7 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
           icon={<Search/>}
         />
       </InputWrapper>
-      {disabledAccounts.length > 0 ? (
+      {disabledAccounts?.length > 0 ? (
         <>
           <ScrollArea
             sx={{height: 500}}

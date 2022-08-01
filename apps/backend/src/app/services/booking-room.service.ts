@@ -29,7 +29,7 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { BookingRoomDevicesService } from './booking-request-devices.service';
 import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
 import { NotificationService } from './notification.service';
-import {BookingRoomPaginationParams} from "../controllers/booking-room-pagination.model";
+import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
 
 @Injectable()
 export class BookingRoomService {
@@ -359,7 +359,7 @@ export class BookingRoomService {
 
   async checkSlotOverTime(payload: { slotin: string; date: string }) {
     try {
-      const today = dayjs(new Date()).format('DD-MM-YYYY');
+      const today = dayjs(new Date()).format('YYYY-MM-DD');
       const currTime = dayjs(new Date()).format('HH:mm:ss');
       if (today === payload.date) {
         const slot = await this.slotService.getById(payload.slotin);
@@ -478,16 +478,22 @@ export class BookingRoomService {
     checkoutSlot: number;
   }) {
     try {
+      console.log(payload);
       const listRequestBookedInMultiDay =
         await this.repository.getRequestBookedInMultiDay(
           payload.dateStart,
           payload.dateEnd
         );
-
       if (listRequestBookedInMultiDay.length > 0) {
         const listRequestBookedInMultiDayAndSlot =
           listRequestBookedInMultiDay.filter((request) => {
             for (let j = request.slotStart; j <= request.slotEnd; j++) {
+              console.log(
+                request.id,
+                j,
+                payload.checkinSlot,
+                payload.checkoutSlot
+              );
               if (j >= payload.checkinSlot && j <= payload.checkoutSlot) {
                 return request;
               }
@@ -575,7 +581,7 @@ export class BookingRoomService {
     try {
       const user = await this.repository.getInforToFeedback(id);
       if (user) {
-        return user
+        return user;
       } else {
         throw new BadRequestException('Not found request with provided id');
       }

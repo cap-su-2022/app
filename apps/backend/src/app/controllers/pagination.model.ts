@@ -1,19 +1,13 @@
-import {ParseIntPipe} from '@nestjs/common';
 import {
   IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsNumberString,
   IsOptional,
   IsString,
   Max,
   MaxLength,
   Min,
 } from 'class-validator';
-import {IsNull} from 'typeorm';
-import {Transform, TransformFnParams} from 'class-transformer';
+import {Transform} from 'class-transformer';
 import {ContainsMany} from '../validators/contains-many.validator';
-import {validationConfig} from '../pipes/validation/global.validator';
 import {ApiProperty} from "@nestjs/swagger";
 
 export class PaginationParams {
@@ -32,9 +26,7 @@ export class PaginationParams {
   @IsInt({
     message: 'Page number must be integer',
   })
-  @IsNotEmpty({
-    message: 'Page number must not be empty',
-  })
+  @IsOptional()
   @Min(1, {
     message: 'Minimum value for page number is 1',
   })
@@ -45,9 +37,7 @@ export class PaginationParams {
   @IsInt({
     message: 'Items per page must be integer',
   })
-  @IsNotEmpty({
-    message: 'Items per page must not be empty',
-  })
+  @IsOptional()
   @Min(1, {
     message: 'Items per page must be at least 1',
   })
@@ -63,12 +53,11 @@ export class PaginationParams {
   @ContainsMany(['ASC', 'DESC'], {
     message: 'Direction must be ASC or DESC',
   })
+  @IsOptional()
   @ApiProperty({default: 'ASC', required: true})
   dir: string;
 
-  @IsNotEmpty({
-    message: 'Sorting field must not be empty',
-  })
+  @IsOptional()
   @IsString({
     message: 'Sorting field must be a string',
   })

@@ -154,6 +154,8 @@ export class FeedbackService {
       });
       if (data.status === 'RESOLVED') {
         throw new BadRequestException('Feedback was resolved!');
+      } else if (data.status === 'REJECTED') {
+        throw new BadRequestException('Feedback was rejected!');
       }
       const feedback = await this.repository.rejectById(
         accountId,

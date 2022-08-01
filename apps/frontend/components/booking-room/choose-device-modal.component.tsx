@@ -40,7 +40,6 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   const [show, setShow] = useState(false);
   const dropdown = useRef(null);
 
-
   useEffect(() => {
     props.formik.setFieldValue('bookingReasonId', reasonNames[0].value);
   }, []);
@@ -131,18 +130,29 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
 
   const handleNextStep = () => {
     props.formik.setFieldValue('listDevice', choosedDevice);
-    if (props.formik.values.bookingReasonId) {
-      // props.handleSubmit();
-      props.handleNextConfirm();
-    } else {
+    if (props.formik.values.description?.length > 500) {
       showNotification({
-        id: 'miss-data',
+        id: 'over-length',
         color: 'red',
-        title: 'Reason missed',
-        message: 'Please choose a reason',
+        title: 'Desciption over length',
+        message: 'Your description so long. Max description is 500 characters',
         icon: <X />,
         autoClose: 3000,
       });
+    } else {
+      if (props.formik.values.bookingReasonId) {
+        // props.handleSubmit();
+        props.handleNextConfirm();
+      } else {
+        showNotification({
+          id: 'miss-data',
+          color: 'red',
+          title: 'Reason missed',
+          message: 'Please choose a reason',
+          icon: <X />,
+          autoClose: 3000,
+        });
+      }
     }
     // setShowChooseRoom(false);
     // setShowBowChooseSlot(true);
