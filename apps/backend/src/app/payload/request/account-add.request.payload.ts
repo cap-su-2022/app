@@ -1,17 +1,18 @@
 import {
-  IsBoolean, IsEmail,
+  IsBoolean,
+  IsEmail,
   IsNotEmpty,
   IsOptional,
-  IsString, Matches,
+  IsString,
+  Matches,
   MaxLength,
   MinLength,
 } from 'class-validator';
-import {Transform, TransformFnParams} from 'class-transformer';
-import {ApiProperty} from '@nestjs/swagger';
+import { Transform, TransformFnParams } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class AccountAddRequestPayload {
-
-  @MinLength(8)
+  @MinLength(5)
   @MaxLength(100)
   @IsString()
   @IsNotEmpty({
@@ -24,13 +25,10 @@ export class AccountAddRequestPayload {
     type: String,
     title: 'Username',
     example: 'ABCDabc1234',
-    minLength: 1,
-    maxLength: 256,
   })
   username: string;
 
-
-  @MinLength(8)
+  @MinLength(5)
   @MaxLength(100)
   @IsString()
   @IsNotEmpty({
@@ -43,18 +41,15 @@ export class AccountAddRequestPayload {
     type: String,
     title: 'Fullname',
     example: 'Nguyễn Văn A',
-    minLength: 1,
-    maxLength: 256,
   })
   fullname: string;
 
-
-  @MinLength(11)
-  @MaxLength(11)
+  @MinLength(10)
+  @MaxLength(10)
   @IsString()
   @IsOptional()
   @Matches(/[0-9]/, {
-    message: 'Phone number must be numbers'
+    message: 'Phone number must be numbers',
   })
   @ApiProperty({
     name: 'phone',
@@ -63,17 +58,15 @@ export class AccountAddRequestPayload {
     type: Number,
     title: 'Phone Number',
     example: '0123456789',
-    minLength: 1,
-    maxLength: 256,
   })
   phone: string;
 
-
-  @MinLength(11)
-  @MaxLength(11)
   @IsString()
   @IsOptional()
   @IsEmail()
+  @Matches(
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  )
   @ApiProperty({
     name: 'email',
     description: 'Email to be added',
@@ -81,11 +74,8 @@ export class AccountAddRequestPayload {
     type: String,
     title: 'Email',
     example: 'abc@fpt.edu.vn',
-    minLength: 1,
-    maxLength: 256,
   })
   email?: string;
-
 
   @MaxLength(100)
   @IsString()
@@ -97,11 +87,8 @@ export class AccountAddRequestPayload {
     type: String,
     title: 'Description',
     example: '',
-    minLength: 1,
-    maxLength: 256,
   })
   description?: string;
-
 
   @IsString()
   @IsNotEmpty({
@@ -114,13 +101,11 @@ export class AccountAddRequestPayload {
     type: String,
     title: 'Role ID',
     example: '23dc0f4f-77f8-47c8-a78f-bcad84e5edee',
-    minLength: 1,
-    maxLength: 256,
   })
   roleId: string;
 
-
   @IsString()
+  @IsOptional()
   @ApiProperty({
     name: 'avatar',
     description: 'Avatar of the account',
@@ -132,7 +117,6 @@ export class AccountAddRequestPayload {
     maxLength: 256,
   })
   avatar: string;
-
 
   @ApiProperty({
     name: 'isDisabled',
