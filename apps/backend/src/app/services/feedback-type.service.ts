@@ -1,8 +1,8 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { PaginationParams } from '../controllers/pagination.model';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
-import { FeedbackTypeRepository } from '../repositories';
-import { FeedbackService } from './feedback.service';
+import {BadRequestException, Injectable, Logger} from '@nestjs/common';
+import {PaginationParams} from '../controllers/pagination.model';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
+import {FeedbackTypeRepository} from '../repositories';
+import {FeedbackService} from './feedback.service';
 
 @Injectable()
 export class FeedbackTypeService {
@@ -11,7 +11,9 @@ export class FeedbackTypeService {
   constructor(
     private readonly repository: FeedbackTypeRepository,
     // private readonly feedbackService: FeedbackService
-  ) {}
+  ) {
+  }
+
   async getAllFeedbackTypes(param: PaginationParams) {
     try {
       return await this.repository.findByPagination(param);
@@ -84,7 +86,8 @@ export class FeedbackTypeService {
     }
   }
 
-  async deleteFeedbackTypeById(accountId: string, id: string) {
+
+  async disableFeedbackTypeById(accountId: string, id: string) {
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -92,12 +95,16 @@ export class FeedbackTypeService {
           'Feedback type does not found with the provided id'
         );
       }
+      const isDisabled = await this.repository.checkIfFeedbackTypeIsDisabledById(id);
+      if (isDisabled) {
+        throw new BadRequestException('This feedback type is already disabled');
+      }
       const data = await this.repository.findById(id);
       if (data === undefined) {
-        throw new BadRequestException('This type is already deleted');
+        throw new BadRequestException('This type is already disabled');
       }
 
-      return this.repository.deleteById(accountId, id);
+      return this.repository.disableById(accountId, id);
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);
@@ -113,7 +120,7 @@ export class FeedbackTypeService {
     }
   }
 
-  async restoreDeletedFeedbackTypeById(accountId: string, id: string) {
+  async restoreDisabledFeedbackTypeById(accountId: string, id: string) {
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -122,12 +129,13 @@ export class FeedbackTypeService {
         );
       }
       const data = await this.repository.findById(id);
+
       if (data !== undefined) {
         throw new BadRequestException(
           'This feedback type ID is now active. Cannot restore it'
         );
       }
-      return this.repository.restoreDeletedById(
+      return this.repository.restoreDisabledById(
         accountId,
         id
       );
