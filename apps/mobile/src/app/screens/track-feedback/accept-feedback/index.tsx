@@ -1,9 +1,16 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text, TextInput,
+  Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -42,10 +49,10 @@ import { rejectBookingRequest } from '../../../redux/features/room-booking/thunk
 import { acceptCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/accept-checkout-booking-request.thunk';
 import { rejectCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkout-booking-request.thunk';
 import { fetchDeviceInUseByBookingRequestId } from '../../../redux/features/room-booking/thunk/fetch-devices-in-use-by-booking-request-id.thunk';
-import AlertModal from "../../../components/modals/alert-modal.component";
-import {resolveFeedback} from "../../../redux/features/feedback/thunk/resolve-feedback.thunk";
-import {cancelFeedback} from "../../../redux/features/feedback/thunk/cancel-feedback.thunk";
-import {useFormik} from "formik";
+import AlertModal from '../../../components/modals/alert-modal.component';
+import { resolveFeedback } from '../../../redux/features/feedback/thunk/resolve-feedback.thunk';
+import { cancelFeedback } from '../../../redux/features/feedback/thunk/cancel-feedback.thunk';
+import { useFormik } from 'formik';
 
 const AcceptFeedback: React.FC<any> = () => {
   const dispatch = useAppDispatch();
@@ -66,12 +73,9 @@ const AcceptFeedback: React.FC<any> = () => {
 
   const renderFooter = () => {
     if (authUser.role === 'Staff') {
-      return (
-        <></>
-      );
+      return <></>;
     }
-    return feedback.status !== "REJECTED" &&
-    feedback.status !== "RESOLVED" ? (
+    return feedback.status !== 'REJECTED' && feedback.status !== 'RESOLVED' ? (
       <ResolveFeedbackFooter
         handleReject={() => handleCancelAction()}
         handleAccept={() => handleResolveAction()}
@@ -79,33 +83,156 @@ const AcceptFeedback: React.FC<any> = () => {
     ) : null;
   };
 
-  const resolveFeedbackModal = useRef();
-  const rejectFeedbackModal = useRef();
+  const resolveFeedbackModal = useRef<React.ElementRef<typeof ResolveAlertModalRef>>();
+  const rejectFeedbackModal = useRef<React.ElementRef<typeof CancelAlertModalRef>>();
 
   const handleAttemptResolveFeedback = () => {
-    dispatch(resolveFeedback({
-      id: feedback.id,
-      replyMessage: resolveFeedbackModal.current ? resolveFeedbackModal.current.message : undefined
-    })).unwrap()
+    // @ts-ignore
+    dispatch(
+      resolveFeedback({
+        id: feedback.id,
+        replyMessage: resolveFeedbackModal.current
+          ? resolveFeedbackModal.current.message
+          : undefined,
+      })
+    )
+      .unwrap()
       .then(() => setResolveModalShown(!isResolveModalShown))
-      .then(() => navigate.replace("TRACK_FEEDBACK_ROUTE"))
+      .then(() => navigate.replace('TRACK_FEEDBACK_ROUTE'))
       .catch((e) => alert(JSON.stringify(e)));
-  }
+  };
 
   const handleAttemptCancelFeedback = () => {
-    dispatch(cancelFeedback({
-      id: feedback.id,
-      replyMessage: rejectFeedbackModal.current ? rejectFeedbackModal.current.message : undefined
-    })).unwrap()
+    dispatch(
+      cancelFeedback({
+        id: feedback.id,
+        replyMessage: rejectFeedbackModal.current
+          ? rejectFeedbackModal.current.message
+          : undefined,
+      })
+    )
+      .unwrap()
       .then(() => setCancelModalShown(!isCancelModalShown))
-      .then(() => navigate.replace("TRACK_FEEDBACK_ROUTE"))
+      .then(() => navigate.replace('TRACK_FEEDBACK_ROUTE'))
       .catch((e) => alert(JSON.stringify(e)));
-  }
+  };
+
+  const CancelAlertModal: React.ForwardRefRenderFunction<
+    { message: string },
+    any
+  > = (props, ref) => {
+
+    const [message, setMessage] = useState<string>();
 
 
+    useImperativeHandle(ref, () => ({
+      message,
+    }));
 
-  const CancelAlertModal: React.ForwardRefRenderFunction<{message: string}, undefined> = (props, ref) => {
+    return (
+      <AlertModal
+        height={300}
+        width={deviceWidth / 1.1}
+        isOpened={isCancelModalShown}
+        toggleShown={() => setCancelModalShown(!isCancelModalShown)}
+      >
+        <View
+          style={{
+            display: 'flex',
+            flex: 1,
+            flexGrow: 0.9,
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={{
+              fontWeight: '600',
+              fontSize: deviceWidth / 21,
+              color: BLACK,
+            }}
+          >
+            Please input reject reason
+          </Text>
+          <TextInput
+            onChangeText={(e) => setMessage(e)}
+            value={message}
+            style={{
+              backgroundColor: LIGHT_GRAY,
+              width: deviceWidth / 1.2,
+              borderRadius: 8,
+              textAlignVertical: 'top',
+              paddingHorizontal: 10,
+            }}
+            placeholder="Please share your reject message..."
+            multiline
+            numberOfLines={8}
+          />
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              width: deviceWidth / 1.1,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => setCancelModalShown(!isCancelModalShown)}
+              style={{
+                height: 40,
+                width: deviceWidth / 2.8,
+                borderWidth: 2,
+                borderColor: FPT_ORANGE_COLOR,
+                borderRadius: 8,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: deviceWidth / 23,
+                  fontWeight: '500',
+                  color: FPT_ORANGE_COLOR,
+                }}
+              >
+                Cancel
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleAttemptCancelFeedback()}
+              style={{
+                height: 40,
+                width: deviceWidth / 2.2,
+                backgroundColor: FPT_ORANGE_COLOR,
+                borderRadius: 8,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: deviceWidth / 23,
+                  color: WHITE,
+                  fontWeight: '500',
+                }}
+              >
+                Attempt Reject
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </AlertModal>
+    );
+  };
 
+  const CancelAlertModalRef = forwardRef(CancelAlertModal);
+
+  const ResolveAlertModal: React.ForwardRefRenderFunction<
+    { message: string },
+    any
+  > = (props, ref) => {
     const [message, setMessage] = useState<string>();
 
     useImperativeHandle(ref, () => ({
@@ -113,143 +240,95 @@ const AcceptFeedback: React.FC<any> = () => {
     }));
 
     return (
-      <AlertModal height={300} width={deviceWidth / 1.1} isOpened={isCancelModalShown} toggleShown={() => setCancelModalShown(!isCancelModalShown)}>
-        <View style={{
-          display: 'flex',
-          flex: 1,
-          flexGrow: 0.9,
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <Text style={{
-            fontWeight: '600',
-            fontSize: deviceWidth / 21,
-            color: BLACK
-          }}>Please input resolve message</Text>
-          <TextInput
-            onChangeText={(e) => setMessage(message)}
+      <AlertModal
+        height={300}
+        width={deviceWidth / 1.1}
+        isOpened={isResolveModalShown}
+        toggleShown={() => setResolveModalShown(!isResolveModalShown)}
+      >
+        <View
           style={{
-            backgroundColor: LIGHT_GRAY,
-            width: deviceWidth / 1.2,
-            borderRadius: 8,
-            textAlignVertical: "top",
-            paddingHorizontal: 10,
-          }} placeholder="Please share your reject message..." multiline numberOfLines={8}/>
-          <View style={{
             display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-            width: deviceWidth / 1.1
-          }}>
-            <TouchableOpacity onPress={() => setCancelModalShown(!isCancelModalShown)} style={{
-              height: 40,
-              width: deviceWidth / 2.8,
-              borderWidth: 2,
-              borderColor: FPT_ORANGE_COLOR,
-              borderRadius: 8,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-              <Text style={{
-                fontSize: deviceWidth / 23,
-                fontWeight: '500',
-                color: FPT_ORANGE_COLOR,
-              }}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleAttemptCancelFeedback()} style={{
-              height: 40,
-              width: deviceWidth / 2.2,
-              backgroundColor: FPT_ORANGE_COLOR,
-              borderRadius: 8,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-              <Text style={{
-                fontSize: deviceWidth / 23,
-                color: WHITE,
-                fontWeight: '500'
-              }}>
-                Attempt resolve
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </AlertModal>
-    );
-  }
+            flex: 1,
+            flexGrow: 0.9,
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={{
+              fontWeight: '600',
+              fontSize: deviceWidth / 21,
+              color: BLACK,
+            }}
+          >
+            Please input resolve message
+          </Text>
 
-  const CancelAlertModalRef = forwardRef(CancelAlertModal);
-
-  const ResolveAlertModal: React.ForwardRefRenderFunction<{message: string}, undefined> = ((props, ref) => {
-
-    const [message, setMessage] = useState<string>();
-
-    useImperativeHandle(ref, () => ({
-      message: message
-    }));
-
-    return (
-      <AlertModal height={300} width={deviceWidth / 1.1} isOpened={isResolveModalShown} toggleShown={() => setResolveModalShown(!isResolveModalShown)}>
-        <View style={{
-          display: 'flex',
-          flex: 1,
-          flexGrow: 0.9,
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <Text style={{
-            fontWeight: '600',
-            fontSize: deviceWidth / 21,
-            color: BLACK
-          }}>Please input reject message</Text>
           <TextInput
             value={message}
             onChangeText={(e) => setMessage(e)}
             style={{
-            backgroundColor: LIGHT_GRAY,
-            width: deviceWidth / 1.2,
-            borderRadius: 8,
-            textAlignVertical: "top",
-            paddingHorizontal: 10,
-          }} placeholder="Please share your resolve message..." multiline numberOfLines={8}/>
-          <View style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-            width: deviceWidth / 1.1
-          }}>
-            <TouchableOpacity onPress={() => setResolveModalShown(!isResolveModalShown)} style={{
-              height: 40,
-              width: deviceWidth / 2.8,
-              borderWidth: 2,
-              borderColor: FPT_ORANGE_COLOR,
+              backgroundColor: LIGHT_GRAY,
+              width: deviceWidth / 1.2,
               borderRadius: 8,
+              textAlignVertical: 'top',
+              paddingHorizontal: 10,
+            }}
+            placeholder="Please share your resolve message..."
+            multiline
+            numberOfLines={8}
+          />
+          <View
+            style={{
               display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-              <Text style={{
-                fontSize: deviceWidth / 23,
-                fontWeight: '500',
-                color: FPT_ORANGE_COLOR,
-              }}>Cancel</Text>
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              width: deviceWidth / 1.1,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => setResolveModalShown(!isResolveModalShown)}
+              style={{
+                height: 40,
+                width: deviceWidth / 2.8,
+                borderWidth: 2,
+                borderColor: FPT_ORANGE_COLOR,
+                borderRadius: 8,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: deviceWidth / 23,
+                  fontWeight: '500',
+                  color: FPT_ORANGE_COLOR,
+                }}
+              >
+                Cancel
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleAttemptResolveFeedback()} style={{
-              height: 40,
-              width: deviceWidth / 2.2,
-              backgroundColor: FPT_ORANGE_COLOR,
-              borderRadius: 8,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-              <Text style={{
-                fontSize: deviceWidth / 23,
-                color: WHITE,
-                fontWeight: '500'
-              }}>
+            <TouchableOpacity
+              onPress={() => handleAttemptResolveFeedback()}
+              style={{
+                height: 40,
+                width: deviceWidth / 2.2,
+                backgroundColor: FPT_ORANGE_COLOR,
+                borderRadius: 8,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: deviceWidth / 23,
+                  color: WHITE,
+                  fontWeight: '500',
+                }}
+              >
                 Attempt resolve
               </Text>
             </TouchableOpacity>
@@ -257,7 +336,7 @@ const AcceptFeedback: React.FC<any> = () => {
         </View>
       </AlertModal>
     );
-  })
+  };
 
   const ResolveAlertModalRef = forwardRef(ResolveAlertModal);
 
@@ -273,8 +352,7 @@ const AcceptFeedback: React.FC<any> = () => {
             />
           </TouchableOpacity>
           <Text style={styles.headerTitleText}>
-            {feedback.status !== CANCELLED &&
-            feedback.status !== CHECKED_OUT
+            {feedback.status !== CANCELLED && feedback.status !== CHECKED_OUT
               ? 'Incoming feedback'
               : 'Review feedback'}
           </Text>
@@ -285,10 +363,11 @@ const AcceptFeedback: React.FC<any> = () => {
           }}
           showsVerticalScrollIndicator={false}
         >
-          <View style={{
-            paddingHorizontal: 20,
-
-          }}>
+          <View
+            style={{
+              paddingHorizontal: 20,
+            }}
+          >
             {authUser.role !== 'Staff' &&
             feedback.status !== CANCELLED &&
             feedback.status !== CHECKED_OUT ? (
@@ -299,8 +378,7 @@ const AcceptFeedback: React.FC<any> = () => {
                   style={styles.warningMessageIcon}
                 />
                 <Text style={styles.warningMessageText}>
-                  Read the feedback carefully before
-                  proceeding the next step!
+                  Read the feedback carefully before proceeding the next step!
                 </Text>
               </View>
             ) : null}
@@ -338,7 +416,6 @@ const AcceptFeedback: React.FC<any> = () => {
               </View>
             </View>
 
-
             <View>
               <Text style={styles.informationHeaderTitle}>
                 MORE INFORMATION
@@ -354,24 +431,23 @@ const AcceptFeedback: React.FC<any> = () => {
                   <Text style={styles.valueText}>{feedback.id}</Text>
                 </View>
 
-                  <>
-                    <Divider num={deviceWidth / 10} />
-                    <View style={styles.dataRowContainer}>
-                      <Text style={styles.titleText}>Message</Text>
-                      <Text style={styles.valueText}>
-                        {feedback.feedbackMess}
-                      </Text>
-                    </View>
-                  </>
+                <>
+                  <Divider num={deviceWidth / 10} />
+                  <View style={styles.dataRowContainer}>
+                    <Text style={styles.titleText}>Message</Text>
+                    <Text style={styles.valueText}>
+                      {feedback.feedbackMess}
+                    </Text>
+                  </View>
+                </>
               </View>
-
             </View>
           </View>
         </ScrollView>
         {renderFooter()}
       </View>
-      <ResolveAlertModalRef ref={resolveFeedbackModal}/>
-      <CancelAlertModalRef ref={rejectFeedbackModal}/>
+      <ResolveAlertModalRef ref={resolveFeedbackModal} />
+      <CancelAlertModalRef ref={rejectFeedbackModal} />
     </SafeAreaView>
   );
 };
