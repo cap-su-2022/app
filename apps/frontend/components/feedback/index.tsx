@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, createStyles } from '@mantine/core';
 import Header from '../common/header.component';
-import { ArchiveOff, BrandHipchat, Check, Plus, X } from 'tabler-icons-react';
+import { ArchiveOff, BrandHipchat, Check, Download, Plus, X } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useDebouncedValue } from '@mantine/hooks';
 import TableHeader from '../actions/table-header.component';
@@ -22,6 +22,7 @@ import RejectFeedbackModal from './reject-feedback.component';
 import ResolveFeedbackModal from './resolve-feedback.component';
 import { FeedbackPaginationParams } from '../../models/pagination-params/feedback-paging-params.model';
 import { sendFeedback } from '../../redux/features/feedback/thunk/send-feedback.thunk';
+import DownloadModal from './download-modal.compnent';
 
 const AddRoomTypeValidation = Yup.object().shape({
   feedback: Yup.string()
@@ -42,12 +43,18 @@ const ManageFeedback: React.FC<any> = () => {
   const styles = useStyles();
   const [isRejectShown, setRejectShown] = useState<boolean>(false);
   const [isResolveShown, setResolveShown] = useState<boolean>(false);
+  const [isDownShown, setDownShown] = useState<boolean>(false);
   const feedbacks = useAppSelector((state) => state.feedback.feedbacks);
   const [pagination, setPagination] = useState<FeedbackPaginationParams>(
     defaultPaginationParams
   );
 
   const [debounceSearchValue] = useDebouncedValue(pagination.search, 400);
+
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
 
   const dispatch = useAppDispatch();
 
@@ -81,7 +88,7 @@ const ManageFeedback: React.FC<any> = () => {
   const handleChangeStatus = (val: string) => {
     setPagination({
       ...pagination,
-      status: val,
+      status: `["${val}"]`,
     });
   };
 
@@ -113,6 +120,10 @@ const ManageFeedback: React.FC<any> = () => {
 
   const handleFetchById = (idVal) => {
     return dispatch(fetchFeedbackById(idVal));
+  };
+
+  const handleDownModalClose = () => {
+    setDownShown(false);
   };
 
   const ActionsFilterLeft: React.FC = () => {
@@ -152,33 +163,32 @@ const ManageFeedback: React.FC<any> = () => {
   };
 
   const ActionsFilter: React.FC = () => {
-    return (
-      <div>
-        <Button
-          leftIcon={<Plus />}
-          color="green"
-          onClick={() => setAddShown(!isAddShown)}
-          style={{ marginRight: 10 }}
-        >
-          Add
-        </Button>
-        {/* <Button
-          variant="outline"
-          color="red"
-          onClick={() => setRestoreDisabledShown(true)}
-          style={{ marginRight: 10 }}
-        >
-          <PencilOff color={'red'} />
-        </Button> */}
-        {/* <Button
-          variant="outline"
-          color="red"
-          onClick={() => setRestoreDeletedShown(true)}
-        >
-          <ArchiveOff />
-        </Button> */}
-      </div>
-    );
+    if (userInfo.role !== 'Staff') {
+      return (
+        <>
+          <Button
+            variant="outline"
+            color="violet"
+            onClick={() => setDownShown(true)}
+          >
+            <Download />
+          </Button>
+        </>
+      );
+    } else {
+      return (
+        <div>
+          <Button
+            leftIcon={<Plus />}
+            color="green"
+            onClick={() => setAddShown(!isAddShown)}
+            style={{ marginRight: 10 }}
+          >
+            Add
+          </Button>
+        </div>
+      );
+    }
   };
 
   const handleActionsCb = {
@@ -266,6 +276,10 @@ const ManageFeedback: React.FC<any> = () => {
         toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
         pagination={pagination}
       /> */}
+      <DownloadModal
+          isShown={isDownShown}
+          toggleShown={() => handleDownModalClose()}
+        />
       {feedbacks.items ? (
         <>
           <TableBody
