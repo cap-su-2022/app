@@ -1,20 +1,32 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {useNavigation} from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {CheckIcon, StarIcon, SwitchHorizontalIcon, XIcon} from "react-native-heroicons/outline";
-import {ClockIcon} from "react-native-heroicons/solid";
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {
+  CheckIcon,
+  StarIcon,
+  SwitchHorizontalIcon,
+  XIcon,
+} from 'react-native-heroicons/outline';
+import { ClockIcon } from 'react-native-heroicons/solid';
 
-import {FPT_ORANGE_COLOR, GRAY, GREEN, RED, WHITE} from "@app/constants";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../../redux/store";
-import DatePicker from "react-native-date-picker";
-import LoginErrorModal from "../../components/modals/login-error.component";
-import { useAppNavigation } from "../../hooks/use-app-navigation.hook";
+import { FPT_ORANGE_COLOR, GRAY, GREEN, RED, WHITE } from '@app/constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import DatePicker from 'react-native-date-picker';
+import LoginErrorModal from '../../components/modals/login-error.component';
+import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
 
 const convertDateToDateStringPattern = (date = new Date()) => {
   return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
-}
+};
 
 const convertDateToNormalizedDateString = (date = new Date()) => {
   return date.toDateString();

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -18,17 +18,14 @@ import {
   FPT_ORANGE_COLOR,
   GRAY,
   INPUT_GRAY_COLOR,
-  LIGHT_GRAY,
   PENDING,
   WHITE,
 } from '@app/constants';
 import { deviceWidth } from '../../../utils/device';
 import {
-  CheckCircleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ExclamationIcon,
-  XCircleIcon,
   XIcon,
 } from 'react-native-heroicons/outline';
 import Divider from '../../../components/text/divider';

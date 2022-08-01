@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  ListRenderItemInfo,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -8,7 +7,6 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  VirtualizedList,
 } from 'react-native';
 import { SearchIcon, SortAscendingIcon } from 'react-native-heroicons/solid';
 import {
@@ -20,25 +18,20 @@ import {
 } from '@app/constants';
 import { deviceWidth } from '../../utils/device';
 import {
-  CheckIcon,
   ChevronDoubleLeftIcon,
   ChevronRightIcon,
   DeviceMobileIcon,
   ExclamationCircleIcon,
 } from 'react-native-heroicons/outline';
-import { fetchBookingRoomDevices } from '../../redux/features/room-booking/thunk/fetch-booking-room-devices.thunk';
 import DelayInput from 'react-native-debounce-input';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAppSelector } from '../../hooks/use-app-selector.hook';
 import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
 import { Device } from '../../redux/models/device.model';
 import { step3ScheduleRoomBooking } from '../../redux/features/room-booking/slice';
 import AlertModal from '../../components/modals/alert-modal.component';
-import { LOCAL_STORAGE } from '../../utils/local-storage';
 import { fetchAllDevices } from '../../redux/features/devices/thunk/fetch-all';
-import RequestRoomBookingHeader from "./request-room-booking/header";
+import RequestRoomBookingHeader from './request-room-booking/header';
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
@@ -52,26 +45,24 @@ const RoomBooking2: React.FC = () => {
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
   useEffect(() => {
-    dispatch(fetchAllDevices())
-      .unwrap()
-      .then((e) => console.log(e.length));
+    dispatch(fetchAllDevices());
   }, [search, sort, dispatch]);
 
   const handleNextStep = () => {
-      const devices = [];
-      for (let i = 0; i < deviceIds.length; i++) {
-        devices.push({
-          label: deviceNames[i],
-          value: deviceIds[i],
-          quantity: 1,
-        });
-      }
-      navigate.navigate('ROOM_BOOKING_3');
-      dispatch(
-        step3ScheduleRoomBooking({
-          devices: devices,
-        })
-      );
+    const devices = [];
+    for (let i = 0; i < deviceIds.length; i++) {
+      devices.push({
+        label: deviceNames[i],
+        value: deviceIds[i],
+        quantity: 1,
+      });
+    }
+    navigate.navigate('ROOM_BOOKING_3');
+    dispatch(
+      step3ScheduleRoomBooking({
+        devices: devices,
+      })
+    );
   };
 
   const Filtering: React.FC = () => {

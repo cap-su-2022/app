@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FPT_ORANGE_COLOR, LIGHT_GRAY, WHITE } from '@app/constants';
 import { deviceWidth } from '../../../utils/device';
-import {ChevronLeftIcon, PencilAltIcon} from "react-native-heroicons/outline";
-import {useAppNavigation} from "../../../hooks/use-app-navigation.hook";
+import { ChevronLeftIcon, PencilAltIcon } from 'react-native-heroicons/outline';
+import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 
 interface FeedbackFooterProps {
   handlePress(): void;

@@ -91,7 +91,6 @@ export const RoomBooking3: React.FC = () => {
       })
     )
       .unwrap()
-      .then((e) => console.log(e))
       .then(() => navigate.navigate('ROOM_BOOKING_SUCCESS'))
       .catch(() => {
         alert('This room has already been booked. Please book another room');
@@ -113,7 +112,6 @@ export const RoomBooking3: React.FC = () => {
       })
     )
       .unwrap()
-      .then((e) => console.log(e))
       .then(() => {
         alert('Book thanh cong');
       })
@@ -483,7 +481,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   titleText: {
-    color: GRAY,
     fontWeight: '400',
     fontSize: deviceWidth / 23,
   },

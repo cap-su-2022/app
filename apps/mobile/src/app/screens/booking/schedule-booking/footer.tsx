@@ -1,7 +1,10 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {ChevronDoubleRightIcon, RefreshIcon} from "react-native-heroicons/outline";
-import {FPT_ORANGE_COLOR, WHITE} from "@app/constants";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ChevronDoubleRightIcon,
+  RefreshIcon,
+} from 'react-native-heroicons/outline';
+import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 
 interface FooterProps {
   handleResetCalendar(): void;

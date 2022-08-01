@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Modal,
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
   VirtualizedList,
@@ -14,7 +12,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ClockIcon,
   ExclamationCircleIcon,
-  ExclamationIcon,
   HeartIcon,
   LibraryIcon,
   SortDescendingIcon,
@@ -36,7 +33,6 @@ import { addToRoomBookingWishlist } from '../../redux/features/room-booking/thun
 import RNPickerSelect from 'react-native-picker-select';
 import { BookingRoom } from '../../redux/models/booking-room.model';
 import AlertModal from '../../components/modals/alert-modal.component';
-import { useFormik } from 'formik';
 import DelayInput from 'react-native-debounce-input';
 import { useAppSelector } from '../../hooks/use-app-selector.hook';
 import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
@@ -66,9 +62,6 @@ const RoomBookingNow: React.FC = () => {
       })
     )
       .unwrap()
-      .then((e) => {
-        console.log(e);
-      })
       .catch((e) => {
         setErrorMessage(e.message.message);
         setModalOpen(true);

@@ -1,6 +1,6 @@
-import {createAsyncThunk} from "@reduxjs/toolkit";
-import {axiosGetAPICall} from "../../../api-call";
-import {API_URL} from "../../../../constants/constant";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { axiosGetAPICall } from '../../../api-call';
+import { API_URL } from '../../../../constants/constant';
 
 interface FeedbackRequestFilter {
   status?: string[];

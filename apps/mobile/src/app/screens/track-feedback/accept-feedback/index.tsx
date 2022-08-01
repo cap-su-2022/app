@@ -1,6 +1,5 @@
 import React, {
   forwardRef,
-  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -18,41 +17,26 @@ import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import {
   BLACK,
-  BOOKED,
   CANCELLED,
-  CHECKED_IN,
   CHECKED_OUT,
   FPT_ORANGE_COLOR,
   GRAY,
   INPUT_GRAY_COLOR,
   LIGHT_GRAY,
-  PENDING,
   WHITE,
 } from '@app/constants';
 import { deviceWidth } from '../../../utils/device';
 import {
-  CheckCircleIcon,
   ChevronLeftIcon,
-  ChevronRightIcon,
   ExclamationIcon,
-  XCircleIcon,
-  XIcon,
 } from 'react-native-heroicons/outline';
 import Divider from '../../../components/text/divider';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import dayjs from 'dayjs';
 import ResolveFeedbackFooter from './footer';
-import { acceptCheckinBookingRequest } from '../../../redux/features/room-booking/thunk/accept-checkin-booking-request.thunk';
-import { rejectCheckinBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkin-booking-request.thunk';
-import { acceptBookingRequest } from '../../../redux/features/room-booking/thunk/accept-booking-request.thunk';
-import { rejectBookingRequest } from '../../../redux/features/room-booking/thunk/reject-booking-request.thunk';
-import { acceptCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/accept-checkout-booking-request.thunk';
-import { rejectCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkout-booking-request.thunk';
-import { fetchDeviceInUseByBookingRequestId } from '../../../redux/features/room-booking/thunk/fetch-devices-in-use-by-booking-request-id.thunk';
 import AlertModal from '../../../components/modals/alert-modal.component';
 import { resolveFeedback } from '../../../redux/features/feedback/thunk/resolve-feedback.thunk';
 import { cancelFeedback } from '../../../redux/features/feedback/thunk/cancel-feedback.thunk';
-import { useFormik } from 'formik';
 
 const AcceptFeedback: React.FC<any> = () => {
   const dispatch = useAppDispatch();
@@ -83,8 +67,10 @@ const AcceptFeedback: React.FC<any> = () => {
     ) : null;
   };
 
-  const resolveFeedbackModal = useRef<React.ElementRef<typeof ResolveAlertModalRef>>();
-  const rejectFeedbackModal = useRef<React.ElementRef<typeof CancelAlertModalRef>>();
+  const resolveFeedbackModal =
+    useRef<React.ElementRef<typeof ResolveAlertModalRef>>();
+  const rejectFeedbackModal =
+    useRef<React.ElementRef<typeof CancelAlertModalRef>>();
 
   const handleAttemptResolveFeedback = () => {
     // @ts-ignore
@@ -121,9 +107,7 @@ const AcceptFeedback: React.FC<any> = () => {
     { message: string },
     any
   > = (props, ref) => {
-
     const [message, setMessage] = useState<string>();
-
 
     useImperativeHandle(ref, () => ({
       message,

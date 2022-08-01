@@ -6,7 +6,7 @@ import { Feedback } from '../models';
 import { FeedbackPaginationPayload } from '../payload/request/feedback-pagination.payload';
 import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
 import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
-import dayjs = require("dayjs");
+import dayjs = require('dayjs');
 
 @CustomRepository(Feedback)
 export class FeedbackRepository extends Repository<Feedback> {
@@ -34,24 +34,25 @@ export class FeedbackRepository extends Repository<Feedback> {
       .innerJoin(Accounts, 'a', 'a.id = f.created_by')
       .leftJoin(FeedbackType, 'ft', 'ft.id = f.feedback_type_id')
       .where('f.deleted_at IS NULL')
-      .andWhere('f.deleted_by IS NULL')
-      //   .andWhere('f.name ILIKE :search', {
-      //     search: `%${pagination.search.trim()}%`,
-      //   })
+      .andWhere('f.deleted_by IS NULL');
+    //   .andWhere('f.name ILIKE :search', {
+    //     search: `%${pagination.search.trim()}%`,
+    //   })
     if (!pagination || !pagination.page) {
       query.addOrderBy('f.created_at', 'DESC');
     }
-      if(pagination.sort){
+    if (pagination.sort) {
       query.orderBy('f.' + pagination.sort, pagination.dir as 'ASC' | 'DESC');
-      }
-    console.log(pagination.fromDate);
-      console.log(pagination.toDate)
+    }
 
     if (pagination.fromDate && pagination.toDate) {
-      query.andWhere('f.created_at >= :fromDate', {
-        fromDate: dayjs(pagination.fromDate).startOf('day').toDate(),
-      })
-        .andWhere('f.created_at <= :toDate', { toDate: dayjs(pagination.toDate).endOf('day').toDate() });
+      query
+        .andWhere('f.created_at >= :fromDate', {
+          fromDate: dayjs(pagination.fromDate).startOf('day').toDate(),
+        })
+        .andWhere('f.created_at <= :toDate', {
+          toDate: dayjs(pagination.toDate).endOf('day').toDate(),
+        });
     }
 
     if (accountId) {

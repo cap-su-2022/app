@@ -6,10 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {
-  ClipboardCheckIcon,
-  ClipboardCopyIcon,
-} from 'react-native-heroicons/outline';
+import { ClipboardCheckIcon } from 'react-native-heroicons/outline';
 import { deviceWidth } from '../../../../utils/device';
 import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';

@@ -1,16 +1,9 @@
 import React from 'react';
-import {
-  Linking,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import { RNCamera } from 'react-native-camera';
-import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
+import { FPT_ORANGE_COLOR } from '@app/constants';
 import { fetchRoomBookingById } from '../../../redux/features/room-booking/thunk/fetch-room-booking-by-id.thunk';
 
 const BookingQRScan: React.FC<any> = () => {
@@ -32,7 +25,6 @@ const BookingQRScan: React.FC<any> = () => {
           }
         })
         .catch((e) => {
-          console.error(e);
           alert(
             'Failed while processing your booking request QR code. Please try again'
           );

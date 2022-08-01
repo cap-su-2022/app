@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import AlertModal from '../../../components/modals/alert-modal.component';
 import { deviceWidth } from '../../../utils/device';
 import RNPickerSelect from 'react-native-picker-select';

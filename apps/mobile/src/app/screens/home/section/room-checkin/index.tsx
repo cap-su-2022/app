@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { ChatAlt2Icon, ClipboardIcon } from 'react-native-heroicons/outline';
+import { ClipboardIcon } from 'react-native-heroicons/outline';
 import { deviceWidth } from '../../../../utils/device';
 import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';

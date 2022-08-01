@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -15,7 +14,7 @@ import {
   DeviceMobileIcon,
 } from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
-import {useAppSelector} from "../../../../hooks/use-app-selector.hook";
+import { useAppSelector } from '../../../../hooks/use-app-selector.hook';
 
 const devices = [
   {

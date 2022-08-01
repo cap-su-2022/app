@@ -1,14 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import {
-  BOOKED,
-  CANCELLED,
-  CHECKED_IN,
-  CHECKED_OUT,
-  FPT_ORANGE_COLOR,
-  PENDING,
-  WHITE,
-} from '@app/constants';
+import { FPT_ORANGE_COLOR, PENDING, WHITE } from '@app/constants';
 import { deviceWidth } from '../../../utils/device';
 import { ChevronRightIcon } from 'react-native-heroicons/outline';
 

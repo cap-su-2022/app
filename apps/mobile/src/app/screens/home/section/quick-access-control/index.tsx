@@ -14,19 +14,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { deviceHeight, deviceWidth } from '../../../../utils/device';
-import {
-  BellIcon,
-  ChatAlt2Icon,
-  ClipboardCheckIcon,
-  ClipboardCopyIcon,
-  ClipboardIcon,
-  ClipboardListIcon,
-  HeartIcon,
-  PlusIcon,
-  UserIcon,
-  XIcon,
-} from 'react-native-heroicons/outline';
+import { deviceWidth } from '../../../../utils/device';
+import { PlusIcon, XIcon } from 'react-native-heroicons/outline';
 import Divider from '../../../../components/text/divider';
 import { LOCAL_STORAGE } from '../../../../utils/local-storage';
 import {
@@ -35,7 +24,6 @@ import {
 } from '../../../../redux/features/system/system.slice';
 import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
 import { QUICK_ACCESS_NAVIGATION_DATA } from '../../../../constants/quick-access-navigation.constant';
-import { useAppSelector } from '../../../../hooks/use-app-selector.hook';
 
 const QuickAccessControlScreen: React.FC<any> = () => {
   const dispatch = useAppDispatch();

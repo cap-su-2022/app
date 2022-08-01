@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
-import { StarIcon as OutlineStarIcon } from "react-native-heroicons/outline";
-import { StarIcon as SolidStarIcon } from "react-native-heroicons/solid";
+import React from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StarIcon as OutlineStarIcon } from 'react-native-heroicons/outline';
+import { StarIcon as SolidStarIcon } from 'react-native-heroicons/solid';
 
-import { deviceWidth } from "../../../../utils/device";
-import { FPT_ORANGE_COLOR, GRAY } from "@app/constants";
+import { deviceWidth } from '../../../../utils/device';
+import { FPT_ORANGE_COLOR, GRAY } from '@app/constants';
 
 interface StarRatingProps {
   rating: number;

@@ -31,7 +31,7 @@ const statusData = [
     value: 'REJECTED',
     style: { width: deviceWidth / 5 },
     slotContainerLeftStyle: { left: deviceWidth / 2.45 },
-  }
+  },
 ];
 
 interface TrackBookingRoomFilterStatusSelectionProps {

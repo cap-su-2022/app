@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
   SafeAreaView,
-  View,
   StyleSheet,
-  TouchableOpacity,
   Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
@@ -21,8 +21,12 @@ const StartDayCalendar: React.FC<any> = (props) => {
   const dispatch = useAppDispatch();
   const [dayStart, setDayStart] = useState<string>('');
   const currentDate = new Date().toJSON().slice(0, 10);
-  const toDay = useAppSelector((state) => state.roomBooking.addRoomBooking.toDay);
-  const isMultiDate = useAppSelector((state) => state.roomBooking.addRoomBooking.isMultiDate)
+  const toDay = useAppSelector(
+    (state) => state.roomBooking.addRoomBooking.toDay
+  );
+  const isMultiDate = useAppSelector(
+    (state) => state.roomBooking.addRoomBooking.isMultiDate
+  );
   const handleDayPress = (day) => {
     setDayStart(day.dateString);
     dispatch(saveStartDay({ fromDay: day.dateString }));

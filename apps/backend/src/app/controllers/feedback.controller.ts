@@ -46,7 +46,6 @@ export class FeedbackController {
     @Query() payload: FeedbackPaginationPayload,
     @User() user: KeycloakUserInstance,
   ): Promise<Pagination<Feedback> | Feedback[]> {
-    console.log("BBBBBBB: ", payload)
     return this.service.getAllFeedbacks(user.account_id, payload);
   }
 

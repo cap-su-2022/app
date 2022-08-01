@@ -1,11 +1,10 @@
-import {createSlice} from "@reduxjs/toolkit";
-import FeedbackTypeModel from "../../models/feedback-type.model";
-import {fetchAllFeedBackTypes} from "./thunk/fetch-all-feed-back-types.thunk";
-
+import { createSlice } from '@reduxjs/toolkit';
+import FeedbackTypeModel from '../../models/feedback-type.model';
+import { fetchAllFeedBackTypes } from './thunk/fetch-all-feed-back-types.thunk';
 
 interface FeedbackTypeInitialState {
-  feedbackTypes: FeedbackTypeModel[],
-  feedbackType: FeedbackTypeModel,
+  feedbackTypes: FeedbackTypeModel[];
+  feedbackType: FeedbackTypeModel;
 }
 
 const initialState: FeedbackTypeInitialState = {

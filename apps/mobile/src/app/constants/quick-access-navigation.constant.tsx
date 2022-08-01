@@ -9,13 +9,11 @@ import {
   UserIcon,
 } from 'react-native-heroicons/outline';
 // @ts-ignore
-
 import React from 'react';
 // @ts-ignore
-import { WHITE } from '@app/constants';
+import {WHITE} from '@app/constants';
 // @ts-ignore
-
-import { deviceWidth } from '../utils/device';
+import {deviceWidth} from '../utils/device';
 
 // @ts-ignore
 export const QUICK_ACCESS_NAVIGATION_DATA = [

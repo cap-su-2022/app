@@ -21,7 +21,7 @@ import axios from 'axios';
 import { API_URL } from '../../constants/constant';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
-import { FEEDBACK_INITIAL_SCREEN, FEEDBACK_SCREEN } from '../../route';
+import { FEEDBACK_SCREEN } from '../../route';
 import { useAppSelector } from '../../hooks/use-app-selector.hook';
 import { deviceWidth } from '../../utils/device';
 
@@ -84,9 +84,7 @@ const SettingsScreen = () => {
       );
       const data = await response.data;
       getAvatarURL();
-    } catch (e) {
-      console.log(JSON.stringify(e.response));
-    }
+    } catch (e) {}
   };
 
   return (
@@ -119,7 +117,10 @@ const SettingsScreen = () => {
             <Text style={[styles.userEmail]}>{authUser.email}</Text>
             <View
               style={{
-                width: authUser.role === "System Admin" ? deviceWidth/2 : deviceWidth/5,
+                width:
+                  authUser.role === 'System Admin'
+                    ? deviceWidth / 2
+                    : deviceWidth / 5,
                 height: 30,
                 backgroundColor: FPT_ORANGE_COLOR,
                 borderRadius: 50,

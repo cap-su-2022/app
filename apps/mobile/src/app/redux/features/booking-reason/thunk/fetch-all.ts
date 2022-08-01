@@ -1,9 +1,8 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Device } from "../../../models/device.model";
-import axios from "axios";
-import { API_URL } from "../../../../constants/constant";
-import { toggleSpinnerOff, toggleSpinnerOn } from "../../spinner";
-import {BookingRoomReason} from "../../../models/booking-reason-response";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { API_URL } from '../../../../constants/constant';
+import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
+import { BookingRoomReason } from '../../../models/booking-reason-response';
 
 interface RejectPayload {
   message: string;

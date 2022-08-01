@@ -1,10 +1,14 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {SearchIcon, SortAscendingIcon, SortDescendingIcon} from "react-native-heroicons/outline";
-import {BLACK, GRAY, LIGHT_GRAY, WHITE} from "@app/constants";
-import {deviceWidth} from "../../../utils/device";
-import DelayInput from "react-native-debounce-input";
-import RNPickerSelect from "react-native-picker-select";
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  SearchIcon,
+  SortAscendingIcon,
+  SortDescendingIcon,
+} from 'react-native-heroicons/outline';
+import { BLACK, GRAY, LIGHT_GRAY, WHITE } from '@app/constants';
+import { deviceWidth } from '../../../utils/device';
+import DelayInput from 'react-native-debounce-input';
+import RNPickerSelect from 'react-native-picker-select';
 
 interface ChooseRoomBookingHeaderProps {
   roomName: string;

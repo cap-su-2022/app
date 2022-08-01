@@ -10,9 +10,6 @@ import { BLACK, GRAY, LIGHT_GRAY, WHITE } from '@app/constants';
 import RNPickerSelect from 'react-native-picker-select';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
-import { fetchAllSlots } from '../../../redux/features/slot';
-import { getTimeDetailBySlotNumber } from '../../../utils/slot-resolver.util';
-import { Slot } from '../../../redux/models/slot.model';
 
 interface SelectDurationProps {
   handleSetSlotStart(val: string): void;

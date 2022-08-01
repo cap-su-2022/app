@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import HomeScreenSectionCarouselItem from './carousel-item';

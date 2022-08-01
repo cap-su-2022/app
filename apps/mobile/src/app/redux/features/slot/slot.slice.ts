@@ -1,11 +1,10 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {Slot} from "../../models/slot.model";
-import {fetchAllSlots} from "./thunk/fetch-all-slots.thunk";
-
+import { createSlice } from '@reduxjs/toolkit';
+import { Slot } from '../../models/slot.model';
+import { fetchAllSlots } from './thunk/fetch-all-slots.thunk';
 
 interface SlotInitialState {
-  slots: Slot[],
-  slot: Slot,
+  slots: Slot[];
+  slot: Slot;
 }
 
 const initialState: SlotInitialState = {

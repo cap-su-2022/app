@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -7,28 +7,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Calendar } from 'react-native-calendars';
 import {
-  ChartPieIcon,
-  ChevronDoubleRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  ClockIcon,
   ExclamationCircleIcon,
-  RefreshIcon,
 } from 'react-native-heroicons/outline';
 import Asterik from '../../../components/text/asterik';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
-import {
-  BLACK,
-  FPT_ORANGE_COLOR,
-  GRAY,
-  LIGHT_GRAY,
-  WHITE,
-} from '@app/constants';
-import RNPickerSelect from 'react-native-picker-select';
+import { BLACK, FPT_ORANGE_COLOR, GRAY, WHITE } from '@app/constants';
 import { getTimeDetailBySlotNumber } from '../../../utils/slot-resolver.util';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import dayjs from 'dayjs';
@@ -37,7 +24,6 @@ import { step1ScheduleRoomBooking } from '../../../redux/features/room-booking/s
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import CustomSlotBookingModal from './custom-slot-booking';
 import Footer from './footer';
-import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import { fetchAllSlots } from '../../../redux/features/slot';
 import SelectDuration from './select-duration';
 import { Slot } from '../../../redux/models/slot.model';
@@ -123,8 +109,6 @@ const ScheduleRoomBooking: React.FC = () => {
   };
 
   const handleNextStep = () => {
-    console.log(`step 1 ${slotStart} ${slotEnd}`);
-    console.log(currentSelectedDate);
     const slotStartDetail = dayjs(
       `${currentSelectedDate} ${getTimeDetailBySlotNumber(1).startTime}`
     ).format(`YYYY-MM-DDTHH:mm:ss.SSS[Z]`);

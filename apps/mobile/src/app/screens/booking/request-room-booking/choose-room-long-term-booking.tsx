@@ -12,7 +12,6 @@ import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import {
   BLACK,
   FPT_ORANGE_COLOR,
-
   INPUT_GRAY_COLOR,
   WHITE,
 } from '@app/constants';
@@ -21,7 +20,7 @@ import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import { boxShadow } from '../../../utils/box-shadow.util';
 import { LibraryIcon, TicketIcon } from 'react-native-heroicons/outline';
-import {step2ScheduleRoomBooking} from "../../../redux/features/room-booking/slice";
+import { step2ScheduleRoomBooking } from '../../../redux/features/room-booking/slice';
 
 const ChooseRoomBookingLongTerm: React.FC<any> = (props) => {
   const addRoomBooking = useAppSelector(
@@ -60,10 +59,12 @@ const ChooseRoomBookingLongTerm: React.FC<any> = (props) => {
   };
 
   const handleBookRoom = (item) => {
-    dispatch(step2ScheduleRoomBooking({
-      roomId: item.id,
-      roomName: item.name
-    }))
+    dispatch(
+      step2ScheduleRoomBooking({
+        roomId: item.id,
+        roomName: item.name,
+      })
+    );
     setTimeout(() => {
       navigate.navigate('ROOM_BOOKING_2');
     }, 0);
@@ -83,9 +84,7 @@ const ChooseRoomBookingLongTerm: React.FC<any> = (props) => {
           style={{ flex: 1 }}
           getItemCount={(data) => data.length}
           getItem={(data, index) => data[index]}
-          data={
-            addRoomBooking.rooms
-          }
+          data={addRoomBooking.rooms}
           renderItem={(item: ListRenderItemInfo<any>) => (
             <ChooseRoomItem
               handleRequestRoomBooking={() => handleBookRoom(item.item)}

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
   SafeAreaView,
-  View,
   StyleSheet,
-  TouchableOpacity,
   Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
@@ -16,7 +16,7 @@ import {
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { saveStartDay } from '../../../redux/features/room-booking/slice';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
-import {useAppNavigation} from "../../../hooks/use-app-navigation.hook";
+import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 
 const ChooseDayWishList: React.FC<any> = (props) => {
   const dispatch = useAppDispatch();

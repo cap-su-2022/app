@@ -488,12 +488,6 @@ export class BookingRoomService {
         const listRequestBookedInMultiDayAndSlot =
           listRequestBookedInMultiDay.filter((request) => {
             for (let j = request.slotStart; j <= request.slotEnd; j++) {
-              console.log(
-                request.id,
-                j,
-                payload.checkinSlot,
-                payload.checkoutSlot
-              );
               if (j >= payload.checkinSlot && j <= payload.checkoutSlot) {
                 return request;
               }

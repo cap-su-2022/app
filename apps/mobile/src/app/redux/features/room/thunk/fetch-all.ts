@@ -2,9 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import { API_URL } from '../../../../constants/constant';
-import {BookedRequest} from "../../../models/booked-request.model";
-import {RoomModel} from "../../../models/room.model";
-
+import { RoomModel } from '../../../models/room.model';
 
 interface RejectValue {
   message: string;

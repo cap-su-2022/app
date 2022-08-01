@@ -4,6 +4,7 @@ import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import { API_URL } from '../../../../constants/constant';
 import AddNewFeedbackResponseModel from '../../../models/add-new-feedback-response.model';
 import { LOCAL_STORAGE } from '../../../../utils/local-storage';
+
 interface RequestPayload {
   message: string;
   feedbackTypeId: string;
@@ -22,7 +23,6 @@ export const addNewFeedback = createAsyncThunk<
 >('feedback/send-feedback', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    console.log('payload: ', payload);
     const response = await axios.post(
       `${API_URL}/feedbacks/send-feedback`,
 

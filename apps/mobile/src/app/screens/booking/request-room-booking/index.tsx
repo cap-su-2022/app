@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Platform,
+  SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  SafeAreaView,
   View,
-  ScrollView,
-  Platform,
 } from 'react-native';
 import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
@@ -175,7 +175,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
   const getContainerHeightBasedOnMultiChecks = () => {
     if (!isMultiDateChecked && !isMultiSlotChecked) {
       return {
-        height: Platform.OS === 'android' ? deviceHeight / 3 : 250,
+        height: Platform.OS === 'android' ? deviceHeight / 3 : 260,
       };
     } else if (isMultiDateChecked && isMultiSlotChecked) {
       return {
@@ -192,15 +192,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
       <RequestRoomBookingHeader />
       <ScrollView>
-        <View
-          style={{
-            display: 'flex',
-            flex: 1,
-            flexGrow: 1,
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-          }}
-        >
+        <View style={styles.containerView}>
           <View
             style={[styles.container, getContainerHeightBasedOnMultiChecks()]}
           >
@@ -268,6 +260,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
     marginTop: 10,
     elevation: 7,
+  },
+  containerView: {
+    display: 'flex',
+    flex: 1,
+    flexGrow: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   searchButton: {
     marginTop: 10,

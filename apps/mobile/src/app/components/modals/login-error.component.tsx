@@ -1,7 +1,7 @@
-import React, {SetStateAction} from 'react';
-import {Modal, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {FPT_ORANGE_COLOR, WHITE} from "@app/constants";
-import {ExclamationCircleIcon} from "react-native-heroicons/solid";
+import React, { SetStateAction } from 'react';
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
+import { ExclamationCircleIcon } from 'react-native-heroicons/solid';
 
 interface LoginErrorModalProps {
   isFailure: boolean;

@@ -18,7 +18,6 @@ import AlreadyBookItem from '../AlreadyBook/AlreadyBookItem';
 import { CurrentBookingRoom } from '../../../redux/models/current-booking-room.model';
 import WarningModal from '../AlreadyBook/WarningModal';
 import AlreadyBookFilter from '../AlreadyBook/already-book-filter';
-import { ChevronDoubleRightIcon } from 'react-native-heroicons/outline';
 
 const ALREADY_HAVE_ROOM_BOOKINGS =
   'You have room(s) are in booking progress! Please review again before booking a new room';

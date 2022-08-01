@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios, { AxiosError } from 'axios';
 import { API_URL } from '../../../../constants/constant';
-import {LOCAL_STORAGE} from "../../../../utils/local-storage";
+import { LOCAL_STORAGE } from '../../../../utils/local-storage';
 
 interface RequestPayload {
   id: string;

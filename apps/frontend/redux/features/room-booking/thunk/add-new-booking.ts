@@ -45,7 +45,6 @@ export const addNewRequest = createAsyncThunk<
         message: 'Access token is invalid',
       });
     } else {
-      console.log(e);
       return thunkAPI.rejectWithValue({
         message: e.response.data.message,
       });

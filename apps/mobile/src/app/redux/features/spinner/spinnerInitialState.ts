@@ -1,5 +1,5 @@
-import {Spinner} from "./spinner.model";
+import { Spinner } from './spinner.model';
 
 export const spinnerInitialState: Spinner = {
   isLoading: false,
-}
+};

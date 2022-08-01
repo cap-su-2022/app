@@ -1,7 +1,7 @@
 import React from 'react';
 import { StackNavigator, StackScreen } from '@app/utils';
 import SuccessfullyAcceptedBookingRequest from '../../../../screens/track-booking-room/accept-booking/success-accepted-booking-request';
-import AcceptFeedback from "../../../../screens/track-feedback/accept-feedback";
+import AcceptFeedback from '../../../../screens/track-feedback/accept-feedback';
 
 const AcceptFeedbackNavigator: React.FC<any> = () => {
   return (

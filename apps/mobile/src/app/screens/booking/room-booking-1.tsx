@@ -1,7 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ReadingTime from '../../../../../../assets/undraw/reading-time.svg';
 import { deviceWidth } from '../../utils/device';
 import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';

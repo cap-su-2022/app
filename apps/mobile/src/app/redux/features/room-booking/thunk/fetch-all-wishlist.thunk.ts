@@ -1,10 +1,9 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import { API_URL } from "../../../../constants/constant";
-import { toggleSpinnerOff, toggleSpinnerOn } from "../../spinner";
-import { RoomWishListResponse } from "../../../models/wishlist-booking-room.model";
-import { LOCAL_STORAGE } from "../../../../utils/local-storage";
-
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { API_URL } from '../../../../constants/constant';
+import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
+import { RoomWishListResponse } from '../../../models/wishlist-booking-room.model';
+import { LOCAL_STORAGE } from '../../../../utils/local-storage';
 
 interface RejectValue {
   message: string;

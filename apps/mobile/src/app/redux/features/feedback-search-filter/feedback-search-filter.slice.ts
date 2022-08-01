@@ -1,9 +1,8 @@
-import {createSlice} from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 interface FeedbackSearchFilterState {
   search: string;
   searchType: string[];
-
 }
 
 const feedbackSearchFilterInitialState: FeedbackSearchFilterState = {
@@ -22,16 +21,20 @@ export const feedbackSearchFilterSlice = createSlice({
         }
       }
       state.searchType.push(action.payload);
-      console.log(state.searchType);
     },
     removeSearchType: (state, action) => {
-      state.searchType = state.searchType.filter(searchType => action.payload !== searchType);
+      state.searchType = state.searchType.filter(
+        (searchType) => action.payload !== searchType
+      );
     },
     removeSearchTypeAll: (state) => {
-      state.searchType = state.searchType.filter(searchType => 'All' !== searchType);
+      state.searchType = state.searchType.filter(
+        (searchType) => 'All' !== searchType
+      );
     },
-  }
+  },
 });
 
 export const feedbackSearchFilterReducer = feedbackSearchFilterSlice.reducer;
-export const {addSearchType, removeSearchType, removeSearchTypeAll} = feedbackSearchFilterSlice.actions;
+export const { addSearchType, removeSearchType, removeSearchTypeAll } =
+  feedbackSearchFilterSlice.actions;

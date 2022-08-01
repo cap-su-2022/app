@@ -1,10 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { Device } from "../../models/device.model";
-import { fetchAllDevices } from "./thunk/fetch-all";
-
+import { createSlice } from '@reduxjs/toolkit';
+import { Device } from '../../models/device.model';
+import { fetchAllDevices } from './thunk/fetch-all';
 
 interface DevicesState {
-  devices: Device[]
+  devices: Device[];
 }
 
 const initialState: DevicesState = {

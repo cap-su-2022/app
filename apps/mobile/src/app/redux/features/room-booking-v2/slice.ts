@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import {fetchBookedRequestByDayAndSlot} from "./thunk/fetch-booked-request.thunk";
-import {BookedRequest} from "../../models/booked-request.model";
+import { fetchBookedRequestByDayAndSlot } from './thunk/fetch-booked-request.thunk';
+import { BookedRequest } from '../../models/booked-request.model';
 
 interface BookedRequestInitialState {
   bookedRequests: BookedRequest[];

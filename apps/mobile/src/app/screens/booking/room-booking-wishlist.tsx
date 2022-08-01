@@ -1,48 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  VirtualizedList,
-} from 'react-native';
-import { fetchAllWishlistRooms } from '../../redux/features/room-booking/thunk/fetch-all-wishlist.thunk';
-import {
-  ExclamationCircleIcon,
-  SearchIcon,
-} from 'react-native-heroicons/solid';
-import {
-  BLACK,
-  FPT_ORANGE_COLOR,
-  GRAY,
-  LIGHT_GRAY,
-  RED,
-  WHITE,
-} from '@app/constants';
-import { deviceWidth } from '../../utils/device';
-import { RoomWishListResponse } from '../../redux/models/wishlist-booking-room.model';
-import {
-  ArrowRightIcon,
-  ClockIcon,
-  LibraryIcon,
-  TicketIcon,
-  XIcon,
-} from 'react-native-heroicons/outline';
-import { getTimeDetailBySlotNumber } from '../../utils/slot-resolver.util';
-import { removeWishlistBookingRoom } from '../../redux/features/room-booking/thunk/remove-wishlist-booking-room.thunk';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View, VirtualizedList,} from 'react-native';
+import {fetchAllWishlistRooms} from '../../redux/features/room-booking/thunk/fetch-all-wishlist.thunk';
+import {ExclamationCircleIcon, SearchIcon,} from 'react-native-heroicons/solid';
+import {BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, RED, WHITE,} from '@app/constants';
+import {deviceWidth} from '../../utils/device';
+import {RoomWishListResponse} from '../../redux/models/wishlist-booking-room.model';
+import {ArrowRightIcon, ClockIcon, LibraryIcon, TicketIcon, XIcon,} from 'react-native-heroicons/outline';
+import {getTimeDetailBySlotNumber} from '../../utils/slot-resolver.util';
+import {removeWishlistBookingRoom} from '../../redux/features/room-booking/thunk/remove-wishlist-booking-room.thunk';
 import Empty from '../../components/empty.svg';
 import AlertModal from '../../components/modals/alert-modal.component';
 import DelayInput from 'react-native-debounce-input';
 import RNPickerSelect from 'react-native-picker-select';
-import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
-import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
-import { useAppSelector } from '../../hooks/use-app-selector.hook';
-import { SLOTS } from '../../constants/slot.constant';
-import { boxShadow } from '../../utils/box-shadow.util';
-import { fetchAllSlots } from '../../redux/features/slot';
+import {useAppNavigation} from '../../hooks/use-app-navigation.hook';
+import {useAppDispatch} from '../../hooks/use-app-dispatch.hook';
+import {useAppSelector} from '../../hooks/use-app-selector.hook';
+import {SLOTS} from '../../constants/slot.constant';
+import {boxShadow} from '../../utils/box-shadow.util';
+import {fetchAllSlots} from '../../redux/features/slot';
 import {step1BookRoomFromWishList} from "../../redux/features/room-booking/slice";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

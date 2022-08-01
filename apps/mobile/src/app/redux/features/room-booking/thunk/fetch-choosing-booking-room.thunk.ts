@@ -1,19 +1,18 @@
-import {createAsyncThunk} from "@reduxjs/toolkit";
-import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
-import axios, {AxiosError} from "axios";
-import {API_URL} from "../../../../constants/constant";
-import {ChoosingBookingRoom} from "../../../models/choosing-booking-room.model";
-
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
+import axios, { AxiosError } from 'axios';
+import { API_URL } from '../../../../constants/constant';
+import { ChoosingBookingRoom } from '../../../models/choosing-booking-room.model';
 
 interface RequestPayload {
   roomName: {
     name: string;
     sort: string;
-  },
+  };
   roomType: {
     name: string;
     sort: string;
-  }
+  };
 }
 
 interface RejectValue {

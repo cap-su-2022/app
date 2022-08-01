@@ -1,6 +1,4 @@
 import React, {
-  createRef,
-  ElementRef,
   forwardRef,
   useCallback,
   useEffect,
@@ -8,18 +6,11 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { FPT_ORANGE_COLOR, GRAY, WHITE } from '@app/constants';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { GRAY, WHITE } from '@app/constants';
 import { deviceWidth } from '../../../utils/device';
 import {
   CalendarIcon,
-  CheckIcon,
   ChevronDoubleRightIcon,
   ClockIcon,
   SearchIcon,
@@ -28,7 +19,6 @@ import DelayInput from 'react-native-debounce-input';
 import RNPickerSelect, { PickerStyle } from 'react-native-picker-select';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
-import CalendarDateSelect from '../calendar-select';
 import dayjs from 'dayjs';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import { fetchAllSlots } from '../../../redux/features/slot';
@@ -36,7 +26,6 @@ import {
   resetGlobalDateEnd,
   resetGlobalDateStart,
 } from '../../../redux/features/room-booking/slice';
-import { boxShadow } from '../../../utils/box-shadow.util';
 import TrackBookingRoomFilterStatusSelection from './status-selection';
 
 interface TrackBookingRoomFilterHandler {

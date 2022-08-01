@@ -15,7 +15,7 @@ interface InitialState {
   account: Account;
   disabledAccounts: Account[];
   deletedAccounts: Account[];
-  userNames: {value: string; label: string}[];
+  userNames: { value: string; label: string }[];
 }
 
 const initialState: InitialState = {
@@ -35,10 +35,6 @@ export const accountSlice = createSlice({
       state.accounts = payload;
     });
 
-    builder.addCase(fetchAccounts.rejected, (state, { payload }) => {
-      console.log('Fetch rejected', state);
-    });
-
     builder.addCase(fetchAccountById.fulfilled, (state, { payload }) => {
       state.account = payload;
     });
@@ -51,17 +47,6 @@ export const accountSlice = createSlice({
     builder.addCase(fetchListusernames.fulfilled, (state, { payload }) => {
       state.userNames = payload;
     });
-    //   builder.addCase(updateRoomBookingById.fulfilled, (state, {payload}) => {
-    //     console.log("updateRoomBookingById.fulfilled")
-    //   });
-
-    //   builder.addCase(addRoomBooking.fulfilled, (state, {payload}) => {
-    //     console.log("addRoomBooking.fulfilled")
-    //   });
-
-    //   builder.addCase(addRoomBooking.rejected, (state, {payload}) => {
-    //     console.log("addRoomBooking.rejected")
-    //   });
   },
 });
 

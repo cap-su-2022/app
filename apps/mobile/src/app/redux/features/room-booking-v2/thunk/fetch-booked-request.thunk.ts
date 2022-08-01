@@ -2,7 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import { API_URL } from '../../../../constants/constant';
-import {BookedRequest} from "../../../models/booked-request.model";
+import { BookedRequest } from '../../../models/booked-request.model';
+
 interface RequestPayload {
   date: string;
   checkinSlotId: string;
