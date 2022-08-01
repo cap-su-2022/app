@@ -61,10 +61,6 @@ const CalendarDateSelect: React.FC<CalendarDateSelectProps> = (props) => {
     }
   };
 
-  useEffect(() => {
-    alert(dayjs(dayjs(new Date()).year()).toDate().toDateString())
-  }, []);
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
       <View style={styles.container}>
@@ -82,7 +78,7 @@ const CalendarDateSelect: React.FC<CalendarDateSelectProps> = (props) => {
               ? globalDateStart
               : globalDateEnd
           }
-          minDate={new Date().toDateString()}
+          minDate={dayjs().startOf('year').format('YYYY-MM-DD')}
           onDayPress={(e) =>
             navigationState.params.type === 'dateStart'
               ? handleSetGlobalStartDate(e.dateString)

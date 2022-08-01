@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import { StackNavigator, StackScreen } from '@app/utils';
 import AcceptFeedbackNavigator from './accept-feedback';
-import CalendarDateSelect from '../../../screens/track-booking-room/calendar-select';
+import CalendarDateSelect from '../../../screens/track-feedback/calendar-select';
 import {ChatIcon} from 'react-native-heroicons/outline';
 import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { deviceWidth } from '../../../utils/device';
@@ -50,6 +50,7 @@ const TrackFeedbackNavigator: React.FC<any> = () => {
         ) : null,
       }}
     >
+      <StackScreen name="FEEDBACK_CALENDAR_SELECT" component={CalendarDateSelect}/>
       <StackScreen name="TRACK_FEEDBACK_ROUTE" component={TrackFeedbackScreen} />
       <StackScreen
         options={{
