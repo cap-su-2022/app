@@ -21,6 +21,7 @@ import { DatePicker } from '@mantine/dates';
 import { showNotification } from '@mantine/notifications';
 import { fetchListBookingByRoomInWeek } from '../../redux/features/room-booking/thunk/fetch-list-booking-by-room-in-week.thunk';
 import { fetchRoomFreeAtTime } from '../../redux/features/room-booking/thunk/fetch-room-free-at-time';
+import { fetchRoomFreeAtMultiDay } from '../../redux/features/room-booking/thunk/fetch-room-free-in-multi-day';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { getRoomById } from '../../redux/features/room/thunk/get-room-by-id';
 
@@ -39,15 +40,28 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
   console.log(listRoom);
 
   useEffect(() => {
-    dispatch(
-      fetchRoomFreeAtTime({
-        date: props.formik.values.checkinDate,
-        checkinSlotId: props.formik.values.checkinSlot,
-        checkoutSlotId: props.formik.values.checkoutSlot,
-      })
-    )
-      .unwrap()
-      .then((roomFree) => setListRoom(roomFree));
+    if (props.formik.values.checkoutDate) {
+      dispatch(
+        fetchRoomFreeAtMultiDay({
+          checkinDate: props.formik.values.checkinDate,
+          checkoutDate: props.formik.values.checkoutDate,
+          checkinSlotId: props.formik.values.checkinSlot,
+          checkoutSlotId: props.formik.values.checkoutSlot,
+        })
+      )
+        .unwrap()
+        .then((roomFree) => setListRoom(roomFree));
+    } else {
+      dispatch(
+        fetchRoomFreeAtTime({
+          date: props.formik.values.checkinDate,
+          checkinSlotId: props.formik.values.checkinSlot,
+          checkoutSlotId: props.formik.values.checkoutSlot,
+        })
+      )
+        .unwrap()
+        .then((roomFree) => setListRoom(roomFree));
+    }
   }, []);
 
   const handleNextStep = () => {
@@ -78,7 +92,7 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
   };
 
   return (
-    <div style={{maxWidth: '90vh'}}>
+    <div style={{ maxWidth: '90vh' }}>
       <div className={classes.divInfor}>
         <div className={classes.divHeader}>
           <h3 style={{ margin: 0 }}>Choose room to book</h3>
@@ -113,7 +127,7 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
                       backgroundColor: FPT_ORANGE_COLOR,
                       borderRadius: '5px 5px 0 0',
                       minHeight: 35,
-                      color: "#fff"
+                      color: '#fff',
                     }}
                   >
                     <b>{room.name}</b>
@@ -129,6 +143,9 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
         <div style={{ padding: 10 }}>
           All room free at{' '}
           {dayjs(props.formik.values.checkinDate).format('DD-MM-YYYY')}
+          {props.formik.values.checkoutDate
+            ? ' --> ' + dayjs(props.formik.values.checkoutDate).format('DD-MM-YYYY')
+            : null}
           {', '}
           {props.slotInName === props.slotOutName
             ? props.slotInName
@@ -180,8 +197,7 @@ const useStyles = createStyles({
     margin: '5%',
     borderRadius: 5,
     cursor: 'pointer',
-    boxShadow:
-      'rgba(255 127 22 / 35%) 0px 5px 15px',
+    boxShadow: 'rgba(255 127 22 / 35%) 0px 5px 15px',
   },
 });
 
