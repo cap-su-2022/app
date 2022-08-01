@@ -53,15 +53,12 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const handleGetData = (e) => {};
 
   const handleCheckoutBookingRoom = () => {
-    if (signature.current) {
-      signature.current.readSignature();
+
       dispatch(checkOutBookingRoom(roomBookingCheckout.id))
         .unwrap()
         .then(() => navigate.navigate('CHECKOUT_SUCCESSFULLY'))
         .catch((e) => alert('Failed while checking out booking room'));
-    } else {
-      alert('Please sign the signature');
-    }
+
   };
 
   const ErrorAlertModal: React.FC = () => {
@@ -300,54 +297,6 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
             </View>
           </View>
 
-          <View style={styles.signatureContainer}>
-            <View style={styles.signatureWrapper}>
-              <Text style={styles.signatureTitleHeader}>
-                CHECK-OUT SIGNATURE
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  setHidden(true);
-                  if (signature) {
-                    signature.current.clearSignature();
-                    signature.current.draw();
-                  }
-                }}
-                style={styles.clearSignatureButton}
-              >
-                <Text style={styles.clearSignatureButtonText}>CLEAR</Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              onTouchStart={() => (!isHidden ? setHidden(true) : null)}
-              style={styles.signatureBoard}
-            >
-              {isHidden ? (
-                <Signature
-                  ref={signature}
-                  onEmpty={() => {
-                    scrollView.current.scrollTo({
-                      x: undefined,
-                      y: deviceHeight - 100,
-                      animated: true,
-                    });
-                    setErrorMessage(
-                      'You must sign first so as to proceed to check out!'
-                    );
-                    setErrorModalShown(true);
-                  }}
-                  onOK={(e) => handleGetData(e)}
-                  onBegin={() => {
-                    setScrollEnabled(false);
-                  }}
-                  onEnd={() => setScrollEnabled(true)}
-                  style={{
-                    borderRadius: 8,
-                  }}
-                />
-              ) : null}
-            </View>
-          </View>
         </ScrollView>
         <View style={styles.footer}>
           <TouchableOpacity
