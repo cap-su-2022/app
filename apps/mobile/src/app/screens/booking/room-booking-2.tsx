@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   ListRenderItemInfo,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -15,6 +14,7 @@ import {
   BLACK,
   FPT_ORANGE_COLOR,
   GRAY,
+  INPUT_GRAY_COLOR,
   LIGHT_GRAY,
   WHITE,
 } from '@app/constants';
@@ -36,8 +36,7 @@ import AlertModal from '../../components/modals/alert-modal.component';
 import { fetchAllDevices } from '../../redux/features/devices/thunk/fetch-all';
 import RequestRoomBookingHeader from './request-room-booking/header';
 import { boxShadow } from '../../utils/box-shadow.util';
-import { BookingRoomsByFiltersResponse } from '../../redux/models/booking-rooms-by-filters-response.model';
-import BookingRequestItem from '../track-booking-room/track-booking-request-item';
+import NotFound from '../../components/empty.svg';
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
@@ -50,6 +49,7 @@ const RoomBooking2: React.FC = () => {
   const [search, setSearch] = useState<string>('');
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
+
   useEffect(() => {
     dispatch(
       fetchAllDevices({
@@ -87,11 +87,14 @@ const RoomBooking2: React.FC = () => {
             </View>
             <View style={styles.filterInput}>
               <DelayInput
+                style={{
+                  height: 50,
+                }}
                 delayTimeout={400}
                 minLength={0}
                 value={search}
                 onChangeText={(text) => setSearch(text.toString())}
-                placeholder="Search by device name"
+                placeholder="Search for devices by name..."
               />
             </View>
           </View>
@@ -113,7 +116,7 @@ const RoomBooking2: React.FC = () => {
   const DeviceRenderItem: React.FC<{
     device: Device;
   }> = (props) => {
-    const [quantity, setQuantity] = useState<number>(0);
+    const [quantity, setQuantity] = useState<number>(1);
 
     return (
       <TouchableOpacity
@@ -147,20 +150,37 @@ const RoomBooking2: React.FC = () => {
           <View style={styles.deviceDescriptionContainer}>
             <Text
               style={{
-                color: BLACK,
-                fontSize: deviceWidth / 26,
-                fontWeight: '500',
+                color: GRAY,
+                marginLeft: 6,
               }}
             >
+              <Text
+                style={{
+                  color: BLACK,
+                  fontSize: deviceWidth / 26,
+                  fontWeight: '500',
+                }}
+              >
+                Name:
+              </Text>
               {props.device.name}
             </Text>
+
             <Text
               style={{
-                color: BLACK,
-                fontSize: deviceWidth / 26,
-                fontWeight: '500',
+                color: GRAY,
+                marginLeft: 6,
               }}
             >
+              <Text
+                style={{
+                  color: BLACK,
+                  fontSize: deviceWidth / 26,
+                  fontWeight: '500',
+                }}
+              >
+                Type:
+              </Text>
               {props.device.type}
             </Text>
           </View>
@@ -186,9 +206,12 @@ const RoomBooking2: React.FC = () => {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    if (quantity > 0) {
-                      setQuantity(quantity - 1);
+                    if (quantity - 1 === 0) {
+                      return setDeviceIds(
+                        deviceIds.filter((id) => id !== props.device.id)
+                      );
                     }
+                    setQuantity(quantity - 1);
                   }}
                   style={{
                     height: 25,
@@ -221,7 +244,7 @@ const RoomBooking2: React.FC = () => {
                   style={{
                     color: FPT_ORANGE_COLOR,
                     textAlignVertical: 'center',
-                    height: 50,
+                    height: 25,
                     width: 40,
                     borderRightWidth: 0,
                     borderLeftWidth: 0,
@@ -273,18 +296,42 @@ const RoomBooking2: React.FC = () => {
       <Filtering />
 
       <View style={styles.container}>
-        <VirtualizedList
-          style={{
-            marginBottom: deviceWidth / 4.2,
-          }}
-          showsVerticalScrollIndicator={false}
-          data={devices}
-          getItemCount={(data) => data.length}
-          getItem={(data, index) => data[index]}
-          renderItem={(item: ListRenderItemInfo<Device>) => (
-            <DeviceRenderItem key={item.index} device={item.item} />
-          )}
-        />
+        {devices.length > 0 ? (
+          <VirtualizedList
+            style={{
+              marginBottom: deviceWidth / 4.2,
+            }}
+            showsVerticalScrollIndicator={false}
+            data={devices}
+            getItemCount={(data) => data.length}
+            getItem={(data, index) => data[index]}
+            renderItem={(item: ListRenderItemInfo<Device>) => (
+              <DeviceRenderItem key={item.index} device={item.item} />
+            )}
+          />
+        ) : (
+          <View
+            style={{
+              display: 'flex',
+              flex: 1,
+              flexGrow: 0.75,
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <NotFound width={deviceWidth / 2} height={250} />
+            <Text
+              style={{
+                color: BLACK,
+                fontSize: deviceWidth / 20,
+                fontWeight: '500',
+              }}
+            >
+              Data not found!
+            </Text>
+          </View>
+        )}
         <View style={styles.footerContainer}>
           <TouchableOpacity
             onPress={() => navigate.pop()}
@@ -396,7 +443,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexWrap: 'wrap',
     width: 200,
-    paddingHorizontal: 10,
   },
   deviceContainer: {
     display: 'flex',
