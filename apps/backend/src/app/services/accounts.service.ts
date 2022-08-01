@@ -5,23 +5,24 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import {Accounts} from '../models';
-import {BaseService} from './base.service';
-import {UpdateDeviceRequest, UsersDTO} from '@app/models';
-import {AccountRepository} from '../repositories';
-import {KeycloakService} from './keycloak.service';
-import {UsersRequestPayload} from '../payload/request/users.payload';
-import {CloudinaryService} from './cloudinary.service';
-import {AccountsResponsePayload} from '../payload/response/accounts.payload';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {Direction} from '../models/search-pagination.payload';
-import {ChangeProfilePasswordRequest} from '../payload/request/change-password.request.payload';
-import {randomUUID} from 'crypto';
-import {AccountsPaginationParams} from '../controllers/accounts-pagination.model';
-import {AccountHistService} from './account-hist.service';
-import {AccountAddRequestPayload} from '../payload/request/account-add.request.payload';
-import {AccountUpdateProfilePayload} from '../payload/request/account-update-profile.request.payload';
-import {PaginationParams} from "../controllers/pagination.model";
+import { Accounts } from '../models';
+import { BaseService } from './base.service';
+import { UpdateDeviceRequest, UsersDTO } from '@app/models';
+import { AccountRepository } from '../repositories';
+import { KeycloakService } from './keycloak.service';
+import { UsersRequestPayload } from '../payload/request/users.payload';
+import { CloudinaryService } from './cloudinary.service';
+import { AccountsResponsePayload } from '../payload/response/accounts.payload';
+import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { Direction } from '../models/search-pagination.payload';
+import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
+import { randomUUID } from 'crypto';
+import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
+import { AccountHistService } from './account-hist.service';
+import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
+import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
+import {Role} from '../enum/roles.enum';
+import { PaginationParams } from '../controllers/pagination.model';
 
 @Injectable()
 export class AccountsService {
@@ -32,8 +33,7 @@ export class AccountsService {
     private readonly keycloakService: KeycloakService,
     private readonly repository: AccountRepository,
     private readonly histService: AccountHistService
-  ) {
-  }
+  ) {}
 
   async getAll(request: AccountsPaginationParams) {
     try {
@@ -138,34 +138,28 @@ export class AccountsService {
     id: string,
     body: AccountAddRequestPayload
   ) {
-    let account;
     try {
       if (accountId === id) {
-        throw new BadRequestException('Cannot update your own account')
+        throw new BadRequestException('Cannot update your own account');
       }
-      account = await this.repository.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(
-        e.message ?? 'Error while update updating account ID'
-      );
-    }
+      const accountBeUpdated = await this.repository.getRoleOfAccount(id);
 
-    const data = await this.repository.findById(id);
-    if (data === undefined) {
-      throw new BadRequestException(
-        'This account is already deleted or disabled'
-      );
-    }
+      if(accountBeUpdated.role_name === Role.APP_ADMIN) {
+        throw new BadRequestException(
+          "Can't update admin"
+        );
+      }
 
-    try {
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException(
+          'This account is already deleted or disabled'
+        );
+      }
+
       const accountUpdated = await this.repository.updatePartially(
         body,
-        account,
+        accountBeUpdated,
         accountId
       );
       await this.histService.createNew(accountUpdated);
@@ -178,7 +172,11 @@ export class AccountsService {
     }
   }
 
-  async disableById(accountId: string, id: string, user: KeycloakUserInstance): Promise<any> {
+  async disableById(
+    accountId: string,
+    id: string,
+    user: KeycloakUserInstance
+  ): Promise<any> {
     try {
       if (accountId === id) {
         throw new BadRequestException('Cannot disable your own account');
@@ -246,13 +244,14 @@ export class AccountsService {
       this.logger.error(e);
       throw new BadRequestException(
         e.message ??
-        'Error occurred while restore the disabled status of this account'
+          'Error occurred while restore the disabled status of this account'
       );
     }
   }
 
   async deleteById(accountId: string, id: string) {
     try {
+
       if (accountId === id) {
         throw new BadRequestException('Cannot delete your own account');
       }
@@ -266,6 +265,12 @@ export class AccountsService {
 
       const userDelete = await this.repository.getRoleOfAccount(accountId);
       const userBeDeleted = await this.repository.getRoleOfAccount(id);
+
+      if(userBeDeleted.role_name === Role.APP_ADMIN) {
+        throw new BadRequestException(
+          "Can't delete admin"
+        );
+      }
 
       if (userDelete?.role_name === userBeDeleted?.role_name) {
         throw new BadRequestException(
@@ -338,7 +343,9 @@ export class AccountsService {
       const isDisabled = await this.repository.checkIfAccountIsDisabledById(id);
       const isDeleted = await this.repository.checkIfAccountIsDeletedById(id);
       if (isDisabled || isDeleted) {
-        throw new BadRequestException('This account has been disabled or deleted');
+        throw new BadRequestException(
+          'This account has been disabled or deleted'
+        );
       }
 
       const imageId = randomUUID();

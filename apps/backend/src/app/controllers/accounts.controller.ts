@@ -10,17 +10,15 @@ import {
   Put,
   Query,
   UploadedFile,
-  UseInterceptors,
-  UsePipes,
+  UseInterceptors
 } from '@nestjs/common';
 import {AccountsService} from '../services';
 import {
   ApiBearerAuth, ApiBody,
   ApiConsumes,
-  ApiOperation, ApiParam, ApiProperty, ApiQuery,
+  ApiOperation, ApiParam,
   ApiResponse,
   ApiTags,
-  getSchemaPath,
 } from '@nestjs/swagger';
 import {User} from '../decorators/keycloak-user.decorator';
 import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
@@ -350,7 +348,6 @@ export class AccountsController {
     @Param() payload: { id: string },
     @Body() body: AccountAddRequestPayload
   ) {
-    console.log(body + " ở đây nè");
     return this.service.updateById(user.account_id, payload.id, body);
   }
 
