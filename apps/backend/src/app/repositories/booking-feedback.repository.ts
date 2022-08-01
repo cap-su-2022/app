@@ -16,6 +16,14 @@ export class BookingFeedbackRepository extends Repository<BookingRoomFeedback> {
       .then((data) => data?.count > 0);
   }
 
+  isAlreadyFeedback(id: string): Promise<boolean> {
+    return this.createQueryBuilder('f')
+      .select('COUNT(1)', 'count')
+      .where('f.booking_room_id = :id', { id: id })
+      .getRawOne()
+      .then((data) => data?.count > 0);
+  }
+
   findByPagination(
     pagination: PaginationParams
   ): Promise<Pagination<BookingRoomFeedback>> {

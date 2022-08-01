@@ -571,6 +571,20 @@ export class BookingRoomService {
   //   }
   // }
 
+  async getInforToFeedback(id: string) {
+    try {
+      const user = await this.repository.getInforToFeedback(id);
+      if (user) {
+        return user
+      } else {
+        throw new BadRequestException('Not found request with provided id');
+      }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async getBookingRoomById(id: string) {
     try {
       const requestInfo = await this.repository.findById(id);
