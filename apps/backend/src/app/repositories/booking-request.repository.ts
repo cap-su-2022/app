@@ -655,6 +655,14 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getRawOne<{ count: number }>();
   }
 
+  async getInforToFeedback(id: string): Promise<{userId: string, status: string}> {
+    return this.createQueryBuilder('br')
+      .select('br.booked_for', 'userId')
+      .addSelect('br.status', 'status')
+      .where('br.id = :id', {id: id})
+      .getRawOne();
+  }
+
   async findById(id: string): Promise<BookingRequest> {
     return this.createQueryBuilder('br')
       .select('br.id', 'id')

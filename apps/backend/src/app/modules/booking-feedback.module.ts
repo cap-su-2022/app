@@ -9,12 +9,14 @@ import { AccountsModule } from './accounts.module';
 import { BookingFeedbackService } from '../services/booking-feedback.service';
 import { BookingFeedbackController } from '../controllers/booking-room-feedback.controller';
 import { BookingFeedbackRepository } from '../repositories/booking-feedback.repository';
+import { BookingRoomModule } from './booking-room.module';
 
 @Module({
   imports: [
     ConfigModule,
     HttpModule,
     AccountsModule,
+    BookingRoomModule,
     TypeOrmExModule.forCustomRepository([
       BookingFeedbackRepository,
     ]),

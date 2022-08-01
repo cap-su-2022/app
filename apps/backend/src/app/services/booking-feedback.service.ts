@@ -4,6 +4,7 @@ import { PaginationParams } from '../controllers/pagination.model';
 import { Feedback } from '../models';
 import { BookingFeedbackSendRequestPayload } from '../payload/request/booking-feedback-send.request.payload';
 import { BookingFeedbackRepository } from '../repositories/booking-feedback.repository';
+import { BookingRoomService } from './booking-room.service';
 
 @Injectable()
 export class BookingFeedbackService {
@@ -12,6 +13,7 @@ export class BookingFeedbackService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly repository: BookingFeedbackRepository,
+    private readonly bookingRoomService: BookingRoomService
   ) {}
 
   getAllFeedbacks(param: PaginationParams) {
@@ -23,13 +25,38 @@ export class BookingFeedbackService {
     }
   }
 
-  async addNewFeedback(accountId: string, payload: BookingFeedbackSendRequestPayload) {
+  async addNewFeedback(
+    accountId: string,
+    payload: BookingFeedbackSendRequestPayload
+  ) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
+      const request = await this.bookingRoomService.getInforToFeedback(
+        payload.bookingRoomId
+      );
+      if (request.userId !== accountId) {
+        throw new BadRequestException(
+          "You did't use this request, so you can't feedback"
+        );
+      } else {
+        if (request.status !== 'CHECKED_OUT') {
+          throw new BadRequestException(
+            "You can't send feedback until you check out of the room"
+          );
+        }
+      }
+
+      const isFeedbacked = await this.repository.isAlreadyFeedback(
+        payload.bookingRoomId
+      );
+      if (isFeedbacked) {
+        throw new BadRequestException('You already feedback this request');
+      }
+
       const feedback = await this.repository.addNew(
         accountId,
         payload,
@@ -60,5 +87,4 @@ export class BookingFeedbackService {
       throw new BadRequestException(e.message);
     }
   }
-
 }

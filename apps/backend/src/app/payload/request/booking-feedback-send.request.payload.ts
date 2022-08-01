@@ -1,3 +1,4 @@
+import { Max, Min } from 'class-validator';
 import {PaginationParams} from '../../controllers/pagination.model';
 import {IsNotEmpty, IsNumber, IsOptional, IsString, MinLength} from 'class-validator';
 import {Transform, TransformFnParams} from 'class-transformer';
@@ -20,6 +21,7 @@ export class BookingFeedbackSendRequestPayload {
   })
   message: string;
 
+  @Transform(({value}: TransformFnParams) => Number(value))
   @IsNotEmpty({
     message: `rate num can't be empty`,
   })
@@ -30,10 +32,10 @@ export class BookingFeedbackSendRequestPayload {
     type: Number,
     title: '3',
     example: '5',
-    minLength: 1,
-    maxLength: 3,
   })
   @IsNumber()
+  @Min(1)
+  @Max(5)
   rateNum: number;
 
   @IsNotEmpty({
