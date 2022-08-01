@@ -1,6 +1,5 @@
 export enum BookingRoomStatus {
-  Booking = "BOOKING",
-  Booked = "BOOKED",
-  Rejected = "REJECTED",
-
+  Pending = "PENDING",
+  Checked_Out = "CHECKED_OUT",
+  Cancelled = "CANCELLED",
 }

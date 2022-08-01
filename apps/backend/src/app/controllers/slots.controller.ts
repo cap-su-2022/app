@@ -16,7 +16,7 @@ import {PaginationParams} from './pagination.model';
 import {Roles} from '../decorators/role.decorator';
 import {Role} from '../enum/roles.enum';
 import {Slot} from '../models/slot.entity';
-import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {User} from '../decorators/keycloak-user.decorator';
 import {KeycloakUserInstance} from '../dto/keycloak.user';
 import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
@@ -31,11 +31,51 @@ export class SlotController {
 
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get all slots',
+    description: 'Get the list of slots',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched slots',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while retrieving slots',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Not enough privileges',
+  })
   getAllSlotsByPagination(@Optional() @Query() params?: PaginationParams) {
     return this.service.getAllByPagination(params);
   }
 
   @Get('name')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully get slot names',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get slot names',
+    description: 'Get slot names',
+  })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   getSlotNames() {
     return this.service.getSlotNames();
@@ -43,6 +83,26 @@ export class SlotController {
 
   @Get(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully get a slot by ID',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request params is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiOperation({
+    summary: 'Get a slot by ID',
+    description: 'Get a slot by ID',
+  })
   getSlotById(@Param('id') id: string) {
     return this.service.getById(id);
   }
@@ -51,16 +111,16 @@ export class SlotController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Add slot',
-    description: 'Add slot',
+    summary: 'Add a new slot',
+    description: 'Add a new slot',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully added slot',
+    description: 'Successfully added a new slot',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for slots is not validated',
+    description: 'Error while adding a new slot',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -96,8 +156,8 @@ export class SlotController {
     description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: 'Deleted slots',
-    description: 'Deleted slots',
+    summary: 'Delete a slot',
+    description: 'Delete a slot',
   })
   deleteSlotById(@Param('id') id: string, @User() user: KeycloakUserInstance) {
     return this.service.deleteSlotById(user.account_id, id);
@@ -124,6 +184,13 @@ export class SlotController {
   @ApiOperation({
     summary: 'Get deleted slot',
     description: 'Get deleted slot',
+  })
+  @ApiParam({
+    name: 'search',
+    description: "Search deleted slots",
+    type: String,
+    required: false,
+    example: 'Slot 5',
   })
   getDeletedSlots(@Query('search') search: string) {
     return this.service.getDeletedSlots(search);

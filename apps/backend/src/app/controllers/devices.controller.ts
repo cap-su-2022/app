@@ -91,7 +91,7 @@ export class DevicesController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Get devices by device type ID',
-    description: 'Get the list of devices by device typ ID',
+    description: 'Get the list of devices by device type ID',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
