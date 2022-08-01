@@ -5,14 +5,14 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import {SlotRepository} from '../repositories/slot.repository';
-import {PaginationParams} from '../controllers/pagination.model';
-import {Pagination} from 'nestjs-typeorm-paginate';
-import {Slot} from '../models/slot.entity';
-import {BookingRoomService} from './booking-room.service';
-import {InjectDataSource} from '@nestjs/typeorm';
-import {DataSource} from 'typeorm';
-import {SlotsRequestPayload} from '../payload/request/slot-add.request.payload';
+import { SlotRepository } from '../repositories/slot.repository';
+import { PaginationParams } from '../controllers/pagination.model';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { Slot } from '../models/slot.entity';
+import { BookingRoomService } from './booking-room.service';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { SlotsRequestPayload } from '../payload/request/slot-add.request.payload';
 
 @Injectable()
 export class SlotService {
@@ -23,18 +23,22 @@ export class SlotService {
     private readonly repository: SlotRepository,
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService
-  ) {
-  }
+  ) {}
 
   async getAllByPagination(
     params: PaginationParams
   ): Promise<Pagination<Slot> | Slot[]> {
     try {
+      let result;
       if (!params || !params.page) {
-        return await this.repository.findAll();
+        result = await this.repository.findAll();
       } else {
-        return await this.repository.findByPagination(params);
+        result = await this.repository.findByPagination(params);
+        if (result.meta.currentPage > result.meta.totalPages) {
+          throw new BadRequestException('Current page is over');
+        }
       }
+      return result;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -73,10 +77,7 @@ export class SlotService {
     return this.repository.findAll();
   }
 
-  async addNewSlot(
-    accountId: string,
-    payload: SlotsRequestPayload
-  ) {
+  async addNewSlot(accountId: string, payload: SlotsRequestPayload) {
     try {
       const isHaveSlotSameNameActive =
         await this.repository.isHaveSlotSameNameActive(payload.name);
@@ -121,7 +122,7 @@ export class SlotService {
       const listRequestBySlot =
         await this.bookingRoomService.getRequestBySlotId(id);
       if (listRequestBySlot?.length > 0) {
-        const reason = `${data.name} was deleted. Request in this slot was auto cancelled`
+        const reason = `${data.name} was deleted. Request in this slot was auto cancelled`;
         for (let i = 0; i < listRequestBySlot.length; i++) {
           this.bookingRoomService.cancelRequest(
             accountId,

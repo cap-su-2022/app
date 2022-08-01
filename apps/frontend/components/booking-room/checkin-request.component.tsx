@@ -75,7 +75,7 @@ const CheckinRequestModal: React.FC<CheckinRequestModalProps> = (props) => {
       onClose={() => props.toggleShown()}
     >
       <Text className={classes.modalBody}>
-        Chúng ta sẽ thay đổi dòng texy này sau
+        Are you sure accept user to Check-in
       </Text>
       <div className={classes.modalFooter}>
         <Button

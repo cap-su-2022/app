@@ -32,7 +32,13 @@ export class RoomTypeService {
     pagination: PaginationParams
   ): Promise<Pagination<RoomType>> {
     try {
-      return await this.repository.findRoomTypesByPagination(pagination);
+      const result = await this.repository.findRoomTypesByPagination(
+        pagination
+      );
+      if (result.meta.currentPage > result.meta.totalPages) {
+        throw new BadRequestException('Current page is over');
+      }
+      return result;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

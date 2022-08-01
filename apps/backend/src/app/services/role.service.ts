@@ -17,9 +17,13 @@ export class RoleService {
   ) {
   }
 
-  getRolesByPagination(payload: PaginationParams) {
+  async getRolesByPagination(payload: PaginationParams) {
     try {
-      return this.repository.findByPagination(payload);
+      const result = await this.repository.findByPagination(payload);
+      if(result.meta.currentPage > result.meta.totalPages){
+        throw new BadRequestException('Current page is over');
+      } 
+      return result
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);

@@ -3,7 +3,6 @@ import {FeedbackService} from '../services';
 import {Roles} from '../decorators/role.decorator';
 import {Role} from '../enum/roles.enum';
 import {ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {PaginationParams} from './pagination.model';
 import {Pagination} from 'nestjs-typeorm-paginate';
 import {Feedback} from '../models';
 import {KeycloakUserInstance} from '../dto/keycloak.user';

@@ -44,7 +44,7 @@ export class SlotRepository extends Repository<Slot> {
       .addSelect('s.name', 'name')
       .where('s.deleted_at IS NULL')
       .andWhere('LOWER(s.name) LIKE LOWER(:search)', {
-        search: `%${params.search}%`,
+        search: `%${params.search || ''}%`,
       })
       .orderBy('s.slot_num', 'ASC')
       .orderBy(params.sort, params.dir as 'ASC' | 'DESC');

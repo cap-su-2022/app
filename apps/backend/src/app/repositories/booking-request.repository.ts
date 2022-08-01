@@ -118,11 +118,11 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       });
     }
     if (accountId) {
-      query.andWhere('booking_request.requested_by = :accountId', {
-        accountId: accountId,
-      });
+      // query.andWhere('booking_request.requested_by = :accountId', {
+      //   accountId: accountId,
+      // });
 
-      query.orWhere('booking_request.booked_for = :accountId', {
+      query.andWhere('booking_request.booked_for = :accountId', {
         accountId: accountId,
       });
     }

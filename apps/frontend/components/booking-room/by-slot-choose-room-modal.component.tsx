@@ -108,8 +108,21 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
             />
           </InputWrapper>
         </div>
-        <ScrollArea style={{ height: 300 }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 10}}>
+          All room free at{' '}
+          {dayjs(props.formik.values.checkinDate).format('DD-MM-YYYY')}
+          {props.formik.values.checkoutDate
+            ? ' -> ' + dayjs(props.formik.values.checkoutDate).format('DD-MM-YYYY')
+            : null}
+          {', '}
+          {props.slotInName === props.slotOutName
+            ? props.slotInName
+            : props.slotInName + ' -> ' + props.slotOutName}
+          {/* {props.slotInName}{' --> '}
+          {props.slotOutName} */}
+        </div>
+        <ScrollArea style={{ height: 300}}>
+          <div style={{ display: 'flex', flexDirection: "column"}}>
             {listRoom?.map((room) => {
               return (
                 <div
@@ -123,36 +136,26 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
                 >
                   <div
                     style={{
-                      textAlign: 'center',
-                      backgroundColor: FPT_ORANGE_COLOR,
-                      borderRadius: '5px 5px 0 0',
+                      // textAlign: 'center',
+                      padding: "10px",
+                      // backgroundColor: '#fff',
+                      borderRadius: '5px',
                       minHeight: 35,
-                      color: '#fff',
+                      height: "100%",
+                      color: '#000',
                     }}
                   >
-                    <b>{room.name}</b>
-                  </div>
-                  <div style={{ padding: '0 5px' }}>
+                    <b>Name: {room.name}</b>
                     <p>Type: {room.type}</p>
                   </div>
+                  {/* <div style={{ padding: '0 5px' }}>
+                  </div> */}
                 </div>
               );
             })}
           </div>
         </ScrollArea>
-        <div style={{ padding: 10 }}>
-          All room free at{' '}
-          {dayjs(props.formik.values.checkinDate).format('DD-MM-YYYY')}
-          {props.formik.values.checkoutDate
-            ? ' --> ' + dayjs(props.formik.values.checkoutDate).format('DD-MM-YYYY')
-            : null}
-          {', '}
-          {props.slotInName === props.slotOutName
-            ? props.slotInName
-            : props.slotInName + ' --> ' + props.slotOutName}
-          {/* {props.slotInName}{' --> '}
-          {props.slotOutName} */}
-        </div>
+        
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -183,18 +186,19 @@ const useStyles = createStyles({
     marginTop: '20px',
   },
   roomDiv: {
-    border: '1px solid #fff',
     height: '100px',
-    width: '40%',
-    margin: '5%',
+    margin: '2%',
     borderRadius: 5,
     cursor: 'pointer',
+    boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
+    "&:hover": {
+      backgroundColor: '#fff'
+    }
   },
   roomChoosedDiv: {
-    border: '1px solid #fff',
     height: '100px',
-    width: '40%',
-    margin: '5%',
+    backgroundColor: '#fff',
+    margin: '2%',
     borderRadius: 5,
     cursor: 'pointer',
     boxShadow: 'rgba(255 127 22 / 35%) 0px 5px 15px',

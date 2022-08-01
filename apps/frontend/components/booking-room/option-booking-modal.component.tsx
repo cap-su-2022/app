@@ -17,6 +17,7 @@ import BySlotChooseSlotModal from './by-slot-choose-slot-modal.component';
 import { fetchListusernames } from '../../redux/features/account/thunk/fetch-user-names.thunk';
 import ByMultiChooseSlotModal from './by-multi-choose-slot-modal.component';
 import { addMultiRequest } from '../../redux/features/room-booking/thunk/add-multi-booking';
+import * as Yup from 'yup';
 
 interface SendBookingModalProps {
   isShown: boolean;
@@ -136,7 +137,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
     };
 
     const formik = useFormik({
-      // validationSchema: UpdateRoomTypeValidation,
+      // validationSchema: Validation,
       initialValues: {
         roomId: '',
         checkinDate: null,
@@ -148,6 +149,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
         description: '',
         bookedFor: null,
       },
+      
       enableReinitialize: true,
       onSubmit: (e) => handleSubmit(e),
     });

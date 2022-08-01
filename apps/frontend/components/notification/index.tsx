@@ -2,23 +2,48 @@ import { GetServerSideProps } from 'next';
 import AdminLayout from '../layout/admin.layout';
 import { Button, createStyles, ScrollArea, Text } from '@mantine/core';
 import { Ban, CircleCheck, Dots, Notification } from 'tabler-icons-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { useDebouncedValue } from '@mantine/hooks';
-import NoDataFound from '../no-data-found';
 import { fetchNotifications } from '../../redux/features/notification/';
 import moment from 'moment';
+import { fetchDetailNotification } from '../../redux/features/notification/thunk/fetch-detail-noti';
+import { Notification as NotificationModel } from '../../models/notification.model';
+import { setDetailNull } from '../../redux/features/notification/notification.slice';
+import dayjs from 'dayjs';
+import autoAnimate from '@formkit/auto-animate';
 
 function NotificationManagement(props: any) {
   const { classes } = useStyles();
   const notifications = useAppSelector(
     (state) => state.notification.notifications
   );
+
+  const detail = useAppSelector((state) => state.notification.notification);
+  console.log('DETAIL: ', detail);
+
+  const [showDetail, setShowDetail] = useState<boolean>(false);
+  const parent = useRef(null);
+
+  useEffect(() => {
+    parent.current && autoAnimate(parent.current);
+  }, [parent]);
+
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(fetchNotifications()).unwrap();
     //   .then((roomTypes) => setRoomTypeNames(roomTypes));
   }, []);
+
+  const handelGetDetailNoti = (id) => {
+    if (detail?.id === id) {
+      dispatch(setDetailNull(null));
+      setShowDetail(false);
+    } else {
+      dispatch(fetchDetailNotification(id)).then(() => {
+        setShowDetail(true);
+      });
+    }
+  };
 
   const NotificationDiv: React.FC = () => {
     return (
@@ -28,7 +53,7 @@ function NotificationManagement(props: any) {
               <div
                 className={classes.notificationDiv}
                 key={notification.id}
-                onClick={() => console.log(notification.id)}
+                onClick={() => handelGetDetailNoti(notification.id)}
               >
                 <div style={{ marginRight: 10 }}>
                   {notification.title.includes('accepted') ||
@@ -69,27 +94,40 @@ function NotificationManagement(props: any) {
   return (
     <>
       <AdminLayout>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <div className={classes.mainDiv}>
-            <div className={classes.headerDiv}>
-              <h1 className={classes.header}>Notification</h1>
-              <Dots size={20} strokeWidth={2} color={'black'} />
+        <div style={{ display: 'flex', justifyContent: 'center' }} ref={parent}>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div className={classes.mainDiv}>
+              <div className={classes.headerDiv}>
+                <h1 className={classes.header}>Notification</h1>
+                <Dots size={20} strokeWidth={2} color={'black'} />
+              </div>
+              <div style={{ margin: '10px 0' }}>
+                <Button variant="light" style={{ borderRadius: 50 }}>
+                  All
+                </Button>
+                <Button
+                  variant="subtle"
+                  color="dark"
+                  style={{ borderRadius: 50 }}
+                >
+                  Not read
+                </Button>
+              </div>
+              <b style={{ margin: '10px 0' }}>Before</b>
+              <NotificationDiv />
             </div>
-            <div style={{ margin: '10px 0' }}>
-              <Button variant="light" style={{ borderRadius: 50 }}>
-                All
-              </Button>
-              <Button
-                variant="subtle"
-                color="dark"
-                style={{ borderRadius: 50 }}
-              >
-                Not read
-              </Button>
-            </div>
-            <b style={{ margin: '10px 0' }}>Before</b>
-            <NotificationDiv />
           </div>
+          {showDetail && (
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div className={classes.detailDiv}>
+                <div className={classes.headerDiv}>
+                  <h1 className={classes.header}>{detail?.title}</h1>
+                </div>
+                <p style={{fontSize: 13}}>{dayjs(detail?.createdAt).format('HH:mm DD-MM-YYYY')}</p>
+                <div className={classes.messageDiv}>{detail.message}</div>
+              </div>
+            </div>
+          )}
         </div>
       </AdminLayout>
     </>
@@ -112,6 +150,17 @@ const useStyles = createStyles({
     borderRadius: 10,
     maxHeight: '80vh',
     width: '600px',
+  },
+  detailDiv: {
+    boxShadow: '#0000003d 0px 3px 8px;',
+    margin: 20,
+    padding: 10,
+    borderRadius: 10,
+    maxHeight: '80vh',
+    width: '400px',
+  },
+  messageDiv: {
+    padding: '20px 0',
   },
   headerDiv: {
     display: 'flex',

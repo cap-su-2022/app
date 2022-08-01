@@ -34,7 +34,7 @@ export class RolesRepository extends Repository<Roles> {
       .addSelect('r.description', 'description')
       .where('r.deleted_at IS NULL')
       .andWhere('r.name ILIKE :search', {
-        search: `%${pagination.search.trim()}%`,
+        search: `%${pagination.search?.trim() || ''}%`,
       })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
     return paginateRaw<Roles, IPaginationMeta>(query, {

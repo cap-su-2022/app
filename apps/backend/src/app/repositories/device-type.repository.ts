@@ -24,7 +24,7 @@ export class DeviceTypeRepository extends Repository<DeviceType> {
       .addSelect('dt.name', 'name')
       .where('dt.deleted_at IS NULL')
       .andWhere('LOWER(dt.name) LIKE LOWER(:search)', {
-        search: `%${pagination.search.trim()}%`,
+        search: `%${pagination.search?.trim() || ''}%`,
       })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
 

@@ -37,7 +37,7 @@ export class FeedbackRepository extends Repository<Feedback> {
       //   .andWhere('f.name ILIKE :search', {
       //     search: `%${pagination.search.trim()}%`,
       //   })
-      .orderBy('f.created_at', 'DESC');
+      .orderBy('f.' + pagination.sort, pagination.dir as 'ASC' | 'DESC');
 
     if (pagination.fromDate && pagination.toDate) {
       query.andWhere('f.created_at >= :fromDate', {
