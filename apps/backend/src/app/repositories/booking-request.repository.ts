@@ -17,6 +17,7 @@ import {BookingReason} from '../models/booking-reason.entity';
 import {BadRequestException} from '@nestjs/common';
 import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
 import dayjs = require('dayjs');
+import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
 
 @CustomRepository(BookingRequest)
 export class BookingRoomRepository extends Repository<BookingRequest> {
@@ -78,7 +79,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   }
 
   findByPaginationPayload(
-    payload: GetBookingRoomsPaginationPayload,
+    payload: BookingRoomPaginationParams,
     accountId
   ) {
     const query = this.createQueryBuilder('booking_request')
@@ -106,9 +107,9 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         checkInAt: payload.checkInAt,
       });
     }
-    if (payload.checkinDate && payload.checkinDate !== '') {
+    if (payload.checkInDate && payload.checkInDate!== '') {
       query.andWhere('booking_request.checkin_date >= :checkinDate', {
-        checkinDate: payload.checkinDate,
+        checkinDate: payload.checkInDate,
       });
     }
     if (payload.reasonType && payload.reasonType !== '') {

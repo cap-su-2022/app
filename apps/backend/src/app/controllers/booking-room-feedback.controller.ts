@@ -1,29 +1,34 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
+import {Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query} from '@nestjs/common';
+import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum/roles.enum';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import { PaginationParams } from './pagination.model';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { Feedback } from '../models';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { User } from '../decorators/keycloak-user.decorator';
-import { BookingFeedbackSendRequestPayload } from '../payload/request/booking-feedback-send.request.payload';
-import { BookingFeedbackService } from '../services/booking-feedback.service';
+import {PaginationParams} from './pagination.model';
+import {Pagination} from 'nestjs-typeorm-paginate';
+import {Feedback} from '../models';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {User} from '../decorators/keycloak-user.decorator';
+import {BookingFeedbackSendRequestPayload} from '../payload/request/booking-feedback-send.request.payload';
+import {BookingFeedbackService} from '../services/booking-feedback.service';
 
 @Controller('/v1/booking-room-feedbacks')
 @ApiTags('Booking Room Feedbacks')
 export class BookingFeedbackController {
-  constructor(private readonly service: BookingFeedbackService) {}
+  constructor(private readonly service: BookingFeedbackService) {
+  }
 
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get all booking room feedbacks',
+    description: 'Get the list of booking room feedbacks',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully got get all feedback',
+    description: 'Successfully got get all booking room feedbacks',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Request params is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -32,10 +37,6 @@ export class BookingFeedbackController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
-  })
-  @ApiOperation({
-    summary: 'Get all feedback',
-    description: 'Get all feedback',
   })
   getAllFeedbacks(
     @Query() payload: PaginationParams
@@ -44,14 +45,18 @@ export class BookingFeedbackController {
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'Get booking room feedback by id',
+    description: 'Get booking room feedback by id',
+  })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully fetched feedback by id',
+    description: 'Successfully fetched booking room feedback by id',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Request params for booking room feedback is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -60,10 +65,6 @@ export class BookingFeedbackController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
-  })
-  @ApiOperation({
-    summary: 'Get feedback by id',
-    description: 'Get feedback by id',
   })
   getFeedbackById(@Param('id') id: string) {
     return this.service.getFeedbackById(id);
@@ -73,16 +74,16 @@ export class BookingFeedbackController {
   @Roles(Role.APP_STAFF, Role.APP_LIBRARIAN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Send feedback',
-    description: 'Send feedback',
+    summary: 'Send booking room feedback',
+    description: 'Send booking room feedback',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully added feedback',
+    description: 'Successfully added booking room feedback',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Request params is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,

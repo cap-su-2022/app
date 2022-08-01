@@ -18,6 +18,16 @@ import {ApiProperty} from "@nestjs/swagger";
 
 export class PaginationParams {
 
+  @IsOptional()
+  @IsString({
+    message: 'Search value must be a string',
+  })
+  @MaxLength(100, {
+    message: 'Maximum length for search is 100 characters',
+  })
+  @ApiProperty({default: '', required: false})
+  search: string;
+
   @Transform((val) => Number.parseInt(val.value))
   @IsInt({
     message: 'Page number must be integer',
@@ -47,7 +57,6 @@ export class PaginationParams {
   @ApiProperty({default: 5, required: true})
   limit: number;
 
-  // @Transform((val) => Number.parseInt(val.value))
   @IsString({
     message: 'Dir value must be a string',
   })
@@ -56,17 +65,6 @@ export class PaginationParams {
   })
   @ApiProperty({default: 'ASC', required: true})
   dir: string;
-
-  // @Transform((val) => Number.parseInt(val.value))
-  @IsOptional()
-  @IsString({
-    message: 'Search value must be a string',
-  })
-  @MaxLength(100, {
-    message: 'Maximum length for search is 100 characters',
-  })
-  @ApiProperty({default: '', required: false})
-  search: string;
 
   @IsNotEmpty({
     message: 'Sorting field must not be empty',

@@ -1,22 +1,24 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Query } from '@nestjs/common';
-import { FeedbackService } from '../services';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import { PaginationParams } from './pagination.model';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { Feedback } from '../models';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { User } from '../decorators/keycloak-user.decorator';
-import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
-import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
-import { FeedbackPaginationPayload } from '../payload/request/feedback-pagination.payload';
+import {Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Query} from '@nestjs/common';
+import {FeedbackService} from '../services';
+import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum/roles.enum';
+import {ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {PaginationParams} from './pagination.model';
+import {Pagination} from 'nestjs-typeorm-paginate';
+import {Feedback} from '../models';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {User} from '../decorators/keycloak-user.decorator';
+import {FeedbackSendRequestPayload} from '../payload/request/feedback-send.request.payload';
+import {FeedbackReplyRequestPayload} from '../payload/request/feedback-resolve.request.payload';
+import {FeedbackPaginationPayload} from '../payload/request/feedback-pagination.payload';
+import {BookingRoomStatus} from '../enum/booking-room-status.enum';
 
 @Controller('/v1/feedbacks')
 @ApiBearerAuth()
 @ApiTags('Feedbacks')
 export class FeedbackController {
-  constructor(private readonly service: FeedbackService) {}
+  constructor(private readonly service: FeedbackService) {
+  }
 
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -40,6 +42,7 @@ export class FeedbackController {
     summary: 'Get all feedback',
     description: 'Get all feedback',
   })
+  @ApiQuery({name: 'status', enum: BookingRoomStatus, required: false})
   getAllFeedbacks(
     @Query() payload: FeedbackPaginationPayload,
     @User() user: KeycloakUserInstance,
@@ -48,6 +51,10 @@ export class FeedbackController {
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'Get feedback by id',
+    description: 'Get feedback by id',
+  })
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiResponse({
     status: HttpStatus.OK,
@@ -64,10 +71,6 @@ export class FeedbackController {
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
-  })
-  @ApiOperation({
-    summary: 'Get feedback by id',
-    description: 'Get feedback by id',
   })
   getFeedbackById(@Param('id') id: string) {
     return this.service.getFeedbackById(id);

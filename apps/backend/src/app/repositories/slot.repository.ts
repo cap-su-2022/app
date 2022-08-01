@@ -1,16 +1,17 @@
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Slot } from '../models/slot.entity';
-import { QueryRunner, Repository } from 'typeorm';
-import { PaginationParams } from '../controllers/pagination.model';
-import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
-import { Accounts } from '../models';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {Slot} from '../models/slot.entity';
+import {QueryRunner, Repository} from 'typeorm';
+import {PaginationParams} from '../controllers/pagination.model';
+import {paginateRaw, Pagination} from 'nestjs-typeorm-paginate';
+import {Accounts} from '../models';
+import {SlotsRequestPayload} from '../payload/request/slot-add.request.payload';
 
 @CustomRepository(Slot)
 export class SlotRepository extends Repository<Slot> {
   existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('sl')
       .select('COUNT(1)', 'count')
-      .where('sl.id = :id', { id: id })
+      .where('sl.id = :id', {id: id})
       .getRawOne()
       .then((data) => data?.count > 0);
   }
@@ -18,7 +19,7 @@ export class SlotRepository extends Repository<Slot> {
   isHaveSlotSameNameActive(name: string): Promise<boolean> {
     return this.createQueryBuilder('sl')
       .select('COUNT(1)', 'count')
-      .where('sl.name ILIKE :name', { name: name })
+      .where('sl.name ILIKE :name', {name: name})
       .andWhere('sl.deleted_by IS NULL')
       .andWhere('sl.deleted_at IS NULL')
       .getRawOne()
@@ -28,7 +29,7 @@ export class SlotRepository extends Repository<Slot> {
   isHaveSlotSameNumActive(slotNum: number): Promise<boolean> {
     return this.createQueryBuilder('sl')
       .select('COUNT(1)', 'count')
-      .where('sl.slotNum = :slotNum', { slotNum: slotNum })
+      .where('sl.slotNum = :slotNum', {slotNum: slotNum})
       .andWhere('sl.deleted_by IS NULL')
       .andWhere('sl.deleted_at IS NULL')
       .getRawOne()
@@ -58,7 +59,7 @@ export class SlotRepository extends Repository<Slot> {
       .select('slot.slot_num', 'slotNum')
       .addSelect('slot.time_start', 'timeStart')
       .addSelect('slot.name', 'name')
-      .where('slot.id = :slotId', { slotId: id })
+      .where('slot.id = :slotId', {slotId: id})
       .getRawOne();
   }
 
@@ -90,7 +91,7 @@ export class SlotRepository extends Repository<Slot> {
       .addSelect('s.description', 'description')
       .innerJoin(Accounts, 'a', 'a.id = s.created_by')
       .leftJoin(Accounts, 'aa', 'aa.id = s.updated_by')
-      .where('s.id = :id', { id: id })
+      .where('s.id = :id', {id: id})
       .getRawOne<Slot>();
   }
 
@@ -108,7 +109,7 @@ export class SlotRepository extends Repository<Slot> {
 
   async addNew(
     accountId: string,
-    payload: { name: string; slotNum: number, timeStart: string, timeEnd: string, description: string }
+    payload: SlotsRequestPayload
   ): Promise<Slot> {
     return this.save<Slot>(
       {
@@ -143,7 +144,7 @@ export class SlotRepository extends Repository<Slot> {
       .addSelect('sl.deleted_at', 'deletedAt')
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'a.id = sl.deleted_by')
-      .where('sl.name ILIKE :search', { search: `%${search.trim()}%` })
+      .where('sl.name ILIKE :search', {search: `%${search.trim()}%`})
       .andWhere('sl.deleted_at IS NOT NULL')
       .orderBy('sl.deleted_at', 'DESC')
       .getRawMany<Slot>();
@@ -157,7 +158,7 @@ export class SlotRepository extends Repository<Slot> {
         deletedAt: null,
         deletedBy: null,
       })
-      .where('slot.id = :id', { id: id })
+      .where('slot.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isRestored.affected > 0) {

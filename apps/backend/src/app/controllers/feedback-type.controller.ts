@@ -1,22 +1,22 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query } from '@nestjs/common';
-import { FeedbackTypeService } from '../services';
-import { Role } from '../enum/roles.enum';
-import { Roles } from '../decorators/role.decorator';
-import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import { PaginationParams } from './pagination.model';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { FeedbackType } from '../models';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { User } from '../decorators/keycloak-user.decorator';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
-
+import {Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query} from '@nestjs/common';
+import {FeedbackTypeService} from '../services';
+import {Role} from '../enum/roles.enum';
+import {Roles} from '../decorators/role.decorator';
+import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {PaginationParams} from './pagination.model';
+import {Pagination} from 'nestjs-typeorm-paginate';
+import {FeedbackType} from '../models';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {User} from '../decorators/keycloak-user.decorator';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
 
 
 @Controller('/v1/feedback-types')
 @ApiBearerAuth()
 @ApiTags('Feedback Types')
 export class FeedbackTypeController {
-  constructor(private readonly service: FeedbackTypeService) {}
+  constructor(private readonly service: FeedbackTypeService) {
+  }
 
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -50,6 +50,10 @@ export class FeedbackTypeController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully got feedback type name',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -97,8 +101,8 @@ export class FeedbackTypeController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Add feedback type',
-    description: 'Add feedback type',
+    summary: 'Add a new feedback type',
+    description: 'Add a new feedback type',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -172,8 +176,8 @@ export class FeedbackTypeController {
     description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: 'Deleted feedback types',
-    description: 'Deleted feedback types',
+    summary: 'Delete feedback types',
+    description: 'Delete feedback types',
   })
   deleteFeedbackTypeById(
     @Param('id') id: string,
@@ -203,6 +207,13 @@ export class FeedbackTypeController {
   @ApiOperation({
     summary: 'Get deleted feedback types',
     description: 'Get deleted feedback types',
+  })
+  @ApiParam({
+    name: 'search',
+    description: "Search deleted feedback types",
+    type: String,
+    required: false,
+    example: 'Library Services',
   })
   getDeletedFeedbackTypes(@Query('search') search: string) {
     return this.service.getDeletedFeedbackTypes(search);

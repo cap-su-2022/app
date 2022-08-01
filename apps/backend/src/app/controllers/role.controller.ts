@@ -11,30 +11,32 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { PaginationParams } from './pagination.model';
-import { User } from '../decorators/keycloak-user.decorator';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { RoleService } from '../services/role.service';
+import {PaginationParams} from './pagination.model';
+import {User} from '../decorators/keycloak-user.decorator';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {RoleService} from '../services/role.service';
 import {
   ApiBearerAuth,
-  ApiOperation,
+  ApiOperation, ApiParam,
   ApiProduces,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
-import { Role } from '../enum/roles.enum';
-import { Roles } from '../decorators/role.decorator';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
+import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
+import {Role} from '../enum/roles.enum';
+import {Roles} from '../decorators/role.decorator';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
 
 @Controller('/v1/roles')
 @ApiBearerAuth()
 @ApiTags('Roles')
 @UseInterceptors(new PathLoggerInterceptor(RoleController.name))
 export class RoleController {
-  constructor(private readonly service: RoleService) {}
+  constructor(private readonly service: RoleService) {
+  }
 
   @Get()
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Get roles by pagination',
     description: 'Get roles by pagination',
@@ -61,9 +63,14 @@ export class RoleController {
   }
 
   @Get('name')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully get role name',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -84,12 +91,12 @@ export class RoleController {
   @Get(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Get role by id',
-    description: 'Get role by id',
+    summary: 'Get role by ID',
+    description: 'Get role by ID',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Id for roel is not validated',
+    description: 'Id for role is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -127,8 +134,8 @@ export class RoleController {
     description: 'Successfully added role',
   })
   @ApiOperation({
-    summary: 'Add role',
-    description: 'Add role',
+    summary: 'Add a new role',
+    description: 'Add a new role',
   })
   addRole(
     @Body() body: MasterDataAddRequestPayload,
@@ -139,8 +146,8 @@ export class RoleController {
 
   @Put(':id')
   @ApiOperation({
-    summary: 'Update role by id',
-    description: 'Update role by id',
+    summary: 'Update role by ID',
+    description: 'Update role by ID',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -170,11 +177,11 @@ export class RoleController {
   @Delete(':id')
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully removed role with provided id',
+    description: 'Successfully removed role with provided ID',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Id for role is not validated',
+    description: 'ID for role is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -218,6 +225,13 @@ export class RoleController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @ApiParam({
+    name: 'search',
+    description: "Search deleted roles",
+    type: String,
+    required: false,
+    example: 'Staff',
+  })
   getDeletedRoles(@Query('search') search: string) {
     return this.service.getDeletedRoles(search);
   }
@@ -225,8 +239,8 @@ export class RoleController {
   @Put('restore-deleted/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
-    summary: 'Restore the deleted role by id',
-    description: 'Restore the deleted role by provided id',
+    summary: 'Restore the deleted role by ID',
+    description: 'Restore the deleted role by provided ID',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -245,12 +259,12 @@ export class RoleController {
     description: 'Insufficient privileges',
   })
   restoreDeletedRoleById(
-    @Param() payload: { id: string },
+    @Param('id') id: string,
     @User() keycloakUser: KeycloakUserInstance
   ) {
     return this.service.handleRestoreDeletedRoleById(
       keycloakUser.account_id,
-      payload.id
+      id
     );
   }
 
@@ -258,7 +272,7 @@ export class RoleController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully permanent deleted role by id',
+    description: 'Successfully permanent deleted role by ID',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -273,8 +287,8 @@ export class RoleController {
     description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: 'Permanently delete role by id',
-    description: 'Permanently delete role by id',
+    summary: 'Permanently delete role by ID',
+    description: 'Permanently delete role by ID',
   })
   permanentDeleteRoleById(@Param('id') id: string) {
     return this.service.permanentDeleteRoleById(id);
