@@ -40,13 +40,22 @@ const RoomBooking2: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const [deviceIds, setDeviceIds] = useState<string[]>([]);
+  const [devicesArray, setDevicesArray] = useState([]);
   const [deviceNames, setDeviceNames] = useState<string[]>([]);
+  const [deviceQuantity, setDeviceQuantity] = useState([]);
   const [search, setSearch] = useState<string>('');
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
   useEffect(() => {
+
     dispatch(fetchAllDevices());
+    setDevicesArray(devices.map((device) => ({
+      ...device,
+      quantity: 0
+    })))
   }, [search, sort, dispatch]);
+console.log(devicesArray)
+
 
   const handleNextStep = () => {
     const devices = [];
@@ -92,11 +101,15 @@ const RoomBooking2: React.FC = () => {
   };
 
   const DeviceRenderItem: React.FC<{
-    device: Device;
+    device: any;
+    index: number
   }> = (props) => {
+    useEffect(() => {
+      console.log(props.device.quantity)
+    }, [props.device.quantity])
     return (
       <TouchableOpacity
-        key={props.device.id}
+        key={props.device}
         onPress={() => {
           deviceIds.filter((id) => id === props.device.id)[0]
             ? setDeviceIds(deviceIds.filter((id) => id !== props.device.id))
@@ -106,6 +119,11 @@ const RoomBooking2: React.FC = () => {
                 deviceIds.filter((name) => name !== props.device.name)
               )
             : setDeviceNames([...deviceNames, props.device.name]);
+          deviceQuantity.filter((quantity) => quantity === props.device.quantity)[0]
+            ? setDeviceQuantity(
+              deviceQuantity.filter((quantity) => quantity !== props.device.quantity)
+            )
+            : setDeviceQuantity([...deviceQuantity, props.device.quantity]);
         }}
         style={[
           styles.selectCircleButton,
@@ -161,6 +179,7 @@ const RoomBooking2: React.FC = () => {
                   borderTopLeftRadius: 8,
                   borderBottomLeftRadius: 8,
                 }}
+                onPress={() => handleReduceQuantity(props.index)}
               >
                 <Text
                   style={{
@@ -172,8 +191,11 @@ const RoomBooking2: React.FC = () => {
                   -
                 </Text>
               </TouchableOpacity>
-              <TextInput
+              <Text
+
                 style={{
+                  paddingTop: 5,
+                  textAlign: 'center',
                   height: 30,
                   width: 30,
                   borderRightWidth: 0,
@@ -183,7 +205,10 @@ const RoomBooking2: React.FC = () => {
                   borderTopWidth: 2,
                   borderBottomWidth: 2,
                 }}
-              />
+              >
+                {props.device.quantity}
+                </Text>
+
               <TouchableOpacity
                 style={{
                   height: 30,
@@ -196,6 +221,7 @@ const RoomBooking2: React.FC = () => {
                   borderTopRightRadius: 8,
                   borderBottomRightRadius: 8,
                 }}
+                onPress={() => handlePlusQuantity(props.index)}
               >
                 <Text
                   style={{
@@ -214,14 +240,26 @@ const RoomBooking2: React.FC = () => {
     );
   };
 
+  const handlePlusQuantity = (index) => {
+    const copyDeviceArray = devicesArray
+    copyDeviceArray[index].quantity += 1
+    setDeviceQuantity(copyDeviceArray)
+  }
+
+  const handleReduceQuantity = (index) => {
+    const copyDeviceArray = devicesArray
+    copyDeviceArray[index].quantity -= 1
+    setDeviceQuantity(copyDeviceArray)
+  }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <RequestRoomBookingHeader />
         <ScrollView>
           <Filtering />
-          {devices.map((device) => (
-            <DeviceRenderItem device={device} />
+          {devicesArray.map((device, index) => (
+            <DeviceRenderItem device={device} index={index}/>
           ))}
         </ScrollView>
         <View style={styles.footerContainer}>
