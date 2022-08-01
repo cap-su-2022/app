@@ -67,13 +67,25 @@ export class DevicesRepository extends Repository<Devices> {
     });
   }
 
-  findDeviceName(): Promise<DeviceType[]> {
-    return this.createQueryBuilder('device')
+  findDeviceName(search: string, dir: string): Promise<Devices[]> {
+    const query = this.createQueryBuilder('device')
       .select('device.id', 'id')
       .addSelect('device.name', 'name')
+      .addSelect('dt.name', 'type')
+      .leftJoin(DeviceType, 'dt', 'dt.id = device.type')
+      .andWhere('device.disabled_at IS NULL')
+      .andWhere('device.disabled_by IS NULL')
+      .andWhere('device.deleted_by IS NULL')
       .andWhere('device.deleted_at IS NULL')
-      .orderBy('device.name', 'ASC')
-      .getRawMany<DeviceType>();
+      .orderBy(
+        'device.name',
+        dir ? (dir as 'ASC' | 'DESC') : ('ASC' as 'ASC' | 'DESC')
+      );
+    if (search) {
+      query.andWhere('device.name ILIKE :search', { search: `%${search}%` });
+    }
+
+    return query.getRawMany<Devices>();
   }
 
   getDevicesByDeviceType(deviceTypeId: string) {

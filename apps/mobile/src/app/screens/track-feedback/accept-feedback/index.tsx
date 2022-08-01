@@ -336,7 +336,7 @@ const AcceptFeedback: React.FC<any> = () => {
             />
           </TouchableOpacity>
           <Text style={styles.headerTitleText}>
-            {feedback.status !== CANCELLED && feedback.status !== CHECKED_OUT
+            {feedback.status !== 'RESOLVED' && feedback.status !== 'REJECTED'
               ? 'Incoming feedback'
               : 'Review feedback'}
           </Text>
@@ -353,8 +353,8 @@ const AcceptFeedback: React.FC<any> = () => {
             }}
           >
             {authUser.role !== 'Staff' &&
-            feedback.status !== CANCELLED &&
-            feedback.status !== CHECKED_OUT ? (
+            feedback.status !== 'RESOLVED' &&
+            feedback.status !== 'REJECTED' ? (
               <View style={styles.warningMessageContainer}>
                 <ExclamationIcon
                   color={FPT_ORANGE_COLOR}
@@ -367,8 +367,8 @@ const AcceptFeedback: React.FC<any> = () => {
               </View>
             ) : null}
             {authUser.role !== 'Staff' &&
-            feedback.status !== CANCELLED &&
-            feedback.status !== CHECKED_OUT ? (
+            feedback.status !== 'RESOLVED' &&
+            feedback.status !== 'REJECTED' ? (
               <Text style={styles.textStatus}>
                 {feedback.createdBy} sent the feedback
               </Text>
@@ -399,6 +399,34 @@ const AcceptFeedback: React.FC<any> = () => {
                 <Text style={styles.valueText}>{feedback.feedbackType}</Text>
               </View>
             </View>
+
+            {feedback.status === 'RESOLVED' ||
+            feedback.status === 'REJECTED' ? (
+              <View>
+                <Text style={styles.informationHeaderTitle}>
+                  FEEDBACK STATUS
+                </Text>
+                <View
+                  style={[
+                    styles.bookingInformationContainer,
+                    { marginBottom: 20 },
+                  ]}
+                >
+                  <View style={styles.dataRowContainer}>
+                    <Text style={styles.titleText}>Status</Text>
+                    <Text style={styles.valueText}>{feedback.status}</Text>
+                  </View>
+
+                  <>
+                    <Divider num={deviceWidth / 10} />
+                    <View style={styles.dataRowContainer}>
+                      <Text style={styles.titleText}>Reply Message</Text>
+                      <Text style={styles.valueText}>{feedback.replyMess}</Text>
+                    </View>
+                  </>
+                </View>
+              </View>
+            ) : null}
 
             <View>
               <Text style={styles.informationHeaderTitle}>

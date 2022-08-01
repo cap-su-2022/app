@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     position: 'absolute',
-    height: deviceHeight / 5,
+    height: 210,
     backgroundColor: BLACK,
   },
   container: {

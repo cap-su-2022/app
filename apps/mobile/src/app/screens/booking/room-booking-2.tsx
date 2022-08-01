@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  ListRenderItemInfo,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -7,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  VirtualizedList,
 } from 'react-native';
 import { SearchIcon, SortAscendingIcon } from 'react-native-heroicons/solid';
 import {
@@ -22,6 +24,7 @@ import {
   ChevronRightIcon,
   DeviceMobileIcon,
   ExclamationCircleIcon,
+  SortDescendingIcon,
 } from 'react-native-heroicons/outline';
 import DelayInput from 'react-native-debounce-input';
 import { useAppSelector } from '../../hooks/use-app-selector.hook';
@@ -32,6 +35,9 @@ import { step3ScheduleRoomBooking } from '../../redux/features/room-booking/slic
 import AlertModal from '../../components/modals/alert-modal.component';
 import { fetchAllDevices } from '../../redux/features/devices/thunk/fetch-all';
 import RequestRoomBookingHeader from './request-room-booking/header';
+import { boxShadow } from '../../utils/box-shadow.util';
+import { BookingRoomsByFiltersResponse } from '../../redux/models/booking-rooms-by-filters-response.model';
+import BookingRequestItem from '../track-booking-room/track-booking-request-item';
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
@@ -45,7 +51,12 @@ const RoomBooking2: React.FC = () => {
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
   useEffect(() => {
-    dispatch(fetchAllDevices());
+    dispatch(
+      fetchAllDevices({
+        search: search,
+        dir: sort,
+      })
+    );
   }, [search, sort, dispatch]);
 
   const handleNextStep = () => {
@@ -76,6 +87,7 @@ const RoomBooking2: React.FC = () => {
             </View>
             <View style={styles.filterInput}>
               <DelayInput
+                delayTimeout={400}
                 minLength={0}
                 value={search}
                 onChangeText={(text) => setSearch(text.toString())}
@@ -83,8 +95,15 @@ const RoomBooking2: React.FC = () => {
               />
             </View>
           </View>
-          <TouchableOpacity style={styles.filterSortButton}>
-            <SortAscendingIcon color={BLACK} />
+          <TouchableOpacity
+            onPress={() => (sort === 'ASC' ? setSort('DESC') : setSort('ASC'))}
+            style={styles.filterSortButton}
+          >
+            {sort === 'ASC' ? (
+              <SortAscendingIcon color={BLACK} />
+            ) : (
+              <SortDescendingIcon color={BLACK} />
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -94,6 +113,8 @@ const RoomBooking2: React.FC = () => {
   const DeviceRenderItem: React.FC<{
     device: Device;
   }> = (props) => {
+    const [quantity, setQuantity] = useState<number>(0);
+
     return (
       <TouchableOpacity
         key={props.device.id}
@@ -111,10 +132,11 @@ const RoomBooking2: React.FC = () => {
           styles.selectCircleButton,
           deviceIds.filter((id) => id === props.device.id)[0]
             ? {
-                borderWidth: 2,
+                borderWidth: 1,
                 borderColor: FPT_ORANGE_COLOR,
               }
             : null,
+          boxShadow(styles),
         ]}
       >
         <View style={styles.deviceIconContainer}>
@@ -126,88 +148,119 @@ const RoomBooking2: React.FC = () => {
             <Text
               style={{
                 color: BLACK,
-                fontSize: deviceWidth / 24,
-                fontWeight: '600',
+                fontSize: deviceWidth / 26,
+                fontWeight: '500',
               }}
             >
               {props.device.name}
+            </Text>
+            <Text
+              style={{
+                color: BLACK,
+                fontSize: deviceWidth / 26,
+                fontWeight: '500',
+              }}
+            >
+              {props.device.type}
             </Text>
           </View>
 
           <View
             style={{
-              marginTop: -20,
-              marginRight: 10,
+              flexDirection: 'column',
+              display: 'flex',
+              justifyContent: 'space-between',
+              height: 70,
+              paddingHorizontal: 10,
             }}
           >
             <TouchableOpacity style={styles.viewDetailButton}>
               <Text style={styles.viewDetailButtonText}>View detail</Text>
             </TouchableOpacity>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-              }}
-            >
-              <TouchableOpacity
+            {deviceIds.find((id) => id === props.device.id) ? (
+              <View
                 style={{
-                  height: 30,
-                  width: 30,
                   display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderColor: FPT_ORANGE_COLOR,
-                  borderWidth: 2,
-                  borderTopLeftRadius: 8,
-                  borderBottomLeftRadius: 8,
+                  flexDirection: 'row',
                 }}
               >
-                <Text
+                <TouchableOpacity
+                  onPress={() => {
+                    if (quantity > 0) {
+                      setQuantity(quantity - 1);
+                    }
+                  }}
                   style={{
-                    color: FPT_ORANGE_COLOR,
-                    fontWeight: '600',
-                    fontSize: deviceWidth / 23,
+                    height: 25,
+                    width: 25,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderColor: FPT_ORANGE_COLOR,
+                    borderWidth: 1,
+                    borderTopLeftRadius: 5,
+                    borderBottomLeftRadius: 5,
                   }}
                 >
-                  -
-                </Text>
-              </TouchableOpacity>
-              <TextInput
-                style={{
-                  height: 30,
-                  width: 30,
-                  borderRightWidth: 0,
-                  borderLeftWidth: 0,
-                  borderTopColor: FPT_ORANGE_COLOR,
-                  borderBottomColor: FPT_ORANGE_COLOR,
-                  borderTopWidth: 2,
-                  borderBottomWidth: 2,
-                }}
-              />
-              <TouchableOpacity
-                style={{
-                  height: 30,
-                  width: 30,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderColor: FPT_ORANGE_COLOR,
-                  borderWidth: 2,
-                  borderTopRightRadius: 8,
-                  borderBottomRightRadius: 8,
-                }}
-              >
-                <Text
+                  <Text
+                    style={{
+                      color: FPT_ORANGE_COLOR,
+                      fontWeight: '600',
+                      fontSize: deviceWidth / 23,
+                    }}
+                  >
+                    -
+                  </Text>
+                </TouchableOpacity>
+                <TextInput
+                  textAlign="center"
+                  value={String(quantity)}
+                  onChangeText={(e) => {
+                    setQuantity(parseInt(e));
+                  }}
                   style={{
                     color: FPT_ORANGE_COLOR,
-                    fontWeight: '600',
-                    fontSize: deviceWidth / 23,
+                    textAlignVertical: 'center',
+                    height: 50,
+                    width: 40,
+                    borderRightWidth: 0,
+                    borderLeftWidth: 0,
+                    borderTopColor: FPT_ORANGE_COLOR,
+                    borderBottomColor: FPT_ORANGE_COLOR,
+                    borderTopWidth: 1,
+                    borderBottomWidth: 1,
+                  }}
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    if (quantity >= 0) {
+                      setQuantity(quantity + 1);
+                    }
+                  }}
+                  style={{
+                    height: 25,
+                    width: 25,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderColor: FPT_ORANGE_COLOR,
+                    borderWidth: 1,
+                    borderTopRightRadius: 5,
+                    borderBottomRightRadius: 5,
                   }}
                 >
-                  +
-                </Text>
-              </TouchableOpacity>
-            </View>
+                  <Text
+                    style={{
+                      color: FPT_ORANGE_COLOR,
+                      fontWeight: '600',
+                      fontSize: deviceWidth / 23,
+                    }}
+                  >
+                    +
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
           </View>
         </View>
       </TouchableOpacity>
@@ -216,14 +269,22 @@ const RoomBooking2: React.FC = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <RequestRoomBookingHeader />
+      <Filtering />
+
       <View style={styles.container}>
-        <RequestRoomBookingHeader />
-        <ScrollView>
-          <Filtering />
-          {devices.map((device) => (
-            <DeviceRenderItem device={device} />
-          ))}
-        </ScrollView>
+        <VirtualizedList
+          style={{
+            marginBottom: deviceWidth / 4.2,
+          }}
+          showsVerticalScrollIndicator={false}
+          data={devices}
+          getItemCount={(data) => data.length}
+          getItem={(data, index) => data[index]}
+          renderItem={(item: ListRenderItemInfo<Device>) => (
+            <DeviceRenderItem key={item.index} device={item.item} />
+          )}
+        />
         <View style={styles.footerContainer}>
           <TouchableOpacity
             onPress={() => navigate.pop()}
@@ -333,13 +394,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10,
+    flexWrap: 'wrap',
+    width: 200,
+    paddingHorizontal: 10,
   },
   deviceContainer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     flexGrow: 1,
   },
   deviceIconContainer: {
@@ -395,20 +457,19 @@ const styles = StyleSheet.create({
   viewDetailButton: {
     borderColor: FPT_ORANGE_COLOR,
     borderWidth: 1,
-    width: deviceWidth / 5,
     height: 30,
+    width: deviceWidth / 4.3,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
-    marginTop: 40,
-    marginRight: 10,
+    borderRadius: 5,
   },
   container: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
     flexGrow: 1,
+    flex: 1,
   },
   nextStepButtonText: {
     fontWeight: '600',
@@ -446,11 +507,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   filterHeaderText: {
-    color: GRAY,
+    color: BLACK,
     fontSize: deviceWidth / 25,
     fontWeight: '600',
-    marginTop: 5,
-    marginLeft: 10,
+    paddingTop: 6,
+    paddingHorizontal: 10,
   },
   filterBodyContainer: {
     margin: 10,

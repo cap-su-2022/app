@@ -33,13 +33,15 @@ export class DevicesService {
   async getAll(request: DevicesPaginationParams) {
     try {
       const result = await this.repository.searchDevices(request);
-      if(result.meta.currentPage > result.meta.totalPages){
+      if (result.meta.currentPage > result.meta.totalPages) {
         throw new BadRequestException('Current page is over');
-      } 
+      }
       return result;
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException(e.message || 'One or more parameters is invalid');
+      throw new BadRequestException(
+        e.message || 'One or more parameters is invalid'
+      );
     }
   }
 
@@ -54,23 +56,14 @@ export class DevicesService {
     }
   }
 
-  getDeviceNames() {
+  async getDeviceNames(search: string, dir: string) {
     try {
-      return this.repository.findDeviceName();
+      return await this.repository.findDeviceName(search, dir);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
-
-  // getBookingRoomDeviceList(name: string, type: string, sort: string) {
-  //   if (!sort) sort = 'ASC';
-  //   if (sort !== 'ASC' && sort !== 'DESC') {
-  //     sort = 'ASC';
-  //   }
-
-  //   return this.repository.findDeviceListByBookingRoomRequest(name, type, sort);
-  // }
 
   async findById(id: string): Promise<Devices> {
     try {
