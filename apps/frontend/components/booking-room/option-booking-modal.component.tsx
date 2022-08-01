@@ -15,6 +15,8 @@ import { BookingRequestParams } from '../../models/pagination-params/booking-roo
 import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
 import BySlotChooseSlotModal from './by-slot-choose-slot-modal.component';
 import { fetchListusernames } from '../../redux/features/account/thunk/fetch-user-names.thunk';
+import ByMultiChooseSlotModal from './by-multi-choose-slot-modal.component';
+import { addMultiRequest } from '../../redux/features/room-booking/thunk/add-multi-booking';
 
 interface SendBookingModalProps {
   isShown: boolean;
@@ -41,18 +43,15 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchSlotNames())
-      .unwrap();
+    dispatch(fetchSlotNames()).unwrap();
   }, []);
 
   useEffect(() => {
-    dispatch(fetchDeviceNames())
-      .unwrap();
+    dispatch(fetchDeviceNames()).unwrap();
   }, []);
 
   useEffect(() => {
-    dispatch(fetchReasonNames())
-      .unwrap();
+    dispatch(fetchReasonNames()).unwrap();
   }, []);
 
   const ModalHeaderTitle: React.FC = () => {
@@ -66,8 +65,10 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
   const Dropdown = () => {
     const [showChooseRoom, setShowChooseRoom] = useState(false);
     const [showChooseSlot, setShowChooseSlot] = useState(false);
+    const [showChooseMultiDay, setShowChooseMultiDay] = useState(false);
     const parentChooseRoom = useRef(null);
     const parentChooseSlot = useRef(null);
+    const parentChooseMultiDay = useRef(null);
 
     useEffect(() => {
       parentChooseRoom.current && autoAnimate(parentChooseRoom.current);
@@ -77,19 +78,36 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
       parentChooseSlot.current && autoAnimate(parentChooseSlot.current);
     }, []);
 
+    useEffect(() => {
+      parentChooseMultiDay.current && autoAnimate(parentChooseMultiDay.current);
+    }, []);
+
     const revealRoom = () => {
       formik.resetForm();
       setShowChooseRoom(!showChooseRoom);
       setShowChooseSlot(false);
+      setShowChooseMultiDay(false);
     };
     const revealSlot = () => {
       formik.resetForm();
       setShowChooseSlot(!showChooseSlot);
       setShowChooseRoom(false);
+      setShowChooseMultiDay(false);
+    };
+    const revealMultiDay = () => {
+      formik.resetForm();
+      console.log(formik.values);
+      setShowChooseMultiDay(!showChooseMultiDay);
+      setShowChooseSlot(false);
+      setShowChooseRoom(false);
     };
 
     const handleSubmit = (value) => {
-      dispatch(addNewRequest(value))
+      dispatch(
+        formik.values.checkoutDate
+          ? addMultiRequest(value)
+          : addNewRequest(value)
+      )
         .unwrap()
         .then(() =>
           showNotification({
@@ -122,6 +140,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
       initialValues: {
         roomId: '',
         checkinDate: null,
+        checkoutDate: null,
         checkinSlot: '',
         checkoutSlot: '',
         bookingReasonId: '',
@@ -137,7 +156,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
       <div>
         <div className={classes.listButton}>
           <div>
-            {!showChooseSlot && (
+            {!showChooseSlot && !showChooseMultiDay && (
               <Button
                 style={{ marginRight: 10 }}
                 onClick={revealRoom}
@@ -148,13 +167,24 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
             )}
           </div>
           <div>
-            {!showChooseRoom && (
+            {!showChooseRoom && !showChooseMultiDay && (
               <Button
                 style={{ marginRight: 10 }}
                 onClick={revealSlot}
                 leftIcon={<BuildingWarehouse />}
               >
                 Book by slot
+              </Button>
+            )}
+          </div>
+          <div>
+            {!showChooseRoom && !showChooseSlot && (
+              <Button
+                style={{ marginRight: 10 }}
+                onClick={revealMultiDay}
+                leftIcon={<BuildingWarehouse />}
+              >
+                Multi Day Booking
               </Button>
             )}
           </div>
@@ -179,6 +209,16 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
             />
           )}
         </div>
+
+        <div ref={parentChooseMultiDay}>
+          {showChooseMultiDay && (
+            <ByMultiChooseSlotModal
+              formik={formik}
+              handleSubmit={() => formik.handleSubmit()}
+              listUsernames={listUsernames}
+            />
+          )}
+        </div>
       </div>
     );
   };
@@ -193,7 +233,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
         opened={props.isShown}
         onClose={() => props.toggleShown()}
       >
-        <div style={{minWidth: 600}}>
+        <div style={{ minWidth: 600 }}>
           <Dropdown />
         </div>
       </Modal>

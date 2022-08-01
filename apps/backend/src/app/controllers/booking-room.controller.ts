@@ -7,21 +7,19 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Post,
   Put,
   Query,
   UseInterceptors,
 } from '@nestjs/common';
 import {BookingRoomService} from '../services';
-import {BookingRoomResponseDTO} from '../dto/booking-room.response.dto';
 import {WishlistBookingRoomResponseDTO} from '../dto/wishlist-booking-room.response.dto';
 import {User} from '../decorators/keycloak-user.decorator';
 import {WishlistBookingRoomRequestDTO} from '../dto/wishlist-booking-room.request.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiParam, ApiQuery,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';

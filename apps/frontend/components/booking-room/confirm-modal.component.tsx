@@ -105,6 +105,26 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
               {dayjs(props.formik.values.checkinDate).format('ddd DD-MM-YYYY')}
             </div>
           </div>
+          {props.formik.values.checkoutDate ? (
+            <div className={classes.nameAndDateDiv}>
+              <b style={{ marginRight: 10, flexBasis: '30%' }}>
+                Date check out:
+              </b>
+              <div
+                style={{
+                  backgroundColor: 'white',
+                  padding: 5,
+                  borderRadius: 5,
+                  flexBasis: '70%',
+                  color: 'black',
+                }}
+              >
+                {dayjs(props.formik.values.checkoutDate).format(
+                  'ddd DD-MM-YYYY'
+                )}
+              </div>
+            </div>
+          ) : null}
           <div
             style={{
               display: 'flex',
@@ -229,7 +249,7 @@ const useStyles = createStyles({
       'rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px',
     width: '80%',
     borderRadius: '5px',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   otherDiv: {
     padding: 10,

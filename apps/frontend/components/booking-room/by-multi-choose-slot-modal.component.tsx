@@ -10,7 +10,7 @@ import BySlotChooseRoomModal from './by-slot-choose-room-modal.component';
 import ChooseDeviceModal from './choose-device-modal.component';
 import ConfirmModal from './confirm-modal.component';
 
-interface ChooseSlotModalProps {
+interface ChooseMultiDayModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
   listUsernames: any[];
@@ -31,8 +31,7 @@ interface UserInfoModel {
   img: File;
 }
 
-const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
-  // const { classes } = useStyles();
+const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
   const [showChooseRoom, setShowChooseRoom] = useState(false);
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(true);
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
@@ -54,7 +53,6 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       return { value: slot.id, label: slot.name };
     });
     setSlotNames(result);
-    console.log('RESULT: ', result);
   }, []);
 
   useEffect(() => {
@@ -80,6 +78,19 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       }
     }
   }, [props.formik.values.checkinSlot, props.formik.values.checkoutSlot]);
+
+  useEffect(() => {
+    if (props.formik.values.checkinDate && props.formik.values.checkoutDate) {
+      if (props.formik.values.checkinDate > props.formik.values.checkoutDate) {
+        const tmp = props.formik.values.checkinDate;
+        props.formik.setFieldValue(
+          'checkinDate',
+          props.formik.values.checkoutDate
+        );
+        props.formik.setFieldValue('checkoutDate', tmp);
+      }
+    }
+  }, [props.formik.values.checkinDate, props.formik.values.checkoutDate]);
 
   useEffect(() => {
     if (props.formik.values.checkinSlot) {
@@ -161,6 +172,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const handleNextChooseRoom = () => {
     if (
       props.formik.values.checkinDate === null ||
+      props.formik.values.checkoutDate === null ||
       props.formik.values.checkinSlot === null ||
       props.formik.values.checkoutSlot === null
     ) {
@@ -208,68 +220,105 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       <div
         style={{
           display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          margin: "20px 0",
+          flexDirection: 'column',
+          // alignItems: 'flex-start',
+          // justifyContent: 'center',
+          margin: '20px 0',
         }}
       >
-        <DatePicker
-          id="checkinDate"
-          style={{ width: '200px', marginRight: 20 }}
-          label="Book date"
-          placeholder="Select date"
-          radius="md"
-          required
-          inputFormat="DD/MM/YYYY"
-          value={props.formik.values.checkinDate}
-          minDate={dayjs(new Date()).toDate()}
-          maxDate={dayjs(new Date()).startOf('weeks').add(21, 'days').toDate()}
-          // onChange={(date) => setbookDate(date)}
-          onChange={(date) => {
-            props.formik.setFieldValue('checkinDate', date);
-          }}
-          excludeDate={(date) => date.getDay() === 0 || date.getDay() === 7}
-        />
-        <div style={{height: 90}}>
-          <Select
-            id="checkinSlot"
-            style={{width: '140px' }}
-            label="From slot"
-            required
-            transition="pop-top-left"
-            transitionDuration={80}
-            transitionTimingFunction="ease"
-            dropdownPosition="top"
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <DatePicker
+            id="checkinDate"
+            style={{ width: '250px' }}
+            label="Date start"
+            placeholder="Select date"
             radius="md"
-            data={slotNames || []}
-            onChange={props.formik.handleChange('checkinSlot')}
-            value={props.formik.values.checkinSlot}
+            required
+            inputFormat="DD/MM/YYYY"
+            value={props.formik.values.checkinDate}
+            minDate={dayjs(new Date()).toDate()}
+            maxDate={dayjs(new Date())
+              .startOf('weeks')
+              .add(21, 'days')
+              .toDate()}
+            onChange={(date) => {
+              props.formik.setFieldValue('checkinDate', date);
+            }}
+            excludeDate={(date) => date.getDay() === 0 || date.getDay() === 7}
           />
-          <div style={{paddingLeft: 10, fontSize: 15}}>{timeStart.slice(0, 5)}</div>
-        </div>
-        <ChevronsRight
-          size={28}
-          strokeWidth={2}
-          color={'black'}
-          style={{ margin: 'auto' }}
-        />
 
-        <div style={{height: 90}}>
-          <Select
-            id="checkoutSlot"
-            style={{ width: '140px' }}
-            label="To slot"
-            required
-            transition="pop-top-left"
-            transitionDuration={80}
-            transitionTimingFunction="ease"
-            dropdownPosition="top"
-            radius="md"
-            data={slotNames || []}
-            onChange={props.formik.handleChange('checkoutSlot')}
-            value={props.formik.values.checkoutSlot}
+          <ChevronsRight
+            size={28}
+            strokeWidth={2}
+            color={'black'}
+            style={{ margin: 'auto 40px', position: 'relative', top: 15 }}
           />
-          <div style={{paddingLeft: 10, fontSize: 15}}>{timeEnd.slice(0, 5)}</div>
+
+          <DatePicker
+            id="checkoutDate"
+            style={{ width: '250px' }}
+            label="Date end"
+            placeholder="Select date"
+            radius="md"
+            required
+            inputFormat="DD/MM/YYYY"
+            value={props.formik.values.checkoutDate}
+            minDate={dayjs(new Date()).toDate()}
+            maxDate={dayjs(new Date())
+              .startOf('weeks')
+              .add(21, 'days')
+              .toDate()}
+            onChange={(date) => {
+              props.formik.setFieldValue('checkoutDate', date);
+            }}
+            excludeDate={(date) => date.getDay() === 0 || date.getDay() === 7}
+          />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{ height: 90 }}>
+            <Select
+              id="checkinSlot"
+              style={{ width: '140px' }}
+              label="From slot"
+              required
+              transition="pop-top-left"
+              transitionDuration={80}
+              transitionTimingFunction="ease"
+              dropdownPosition="top"
+              radius="md"
+              data={slotNames || []}
+              onChange={props.formik.handleChange('checkinSlot')}
+              value={props.formik.values.checkinSlot}
+            />
+            <div style={{ paddingLeft: 10, fontSize: 15 }}>
+              {timeStart.slice(0, 5)}
+            </div>
+          </div>
+          <ChevronsRight
+            size={28}
+            strokeWidth={2}
+            color={'black'}
+            style={{ margin: 'auto 40px' }}
+          />
+          <div style={{ height: 90 }}>
+            <Select
+              id="checkoutSlot"
+              style={{ width: '140px' }}
+              label="To slot"
+              required
+              transition="pop-top-left"
+              transitionDuration={80}
+              transitionTimingFunction="ease"
+              dropdownPosition="top"
+              radius="md"
+              data={slotNames || []}
+              onChange={props.formik.handleChange('checkoutSlot')}
+              value={props.formik.values.checkoutSlot}
+            />
+            <div style={{ paddingLeft: 10, fontSize: 15 }}>
+              {timeEnd.slice(0, 5)}
+            </div>
+          </div>
         </div>
       </div>
       {userInfo.role !== 'Staff' ? (
@@ -327,4 +376,4 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
 
 const useStyles = createStyles({});
 
-export default BySlotChooseSlotModal;
+export default ByMultiChooseSlotModal;
