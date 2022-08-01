@@ -16,7 +16,7 @@ import { fetchAllSlots } from '../../../redux/features/slot';
 import { Slot } from '../../../redux/models/slot.model';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import {
-  saveFromSlotNum,
+  saveFromSlotNum, saveMultiDate,
   saveStartDay,
   saveToday,
   saveToSlotNum, step1BookingLongTerm,
@@ -187,7 +187,10 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
           >
             <DateSelect
               isChecked={isMultiDateChecked}
-              handleCheck={() => setMultiDateChecked(!isMultiDateChecked)}
+              handleCheck={() => {
+                dispatch(saveMultiDate(!isMultiDateChecked))
+                setMultiDateChecked(!isMultiDateChecked)
+              }}
             />
             <SlotSelect
               isChecked={isMultiSlotChecked}

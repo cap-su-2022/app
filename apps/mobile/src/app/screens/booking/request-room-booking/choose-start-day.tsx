@@ -22,6 +22,7 @@ const StartDayCalendar: React.FC<any> = (props) => {
   const [dayStart, setDayStart] = useState<string>('');
   const currentDate = new Date().toJSON().slice(0, 10);
   const toDay = useAppSelector((state) => state.roomBooking.addRoomBooking.toDay);
+  const isMultiDate = useAppSelector((state) => state.roomBooking.addRoomBooking.isMultiDate)
   const handleDayPress = (day) => {
     setDayStart(day.dateString);
     dispatch(saveStartDay({ fromDay: day.dateString }));
@@ -33,7 +34,7 @@ const StartDayCalendar: React.FC<any> = (props) => {
         <Calendar
           initialDate={currentDate}
           minDate={currentDate}
-          maxDate={toDay}
+          maxDate={isMultiDate ? toDay : null}
           onDayPress={(day) => handleDayPress(day)}
           markedDates={{
             [dayStart]: {
