@@ -13,7 +13,7 @@ export const rejectCheckoutBookingRequest = createAsyncThunk<
 >('booking-room/reject-checkout-booking-request', async (payload, thunkAPI) => {
   return await axiosPutAPICall(
     `${API_URL}/booking-room/reject-checkout/${payload}`,
-    undefined,
+    undefined, undefined,
     thunkAPI
   );
 });

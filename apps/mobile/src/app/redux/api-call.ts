@@ -44,11 +44,11 @@ export const axiosPostAPICall = async (url, params, thunkAPI) => {
   }
 };
 
-export const axiosPutAPICall = async (url, params, thunkAPI) => {
+export const axiosPutAPICall = async (url, body, params, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
 
   try {
-    const response = await axios.put(url, {
+    const response = await axios.put(url, body, {
       params: params,
       headers: {
         Authorization: LOCAL_STORAGE.getString('accessToken'),

@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
+  Text, TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -34,7 +34,7 @@ import {
 import Divider from '../../../components/text/divider';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import dayjs from 'dayjs';
-import AcceptBookingFooter from './footer';
+import ResolveFeedbackFooter from './footer';
 import { acceptCheckinBookingRequest } from '../../../redux/features/room-booking/thunk/accept-checkin-booking-request.thunk';
 import { rejectCheckinBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkin-booking-request.thunk';
 import { acceptBookingRequest } from '../../../redux/features/room-booking/thunk/accept-booking-request.thunk';
@@ -42,6 +42,10 @@ import { rejectBookingRequest } from '../../../redux/features/room-booking/thunk
 import { acceptCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/accept-checkout-booking-request.thunk';
 import { rejectCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkout-booking-request.thunk';
 import { fetchDeviceInUseByBookingRequestId } from '../../../redux/features/room-booking/thunk/fetch-devices-in-use-by-booking-request-id.thunk';
+import AlertModal from "../../../components/modals/alert-modal.component";
+import {resolveFeedback} from "../../../redux/features/feedback/thunk/resolve-feedback.thunk";
+import {cancelFeedback} from "../../../redux/features/feedback/thunk/cancel-feedback.thunk";
+import {useFormik} from "formik";
 
 const AcceptFeedback: React.FC<any> = () => {
   const dispatch = useAppDispatch();
@@ -49,110 +53,213 @@ const AcceptFeedback: React.FC<any> = () => {
   const { feedback } = useAppSelector((state) => state.feedback);
   const authUser = useAppSelector((state) => state.auth.authUser);
 
-  const handleRejectBookingRequest = () => {
-    dispatch(rejectBookingRequest(feedback.id))
-      .unwrap()
-      .then(() => navigate.replace('TRACK_BOOKING_ROOM'))
-      .catch(() =>
-        alert('Error while processing your request. Please try again')
-      );
+  const handleResolveAction = () => {
+    setResolveModalShown(!isResolveModalShown);
   };
 
-  const handleAcceptBookingRequest = () => {
-    dispatch(acceptBookingRequest(feedback.id))
-      .unwrap()
-      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_FEEDBACK'))
-      .catch((e) => alert(e.message));
-  };
+  const [isResolveModalShown, setResolveModalShown] = useState(false);
+  const [isCancelModalShown, setCancelModalShown] = useState(false);
 
-  const handleRejectCheckout = () => {
-    dispatch(rejectCheckoutBookingRequest(feedback.id))
-      .unwrap()
-      .then(() => navigate.replace('TRACK_BOOKING_ROOM'))
-      .catch(() =>
-        alert('Error while processing your request. Please try again')
-      );
-  };
-
-  const handleAcceptCheckout = () => {
-    dispatch(acceptCheckoutBookingRequest(feedback.id))
-      .unwrap()
-      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_FEEDBACK'))
-      .catch((e) => alert(e.message));
-  };
-
-  const handleAcceptCheckin = () => {
-    dispatch(acceptCheckinBookingRequest(feedback.id))
-      .unwrap()
-      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_FEEDBACK'))
-      .catch((e) => alert(e.message));
-  };
-
-  const handleRejectCheckin = () => {
-    dispatch(rejectCheckinBookingRequest(feedback.id))
-      .unwrap()
-      .then(() => navigate.replace('TRACK_BOOKING_ROOM'))
-      .catch(() =>
-        alert('Error while processing your request. Please try again')
-      );
-  };
-
-  const handleAcceptAction = () => {
-    if (feedback.status === BOOKED) {
-      return handleAcceptCheckin();
-    } else if (feedback.status === PENDING) {
-      return handleAcceptBookingRequest();
-    } else {
-      return handleAcceptCheckout();
-    }
-  };
-
-  const handleViewDevices = (id) => {
-    dispatch(fetchDeviceInUseByBookingRequestId(id))
-      .unwrap()
-      .then((val) => {
-        navigate.navigate('ACCEPT_BOOKING_LIST_DEVICES');
-      });
-  };
-
-  const handleRejectAction = () => {
-    if (feedback.status === BOOKED) {
-      return handleRejectCheckin();
-    } else if (feedback.status === PENDING) {
-      return handleRejectBookingRequest();
-    } else {
-      return handleRejectCheckout();
-    }
-  };
-
-  const handleStatusMessageConvert = () => {
-    switch (feedback.status) {
-      case PENDING:
-        return 'book';
-      case BOOKED:
-        return 'check-in';
-      case CHECKED_IN:
-        return 'check-out';
-    }
+  const handleCancelAction = () => {
+    setCancelModalShown(!isCancelModalShown);
   };
 
   const renderFooter = () => {
-    if (
-      authUser.role === 'Staff' &&
-      (feedback.status === 'BOOKED' || feedback.status === 'PENDING')
-    ) {
+    if (authUser.role === 'Staff') {
       return (
         <></>
       );
     }
-    return feedback.status !== CANCELLED &&
-    feedback.status !== CHECKED_OUT ? (
-      <AcceptBookingFooter
-        handleReject={() => handleRejectAction()}
-        handleAccept={() => handleAcceptAction()}
+    return feedback.status !== "REJECTED" &&
+    feedback.status !== "RESOLVED" ? (
+      <ResolveFeedbackFooter
+        handleReject={() => handleCancelAction()}
+        handleAccept={() => handleResolveAction()}
       />
     ) : null;
   };
+
+  const resolveFeedbackModal = useRef();
+  const rejectFeedbackModal = useRef();
+
+  const handleAttemptResolveFeedback = () => {
+    dispatch(resolveFeedback({
+      id: feedback.id,
+      replyMessage: resolveFeedbackModal.current ? resolveFeedbackModal.current.message : undefined
+    })).unwrap()
+      .then(() => setResolveModalShown(!isResolveModalShown))
+      .then(() => navigate.replace("TRACK_FEEDBACK_ROUTE"))
+      .catch((e) => alert(JSON.stringify(e)));
+  }
+
+  const handleAttemptCancelFeedback = () => {
+    dispatch(cancelFeedback({
+      id: feedback.id,
+      replyMessage: rejectFeedbackModal.current ? rejectFeedbackModal.current.message : undefined
+    })).unwrap()
+      .then(() => setCancelModalShown(!isCancelModalShown))
+      .then(() => navigate.replace("TRACK_FEEDBACK_ROUTE"))
+      .catch((e) => alert(JSON.stringify(e)));
+  }
+
+
+
+  const CancelAlertModal: React.ForwardRefRenderFunction<{message: string}, undefined> = (props, ref) => {
+
+    const [message, setMessage] = useState<string>();
+
+    useImperativeHandle(ref, () => ({
+      message: message,
+    }));
+
+    return (
+      <AlertModal height={300} width={deviceWidth / 1.1} isOpened={isCancelModalShown} toggleShown={() => setCancelModalShown(!isCancelModalShown)}>
+        <View style={{
+          display: 'flex',
+          flex: 1,
+          flexGrow: 0.9,
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <Text style={{
+            fontWeight: '600',
+            fontSize: deviceWidth / 21,
+            color: BLACK
+          }}>Please input resolve message</Text>
+          <TextInput
+            onChangeText={(e) => setMessage(message)}
+          style={{
+            backgroundColor: LIGHT_GRAY,
+            width: deviceWidth / 1.2,
+            borderRadius: 8,
+            textAlignVertical: "top",
+            paddingHorizontal: 10,
+          }} placeholder="Please share your reject message..." multiline numberOfLines={8}/>
+          <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            width: deviceWidth / 1.1
+          }}>
+            <TouchableOpacity onPress={() => setCancelModalShown(!isCancelModalShown)} style={{
+              height: 40,
+              width: deviceWidth / 2.8,
+              borderWidth: 2,
+              borderColor: FPT_ORANGE_COLOR,
+              borderRadius: 8,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+              <Text style={{
+                fontSize: deviceWidth / 23,
+                fontWeight: '500',
+                color: FPT_ORANGE_COLOR,
+              }}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleAttemptCancelFeedback()} style={{
+              height: 40,
+              width: deviceWidth / 2.2,
+              backgroundColor: FPT_ORANGE_COLOR,
+              borderRadius: 8,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+              <Text style={{
+                fontSize: deviceWidth / 23,
+                color: WHITE,
+                fontWeight: '500'
+              }}>
+                Attempt resolve
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </AlertModal>
+    );
+  }
+
+  const CancelAlertModalRef = forwardRef(CancelAlertModal);
+
+  const ResolveAlertModal: React.ForwardRefRenderFunction<{message: string}, undefined> = ((props, ref) => {
+
+    const [message, setMessage] = useState<string>();
+
+    useImperativeHandle(ref, () => ({
+      message: message
+    }));
+
+    return (
+      <AlertModal height={300} width={deviceWidth / 1.1} isOpened={isResolveModalShown} toggleShown={() => setResolveModalShown(!isResolveModalShown)}>
+        <View style={{
+          display: 'flex',
+          flex: 1,
+          flexGrow: 0.9,
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <Text style={{
+            fontWeight: '600',
+            fontSize: deviceWidth / 21,
+            color: BLACK
+          }}>Please input reject message</Text>
+          <TextInput
+            value={message}
+            onChangeText={(e) => setMessage(e)}
+            style={{
+            backgroundColor: LIGHT_GRAY,
+            width: deviceWidth / 1.2,
+            borderRadius: 8,
+            textAlignVertical: "top",
+            paddingHorizontal: 10,
+          }} placeholder="Please share your resolve message..." multiline numberOfLines={8}/>
+          <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            width: deviceWidth / 1.1
+          }}>
+            <TouchableOpacity onPress={() => setResolveModalShown(!isResolveModalShown)} style={{
+              height: 40,
+              width: deviceWidth / 2.8,
+              borderWidth: 2,
+              borderColor: FPT_ORANGE_COLOR,
+              borderRadius: 8,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+              <Text style={{
+                fontSize: deviceWidth / 23,
+                fontWeight: '500',
+                color: FPT_ORANGE_COLOR,
+              }}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleAttemptResolveFeedback()} style={{
+              height: 40,
+              width: deviceWidth / 2.2,
+              backgroundColor: FPT_ORANGE_COLOR,
+              borderRadius: 8,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+              <Text style={{
+                fontSize: deviceWidth / 23,
+                color: WHITE,
+                fontWeight: '500'
+              }}>
+                Attempt resolve
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </AlertModal>
+    );
+  })
+
+  const ResolveAlertModalRef = forwardRef(ResolveAlertModal);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
@@ -205,20 +312,20 @@ const AcceptFeedback: React.FC<any> = () => {
               </Text>
             ) : null}
             <Text style={styles.informationHeaderTitle}>
-              BOOKING INFORMATION
+              FEEDBACK INFORMATION
             </Text>
             <View style={styles.bookingInformationContainer}>
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Created By</Text>
                 <Text style={styles.valueText}>{feedback.createdBy}</Text>
               </View>
+              <Divider num={deviceWidth / 10} />
 
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Created at</Text>
                 <Text style={styles.valueText}>
-                  {feedback.createdAt} -{' '}
                   {dayjs(new Date(feedback.createdAt)).format(
-                    'DD/MM/YYYY'
+                    'HH:mm DD/MM/YYYY'
                   )}
                 </Text>
               </View>
@@ -243,7 +350,7 @@ const AcceptFeedback: React.FC<any> = () => {
                 ]}
               >
                 <View style={styles.dataRowContainer}>
-                  <Text style={styles.titleText}>Feeback ID</Text>
+                  <Text style={styles.titleText}>Feedback ID</Text>
                   <Text style={styles.valueText}>{feedback.id}</Text>
                 </View>
 
@@ -263,6 +370,8 @@ const AcceptFeedback: React.FC<any> = () => {
         </ScrollView>
         {renderFooter()}
       </View>
+      <ResolveAlertModalRef ref={resolveFeedbackModal}/>
+      <CancelAlertModalRef ref={rejectFeedbackModal}/>
     </SafeAreaView>
   );
 };
@@ -326,11 +435,10 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   informationHeaderTitle: {
-    marginTop: 20,
+    paddingTop: 20,
     color: GRAY,
     fontSize: deviceWidth / 23,
     fontWeight: '600',
-    marginLeft: 20,
   },
   dataRowContainer: {
     flex: 1,

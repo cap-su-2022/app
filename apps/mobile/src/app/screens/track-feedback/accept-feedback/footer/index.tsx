@@ -9,7 +9,7 @@ interface AcceptBookingFooterProps {
   handleAccept(): void;
 }
 
-const AcceptBookingFooter: React.FC<AcceptBookingFooterProps> = (props) => {
+const ResolveFeedbackFooter: React.FC<AcceptBookingFooterProps> = (props) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -17,14 +17,14 @@ const AcceptBookingFooter: React.FC<AcceptBookingFooterProps> = (props) => {
         style={styles.goBackButton}
       >
         <XCircleIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 14} />
-        <Text style={styles.goBackButtonText}>Reject</Text>
+        <Text style={styles.goBackButtonText}>Cancel</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => props.handleAccept()}
         style={styles.acceptButton}
       >
         <CheckCircleIcon color={WHITE} size={deviceWidth / 14} />
-        <Text style={styles.acceptButtonText}>Accept</Text>
+        <Text style={styles.acceptButtonText}>Resolve</Text>
       </TouchableOpacity>
     </View>
   );
@@ -76,4 +76,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AcceptBookingFooter;
+export default ResolveFeedbackFooter;
