@@ -8,9 +8,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
+import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
-import { SearchIcon, TicketIcon } from 'react-native-heroicons/outline';
+import {
+  ExclamationCircleIcon,
+  SearchIcon,
+  TicketIcon,
+} from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import { fetchAllSlots } from '../../../redux/features/slot';
 import { Slot } from '../../../redux/models/slot.model';
@@ -31,6 +35,7 @@ import RequestRoomBookingRecentlySearch from './recently-search';
 import SlotSelect from './slot-select';
 import { fetchRoomFreeByMultiSlotAndDay } from '../../../redux/features/room-booking/thunk/fetch-room-free-by-multi-day-and-slot.thunk';
 import { checkOverSlot } from '../../../redux/features/room-booking/thunk/check-over-slot.thunk';
+import AlertModal from '../../../components/modals/alert-modal.component';
 
 const ScheduleRoomBookingLater: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -96,8 +101,10 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       .unwrap()
       .then((value) => {
         if (value === true) {
-          alert('This slot is over time! Please choose another slot');
-          return;
+          setGenericMessage(
+            'This slot is already passed. Please choose the next slot or the next day and try again.'
+          );
+          setGenericModalShown(!isGenericModalShown);
         } else {
           dispatch(saveFromSlotNum({ fromSlotNum: slotStartNum.slotNum }));
           dispatch(saveToSlotNum({ toSlotNum: slotEndNum.slotNum }));
@@ -183,9 +190,71 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       };
     } else if (isMultiDateChecked || isMultiSlotChecked) {
       return {
-        height: Platform.OS === 'android' ? deviceHeight / 2.2 : 340,
+        height: Platform.OS === 'android' ? deviceHeight / 2.2 : 350,
       };
     }
+  };
+  const [genericMessage, setGenericMessage] = useState<string>();
+  const [isGenericModalShown, setGenericModalShown] = useState<boolean>(false);
+
+  const GenericAlertModal = ({ message }) => {
+    return (
+      <AlertModal
+        isOpened={isGenericModalShown}
+        height={200}
+        width={deviceWidth / 1.1}
+        toggleShown={() => setGenericModalShown(!isGenericModalShown)}
+      >
+        <View
+          style={{
+            display: 'flex',
+            flex: 1,
+            flexGrow: 0.9,
+            justifyContent: 'space-between',
+            paddingHorizontal: 10,
+          }}
+        >
+          <ExclamationCircleIcon
+            style={{
+              alignSelf: 'center',
+            }}
+            size={deviceWidth / 8}
+            color={FPT_ORANGE_COLOR}
+          />
+          <Text
+            style={{
+              color: BLACK,
+              fontWeight: '500',
+              fontSize: deviceWidth / 23,
+              textAlign: 'center',
+            }}
+          >
+            {message}
+          </Text>
+          <TouchableOpacity
+            onPress={() => setGenericModalShown(!isGenericModalShown)}
+            style={{
+              backgroundColor: FPT_ORANGE_COLOR,
+              height: 40,
+              borderRadius: 8,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: '500',
+                fontSize: deviceWidth / 23,
+                color: WHITE,
+              }}
+            >
+              Close
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </AlertModal>
+    );
   };
 
   return (
@@ -238,6 +307,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
         </View>
       </ScrollView>
       <RequestRoomBookingRecentlySearch />
+      <GenericAlertModal message={genericMessage} />
     </SafeAreaView>
   );
 };

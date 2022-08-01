@@ -7,20 +7,18 @@ interface DevicesState {
 }
 
 const initialState: DevicesState = {
-  devices: []
+  devices: [],
 };
 
 const devicesSlice = createSlice({
-  name: "device",
+  name: 'device',
   initialState: initialState,
-  reducers: {
-
-  },
+  reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchAllDevices.fulfilled, (state, {payload}) => {
+    builder.addCase(fetchAllDevices.fulfilled, (state, { payload }) => {
       state.devices = payload;
     });
-  }
+  },
 });
 
 export const deviceReducer = devicesSlice.reducer;
