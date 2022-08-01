@@ -86,6 +86,7 @@ const SlotSelect: React.FC<SelectSlotsProps> = (props) => {
           </Text>
           <View style={styles.slotPicker}>
             <RNPickerSelect
+              placeholder={{}}
               fixAndroidTouchableBug={true}
               items={slotStartSelections}
               style={pickerStyles}
@@ -108,6 +109,7 @@ const SlotSelect: React.FC<SelectSlotsProps> = (props) => {
 
           <View style={[styles.slotPicker, { width: deviceWidth / 1.2 }]}>
             <RNPickerSelect
+              placeholder={{}}
               fixAndroidTouchableBug={true}
               items={slotEndSelections}
               style={pickerStyles}

@@ -69,6 +69,7 @@ interface AddRoomBookingPayload {
   devices: BookingDevice[];
   deviceNames: string[];
   isMultiSlot: boolean;
+  isMultiDate: boolean;
   rooms: Room[];
   isMultiLongTerm: boolean
 }
@@ -209,6 +210,12 @@ const roomBookingSlice = createSlice({
         isMultiLongTerm: payload.isMultiLongTerm
       };
     },
+    saveMultiDate(state, {payload}) {
+      state.addRoomBooking = {
+        ...state.addRoomBooking,
+        isMultiDate: payload.isMultiDate
+      }
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAllBookingRooms.fulfilled, (state, { payload }) => {
@@ -297,5 +304,6 @@ export const {
   resetGlobalDateStart,
   resetGlobalDateEnd,
   step1BookRoomFromWishList,
-  step1BookingLongTerm
+  step1BookingLongTerm,
+  saveMultiDate
 } = roomBookingSlice.actions;
