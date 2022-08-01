@@ -24,6 +24,11 @@ export class FeedbackService {
 
   async getAllFeedbacks(accountId: string, param: FeedbackPaginationPayload) {
     try {
+      if (param.fromDate > param.toDate) {
+        throw new BadRequestException(
+          'From date must be less than or equal to To date'
+        );
+      }
       const roleName = await this.accountService.getAccountRoleById(accountId);
       if (roleName === 'Staff') {
         return await this.repository.findByPagination(accountId, param);

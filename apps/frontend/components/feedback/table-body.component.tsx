@@ -40,6 +40,10 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const { classes } = useStyles();
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -61,7 +65,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           <div className={classes.pendingDisplay}>{row.status}</div>
         ) : row.status === 'RESOLVED' ? (
           <div className={classes.resolvedDisplay}>{row.status}</div>
-        )  : row.status === 'REJECTED' ? (
+        ) : row.status === 'REJECTED' ? (
           <div className={classes.rejectedDisplay}>{row.status}</div>
         ) : null}
       </td>
@@ -72,13 +76,15 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
         >
           <InfoCircle />
         </Button>
-        <Button
-          variant="outline"
-          color="green"
-          onClick={() => props.actionButtonCb.update(row.id)}
-        >
-          <Pencil />
-        </Button>
+        {userInfo.role === 'Staff' && (
+          <Button
+            variant="outline"
+            color="green"
+            onClick={() => props.actionButtonCb.update(row.id)}
+          >
+            <Pencil />
+          </Button>
+        )}
         {/* <Button
           variant="outline"
           color="red"

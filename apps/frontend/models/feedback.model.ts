@@ -1,4 +1,5 @@
 export interface Feedback {
+  feedbackType: string;
   replyMess: string;
   id?: string;
   feedbackMess?: string;

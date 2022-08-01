@@ -98,6 +98,15 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
               />
             </InputWrapper>
           </div>
+
+          <InputWrapper label="Feedback type" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText />}
+                radius="md"
+                readOnly
+                value={feedback.feedbackType}
+              />
+            </InputWrapper>
           <InputWrapper
             label="Feedback message"
             className={classes.inputWrapper}
