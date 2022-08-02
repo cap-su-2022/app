@@ -35,6 +35,7 @@ import AlertModal from '../../../components/modals/alert-modal.component';
 import QRCode from 'react-native-qrcode-svg';
 import Divider from '../../../components/text/divider';
 import dayjs from 'dayjs';
+import { fetchAllSlots } from '../../../redux/features/slot';
 
 const RoomBookingReadyToCheckIn: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -58,14 +59,24 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
 
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('Error');
-
+  const slots = useAppSelector((state) => state.slot.slots);
   const bookingRoom = useAppSelector(
     (state) => state.roomBooking.currentCheckinInformation
   );
 
+  const timeSlotCheckin = slots
+    .find((slot) => slot.slotNum === bookingRoom.checkinSlot)
+    .timeStart.slice(0, 5);
+  const timeSlotCheckout = slots
+    .find((slot) => slot.slotNum === bookingRoom.checkoutSlot)
+    .timeEnd.slice(0, 5);
   const [isQRModalShown, setQRModalShown] = useState<boolean>(false);
 
   useEffect(() => {
+    dispatch(fetchAllSlots())
+      .unwrap()
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .then((val) => {});
     return () => {
       setQRModalShown(false);
       setErrorModalShown(false);
@@ -189,7 +200,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
                   fontWeight: '500',
                 }}
               >
-                Checkin at Slot {bookingRoom.checkinSlot}{' '}
+                Checkin at {timeSlotCheckin}{' '}
                 {dayjs(bookingRoom.checkinDate).format('ddd DD/MM/YYYY')}
               </Text>
             </View>
@@ -209,7 +220,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
                   fontWeight: '500',
                 }}
               >
-                Checkout at Slot {bookingRoom.checkoutSlot}{' '}
+                Checkout at {timeSlotCheckout}{' '}
                 {dayjs(bookingRoom.checkinDate).format('ddd DD/MM/YYYY')}
               </Text>
             </View>
@@ -285,7 +296,6 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
         >
           <ReadyToCheckinBookingInformation />
           <ReadyToCheckinMoreInformation />
-
         </ScrollView>
         <View style={styles.footer}>
           <TouchableOpacity

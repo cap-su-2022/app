@@ -20,9 +20,16 @@ const ReadyToCheckinBookingInformation: React.FC<
 > = (props) => {
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch()
+  const slots = useAppSelector((state) => state.slot.slots);
   const { currentCheckinInformation } = useAppSelector(
     (state) => state.roomBooking
   );
+  const timeSlotCheckin = slots
+    .find((slot) => slot.slotNum === currentCheckinInformation.checkinSlot)
+    .timeStart.slice(0, 5);
+  const timeSlotCheckout = slots
+    .find((slot) => slot.slotNum === currentCheckinInformation.checkoutSlot)
+    .timeEnd.slice(0, 5);
 
   const handleViewDevices = (id) => {
     dispatch(fetchDeviceInUseByBookingRequestId(id))
@@ -54,7 +61,7 @@ const ReadyToCheckinBookingInformation: React.FC<
         <View style={styles.dataRowContainer}>
           <Text style={styles.titleText}>Check-in Time</Text>
           <Text style={styles.valueText}>
-            Slot {currentCheckinInformation.checkinSlot} -{' '}
+            {timeSlotCheckin} -{'  '}
             {dayjs(new Date(currentCheckinInformation.checkinDate)).format(
               'DD/MM/YYYY'
             )}
@@ -66,7 +73,7 @@ const ReadyToCheckinBookingInformation: React.FC<
         <View style={styles.dataRowContainer}>
           <Text style={styles.titleText}>Check-out Time</Text>
           <Text style={styles.valueText}>
-            Slot {currentCheckinInformation.checkoutSlot} -{' '}
+           {timeSlotCheckout} -{'  '}
             {dayjs(new Date(currentCheckinInformation.checkinDate)).format(
               'DD/MM/YYYY'
             )}
