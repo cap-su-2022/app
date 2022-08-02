@@ -56,8 +56,11 @@ const AcceptBooking: React.FC<any> = () => {
   const { bookingRoom } = useAppSelector((state) => state.roomBooking);
   const authUser = useAppSelector((state) => state.auth.authUser);
   const [isCancelModalShown, setCancelModalShown] = useState(false);
+  const [isRejectModalShow, setRejectModalShown] = useState(false)
   const cancelBookingRequestModal =
     useRef<React.ElementRef<typeof CancelAlertModalRef>>();
+
+  const rejectBookingRequestModal = useRef<React.ElementRef<typeof RejectAlertModalRef>>()
 
   const handleRejectBookingRequest = () => {
     dispatch(rejectBookingRequest(bookingRoom.id))
@@ -99,12 +102,25 @@ const AcceptBooking: React.FC<any> = () => {
   };
 
   const handleRejectCheckin = () => {
-    dispatch(rejectCheckinBookingRequest(bookingRoom.id))
+    dispatch(
+      rejectCheckinBookingRequest({
+        id: bookingRoom.id,
+        reason: rejectBookingRequestModal.current
+          ? rejectBookingRequestModal.current.message
+          : undefined,
+      })
+    )
       .unwrap()
-      .then(() => navigate.replace('TRACK_BOOKING_ROOM'))
-      .catch(() =>
-        alert('Error while processing your request. Please try again')
-      );
+      .then(() => {
+        setCancelModalShown(!isRejectModalShow);
+        alert('Reject Successfully');
+      })
+      .then(() => {
+        setTimeout(() => {
+          navigate.replace('TRACK_BOOKING_ROOM');
+        }, 2000);
+      })
+      .catch((e) => alert(JSON.stringify(e)));
   };
 
   const handleAcceptAction = () => {
@@ -170,7 +186,9 @@ const AcceptBooking: React.FC<any> = () => {
     return bookingRoom.status !== CANCELLED &&
       bookingRoom.status !== CHECKED_OUT ? (
       <AcceptBookingFooter
-        handleReject={() => handleRejectAction()}
+        handleReject={() => {
+          setRejectModalShown(!isRejectModalShow)
+        }}
         handleAccept={() => handleAcceptAction()}
       />
     ) : null;
@@ -192,11 +210,122 @@ const AcceptBooking: React.FC<any> = () => {
       })
       .then(() => {
         setTimeout(() => {
-          navigate.pop(2);
+          navigate.replace('TRACK_BOOKING_ROOM');
         }, 2000);
       })
       .catch((e) => alert(JSON.stringify(e)));
   };
+
+  const RejectAlertModal: React.ForwardRefRenderFunction<
+    { message: string },
+    any
+    > = (props, ref) => {
+    const [message, setMessage] = useState<string>();
+
+    useImperativeHandle(ref, () => ({
+      message,
+    }));
+
+    return (
+      <AlertModal
+        height={300}
+        width={deviceWidth / 1.1}
+        isOpened={isRejectModalShow}
+        toggleShown={() => setRejectModalShown(!isRejectModalShow)}
+      >
+        <View
+          style={{
+            display: 'flex',
+            flex: 1,
+            flexGrow: 0.9,
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={{
+              fontWeight: '600',
+              fontSize: deviceWidth / 21,
+              color: BLACK,
+            }}
+          >
+            Please input reject reason
+          </Text>
+          <TextInput
+            onChangeText={(e) => setMessage(e)}
+            value={message}
+            style={{
+              backgroundColor: LIGHT_GRAY,
+              width: deviceWidth / 1.2,
+              borderRadius: 8,
+              textAlignVertical: 'top',
+              paddingHorizontal: 10,
+            }}
+            placeholder="Please share your reject message..."
+            multiline
+            numberOfLines={8}
+          />
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              width: deviceWidth / 1.1,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => setRejectModalShown(!isRejectModalShow)}
+              style={{
+                height: 40,
+                width: deviceWidth / 2.8,
+                borderWidth: 2,
+                borderColor: FPT_ORANGE_COLOR,
+                borderRadius: 8,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: deviceWidth / 23,
+                  fontWeight: '500',
+                  color: FPT_ORANGE_COLOR,
+                }}
+              >
+                Cancel
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleRejectAction()}
+              style={{
+                height: 40,
+                width: deviceWidth / 2.2,
+                backgroundColor: FPT_ORANGE_COLOR,
+                borderRadius: 8,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: deviceWidth / 23,
+                  color: WHITE,
+                  fontWeight: '500',
+                }}
+              >
+                Attempt Reject
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </AlertModal>
+    );
+  };
+
+  const RejectAlertModalRef = forwardRef(RejectAlertModal);
+
   const CancelAlertModal: React.ForwardRefRenderFunction<
     { message: string },
     any
@@ -487,23 +616,11 @@ const AcceptBooking: React.FC<any> = () => {
                     marginTop: 20,
                   }}
                 >
-                  <Text
-                    style={{
-                      color: GRAY,
-                      fontSize: deviceWidth / 23,
-                      fontWeight: '600',
-                      marginLeft: 20,
-                    }}
-                  >
-                    SIGNATURE
-                  </Text>
-                  <View style={styles.signatureView}>
-                    <View style={styles.dataRowContainer}></View>
-                  </View>
                 </View>
               ) : null}
             </View>
             <CancelAlertModalRef ref={cancelBookingRequestModal} />
+            <RejectAlertModalRef ref={rejectBookingRequestModal} />
           </View>
         </ScrollView>
         {renderFooter()}
