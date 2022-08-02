@@ -67,7 +67,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     return () => {
       setSlotSelections([]);
     };
-  }, [isMultiSlotChecked]);
+  }, []);
 
   const transformSlotsToSlotPicker = (val: Slot[]) => {
     const slotSelections = val.map((slot) => {
