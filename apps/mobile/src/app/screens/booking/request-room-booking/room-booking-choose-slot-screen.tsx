@@ -469,7 +469,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: WHITE,
     margin: 10,
-    height: 235,
+    height: 240,
   },
   roomBookingDetail: {
     display: 'flex',
@@ -544,6 +544,7 @@ export const styles = StyleSheet.create({
   },
   roomCodeOuterText: {
     fontSize: 18,
+    maxWidth: 320
   },
   roomCodeInnerText: {
     marginLeft: 5,

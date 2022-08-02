@@ -1,9 +1,15 @@
-import React from 'react';
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -18,6 +24,7 @@ import {
   FPT_ORANGE_COLOR,
   GRAY,
   INPUT_GRAY_COLOR,
+  LIGHT_GRAY,
   PENDING,
   WHITE,
 } from '@app/constants';
@@ -39,12 +46,18 @@ import { rejectBookingRequest } from '../../../redux/features/room-booking/thunk
 import { acceptCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/accept-checkout-booking-request.thunk';
 import { rejectCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkout-booking-request.thunk';
 import { fetchDeviceInUseByBookingRequestId } from '../../../redux/features/room-booking/thunk/fetch-devices-in-use-by-booking-request-id.thunk';
+import AlertModal from '../../../components/modals/alert-modal.component';
+import { cancelFeedback } from '../../../redux/features/feedback/thunk/cancel-feedback.thunk';
+import { cancelBookingRoom } from '../../../redux/features/room-booking/thunk/cancel-room-booking.thunk';
 
 const AcceptBooking: React.FC<any> = () => {
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
   const { bookingRoom } = useAppSelector((state) => state.roomBooking);
   const authUser = useAppSelector((state) => state.auth.authUser);
+  const [isCancelModalShown, setCancelModalShown] = useState(false);
+  const cancelBookingRequestModal =
+    useRef<React.ElementRef<typeof CancelAlertModalRef>>();
 
   const handleRejectBookingRequest = () => {
     dispatch(rejectBookingRequest(bookingRoom.id))
@@ -140,7 +153,12 @@ const AcceptBooking: React.FC<any> = () => {
     ) {
       return (
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.cancelBookingRequestButton}>
+          <TouchableOpacity
+            style={styles.cancelBookingRequestButton}
+            onPress={() => {
+              setCancelModalShown(!isCancelModalShown);
+            }}
+          >
             <XIcon size={deviceWidth / 14} color={WHITE} />
             <Text style={styles.cancelBookingRequestButtonText}>
               Cancel booking request
@@ -157,6 +175,137 @@ const AcceptBooking: React.FC<any> = () => {
       />
     ) : null;
   };
+
+  const handleAttemptCancelBookingRequest = () => {
+    dispatch(
+      cancelBookingRoom({
+        id: bookingRoom.id,
+        reason: cancelBookingRequestModal.current
+          ? cancelBookingRequestModal.current.message
+          : undefined,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        setCancelModalShown(!isCancelModalShown);
+        alert('Cancel Successfully');
+      })
+      .then(() => {
+        setTimeout(() => {
+          navigate.pop(2);
+        }, 2000);
+      })
+      .catch((e) => alert(JSON.stringify(e)));
+  };
+  const CancelAlertModal: React.ForwardRefRenderFunction<
+    { message: string },
+    any
+  > = (props, ref) => {
+    const [message, setMessage] = useState<string>();
+
+    useImperativeHandle(ref, () => ({
+      message,
+    }));
+
+    return (
+      <AlertModal
+        height={300}
+        width={deviceWidth / 1.1}
+        isOpened={isCancelModalShown}
+        toggleShown={() => setCancelModalShown(!isCancelModalShown)}
+      >
+        <View
+          style={{
+            display: 'flex',
+            flex: 1,
+            flexGrow: 0.9,
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={{
+              fontWeight: '600',
+              fontSize: deviceWidth / 21,
+              color: BLACK,
+            }}
+          >
+            Please input cancel reason
+          </Text>
+          <TextInput
+            onChangeText={(e) => setMessage(e)}
+            value={message}
+            style={{
+              backgroundColor: LIGHT_GRAY,
+              width: deviceWidth / 1.2,
+              borderRadius: 8,
+              textAlignVertical: 'top',
+              paddingHorizontal: 10,
+            }}
+            placeholder="Please share your cancel message..."
+            multiline
+            numberOfLines={8}
+          />
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              width: deviceWidth / 1.1,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => setCancelModalShown(!isCancelModalShown)}
+              style={{
+                height: 40,
+                width: deviceWidth / 2.8,
+                borderWidth: 2,
+                borderColor: FPT_ORANGE_COLOR,
+                borderRadius: 8,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: deviceWidth / 23,
+                  fontWeight: '500',
+                  color: FPT_ORANGE_COLOR,
+                }}
+              >
+                Cancel
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleAttemptCancelBookingRequest()}
+              style={{
+                height: 40,
+                width: deviceWidth / 2.2,
+                backgroundColor: FPT_ORANGE_COLOR,
+                borderRadius: 8,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: deviceWidth / 23,
+                  color: WHITE,
+                  fontWeight: '500',
+                }}
+              >
+                Attempt Cancel
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </AlertModal>
+    );
+  };
+
+  const CancelAlertModalRef = forwardRef(CancelAlertModal);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
@@ -354,6 +503,7 @@ const AcceptBooking: React.FC<any> = () => {
                 </View>
               ) : null}
             </View>
+            <CancelAlertModalRef ref={cancelBookingRequestModal} />
           </View>
         </ScrollView>
         {renderFooter()}

@@ -23,6 +23,7 @@ import { fetchDeviceInUseByBookingRequestId } from './thunk/fetch-devices-in-use
 import { fetchRoomFreeByMultiSlotAndDay } from './thunk/fetch-room-free-by-multi-day-and-slot.thunk';
 import { addNewLongTermRequestBooking } from './thunk/add-long-term-request-booking';
 import { checkOverSlot } from './thunk/check-over-slot.thunk';
+import { cancelBookingRoom } from './thunk/cancel-room-booking.thunk';
 
 interface RoomBookingState {
   roomBookingCheckout: RoomBookingCheckout;
@@ -288,6 +289,7 @@ const roomBookingSlice = createSlice({
       }
     );
     builder.addCase(checkOverSlot.fulfilled, (state, { payload }) => {});
+    builder.addCase(cancelBookingRoom.fulfilled, (state, { payload }) => {});
   },
 });
 
