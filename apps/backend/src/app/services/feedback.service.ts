@@ -24,7 +24,7 @@ export class FeedbackService {
 
   async getAllFeedbacks(accountId: string, param: FeedbackPaginationPayload) {
     try {
-      if (param.fromDate > param.toDate) {
+      if (param.fromDate && param.toDate && param.fromDate > param.toDate) {
         throw new BadRequestException(
           'From date must be less than or equal to To date'
         );

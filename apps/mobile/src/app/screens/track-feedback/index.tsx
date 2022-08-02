@@ -24,7 +24,7 @@ const TrackFeedbackScreen: React.FC<any> = () => {
   const handleFilterSearch = () => {
     dispatch(fetchFeedbacks(filterRef.current))
       .unwrap()
-      .catch(() => alert('Error while fetching data'));
+      .catch((e) => alert(JSON.stringify(e)));
   };
 
   const TrackBookingRoomList = () => {
