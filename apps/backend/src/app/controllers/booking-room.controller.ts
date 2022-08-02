@@ -334,6 +334,43 @@ export class BookingRoomController {
     });
   }
 
+  @Get('list-room-free-at-multi-date-v2')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get a list room free a multi date',
+    description:
+      'Get a list room free a multi date',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched a list room free at time',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getRoomFreeAtMultiDateV2(
+    @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
+    @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
+    @Query('dateStart', new DefaultValuePipe('')) dateStart: string,
+    @Query('dateEnd', new DefaultValuePipe('')) dateEnd: string
+  ) {
+    return this.service.getRoomFreeAtMultiDateV2({
+      dateStart: dateStart,
+      dateEnd: dateEnd,
+      checkinSlotId: checkinSlotId,
+      checkoutSlotId: checkoutSlotId,
+    });
+  }
+
   @Get('get-booked-requests')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({

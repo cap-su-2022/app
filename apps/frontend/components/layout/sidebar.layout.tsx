@@ -68,7 +68,7 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
   useEffect(() => {
     dispatch(fetchCountPendingRequestBooking())
       .unwrap()
-      .then((count) => setCount(count.count));
+      .then((count) => setCount(count?.count));
   }, []);
 
   const handleLogoutSubmit = async (
