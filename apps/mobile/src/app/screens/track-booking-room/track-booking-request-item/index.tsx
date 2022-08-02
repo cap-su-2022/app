@@ -28,6 +28,8 @@ const BookingRequestItem: React.FC<BookingRequestItemProps> = (props) => {
     <TouchableOpacity
       onPress={() => handleFetchBookingRequest(props.item.id)}
       style={[boxShadow(styles), styles.container]}
+      // @ts-ignore
+      key={props.item}
     >
       <TrackBookingRequestItemContent item={props.item} />
       <TrackingBookingRequestItemNavigation status={props.item.status} />

@@ -38,7 +38,7 @@ const TrackBookingRoom: React.FC<any> = () => {
         getItem={(data, index) => data[index]}
         renderItem={(
           item: ListRenderItemInfo<BookingRoomsByFiltersResponse>
-        ) => <BookingRequestItem key={item.index} item={item.item} />}
+        ) => <BookingRequestItem  item={item.item} />}
       />
     );
   };
