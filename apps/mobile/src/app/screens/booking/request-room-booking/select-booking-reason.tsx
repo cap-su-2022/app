@@ -16,13 +16,13 @@ const SelectSlots: React.FC<any> = (props) => {
               items={props.bookingReasonSelections}
               style={{
                 inputAndroid: {
-                  fontSize: deviceWidth / 21,
+                  fontSize: deviceWidth / 23,
                   fontWeight: '600',
                   color: GRAY,
                 },
                 inputIOS: {
                   alignSelf: 'center',
-                  fontSize: deviceWidth / 21,
+                  fontSize: deviceWidth / 23,
                   fontWeight: '600',
                   color: GRAY,
                 },
