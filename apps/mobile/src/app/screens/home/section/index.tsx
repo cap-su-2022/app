@@ -11,6 +11,8 @@ import { deviceWidth } from '../../../utils/device';
 import { boxShadow } from '../../../utils/box-shadow.util';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import HomeScreenSectionRoomCheckin from './room-checkin';
+import TrackRoomBookingFeedbackNavigator from '../../../navigation/home/track-room-booking-feedback';
+import HomeScreenSectionTrackRoomBookingFeedback from './track-room-booking-feedbacks';
 
 const HomeScreenSection: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -49,6 +51,7 @@ const HomeScreenSection: React.FC<any> = () => {
           <HomeScreenSectionRoomCheckout />
           <HomeScreenSectionTrackBookingRoom />
           <HomeScreenSectionResolveFeedback />
+          <HomeScreenSectionTrackRoomBookingFeedback />
           <HomeScreenSectionRoomCheckin />
         </View>
       </View>

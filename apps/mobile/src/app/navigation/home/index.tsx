@@ -12,6 +12,7 @@ import RoomBookingWishlistNavigator from '../room-booking/room-booking-wishlist.
 import NotificationNavigator from './notification';
 import CheckinBookingRoomNavigator from './check-in-booking-room';
 import TrackFeedbackNavigator from './track-feedback';
+import TrackRoomBookingFeedbackNavigator from './track-room-booking-feedback';
 
 const HomeNavigator: React.FC = () => {
   const navigate = useAppNavigation();
@@ -64,6 +65,13 @@ const HomeNavigator: React.FC = () => {
       <StackScreen
         name="BOOKING_ROOM_WISHLIST"
         component={RoomBookingWishlistNavigator}
+      />
+      <StackScreen
+        options={{
+          headerShown: false,
+        }}
+        name="TRACK_ROOM_BOOKING_FEEDBACK"
+        component={TrackRoomBookingFeedbackNavigator}
       />
       <StackScreen name="NOTIFICATION" component={NotificationNavigator} />
       <StackScreen
