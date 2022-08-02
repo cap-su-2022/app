@@ -237,11 +237,18 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
         const filterArrayByRoom = slotAndRoom.filter(
           (room) => room.roomId === filteredRoomId
         );
-        const finalResult = filterArrayByRoom.filter(
-          (item) =>
-            item.slotNum >= addRoomBooking.fromSlotNum &&
-            item.slotNum <= addRoomBooking.toSlotNum
-        );
+        let finalResult = []
+        if (addRoomBooking.isMultiSlot){
+           finalResult = filterArrayByRoom.filter(
+            (item) =>
+              item.slotNum >= addRoomBooking.fromSlotNum &&
+              item.slotNum <= addRoomBooking.toSlotNum
+          );
+        } else {
+          finalResult = filterArrayByRoom.filter(
+            (item) =>  item.slotNum >= addRoomBooking.fromSlotNum
+          )
+        }
         setSlotAndRoomFilter(finalResult);
       });
   }, [filteredRoomId]);
