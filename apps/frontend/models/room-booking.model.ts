@@ -1,4 +1,6 @@
 export interface RoomBooking {
+  checkoutTime: string;
+  checkinTime: string;
   bookedFor: string;
   cancelReason: string;
   listDevice: any[];
