@@ -28,7 +28,7 @@ export class BookingReasonController {
   }
 
   @Get()
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully fetched booking reason by pagination',

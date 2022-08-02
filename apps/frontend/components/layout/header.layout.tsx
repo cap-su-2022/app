@@ -38,11 +38,13 @@ interface UserInfoModel {
   img: File;
 }
 interface HeaderSearchProps {
-  links: { link: string; label: string }[];
+  // links: { link: string; label: string }[];
+  toggleOpened(): void
+  opened: boolean
 }
 
-export function LayoutHeader() {
-  const [opened, toggleOpened] = useBooleanToggle(false);
+const LayoutHeader: React.FC<HeaderSearchProps> = (props) => {
+  // const [opened, toggleOpened] = useBooleanToggle(false);
   const router = useRouter();
   const { classes } = useStyles();
 
@@ -70,7 +72,7 @@ export function LayoutHeader() {
     <Header height={56} className={classes.header} mb={20}>
       <div className={classes.inner}>
         <Group>
-          <Burger opened={opened} onClick={() => toggleOpened()} size="sm" />
+          <Burger opened={props.opened} onClick={() => props.toggleOpened()} size="sm" />
           <></>
         </Group>
 
@@ -761,7 +763,7 @@ export function LayoutHeader() {
         {isLogoutModalShown ? (
           <LogoutModal
             isOpened={isLogoutModalShown}
-            handleRouterReload={router.reload}
+            handleRouterReload={() => router.replace("/login")}
             handleClose={() => setLogoutModalShown(!isLogoutModalShown)}
           />
         ) : null}
@@ -1284,3 +1286,5 @@ const useStyles = createStyles((theme) => ({
     },
   },
 }));
+
+export default LayoutHeader
