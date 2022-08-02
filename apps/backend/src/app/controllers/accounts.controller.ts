@@ -352,7 +352,7 @@ export class AccountsController {
   }
 
   @Put('update-profile')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Update own profile',
     description: 'Update own profile based on provided credentials',

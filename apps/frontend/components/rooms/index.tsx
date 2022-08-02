@@ -116,6 +116,11 @@ function RoomsManagement(props: any) {
   const [isRestoreDisabledShown, setRestoreDisabledShown] =
     useState<boolean>(false);
 
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
+
   const ActionsFilter: React.FC = () => {
     return (
       <>
@@ -143,7 +148,11 @@ function RoomsManagement(props: any) {
         >
           <ArchiveOff />
         </Button>
-        <Button variant="outline" color="violet" onClick={() => setDownShown(true)}>
+        <Button
+          variant="outline"
+          color="violet"
+          onClick={() => setDownShown(true)}
+        >
           <Download />
         </Button>
       </>
@@ -189,7 +198,7 @@ function RoomsManagement(props: any) {
         <TableHeader
           actionsLeft={null}
           handleResetFilter={() => handleResetFilter()}
-          actions={<ActionsFilter />}
+          actions={userInfo.role === 'System Admin ' ? <ActionsFilter /> : null}
           setSearch={(val) => handleSearchValue(val)}
           search={pagination.search}
         />
@@ -254,7 +263,7 @@ function RoomsManagement(props: any) {
           toggleShown={() => handleAddModalClose()}
           roomTypes={roomTypeNames}
         />
-        {rooms.meta ? (
+        {rooms?.meta ? (
           <TableFooter
             handlePageChange={(val) => handlePageChange(val)}
             handleLimitChange={(val) => handleLimitChange(val)}

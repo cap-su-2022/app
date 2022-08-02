@@ -37,6 +37,7 @@ import {updateFeedbackTypeById} from "../../redux/features/feedback-type/thunk/u
 import {log} from "util";
 import {fetchFeedbackTypeById} from "../../redux/features/feedback-type/thunk/fetch-feedback-type-by-id.thunk";
 import {addFeedbackType} from "../../redux/features/feedback-type/thunk/add-feedback-type.thunk";
+import NoDataFound from '../no-data-found';
 
 
 const AddFeedbackTypeValidation = Yup.object().shape({
@@ -443,7 +444,7 @@ const ManageFeedbackType: React.FC<any> = () => {
             feedbackTypes={feedbackTypeNames}
           />
         </>
-      ) : null}
+      ) : <NoDataFound />}
       <AddModal
         header="Add new feedback type"
         isShown={isAddShown}

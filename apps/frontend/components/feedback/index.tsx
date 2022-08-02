@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Button, createStyles } from '@mantine/core';
 import Header from '../common/header.component';
-import { ArchiveOff, BrandHipchat, Check, Download, Plus, X } from 'tabler-icons-react';
+import {
+  BrandHipchat,
+  Check,
+  Download,
+  Plus,
+  X,
+} from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useDebouncedValue } from '@mantine/hooks';
 import TableHeader from '../actions/table-header.component';
@@ -9,10 +15,7 @@ import { TableBody } from './table-body.component';
 import TableFooter from '../actions/table-footer.component';
 import InfoModal from './info-modal.component';
 import * as Yup from 'yup';
-import AddModal from '../actions/modal/add-modal.component';
 import { FormikValues, useFormik } from 'formik';
-import { InputAddProps } from '../actions/models/input-add-props.model';
-import { InputTypes } from '../actions/models/input-type.constant';
 import AdminLayout from '../layout/admin.layout';
 import { showNotification } from '@mantine/notifications';
 import NoDataFound from '../no-data-found';
@@ -23,6 +26,8 @@ import ResolveFeedbackModal from './resolve-feedback.component';
 import { FeedbackPaginationParams } from '../../models/pagination-params/feedback-paging-params.model';
 import { sendFeedback } from '../../redux/features/feedback/thunk/send-feedback.thunk';
 import DownloadModal from './download-modal.compnent';
+import { fetchFeedbackTypeNames } from '../../redux/features/feedback-type/thunk/fetch-feedback-type-names.thunk';
+import AddFeedbackModal from './add-modal.component';
 
 const AddRoomTypeValidation = Yup.object().shape({
   feedback: Yup.string()
@@ -34,7 +39,7 @@ const defaultPaginationParams = {
   page: 1,
   limit: 5,
   search: '',
-  dir: 'ASC',
+  dir: 'DESC',
   sort: 'created_at',
   status: '',
 };
@@ -44,6 +49,7 @@ const ManageFeedback: React.FC<any> = () => {
   const [isRejectShown, setRejectShown] = useState<boolean>(false);
   const [isResolveShown, setResolveShown] = useState<boolean>(false);
   const [isDownShown, setDownShown] = useState<boolean>(false);
+  const [feedbackTypeNames, setFeedbackTypeNames] = useState<any[]>(null);
   const feedbacks = useAppSelector((state) => state.feedback.feedbacks);
   const [pagination, setPagination] = useState<FeedbackPaginationParams>(
     defaultPaginationParams
@@ -71,6 +77,12 @@ const ManageFeedback: React.FC<any> = () => {
     dispatch,
   ]);
 
+  useEffect(() => {
+    dispatch(fetchFeedbackTypeNames())
+      .unwrap()
+      .then((feedbackTypes) => setFeedbackTypeNames(feedbackTypes));
+  }, []);
+
   const toggleSortDirection = () => {
     setPagination({
       ...pagination,
@@ -80,7 +92,7 @@ const ManageFeedback: React.FC<any> = () => {
 
   const handleSearchValue = (val: string) => {
     setPagination({
-      ...defaultPaginationParams,
+      ...pagination,
       search: val,
     });
   };
@@ -194,7 +206,6 @@ const ManageFeedback: React.FC<any> = () => {
   const handleActionsCb = {
     info: (id) => {
       setId(id);
-      console.log('IDDDDDDDD: ', id);
       handleFetchById(id)
         .unwrap()
         .then(() => setInfoShown(!isInfoShown));
@@ -206,17 +217,6 @@ const ManageFeedback: React.FC<any> = () => {
         .then(() => setDeleteShown(!isDeleteShown));
     },
   };
-
-  const addFields: InputAddProps[] = [
-    {
-      label: 'Feedback',
-      description: null,
-      id: 'feedback',
-      name: 'feedback',
-      required: false,
-      inputtype: InputTypes.TextArea,
-    },
-  ];
 
   const handleAddModalClose = () => {
     setAddShown(!isAddShown);
@@ -256,6 +256,7 @@ const ManageFeedback: React.FC<any> = () => {
     validationSchema: AddRoomTypeValidation,
     initialValues: {
       feedback: '',
+      type: '',
     },
     enableReinitialize: true,
     onSubmit: (e) => handleAddSubmit(e),
@@ -277,9 +278,9 @@ const ManageFeedback: React.FC<any> = () => {
         pagination={pagination}
       /> */}
       <DownloadModal
-          isShown={isDownShown}
-          toggleShown={() => handleDownModalClose()}
-        />
+        isShown={isDownShown}
+        toggleShown={() => handleDownModalClose()}
+      />
       {feedbacks.items ? (
         <>
           <TableBody
@@ -310,22 +311,15 @@ const ManageFeedback: React.FC<any> = () => {
             toggleInforModalShown={() => setInfoShown(!isInfoShown)}
             pagination={pagination}
           />
-          {/* <DeleteModal
-            isShown={isDeleteShown}
-            toggleShown={() => setDeleteShown(!isDeleteShown)}
-            pagination={pagination}
-          /> */}
         </>
       ) : (
         <NoDataFound />
       )}
-      <AddModal
-        header="Send Feedback"
+      <AddFeedbackModal
         isShown={isAddShown}
+        pagination={pagination}
         toggleShown={() => handleAddModalClose()}
-        formik={addFormik}
-        fields={addFields}
-        handleSubmit={() => addFormik.handleSubmit()}
+        feedbackTypes={feedbackTypeNames}
       />
       {feedbacks.meta ? (
         <TableFooter

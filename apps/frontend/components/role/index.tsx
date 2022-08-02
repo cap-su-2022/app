@@ -30,6 +30,7 @@ import RestoreDeletedModal from '../role/restore-deleted.modal.component';
 import DeleteModal from '../role/delete-modal.component';
 import dayjs from 'dayjs';
 import { showNotification } from '@mantine/notifications';
+import NoDataFound from '../no-data-found';
 
 const AddRoleValidation = Yup.object().shape({
   name: Yup.string()
@@ -405,7 +406,7 @@ const ManageRole: React.FC<any> = () => {
             roles={roleNames}
           />
         </>
-      ) : null}
+      ) : <NoDataFound />}
       <AddModal
         header="Add new role"
         isShown={isAddShown}

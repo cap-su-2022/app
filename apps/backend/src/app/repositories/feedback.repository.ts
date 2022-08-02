@@ -34,10 +34,10 @@ export class FeedbackRepository extends Repository<Feedback> {
       .innerJoin(Accounts, 'a', 'a.id = f.created_by')
       .leftJoin(FeedbackType, 'ft', 'ft.id = f.feedback_type_id')
       .where('f.deleted_at IS NULL')
-      .andWhere('f.deleted_by IS NULL');
-    //   .andWhere('f.name ILIKE :search', {
-    //     search: `%${pagination.search.trim()}%`,
-    //   })
+      .andWhere('f.deleted_by IS NULL')
+      .andWhere('a.username ILIKE :search', {
+        search: `%${pagination.search.trim()}%`,
+      })
     if (!pagination || !pagination.page) {
       query.addOrderBy('f.created_at', 'DESC');
     }

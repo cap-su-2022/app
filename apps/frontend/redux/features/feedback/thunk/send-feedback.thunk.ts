@@ -6,6 +6,7 @@ export const sendFeedback = createAsyncThunk<
   void,
   {
     feedback?: string;
+    type?: string;
   },
   {
     rejectValue: {
@@ -17,6 +18,7 @@ export const sendFeedback = createAsyncThunk<
   try {
     const response = await axios.post(`api/feedbacks/send-feedback`, {
       message: payload.feedback,
+      feedbackTypeId: payload.type,
     });
     return await response.data;
   } catch (e) {
