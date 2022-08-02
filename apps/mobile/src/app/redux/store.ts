@@ -19,6 +19,7 @@ import { bookedRequestReducer } from './features/room-booking-v2/slice';
 import { systemReducer } from './features/system/system.slice';
 import { feedbackTypeReducer } from './features/feed-back-type/feedback-types.slice';
 import { feedbackReducer } from './features/feedback/feedback.slice';
+import { roomBookingFeedbackReducer } from './features/room-booking-feedback/slice';
 
 const combinedReducer = combineReducers({
   system: systemReducer,
@@ -26,6 +27,7 @@ const combinedReducer = combineReducers({
   spinner: spinnerReducer,
   feedbackSearchFilter: feedbackSearchFilterReducer,
   roomBooking: roomBookingReducer,
+  roomBookingFeedback: roomBookingFeedbackReducer,
   device: deviceReducer,
   auth: authReducer,
   account: accountReducer,

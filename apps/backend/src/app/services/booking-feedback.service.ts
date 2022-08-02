@@ -5,6 +5,7 @@ import { Feedback } from '../models';
 import { BookingFeedbackSendRequestPayload } from '../payload/request/booking-feedback-send.request.payload';
 import { BookingFeedbackRepository } from '../repositories/booking-feedback.repository';
 import { BookingRoomService } from './booking-room.service';
+import { AccountRepository } from '../repositories';
 
 @Injectable()
 export class BookingFeedbackService {
@@ -13,15 +14,29 @@ export class BookingFeedbackService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly repository: BookingFeedbackRepository,
-    private readonly bookingRoomService: BookingRoomService
+    private readonly bookingRoomService: BookingRoomService,
+    private readonly accountRepository: AccountRepository
   ) {}
 
-  async getAllFeedbacks(param: PaginationParams) {
+  async getAllFeedbacks(accountId: string, param: PaginationParams) {
     try {
-      const result = await this.repository.findByPagination(param);
-      if(result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages){
+      if (!param.page) {
+        const roleName = await this.accountRepository.findRoleNameById(
+          accountId
+        );
+        if (roleName === 'Staff') {
+          return await this.repository.findByPagination(accountId, param);
+        }
+        return await this.repository.findByPagination(undefined, param);
+      }
+
+      const result = await this.repository.findByPagination(undefined, param);
+      if (
+        result.meta.totalPages > 0 &&
+        result.meta.currentPage > result.meta.totalPages
+      ) {
         throw new BadRequestException('Current page is over');
-      } 
+      }
       return result;
     } catch (e) {
       this.logger.error(e);

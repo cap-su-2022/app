@@ -1,20 +1,28 @@
-import {Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query} from '@nestjs/common';
-import {Roles} from '../decorators/role.decorator';
-import {Role} from '../enum/roles.enum';
-import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {PaginationParams} from './pagination.model';
-import {Pagination} from 'nestjs-typeorm-paginate';
-import {Feedback} from '../models';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {User} from '../decorators/keycloak-user.decorator';
-import {BookingFeedbackSendRequestPayload} from '../payload/request/booking-feedback-send.request.payload';
-import {BookingFeedbackService} from '../services/booking-feedback.service';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { Roles } from '../decorators/role.decorator';
+import { Role } from '../enum/roles.enum';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PaginationParams } from './pagination.model';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { BookingRoomFeedback, Feedback } from '../models';
+import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { User } from '../decorators/keycloak-user.decorator';
+import { BookingFeedbackSendRequestPayload } from '../payload/request/booking-feedback-send.request.payload';
+import { BookingFeedbackService } from '../services/booking-feedback.service';
 
 @Controller('/v1/booking-room-feedbacks')
 @ApiTags('Booking Room Feedbacks')
 export class BookingFeedbackController {
-  constructor(private readonly service: BookingFeedbackService) {
-  }
+  constructor(private readonly service: BookingFeedbackService) {}
 
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -39,9 +47,14 @@ export class BookingFeedbackController {
     description: 'Insufficient privileges',
   })
   getAllFeedbacks(
-    @Query() payload: PaginationParams
-  ): Promise<Pagination<Feedback>> {
-    return this.service.getAllFeedbacks(payload as PaginationParams);
+    @Query()
+    payload: PaginationParams,
+    @User() user: KeycloakUserInstance
+  ): Promise<Pagination<BookingRoomFeedback> | BookingRoomFeedback[]> {
+    return this.service.getAllFeedbacks(
+      user.account_id,
+      payload as PaginationParams
+    );
   }
 
   @Get(':id')
@@ -99,5 +112,4 @@ export class BookingFeedbackController {
   ) {
     return this.service.addNewFeedback(user.account_id, payload);
   }
-
 }

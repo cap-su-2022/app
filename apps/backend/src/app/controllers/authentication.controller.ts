@@ -87,6 +87,7 @@ export class AuthenticationController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @HttpCode(HttpStatus.OK)
   async validateTokenAndGetUserInfo(@Body() payload: { token: string }) {
     if (Object.keys(payload).length < 1) {
       throw new BadRequestException('Must provide access token');
@@ -120,6 +121,7 @@ export class AuthenticationController {
     description: 'Contains the username and password value.',
     type: AuthenticationRequest,
   })
+  @HttpCode(HttpStatus.OK)
   async signIn(
     @Res({ passthrough: true }) httpResponse: FastifyReply,
     @Body() account: { username: string; password: string }
@@ -171,6 +173,7 @@ export class AuthenticationController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @HttpCode(HttpStatus.OK)
   async signInWithGoogle(
     @Res({ passthrough: true }) httpResponse: FastifyReply,
     @Body() request: GoogleIDTokenRequest
@@ -219,6 +222,7 @@ export class AuthenticationController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
+  @HttpCode(HttpStatus.OK)
   async refreshAccessToken(
     @Res({ passthrough: true }) httpResponse: FastifyReply,
     @Body() payload: RefreshTokenPayload
@@ -234,6 +238,7 @@ export class AuthenticationController {
   }
 
   @Post(KEYCLOAK_PATH.signOut)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Sign out ',
     description: 'Sign out by keycloak ID',
