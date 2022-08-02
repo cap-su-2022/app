@@ -37,6 +37,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .where(
         `booking_request.status IN ('BOOKED', 'CHECKED_IN', 'CHECKED_OUT', 'CANCELLED')`
       )
+      .orderBy('booking_request.checkin_date', 'ASC')
       .getRawMany();
   }
 

@@ -20,6 +20,8 @@ import {fetchDisabledFeedbackTypes} from "../../redux/features/feedback-type/thu
 import {
   restoreDisabledFeedbackTypeById
 } from "../../redux/features/feedback-type/thunk/restore-disabled-feedback-type-by-id.thunk";
+import {fetchFeedbackTypes} from '../../redux/features/feedback-type/thunk/fetch-feedback-types.thunk'
+
 
 
 interface RestoreDisabledModalProps {
@@ -51,6 +53,8 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
   const handleRestoreDisabledFeedbackTypes = (id: string) => {
     dispatch(restoreDisabledFeedbackTypeById(id))
       .unwrap()
+      .then(() => dispatch(fetchDisabledFeedbackTypes('')))
+      .then(() => dispatch(fetchFeedbackTypes(props.pagination)))
       .catch((e) =>
         showNotification({
           id: 'restore-data',

@@ -77,23 +77,33 @@ export class BookingRoomService {
     };
     const today = new Date().setHours(0, 0, 0, 0);
     const curr = new Date();
-    const firstDayInWeek = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-    const lastDayInWeek = firstDayInWeek + 6; // last day is the first day + 6
+    const firstDayInWeek = curr.getDate() - curr.getDay() + 2; // First day is the day of the month - the day of the week
+    const lastDayInWeek = firstDayInWeek + 6 ; // last day is the first day + 6
     const sunday = new Date(curr.setDate(firstDayInWeek)).setHours(0, 0, 0, 0);
     const satuday = new Date(curr.setDate(lastDayInWeek)).setHours(0, 0, 0, 0);
-    const firstDayInMonth = new Date(curr.setDate(1)).setHours(0, 0, 0, 0);
+    const firstDayInMonth = new Date(curr.setDate(2)).setHours(0, 0, 0, 0);
     const lastDayInMonth = new Date(
       curr.getFullYear(),
       curr.getMonth() + 1,
-      0
+      1
     ).setHours(0, 0, 0, 0);
     const allRequest = await this.repository.getAllRequest();
+    // console.log(firstDayInWeek)
+    // console.log(lastDayInWeek)
+    // console.log(new Date(curr.setDate(firstDayInWeek)))
+    // console.log("sunday: ", sunday)
+    // console.log( new Date(curr.setDate(lastDayInWeek)))
+    // console.log("satuday: ", satuday)
+    // console.log('firstDayInMonth ', firstDayInMonth);
+    // console.log('lastDayInMonth ', lastDayInMonth);
+
     for (let i = 0; i < allRequest.length; i++) {
       const checkinDate = allRequest[i].checkinDate.setHours(0, 0, 0, 0);
       if (checkinDate === today) {
         result.day.total += 1;
       }
       if (checkinDate >= sunday && checkinDate <= satuday) {
+        // console.log("INWEEK: ", allRequest[i].checkinDate)
         result.week.total += 1;
       }
       if (checkinDate >= firstDayInMonth && checkinDate <= lastDayInMonth) {
@@ -102,7 +112,7 @@ export class BookingRoomService {
       result.totalTime.total += 1;
       if (
         allRequest[i].status === 'BOOKED' ||
-        allRequest[i].status === 'CHECKED_ID' ||
+        allRequest[i].status === 'CHECKED_IN' ||
         allRequest[i].status === 'CHECKED_OUT'
       ) {
         if (checkinDate === today) {
@@ -128,6 +138,8 @@ export class BookingRoomService {
         result.totalTime.cancelled += 1;
       }
     }
+
+    console.log(result);
     return result;
   }
 
