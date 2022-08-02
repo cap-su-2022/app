@@ -423,6 +423,7 @@ export class BookingRoomService {
     checkoutSlotId: string;
   }) {
     try {
+      console.log("PAYLOAD: ", payload);
       const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlotId);
       const slotOut = await this.slotService.getNumOfSlot(
         payload.checkoutSlotId
@@ -490,7 +491,6 @@ export class BookingRoomService {
     checkoutSlot: number;
   }) {
     try {
-      console.log(payload);
       const listRequestBookedInMultiDay =
         await this.repository.getRequestBookedInMultiDay(
           payload.dateStart,
@@ -501,6 +501,42 @@ export class BookingRoomService {
           listRequestBookedInMultiDay.filter((request) => {
             for (let j = request.slotStart; j <= request.slotEnd; j++) {
               if (j >= payload.checkinSlot && j <= payload.checkoutSlot) {
+                return request;
+              }
+            }
+          });
+        return listRequestBookedInMultiDayAndSlot;
+      }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getListRequestBookedInMultiDayV2(payload: {
+    dateStart: string;
+    dateEnd: string;
+    checkinSlotId: string;
+    checkoutSlotId: string;
+  }) {
+    try {
+
+      const listRequestBookedInMultiDay =
+        await this.repository.getRequestBookedInMultiDay(
+          payload.dateStart,
+          payload.dateEnd
+        );
+      if (listRequestBookedInMultiDay.length > 0) {
+        const slotIn = await this.slotService.getNumOfSlot(
+          payload.checkinSlotId
+        );
+        const slotOut = await this.slotService.getNumOfSlot(
+          payload.checkoutSlotId
+        );
+        const listRequestBookedInMultiDayAndSlot =
+          listRequestBookedInMultiDay.filter((request) => {
+            for (let j = request.slotStart; j <= request.slotEnd; j++) {
+              if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
                 return request;
               }
             }
@@ -547,6 +583,31 @@ export class BookingRoomService {
     try {
       const listRequestBookedInMultiDay =
         await this.getListRequestBookedInMultiDay(payload);
+      const listRoomBookedInMultiDaySameSlot = [];
+      if (listRequestBookedInMultiDay?.length > 0) {
+        listRequestBookedInMultiDay.map((request) => {
+          listRoomBookedInMultiDaySameSlot.push(request.roomId);
+        });
+      }
+      const result = await this.roomService.filterRoomFreeByRoomBooked(
+        listRoomBookedInMultiDaySameSlot
+      );
+      return result;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getRoomFreeAtMultiDateV2(payload: {
+    dateStart: string;
+    dateEnd: string;
+    checkinSlotId: string;
+    checkoutSlotId: string;
+  }) {
+    try {
+      const listRequestBookedInMultiDay =
+        await this.getListRequestBookedInMultiDayV2(payload);
       const listRoomBookedInMultiDaySameSlot = [];
       if (listRequestBookedInMultiDay?.length > 0) {
         listRequestBookedInMultiDay.map((request) => {
@@ -1002,6 +1063,7 @@ export class BookingRoomService {
         checkinSlotId: request.checkinSlotId,
         checkoutSlotId: request.checkoutSlotId,
       });
+      console.log("list request same slot: ", listRequestSameSlot)
       if (listRequestSameSlot) {
         const reason = 'This room is given priority for another request';
         listRequestSameSlot.map((request) => {
