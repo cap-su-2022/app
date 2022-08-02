@@ -1,14 +1,6 @@
-import React, { CSSProperties, useState } from 'react';
-import {
-  createStyles,
-  Table,
-  Button,
-} from '@mantine/core';
-import {
-  InfoCircle,
-  Pencil,
-  Trash,
-} from 'tabler-icons-react';
+import React, { CSSProperties, useEffect, useState } from 'react';
+import { createStyles, Table, Button } from '@mantine/core';
+import { InfoCircle, Pencil, Trash } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import moment from 'moment';
 import Th from '../../components/table/th.table.component';
@@ -29,6 +21,11 @@ interface TableBodyProps {
 export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
+
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
 
   const { classes } = useStyles();
   const setSorting = (field: keyof RowData) => {
@@ -53,20 +50,25 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
         >
           <InfoCircle />
         </Button>
-        <Button
-          variant="outline"
-          color="green"
-          onClick={() => props.actionButtonCb.update(row.id)}
-        >
-          <Pencil />
-        </Button>
-        <Button
-          variant="outline"
-          color="red"
-          onClick={() => props.actionButtonCb.delete(row.id)}
-        >
-          <Trash />
-        </Button>
+
+        {userInfo.role === 'System Admin' ? (
+          <>
+            <Button
+              variant="outline"
+              color="green"
+              onClick={() => props.actionButtonCb.update(row.id)}
+            >
+              <Pencil />
+            </Button>
+            <Button
+              variant="outline"
+              color="red"
+              onClick={() => props.actionButtonCb.delete(row.id)}
+            >
+              <Trash />
+            </Button>
+          </>
+        ) : null}
       </td>
     </tr>
   ));
@@ -75,7 +77,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{ tableLayout: 'fixed'}}
+      sx={{ tableLayout: 'fixed' }}
     >
       <thead>
         <tr>
@@ -110,7 +112,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             sorted={null}
             reversed={reverseSortDirection}
             onSort={null}
-            style={{width: 220}}
+            style={{ width: 220 }}
           >
             Actions
           </Th>

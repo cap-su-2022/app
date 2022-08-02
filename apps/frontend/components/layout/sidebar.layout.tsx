@@ -1,12 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { createStyles, Navbar, Group, Code, Badge } from '@mantine/core';
+import React, { useEffect, useState } from 'react';
 import {
-  Logout,
-  User,
+  createStyles,
+  Navbar,
+  Group,
+  Code,
+  Badge,
+  Image,
+  Text,
+} from '@mantine/core';
+import {
   BuildingWarehouse,
   Users,
   Devices,
-  Messages,
   Dashboard,
   Bell,
   Ticket,
@@ -21,46 +26,85 @@ import {
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { BLACK, WHITE } from '@app/constants';
 import { useRouter } from 'next/router';
-import LogoutModal from '../logout.modal';
-import PreferencesModal from '../preferences.modal.component';
 import { useAppDispatch } from '../../redux/hooks';
 import { fetchCountPendingRequestBooking } from '../../redux/features/room-booking/thunk/fetch-count-pending-request-booking';
 
-const data = [
-  { link: '/dashboard', label: 'Dashboard', icon: Dashboard },
-  { link: '/rooms', label: 'Rooms', icon: BuildingWarehouse },
-  { link: '/room-type', label: 'Room Type', icon: Door },
-  { link: '/devices', label: 'Devices', icon: Devices },
-  { link: '/device-type', label: 'Device Type', icon: DeviceTablet },
-  { link: '/role', label: 'Role', icon: BarrierBlock },
-  { link: '/accounts', label: 'Accounts', icon: Users },
-  { link: '/feedback-type', label: 'Feedback Type', icon: MessageCode },
-  { link: '/feedbacks', label: 'Feedback', icon: BrandHipchat },
-  { link: '/notifications', label: 'Notification', icon: Bell },
-  { link: '/booking-room', label: 'Booking Room', icon: Ticket },
-  {
-    link: '/booking-reason',
-    label: 'Booking Reason',
-    icon: DeviceMobileMessage,
-  },
-  // { link: '/feedback', label: 'Feedback', icon:  BrandHipchat},
-  { link: '/slot', label: 'Slot', icon: Clock2 },
-];
-
 interface SideBarProps {
-  // links: { link: string; label: string }[];
   opened: boolean;
 }
 
 const LayoutSidebar: React.FC<SideBarProps> = (props) => {
   const { classes, cx } = useStyles();
-  console.log(props.opened);
 
-  const [isLogoutModalShown, setLogoutModalShown] = useState<boolean>(false);
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
+
+  const isAdmin = userInfo.role === 'System Admin';
+  const isLibrarian = userInfo.role === 'Librarian';
+  const isStaff = userInfo.role === 'Staff';
+  console.log(userInfo)
+
+  const data = [
+    {
+      link: '/dashboard',
+      label: 'Dashboard',
+      icon: Dashboard,
+      isRender: isAdmin || isLibrarian,
+    },
+    {
+      link: '/rooms',
+      label: 'Rooms',
+      icon: BuildingWarehouse,
+      isRender: isAdmin || isLibrarian || isStaff,
+    },
+    { link: '/room-type', label: 'Room Type', icon: Door, isRender: isAdmin },
+    { link: '/devices', label: 'Devices', icon: Devices, isRender: isAdmin },
+    {
+      link: '/device-type',
+      label: 'Device Type',
+      icon: DeviceTablet,
+      isRender: isAdmin,
+    },
+    { link: '/role', label: 'Role', icon: BarrierBlock, isRender: isAdmin },
+    { link: '/accounts', label: 'Accounts', icon: Users, isRender: isAdmin },
+    {
+      link: '/feedback-type',
+      label: 'Feedback Type',
+      icon: MessageCode,
+      isRender: isAdmin,
+    },
+    {
+      link: '/feedbacks',
+      label: 'Feedback',
+      icon: BrandHipchat,
+      isRender: isAdmin,
+    },
+    {
+      link: '/notifications',
+      label: 'Notification',
+      icon: Bell,
+      isRender: isAdmin || isLibrarian || isStaff,
+    },
+    {
+      link: '/booking-room',
+      label: 'Booking Room',
+      icon: Ticket,
+      isRender: isAdmin || isLibrarian || isStaff,
+    },
+    {
+      link: '/booking-reason',
+      label: 'Booking Reason',
+      icon: DeviceMobileMessage,
+      isRender: isAdmin || isLibrarian,
+    },
+
+    { link: '/slot', label: 'Slot', icon: Clock2, isRender: isAdmin },
+  ];
+
   const [active, setActive] = useState('Billing');
   const dispatch = useAppDispatch();
-  const [isPreferencesShown, setPreferencesShown] = useState<boolean>(false);
-
   const router = useRouter();
 
   const [count, setCount] = useState<number>();
@@ -71,47 +115,54 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       .then((count) => setCount(count?.count));
   }, []);
 
-  const handleLogoutSubmit = async (
-    event: React.MouseEvent<HTMLAnchorElement>
-  ) => {
-    event.preventDefault();
-    setLogoutModalShown(!isLogoutModalShown);
-  };
+  console.log(isStaff)
 
   const isMenuSelect = (item) => {
     return item.label === active || router.route === item.link;
   };
 
-  const links = data.map((item, index) => (
-    <a
-      className={
-        props.opened
-          ? cx(classes.closeLink, { [classes.linkActive]: isMenuSelect(item) })
-          : cx(classes.link, { [classes.linkActive]: isMenuSelect(item) })
-      }
-      href={item.link}
-      key={index}
-      onClick={async (event) => {
-        event.preventDefault();
-        setActive(item.label);
-        await router.push(item.link);
-      }}
-    >
-      <item.icon
-        className={cx(classes.linkIcon, {
-          [classes.iconActive]: isMenuSelect(item),
-        })}
-      />
-      <span className={cx({ [classes.labelActive]: isMenuSelect(item) })}>
-        {item.label}
-      </span>
-      {item.link === '/booking-room' && count > 0 ? (
-        <Badge style={{ marginLeft: 10 }} color="red" variant="filled">
-          {count}
-        </Badge>
-      ) : null}
-    </a>
-  ));
+  const links = data.map((item, index) =>
+    
+      (item.isRender ? item.isRender ? (
+        <a
+          className={
+            props.opened
+              ? cx(classes.closeLink, {
+                  [classes.linkActive]: isMenuSelect(item),
+                })
+              : cx(classes.link, { [classes.linkActive]: isMenuSelect(item) })
+          }
+          href={item.link}
+          key={index}
+          onClick={async (event) => {
+            event.preventDefault();
+            setActive(item.label);
+            await router.push(item.link);
+          }}
+        >
+          <item.icon
+            className={
+              item.link === '/booking-room' && props.opened && count > 0
+                ? cx(classes.linkRedIcon, {
+                    [classes.iconActive]: isMenuSelect(item),
+                  })
+                : cx(classes.linkIcon, {
+                    [classes.iconActive]: isMenuSelect(item),
+                  })
+            }
+          />
+          <span className={cx({ [classes.labelActive]: isMenuSelect(item) })}>
+            {item.label}
+          </span>
+          {item.link === '/booking-room' && !props.opened && count > 0 ? (
+            <Badge style={{ marginLeft: 10 }} color="red" variant="filled">
+              {count}
+            </Badge>
+          ) : null}
+        </a>
+      ) : null : null)
+    
+  );
 
   return (
     <Navbar
@@ -121,8 +172,16 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
     >
       <Navbar.Section grow>
         <Group className={classes.header} position="apart">
-          <></>
-          <Code className={classes.version}>FPTU Library Room Booking</Code>
+          {props.opened ? (
+            <div
+              style={{ backgroundColor: '#fff', borderRadius: 10, padding: 5 }}
+            >
+              <Image alt="FPTU Logo" src="/logo.svg" height={60} width={60} />
+              <Text className={classes.text}>FLRBMS</Text>
+            </div>
+          ) : (
+            <Code className={classes.version}>FPTU Library Room Booking</Code>
+          )}
         </Group>
         {links}
       </Navbar.Section>
@@ -177,10 +236,20 @@ const useStyles = createStyles((theme, _params, getRef) => {
       '@media (max-width: 780px)': {
         maxWidth: 100,
       },
+      transition: 'max-width 1s',
+    },
+    text: {
+      fontWeight: 'bold',
+      color: FPT_ORANGE_COLOR,
+      fontSize: 16,
+      fontFamily: 'monospace',
+      // marginTop: -10,
+      textAlign: 'center',
     },
     closeNavBar: {
       backgroundColor: FPT_ORANGE_COLOR,
       maxWidth: 100,
+      transition: 'max-width 1s',
     },
     version: {
       backgroundColor: WHITE,
@@ -257,6 +326,15 @@ const useStyles = createStyles((theme, _params, getRef) => {
     linkIcon: {
       ref: icon,
       color: theme.white,
+      opacity: 0.75,
+      marginRight: theme.spacing.sm,
+    },
+
+    linkRedIcon: {
+      borderRadius: 10,
+      ref: icon,
+      color: theme.white,
+      backgroundColor: 'red',
       opacity: 0.75,
       marginRight: theme.spacing.sm,
     },

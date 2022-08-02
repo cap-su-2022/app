@@ -1,5 +1,12 @@
-import {IsNotEmpty, IsNumber, IsOptional, IsString} from "class-validator";
-import {ApiProperty} from "@nestjs/swagger";
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class SlotsRequestPayload {
   @IsString()
@@ -22,16 +29,8 @@ export class SlotsRequestPayload {
   @IsNotEmpty({
     message: 'Name can not be empty',
   })
-  @ApiProperty({
-    name: 'name',
-    description: 'Name to be added',
-    required: true,
-    type: String,
-    title: 'Name',
-    example: 'Slot 10',
-    minLength: 1,
-    maxLength: 256,
-  })
+  @Min(1)
+  @Max(20)
   slotNum: number;
 
   @IsString()
@@ -45,8 +44,6 @@ export class SlotsRequestPayload {
     type: String,
     title: 'Time Start',
     example: '21:00:15',
-    minLength: 1,
-    maxLength: 256,
   })
   timeStart: string;
 
@@ -61,8 +58,6 @@ export class SlotsRequestPayload {
     type: String,
     title: 'Time End',
     example: '22:00:45',
-    minLength: 1,
-    maxLength: 256,
   })
   timeEnd: string;
 

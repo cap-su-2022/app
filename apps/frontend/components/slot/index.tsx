@@ -31,6 +31,7 @@ import { fetchAllSlots } from '../../redux/features/slot';
 import { fetchSlotById } from '../../redux/features/slot/thunk/fetch-by-id.thunk';
 import { addSlot } from '../../redux/features/slot/thunk/add.thunk';
 import DeleteModal from './delete-modal.component';
+import NoDataFound from '../no-data-found';
 
 const AddSlotValidation = Yup.object().shape({
   name: Yup.string()
@@ -353,7 +354,9 @@ const ManageSlot: React.FC<any> = () => {
             // slots={slots}
           />
         </>
-      ) : null}
+      ) : (
+        <NoDataFound />
+      )}
       <AddModal
         // header="Add new slot"
         isShown={isAddShown}

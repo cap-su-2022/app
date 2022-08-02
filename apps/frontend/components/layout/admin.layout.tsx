@@ -11,15 +11,15 @@ interface AdminLayoutProps {
 }
 const AdminLayout: React.FC<AdminLayoutProps> = (props) => {
   const { classes } = useStyles();
-  const [opened, toggleOpened] = useBooleanToggle(false);
+  const [opened, toggleOpened] = useBooleanToggle(true);
 
   return (
     <>
       <div className={styles.page}>
-        <LayoutSidebar opened={opened} />
+        <LayoutSidebar opened={!opened} />
 
         <div className={classes.headerRight}>
-          <LayoutHeader toggleOpened={() => toggleOpened()} opened={opened} />
+          <LayoutHeader toggleOpened={() => toggleOpened()} opened={!opened} />
           <div className={classes.wrapper}>{props.children}</div>
         </div>
       </div>

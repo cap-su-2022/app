@@ -76,15 +76,6 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
         >
           <InfoCircle />
         </Button>
-        {userInfo.role === 'Staff' && (
-          <Button
-            variant="outline"
-            color="green"
-            onClick={() => props.actionButtonCb.update(row.id)}
-          >
-            <Pencil />
-          </Button>
-        )}
         {/* <Button
           variant="outline"
           color="red"
