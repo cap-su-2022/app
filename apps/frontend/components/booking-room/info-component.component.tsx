@@ -60,19 +60,39 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
+  const RenderDeviceButton: React.FC = () => {
+    if (requestBooking.listDevice.length > 0) {
+      return (
+        <Button
+          onClick={() => setShowListDevice(!isShowListDevice)}
+          variant="outline"
+          color={'blue'}
+          leftIcon={<Devices />}
+        >
+          Device
+        </Button>
+      );
+    } else {
+      return null;
+    }
+  };
+
   const ButtonRender = (status: string) => {
     switch (status) {
       case 'PENDING':
         if (userInfo.id === requestBooking.requestedById) {
           return (
-            <Button
-              onClick={() => props.toggleCancelModalShown()}
-              variant="outline"
-              color={'red'}
-              leftIcon={<X />}
-            >
-              Cancel request
-            </Button>
+            <>
+              <Button
+                onClick={() => props.toggleCancelModalShown()}
+                variant="outline"
+                color={'red'}
+                leftIcon={<X />}
+              >
+                Cancel request
+              </Button>
+              <RenderDeviceButton />
+            </>
           );
         } else {
           return (
@@ -94,6 +114,8 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               >
                 Accept request
               </Button>
+
+              <RenderDeviceButton />
             </>
           );
         }
@@ -117,18 +139,23 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               >
                 Check in
               </Button>
+
+              <RenderDeviceButton />
             </>
           );
         } else {
           return (
-            <Button
-              onClick={() => props.toggleCancelModalShown()}
-              variant="outline"
-              color={'red'}
-              leftIcon={<X />}
-            >
-              Cancel request
-            </Button>
+            <>
+              <Button
+                onClick={() => props.toggleCancelModalShown()}
+                variant="outline"
+                color={'red'}
+                leftIcon={<X />}
+              >
+                Cancel request
+              </Button>
+              <RenderDeviceButton />
+            </>
           );
         }
       case 'CHECKED_IN':
@@ -144,6 +171,8 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               >
                 Check out
               </Button>
+
+              <RenderDeviceButton />
             </>
           );
         }
@@ -162,7 +191,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
 
   return (
     <div style={{ display: 'flex' }} ref={parent}>
-      <div style={{ width: 530 }}>
+      <div style={{ width: 600 }}>
         <div className={classes.modalBody}>
           <InputWrapper label="Request ID" className={classes.inputWrapper}>
             <TextInput
@@ -172,7 +201,13 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               value={requestBooking.id}
             />
           </InputWrapper>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              flex: 1,
+            }}
+          >
             <InputWrapper label="Room name" className={classes.inputWrapper}>
               <TextInput
                 icon={<ClipboardText />}
@@ -181,11 +216,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 value={requestBooking.roomName}
               />
             </InputWrapper>
-            <InputWrapper
-              label="Room user"
-              className={classes.inputWrapper}
-              style={{ flex: 1 }}
-            >
+            <InputWrapper label="Room user" className={classes.inputWrapper}>
               <TextInput
                 icon={<ClipboardText />}
                 radius="md"
@@ -207,11 +238,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               />
             </InputWrapper>
 
-            <InputWrapper
-              label="Request by"
-              className={classes.inputWrapper}
-              style={{ flex: 1 }}
-            >
+            <InputWrapper label="Request by" className={classes.inputWrapper}>
               <TextInput
                 icon={<ClipboardText />}
                 radius="md"
@@ -236,8 +263,12 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 icon={<ClipboardText />}
                 radius="md"
                 readOnly
-                value={requestBooking.checkinSlot}
-                style={{ width: 100 }}
+                value={
+                  requestBooking.checkinSlot +
+                  '   ' +
+                  requestBooking.checkinTime.slice(0, 5)
+                }
+                style={{ width: 150 }}
               />
             </InputWrapper>
             <div style={{ position: 'relative', top: '45px' }}>
@@ -248,8 +279,12 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 icon={<ClipboardText />}
                 radius="md"
                 readOnly
-                value={requestBooking.checkoutSlot}
-                style={{ width: 100 }}
+                value={
+                  requestBooking.checkoutSlot +
+                  '   ' +
+                  requestBooking.checkoutTime.slice(0, 5)
+                }
+                style={{ width: 150 }}
               />
             </InputWrapper>
           </div>
@@ -320,7 +355,7 @@ const useStyles = createStyles({
     display: 'flex',
     flexDirection: 'column',
     margin: 20,
-    width: 490,
+    width: 560,
   },
   modalFooter: {
     display: 'flex',
@@ -334,6 +369,7 @@ const useStyles = createStyles({
   },
   inputWrapper: {
     margin: 10,
+    flex: 1,
   },
   deviceRow: {
     borderRadius: '3px',

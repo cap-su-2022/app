@@ -79,7 +79,7 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       link: '/feedbacks',
       label: 'Feedback',
       icon: BrandHipchat,
-      isRender: isAdmin,
+      isRender: isAdmin || isLibrarian || isStaff,
     },
     {
       link: '/notifications',

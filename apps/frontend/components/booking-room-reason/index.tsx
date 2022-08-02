@@ -332,6 +332,26 @@ const ManageBookingReason: React.FC<any> = () => {
       })
     )
       .unwrap()
+      .catch((e) =>
+        showNotification({
+          id: 'restore-data',
+          color: 'red',
+          title: 'Error while update booking reason',
+          message: e.message ?? 'Failed to update booking reason',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'restore-data',
+          color: 'teal',
+          title: 'New booking reason was updated',
+          message: 'New booking reason successfully updated',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
       .then((e) => handleUpdateModalClose());
   };
 

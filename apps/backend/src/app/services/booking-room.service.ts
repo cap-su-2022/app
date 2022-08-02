@@ -668,6 +668,7 @@ export class BookingRoomService {
   async getBookingRoomById(id: string) {
     try {
       const requestInfo = await this.repository.findById(id);
+      console.log(requestInfo)
       if (requestInfo) {
         const listDevice = await this.bookingRoomDeviceService.findByRequestId(
           id
