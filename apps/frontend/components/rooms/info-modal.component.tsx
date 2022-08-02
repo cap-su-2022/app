@@ -31,10 +31,6 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
   const { classes } = useStyles();
   const room = useAppSelector((state) => state.room.room);
 
-  useEffect(() => {
-    console.log(room);
-  }, []);
-
   const ModalHeaderTitle: React.FC = () => {
     return <Text className={classes.modalHeaderTitle}>Room Information</Text>;
   };

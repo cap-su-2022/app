@@ -67,7 +67,7 @@ const filterBookingRoom = (bookedData, slotsFromState, roomsFromState) => {
           slotName: slotsFromState[i].name,
           slotNum: slotsFromState[i].slotNum,
           timeStart: slotsFromState[i].timeStart,
-          timeEnd: slotsFromState[i].timeEnd
+          timeEnd: slotsFromState[i].timeEnd,
         });
       }
     }
@@ -87,7 +87,7 @@ const filterBookingRoomElse = (slotsFromState, roomsFromState) => {
         slotName: slotsFromState[j].name,
         slotNum: slotsFromState[j].slotNum,
         timeStart: slotsFromState[j].timeStart,
-        timeEnd: slotsFromState[j].timeEnd
+        timeEnd: slotsFromState[j].timeEnd,
       });
     }
   }
@@ -122,7 +122,6 @@ const firstAddRoomRecentlySearch = (item, username, selectedDay) => {
 };
 
 const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
-
   const addRoomBooking = useAppSelector(
     (state) => state.roomBooking.addRoomBooking
   );
@@ -154,17 +153,15 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
     } else {
       result = filterBookingRoomElse(slotsFromState, rooms);
     }
-    let finalResult = []
+    let finalResult = [];
 
-   if (addRoomBooking.isMultiSlot){
+    if (addRoomBooking.isMultiSlot) {
       finalResult = result.filter(
-       (item) => item.slotNum >= slotStart && item.slotNum <= slotEnd
-     );
-   } else {
-     finalResult = result.filter(
-       (item) => item.slotNum === slotStart
-     )
-   }
+        (item) => item.slotNum >= slotStart && item.slotNum <= slotEnd
+      );
+    } else {
+      finalResult = result.filter((item) => item.slotNum === slotStart);
+    }
     setSlotAndRoom(finalResult);
   };
 
@@ -257,6 +254,71 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
     }
   };
 
+  const RoomWishlistErrorModal = () => {
+    return (
+      <AlertModal
+        isOpened={isModalOpened}
+        height={deviceWidth / 1.7}
+        width={deviceWidth / 1.3}
+        toggleShown={() => setModalOpen(!isModalOpened)}
+      >
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            flex: 1,
+          }}
+        >
+          <View
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <ExclamationCircleIcon
+              size={deviceWidth / 8}
+              color={FPT_ORANGE_COLOR}
+            />
+            <Text
+              style={{
+                color: BLACK,
+                fontWeight: '500',
+                fontSize: deviceWidth / 23,
+                textAlign: 'center',
+              }}
+            >
+              You already add this room to wishlist
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 40,
+              width: deviceWidth / 1.7,
+              backgroundColor: FPT_ORANGE_COLOR,
+              borderRadius: 8,
+            }}
+            onPress={() => setModalOpen(false)}
+          >
+            <Text
+              style={{
+                color: WHITE,
+                fontSize: deviceWidth / 23,
+                fontWeight: '600',
+              }}
+            >
+              I understand
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </AlertModal>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -331,68 +393,9 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
               Back
             </Text>
           </TouchableOpacity>
-          <AlertModal
-            isOpened={isModalOpened}
-            height={deviceWidth / 1.7}
-            width={deviceWidth / 1.3}
-            toggleShown={() => setModalOpen(!isModalOpened)}
-          >
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-                flex: 1,
-              }}
-            >
-              <View
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <ExclamationCircleIcon
-                  size={deviceWidth / 8}
-                  color={FPT_ORANGE_COLOR}
-                />
-                <Text
-                  style={{
-                    color: BLACK,
-                    fontWeight: '500',
-                    fontSize: deviceWidth / 23,
-                    textAlign: 'center',
-                  }}
-                >
-                  You already add this room to wishlist
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: 40,
-                  width: deviceWidth / 1.7,
-                  backgroundColor: FPT_ORANGE_COLOR,
-                  borderRadius: 8,
-                }}
-                onPress={() => setModalOpen(false)}
-              >
-                <Text
-                  style={{
-                    color: WHITE,
-                    fontSize: deviceWidth / 23,
-                    fontWeight: '600',
-                  }}
-                >
-                  I understand
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </AlertModal>
         </View>
       </View>
+      <RoomWishlistErrorModal />
     </SafeAreaView>
   );
 };

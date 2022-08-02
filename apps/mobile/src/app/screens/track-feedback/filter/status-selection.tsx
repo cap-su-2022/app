@@ -13,25 +13,32 @@ import { deviceWidth } from '../../../utils/device';
 const statusData = [
   {
     id: 0,
-    label: 'Other',
+    label: 'All',
     value: undefined,
-    style: { width: deviceWidth / 7 },
+    style: { width: deviceWidth / 8.8 },
     slotContainerLeftStyle: { left: 5 },
   },
   {
     id: 1,
-    label: 'Resolved',
-    value: 'RESOLVED',
+    label: 'Pending',
+    value: 'PENDING',
     style: { width: deviceWidth / 5 },
-    slotContainerLeftStyle: { left: deviceWidth / 5.6 },
+    slotContainerLeftStyle: { left: deviceWidth / 6.5 },
   },
   {
     id: 2,
+    label: 'Resolved',
+    value: 'RESOLVED',
+    style: { width: deviceWidth / 5 },
+    slotContainerLeftStyle: { left: deviceWidth / 2.65 },
+  },
+  {
+    id: 3,
     label: 'Rejected',
     value: 'REJECTED',
     style: { width: deviceWidth / 5 },
-    slotContainerLeftStyle: { left: deviceWidth / 2.45 },
-  }
+    slotContainerLeftStyle: { left: deviceWidth / 1.65 },
+  },
 ];
 
 interface TrackBookingRoomFilterStatusSelectionProps {

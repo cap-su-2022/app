@@ -1,18 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Divider from '../../../../components/text/divider';
-import { deviceWidth } from '../../../../utils/device';
+import {deviceWidth} from '../../../../utils/device';
 import dayjs from 'dayjs';
-import {
-  BLACK,
-  FPT_ORANGE_COLOR,
-  GRAY,
-  INPUT_GRAY_COLOR,
-} from '@app/constants';
-import { ChevronRightIcon } from 'react-native-heroicons/outline';
-import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
-import { CurrentCheckinInformation } from '../../../../redux/models/current-checkin-information.model';
-import { useAppSelector } from '../../../../hooks/use-app-selector.hook';
+import {BLACK, FPT_ORANGE_COLOR, GRAY, INPUT_GRAY_COLOR,} from '@app/constants';
+import {ChevronRightIcon} from 'react-native-heroicons/outline';
+import {useAppNavigation} from '../../../../hooks/use-app-navigation.hook';
+import {useAppSelector} from '../../../../hooks/use-app-selector.hook';
 import {
   fetchDeviceInUseByBookingRequestId
 } from "../../../../redux/features/room-booking/thunk/fetch-devices-in-use-by-booking-request-id.thunk";

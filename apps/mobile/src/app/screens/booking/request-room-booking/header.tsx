@@ -30,7 +30,9 @@ const RequestRoomBookingHeader: React.FC<any> = () => {
         <Text style={[styles.titleText, boxShadow(styles)]}>
           Request for room booking
         </Text>
-        <TouchableOpacity onPress={() => navigate.navigate('ROOM_BOOKING_WISHLIST')}>
+        <TouchableOpacity
+          onPress={() => navigate.navigate('ROOM_BOOKING_WISHLIST')}
+        >
           <HeartIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 14} />
         </TouchableOpacity>
       </View>
@@ -43,7 +45,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     position: 'absolute',
-    height: deviceHeight / 5,
+    height: 210,
     backgroundColor: BLACK,
   },
   container: {

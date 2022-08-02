@@ -1,5 +1,5 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {spinnerInitialState} from "./spinnerInitialState";
+import { createSlice } from '@reduxjs/toolkit';
+import { spinnerInitialState } from './spinnerInitialState';
 
 const spinnerSlice = createSlice({
   name: 'spinner',
@@ -11,7 +11,7 @@ const spinnerSlice = createSlice({
     toggleSpinnerOff: (state) => {
       state.isLoading = false;
     },
-  }
+  },
 });
 
 export const spinnerReducer = spinnerSlice.reducer;

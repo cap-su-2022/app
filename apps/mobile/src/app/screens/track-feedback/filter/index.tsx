@@ -5,30 +5,25 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {GRAY, INPUT_GRAY_COLOR, WHITE} from '@app/constants';
-import {deviceHeight, deviceWidth} from '../../../utils/device';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { GRAY, WHITE } from '@app/constants';
+import { deviceWidth } from '../../../utils/device';
 import {
   CalendarIcon,
-  ChevronDoubleRightIcon, TagIcon,
+  ChevronDoubleRightIcon,
+  TagIcon,
 } from 'react-native-heroicons/outline';
-import RNPickerSelect, { PickerStyle } from 'react-native-picker-select';
+import RNPickerSelect from 'react-native-picker-select';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import dayjs from 'dayjs';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
-import { fetchAllSlots } from '../../../redux/features/slot';
 import {
   resetGlobalDateEnd,
   resetGlobalDateStart,
 } from '../../../redux/features/room-booking/slice';
 import TrackBookingRoomFilterStatusSelection from './status-selection';
-import {fetchAllFeedBackTypes} from "../../../redux/features/feed-back-type/thunk/fetch-all-feed-back-types.thunk";
+import { fetchAllFeedBackTypes } from '../../../redux/features/feed-back-type/thunk/fetch-all-feed-back-types.thunk';
 
 interface TrackBookingRoomFilterHandler {
   fromDate: string;

@@ -1,6 +1,11 @@
 import React from 'react';
 
-import { TabNavigator, TabScreen } from '@app/utils';
+import {
+  StackNavigator,
+  StackScreen,
+  TabNavigator,
+  TabScreen,
+} from '@app/utils';
 import {
   HomeRoute,
   QRScanRoute,
@@ -10,12 +15,10 @@ import { HomeIcon, UserIcon } from 'react-native-heroicons/solid';
 import QRScan from '../screens/qr-scan.screen';
 import QRScanButton from '../components/buttons/QRScanButton';
 import { Platform } from 'react-native';
-import { StackNavigator, StackScreen } from '@app/utils';
 import HomeNavigator from './home';
 import UserNavigator from './user';
 import BookingQRScan from '../screens/track-booking-room/booking-qr-scan';
 import AcceptBookingNavigator from './home/track-booking-room/accept-booking';
-import { deviceHeight } from '../utils/device';
 
 const MainNavigator = () => {
   return (

@@ -14,17 +14,14 @@ import {
   FPT_ORANGE_COLOR,
   GRAY,
   INPUT_GRAY_COLOR,
-  LIGHT_GRAY,
   WHITE,
 } from '@app/constants';
 import { deviceWidth } from '../../../utils/device';
 import {
   ExclamationCircleIcon,
   HomeIcon,
-  LibraryIcon,
   TicketIcon,
 } from 'react-native-heroicons/outline';
-import { StarIcon } from 'react-native-heroicons/outline';
 
 import SuccessCheckOut from '../../../components/success-checkout.svg';
 import StarRating from './rate';
@@ -38,7 +35,7 @@ import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { fetchAllFeedBackTypes } from '../../../redux/features/feed-back-type/thunk/fetch-all-feed-back-types.thunk';
 import FeedbackTypeModel from '../../../redux/models/feedback-type.model';
 import { addNewFeedbackAfterCheckout } from '../../../redux/features/feedback/thunk/Add-new-feedback-after-checkout.thunk';
-import {useAppSelector} from "../../../hooks/use-app-selector.hook";
+import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 
 const CheckoutSuccessfully: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -121,8 +118,8 @@ const CheckoutSuccessfully: React.FC<any> = () => {
     )
       .unwrap()
       .then(() => {
-        alert('Feed Back Successful! Thank you for your feedback')
-        setTimeout(() => navigate.pop(2), 1000)
+        alert('Feed Back Successful! Thank you for your feedback');
+        setTimeout(() => navigate.pop(2), 1000);
       })
       .catch((e) => {
         alert(JSON.stringify(e));

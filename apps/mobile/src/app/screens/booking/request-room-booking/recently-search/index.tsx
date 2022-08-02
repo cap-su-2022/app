@@ -1,7 +1,14 @@
 import React from 'react';
 import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
 import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
-import {Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { deviceHeight, deviceWidth } from '../../../../utils/device';
 import { BLACK, WHITE } from '@app/constants';
 import {
@@ -10,7 +17,7 @@ import {
   HomeIcon,
 } from 'react-native-heroicons/outline';
 import { LOCAL_STORAGE } from '../../../../utils/local-storage';
-import {step1ScheduleRoomBooking} from "../../../../redux/features/room-booking/slice";
+import { step1ScheduleRoomBooking } from '../../../../redux/features/room-booking/slice';
 
 const RequestRoomBookingRecentlySearch: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -26,22 +33,24 @@ const RequestRoomBookingRecentlySearch: React.FC<any> = () => {
   }
 
   const handleBookAgain = (props) => {
-    dispatch(step1ScheduleRoomBooking({
-      roomId: props.roomId,
-      roomName: props.roomName,
-      fromDay: props.fromDay,
-      fromSlot: props.slotId,
-      toSlot: props.slotId
-    }))
+    dispatch(
+      step1ScheduleRoomBooking({
+        roomId: props.roomId,
+        roomName: props.roomName,
+        fromDay: props.fromDay,
+        fromSlot: props.slotId,
+        toSlot: props.slotId,
+      })
+    );
     setTimeout(() => {
       navigate.navigate('ROOM_BOOKING_2');
     }, 0);
-  }
+  };
 
   const RecentlyHistory = (props, index) => {
     return (
       <TouchableOpacity onPress={() => handleBookAgain(props)} key={index}>
-        <View style={styles.itemContainer} >
+        <View style={styles.itemContainer}>
           <View style={styles.itemWrapper}>
             <HomeIcon color={BLACK} size={deviceWidth / 16} />
             <Text style={styles.textContent}>{props.roomName}</Text>

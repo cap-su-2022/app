@@ -33,7 +33,6 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
 ) => {
   const {classes, cx} = useStyles();
   const deletedRooms = useAppSelector((state) => state.room.deletedRooms);
-  console.log(deletedRooms)
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
   const [search, setSearch] = useState<string>('');

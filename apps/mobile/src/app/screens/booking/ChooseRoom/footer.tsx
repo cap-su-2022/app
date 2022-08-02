@@ -1,11 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {
-  AsyncStorage,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
@@ -17,7 +11,6 @@ import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import AlertModal from '../../../components/modals/alert-modal.component';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { step2ScheduleRoomBooking } from '../../../redux/features/room-booking/slice';
-import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import { LOCAL_STORAGE } from '../../../utils/local-storage';
 
 interface ChooseRoomBookingFooterProps {
@@ -50,9 +43,7 @@ const ChooseRoomBookingFooter: React.FC<ChooseRoomBookingFooterProps> = (
           [props.roomName].toString()
         );
       }
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
     if (props.roomId === undefined) {
       setErrorModalShown(true);
     } else {

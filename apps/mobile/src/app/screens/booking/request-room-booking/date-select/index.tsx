@@ -1,12 +1,11 @@
-import React, { useMemo, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { CalendarIcon } from 'react-native-heroicons/outline';
-import { FPT_ORANGE_COLOR, GRAY, WHITE } from '@app/constants';
-import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
-import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
-import { deviceWidth } from '../../../../utils/device';
+import React, {useMemo} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {CalendarIcon} from 'react-native-heroicons/outline';
+import {BLACK, FPT_ORANGE_COLOR, GRAY, WHITE} from '@app/constants';
+import {useAppNavigation} from '../../../../hooks/use-app-navigation.hook';
+import {deviceWidth} from '../../../../utils/device';
 import DateSelectMultiDateCheckbox from './multi-date';
-import { useAppSelector } from '../../../../hooks/use-app-selector.hook';
+import {useAppSelector} from '../../../../hooks/use-app-selector.hook';
 import dayjs from 'dayjs';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -76,6 +75,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 6,
     marginLeft: 5,
+    color: BLACK,
   },
   startDayContainer: {
     display: 'flex',
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   bookingNowButtonText: {
     fontSize: deviceWidth / 23,
     fontWeight: '600',
-    color: GRAY,
+    color: GRAY
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BLACK, GRAY, WHITE } from '@app/constants';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';

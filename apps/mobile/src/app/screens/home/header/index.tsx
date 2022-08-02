@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { BellIcon } from 'react-native-heroicons/solid';

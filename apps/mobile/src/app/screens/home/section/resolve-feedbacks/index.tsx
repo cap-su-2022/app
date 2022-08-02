@@ -10,7 +10,6 @@ import { ChatAlt2Icon } from 'react-native-heroicons/outline';
 import { deviceWidth } from '../../../../utils/device';
 import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
-import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
 
 const HomeScreenSectionResolveFeedback: React.FC<any> = () => {
   const navigate = useAppNavigation();

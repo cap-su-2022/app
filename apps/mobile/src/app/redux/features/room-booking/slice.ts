@@ -3,7 +3,6 @@ import { BookingRoom } from '../../models/booking-room.model';
 import { fetchAllBookingRooms } from './thunk/fetch-all';
 import { fetchAllWishlistRooms } from './thunk/fetch-all-wishlist.thunk';
 import { RoomWishListResponse } from '../../models/wishlist-booking-room.model';
-import { addToRoomBookingWishlist } from './thunk/add-to-wishlist.thunk';
 import { fetchBookingRoomDevices } from './thunk/fetch-booking-room-devices.thunk';
 import { Device } from '../../models/device.model';
 import { fetchChoosingBookingRoom } from './thunk/fetch-choosing-booking-room.thunk';

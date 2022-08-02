@@ -1,14 +1,13 @@
-import React from "react";
-import {StyleSheet, Text, View} from "react-native";
-
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 const renderDividerText = (num: number) => {
-  let result = "";
+  let result = '';
   for (let i = 0; i < num; i++) {
-    result += "_";
+    result += '_';
   }
   return result;
-}
+};
 
 interface DividerProps {
   num: number;

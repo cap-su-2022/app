@@ -2,7 +2,7 @@ import React from 'react';
 import { CalendarProvider, WeekCalendar } from 'react-native-calendars';
 import RNPickerSelect, { PickerStyle } from 'react-native-picker-select';
 import { useAppSelector } from '../../../../hooks/use-app-selector.hook';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import {
   BLACK,
   FPT_ORANGE_COLOR,
@@ -91,6 +91,13 @@ const pickerStyle: PickerStyle = {
     borderBottomRightRadius: 8,
     borderTopRightRadius: 8,
   },
+  inputIOSContainer: {
+    width: deviceWidth / 1.75,
+    backgroundColor: LIGHT_GRAY,
+    borderBottomRightRadius: 8,
+    borderTopRightRadius: 8,
+    height: 50,
+  },
   inputAndroid: {
     fontSize: deviceWidth / 25,
     fontWeight: '600',
@@ -119,6 +126,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingVertical: 6,
     paddingHorizontal: 10,
+    color: GRAY,
   },
   roomFilterIcon: {
     width: 50,

@@ -123,11 +123,6 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
     setChoosedDevice(chooesdDeviceUpdated);
   };
 
-  // const test = () => {
-  //   console.log("Device", device)
-  //   console.log("Quantity", value)
-  // }
-
   const handleNextStep = () => {
     props.formik.setFieldValue('listDevice', choosedDevice);
     if (props.formik.values.description?.length > 500) {
@@ -141,7 +136,6 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
       });
     } else {
       if (props.formik.values.bookingReasonId) {
-        // props.handleSubmit();
         props.handleNextConfirm();
       } else {
         showNotification({
@@ -154,12 +148,9 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
         });
       }
     }
-    // setShowChooseRoom(false);
-    // setShowBowChooseSlot(true);
   };
 
   const handleKeypress = (e) => {
-    //it triggers by pressing the enter key
     if (e.which === 13) {
       add();
     }

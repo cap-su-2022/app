@@ -75,7 +75,6 @@ const ChangePasswordScreen = () => {
         navigate.pop();
       })
       .catch((e) => {
-        console.error(e);
         setChangePasswordFailure(true);
         setErrorChangePasswordMessage('Your current password is wrong!');
       });

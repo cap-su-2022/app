@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import {
   ListRenderItemInfo,
   SafeAreaView,
@@ -29,14 +29,8 @@ const TrackBookingRoom: React.FC<any> = () => {
     useRef<React.ElementRef<typeof BookingRoomHistoryFilter>>(null);
 
   const handleFilterSearch = () => {
-    console.log(filterRef.current);
     dispatch(fetchAllBookingRoomHistory(filterRef.current))
       .unwrap()
-
-      .then((data) => {
-        console.log(data);
-        return data;
-      })
       .catch(() => alert('Error while fetching data'));
   };
 

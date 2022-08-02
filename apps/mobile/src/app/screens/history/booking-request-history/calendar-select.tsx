@@ -1,9 +1,4 @@
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from 'react';
+import React from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -13,12 +8,7 @@ import {
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { deviceWidth } from '../../utils/device';
-import {
-  FPT_ORANGE_COLOR,
-  GRAY,
-  INPUT_GRAY_COLOR,
-  WHITE,
-} from '@app/constants';
+import { FPT_ORANGE_COLOR, INPUT_GRAY_COLOR, WHITE } from '@app/constants';
 import { CalendarIcon, ChevronLeftIcon } from 'react-native-heroicons/outline';
 import {
   setGlobalDateEnd,
@@ -53,7 +43,6 @@ const CalendarDateSelect: React.FC<CalendarDateSelectProps> = (props) => {
   };
 
   const handleSetGlobalEndDate = (date) => {
-    console.log(dayjs(date).diff(dayjs(globalDateStart)));
     if (dayjs(date).diff(dayjs(globalDateStart)) >= 0) {
       dispatch(setGlobalDateEnd(date));
     } else {

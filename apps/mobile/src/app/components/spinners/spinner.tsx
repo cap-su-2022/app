@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from "react";
-import {StyleSheet, View} from "react-native";
-import {FPT_ORANGE_COLOR} from "@app/constants";
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { FPT_ORANGE_COLOR } from '@app/constants';
 
 export const Spinner: React.FC = () => {
-
   const [dot1, setDot1] = useState(styles.dotBig);
   const [dot2, setDot2] = useState(styles.dotSmall);
   const [dot3, setDot3] = useState(styles.dotSmall);
@@ -33,7 +32,6 @@ export const Spinner: React.FC = () => {
         });
       }
       if (dot3Active) {
-
         setDot3({
           width: 20,
           height: 20,
@@ -51,29 +49,26 @@ export const Spinner: React.FC = () => {
         setDot3Active(true);
       }
 
-        if (dot1Active) {
-          setDot1({
-            width: 20,
-            height: 20,
-          });
-          setDot1Active(false);
-          setDot2Active(true);
-        }
+      if (dot1Active) {
+        setDot1({
+          width: 20,
+          height: 20,
+        });
+        setDot1Active(false);
+        setDot2Active(true);
+      }
     }, 250);
     return () => {
       clearInterval(interval);
-    }
+    };
   }, [dot1Active, dot2Active, dot3Active]);
 
   return (
     <View style={[styles.spinner]}>
       <View style={[styles.dotContainer]}>
-        <View style={[styles.dot, dot1]}>
-        </View>
-        <View style={[styles.dot, dot2]}>
-        </View>
-        <View style={[styles.dot, dot3]}>
-        </View>
+        <View style={[styles.dot, dot1]}></View>
+        <View style={[styles.dot, dot2]}></View>
+        <View style={[styles.dot, dot3]}></View>
       </View>
     </View>
   );

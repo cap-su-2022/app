@@ -9,7 +9,6 @@ import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BLACK } from '@app/constants';
-import BookingRequestHistory from '../../screens/history/booking-request-history';
 import BookingRequestHistoryNavigator from './booking-request';
 
 const HistoryNavigation: React.FC = () => {

@@ -7,7 +7,7 @@ import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import TrackFeedbackItemContent from './content';
 import TrackingBookingRequestItemNavigation from './navigation';
 import { boxShadow } from '../../../utils/box-shadow.util';
-import {fetchFeedbackById} from "../../../redux/features/feedback/thunk/fetch-feedback-by-id.thunk";
+import { fetchFeedbackById } from '../../../redux/features/feedback/thunk/fetch-feedback-by-id.thunk';
 
 interface BookingRequestItemProps {
   item: FeedbackFilterResponse;

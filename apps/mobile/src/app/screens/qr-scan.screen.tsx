@@ -1,9 +1,8 @@
-import React, {useRef, useState} from "react";
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
-import * as IconOutline from "react-native-heroicons/outline";
-import * as Icon from "react-native-heroicons/solid";
-import {BLACK, WHITE} from "@app/constants";
-
+import React, { useRef, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import * as IconOutline from 'react-native-heroicons/outline';
+import * as Icon from 'react-native-heroicons/solid';
+import { BLACK, WHITE } from '@app/constants';
 
 const QRScan = () => {
   const [whatsNextYCoord, setWhatsNextYCoord] = useState<number>(0);
@@ -20,20 +19,18 @@ const QRScan = () => {
         <View style={[styles.header]}>
           <View style={[styles.headerTitle]}>
             <Text>Cac</Text>
-            <IconOutline.UserCircleIcon color="black" size={40}/>
+            <IconOutline.UserCircleIcon color="black" size={40} />
           </View>
           <View style={[styles.headerBody]}>
-            <Icon.UserCircleIcon size={80} color="#f06e28"/>
+            <Icon.UserCircleIcon size={80} color="#f06e28" />
             <Text style={[styles.userAvatarname]}>Ngô Nguyên Bằng</Text>
             <Text style={[styles.userEmail]}>bangnnse140937@fpt.edu.vn</Text>
           </View>
         </View>
-
-
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
 export default QRScan;
 

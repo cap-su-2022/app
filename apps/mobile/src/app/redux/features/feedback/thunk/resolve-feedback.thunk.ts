@@ -1,6 +1,6 @@
-import {createAsyncThunk} from "@reduxjs/toolkit";
-import {axiosPutAPICall} from "../../../api-call";
-import {API_URL} from "../../../../constants/constant";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { axiosPutAPICall } from '../../../api-call';
+import { API_URL } from '../../../../constants/constant';
 
 interface ResolveFeedbackPayload {
   id: string;

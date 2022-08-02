@@ -4,7 +4,6 @@ import { deviceWidth } from '../../../utils/device';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ExclamationCircleIcon } from 'react-native-heroicons/outline';
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
-import RNExitApp from 'react-native-exit-app';
 
 interface WarningModalProps {
   isShown: boolean;

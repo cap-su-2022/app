@@ -35,7 +35,6 @@ export const doUpdateProfile = createAsyncThunk<
     );
     return await response.data;
   } catch (e) {
-    console.log(e.response.data);
     return thunkApi.rejectWithValue(e.message);
   } finally {
     thunkApi.dispatch(toggleSpinnerOff());

@@ -25,7 +25,7 @@ export const doChangePassword = createAsyncThunk<
       {
         username: payload.username,
         password: payload.password,
-        newPassword: payload.newPassword
+        newPassword: payload.newPassword,
       },
       {
         headers: {
@@ -35,7 +35,6 @@ export const doChangePassword = createAsyncThunk<
     );
     return await response.data;
   } catch (e) {
-    console.log(e.response.data);
     return thunkApi.rejectWithValue(e.message);
   } finally {
     thunkApi.dispatch(toggleSpinnerOff());

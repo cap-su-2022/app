@@ -100,16 +100,16 @@ export class FeedbackTypeRepository extends Repository<FeedbackType> {
     );
   }
 
-  async deleteById(accountId: string, id: string) {
-    const isDeleted = await this.createQueryBuilder('ft')
+  async disableById(accountId: string, id: string) {
+    const isDisabled = await this.createQueryBuilder('feedback_type')
       .update({
         deletedAt: new Date(),
         deletedBy: accountId,
       })
-      .where('ft.id = :id', {id: id})
+      .where('feedback_type.id = :id', {id: id})
       .useTransaction(true)
       .execute();
-    if (isDeleted.affected > 0) {
+    if (isDisabled.affected > 0) {
       return this.findOneOrFail({
         where: {
           id: id,
@@ -131,15 +131,15 @@ export class FeedbackTypeRepository extends Repository<FeedbackType> {
       .getRawMany<FeedbackType>();
   }
 
-  async restoreDeletedById(accountId: string, id: string) {
-    const isRestored = await this.createQueryBuilder('ft')
+  async restoreDisabledById(accountId: string, id: string) {
+    const isRestored = await this.createQueryBuilder('feedback_type')
       .update({
         updatedAt: new Date(),
         updatedBy: accountId,
         deletedAt: null,
         deletedBy: null,
       })
-      .where('ft.id = :id', {id: id})
+      .where('feedback_type.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isRestored.affected > 0) {
@@ -151,12 +151,21 @@ export class FeedbackTypeRepository extends Repository<FeedbackType> {
     }
   }
 
-  async permanentlyDeleteById(id: string) {
-    return this.createQueryBuilder('ft')
-      .delete()
-      .where('ft.id = :id', {id: id})
-      .useTransaction(true)
-      .execute();
+  async checkIfFeedbackTypeIsDisabledById(id: string): Promise<boolean> {
+    return this.createQueryBuilder('feedback_type')
+      .select('feedback_type.deleted_at')
+      .where('feedback_type.id = :id', {id: id})
+      .getRawOne<boolean>()
+      .then((data) => (data ? data['deleted_at'] : true));
   }
+
+
+  // async permanentlyDeleteById(id: string) {
+  //   return this.createQueryBuilder('ft')
+  //     .delete()
+  //     .where('ft.id = :id', {id: id})
+  //     .useTransaction(true)
+  //     .execute();
+  // }
 
 }

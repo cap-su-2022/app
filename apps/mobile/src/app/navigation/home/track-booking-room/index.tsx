@@ -5,7 +5,7 @@ import AcceptBookingNavigator from './accept-booking';
 import TrackBookingRoom from '../../../screens/track-booking-room';
 import CalendarDateSelect from '../../../screens/track-booking-room/calendar-select';
 import { QrcodeIcon } from 'react-native-heroicons/outline';
-import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
+import { FPT_ORANGE_COLOR } from '@app/constants';
 import { deviceWidth } from '../../../utils/device';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import BookingQRScan from '../../../screens/track-booking-room/booking-qr-scan';

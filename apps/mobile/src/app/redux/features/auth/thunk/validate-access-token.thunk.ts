@@ -1,8 +1,8 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import { API_URL } from "../../../../constants/constant";
-import { LOCAL_STORAGE } from "../../../../utils/local-storage";
-import { toggleSpinnerOff, toggleSpinnerOn } from "../../spinner";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { API_URL } from '../../../../constants/constant';
+import { LOCAL_STORAGE } from '../../../../utils/local-storage';
+import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 
 interface RejectPayload {
   message: string;

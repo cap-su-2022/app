@@ -8,7 +8,6 @@ import {
   View,
 } from 'react-native';
 import { ChatAlt2Icon, LibraryIcon } from 'react-native-heroicons/outline';
-import { LocalStorageKeys, useStorage } from '../../utils/local-storage';
 import Divider from '../../components/text/divider';
 import { BLACK, LIGHT_GRAY, WHITE } from '@app/constants';
 import { useAppNavigation } from '../../hooks/use-app-navigation.hook';

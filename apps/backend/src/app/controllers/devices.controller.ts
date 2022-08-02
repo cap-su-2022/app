@@ -12,26 +12,30 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import {DevicesService} from '../services';
-import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags,} from '@nestjs/swagger';
-import {DevicesValidation} from '../pipes/validation/devices.validation';
-import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
-import {Roles} from '../decorators/role.decorator';
-import {Role} from '../enum/roles.enum';
-import {Devices} from '../models';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {User} from '../decorators/keycloak-user.decorator';
-import {DevicesPaginationParams} from './devices-pagination.model';
-import {DataAddRequestPayload} from '../payload/request/data-add.request.payload';
-
+import { DevicesService } from '../services';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { DevicesValidation } from '../pipes/validation/devices.validation';
+import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
+import { Roles } from '../decorators/role.decorator';
+import { Role } from '../enum/roles.enum';
+import { Devices } from '../models';
+import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { User } from '../decorators/keycloak-user.decorator';
+import { DevicesPaginationParams } from './devices-pagination.model';
+import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
 
 @Controller('/v1/devices')
 @ApiBearerAuth()
 @ApiTags('Devices')
 @UseInterceptors(new PathLoggerInterceptor(DevicesController.name))
 export class DevicesController {
-  constructor(private readonly service: DevicesService) {
-  }
+  constructor(private readonly service: DevicesService) {}
 
   @Get()
   @UsePipes(new DevicesValidation())
@@ -83,8 +87,8 @@ export class DevicesController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Access token is invalidated',
   })
-  getDeviceNames() {
-    return this.service.getDeviceNames();
+  getDeviceNames(@Query('search') search: string, @Query('dir') dir: string) {
+    return this.service.getDeviceNames(search, dir);
   }
 
   @Get('by-device-type')
@@ -111,7 +115,7 @@ export class DevicesController {
   })
   @ApiParam({
     name: 'deviceTypeID',
-    description: "Device type ID",
+    description: 'Device type ID',
     type: String,
     required: false,
     example: 'abcdef1234',
@@ -144,7 +148,7 @@ export class DevicesController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of active device",
+    description: 'The ID of active device',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -207,7 +211,7 @@ export class DevicesController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of active device",
+    description: 'The ID of active device',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -244,7 +248,7 @@ export class DevicesController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of active device",
+    description: 'The ID of active device',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -280,7 +284,7 @@ export class DevicesController {
   })
   @ApiParam({
     name: 'search',
-    description: "Search disabled devices",
+    description: 'Search disabled devices',
     type: String,
     required: false,
     example: 'Iphone',
@@ -313,7 +317,7 @@ export class DevicesController {
   })
   @ApiParam({
     name: 'id',
-    description: "Restore disabled device",
+    description: 'Restore disabled device',
     type: String,
     required: true,
     example: 'abcdef',
@@ -322,7 +326,10 @@ export class DevicesController {
     @Param() payload: { id: string },
     @User() user: KeycloakUserInstance
   ) {
-    return this.service.handleRestoreDisabledDeviceById(user.account_id, payload.id);
+    return this.service.handleRestoreDisabledDeviceById(
+      user.account_id,
+      payload.id
+    );
   }
 
   @Delete(':id')
@@ -349,7 +356,7 @@ export class DevicesController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of active or disabled device",
+    description: 'The ID of active or disabled device',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -411,7 +418,7 @@ export class DevicesController {
   })
   @ApiParam({
     name: 'id',
-    description: "Restore deleted device",
+    description: 'Restore deleted device',
     type: String,
     required: true,
     example: 'abcdef',

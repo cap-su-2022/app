@@ -15,19 +15,21 @@ import {
   User,
   X,
 } from 'tabler-icons-react';
-import { InputInfoProps } from '../models/input-info-props.model';
+import {InputInfoProps} from '../models/input-info-props.model';
 import InputType from '../common/input-type.component';
 
 interface InfoModalProps {
   header: React.ReactNode;
   isShown: boolean;
+
   toggleShown(): void;
+
   fields: InputInfoProps[];
 
 }
 
 const InfoModal: React.FC<InfoModalProps> = (props) => {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   console.log('SHOW:  ', props.fields);
 
   return (
@@ -79,15 +81,15 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
                 inputtype={field.inputtype}
                 icon={
                   field.id === 'id' ? (
-                    <Id />
+                    <Id/>
                   ) : field.id === 'name' ? (
-                    <ClipboardText />
+                    <ClipboardText/>
                   ) : field.id === 'description' ? (
-                    <FileDescription />
+                    <FileDescription/>
                   ) : field.id === 'createAt' || field.id === 'updateAt' ? (
-                    <CalendarStats />
+                    <CalendarStats/>
                   ) : field.id === 'createBy' || field.id === 'updateBy' ? (
-                    <User />
+                    <User/>
                   ) : null
                 }
                 defaultValue={field.value}
@@ -98,7 +100,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
         </div>
         <div className={classes.footer}>
           <Button
-            leftIcon={<X />}
+            leftIcon={<X/>}
             color="orange"
             onClick={() => props.toggleShown()}
           >
@@ -111,7 +113,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
 };
 
 const useStyles = createStyles({
-  headerTitle: { fontWeight: 600, fontSize: 20 },
+  headerTitle: {fontWeight: 600, fontSize: 20},
   body: {
     display: 'flex',
     flexDirection: 'column',

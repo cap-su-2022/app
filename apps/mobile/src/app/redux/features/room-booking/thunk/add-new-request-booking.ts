@@ -4,7 +4,7 @@ import axios from 'axios';
 import { API_URL } from '../../../../constants/constant';
 import { LOCAL_STORAGE } from '../../../../utils/local-storage';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
-import {NewRequestBookingResponseModel} from "../../../models/new-request-booking-response.model";
+import { NewRequestBookingResponseModel } from '../../../models/new-request-booking-response.model';
 
 interface RejectPayload {
   message: string;

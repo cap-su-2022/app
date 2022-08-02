@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   ListRenderItemInfo,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -15,30 +14,29 @@ import {
   BLACK,
   FPT_ORANGE_COLOR,
   GRAY,
+  INPUT_GRAY_COLOR,
   LIGHT_GRAY,
   WHITE,
 } from '@app/constants';
 import { deviceWidth } from '../../utils/device';
 import {
-  CheckIcon,
   ChevronDoubleLeftIcon,
   ChevronRightIcon,
   DeviceMobileIcon,
   ExclamationCircleIcon,
+  SortDescendingIcon,
 } from 'react-native-heroicons/outline';
-import { fetchBookingRoomDevices } from '../../redux/features/room-booking/thunk/fetch-booking-room-devices.thunk';
 import DelayInput from 'react-native-debounce-input';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAppSelector } from '../../hooks/use-app-selector.hook';
 import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
 import { Device } from '../../redux/models/device.model';
 import { step3ScheduleRoomBooking } from '../../redux/features/room-booking/slice';
 import AlertModal from '../../components/modals/alert-modal.component';
-import { LOCAL_STORAGE } from '../../utils/local-storage';
 import { fetchAllDevices } from '../../redux/features/devices/thunk/fetch-all';
-import RequestRoomBookingHeader from "./request-room-booking/header";
+import RequestRoomBookingHeader from './request-room-booking/header';
+import { boxShadow } from '../../utils/box-shadow.util';
+import NotFound from '../../components/empty.svg';
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
@@ -51,27 +49,31 @@ const RoomBooking2: React.FC = () => {
   const [search, setSearch] = useState<string>('');
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
+
   useEffect(() => {
-    dispatch(fetchAllDevices())
-      .unwrap()
-      .then((e) => console.log(e.length));
+    dispatch(
+      fetchAllDevices({
+        search: search,
+        dir: sort,
+      })
+    );
   }, [search, sort, dispatch]);
 
   const handleNextStep = () => {
-      const devices = [];
-      for (let i = 0; i < deviceIds.length; i++) {
-        devices.push({
-          label: deviceNames[i],
-          value: deviceIds[i],
-          quantity: 1,
-        });
-      }
-      navigate.navigate('ROOM_BOOKING_3');
-      dispatch(
-        step3ScheduleRoomBooking({
-          devices: devices,
-        })
-      );
+    const devices = [];
+    for (let i = 0; i < deviceIds.length; i++) {
+      devices.push({
+        label: deviceNames[i],
+        value: deviceIds[i],
+        quantity: 1,
+      });
+    }
+    navigate.navigate('ROOM_BOOKING_3');
+    dispatch(
+      step3ScheduleRoomBooking({
+        devices: devices,
+      })
+    );
   };
 
   const Filtering: React.FC = () => {
@@ -85,15 +87,26 @@ const RoomBooking2: React.FC = () => {
             </View>
             <View style={styles.filterInput}>
               <DelayInput
+                style={{
+                  height: 50,
+                }}
+                delayTimeout={400}
                 minLength={0}
                 value={search}
                 onChangeText={(text) => setSearch(text.toString())}
-                placeholder="Search by device name"
+                placeholder="Search for devices by name..."
               />
             </View>
           </View>
-          <TouchableOpacity style={styles.filterSortButton}>
-            <SortAscendingIcon color={BLACK} />
+          <TouchableOpacity
+            onPress={() => (sort === 'ASC' ? setSort('DESC') : setSort('ASC'))}
+            style={styles.filterSortButton}
+          >
+            {sort === 'ASC' ? (
+              <SortAscendingIcon color={BLACK} />
+            ) : (
+              <SortDescendingIcon color={BLACK} />
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -103,6 +116,8 @@ const RoomBooking2: React.FC = () => {
   const DeviceRenderItem: React.FC<{
     device: Device;
   }> = (props) => {
+    const [quantity, setQuantity] = useState<number>(1);
+
     return (
       <TouchableOpacity
         key={props.device.id}
@@ -120,10 +135,11 @@ const RoomBooking2: React.FC = () => {
           styles.selectCircleButton,
           deviceIds.filter((id) => id === props.device.id)[0]
             ? {
-                borderWidth: 2,
+                borderWidth: 1,
                 borderColor: FPT_ORANGE_COLOR,
               }
             : null,
+          boxShadow(styles),
         ]}
       >
         <View style={styles.deviceIconContainer}>
@@ -134,89 +150,140 @@ const RoomBooking2: React.FC = () => {
           <View style={styles.deviceDescriptionContainer}>
             <Text
               style={{
-                color: BLACK,
-                fontSize: deviceWidth / 24,
-                fontWeight: '600',
+                color: GRAY,
+                marginLeft: 6,
               }}
             >
+              <Text
+                style={{
+                  color: BLACK,
+                  fontSize: deviceWidth / 26,
+                  fontWeight: '500',
+                }}
+              >
+                Name:
+              </Text>
               {props.device.name}
+            </Text>
+
+            <Text
+              style={{
+                color: GRAY,
+                marginLeft: 6,
+              }}
+            >
+              <Text
+                style={{
+                  color: BLACK,
+                  fontSize: deviceWidth / 26,
+                  fontWeight: '500',
+                }}
+              >
+                Type:
+              </Text>
+              {props.device.type}
             </Text>
           </View>
 
           <View
             style={{
-              marginTop: -20,
-              marginRight: 10,
+              flexDirection: 'column',
+              display: 'flex',
+              justifyContent: 'space-between',
+              height: 70,
+              paddingHorizontal: 10,
             }}
           >
             <TouchableOpacity style={styles.viewDetailButton}>
               <Text style={styles.viewDetailButtonText}>View detail</Text>
             </TouchableOpacity>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-              }}
-            >
-              <TouchableOpacity
+            {deviceIds.find((id) => id === props.device.id) ? (
+              <View
                 style={{
-                  height: 30,
-                  width: 30,
                   display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderColor: FPT_ORANGE_COLOR,
-                  borderWidth: 2,
-                  borderTopLeftRadius: 8,
-                  borderBottomLeftRadius: 8,
+                  flexDirection: 'row',
                 }}
               >
-                <Text
+                <TouchableOpacity
+                  onPress={() => {
+                    if (quantity - 1 === 0) {
+                      return setDeviceIds(
+                        deviceIds.filter((id) => id !== props.device.id)
+                      );
+                    }
+                    setQuantity(quantity - 1);
+                  }}
                   style={{
-                    color: FPT_ORANGE_COLOR,
-                    fontWeight: '600',
-                    fontSize: deviceWidth / 23,
+                    height: 25,
+                    width: 25,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderColor: FPT_ORANGE_COLOR,
+                    borderWidth: 1,
+                    borderTopLeftRadius: 5,
+                    borderBottomLeftRadius: 5,
                   }}
                 >
-                  -
-                </Text>
-              </TouchableOpacity>
-              <TextInput
-                style={{
-                  height: 30,
-                  width: 30,
-                  borderRightWidth: 0,
-                  borderLeftWidth: 0,
-                  borderTopColor: FPT_ORANGE_COLOR,
-                  borderBottomColor: FPT_ORANGE_COLOR,
-                  borderTopWidth: 2,
-                  borderBottomWidth: 2,
-                }}
-              />
-              <TouchableOpacity
-                style={{
-                  height: 30,
-                  width: 30,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderColor: FPT_ORANGE_COLOR,
-                  borderWidth: 2,
-                  borderTopRightRadius: 8,
-                  borderBottomRightRadius: 8,
-                }}
-              >
-                <Text
+                  <Text
+                    style={{
+                      color: FPT_ORANGE_COLOR,
+                      fontWeight: '600',
+                      fontSize: deviceWidth / 23,
+                    }}
+                  >
+                    -
+                  </Text>
+                </TouchableOpacity>
+                <TextInput
+                  textAlign="center"
+                  value={String(quantity)}
+                  onChangeText={(e) => {
+                    setQuantity(parseInt(e));
+                  }}
                   style={{
                     color: FPT_ORANGE_COLOR,
-                    fontWeight: '600',
-                    fontSize: deviceWidth / 23,
+                    textAlignVertical: 'center',
+                    height: 25,
+                    width: 40,
+                    borderRightWidth: 0,
+                    borderLeftWidth: 0,
+                    borderTopColor: FPT_ORANGE_COLOR,
+                    borderBottomColor: FPT_ORANGE_COLOR,
+                    borderTopWidth: 1,
+                    borderBottomWidth: 1,
+                  }}
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    if (quantity >= 0) {
+                      setQuantity(quantity + 1);
+                    }
+                  }}
+                  style={{
+                    height: 25,
+                    width: 25,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderColor: FPT_ORANGE_COLOR,
+                    borderWidth: 1,
+                    borderTopRightRadius: 5,
+                    borderBottomRightRadius: 5,
                   }}
                 >
-                  +
-                </Text>
-              </TouchableOpacity>
-            </View>
+                  <Text
+                    style={{
+                      color: FPT_ORANGE_COLOR,
+                      fontWeight: '600',
+                      fontSize: deviceWidth / 23,
+                    }}
+                  >
+                    +
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
           </View>
         </View>
       </TouchableOpacity>
@@ -225,14 +292,46 @@ const RoomBooking2: React.FC = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <RequestRoomBookingHeader />
+      <Filtering />
+
       <View style={styles.container}>
-        <RequestRoomBookingHeader />
-        <ScrollView>
-          <Filtering />
-          {devices.map((device) => (
-            <DeviceRenderItem device={device} />
-          ))}
-        </ScrollView>
+        {devices.length > 0 ? (
+          <VirtualizedList
+            style={{
+              marginBottom: deviceWidth / 4.2,
+            }}
+            showsVerticalScrollIndicator={false}
+            data={devices}
+            getItemCount={(data) => data.length}
+            getItem={(data, index) => data[index]}
+            renderItem={(item: ListRenderItemInfo<Device>) => (
+              <DeviceRenderItem key={item.index} device={item.item} />
+            )}
+          />
+        ) : (
+          <View
+            style={{
+              display: 'flex',
+              flex: 1,
+              flexGrow: 0.75,
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <NotFound width={deviceWidth / 2} height={250} />
+            <Text
+              style={{
+                color: BLACK,
+                fontSize: deviceWidth / 20,
+                fontWeight: '500',
+              }}
+            >
+              Data not found!
+            </Text>
+          </View>
+        )}
         <View style={styles.footerContainer}>
           <TouchableOpacity
             onPress={() => navigate.pop()}
@@ -342,13 +441,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10,
+    flexWrap: 'wrap',
+    width: 200,
   },
   deviceContainer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     flexGrow: 1,
   },
   deviceIconContainer: {
@@ -404,20 +503,19 @@ const styles = StyleSheet.create({
   viewDetailButton: {
     borderColor: FPT_ORANGE_COLOR,
     borderWidth: 1,
-    width: deviceWidth / 5,
     height: 30,
+    width: deviceWidth / 4.3,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
-    marginTop: 40,
-    marginRight: 10,
+    borderRadius: 5,
   },
   container: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
     flexGrow: 1,
+    flex: 1,
   },
   nextStepButtonText: {
     fontWeight: '600',
@@ -455,11 +553,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   filterHeaderText: {
-    color: GRAY,
+    color: BLACK,
     fontSize: deviceWidth / 25,
     fontWeight: '600',
-    marginTop: 5,
-    marginLeft: 10,
+    paddingTop: 6,
+    paddingHorizontal: 10,
   },
   filterBodyContainer: {
     margin: 10,

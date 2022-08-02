@@ -1,10 +1,9 @@
-import AddNewFeedbackResponseModel from '../../models/add-new-feedback-response.model';
 import { createSlice } from '@reduxjs/toolkit';
-import { addNewFeedback } from './thunk/Add-new-feedback.thunk';
 import { fetchFeedbacks } from './thunk/fetch-feedbacks.thunk';
 import { FeedbackModel } from '../../models/feedback.model';
 import { fetchFeedbackById } from './thunk/fetch-feedback-by-id.thunk';
 import { addNewFeedbackAfterCheckout } from './thunk/Add-new-feedback-after-checkout.thunk';
+
 interface FeedbackResponse {
   feedbackMessage: string;
   rateNum: number;

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Button, createStyles } from '@mantine/core';
+import React, {useEffect, useState} from 'react';
+import {Button, createStyles} from '@mantine/core';
 import AdminLayout from '../../components/layout/admin.layout';
 import Header from '../../components/common/header.component';
 import {
@@ -10,7 +10,7 @@ import {
   Plus,
   X,
 } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {
   fetchDeviceTypes,
   fetchDeviceTypeById,
@@ -22,23 +22,23 @@ import {
   defaultPaginationParams,
   PaginationParams,
 } from '../../models/pagination-params.model';
-import { useDebouncedValue } from '@mantine/hooks';
+import {useDebouncedValue} from '@mantine/hooks';
 import TableHeader from '../../components/actions/table-header.component';
-import { TableBody } from '../../components/actions/table-body.component';
+import {TableBody} from '../../components/actions/table-body.component';
 import TableFooter from '../../components/actions/table-footer.component';
 import * as Yup from 'yup';
 import AddModal from '../../components/actions/modal/add-modal.component';
-import { FormikValues, useFormik } from 'formik';
-import { InputAddProps } from '../../components/actions/models/input-add-props.model';
-import { InputTypes } from '../../components/actions/models/input-type.constant';
+import {FormikValues, useFormik} from 'formik';
+import {InputAddProps} from '../../components/actions/models/input-add-props.model';
+import {InputTypes} from '../../components/actions/models/input-type.constant';
 import InfoModal from '../../components/actions/modal/info-modal.component';
 import UpdateModal from '../../components/actions/modal/update-modal.component';
-import { InputUpdateProps } from '../../components/actions/models/input-update-props.model';
+import {InputUpdateProps} from '../../components/actions/models/input-update-props.model';
 import RestoreDeletedModal from '../../components/device-type/restore-deleted.modal.component';
-import DeleteModal from '../../components/device-type/delete-modal.component';
-import { showNotification } from '@mantine/notifications';
+import DeleteModal from '../device-type/delete-modal.component';
+import {showNotification} from '@mantine/notifications';
 import dayjs from 'dayjs';
-import { fetchDeviceTypeNames } from '../../redux/features/device-type/thunk/fetch-device-type-names.thunk';
+import {fetchDeviceTypeNames} from '../../redux/features/device-type/thunk/fetch-device-type-names.thunk';
 
 const AddDeviceTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -150,10 +150,10 @@ const ManageDeviceType: React.FC<any> = () => {
     return (
       <div>
         <Button
-          leftIcon={<Plus />}
+          leftIcon={<Plus/>}
           color="green"
           onClick={() => setAddShown(!isAddShown)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
           Add
         </Button>
@@ -163,7 +163,7 @@ const ManageDeviceType: React.FC<any> = () => {
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
         >
-          <ArchiveOff />
+          <ArchiveOff/>
         </Button>
       </div>
     );
@@ -320,7 +320,7 @@ const ManageDeviceType: React.FC<any> = () => {
           color: 'teal',
           title: 'Device type was added',
           message: 'Device type was successfully added',
-          icon: <Check />,
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -331,7 +331,7 @@ const ManageDeviceType: React.FC<any> = () => {
           color: 'red',
           title: 'Error while Add device type',
           message: `${e.message}`,
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         });
       });
@@ -352,7 +352,7 @@ const ManageDeviceType: React.FC<any> = () => {
           color: 'teal',
           title: 'Device type was updated',
           message: 'Device type was successfully updated',
-          icon: <Check />,
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -363,7 +363,7 @@ const ManageDeviceType: React.FC<any> = () => {
           color: 'red',
           title: 'Error while update device type',
           message: `${e.message}`,
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         });
       });
@@ -397,10 +397,10 @@ const ManageDeviceType: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Device Type" icon={<BuildingWarehouse size={50} />} />
+      <Header title="Device Type" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
-        actions={<ActionsFilter />}
+        actions={<ActionsFilter/>}
         actionsLeft={null}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}

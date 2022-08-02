@@ -1,11 +1,5 @@
 import React, { useCallback } from 'react';
-import {
-  StyleProp,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { deviceWidth } from '../../../utils/device';
 import { BLACK, BLUE, FPT_ORANGE_COLOR, GREEN, WHITE } from '@app/constants';
 import {
@@ -30,7 +24,6 @@ const AlreadyBookItem: React.FC<AlreadyBookItemProps> = (props) => {
     dispatch(fetchCurrentRoomBookingDetail(id))
       .unwrap()
       .then((e) => {
-        console.log(e);
         navigate.navigate('ROOM_BOOKING_ALREADY_BOOKED_DETAIL');
       });
   };

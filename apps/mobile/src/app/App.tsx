@@ -1,16 +1,10 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import {
-  SafeAreaView,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StatusBar } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { StackNavigator, StackScreen } from '@app/utils';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from './redux/store';
+import { useSelector } from 'react-redux';
+import { RootState } from './redux/store';
 import LoginScreen from './screens/login.screen';
 import MainNavigator from './navigation/main.navigator';
 import { Spinner } from './components/spinners/spinner';
@@ -47,7 +41,6 @@ export const App = () => {
     }
   };
 
-
   useEffect(() => {
     if (!LOCAL_STORAGE.contains('QUICK_ACCESS')) {
       LOCAL_STORAGE.set('QUICK_ACCESS', JSON.stringify(DEFAULT_QUICK_ACCESS));
@@ -57,8 +50,6 @@ export const App = () => {
         setQuickAccessData(JSON.parse(LOCAL_STORAGE.getString('QUICK_ACCESS')))
       );
     }
-
-
 
     if (!LOCAL_STORAGE.contains('NOTIFICATION_BELL')) {
       LOCAL_STORAGE.set('NOTIFICATION_BELL', true);
@@ -74,7 +65,7 @@ export const App = () => {
   useEffect(() => {
     if (!isEmpty(authUser)) {
       const user = LOCAL_STORAGE.getString('user');
-      if(typeof user !== "undefined"){
+      if (typeof user !== 'undefined') {
         dispatch(addUserAfterCloseApp(JSON.parse(user)));
       }
     }
@@ -87,7 +78,6 @@ export const App = () => {
         timeout: 1500,
       })
       .catch((e) => {
-        console.error(e);
         setPingTimedOut(true);
       })
       .finally(() => dispatch(toggleSpinnerOff()));

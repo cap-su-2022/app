@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { deviceWidth } from '../../../utils/device';
 import { FPT_ORANGE_COLOR, GRAY } from '@app/constants';

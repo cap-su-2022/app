@@ -1,7 +1,7 @@
-import React from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { useAppNavigation } from "../hooks/use-app-navigation.hook";
-import { useAppDispatch } from "../hooks/use-app-dispatch.hook";
+import React from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { useAppNavigation } from '../hooks/use-app-navigation.hook';
+import { useAppDispatch } from '../hooks/use-app-dispatch.hook';
 
 const ForgotPassword: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -9,13 +9,11 @@ const ForgotPassword: React.FC = () => {
   return (
     <SafeAreaView>
       <ScrollView>
-        <View>
-
-        </View>
+        <View></View>
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
 

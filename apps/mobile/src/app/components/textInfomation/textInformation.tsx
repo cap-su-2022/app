@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
+import { StyleSheet, Text, View } from 'react-native';
+import { WHITE } from '@app/constants';
 
 const TextInformation = (props) => {
   return (

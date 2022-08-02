@@ -10,29 +10,22 @@ import {
 } from 'react-native';
 import Asterik from '../components/text/asterik';
 import { FormikProps, FormikProvider, useFormik } from 'formik';
-import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 
 import * as Yup from 'yup';
 
 import {
-  ArrowCircleLeftIcon,
-  ClipboardCheckIcon,
-  DocumentIcon,
+  IdentificationIcon,
   MailIcon,
   PencilIcon,
   PhoneIcon,
-  SaveIcon,
   UserIcon,
   ViewListIcon,
 } from 'react-native-heroicons/outline';
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { deviceWidth } from '../utils/device';
 import { AuthUser } from '../redux/models/auth-user.model';
 import { LOCAL_STORAGE } from '../utils/local-storage';
-import { IdentificationIcon } from 'react-native-heroicons/outline';
 import { doUpdateProfile } from '../redux/features/account/thunk/update.thunk';
 import { useAppDispatch } from '../hooks/use-app-dispatch.hook';
 import { useAppSelector } from '../hooks/use-app-selector.hook';
@@ -58,10 +51,8 @@ const EditDetailProfile = (props: EditDetailProfileProps) => {
     useState<boolean>(false);
 
   useEffect(() => {
-    console.log(birthdate);
-    console.log(new Date());
     if (birthdate.getTime() >= new Date().getTime()) {
-      alert('con cac');
+      alert(1);
     }
   }, [birthdate]);
 

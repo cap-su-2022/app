@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import RNPickerSelect, { PickerStyle } from 'react-native-picker-select';
 import { deviceWidth } from '../../../../utils/device';
-import { BLACK, FPT_ORANGE_COLOR, GRAY, WHITE } from '@app/constants';
-import { CheckIcon } from 'react-native-heroicons/solid';
-import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
+import { BLACK, GRAY } from '@app/constants';
 import SlotSelectMultiSlot from './multi-slot';
 
 interface SelectSlotsProps {
@@ -162,6 +160,7 @@ const styles = StyleSheet.create({
     fontSize: deviceWidth / 23,
     fontWeight: '600',
     marginBottom: 6,
+    color: BLACK
   },
   container: {
     display: 'flex',

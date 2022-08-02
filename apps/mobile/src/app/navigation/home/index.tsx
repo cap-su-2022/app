@@ -11,7 +11,7 @@ import QuickAccessControlScreen from '../../screens/home/section/quick-access-co
 import RoomBookingWishlistNavigator from '../room-booking/room-booking-wishlist.navigator';
 import NotificationNavigator from './notification';
 import CheckinBookingRoomNavigator from './check-in-booking-room';
-import TrackFeedbackNavigator from "./track-feedback";
+import TrackFeedbackNavigator from './track-feedback';
 
 const HomeNavigator: React.FC = () => {
   const navigate = useAppNavigation();

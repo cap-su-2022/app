@@ -10,7 +10,7 @@ import EmptyCheckOut from '../../../components/empty-checkout.svg';
 import { deviceWidth } from '../../../utils/device';
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
-import { HomeIcon, TicketIcon, XIcon } from 'react-native-heroicons/outline';
+import { HomeIcon, TicketIcon } from 'react-native-heroicons/outline';
 
 const NoRoomBookingCheckOut: React.FC<any> = () => {
   const navigate = useAppNavigation();

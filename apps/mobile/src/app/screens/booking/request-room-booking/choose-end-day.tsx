@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
   SafeAreaView,
-  View,
   StyleSheet,
-  TouchableOpacity,
   Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { deviceHeight, deviceWidth } from '../../../utils/device';

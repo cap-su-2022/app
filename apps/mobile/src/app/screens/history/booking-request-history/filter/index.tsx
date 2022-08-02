@@ -1,5 +1,4 @@
 import React, {
-  createRef,
   forwardRef,
   useCallback,
   useEffect,
@@ -27,7 +26,6 @@ import DelayInput from 'react-native-debounce-input';
 import RNPickerSelect, { PickerStyle } from 'react-native-picker-select';
 import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
 import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
-import CalendarDateSelect from '../calendar-select';
 import dayjs from 'dayjs';
 import { useAppSelector } from '../../../../hooks/use-app-selector.hook';
 import { fetchAllSlots } from '../../../../redux/features/slot';
@@ -144,7 +142,6 @@ const BookingRoomHistoryFilter: React.ForwardRefRenderFunction<
   const inputRef = useRef(null);
 
   const handleClearFilter = useCallback(() => {
-    console.log(slots);
     setSearch('');
     setSlotStart(slots[0]?.slotNum);
     setSlotEnd(slots[slots.length - 1]?.slotNum);

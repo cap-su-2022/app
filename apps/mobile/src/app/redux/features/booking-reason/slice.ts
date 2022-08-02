@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { BookingRoomReason } from '../../models/booking-reason-response';
-import {fetchAllBookingReason} from "./thunk/fetch-all";
+import { fetchAllBookingReason } from './thunk/fetch-all';
 
 interface BookingReasonState {
   bookingReasons: BookingRoomReason[];

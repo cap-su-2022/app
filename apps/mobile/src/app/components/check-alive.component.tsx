@@ -1,15 +1,14 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ExclamationCircleIcon} from "react-native-heroicons/solid";
-import {FPT_ORANGE_COLOR, WHITE} from "@app/constants";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ExclamationCircleIcon } from 'react-native-heroicons/solid';
+import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 
 const CheckAlive = () => {
-
   const errorIconProps = {
     color: 'red',
-    size: 50
+    size: 50,
   };
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -17,21 +16,18 @@ const CheckAlive = () => {
   return (
     <View style={[styles.modal]}>
       <View style={[styles.modalContainer]}>
-        <ExclamationCircleIcon {...errorIconProps}/>
+        <ExclamationCircleIcon {...errorIconProps} />
         <View>
-          <Text style={[styles.errorText]}>
-            Server has occurred an error.
-          </Text>
-          <Text style={[styles.errorText]}>
-            Please try again later!
-          </Text>
+          <Text style={[styles.errorText]}>Server has occurred an error.</Text>
+          <Text style={[styles.errorText]}>Please try again later!</Text>
         </View>
-        <TouchableOpacity onPress={() => {
-          navigation.navigate("LOGIN_SCREEN");
-        }} style={[styles.errorButton]}>
-          <Text style={[styles.errorButtonText]}>
-            OK
-          </Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('LOGIN_SCREEN');
+          }}
+          style={[styles.errorButton]}
+        >
+          <Text style={[styles.errorButtonText]}>OK</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -48,7 +44,7 @@ const styles = StyleSheet.create({
     opacity: 1,
     backgroundColor: 'rgb(206, 212, 218)',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   modalContainer: {
     width: 350,
@@ -58,7 +54,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
-    margin: 10
+    margin: 10,
   },
   errorText: {
     margin: 5,
@@ -74,12 +70,12 @@ const styles = StyleSheet.create({
     backgroundColor: FPT_ORANGE_COLOR,
     borderRadius: 50,
     width: 250,
-    height: 40
+    height: 40,
   },
   errorButtonText: {
     color: WHITE,
     fontSize: 16,
-  }
+  },
 });
 
 export default CheckAlive;

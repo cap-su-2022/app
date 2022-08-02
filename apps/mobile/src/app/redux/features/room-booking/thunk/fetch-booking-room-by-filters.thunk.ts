@@ -1,6 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { API_URL } from '../../../../constants/constant';
-import { RoomWishListResponse } from '../../../models/wishlist-booking-room.model';
 import { BookingRoomsByFilters } from '../../../models/booking-rooms-by-filters.model';
 import { axiosGetAPICall } from '../../../api-call';
 import { BookingRoomsByFiltersResponse } from '../../../models/booking-rooms-by-filters-response.model';

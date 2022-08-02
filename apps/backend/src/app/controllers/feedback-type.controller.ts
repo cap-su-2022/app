@@ -157,15 +157,15 @@ export class FeedbackTypeController {
     return this.service.updateFeedbackTypeById(user.account_id, id, payload);
   }
 
-  @Delete(':id')
+  @Put('disable/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully deleted feedback types',
+    description: 'Successfully disabled feedback types',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for roles is not validated',
+    description: 'Request params is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -179,11 +179,11 @@ export class FeedbackTypeController {
     summary: 'Delete feedback types',
     description: 'Delete feedback types',
   })
-  deleteFeedbackTypeById(
+  disableFeedbackTypeById(
     @Param('id') id: string,
     @User() user: KeycloakUserInstance
   ) {
-    return this.service.deleteFeedbackTypeById(user.account_id, id);
+    return this.service.disableFeedbackTypeById(user.account_id, id);
   }
 
   @Get('deleted')
@@ -220,7 +220,7 @@ export class FeedbackTypeController {
   }
 
 
-  @Put('restore-deleted/:id')
+  @Put('restore-disabled/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
@@ -242,11 +242,11 @@ export class FeedbackTypeController {
     summary: 'Successfully restored deleted feedback type by id',
     description: 'Successfully restored deleted feedback type by id',
   })
-  restoreDeletedTypeById(
+  restoreDisabledTypeById(
     @Param('id') id: string,
     @User() keycloakUser: KeycloakUserInstance
   ) {
-    return this.service.restoreDeletedFeedbackTypeById(keycloakUser.account_id, id);
+    return this.service.restoreDisabledFeedbackTypeById(keycloakUser.account_id, id);
   }
 
   // @Delete('permanent/:id')

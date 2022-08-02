@@ -15,7 +15,7 @@ import { useAppSelector } from '../../hooks/use-app-selector.hook';
 import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
 import { fetchChoosingBookingRoom } from '../../redux/features/room-booking/thunk/fetch-choosing-booking-room.thunk';
 import { ChoosingBookingRoom } from '../../redux/models/choosing-booking-room.model';
-import { deviceHeight, deviceWidth } from '../../utils/device';
+import { deviceHeight } from '../../utils/device';
 import { LOCAL_STORAGE } from '../../utils/local-storage';
 import { WHITE } from '@app/constants';
 
