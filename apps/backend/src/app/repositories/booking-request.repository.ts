@@ -46,6 +46,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .select('booking_request.id', 'id')
       .addSelect('r.name', 'roomName')
       .addSelect('booking_request.checkin_Date', 'checkinDate')
+      .addSelect('booking_request.roomId', 'roomId')
       .addSelect('booking_request.checkin_slot', 'checkinSlotId')
       .addSelect('booking_request.checkout_slot', 'checkoutSlotId')
       .addSelect('booking_request.requested_by', 'requestedBy')

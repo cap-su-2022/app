@@ -19,7 +19,7 @@ export const fetchRoomFreeAtMultiDay = createAsyncThunk<
 >('booking-room/list-room-free-at-multi-date', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.get('api/booking-room/list-room-free-at-multi-date', {
+    const response = await axios.get('api/booking-room/list-room-free-at-multi-date-v2', {
       params: {
         dateStart: dayjs(payload.checkinDate).format("YYYY-MM-DD"),
         dateEnd: dayjs(payload.checkoutDate).format("YYYY-MM-DD"),
