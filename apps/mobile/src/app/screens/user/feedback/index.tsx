@@ -65,19 +65,24 @@ const FeedbackScreen: React.FC<any> = () => {
   };
 
   const attemptSendFeedback = () => {
-    dispatch(
-      addNewFeedback({
-        message: descriptions,
-        feedbackTypeId: selectedFeedbackType,
-      })
-    )
-      .unwrap()
-      .then(() => {
-        navigate.navigate('SUCCESSFULLY_SENT_FEEDBACK');
-      })
-      .catch((e) => {
-        alert('Failed while processing your request. Please try again.');
-      });
+    if (descriptions.length < 1) {
+      alert('Please Share Your Experience');
+      return
+    } else {
+      dispatch(
+        addNewFeedback({
+          message: descriptions,
+          feedbackTypeId: selectedFeedbackType,
+        })
+      )
+        .unwrap()
+        .then(() => {
+          navigate.navigate('SUCCESSFULLY_SENT_FEEDBACK');
+        })
+        .catch((e) => {
+          alert('Failed while processing your request. Please try again.');
+        });
+    }
   };
 
   const handleSendFeedback = () => {
