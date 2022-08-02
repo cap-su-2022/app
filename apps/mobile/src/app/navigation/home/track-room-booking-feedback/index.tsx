@@ -1,17 +1,12 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { StackNavigator, StackScreen } from '@app/utils';
 import AcceptFeedbackNavigator from './accept-feedback';
-import CalendarDateSelect from '../../../screens/track-feedback/calendar-select';
-import { ChatIcon } from 'react-native-heroicons/outline';
-import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
-import { deviceWidth } from '../../../utils/device';
+import CalendarDateSelect from '../../../screens/track-room-booking-feedback/calendar-select';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import BookingQRScan from '../../../screens/track-booking-room/booking-qr-scan';
-import TrackFeedbackScreen from '../../../screens/track-feedback';
-import { PlusCircleIcon } from 'react-native-heroicons/solid';
 import FeedbackNavigator from '../../user/feedback';
-import { useAppSelector } from '../../../hooks/use-app-selector.hook';
+import TrackRoomBookingFeedback from '../../../screens/track-room-booking-feedback';
 
 const TrackRoomBookingFeedbackNavigator: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -23,7 +18,7 @@ const TrackRoomBookingFeedbackNavigator: React.FC<any> = () => {
           headerTitle: 'Room Booking Feedbacks',
         }}
         name="TRACK_FEEDBACK_ROUTE"
-        component={TrackFeedbackScreen}
+        component={TrackRoomBookingFeedback}
       />
       <StackScreen
         options={{

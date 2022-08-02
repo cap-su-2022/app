@@ -9,4 +9,6 @@ interface FeedbackFilterResponse {
   rejectedAt: string;
   resolvedAt: string;
   resolvedBy: string;
+  rateNum?: number;
+  roomName?: string;
 }

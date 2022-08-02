@@ -10,42 +10,83 @@ import { CheckIcon } from 'react-native-heroicons/outline';
 import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
 import { deviceWidth } from '../../../utils/device';
 import StarRating from '../../booking/checkout/rate';
+import { StarIcon } from 'react-native-heroicons/solid';
 
 const statusData = [
   {
     id: 0,
-    label: <StarRating rating={1} setRating={() => null} />,
-    value: 1,
-    style: { width: deviceWidth / 8.8 },
-    slotContainerLeftStyle: { left: 5 },
+    label: 'All',
+    value: undefined,
+    style: { width: deviceWidth / 9 },
+    slotContainerLeftStyle: { left: deviceWidth / 10 },
   },
   {
     id: 1,
-    label: 'Pending',
-    value: 'PENDING',
-    style: { width: deviceWidth / 5 },
-    slotContainerLeftStyle: { left: deviceWidth / 6.5 },
+    label: <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />,
+    value: 1,
+    style: { width: deviceWidth / 10 },
+    slotContainerLeftStyle: { left: deviceWidth / 6.8 },
   },
   {
     id: 2,
-    label: 'Resolved',
-    value: 'RESOLVED',
-    style: { width: deviceWidth / 5 },
-    slotContainerLeftStyle: { left: deviceWidth / 2.65 },
+    label: (
+      <>
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+      </>
+    ),
+    value: 2,
+    style: { width: deviceWidth / 8 },
+    slotContainerLeftStyle: { left: deviceWidth / 3.65 },
   },
   {
     id: 3,
-    label: 'Rejected',
-    value: 'REJECTED',
-    style: { width: deviceWidth / 5 },
-    slotContainerLeftStyle: { left: deviceWidth / 1.65 },
+    label: (
+      <>
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+      </>
+    ),
+    value: 3,
+    style: { width: deviceWidth / 5.5 },
+    slotContainerLeftStyle: { left: deviceWidth / 2.35 },
+  },
+  {
+    id: 4,
+    label: (
+      <>
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+      </>
+    ),
+    value: 4,
+    style: { width: deviceWidth / 4.5 },
+    slotContainerLeftStyle: { left: deviceWidth / 1.59 },
+  },
+  {
+    id: 5,
+    label: (
+      <>
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+        <StarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />
+      </>
+    ),
+    value: 5,
+    style: { width: deviceWidth / 3.5 },
+    slotContainerLeftStyle: { left: deviceWidth / 1.135 },
   },
 ];
 
 interface TrackBookingRoomFilterStatusSelectionProps {
   handleSearch(): void;
-  status: string[];
-  setStatus(val: string[]): void;
+  star: number[];
+  setStar(val: number[]): void;
 }
 
 const TrackBookingRoomFilterStatusSelection: React.FC<
@@ -53,14 +94,14 @@ const TrackBookingRoomFilterStatusSelection: React.FC<
 > = (props) => {
   const handleSelectStatus = (statusFilter) => {
     if (
-      !props.status.some((val) => statusFilter.value === val) &&
+      !props.star.some((val) => statusFilter.value === val) &&
       statusFilter.value
     ) {
-      props.setStatus([...props.status, statusFilter.value]);
-    } else if (props.status.some((val) => statusFilter.value === val)) {
-      props.setStatus(props.status.filter((stt) => stt !== statusFilter.value));
+      props.setStar([...props.star, statusFilter.value]);
+    } else if (props.star.some((val) => statusFilter.value === val)) {
+      props.setStar(props.star.filter((stt) => stt !== statusFilter.value));
     } else if (!statusFilter.value) {
-      props.setStatus([]);
+      props.setStar([]);
     }
   };
 
@@ -84,7 +125,7 @@ const TrackBookingRoomFilterStatusSelection: React.FC<
             >
               <Text style={styles.filterTypeText}>{statusFilter.label}</Text>
             </TouchableOpacity>
-            {props.status.some((val) => val === statusFilter.value) ? (
+            {props.star.some((val) => val === statusFilter.value) ? (
               <View
                 style={[
                   styles.selectContainer,
@@ -93,7 +134,7 @@ const TrackBookingRoomFilterStatusSelection: React.FC<
               >
                 <CheckIcon color={WHITE} size={deviceWidth / 30} />
               </View>
-            ) : props.status.length < 1 ? (
+            ) : props.star.length < 1 ? (
               <StatusCheckIcon />
             ) : null}
           </>
@@ -124,6 +165,10 @@ const styles = StyleSheet.create({
     color: FPT_ORANGE_COLOR,
     fontWeight: '600',
     fontSize: deviceWidth / 30,
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    display: 'flex',
   },
 
   selectContainer: {

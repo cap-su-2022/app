@@ -12,7 +12,7 @@ import { fetchFeedbackById } from '../../../redux/features/feedback/thunk/fetch-
 interface BookingRequestItemProps {
   item: FeedbackFilterResponse;
 }
-const FeedbackItem: React.FC<BookingRequestItemProps> = (props) => {
+const RoomBookingFeedbackItem: React.FC<BookingRequestItemProps> = (props) => {
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
 
@@ -26,7 +26,11 @@ const FeedbackItem: React.FC<BookingRequestItemProps> = (props) => {
   return (
     <TouchableOpacity
       onPress={() => handleFetchBookingRequest(props.item.id)}
-      style={[boxShadow(styles), styles.container, {height: props.item.status !== "PENDING" ? 130 : 100}]}
+      style={[
+        boxShadow(styles),
+        styles.container,
+        { height: props.item.status !== 'PENDING' ? 130 : 100 },
+      ]}
     >
       <TrackFeedbackItemContent item={props.item} />
       <TrackingBookingRequestItemNavigation status={props.item.status} />
@@ -47,4 +51,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FeedbackItem;
+export default RoomBookingFeedbackItem;

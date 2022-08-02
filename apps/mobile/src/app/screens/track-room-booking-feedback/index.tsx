@@ -7,31 +7,34 @@ import {
 } from 'react-native';
 import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
 import TrackBookingRoomFilter from './filter';
-import TrackFeedbackFilter from './filter';
-import FeedbackItem from './track-feedback-item';
+import RoomBookingFeedbackItem from './track-room-booking-feedback-item';
 import { useAppSelector } from '../../hooks/use-app-selector.hook';
-import TrackBookingRoomNotFound from './not-found';
-import { fetchFeedbacks } from '../../redux/features/feedback/thunk/fetch-feedbacks.thunk';
+import TrackRoomBookingFeedbackNotFound from './not-found';
+import { fetchRoomBookingFeedbacks } from '../../redux/features/room-booking-feedback/thunk/fetch-all-room-booking-feedbacks.thunk';
+import TrackRoomBookingFeedbackFilter from './filter';
 
-const TrackFeedbackScreen: React.FC<any> = () => {
+const TrackRoomBookingFeedback: React.FC<any> = () => {
   const dispatch = useAppDispatch();
 
-  const feedbacks = useAppSelector((state) => state.feedback.feedbacks);
+  const roomBookingFeedbacks = useAppSelector(
+    (state) => state.roomBookingFeedback.roomBookingFeedbacks
+  );
 
   const filterRef =
     useRef<React.ElementRef<typeof TrackBookingRoomFilter>>(null);
 
   const handleFilterSearch = () => {
-    dispatch(fetchFeedbacks(filterRef.current))
+    console.log(filterRef.current);
+    dispatch(fetchRoomBookingFeedbacks(filterRef.current))
       .unwrap()
-      .catch(() => alert('Error while fetching data'));
+      .catch((e) => alert(JSON.stringify(e)));
   };
 
-  const TrackBookingRoomList = () => {
+  const TrackRoomBookingFeedbackList = () => {
     return (
       <VirtualizedList
         showsVerticalScrollIndicator={false}
-        data={feedbacks}
+        data={roomBookingFeedbacks}
         style={{
           paddingTop: 10,
           marginBottom: 20,
@@ -39,7 +42,7 @@ const TrackFeedbackScreen: React.FC<any> = () => {
         getItemCount={(data) => data.length}
         getItem={(data, index) => data[index]}
         renderItem={(item: ListRenderItemInfo<FeedbackFilterResponse>) => (
-          <FeedbackItem key={item.index} item={item.item} />
+          <RoomBookingFeedbackItem key={item.index} item={item.item} />
         )}
       />
     );
@@ -47,14 +50,14 @@ const TrackFeedbackScreen: React.FC<any> = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TrackFeedbackFilter
+      <TrackRoomBookingFeedbackFilter
         ref={filterRef}
         handleFilterSearch={() => handleFilterSearch()}
       />
-      {feedbacks?.length < 1 ? (
-        <TrackBookingRoomNotFound />
+      {roomBookingFeedbacks?.length < 1 ? (
+        <TrackRoomBookingFeedbackNotFound />
       ) : (
-        <TrackBookingRoomList />
+        <TrackRoomBookingFeedbackList />
       )}
     </SafeAreaView>
   );
@@ -64,4 +67,4 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
 });
 
-export default TrackFeedbackScreen;
+export default TrackRoomBookingFeedback;

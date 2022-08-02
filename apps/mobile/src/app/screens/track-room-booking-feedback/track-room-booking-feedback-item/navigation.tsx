@@ -16,9 +16,9 @@ const TrackingBookingRequestItemNavigation: React.FC<
       switch (props.status) {
         case PENDING:
           return { width: 90 };
-        case "REJECTED":
+        case 'REJECTED':
           return { width: 90 };
-        case "RESOLVED":
+        case 'RESOLVED':
           return { width: 90 };
       }
     };
@@ -30,8 +30,12 @@ const TrackingBookingRequestItemNavigation: React.FC<
   };
 
   return (
-    <View style={[styles.container, {height: props.status !== "PENDING" ? 110 : 80}]}>
-      <StatusRender />
+    <View
+      style={[
+        styles.container,
+        { height: props.status !== 'PENDING' ? 110 : 80 },
+      ]}
+    >
       <View style={styles.viewMoreButton}>
         <Text style={styles.viewMoreButtonText}>View more</Text>
         <ChevronRightIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 20} />

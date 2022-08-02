@@ -26,16 +26,6 @@ const LoginFailedModal = dynamic(
   () => import('../components/login-fail.modal')
 );
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyBu0hVHThHGd5OQLxQWnNZLSgdLGiYsfZE',
-  authDomain: 'fptu-library-booking.firebaseapp.com',
-  projectId: 'fptu-library-booking',
-  storageBucket: 'fptu-library-booking.appspot.com',
-  messagingSenderId: '1013204251190',
-  appId: '1:1013204251190:web:52aeef762a7eb980e51e97',
-  measurementId: 'G-MQLQ866QXQ',
-};
-initializeApp(firebaseConfig);
 const provider = new GoogleAuthProvider();
 
 const auth = getAuth();
