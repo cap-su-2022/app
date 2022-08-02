@@ -99,14 +99,14 @@ const pickerStyle: PickerStyle = {
     height: 50,
   },
   inputAndroid: {
-    fontSize: deviceWidth / 25,
+    fontSize: deviceWidth / 23,
     fontWeight: '600',
     color: GRAY,
     alignSelf: 'center',
   },
   inputIOS: {
     alignSelf: 'center',
-    fontSize: deviceWidth / 25,
+    fontSize: deviceWidth / 23,
     fontWeight: '600',
     color: GRAY,
   },
@@ -114,8 +114,8 @@ const pickerStyle: PickerStyle = {
   placeholder: {
     color: BLACK,
     alignSelf: 'center',
-    fontWeight: '500',
-    fontSize: deviceWidth / 19,
+    fontWeight: '600',
+    fontSize: deviceWidth / 23,
   },
 };
 

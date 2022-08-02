@@ -92,7 +92,7 @@ export const RoomBooking3: React.FC = () => {
     )
       .unwrap()
       .then(() => navigate.navigate('ROOM_BOOKING_SUCCESS'))
-      .catch(() => {
+      .catch((e) => {
         alert('This room has already been booked. Please book another room');
         navigate.pop(2);
       });
@@ -115,8 +115,9 @@ export const RoomBooking3: React.FC = () => {
       .then(() => {
         alert('Book thanh cong');
       })
-      .catch(() => {
+      .catch((e) => {
         alert('This room has already been booked. Please book another room');
+        console.log(e)
         navigate.pop(2);
       });
   };
@@ -143,7 +144,7 @@ export const RoomBooking3: React.FC = () => {
     device: any;
   }> = (props) => {
     return (
-      <View style={styles.historyContainer} key={props.device.id}>
+      <View style={styles.historyContainer} key={props.device}>
         <View style={styles.bookingNowContainer}>
           <Text style={styles.bookingNowButtonText}>
             {props.device ? props.device.label : 'N/A'}

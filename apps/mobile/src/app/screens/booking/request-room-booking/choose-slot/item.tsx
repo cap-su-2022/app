@@ -28,7 +28,7 @@ const ChooseSlotItem: React.FC<ChooseSlotItemProps> = (props) => {
         <View style={styles.roomBookingDetail}>
           <Text style={styles.roomText}>Library Room</Text>
           <Text style={styles.roomCodeOuterText}>
-            Room Code: {props.item.roomName}
+            Room Name: {props.item.roomName}
           </Text>
           <Text
             style={{
