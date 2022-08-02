@@ -78,7 +78,7 @@ export class BookingRoomService {
     const today = new Date().setHours(0, 0, 0, 0);
     const curr = new Date();
     const firstDayInWeek = curr.getDate() - curr.getDay() + 2; // First day is the day of the month - the day of the week
-    const lastDayInWeek = firstDayInWeek + 6 ; // last day is the first day + 6
+    const lastDayInWeek = firstDayInWeek + 6; // last day is the first day + 6
     const sunday = new Date(curr.setDate(firstDayInWeek)).setHours(0, 0, 0, 0);
     const satuday = new Date(curr.setDate(lastDayInWeek)).setHours(0, 0, 0, 0);
     const firstDayInMonth = new Date(curr.setDate(2)).setHours(0, 0, 0, 0);
@@ -359,10 +359,18 @@ export class BookingRoomService {
       if (role.role_name === 'Staff') {
         filterByAccountId = accountId;
       }
-      return this.repository.findByPaginationPayload(
+      const result = await this.repository.findByPaginationPayload(
         payload,
         filterByAccountId
       );
+      if (
+        result.meta.totalPages > 0 &&
+        result.meta.currentPage > result.meta.totalPages
+      ) {
+        throw new BadRequestException('Current page is over');
+      }
+
+      return result;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -423,7 +431,7 @@ export class BookingRoomService {
     checkoutSlotId: string;
   }) {
     try {
-      console.log("PAYLOAD: ", payload);
+      console.log('PAYLOAD: ', payload);
       const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlotId);
       const slotOut = await this.slotService.getNumOfSlot(
         payload.checkoutSlotId
@@ -520,7 +528,6 @@ export class BookingRoomService {
     checkoutSlotId: string;
   }) {
     try {
-
       const listRequestBookedInMultiDay =
         await this.repository.getRequestBookedInMultiDay(
           payload.dateStart,
@@ -1063,7 +1070,7 @@ export class BookingRoomService {
         checkinSlotId: request.checkinSlotId,
         checkoutSlotId: request.checkoutSlotId,
       });
-      console.log("list request same slot: ", listRequestSameSlot)
+      console.log('list request same slot: ', listRequestSameSlot);
       if (listRequestSameSlot) {
         const reason = 'This room is given priority for another request';
         listRequestSameSlot.map((request) => {

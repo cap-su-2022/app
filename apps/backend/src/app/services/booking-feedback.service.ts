@@ -16,9 +16,13 @@ export class BookingFeedbackService {
     private readonly bookingRoomService: BookingRoomService
   ) {}
 
-  getAllFeedbacks(param: PaginationParams) {
+  async getAllFeedbacks(param: PaginationParams) {
     try {
-      return this.repository.findByPagination(param);
+      const result = await this.repository.findByPagination(param);
+      if(result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages){
+        throw new BadRequestException('Current page is over');
+      } 
+      return result;
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);

@@ -34,9 +34,9 @@ export class SlotService {
         result = await this.repository.findAll();
       } else {
         result = await this.repository.findByPagination(params);
-        if (result.meta.currentPage > result.meta.totalPages) {
+        if(result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages){
           throw new BadRequestException('Current page is over');
-        }
+        } 
       }
       return result;
     } catch (e) {

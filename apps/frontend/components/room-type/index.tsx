@@ -419,7 +419,7 @@ const ManageRoomType: React.FC<any> = () => {
         toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
         pagination={pagination}
       />
-      {roomTypes.items ? (
+      {roomTypes?.items ? (
         <>
           <TableBody
             actionButtonCb={handleActionsCb}
