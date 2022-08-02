@@ -44,9 +44,6 @@ const RoomBooking2: React.FC = () => {
   const devices = useAppSelector((state) => state.device.devices);
   const dispatch = useAppDispatch();
   const [devicesArray, setDevicesArray] = useState([]);
-  const [deviceIds, setDeviceIds] = useState<string[]>([]);
-  const [deviceNames, setDeviceNames] = useState<string[]>([]);
-
   const [deviceSelectedDevice, setDeviceSelectedDevice] = useState([]);
   const [search, setSearch] = useState<string>('');
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');

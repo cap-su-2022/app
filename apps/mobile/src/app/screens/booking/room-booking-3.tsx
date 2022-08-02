@@ -147,7 +147,10 @@ export const RoomBooking3: React.FC = () => {
       <View style={styles.historyContainer} key={props.device}>
         <View style={styles.bookingNowContainer}>
           <Text style={styles.bookingNowButtonText}>
-            {props.device ? props.device.label : 'N/A'}
+            {props.device ? `${props.device.label}` : 'N/A'}
+          </Text>
+          <Text style={styles.bookingNowButtonText}>
+            {props.device ? `Quantity: ${props.device.quantity}` : 'N/A'}
           </Text>
         </View>
       </View>
