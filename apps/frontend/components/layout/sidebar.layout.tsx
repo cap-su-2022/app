@@ -23,10 +23,8 @@ import { BLACK, WHITE } from '@app/constants';
 import { useRouter } from 'next/router';
 import LogoutModal from '../logout.modal';
 import PreferencesModal from '../preferences.modal.component';
-import {useAppDispatch} from "../../redux/hooks";
-import {
-  fetchCountPendingRequestBooking
-} from "../../redux/features/room-booking/thunk/fetch-count-pending-request-booking";
+import { useAppDispatch } from '../../redux/hooks';
+import { fetchCountPendingRequestBooking } from '../../redux/features/room-booking/thunk/fetch-count-pending-request-booking';
 
 const data = [
   { link: '/dashboard', label: 'Dashboard', icon: Dashboard },
@@ -49,8 +47,14 @@ const data = [
   { link: '/slot', label: 'Slot', icon: Clock2 },
 ];
 
-function LayoutSidebar() {
+interface SideBarProps {
+  // links: { link: string; label: string }[];
+  opened: boolean;
+}
+
+const LayoutSidebar: React.FC<SideBarProps> = (props) => {
   const { classes, cx } = useStyles();
+  console.log(props.opened);
 
   const [isLogoutModalShown, setLogoutModalShown] = useState<boolean>(false);
   const [active, setActive] = useState('Billing');
@@ -62,10 +66,10 @@ function LayoutSidebar() {
   const [count, setCount] = useState<number>();
 
   useEffect(() => {
-    dispatch(fetchCountPendingRequestBooking()).unwrap().then(count => setCount(count.count));
-  },[]);
-
-
+    dispatch(fetchCountPendingRequestBooking())
+      .unwrap()
+      .then((count) => setCount(count.count));
+  }, []);
 
   const handleLogoutSubmit = async (
     event: React.MouseEvent<HTMLAnchorElement>
@@ -80,7 +84,11 @@ function LayoutSidebar() {
 
   const links = data.map((item, index) => (
     <a
-      className={cx(classes.link, { [classes.linkActive]: isMenuSelect(item) })}
+      className={
+        props.opened
+          ? cx(classes.closeLink, { [classes.linkActive]: isMenuSelect(item) })
+          : cx(classes.link, { [classes.linkActive]: isMenuSelect(item) })
+      }
       href={item.link}
       key={index}
       onClick={async (event) => {
@@ -97,15 +105,20 @@ function LayoutSidebar() {
       <span className={cx({ [classes.labelActive]: isMenuSelect(item) })}>
         {item.label}
       </span>
-      {(item.link === '/booking-room' && count > 0 ? (
-
-        <Badge style={{marginLeft: 10}} color="red" variant="filled">{count}</Badge>
-      ): null)}
+      {item.link === '/booking-room' && count > 0 ? (
+        <Badge style={{ marginLeft: 10 }} color="red" variant="filled">
+          {count}
+        </Badge>
+      ) : null}
     </a>
   ));
 
   return (
-    <Navbar height={'full'} p="md" className={classes.navbar}>
+    <Navbar
+      height={'full'}
+      p="md"
+      className={props.opened ? classes.closeNavBar : classes.navbar}
+    >
       <Navbar.Section grow>
         <Group className={classes.header} position="apart">
           <></>
@@ -153,7 +166,7 @@ function LayoutSidebar() {
       </Navbar.Section> */}
     </Navbar>
   );
-}
+};
 
 const useStyles = createStyles((theme, _params, getRef) => {
   const icon = getRef('icon');
@@ -165,7 +178,10 @@ const useStyles = createStyles((theme, _params, getRef) => {
         maxWidth: 100,
       },
     },
-
+    closeNavBar: {
+      backgroundColor: FPT_ORANGE_COLOR,
+      maxWidth: 100,
+    },
     version: {
       backgroundColor: WHITE,
       color: BLACK,
@@ -182,6 +198,32 @@ const useStyles = createStyles((theme, _params, getRef) => {
       paddingTop: theme.spacing.md,
       marginTop: theme.spacing.md,
       borderTop: `1px solid ${WHITE}`,
+    },
+
+    closeLink: {
+      ...theme.fn.focusStyles(),
+      display: 'flex',
+      alignItems: 'center',
+      textDecoration: 'none',
+      fontSize: theme.fontSizes.sm,
+      color: theme.white,
+      padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
+      borderRadius: theme.radius.sm,
+      fontWeight: 500,
+
+      span: {
+        display: 'none',
+      },
+
+      '&:hover': {
+        backgroundColor: '#f2f2f2',
+        span: {
+          color: FPT_ORANGE_COLOR,
+        },
+        svg: {
+          color: FPT_ORANGE_COLOR,
+        },
+      },
     },
 
     link: {

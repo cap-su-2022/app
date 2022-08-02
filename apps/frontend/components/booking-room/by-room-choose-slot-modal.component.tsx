@@ -389,13 +389,13 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
 
           <Select
             id="checkinSlot"
-            style={{ width: '140px', paddingBottom: 10 }}
+            style={{ paddingBottom: 10 }}
             label="From slot"
             required
             transition="pop-top-left"
             transitionDuration={80}
             transitionTimingFunction="ease"
-            dropdownPosition="top"
+            // dropdownPosition="top"
             radius="md"
             data={slotNames || []}
             onChange={props.formik.handleChange('checkinSlot')}
@@ -404,13 +404,13 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           <ChevronsDown size={28} strokeWidth={2} color={'black'} />
           <Select
             id="checkoutSlot"
-            style={{ width: '140px' }}
+            // style={{ width: '140px' }}
             label="To slot"
             required
             transition="pop-top-left"
             transitionDuration={80}
             transitionTimingFunction="ease"
-            dropdownPosition="top"
+            // dropdownPosition="top"
             radius="md"
             data={slotNames || []}
             onChange={props.formik.handleChange('checkoutSlot')}

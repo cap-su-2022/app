@@ -15,11 +15,9 @@ import {SlotService} from '../services/slot.service';
 import {PaginationParams} from './pagination.model';
 import {Roles} from '../decorators/role.decorator';
 import {Role} from '../enum/roles.enum';
-import {Slot} from '../models/slot.entity';
 import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {User} from '../decorators/keycloak-user.decorator';
 import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
 import {SlotsRequestPayload} from '../payload/request/slot-add.request.payload';
 
 @Controller('/v1/slots')
@@ -30,7 +28,7 @@ export class SlotController {
   }
 
   @Get()
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Get all slots',
     description: 'Get the list of slots',

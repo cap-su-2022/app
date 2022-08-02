@@ -1,22 +1,25 @@
 import styles from '../admin-layout.module.scss';
 import React, { ReactNode } from 'react';
 import { createStyles } from '@mantine/core';
-import { LayoutHeader } from './header.layout';
+import LayoutHeader from './header.layout';
 import LayoutSidebar from './sidebar.layout';
 import LayoutFooter from './footer.layout';
+import { useBooleanToggle } from '@mantine/hooks';
 
 interface AdminLayoutProps {
   children: ReactNode;
 }
 const AdminLayout: React.FC<AdminLayoutProps> = (props) => {
   const { classes } = useStyles();
+  const [opened, toggleOpened] = useBooleanToggle(false);
+
   return (
     <>
       <div className={styles.page}>
-        <LayoutSidebar />
+        <LayoutSidebar opened={opened} />
 
         <div className={classes.headerRight}>
-          <LayoutHeader />
+          <LayoutHeader toggleOpened={() => toggleOpened()} opened={opened} />
           <div className={classes.wrapper}>{props.children}</div>
         </div>
       </div>
