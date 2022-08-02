@@ -35,6 +35,7 @@ import AlertModal from '../../../components/modals/alert-modal.component';
 import QRCode from 'react-native-qrcode-svg';
 import Divider from '../../../components/text/divider';
 import dayjs from 'dayjs';
+import { fetchAllSlots } from '../../../redux/features/slot';
 
 const RoomBookingReadyToCheckIn: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -58,25 +59,34 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
 
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('Error');
-
+  const slots = useAppSelector((state) => state.slot.slots);
   const bookingRoom = useAppSelector(
     (state) => state.roomBooking.currentCheckinInformation
   );
 
+  const timeSlotCheckin = slots
+    .find((slot) => slot.slotNum === bookingRoom.checkinSlot)
+    .timeStart.slice(0, 5);
+  const timeSlotCheckout = slots
+    .find((slot) => slot.slotNum === bookingRoom.checkoutSlot)
+    .timeEnd.slice(0, 5);
   const [isQRModalShown, setQRModalShown] = useState<boolean>(false);
 
   useEffect(() => {
+    dispatch(fetchAllSlots())
+      .unwrap()
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .then((val) => {});
     return () => {
       setQRModalShown(false);
       setErrorModalShown(false);
     };
   }, []);
 
-  const handleGetData = (e) => {
+  const handleGetData = () => {
     dispatch(
       attemptCheckinBookingRoom({
         id: bookingRoom.id,
-        signature: e,
       })
     )
       .unwrap()
@@ -190,7 +200,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
                   fontWeight: '500',
                 }}
               >
-                Checkin at Slot {bookingRoom.checkinSlot}{' '}
+                Checkin at {timeSlotCheckin}{' '}
                 {dayjs(bookingRoom.checkinDate).format('ddd DD/MM/YYYY')}
               </Text>
             </View>
@@ -210,7 +220,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
                   fontWeight: '500',
                 }}
               >
-                Checkout at Slot {bookingRoom.checkoutSlot}{' '}
+                Checkout at {timeSlotCheckout}{' '}
                 {dayjs(bookingRoom.checkinDate).format('ddd DD/MM/YYYY')}
               </Text>
             </View>
@@ -286,36 +296,10 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
         >
           <ReadyToCheckinBookingInformation />
           <ReadyToCheckinMoreInformation />
-          <ReadyToCheckinSignature
-            handleScrollViewEnabled={(e) => setScrollEnabled(e)}
-            signatureRef={signature}
-            handleGetSignatureData={(e) => handleGetData(e)}
-            isSignatureBoardHidden={isHidden}
-            handleSignatureBoardHidden={() => setHidden(true)}
-            handleClearSignature={() => {
-              setHidden(true);
-              if (signature) {
-                signature.current.clearSignature();
-                signature.current.draw();
-              }
-            }}
-            handleSignatureEmptyAction={() => {
-              scrollView.current.scrollTo({
-                x: undefined,
-                y: deviceHeight - 100,
-                animated: true,
-              });
-              setErrorMessage(
-                'You must sign first so as to proceed to check in!'
-              );
-              setErrorModalShown(true);
-            }}
-            handleOnFinishSigning={() => setScrollEnabled(true)}
-          />
         </ScrollView>
         <View style={styles.footer}>
           <TouchableOpacity
-            onPress={() => handleCheckinBookingRoom()}
+            onPress={() => handleGetData()}
             style={styles.checkOutButton}
           >
             <Text style={styles.checkOutButtonText}>Proceed to check in</Text>
