@@ -40,6 +40,8 @@ export async function middleware(request: NextRequest) {
 
   if (request.cookies['accessToken'] && parseJwt(request.cookies['accessToken']) && request.nextUrl.pathname === '/login') {
     return NextResponse.redirect(new URL('/dashboard', request.url));
+  } else {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
   return NextResponse.next();
   //return NextResponse.redirect(new URL('/login', request.url))
