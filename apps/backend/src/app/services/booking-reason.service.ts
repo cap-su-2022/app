@@ -1,10 +1,9 @@
-import {BadRequestException, Body, Injectable, Logger} from '@nestjs/common';
-import {BookingReasonRepository} from '../repositories/booking-reason.repository';
-import {BookingReasonHistService} from './booking-reason-hist.service';
-import {PaginationParams} from '../controllers/pagination.model';
-import {BookingReason} from '../models/booking-reason.entity';
-import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
-
+import { BadRequestException, Body, Injectable, Logger } from '@nestjs/common';
+import { BookingReasonRepository } from '../repositories/booking-reason.repository';
+import { BookingReasonHistService } from './booking-reason-hist.service';
+import { PaginationParams } from '../controllers/pagination.model';
+import { BookingReason } from '../models/booking-reason.entity';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 
 @Injectable()
 export class BookingReasonService {
@@ -13,16 +12,24 @@ export class BookingReasonService {
   constructor(
     private readonly repository: BookingReasonRepository,
     private readonly histService: BookingReasonHistService
-  ) {
-  }
+  ) {}
 
   async getBookingReasonTypesWithPagination(pagination: PaginationParams) {
     try {
+      let result;
       if (!pagination || !pagination.page) {
-        return await this.repository.findAll();
+        result = await this.repository.findAll();
       } else {
-        return await this.repository.findByPagination(pagination);
+        result = await this.repository.findByPagination(pagination);
+        if (
+          result.meta.totalPages > 0 &&
+          result.meta.currentPage > result.meta.totalPages
+        ) {
+          throw new BadRequestException('Current page is over');
+        }
       }
+
+      return result;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -38,7 +45,6 @@ export class BookingReasonService {
     }
   }
 
-
   async getBookingReasonById(id: string): Promise<BookingReason> {
     try {
       const isExisted = await this.repository.existsById(id);
@@ -49,14 +55,14 @@ export class BookingReasonService {
       }
       const result = await this.repository.findById(id);
       if (!result) {
-        throw new BadRequestException(
-          'This booking reason is already deleted'
-        );
+        throw new BadRequestException('This booking reason is already deleted');
       }
       return result;
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException(e.message ?? 'An error occurred while retrieving this booking reason');
+      throw new BadRequestException(
+        e.message ?? 'An error occurred while retrieving this booking reason'
+      );
     }
   }
 
@@ -89,7 +95,9 @@ export class BookingReasonService {
       if (data === undefined) {
         throw new BadRequestException('This reason already deleted!');
       }
-      const isExisted = await this.repository.isExistedByName(updatePayload.name);
+      const isExisted = await this.repository.isExistedByName(
+        updatePayload.name
+      );
       if (isExisted) {
         throw new BadRequestException('Booking reason name is duplicated!');
       }
@@ -149,7 +157,10 @@ export class BookingReasonService {
       return reason;
     } catch (e) {
       this.logger.error(e.message);
-      throw new BadRequestException(e.message ?? 'Error occurred while restore the deleted status of this boôking reason');
+      throw new BadRequestException(
+        e.message ??
+          'Error occurred while restore the deleted status of this boôking reason'
+      );
     }
   }
 

@@ -243,7 +243,7 @@ function DevicesManagement(props: any) {
           pagination={pagination}
         />
 
-        {devices.items ? (
+        {devices?.items ? (
           <>
             <TableBody
               actionButtonCb={handleActionsCb}

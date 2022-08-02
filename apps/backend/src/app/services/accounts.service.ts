@@ -38,7 +38,7 @@ export class AccountsService {
   async getAll(request: AccountsPaginationParams) {
     try {
       const result = await this.repository.searchAccount(request);
-      if(result.meta.currentPage > result.meta.totalPages){
+      if(result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages){
         throw new BadRequestException('Current page is over');
       } 
 

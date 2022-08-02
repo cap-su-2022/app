@@ -35,7 +35,8 @@ export class RoomTypeService {
       const result = await this.repository.findRoomTypesByPagination(
         pagination
       );
-      if (result.meta.currentPage > result.meta.totalPages) {
+      console.log(result.meta.currentPage, result.meta.totalPages)
+      if (result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages) {
         throw new BadRequestException('Current page is over');
       }
       return result;
