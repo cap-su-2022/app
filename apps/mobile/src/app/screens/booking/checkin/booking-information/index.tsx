@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Divider from '../../../../components/text/divider';
 import {deviceWidth} from '../../../../utils/device';
@@ -11,6 +11,7 @@ import {
   fetchDeviceInUseByBookingRequestId
 } from "../../../../redux/features/room-booking/thunk/fetch-devices-in-use-by-booking-request-id.thunk";
 import {useAppDispatch} from "../../../../hooks/use-app-dispatch.hook";
+import {fetchAllSlots} from "../../../../redux/features/slot";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface ReadyToCheckinBookingInformationProps {}
@@ -24,12 +25,19 @@ const ReadyToCheckinBookingInformation: React.FC<
   const { currentCheckinInformation } = useAppSelector(
     (state) => state.roomBooking
   );
-  const timeSlotCheckin = slots
-    .find((slot) => slot.slotNum === currentCheckinInformation.checkinSlot)
-    .timeStart.slice(0, 5);
-  const timeSlotCheckout = slots
-    .find((slot) => slot.slotNum === currentCheckinInformation.checkoutSlot)
-    .timeEnd.slice(0, 5);
+  const [timeSlotCheckin, setTimeSlotCheckin] = useState('')
+  const [timeSlotCheckout, setTimeSlotCheckout] = useState('')
+
+
+  useEffect(() => {
+    dispatch(fetchAllSlots()).unwrap().then((value) => {
+      setTimeSlotCheckin(value
+        .find((slot) => slot.slotNum === currentCheckinInformation.checkinSlot)
+        .timeStart.slice(0, 5))
+      setTimeSlotCheckout(value
+        .find((slot) => slot.slotNum === currentCheckinInformation.checkoutSlot)
+        .timeStart.slice(0, 5))    })
+  }, [])
 
   const handleViewDevices = (id) => {
     dispatch(fetchDeviceInUseByBookingRequestId(id))

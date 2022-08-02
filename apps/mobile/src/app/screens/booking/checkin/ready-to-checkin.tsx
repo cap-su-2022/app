@@ -64,13 +64,19 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
     (state) => state.roomBooking.currentCheckinInformation
   );
 
-  const timeSlotCheckin = slots
-    .find((slot) => slot.slotNum === bookingRoom.checkinSlot)
-    .timeStart.slice(0, 5);
-  const timeSlotCheckout = slots
-    .find((slot) => slot.slotNum === bookingRoom.checkoutSlot)
-    .timeEnd.slice(0, 5);
+  const [timeSlotCheckin, setTimeSlotCheckin] = useState('')
+  const [timeSlotCheckout, setTimeSlotCheckout] = useState('')
   const [isQRModalShown, setQRModalShown] = useState<boolean>(false);
+
+  useEffect(() => {
+    dispatch(fetchAllSlots()).unwrap().then((value) => {
+      setTimeSlotCheckin(value
+        .find((slot) => slot.slotNum === bookingRoom.checkinSlot)
+        .timeStart.slice(0, 5))
+      setTimeSlotCheckout(value
+        .find((slot) => slot.slotNum === bookingRoom.checkoutSlot)
+        .timeStart.slice(0, 5))    })
+  }, [])
 
   useEffect(() => {
     dispatch(fetchAllSlots())
