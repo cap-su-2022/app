@@ -13,7 +13,7 @@ import { Role } from '../enum/roles.enum';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaginationParams } from './pagination.model';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { BookingRoomFeedback, Feedback } from '../models';
+import { BookingRoomFeedback } from '../models';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { User } from '../decorators/keycloak-user.decorator';
 import { BookingFeedbackSendRequestPayload } from '../payload/request/booking-feedback-send.request.payload';
@@ -51,10 +51,7 @@ export class BookingFeedbackController {
     payload: PaginationParams,
     @User() user: KeycloakUserInstance
   ): Promise<Pagination<BookingRoomFeedback> | BookingRoomFeedback[]> {
-    return this.service.getAllFeedbacks(
-      user.account_id,
-      payload as PaginationParams
-    );
+    return this.service.getAllFeedbacks(user.account_id, payload);
   }
 
   @Get(':id')

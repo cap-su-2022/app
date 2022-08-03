@@ -1,29 +1,52 @@
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View, VirtualizedList,} from 'react-native';
-import {fetchAllWishlistRooms} from '../../redux/features/room-booking/thunk/fetch-all-wishlist.thunk';
-import {ExclamationCircleIcon, SearchIcon,} from 'react-native-heroicons/solid';
-import {BLACK, FPT_ORANGE_COLOR, GRAY, LIGHT_GRAY, RED, WHITE,} from '@app/constants';
-import {deviceWidth} from '../../utils/device';
-import {RoomWishListResponse} from '../../redux/models/wishlist-booking-room.model';
-import {ArrowRightIcon, ClockIcon, LibraryIcon, TicketIcon, XIcon,} from 'react-native-heroicons/outline';
-import {getTimeDetailBySlotNumber} from '../../utils/slot-resolver.util';
-import {removeWishlistBookingRoom} from '../../redux/features/room-booking/thunk/remove-wishlist-booking-room.thunk';
+import React, { useEffect, useState } from 'react';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  VirtualizedList,
+} from 'react-native';
+import { fetchAllWishlistRooms } from '../../redux/features/room-booking/thunk/fetch-all-wishlist.thunk';
+import {
+  ExclamationCircleIcon,
+  SearchIcon,
+} from 'react-native-heroicons/solid';
+import {
+  BLACK,
+  FPT_ORANGE_COLOR,
+  GRAY,
+  LIGHT_GRAY,
+  RED,
+  WHITE,
+} from '@app/constants';
+import { deviceWidth } from '../../utils/device';
+import { RoomWishListResponse } from '../../redux/models/wishlist-booking-room.model';
+import {
+  ArrowRightIcon,
+  ClockIcon,
+  LibraryIcon,
+  TicketIcon,
+  XIcon,
+} from 'react-native-heroicons/outline';
+import { getTimeDetailBySlotNumber } from '../../utils/slot-resolver.util';
+import { removeWishlistBookingRoom } from '../../redux/features/room-booking/thunk/remove-wishlist-booking-room.thunk';
 import Empty from '../../components/empty.svg';
 import AlertModal from '../../components/modals/alert-modal.component';
 import DelayInput from 'react-native-debounce-input';
 import RNPickerSelect from 'react-native-picker-select';
-import {useAppNavigation} from '../../hooks/use-app-navigation.hook';
-import {useAppDispatch} from '../../hooks/use-app-dispatch.hook';
-import {useAppSelector} from '../../hooks/use-app-selector.hook';
-import {SLOTS} from '../../constants/slot.constant';
-import {boxShadow} from '../../utils/box-shadow.util';
-import {fetchAllSlots} from '../../redux/features/slot';
-import {step1BookRoomFromWishList} from "../../redux/features/room-booking/slice";
+import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
+import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
+import { useAppSelector } from '../../hooks/use-app-selector.hook';
+import { SLOTS } from '../../constants/slot.constant';
+import { boxShadow } from '../../utils/box-shadow.util';
+import { fetchAllSlots } from '../../redux/features/slot';
+import { step1BookRoomFromWishList } from '../../redux/features/room-booking/slice';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface RoomBookingWishlistProps {}
 
-const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
+const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (_props) => {
   const wishlistBookingRooms = useAppSelector(
     (state) => state.roomBooking.wishlistBookingRooms
   );
@@ -93,16 +116,18 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
   };
 
   const handleBookThisRoom = (roomId, slot, roomName) => {
-    const mySlot = slotSelections.find(item => item.slotNum === slot)
-    dispatch(step1BookRoomFromWishList({
-      roomId: roomId,
-      roomName: roomName,
-      fromSlot: mySlot.id,
-      toSlotNum: mySlot.slotNum,
-      toSlot: mySlot.id,
-    }))
+    const mySlot = slotSelections.find((item) => item.slotNum === slot);
+    dispatch(
+      step1BookRoomFromWishList({
+        roomId: roomId,
+        roomName: roomName,
+        fromSlot: mySlot.id,
+        toSlotNum: mySlot.slotNum,
+        toSlot: mySlot.id,
+      })
+    );
     setTimeout(() => {
-      navigate.navigate("BOOKING_WISHLIST_CHOOSE_DAY");
+      navigate.navigate('BOOKING_WISHLIST_CHOOSE_DAY');
     }, 0);
   };
 
@@ -152,7 +177,9 @@ const RoomBookingWishlist: React.FC<RoomBookingWishlistProps> = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.bookThisRoomButtonContainer}
-            onPress={() => handleBookThisRoom(item.roomid, item.slot, item.roomname)}
+            onPress={() =>
+              handleBookThisRoom(item.roomid, item.slot, item.roomname)
+            }
           >
             <TicketIcon color={WHITE} size={deviceWidth / 15} />
             <Text style={styles.bookThisRoomButtonText}>
