@@ -523,19 +523,6 @@ export class BookingRoomController {
   }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   @Get('/statistics')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
@@ -1143,6 +1130,33 @@ export class BookingRoomController {
       checkinSignature
     );
   }
+
+
+  @Get('count')
+  @ApiOperation({
+    summary: 'Get count booking requests',
+    description: 'Get count booking requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully getting count booking requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting count booking requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getCountRequestBooking() {
+    return this.service.getCountRequestBooking();
+  }
+
 
   @Get('check-out')
   @ApiOperation({

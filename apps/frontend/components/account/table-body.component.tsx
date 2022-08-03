@@ -6,7 +6,7 @@ import {
   Group,
   Text,
   Center,
-  Button,
+  Button, Highlight,
 } from '@mantine/core';
 import {
   Selector,
@@ -28,6 +28,7 @@ interface RowData {
 
 interface TableBodyProps {
   data: any[];
+  search?: React.ReactNode;
 
   toggleSortDirection(label): void;
 
@@ -53,47 +54,44 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, [])
 
-  const rows = props.data.map((row, index) => (
-    userInfo.id !== row.id ? <tr key={index}>
-
-      <td>
-        {props.page === 1
-          ? index + 1
-          : (props.page - 1) * props.itemsPerPage + (index + 1)}
-      </td>
-      <td>{row.fullname}</td>
-      <td>{row.email}</td>
-      <td className={classes.actionButtonContainer}>
-        <Button
-          variant="outline"
-          onClick={() => props.actionButtonCb.info(row.id)}
-        >
-          <InfoCircle/>
-        </Button>
-
-
-        <Button
-          variant="outline"
-          color="green"
-          onClick={() => props.actionButtonCb.update(row.id)}
-        >
-          <Pencil/>
-        </Button>
-
-        <Button
-          variant="outline"
-          color="red"
-          onClick={() => props.actionButtonCb.delete(row.id)}
-        >
-          <Trash/>
-        </Button>
-
-      </td>
+  const rows = props.data.map((row, index) =>
+    (
+      userInfo.id !== row.id ? <tr key={index}>
+        <td>
+          {props.page === 1
+            ? index + 1
+            : (props.page - 1) * props.itemsPerPage + (index + 1)}
+        </td>
+        <td>{row.fullname}</td>
+        <td>{row.email}</td>
+        <td className={classes.actionButtonContainer}>
+          <Button
+            variant="outline"
+            onClick={() => props.actionButtonCb.info(row.id)}
+          >
+            <InfoCircle/>
+          </Button>
 
 
-    </tr> : null
+          <Button
+            variant="outline"
+            color="green"
+            onClick={() => props.actionButtonCb.update(row.id)}
+          >
+            <Pencil/>
+          </Button>
 
-  ));
+          <Button
+            variant="outline"
+            color="red"
+            onClick={() => props.actionButtonCb.delete(row.id)}
+          >
+            <Trash/>
+          </Button>
+        </td>
+      </tr> : null
+    )
+  );
 
   return props.data.length > 0 ? (
     <Table

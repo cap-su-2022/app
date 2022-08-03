@@ -647,40 +647,15 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .then((data) => data?.count > 0);
   }
 
-  getCountRequestBookingPending() {
-    return this.createQueryBuilder('booking_request')
-      .select('COUNT(1)', 'count')
-      .where("booking_request.status = 'PENDING'")
-      .getRawOne<{ count: number }>();
+  async getCountRequestBooking() {
+    return await this.query(`SELECT COUNT(1) as count FROM booking_request br WHERE br.status = 'PENDING' UNION ALL
+                                    SELECT COUNT(1) FROM booking_request br WHERE br.status = 'BOOKED' UNION ALL
+                                    SELECT COUNT(1) FROM booking_request br WHERE br.status = 'CHECKED_IN' UNION ALL
+                                    SELECT COUNT(1) FROM booking_request br WHERE br.status = 'CHECKED_OUT' UNION ALL
+                                    SELECT COUNT(1) FROM booking_request br WHERE br.status = 'CANCELLED'`);
   }
 
-  getCountRequestBookingBooked() {
-    return this.createQueryBuilder('booking_request')
-      .select('COUNT(1)', 'count')
-      .where("booking_request.status = 'BOOKED'")
-      .getRawOne<{ count: number }>();
-  }
 
-  getCountRequestBookingCancelled() {
-    return this.createQueryBuilder('booking_request')
-      .select('COUNT(1)', 'count')
-      .where("booking_request.status = 'CANCELLED'")
-      .getRawOne<{ count: number }>();
-  }
-
-  getCountRequestBookingCheckedIn() {
-    return this.createQueryBuilder('booking_request')
-      .select('COUNT(1)', 'count')
-      .where("booking_request.status = 'CHECKED_IN'")
-      .getRawOne<{ count: number }>();
-  }
-
-  getCountRequestBookingCheckedOut() {
-    return this.createQueryBuilder('booking_request')
-      .select('COUNT(1)', 'count')
-      .where("booking_request.status = 'CHECKED_OUT'")
-      .getRawOne<{ count: number }>();
-  }
 
   async getInforToFeedback(
     id: string

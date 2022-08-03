@@ -682,50 +682,15 @@ export class BookingRoomService {
     }
   }
 
-  async getCountRequestBookingPending() {
+  async getCountRequestBooking() {
     try {
-      return await this.repository.getCountRequestBookingPending();
+      return await this.repository.getCountRequestBooking();
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
 
-  async getCountRequestBookingBooked() {
-    try {
-      return await this.repository.getCountRequestBookingBooked();
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
-
-  async getCountRequestBookingCancelled() {
-    try {
-      return await this.repository.getCountRequestBookingCancelled();
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
-
-  async getCountRequestBookingCheckedIn() {
-    try {
-      return await this.repository.getCountRequestBookingCheckedIn();
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
-
-  async getCountRequestBookingCheckedOut() {
-    try {
-      return await this.repository.getCountRequestBookingCheckedOut();
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
 
   async addNewRequest(
     payload: BookingRequestAddRequestPayload,

@@ -67,26 +67,25 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       icon: DeviceTablet,
       isRender: isAdmin,
     },
-    {link: '/role', label: 'Role', icon: BarrierBlock, isRender: isAdmin},
     {link: '/accounts', label: 'Accounts', icon: Users, isRender: isAdmin},
-    {
-      link: '/feedback-type',
-      label: 'Feedback Type',
-      icon: MessageCode,
-      isRender: isAdmin,
-    },
+    {link: '/role', label: 'Role', icon: BarrierBlock, isRender: isAdmin},
     {
       link: '/feedbacks',
-      label: 'Feedback',
+      label: 'Feedbacks',
       icon: BrandHipchat,
       isRender: isAdmin || isLibrarian || isStaff,
     },
-
     {
       link: '/booking-room-feedbacks',
       label: 'Booking Room Feedbacks',
       icon: BrandHipchat,
       isRender: isAdmin || isLibrarian || isStaff,
+    },
+    {
+      link: '/feedback-type',
+      label: 'Feedback Type',
+      icon: MessageCode,
+      isRender: isAdmin,
     },
     {
       link: '/notifications',
@@ -107,7 +106,7 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       isRender: isAdmin || isLibrarian,
     },
 
-    {link: '/slot', label: 'Slot', icon: Clock2, isRender: isAdmin},
+    {link: '/slot', label: 'Slots', icon: Clock2, isRender: isAdmin},
   ];
 
   const [active, setActive] = useState('Billing');
