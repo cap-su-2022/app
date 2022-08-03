@@ -668,7 +668,7 @@ export class BookingRoomService {
   async getBookingRoomById(id: string) {
     try {
       const requestInfo = await this.repository.findById(id);
-      console.log(requestInfo)
+      console.log(requestInfo);
       if (requestInfo) {
         const listDevice = await this.bookingRoomDeviceService.findByRequestId(
           id
@@ -1266,7 +1266,21 @@ export class BookingRoomService {
 
   async getCurrentBookingCheckoutInformation(accountId: string) {
     try {
-      return await this.repository.findCurrentCheckoutInformation(accountId);
+      const requestInfo = await this.repository.findCurrentCheckoutInformation(
+        accountId
+      );
+      console.log(requestInfo);
+      if (requestInfo) {
+        const listDevice = await this.bookingRoomDeviceService.findByRequestId(
+          requestInfo.id
+        );
+        return {
+          ...requestInfo,
+          listDevice: listDevice,
+        };
+      } else {
+        throw new BadRequestException('Not found request with provided id');
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
