@@ -28,22 +28,11 @@ import AcceptRequestModal from './accept-request-modal.component';
 import RejectRequestModal from './reject-request.component';
 import CheckinRequestModal from './checkin-request.component';
 import CheckoutRequestModal from './checkout-request.component';
+
 import {
-  fetchCountPendingRequestBooking
-} from "../../redux/features/room-booking/thunk/fetch-count-pending-request-booking";
-import {
-  fetchCountBookedRequestBooking
-} from "../../redux/features/room-booking/thunk/fetch-count-booked-request-booking";
-import {
-  fetchCountCancelledRequestBooking
-} from "../../redux/features/room-booking/thunk/fetch-count-cancelled-request-booking";
-import {
-  fetchCountCheckedInRequestBooking
-} from "../../redux/features/room-booking/thunk/fetch-count-checked-in-request-booking";
-import {
-  fetchCountCheckedOutRequestBooking
-} from "../../redux/features/room-booking/thunk/fetch-count-checked-out-request-booking";
-import {backgroundColor} from "react-native-calendars/src/style";
+  fetchCountRequestBooking
+} from "../../redux/features/room-booking/thunk/fetch-count-request-booking";
+
 
 const defaultPagination = {
   limit: 5,
@@ -69,44 +58,13 @@ const BookingRoom = () => {
   //   const roomBooking = useAppSelector((state) => state.roomBooking.roomBooking);
 
 
-  const [countPending, setCountPending] = useState<number>();
-  const [countBooked, setCountBooked] = useState<number>();
-  const [countCancelled, setCountCancelled] = useState<number>();
-  const [countCheckedIn, setCountCheckedIn] = useState<number>();
-  const [countCheckedOut, setCountCheckedOut] = useState<number>();
+  const [count, setCount] = useState<{ count: number }[]>([]);
 
 
   useEffect(() => {
-    dispatch(fetchCountPendingRequestBooking())
+    dispatch(fetchCountRequestBooking())
       .unwrap()
-      .then((countPending) => setCountPending(countPending?.count));
-  }, []);
-
-  useEffect(() => {
-    dispatch(fetchCountBookedRequestBooking())
-      .unwrap()
-      .then((countBooked) => setCountBooked(countBooked?.count));
-  }, []);
-
-
-  useEffect(() => {
-    dispatch(fetchCountCancelledRequestBooking())
-      .unwrap()
-      .then((countCancelled) => setCountCancelled(countCancelled?.count));
-  }, []);
-
-
-  useEffect(() => {
-    dispatch(fetchCountCheckedInRequestBooking())
-      .unwrap()
-      .then((countCheckedIn) => setCountCheckedIn(countCheckedIn?.count));
-  }, []);
-
-
-  useEffect(() => {
-    dispatch(fetchCountCheckedOutRequestBooking())
-      .unwrap()
-      .then((countCheckedOut) => setCountCheckedOut(countCheckedOut?.count));
+      .then(setCount);
   }, []);
 
 
@@ -227,14 +185,14 @@ const BookingRoom = () => {
             size="xs"
           >
             Pending
-            {countPending > 0 ? (
+            {count[0]?.count > 0 ? (
               <div className={classes.badge} style={{backgroundColor: "#228be6"}}>
-                {countPending}
+                {count[0].count}
               </div>
             ) : null}
           </Button>
 
-          <Space w="lg"/>
+          <Space w="xl"/>
 
           <Button
             variant="outline"
@@ -243,15 +201,15 @@ const BookingRoom = () => {
             size="xs"
           >
             Booked
-            {countBooked > 0 ? (
+            {count[1]?.count > 0 ? (
               <div className={classes.badge} style={{backgroundColor: "#40c057"}}>
-                {countBooked}
+                {count[1].count}
               </div>
             ) : null}
 
           </Button>
 
-          <Space w="lg"/>
+          <Space w="xl"/>
 
 
           <Button
@@ -262,15 +220,15 @@ const BookingRoom = () => {
             size="xs"
           >
             Checked in
-            {countCheckedIn > 0 ? (
+            {count[2]?.count > 0 ? (
               <div className={classes.badge} style={{backgroundColor: "#fd7e14"}}>
-                {countCheckedIn}
+                {count[2].count}
               </div>
             ) : null}
 
           </Button>
 
-          <Space w="lg"/>
+          <Space w="xl"/>
           <Button
             variant="outline"
             color="violet"
@@ -278,14 +236,14 @@ const BookingRoom = () => {
             size="xs"
           >
             Checked out
-            {countCheckedOut > 0 ? (
+            {count[3]?.count > 0 ? (
               <div className={classes.badge} style={{backgroundColor: "#7950f2"}}>
-                {countCheckedOut}
+                {count[3].count}
               </div>
             ) : null}
           </Button>
 
-          <Space w="lg"/>
+          <Space w="xl"/>
 
           <Button
             variant="outline"
@@ -294,9 +252,9 @@ const BookingRoom = () => {
             size="xs"
           >
             Cancelled
-            {countCancelled > 0 ? (
+            {count[4]?.count > 0 ? (
               <div className={classes.badge} style={{backgroundColor: "#fa5252"}}>
-                {countCancelled}
+                {count[4].count}
               </div>
             ) : null}
           </Button>

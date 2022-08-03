@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ListRenderItemInfo,
   SafeAreaView,
@@ -9,7 +9,7 @@ import {
   View,
   VirtualizedList,
 } from 'react-native';
-import { SearchIcon, SortAscendingIcon } from 'react-native-heroicons/solid';
+import {SearchIcon, SortAscendingIcon} from 'react-native-heroicons/solid';
 import {
   BLACK,
   FPT_ORANGE_COLOR,
@@ -18,7 +18,7 @@ import {
   LIGHT_GRAY,
   WHITE,
 } from '@app/constants';
-import { deviceWidth } from '../../utils/device';
+import {deviceWidth} from '../../utils/device';
 import {
   ChevronDoubleLeftIcon,
   ChevronRightIcon,
@@ -27,18 +27,17 @@ import {
   SortDescendingIcon,
 } from 'react-native-heroicons/outline';
 import DelayInput from 'react-native-debounce-input';
-import { useAppSelector } from '../../hooks/use-app-selector.hook';
-import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
-import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
-import { Device } from '../../redux/models/device.model';
-import { step3ScheduleRoomBooking } from '../../redux/features/room-booking/slice';
+import {useAppSelector} from '../../hooks/use-app-selector.hook';
+import {useAppDispatch} from '../../hooks/use-app-dispatch.hook';
+import {useAppNavigation} from '../../hooks/use-app-navigation.hook';
+import {Device} from '../../redux/models/device.model';
+import {step3ScheduleRoomBooking} from '../../redux/features/room-booking/slice';
 import AlertModal from '../../components/modals/alert-modal.component';
-import { fetchAllDevices } from '../../redux/features/devices/thunk/fetch-all';
+import {fetchAllDevices} from '../../redux/features/devices/thunk/fetch-all';
 import RequestRoomBookingHeader from './request-room-booking/header';
-import { boxShadow } from '../../utils/box-shadow.util';
-import { BookingRoomsByFiltersResponse } from '../../redux/models/booking-rooms-by-filters-response.model';
+import {BookingRoomsByFiltersResponse} from '../../redux/models/booking-rooms-by-filters-response.model';
 import BookingRequestItem from '../track-booking-room/track-booking-request-item';
-import { boxShadow } from '../../utils/box-shadow.util';
+import {boxShadow} from '../../utils/box-shadow.util';
 import NotFound from '../../components/empty.svg';
 
 const RoomBooking2: React.FC = () => {
@@ -94,7 +93,7 @@ const RoomBooking2: React.FC = () => {
         <View style={styles.filterBodyContainer}>
           <View style={styles.filterInputContainer}>
             <View style={styles.filterInputIconContainer}>
-              <SearchIcon color={BLACK} />
+              <SearchIcon color={BLACK}/>
             </View>
             <View style={styles.filterInput}>
               <DelayInput
@@ -114,9 +113,9 @@ const RoomBooking2: React.FC = () => {
             style={styles.filterSortButton}
           >
             {sort === 'ASC' ? (
-              <SortAscendingIcon color={BLACK} />
+              <SortAscendingIcon color={BLACK}/>
             ) : (
-              <SortDescendingIcon color={BLACK} />
+              <SortDescendingIcon color={BLACK}/>
             )}
           </TouchableOpacity>
         </View>
@@ -133,10 +132,10 @@ const RoomBooking2: React.FC = () => {
     const handleSelectedDevice = () => {
       deviceSelectedDevice.filter((device) => device.id === props.device.id)[0]
         ? setDeviceSelectedDevice(
-            deviceSelectedDevice.filter(
-              (device) => device.id !== props.device.id
-            )
+          deviceSelectedDevice.filter(
+            (device) => device.id !== props.device.id
           )
+        )
         : setDeviceSelectedDevice([...deviceSelectedDevice, props.device]);
     };
 
@@ -179,15 +178,15 @@ const RoomBooking2: React.FC = () => {
             (device) => device.id === props.device.id
           )[0]
             ? {
-                borderWidth: 1,
-                borderColor: FPT_ORANGE_COLOR,
-              }
+              borderWidth: 1,
+              borderColor: FPT_ORANGE_COLOR,
+            }
             : null,
           boxShadow(styles),
         ]}
       >
         <View style={styles.deviceIconContainer}>
-          <DeviceMobileIcon color={FPT_ORANGE_COLOR} />
+          <DeviceMobileIcon color={FPT_ORANGE_COLOR}/>
         </View>
 
         <View style={styles.deviceContainer}>
@@ -339,9 +338,9 @@ const RoomBooking2: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <RequestRoomBookingHeader />
-      <Filtering />
+    <SafeAreaView style={{flex: 1}}>
+      <RequestRoomBookingHeader/>
+      <Filtering/>
 
       <View style={styles.container}>
         {devices.length > 0 ? (
@@ -372,7 +371,7 @@ const RoomBooking2: React.FC = () => {
               flexDirection: 'column',
             }}
           >
-            <NotFound width={deviceWidth / 2} height={250} />
+            <NotFound width={deviceWidth / 2} height={250}/>
             <Text
               style={{
                 color: BLACK,
@@ -418,7 +417,7 @@ const RoomBooking2: React.FC = () => {
             onPress={() => handleNextStep()}
             style={styles.nextStepButton}
           >
-            <ChevronRightIcon color={WHITE} />
+            <ChevronRightIcon color={WHITE}/>
             <Text style={styles.nextStepButtonText}>Next Step</Text>
           </TouchableOpacity>
         </View>

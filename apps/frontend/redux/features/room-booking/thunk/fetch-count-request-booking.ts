@@ -2,15 +2,15 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
 import {toggleSpinnerOff, toggleSpinnerOn} from '../../spinner';
 
-export const fetchCountBookedRequestBooking = createAsyncThunk<{ count: number }, void, {
+export const fetchCountRequestBooking = createAsyncThunk<{ count: number }[], void, {
   rejectValue: {
     message: string
   }
 }>(
-  ('booking-room/fetch-count-request-booking-booked'), async (payload, thunkAPI) => {
+  ('booking-room/fetch-count'), async (payload, thunkAPI) => {
     thunkAPI.dispatch(toggleSpinnerOn());
     try {
-      const response = await axios.get(`api/booking-room/count-booked`);
+      const response = await axios.get(`api/booking-room/count`);
       console.log(response.data)
       return await response.data;
     } catch ({response}) {

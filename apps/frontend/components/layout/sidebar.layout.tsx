@@ -27,9 +27,7 @@ import {FPT_ORANGE_COLOR} from '@app/constants';
 import {BLACK, WHITE} from '@app/constants';
 import {useRouter} from 'next/router';
 import {useAppDispatch} from '../../redux/hooks';
-import {
-  fetchCountPendingRequestBooking
-} from '../../redux/features/room-booking/thunk/fetch-count-pending-request-booking';
+import {fetchCountRequestBooking} from '../../redux/features/room-booking/thunk/fetch-count-request-booking';
 
 interface SideBarProps {
   opened: boolean;
@@ -69,31 +67,37 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       icon: DeviceTablet,
       isRender: isAdmin,
     },
-    {link: '/accounts', label: 'Accounts', icon: Users, isRender: isAdmin},
     {link: '/role', label: 'Role', icon: BarrierBlock, isRender: isAdmin},
-    {
-      link: '/feedbacks',
-      label: 'Feedback',
-      icon: BrandHipchat,
-      isRender: isAdmin || isLibrarian || isStaff,
-    },
-    {
-      link: '/booking-room-feedbacks',
-      label: 'Booking Room Feedback',
-      icon: BrandHipchat,
-      isRender: isAdmin || isLibrarian,
-    },
+    {link: '/accounts', label: 'Accounts', icon: Users, isRender: isAdmin},
     {
       link: '/feedback-type',
       label: 'Feedback Type',
       icon: MessageCode,
       isRender: isAdmin,
     },
+    {
+      link: '/feedbacks',
+      label: 'Feedback',
+      icon: BrandHipchat,
+      isRender: isAdmin || isLibrarian || isStaff,
+    },
 
+    {
+      link: '/booking-room-feedbacks',
+      label: 'Booking Room Feedbacks',
+      icon: BrandHipchat,
+      isRender: isAdmin || isLibrarian || isStaff,
+    },
     {
       link: '/notifications',
       label: 'Notification',
       icon: Bell,
+      isRender: isAdmin || isLibrarian || isStaff,
+    },
+    {
+      link: '/booking-room',
+      label: 'Booking Room',
+      icon: Ticket,
       isRender: isAdmin || isLibrarian || isStaff,
     },
     {
@@ -102,18 +106,15 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       icon: DeviceMobileMessage,
       isRender: isAdmin || isLibrarian,
     },
+
     {link: '/slot', label: 'Slot', icon: Clock2, isRender: isAdmin},
-    {
-      link: '/booking-room',
-      label: 'Booking Room',
-      icon: Ticket,
-      isRender: isAdmin || isLibrarian || isStaff,
-    },
   ];
 
   const [active, setActive] = useState('Billing');
   const dispatch = useAppDispatch();
   const router = useRouter();
+
+  const [count, setCount] = useState<number>();
 
 
   console.log(isStaff)
@@ -143,7 +144,7 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       >
         <item.icon
           className={
-            item.link === '/booking-room' && props.opened
+            item.link === '/booking-room' && props.opened && count > 0
               ? cx(classes.linkRedIcon, {
                 [classes.iconActive]: isMenuSelect(item),
               })

@@ -522,148 +522,18 @@ export class BookingRoomController {
     return this.service.getCurrentRoomBookingList(user.account_id);
   }
 
-  // @Get('current-booking/:id')
-  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  // getCurrentRoomBookingDetail(
-  //   @User() user: KeycloakUserInstance,
-  //   @Param() payload: { id: string }
-  // ) {
-  //   return this.service.getCurrentRoomBookingDetail(
-  //     user.account_id,
-  //     payload.id
-  //   );
-  // }
-
-  @Get('count-pending')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Get count for booking request pending',
-    description: 'Get count for booking request pending',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'One or more payload parameters are invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully get count request booking pending',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getCountRequestBookingPending() {
-    return this.service.getCountRequestBookingPending();
-  }
 
 
-  @Get('count-booked')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Get count for booking request booked',
-    description: 'Get count for booking request booked',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'One or more payload parameters are invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully get count request booking booked',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getCountRequestBookingBooked() {
-    return this.service.getCountRequestBookingBooked();
-  }
 
-  @Get('count-cancelled')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Get count for booking request cancelled',
-    description: 'Get count for booking request cancelled',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'One or more payload parameters are invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully get count request booking cancelled',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getCountRequestBookingCancelled() {
-    return this.service.getCountRequestBookingCancelled();
-  }
 
-  @Get('count-checked-in')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Get count for booking request checked-in',
-    description: 'Get count for booking request checked-in',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'One or more payload parameters are invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully get count request booking checked-in',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getCountRequestBookingCheckedIn() {
-    return this.service.getCountRequestBookingCheckedIn();
-  }
 
-  @Get('count-checked-out')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Get count for booking request checked-out',
-    description: 'Get count for booking request checked-out',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'One or more payload parameters are invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully get count request booking checked-out',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getCountRequestBookingCheckedOut() {
-    return this.service.getCountRequestBookingCheckedOut();
-  }
+
+
+
+
+
+
+
 
 
   @Get('/statistics')

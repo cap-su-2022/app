@@ -54,6 +54,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
     props.toggleSortDirection(field);
+
   };
 
   const rows = props.data.map((row, index) => (
@@ -137,6 +138,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           reversed={reverseSortDirection}
           onSort={() => {
             setSorting('createdAt')
+            console.log('created sort');
           }}
           style={{width: 160}}
         >
