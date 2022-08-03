@@ -161,7 +161,11 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
       onClose={() => props.toggleShown()}
     >
       <div className={classes.modalContainer}>
-        <Text className={classes.modalBody}>Chổ này thay đổi sau đi</Text>
+        <Text className={classes.modalBody}>
+          Once deleted, this device will <b>not be able to restore</b>. If there is a
+          booking request that will use this device, the delete action will not
+          be possible. Please cancel booking requests then delete this device.{' '}
+        </Text>
         <div className={classes.modalFooter}>
           {listRequest.length > 0 ? (
             <Button
