@@ -49,6 +49,7 @@ const RoomBooking2: React.FC = () => {
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
 
+  console.log(deviceSelectedDevice);
   useEffect(() => {
     dispatch(
       fetchAllDevices({
@@ -125,13 +126,18 @@ const RoomBooking2: React.FC = () => {
     index: number;
   }> = (props) => {
     const [quantity, setQuantity] = useState<number>(1);
+    console.log(deviceSelectedDevice.filter((id) => id === props.device.id)[0]);
     return (
       <TouchableOpacity
         key={props.device}
         onPress={() => {
-          deviceSelectedDevice.filter((id) => id === props.device.id)[0]
+          deviceSelectedDevice.filter(
+            (device) => device.id === props.device.id
+          )[0]
             ? setDeviceSelectedDevice(
-                deviceSelectedDevice.filter((id) => id !== props.device.id)
+                deviceSelectedDevice.filter(
+                  (device) => device.id !== props.device.id
+                )
               )
             : setDeviceSelectedDevice([...deviceSelectedDevice, props.device]);
         }}
@@ -217,14 +223,16 @@ const RoomBooking2: React.FC = () => {
                     if (quantity - 1 === 0) {
                       return setDeviceSelectedDevice(
                         deviceSelectedDevice.filter(
-                          (id) => id !== props.device.id
+                          (device) => device.id !== props.device.id
                         )
                       );
                     }
                     setQuantity(quantity - 1);
                     const copyArray = deviceSelectedDevice;
-                    copyArray[props.index].quantity -= 1;
-                    console.log(copyArray[props.index]);
+                    const itemSelectedIndex = copyArray.findIndex(
+                      (device) => device.id === props.device.id
+                    );
+                    copyArray[itemSelectedIndex].quantity -= 1;
                     setDeviceSelectedDevice(copyArray);
                   }}
                   style={{
@@ -251,9 +259,16 @@ const RoomBooking2: React.FC = () => {
                 </TouchableOpacity>
                 <TextInput
                   value={String(props.device.quantity)}
+                  keyboardType="numeric"
                   textAlignVertical="center"
                   onChangeText={(e) => {
                     setQuantity(parseInt(e));
+                    const copyArray = deviceSelectedDevice;
+                    const itemSelectedIndex = copyArray.findIndex(
+                      (device) => device.id === props.device.id
+                    );
+                    copyArray[itemSelectedIndex].quantity = parseInt(e);
+                    setDeviceSelectedDevice(copyArray);
                   }}
                   style={{
                     textAlign: 'center',
@@ -274,8 +289,9 @@ const RoomBooking2: React.FC = () => {
                   onPress={() => {
                     if (quantity >= 0) {
                       const copyArray = deviceSelectedDevice;
-                      console.log('ssss', props.index, copyArray)
-                      const itemSelectedIndex = copyArray.findIndex(device => device.id === props.device.id)
+                      const itemSelectedIndex = copyArray.findIndex(
+                        (device) => device.id === props.device.id
+                      );
                       copyArray[itemSelectedIndex].quantity += 1;
                       setDeviceSelectedDevice(copyArray);
                       setQuantity(quantity + 1);
