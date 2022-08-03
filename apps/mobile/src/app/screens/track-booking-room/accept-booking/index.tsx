@@ -1,5 +1,6 @@
 import React, {
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -49,6 +50,7 @@ import { fetchDeviceInUseByBookingRequestId } from '../../../redux/features/room
 import AlertModal from '../../../components/modals/alert-modal.component';
 import { cancelFeedback } from '../../../redux/features/feedback/thunk/cancel-feedback.thunk';
 import { cancelBookingRoom } from '../../../redux/features/room-booking/thunk/cancel-room-booking.thunk';
+import { fetchAllSlots } from '../../../redux/features/slot';
 
 const AcceptBooking: React.FC<any> = () => {
   const dispatch = useAppDispatch();
@@ -56,11 +58,30 @@ const AcceptBooking: React.FC<any> = () => {
   const { bookingRoom } = useAppSelector((state) => state.roomBooking);
   const authUser = useAppSelector((state) => state.auth.authUser);
   const [isCancelModalShown, setCancelModalShown] = useState(false);
-  const [isRejectModalShow, setRejectModalShown] = useState(false)
+  const [isRejectModalShow, setRejectModalShown] = useState(false);
+  const [timeSlotCheckin, setTimeSlotCheckin] = useState('');
+  const [timeSlotCheckout, setTimeSlotCheckout] = useState('');
   const cancelBookingRequestModal =
     useRef<React.ElementRef<typeof CancelAlertModalRef>>();
+  const rejectBookingRequestModal =
+    useRef<React.ElementRef<typeof RejectAlertModalRef>>();
 
-  const rejectBookingRequestModal = useRef<React.ElementRef<typeof RejectAlertModalRef>>()
+  useEffect(() => {
+    dispatch(fetchAllSlots())
+      .unwrap()
+      .then((value) => {
+        setTimeSlotCheckin(
+          value
+            .find((slot) => slot.name === bookingRoom.checkinSlot)
+            .timeStart.slice(0, 5)
+        );
+        setTimeSlotCheckout(
+          value
+            .find((slot) => slot.name === bookingRoom.checkoutSlot)
+            .timeEnd.slice(0, 5)
+        );
+      });
+  }, []);
 
   const handleRejectBookingRequest = () => {
     dispatch(rejectBookingRequest(bookingRoom.id))
@@ -137,6 +158,7 @@ const AcceptBooking: React.FC<any> = () => {
     dispatch(fetchDeviceInUseByBookingRequestId(id))
       .unwrap()
       .then((val) => {
+        console.log(val)
         navigate.navigate('ACCEPT_BOOKING_LIST_DEVICES');
       });
   };
@@ -187,7 +209,7 @@ const AcceptBooking: React.FC<any> = () => {
       bookingRoom.status !== CHECKED_OUT ? (
       <AcceptBookingFooter
         handleReject={() => {
-          setRejectModalShown(!isRejectModalShow)
+          setRejectModalShown(!isRejectModalShow);
         }}
         handleAccept={() => handleAcceptAction()}
       />
@@ -219,7 +241,7 @@ const AcceptBooking: React.FC<any> = () => {
   const RejectAlertModal: React.ForwardRefRenderFunction<
     { message: string },
     any
-    > = (props, ref) => {
+  > = (props, ref) => {
     const [message, setMessage] = useState<string>();
 
     useImperativeHandle(ref, () => ({
@@ -502,7 +524,7 @@ const AcceptBooking: React.FC<any> = () => {
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Check-in Time</Text>
                 <Text style={styles.valueText}>
-                  {bookingRoom.checkinSlot} -{' '}
+                  {timeSlotCheckin} -{' '}
                   {dayjs(new Date(bookingRoom.checkinDate)).format(
                     'DD/MM/YYYY'
                   )}
@@ -515,7 +537,7 @@ const AcceptBooking: React.FC<any> = () => {
                 <Text style={styles.titleText}>Check-out Time</Text>
                 <Text style={styles.valueText}>
                   {' '}
-                  {bookingRoom.checkoutSlot} -{' '}
+                  {timeSlotCheckout} -{' '}
                   {dayjs(new Date(bookingRoom.checkinDate)).format(
                     'DD/MM/YYYY'
                   )}
@@ -615,8 +637,7 @@ const AcceptBooking: React.FC<any> = () => {
                   style={{
                     marginTop: 20,
                   }}
-                >
-                </View>
+                ></View>
               ) : null}
             </View>
             <CancelAlertModalRef ref={cancelBookingRequestModal} />
