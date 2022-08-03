@@ -310,41 +310,41 @@ export class DevicesService {
     }
   }
 
-  async handleRestoreDeletedDeviceById(id: string) {
-    const queryRunner = this.dataSource.createQueryRunner();
+  // async handleRestoreDeletedDeviceById(id: string) {
+  //   const queryRunner = this.dataSource.createQueryRunner();
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
 
-    try {
-      const isExisted = await this.repository.existsById(id);
-      if (!isExisted) {
-        throw new BadRequestException(
-          'Device does not found with the provided id'
-        );
-      }
-      const isDisabled = await this.repository.checkIfDeviceIsDisabledById(id);
-      if (isDisabled) {
-        throw new BadRequestException('This device is already disabled');
-      }
-      const isDeleted = await this.repository.checkIfDeviceIsDeletedById(id);
-      if (!isDeleted) {
-        throw new BadRequestException(
-          'This device ID is now active. Cannot restore it'
-        );
-      }
+  //   try {
+  //     const isExisted = await this.repository.existsById(id);
+  //     if (!isExisted) {
+  //       throw new BadRequestException(
+  //         'Device does not found with the provided id'
+  //       );
+  //     }
+  //     const isDisabled = await this.repository.checkIfDeviceIsDisabledById(id);
+  //     if (isDisabled) {
+  //       throw new BadRequestException('This device is already disabled');
+  //     }
+  //     const isDeleted = await this.repository.checkIfDeviceIsDeletedById(id);
+  //     if (!isDeleted) {
+  //       throw new BadRequestException(
+  //         'This device ID is now active. Cannot restore it'
+  //       );
+  //     }
 
-      const device = await this.repository.restoreDeletedDeviceById(id);
-      await this.histService.createNew(device, queryRunner);
+  //     const device = await this.repository.restoreDeletedDeviceById(id);
+  //     await this.histService.createNew(device, queryRunner);
 
-      await queryRunner.commitTransaction();
-      return device;
-    } catch (e) {
-      this.logger.error(e.message);
-      await queryRunner.rollbackTransaction();
-      throw new BadRequestException(e.message);
-    }
-  }
+  //     await queryRunner.commitTransaction();
+  //     return device;
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     await queryRunner.rollbackTransaction();
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
   // getBookingRoomDeviceList(name: string, type: string, sort: string) {
   //   if (!sort) sort = 'ASC';
