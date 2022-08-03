@@ -90,6 +90,7 @@ interface RoomBookingCheckout {
   roomName: string;
   roomType: string;
   checkinDate: string;
+  listDevice: Device[]
 }
 
 const initialState: RoomBookingState = {
