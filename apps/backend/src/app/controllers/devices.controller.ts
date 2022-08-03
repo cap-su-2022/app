@@ -394,36 +394,36 @@ export class DevicesController {
     return this.service.getDeletedDevices(search);
   }
 
-  @Put('restore-deleted/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Restore the deleted device by id',
-    description: 'Restore the deleted device by provided id',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully restored the deleted device',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while restoring the deleted device',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'Restore deleted device',
-    type: String,
-    required: true,
-    example: 'abcdef',
-  })
-  restoreDeletedDeviceById(@Param() payload: { id: string }) {
-    return this.service.handleRestoreDeletedDeviceById(payload.id);
-  }
+  // @Put('restore-deleted/:id')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  // @ApiOperation({
+  //   summary: 'Restore the deleted device by id',
+  //   description: 'Restore the deleted device by provided id',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully restored the deleted device',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while restoring the deleted device',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Invalid access token',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // @ApiParam({
+  //   name: 'id',
+  //   description: 'Restore deleted device',
+  //   type: String,
+  //   required: true,
+  //   example: 'abcdef',
+  // })
+  // restoreDeletedDeviceById(@Param() payload: { id: string }) {
+  //   return this.service.handleRestoreDeletedDeviceById(payload.id);
+  // }
 }

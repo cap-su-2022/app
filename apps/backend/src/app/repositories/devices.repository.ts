@@ -266,23 +266,23 @@ export class DevicesRepository extends Repository<Devices> {
       .getRawMany<Devices>();
   }
 
-  async restoreDeletedDeviceById(id: string) {
-    const isRestored = await this.createQueryBuilder('devices')
-      .update({
-        deletedBy: null,
-        deletedAt: null,
-      })
-      .where('devices.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-    if (isRestored.affected > 0) {
-      return this.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
-    }
-  }
+  // async restoreDeletedDeviceById(id: string) {
+  //   const isRestored = await this.createQueryBuilder('devices')
+  //     .update({
+  //       deletedBy: null,
+  //       deletedAt: null,
+  //     })
+  //     .where('devices.id = :id', { id: id })
+  //     .useTransaction(true)
+  //     .execute();
+  //   if (isRestored.affected > 0) {
+  //     return this.findOneOrFail({
+  //       where: {
+  //         id: id,
+  //       },
+  //     });
+  //   }
+  // }
 
   // findDeviceListByBookingRoomRequest(name: string, type: string, sort: string) {
   //   return this.createQueryBuilder('devices')
