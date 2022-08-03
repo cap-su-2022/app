@@ -52,8 +52,8 @@ export class BookingRoomService {
   ) {
   }
 
-  async getStatistics() {
-    const result = {
+  private getExampleStatistics() {
+    return {
       totalTime: {
         total: 0,
         booked: 0,
@@ -75,6 +75,10 @@ export class BookingRoomService {
         cancelled: 0,
       },
     };
+  }
+
+  async getStatistics() {
+    const result = this.getExampleStatistics();
     const today = new Date().setHours(0, 0, 0, 0);
     const curr = new Date();
     const firstDayInWeek = curr.getDate() - curr.getDay() + 2; // First day is the day of the month - the day of the week
@@ -88,14 +92,6 @@ export class BookingRoomService {
       1
     ).setHours(0, 0, 0, 0);
     const allRequest = await this.repository.getAllRequest();
-    // console.log(firstDayInWeek)
-    // console.log(lastDayInWeek)
-    // console.log(new Date(curr.setDate(firstDayInWeek)))
-    // console.log("sunday: ", sunday)
-    // console.log( new Date(curr.setDate(lastDayInWeek)))
-    // console.log("satuday: ", satuday)
-    // console.log('firstDayInMonth ', firstDayInMonth);
-    // console.log('lastDayInMonth ', lastDayInMonth);
 
     for (let i = 0; i < allRequest.length; i++) {
       const checkinDate = allRequest[i].checkinDate.setHours(0, 0, 0, 0);
@@ -1110,10 +1106,10 @@ export class BookingRoomService {
       console.log('list request same slot: ', listRequestSameSlot);
       if (listRequestSameSlot) {
         const reason = 'This room is given priority for another request';
-        listRequestSameSlot.map((request) => {
-          return this.repository.rejectById(
+        listRequestSameSlot.forEach((requestSameSlot) => {
+          this.repository.rejectById(
             accountId,
-            request.id,
+            requestSameSlot.id,
             reason,
             queryRunner
           );
@@ -1134,7 +1130,6 @@ export class BookingRoomService {
         queryRunner
       );
 
-      // await this.histService.createNew(requestAccepted);
       await queryRunner.commitTransaction();
       return requestAccepted;
     } catch (e) {
@@ -1200,7 +1195,6 @@ export class BookingRoomService {
       const requestRejected = this.reject(accountId, id, reason, queryRunner);
 
       await queryRunner.commitTransaction();
-      // await this.histService.createNew(requestRejected);
       return requestRejected;
     } catch (e) {
       this.logger.error(e);
@@ -1324,10 +1318,15 @@ export class BookingRoomService {
   }
 
   async checkOutBookingRoom(bookingRequestId: string, accountId: string) {
-    return await this.repository.checkoutBookingRoom(
-      bookingRequestId,
-      accountId
-    );
+    try {
+      return await this.repository.checkoutBookingRoom(
+        bookingRequestId,
+        accountId
+      );
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
   }
 
   async getAllBookingRoomHistory(
