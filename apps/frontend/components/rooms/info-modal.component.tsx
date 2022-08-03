@@ -45,9 +45,9 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
         onClose={() => props.toggleShown()}
       >
         <div className={classes.modalBody}>
-          <InputWrapper label="Room ID" style={{ marginBottom: 20 }}>
+          {/* <InputWrapper label="Room ID" style={{ marginBottom: 20 }}>
             <TextInput icon={<Id />} radius="md" readOnly value={room.id} />
-          </InputWrapper>
+          </InputWrapper> */}
           <div
             style={{
               display: 'flex',

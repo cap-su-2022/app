@@ -8,7 +8,6 @@ import { addRoom } from "./thunk/add-room";
 import { fetchDisabledRooms } from "./thunk/fetch-disabled-rooms";
 import { fetchDeletedRooms } from "./thunk/fetch-deleted-rooms";
 import { restoreDisabledRoom } from "./thunk/restore-disabled.thunk";
-import { restoreDeletedRoom } from "./thunk/restore-deleted.thunk";
 import { deleteRoomById } from "./thunk/delete-room-by-id";
 import { PaginationResponse } from '../../../models/pagination-response.payload';
 
@@ -79,10 +78,6 @@ export const roomSlice = createSlice({
       state.deletedRooms = payload;
     });
     builder.addCase(restoreDisabledRoom.fulfilled, (state, {payload}) => {
-      return;
-
-    });
-    builder.addCase(restoreDeletedRoom.fulfilled, (state, {payload}) => {
       return;
 
     });
