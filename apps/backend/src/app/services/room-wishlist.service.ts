@@ -33,7 +33,7 @@ export class RoomWishlistService {
   ) {
     console.log(wishlist.slotId);
     const slot = await this.slotService.getNumOfSlot(wishlist.slotId);
-    console.log(slot);
+    console.log("SLOT:", slot);
     const isWishlistExisted = await this.repository.checkIfWishlistAlreadyExist(
       {
         ...wishlist,

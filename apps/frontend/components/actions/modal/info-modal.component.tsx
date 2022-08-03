@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Button,
   createStyles,
@@ -11,12 +11,13 @@ import {
   ClipboardText,
   FileDescription,
   Id,
-  PencilOff,
   User,
   X,
 } from 'tabler-icons-react';
-import {InputInfoProps} from '../models/input-info-props.model';
+import { InputInfoProps } from '../models/input-info-props.model';
 import InputType from '../common/input-type.component';
+import autoAnimate from '@formkit/auto-animate';
+import InfoComponent from './info-component.component';
 
 interface InfoModalProps {
   header: React.ReactNode;
@@ -26,15 +27,18 @@ interface InfoModalProps {
 
   fields: InputInfoProps[];
 
+  isShowListItems: boolean;
+  itemsOfData: any[];
+  itemsOfDataButton: React.ReactNode;
+  title: string;
 }
 
 const InfoModal: React.FC<InfoModalProps> = (props) => {
-  const {classes} = useStyles();
-  console.log('SHOW:  ', props.fields);
+  const { classes } = useStyles();
 
   return (
     <Modal
-      size="lg"
+      size="auto"
       centered
       title={<div className={classes.headerTitle}>{props.header}</div>}
       padding="lg"
@@ -47,73 +51,20 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
       opened={props.isShown}
       onClose={() => props.toggleShown()}
     >
-      <div className={classes.body}>
-        <div className={classes.inner}>
-          {props.fields.map((field, index) => (
-            <InputWrapper
-              key={index}
-              label={field.label}
-              className={classes.inputWrapper}
-            >
-              {/* <TextInput
-                id={field.id}
-                name={field.name}
-                icon={
-                  field.id === 'id' ? (
-                    <Id />
-                  ) : field.id === 'name' ? (
-                    <ClipboardText />
-                  ) : field.id === 'description' ? (
-                    <FileDescription />
-                  ) : field.id === 'createAt' || field.id === 'updateAt' ? (
-                    <CalendarStats />
-                  ) : field.id === 'createBy' || field.id === 'updateBy' ? (
-                    <User />
-                  ) : null
-                }
-                defaultValue={field.value}
-                readOnly={field.readOnly}
-              /> */}
-
-              <InputType
-                id={field.id}
-                name={field.name}
-                inputtype={field.inputtype}
-                icon={
-                  field.id === 'id' ? (
-                    <Id/>
-                  ) : field.id === 'name' ? (
-                    <ClipboardText/>
-                  ) : field.id === 'description' ? (
-                    <FileDescription/>
-                  ) : field.id === 'createAt' || field.id === 'updateAt' ? (
-                    <CalendarStats/>
-                  ) : field.id === 'createBy' || field.id === 'updateBy' ? (
-                    <User/>
-                  ) : null
-                }
-                defaultValue={field.value}
-                readOnly={field.readOnly}
-              />
-            </InputWrapper>
-          ))}
-        </div>
-        <div className={classes.footer}>
-          <Button
-            leftIcon={<X/>}
-            color="orange"
-            onClick={() => props.toggleShown()}
-          >
-            Close
-          </Button>
-        </div>
-      </div>
+      <InfoComponent
+        toggleShown={props.toggleShown}
+        fields={props.fields}
+        isShowListItems={props.isShowListItems}
+        itemsOfData={props.itemsOfData}
+        itemsOfDataButton={props.itemsOfDataButton}
+        title={props.title}
+      />
     </Modal>
   );
 };
 
 const useStyles = createStyles({
-  headerTitle: {fontWeight: 600, fontSize: 20},
+  headerTitle: { fontWeight: 600, fontSize: 20 },
   body: {
     display: 'flex',
     flexDirection: 'column',
@@ -134,16 +85,28 @@ const useStyles = createStyles({
       gridColumnStart: 1,
       gridColumnEnd: 3,
     },
-    '&:nth-of-type(3)': {
-      gridColumnStart: 1,
-      gridColumnEnd: 3,
-    },
   },
   footer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-end',
     marginTop: 20,
+  },
+  itemRow: {
+    borderRadius: '3px',
+    padding: '10px 15px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '15px',
+    backgroundColor: '#ffffff',
+    boxShadow: '0px 0px 9px 0px rgba(0,0,0,0.1)',
+    width: 200,
+  },
+  col1: {
+    flexBasis: '80%',
+  },
+  col2: {
+    flexBasis: '20%',
   },
 });
 

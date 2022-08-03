@@ -37,11 +37,10 @@ import { InputUpdateProps } from '../actions/models/input-update-props.model';
 import DeleteModal from './delete-modal.component';
 import AdminLayout from '../layout/admin.layout';
 import RestoreDeletedModal from './restore-deleted.modal.component';
-import { RoomType } from '../../models/room-type.model';
-import { PaginationResponse } from '../../models/pagination-response.payload';
 import { showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
 import NoDataFound from '../no-data-found';
+import { fetchRoomsByRoomType } from '../../redux/features/room/thunk/fetch-rooms-by-room-type';
 
 const AddRoomTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -124,7 +123,6 @@ const ManageRoomType: React.FC<any> = () => {
       page: val,
     });
   };
-
   const handleResetFilter = () => {
     setPagination(defaultPaginationParams);
   };
@@ -134,12 +132,27 @@ const ManageRoomType: React.FC<any> = () => {
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
+  const [isListRoomShown, setListRoomShown] = useState<boolean>(false);
   const [isRestoreDeletedShown, setRestoreDeletedShown] =
     useState<boolean>(false);
   const roomType = useAppSelector((state) => state.roomType.roomType);
+  const [listRoomOfType, setListRoomOfType] = useState<any[]>();
+  
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchRoomsByRoomType(id))
+        .unwrap()
+        .then((response) => setListRoomOfType(response));
+    }
+  }, [dispatch, id]);
 
   const handleFetchById = (idVal) => {
     return dispatch(fetchRoomTypeById(idVal));
+  };
+
+  const ShowRoomOfTypeButton: React.FC<any> = () => {
+    return <Button onClick={() => setListRoomShown(!isListRoomShown)}>Rooms</Button>;
   };
 
   const ActionsFilter: React.FC = () => {
@@ -153,14 +166,6 @@ const ManageRoomType: React.FC<any> = () => {
         >
           Add
         </Button>
-        {/* <Button
-          variant="outline"
-          color="red"
-          onClick={() => setRestoreDisabledShown(true)}
-          style={{ marginRight: 10 }}
-        >
-          <PencilOff color={'red'} />
-        </Button> */}
         <Button
           variant="outline"
           color="red"
@@ -195,21 +200,12 @@ const ManageRoomType: React.FC<any> = () => {
 
   const infoFields = [
     {
-      label: 'Room Type Id',
-      id: 'id',
-      name: 'id',
-      value: roomType.id,
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
-    {
       label: 'Room Type Name',
       id: 'name',
       name: 'name',
       value: roomType.name,
       readOnly: true,
       inputtype: InputTypes.TextInput,
-
     },
     {
       label: 'Room Type Description',
@@ -218,7 +214,6 @@ const ManageRoomType: React.FC<any> = () => {
       value: roomType.description,
       readOnly: true,
       inputtype: InputTypes.TextArea,
-
     },
     {
       label: 'Create at',
@@ -227,7 +222,6 @@ const ManageRoomType: React.FC<any> = () => {
       value: dayjs(roomType.createdAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
       inputtype: InputTypes.TextInput,
-
     },
     {
       label: 'Create By',
@@ -236,16 +230,14 @@ const ManageRoomType: React.FC<any> = () => {
       value: roomType.createdBy,
       readOnly: true,
       inputtype: InputTypes.TextInput,
-
     },
     {
       label: 'Update At',
       id: 'updateAt',
       name: 'updateAt',
-      value:dayjs(roomType.updatedAt).format('HH:mm DD/MM/YYYY'),
+      value: dayjs(roomType.updatedAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
       inputtype: InputTypes.TextInput,
-
     },
     {
       label: 'Update By',
@@ -254,7 +246,6 @@ const ManageRoomType: React.FC<any> = () => {
       value: roomType.updatedBy,
       readOnly: true,
       inputtype: InputTypes.TextInput,
-
     },
   ];
 
@@ -288,7 +279,7 @@ const ManageRoomType: React.FC<any> = () => {
       readOnly: true,
       required: false,
       value: roomType.id,
-      disabled: true
+      disabled: true,
     },
     {
       id: 'name',
@@ -298,7 +289,7 @@ const ManageRoomType: React.FC<any> = () => {
       readOnly: false,
       required: true,
       value: roomType.name,
-      disabled: false
+      disabled: false,
     },
     {
       id: 'description',
@@ -308,7 +299,7 @@ const ManageRoomType: React.FC<any> = () => {
       readOnly: false,
       required: false,
       value: roomType.description,
-      disabled: false
+      disabled: false,
     },
   ];
   const handleAddModalClose = () => {
@@ -394,6 +385,11 @@ const ManageRoomType: React.FC<any> = () => {
     updateFormik.resetForm();
   };
 
+  const handleCloseInfoModal = () => {
+    setInfoShown(!isInfoShown);
+    setListRoomShown(false);
+  };
+
   const addFormik = useFormik({
     validationSchema: AddRoomTypeValidation,
     initialValues: {
@@ -431,8 +427,12 @@ const ManageRoomType: React.FC<any> = () => {
           <InfoModal
             header="Room Type Information"
             fields={infoFields}
-            toggleShown={() => setInfoShown(!isInfoShown)}
+            toggleShown={() => handleCloseInfoModal()}
             isShown={isInfoShown}
+            itemsOfDataButton={<ShowRoomOfTypeButton />}
+            isShowListItems={isListRoomShown}
+            itemsOfData={listRoomOfType}
+            title='LIST ROOM OF TYPE'
           />
 
           <UpdateModal
@@ -451,7 +451,9 @@ const ManageRoomType: React.FC<any> = () => {
             roomTypes={roomTypeNames}
           />
         </>
-      ) : <NoDataFound />}
+      ) : (
+        <NoDataFound />
+      )}
       <AddModal
         header="Add new room type"
         isShown={isAddShown}

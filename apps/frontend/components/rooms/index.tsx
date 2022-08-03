@@ -198,7 +198,7 @@ function RoomsManagement(props: any) {
         <TableHeader
           actionsLeft={null}
           handleResetFilter={() => handleResetFilter()}
-          actions={userInfo.role === 'System Admin ' ? <ActionsFilter /> : null}
+          actions={userInfo.role === 'System Admin' ? <ActionsFilter /> : null}
           setSearch={(val) => handleSearchValue(val)}
           search={pagination.search}
         />
