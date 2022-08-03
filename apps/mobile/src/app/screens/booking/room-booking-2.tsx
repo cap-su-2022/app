@@ -36,6 +36,9 @@ import AlertModal from '../../components/modals/alert-modal.component';
 import { fetchAllDevices } from '../../redux/features/devices/thunk/fetch-all';
 import RequestRoomBookingHeader from './request-room-booking/header';
 import { boxShadow } from '../../utils/box-shadow.util';
+import { BookingRoomsByFiltersResponse } from '../../redux/models/booking-rooms-by-filters-response.model';
+import BookingRequestItem from '../track-booking-room/track-booking-request-item';
+import { boxShadow } from '../../utils/box-shadow.util';
 import NotFound from '../../components/empty.svg';
 
 const RoomBooking2: React.FC = () => {
@@ -91,6 +94,7 @@ const RoomBooking2: React.FC = () => {
                   height: 50,
                 }}
                 delayTimeout={400}
+                delayTimeout={400}
                 minLength={0}
                 value={search}
                 onChangeText={(text) => setSearch(text.toString())}
@@ -117,6 +121,8 @@ const RoomBooking2: React.FC = () => {
     device: Device;
   }> = (props) => {
     const [quantity, setQuantity] = useState<number>(1);
+
+    const [quantity, setQuantity] = useState<number>(0);
 
     return (
       <TouchableOpacity
@@ -163,6 +169,11 @@ const RoomBooking2: React.FC = () => {
               >
                 Name:
               </Text>
+                color: BLACK,
+                fontSize: deviceWidth / 26,
+                fontWeight: '500',
+              }}
+            >
               {props.device.name}
             </Text>
 
@@ -183,6 +194,15 @@ const RoomBooking2: React.FC = () => {
               </Text>
               {props.device.type}
             </Text>
+            <Text
+              style={{
+                color: BLACK,
+                fontSize: deviceWidth / 26,
+                fontWeight: '500',
+              }}
+            >
+              {props.device.type}
+            </Text>
           </View>
 
           <View
@@ -197,6 +217,90 @@ const RoomBooking2: React.FC = () => {
             <TouchableOpacity style={styles.viewDetailButton}>
               <Text style={styles.viewDetailButtonText}>View detail</Text>
             </TouchableOpacity>
+            {deviceIds.find((id) => id === props.device.id) ? (
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    if (quantity > 0) {
+                      setQuantity(quantity - 1);
+                    }
+                  }}
+                  style={{
+                    height: 25,
+                    width: 25,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderColor: FPT_ORANGE_COLOR,
+                    borderWidth: 1,
+                    borderTopLeftRadius: 5,
+                    borderBottomLeftRadius: 5,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: FPT_ORANGE_COLOR,
+                      fontWeight: '600',
+                      fontSize: deviceWidth / 23,
+                    }}
+                  >
+                    -
+                  </Text>
+                </TouchableOpacity>
+                <TextInput
+                  textAlign="center"
+                  value={String(quantity)}
+                  onChangeText={(e) => {
+                    setQuantity(parseInt(e));
+                  }}
+                  style={{
+                    color: FPT_ORANGE_COLOR,
+                    textAlignVertical: 'center',
+                    height: 50,
+                    width: 40,
+                    borderRightWidth: 0,
+                    borderLeftWidth: 0,
+                    borderTopColor: FPT_ORANGE_COLOR,
+                    borderBottomColor: FPT_ORANGE_COLOR,
+                    borderTopWidth: 1,
+                    borderBottomWidth: 1,
+                  }}
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    if (quantity >= 0) {
+                      setQuantity(quantity + 1);
+                    }
+                  }}
+                  style={{
+                    height: 25,
+                    width: 25,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderColor: FPT_ORANGE_COLOR,
+                    borderWidth: 1,
+                    borderTopRightRadius: 5,
+                    borderBottomRightRadius: 5,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: FPT_ORANGE_COLOR,
+                      fontWeight: '600',
+                      fontSize: deviceWidth / 23,
+                    }}
+                  >
+                    +
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
             {deviceIds.find((id) => id === props.device.id) ? (
               <View
                 style={{
@@ -332,6 +436,22 @@ const RoomBooking2: React.FC = () => {
             </Text>
           </View>
         )}
+      <RequestRoomBookingHeader />
+      <Filtering />
+
+      <View style={styles.container}>
+        <VirtualizedList
+          style={{
+            marginBottom: deviceWidth / 4.2,
+          }}
+          showsVerticalScrollIndicator={false}
+          data={devices}
+          getItemCount={(data) => data.length}
+          getItem={(data, index) => data[index]}
+          renderItem={(item: ListRenderItemInfo<Device>) => (
+            <DeviceRenderItem key={item.index} device={item.item} />
+          )}
+        />
         <View style={styles.footerContainer}>
           <TouchableOpacity
             onPress={() => navigate.pop()}
@@ -443,6 +563,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexWrap: 'wrap',
     width: 200,
+    flexWrap: 'wrap',
+    width: 200,
+    paddingHorizontal: 10,
   },
   deviceContainer: {
     display: 'flex',

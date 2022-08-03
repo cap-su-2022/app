@@ -6,30 +6,30 @@ import {
   Logger,
   Scope,
 } from '@nestjs/common';
-import { RoomsService } from './rooms.service';
-import { BookingRoomRepository } from '../repositories';
-import { BookingRoomResponseDTO } from '../dto/booking-room.response.dto';
-import { WishlistBookingRoomResponseDTO } from '../dto/wishlist-booking-room.response.dto';
-import { RoomWishlistService } from './room-wishlist.service';
-import { WishlistBookingRoomRequestDTO } from '../dto/wishlist-booking-room.request.dto';
-import { BookingRoomsFilterRequestPayload } from '../payload/request/booking-rooms.request.payload';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { RemoveWishlistRequest } from '../payload/request/remove-from-booking-room-wishlist.request.payload';
-import { DevicesService } from './devices.service';
-import { AccountsService } from './accounts.service';
-import { ChooseBookingRoomFilterPayload } from '../payload/request/choose-booking-room-filter.payload';
-import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
-import { BookingRequest, Devices } from '../models';
-import { RoomTypeService } from './room-type.service';
-import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
-import { BookingRequestHistService } from './booking-room-hist.service';
-import { SlotService } from './slot.service';
+import {RoomsService} from './rooms.service';
+import {BookingRoomRepository} from '../repositories';
+import {BookingRoomResponseDTO} from '../dto/booking-room.response.dto';
+import {WishlistBookingRoomResponseDTO} from '../dto/wishlist-booking-room.response.dto';
+import {RoomWishlistService} from './room-wishlist.service';
+import {WishlistBookingRoomRequestDTO} from '../dto/wishlist-booking-room.request.dto';
+import {BookingRoomsFilterRequestPayload} from '../payload/request/booking-rooms.request.payload';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {RemoveWishlistRequest} from '../payload/request/remove-from-booking-room-wishlist.request.payload';
+import {DevicesService} from './devices.service';
+import {AccountsService} from './accounts.service';
+import {ChooseBookingRoomFilterPayload} from '../payload/request/choose-booking-room-filter.payload';
+import {GetBookingRoomsPaginationPayload} from '../payload/request/get-booking-rooms-pagination.payload';
+import {BookingRequest, Devices} from '../models';
+import {RoomTypeService} from './room-type.service';
+import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.payload';
+import {BookingRequestHistService} from './booking-room-hist.service';
+import {SlotService} from './slot.service';
 import dayjs = require('dayjs');
-import { DataSource, QueryRunner } from 'typeorm';
-import { BookingRoomDevicesService } from './booking-request-devices.service';
-import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
-import { NotificationService } from './notification.service';
-import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
+import {DataSource, QueryRunner} from 'typeorm';
+import {BookingRoomDevicesService} from './booking-request-devices.service';
+import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
+import {NotificationService} from './notification.service';
+import {BookingRoomPaginationParams} from '../controllers/booking-room-pagination.model';
 
 @Injectable()
 export class BookingRoomService {
@@ -48,9 +48,9 @@ export class BookingRoomService {
     @Inject(forwardRef(() => RoomTypeService))
     private readonly roomTypeService: RoomTypeService,
     private readonly bookingRoomDeviceService: BookingRoomDevicesService,
-
     private readonly histService: BookingRequestHistService
-  ) {}
+  ) {
+  }
 
   async getStatistics() {
     const result = {
@@ -203,7 +203,7 @@ export class BookingRoomService {
       this.logger.error(e.message);
       throw new BadRequestException(
         e.message ||
-          'An error occurred while getting request by room id ' + roomId
+        'An error occurred while getting request by room id ' + roomId
       );
     }
   }
@@ -689,6 +689,42 @@ export class BookingRoomService {
   async getCountRequestBookingPending() {
     try {
       return await this.repository.getCountRequestBookingPending();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getCountRequestBookingBooked() {
+    try {
+      return await this.repository.getCountRequestBookingBooked();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getCountRequestBookingCancelled() {
+    try {
+      return await this.repository.getCountRequestBookingCancelled();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getCountRequestBookingCheckedIn() {
+    try {
+      return await this.repository.getCountRequestBookingCheckedIn();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getCountRequestBookingCheckedOut() {
+    try {
+      return await this.repository.getCountRequestBookingCheckedOut();
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

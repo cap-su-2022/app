@@ -7,25 +7,28 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core';
-import { Archive, Check, CircleCheck, X } from 'tabler-icons-react';
-import { FPT_ORANGE_COLOR } from '@app/constants';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { BookingRequestParams } from '../../models/pagination-params/booking-room-params.model';
-import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
-import { showNotification } from '@mantine/notifications';
-import { Form, FormikProvider, useFormik } from 'formik';
+import {Archive, Check, CircleCheck, X} from 'tabler-icons-react';
+import {FPT_ORANGE_COLOR} from '@app/constants';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {BookingRequestParams} from '../../models/pagination-params/booking-room-params.model';
+import {fetchRoomBookings} from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
+import {showNotification} from '@mantine/notifications';
+import {Form, FormikProvider, useFormik} from 'formik';
 import * as Yup from 'yup';
-import { acceptCheckinRequest } from '../../redux/features/room-booking/thunk/accept-checkin-request';
+import {acceptCheckinRequest} from '../../redux/features/room-booking/thunk/accept-checkin-request';
 
 interface CheckinRequestModalProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   toggleInforModalShown(): void;
+
   pagination: BookingRequestParams;
 }
 
 const CheckinRequestModal: React.FC<CheckinRequestModalProps> = (props) => {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const selectedRequestId = useAppSelector(
     (state) => state.roomBooking.roomBooking.id
   );
@@ -40,7 +43,7 @@ const CheckinRequestModal: React.FC<CheckinRequestModalProps> = (props) => {
           color: 'red',
           title: 'Error while checkin booking room',
           message: e.message ?? 'Failed to checkin booking room',
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         })
       )
@@ -48,9 +51,9 @@ const CheckinRequestModal: React.FC<CheckinRequestModalProps> = (props) => {
         showNotification({
           id: 'checkin-booking-room',
           color: 'teal',
-          title: 'This booking room was checkinled',
-          message: 'This booking room was successfully checkinled',
-          icon: <Check />,
+          title: 'This booking room was checked-in',
+          message: 'This booking room was successfully checked-in',
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -70,7 +73,7 @@ const CheckinRequestModal: React.FC<CheckinRequestModalProps> = (props) => {
       closeOnClickOutside={false}
       centered
       zIndex={200}
-      title={<ModalHeaderTitle />}
+      title={<ModalHeaderTitle/>}
       opened={props.isShown}
       onClose={() => props.toggleShown()}
     >
@@ -80,7 +83,7 @@ const CheckinRequestModal: React.FC<CheckinRequestModalProps> = (props) => {
       <div className={classes.modalFooter}>
         <Button
           onClick={() => props.toggleShown()}
-          leftIcon={<X />}
+          leftIcon={<X/>}
           style={{
             backgroundColor: FPT_ORANGE_COLOR,
           }}
@@ -92,7 +95,7 @@ const CheckinRequestModal: React.FC<CheckinRequestModalProps> = (props) => {
           onClick={() => handleCheckinSelectedRequest()}
           variant="outline"
           color={'green'}
-          leftIcon={<CircleCheck />}
+          leftIcon={<CircleCheck/>}
         >
           Check in
         </Button>

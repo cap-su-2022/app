@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Button, createStyles } from '@mantine/core';
+import React, {useEffect, useState} from 'react';
+import {Button, createStyles} from '@mantine/core';
 import Header from '../common/header.component';
-import { ArchiveOff, BuildingWarehouse, Check, Plus, X } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {ArchiveOff, BuildingWarehouse, Check, Plus, X} from 'tabler-icons-react';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {
   fetchRoleById,
   fetchRoles,
@@ -13,23 +13,23 @@ import {
   defaultPaginationParams,
   PaginationParams,
 } from '../../models/pagination-params.model';
-import { useDebouncedValue } from '@mantine/hooks';
-import { TableBody } from '../actions/table-body.component';
+import {useDebouncedValue} from '@mantine/hooks';
+import {TableBody} from '../actions/table-body.component';
 import TableFooter from '../actions/table-footer.component';
 import TableHeader from '../actions/table-header.component';
 import InfoModal from '../actions/modal/info-modal.component';
 import * as Yup from 'yup';
 import AddModal from '../actions/modal/add-modal.component';
-import { FormikValues, useFormik } from 'formik';
-import { InputAddProps } from '../actions/models/input-add-props.model';
-import { InputTypes } from '../actions/models/input-type.constant';
+import {FormikValues, useFormik} from 'formik';
+import {InputAddProps} from '../actions/models/input-add-props.model';
+import {InputTypes} from '../actions/models/input-type.constant';
 import UpdateModal from '../actions/modal/update-modal.component';
-import { InputUpdateProps } from '../actions/models/input-update-props.model';
+import {InputUpdateProps} from '../actions/models/input-update-props.model';
 import AdminLayout from '../layout/admin.layout';
 import RestoreDeletedModal from '../role/restore-deleted.modal.component';
 import DeleteModal from '../role/delete-modal.component';
 import dayjs from 'dayjs';
-import { showNotification } from '@mantine/notifications';
+import {showNotification} from '@mantine/notifications';
 import NoDataFound from '../no-data-found';
 
 const AddRoleValidation = Yup.object().shape({
@@ -138,10 +138,10 @@ const ManageRole: React.FC<any> = () => {
     return (
       <div>
         <Button
-          leftIcon={<Plus />}
+          leftIcon={<Plus/>}
           color="green"
           onClick={() => setAddShown(!isAddShown)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
           Add
         </Button>
@@ -150,7 +150,7 @@ const ManageRole: React.FC<any> = () => {
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
         >
-          <ArchiveOff />
+          <ArchiveOff/>
         </Button>
       </div>
     );
@@ -305,7 +305,7 @@ const ManageRole: React.FC<any> = () => {
           color: 'teal',
           title: 'Role was added',
           message: 'Role was successfully added to the system',
-          icon: <Check />,
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -316,7 +316,7 @@ const ManageRole: React.FC<any> = () => {
           color: 'red',
           title: 'Error while adding role',
           message: e.message ?? 'Failed to add role',
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         })
       )
@@ -361,11 +361,11 @@ const ManageRole: React.FC<any> = () => {
   });
   return (
     <AdminLayout>
-      <Header title="Role Manager" icon={<BuildingWarehouse size={50} />} />
+      <Header title="Role Management" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
         actionsLeft={null}
         handleResetFilter={() => handleResetFilter()}
-        actions={<ActionsFilter />}
+        actions={<ActionsFilter/>}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
       />
@@ -406,7 +406,7 @@ const ManageRole: React.FC<any> = () => {
             roles={roleNames}
           />
         </>
-      ) : <NoDataFound />}
+      ) : <NoDataFound/>}
       <AddModal
         header="Add new role"
         isShown={isAddShown}

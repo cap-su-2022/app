@@ -79,6 +79,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
                 id={field.id}
                 name={field.name}
                 inputtype={field.inputtype}
+                autosize
                 icon={
                   field.id === 'id' ? (
                     <Id/>

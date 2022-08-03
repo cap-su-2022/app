@@ -54,7 +54,8 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
   }, [])
 
   const rows = props.data.map((row, index) => (
-    <tr key={index}>
+    userInfo.id !== row.id ? <tr key={index}>
+
       <td>
         {props.page === 1
           ? index + 1
@@ -71,28 +72,27 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
         </Button>
 
 
-        {userInfo.id !== row.id ?
+        <Button
+          variant="outline"
+          color="green"
+          onClick={() => props.actionButtonCb.update(row.id)}
+        >
+          <Pencil/>
+        </Button>
 
-          <Button
-            variant="outline"
-            color="green"
-            onClick={() => props.actionButtonCb.update(row.id)}
-          >
-            <Pencil/>
-          </Button> : null}
-
-        {
-          userInfo.id !== row.id ? <Button
-            variant="outline"
-            color="red"
-            onClick={() => props.actionButtonCb.delete(row.id)}
-          >
-            <Trash/>
-          </Button> : null
-        }
+        <Button
+          variant="outline"
+          color="red"
+          onClick={() => props.actionButtonCb.delete(row.id)}
+        >
+          <Trash/>
+        </Button>
 
       </td>
-    </tr>
+
+
+    </tr> : null
+
   ));
 
   return props.data.length > 0 ? (
@@ -119,7 +119,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           reversed={reverseSortDirection}
           onSort={() => setSorting('name')}
         >
-          Fullname
+          Full name
         </Th>
 
         <Th

@@ -22,15 +22,19 @@ import {
 } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
+import dayjs from 'dayjs';
 
 interface RowData {
-  name: string;
+  createdAt: string;
+  roomName: string,
+  feedbackType: string,
+  rateNum: string
 }
 
 interface TableBodyProps {
   data: any[];
 
-  toggleSortDirection(): void;
+  toggleSortDirection(label): void;
 
   actionButtonCb: any;
   page: number;
@@ -40,13 +44,16 @@ interface TableBodyProps {
 export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
-
   const {classes} = useStyles();
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
-    props.toggleSortDirection();
+    props.toggleSortDirection(field);
   };
 
   const rows = props.data.map((row, index) => (
@@ -56,7 +63,14 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           ? index + 1
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
-      <td>{row.name}</td>
+      <td>{row.roomName}</td>
+      <td>{row.feedbackType}</td>
+      <td>{row.createdByName}</td>
+      <td>{dayjs(row.createdAt).format('DD-MM-YYYY')}</td>
+
+      <td>
+        <div className={classes.resolvedDisplay}>{row.rateNum}</div>
+      </td>
       <td className={classes.actionButtonContainer}>
         <Button
           variant="outline"
@@ -64,27 +78,13 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
         >
           <InfoCircle/>
         </Button>
-        {props.actionButtonCb.update !== undefined ?
-          <Button
-            variant="outline"
-            color="green"
-            onClick={() => props.actionButtonCb.update(row.id)}
-          >
-            <Pencil/>
-          </Button> : null
-        }
-
-        {props.actionButtonCb.delete !== undefined ?
-          <Button
-            variant="outline"
-            color="red"
-            onClick={() => props.actionButtonCb.delete(row.id)}
-          >
-            <Trash/>
-          </Button> : null
-
-        }
-
+        {/* <Button
+          variant="outline"
+          color="red"
+          onClick={() => props.actionButtonCb.delete(row.id)}
+        >
+          <Trash />
+        </Button> */}
       </td>
     </tr>
   ));
@@ -109,17 +109,56 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
         </Th>
 
         <Th
-          style={{
-            width: '75%',
-          }}
-          sorted={sortBy === 'name'}
+          // style={{
+          //   width: '75%',
+          // }}
+
+          sorted={sortBy === 'roomName'}
           reversed={reverseSortDirection}
-          onSort={() => setSorting('name')}
+          onSort={() => setSorting('roomName')}
         >
-          Name
+          Room Name
         </Th>
 
-        <Th sorted={null} reversed={reverseSortDirection} onSort={null} style={{width: 220}}>
+        <Th
+          sorted={sortBy === 'feedbackType'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('feedbackType')}
+        >
+          Feedback Type
+        </Th>
+
+        <Th sorted={null} reversed={null} onSort={null}>
+          Created By
+        </Th>
+
+        <Th
+          sorted={sortBy === 'createdAt'}
+          reversed={reverseSortDirection}
+          onSort={() => {
+            setSorting('createdAt')
+          }}
+          style={{width: 160}}
+        >
+          Created At
+        </Th>
+        <Th
+          sorted={sortBy === 'rateNum'}
+          reversed={reverseSortDirection}
+          onSort={() => {
+            setSorting('rateNum')
+          }}
+        >
+          Rate Number
+        </Th>
+
+
+        <Th
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+          style={{width: 160}}
+        >
           Actions
         </Th>
       </tr>
@@ -168,5 +207,29 @@ const useStyles = createStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  pendingDisplay: {
+    color: '#228be6',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#0000ff1c',
+    fontWeight: 600,
+  },
+  rejectedDisplay: {
+    color: 'red',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#ff00001c',
+    fontWeight: 600,
+  },
+  resolvedDisplay: {
+    color: '#40c057',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#00800024',
+    fontWeight: 600,
   },
 }));

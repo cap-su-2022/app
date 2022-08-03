@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   createStyles,
   Navbar,
@@ -23,18 +23,20 @@ import {
   MessageCode,
   Clock2,
 } from 'tabler-icons-react';
-import { FPT_ORANGE_COLOR } from '@app/constants';
-import { BLACK, WHITE } from '@app/constants';
-import { useRouter } from 'next/router';
-import { useAppDispatch } from '../../redux/hooks';
-import { fetchCountPendingRequestBooking } from '../../redux/features/room-booking/thunk/fetch-count-pending-request-booking';
+import {FPT_ORANGE_COLOR} from '@app/constants';
+import {BLACK, WHITE} from '@app/constants';
+import {useRouter} from 'next/router';
+import {useAppDispatch} from '../../redux/hooks';
+import {
+  fetchCountPendingRequestBooking
+} from '../../redux/features/room-booking/thunk/fetch-count-pending-request-booking';
 
 interface SideBarProps {
   opened: boolean;
 }
 
 const LayoutSidebar: React.FC<SideBarProps> = (props) => {
-  const { classes, cx } = useStyles();
+  const {classes, cx} = useStyles();
 
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
@@ -59,22 +61,16 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       icon: BuildingWarehouse,
       isRender: isAdmin || isLibrarian || isStaff,
     },
-    { link: '/room-type', label: 'Room Type', icon: Door, isRender: isAdmin },
-    { link: '/devices', label: 'Devices', icon: Devices, isRender: isAdmin },
+    {link: '/room-type', label: 'Room Type', icon: Door, isRender: isAdmin},
+    {link: '/devices', label: 'Devices', icon: Devices, isRender: isAdmin},
     {
       link: '/device-type',
       label: 'Device Type',
       icon: DeviceTablet,
       isRender: isAdmin,
     },
-    { link: '/role', label: 'Role', icon: BarrierBlock, isRender: isAdmin },
-    { link: '/accounts', label: 'Accounts', icon: Users, isRender: isAdmin },
-    {
-      link: '/feedback-type',
-      label: 'Feedback Type',
-      icon: MessageCode,
-      isRender: isAdmin,
-    },
+    {link: '/accounts', label: 'Accounts', icon: Users, isRender: isAdmin},
+    {link: '/role', label: 'Role', icon: BarrierBlock, isRender: isAdmin},
     {
       link: '/feedbacks',
       label: 'Feedback',
@@ -82,15 +78,22 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       isRender: isAdmin || isLibrarian || isStaff,
     },
     {
+      link: '/booking-room-feedbacks',
+      label: 'Booking Room Feedback',
+      icon: BrandHipchat,
+      isRender: isAdmin || isLibrarian,
+    },
+    {
+      link: '/feedback-type',
+      label: 'Feedback Type',
+      icon: MessageCode,
+      isRender: isAdmin,
+    },
+
+    {
       link: '/notifications',
       label: 'Notification',
       icon: Bell,
-      isRender: isAdmin || isLibrarian || isStaff,
-    },
-    {
-      link: '/booking-room',
-      label: 'Booking Room',
-      icon: Ticket,
       isRender: isAdmin || isLibrarian || isStaff,
     },
     {
@@ -99,21 +102,19 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       icon: DeviceMobileMessage,
       isRender: isAdmin || isLibrarian,
     },
-
-    { link: '/slot', label: 'Slot', icon: Clock2, isRender: isAdmin },
+    {link: '/slot', label: 'Slot', icon: Clock2, isRender: isAdmin},
+    {
+      link: '/booking-room',
+      label: 'Booking Room',
+      icon: Ticket,
+      isRender: isAdmin || isLibrarian || isStaff,
+    },
   ];
 
   const [active, setActive] = useState('Billing');
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const [count, setCount] = useState<number>();
-
-  useEffect(() => {
-    dispatch(fetchCountPendingRequestBooking())
-      .unwrap()
-      .then((count) => setCount(count?.count));
-  }, []);
 
   console.log(isStaff)
 
@@ -122,46 +123,40 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
   };
 
   const links = data.map((item, index) =>
-    
-      (item.isRender ? item.isRender ? (
-        <a
+
+    (item.isRender ? item.isRender ? (
+      <a
+        className={
+          props.opened
+            ? cx(classes.closeLink, {
+              [classes.linkActive]: isMenuSelect(item),
+            })
+            : cx(classes.link, {[classes.linkActive]: isMenuSelect(item)})
+        }
+        href={item.link}
+        key={index}
+        onClick={async (event) => {
+          event.preventDefault();
+          setActive(item.label);
+          await router.push(item.link);
+        }}
+      >
+        <item.icon
           className={
-            props.opened
-              ? cx(classes.closeLink, {
-                  [classes.linkActive]: isMenuSelect(item),
-                })
-              : cx(classes.link, { [classes.linkActive]: isMenuSelect(item) })
+            item.link === '/booking-room' && props.opened
+              ? cx(classes.linkRedIcon, {
+                [classes.iconActive]: isMenuSelect(item),
+              })
+              : cx(classes.linkIcon, {
+                [classes.iconActive]: isMenuSelect(item),
+              })
           }
-          href={item.link}
-          key={index}
-          onClick={async (event) => {
-            event.preventDefault();
-            setActive(item.label);
-            await router.push(item.link);
-          }}
-        >
-          <item.icon
-            className={
-              item.link === '/booking-room' && props.opened && count > 0
-                ? cx(classes.linkRedIcon, {
-                    [classes.iconActive]: isMenuSelect(item),
-                  })
-                : cx(classes.linkIcon, {
-                    [classes.iconActive]: isMenuSelect(item),
-                  })
-            }
-          />
-          <span className={cx({ [classes.labelActive]: isMenuSelect(item) })}>
+        />
+        <span className={cx({[classes.labelActive]: isMenuSelect(item)})}>
             {item.label}
           </span>
-          {item.link === '/booking-room' && !props.opened && count > 0 ? (
-            <Badge style={{ marginLeft: 10 }} color="red" variant="filled">
-              {count}
-            </Badge>
-          ) : null}
-        </a>
-      ) : null : null)
-    
+      </a>
+    ) : null : null)
   );
 
   return (
@@ -174,9 +169,9 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
         <Group className={classes.header} position="apart">
           {props.opened ? (
             <div
-              style={{ backgroundColor: '#fff', borderRadius: 10, padding: 5 }}
+              style={{backgroundColor: '#fff', borderRadius: 10, padding: 5}}
             >
-              <Image alt="FPTU Logo" src="/logo.svg" height={60} width={60} />
+              <Image alt="FPTU Logo" src="/logo.svg" height={60} width={60}/>
               <Text className={classes.text}>FLRBMS</Text>
             </div>
           ) : (
@@ -342,7 +337,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
     iconActive: {
       color: FPT_ORANGE_COLOR,
     },
-    labelActive: { color: FPT_ORANGE_COLOR },
+    labelActive: {color: FPT_ORANGE_COLOR},
 
     linkActive: {
       '&, &:hover': {

@@ -27,9 +27,6 @@ interface InfoModalProps {
 
   toggleShown(): void;
 
-  toggleRejectModalShown(): void;
-
-  toggleResolveModalShown(): void;
 }
 
 interface UserInfoModel {
@@ -49,7 +46,7 @@ interface UserInfoModel {
 
 const InfoModal: React.FC<InfoModalProps> = (props) => {
   const {classes} = useStyles();
-  const feedback = useAppSelector((state) => state.feedback.feedback);
+  const bookingRoomFeedback = useAppSelector((state) => state.bookingRoomFeedback.bookingRoomFeedback);
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
@@ -59,22 +56,6 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
     return (
       <div style={{display: 'flex'}}>
         <div className={classes.headerTitle}>{props.header}</div>
-        <div style={{marginLeft: 10}}>
-          {feedback.status === 'PENDING' ? (
-            <div className={classes.pendingDisplay}>{feedback.status}</div>
-          ) : feedback.status === 'RESOLVED' ? (
-            <div style={{display: 'flex'}}>
-              <div className={classes.resolvedDisplay}>{feedback.status}</div>
-              <span className={classes.resolvedByDiv}>
-                Resolved by <b>{feedback.resolvedBy || 'system'}</b>
-              </span>
-            </div>
-          ) : feedback.status === 'REJECTED' ? (
-            <div style={{display: 'flex'}}>
-              <div className={classes.rejectedDisplay}>{feedback.status}</div>
-            </div>
-          ) : null}
-        </div>
       </div>
     );
   };
@@ -89,7 +70,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
                 icon={<ClipboardText/>}
                 radius="md"
                 readOnly
-                value={dayjs(feedback.createdAt).format('DD-MM-YYYY')}
+                value={dayjs(bookingRoomFeedback.createdAt).format('DD-MM-YYYY')}
               />
             </InputWrapper>
             <InputWrapper label="Created by" className={classes.inputWrapper}>
@@ -97,28 +78,40 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
                 icon={<ClipboardText/>}
                 radius="md"
                 readOnly
-                value={feedback.createdBy}
+                value={bookingRoomFeedback.createdBy}
               />
             </InputWrapper>
           </div>
 
-          <InputWrapper label="Feedback type" className={classes.inputWrapper}>
-            <TextInput
-              icon={<ClipboardText/>}
-              radius="md"
-              readOnly
-              value={feedback.feedbackType}
-            />
-          </InputWrapper>
+          <div style={{display: 'flex', justifyContent: 'space-between'}}>
+            <InputWrapper label="Created by Email" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText/>}
+                radius="md"
+                readOnly
+                value={bookingRoomFeedback.createdByEmail}
+              />
+            </InputWrapper>
+            <InputWrapper label="Feedback type" className={classes.inputWrapper}>
+              <TextInput
+                icon={<ClipboardText/>}
+                radius="md"
+                readOnly
+                value={bookingRoomFeedback.feedbackType}
+              />
+            </InputWrapper>
+          </div>
+
           <InputWrapper
             label="Feedback message"
             className={classes.inputWrapper}
           >
             <Textarea
               icon={<ClipboardText/>}
+              autosize
               radius="md"
               readOnly
-              value={feedback.feedbackMess}
+              value={bookingRoomFeedback.feedbackMess}
             />
           </InputWrapper>
         </div>
@@ -126,81 +119,6 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
     );
   };
 
-  const InforResolved: React.FC = () => {
-    return (
-      <>
-        <div>
-          <div style={{display: 'flex', justifyContent: 'space-between'}}>
-            <InputWrapper label="Resolved at" className={classes.inputWrapper}>
-              <TextInput
-                icon={<ClipboardText/>}
-                radius="md"
-                readOnly
-                value={dayjs(feedback.resolvedAt).format('DD-MM-YYYY')}
-              />
-            </InputWrapper>
-            <InputWrapper label="Resolved by" className={classes.inputWrapper}>
-              <TextInput
-                icon={<ClipboardText/>}
-                radius="md"
-                readOnly
-                value={feedback.resolvedBy}
-              />
-            </InputWrapper>
-          </div>
-          <InputWrapper
-            label="Resolve message"
-            className={classes.inputWrapper}
-          >
-            <Textarea
-              icon={<ClipboardText/>}
-              radius="md"
-              readOnly
-              value={feedback.replyMess}
-            />
-          </InputWrapper>
-        </div>
-      </>
-    );
-  };
-
-  const InforRejected: React.FC = () => {
-    return (
-      <>
-        <div>
-          <div style={{display: 'flex', justifyContent: 'space-between'}}>
-            <InputWrapper label="Rejected at" className={classes.inputWrapper}>
-              <TextInput
-                icon={<ClipboardText/>}
-                radius="md"
-                readOnly
-                value={dayjs(feedback.rejectedAt).format('DD-MM-YYYY')}
-              />
-            </InputWrapper>
-            <InputWrapper label="Rejected by" className={classes.inputWrapper}>
-              <TextInput
-                icon={<ClipboardText/>}
-                radius="md"
-                readOnly
-                value={feedback.rejectedBy}
-              />
-            </InputWrapper>
-          </div>
-          <InputWrapper
-            label="Resolve message"
-            className={classes.inputWrapper}
-          >
-            <Textarea
-              icon={<ClipboardText/>}
-              radius="md"
-              readOnly
-              value={feedback.replyMess}
-            />
-          </InputWrapper>
-        </div>
-      </>
-    );
-  };
 
   return (
     <Modal
@@ -219,34 +137,8 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
     >
       <div className={classes.body}>
         <Infor/>
-        {feedback.status === 'RESOLVED' && <InforResolved/>}
-        {feedback.status === 'REJECTED' && <InforRejected/>}
 
         <div className={classes.footer}>
-          {feedback.status === 'PENDING' &&
-          userInfo.id !== feedback.createdBy ? (
-            <>
-              <Button
-                onClick={() => props.toggleResolveModalShown()}
-                variant="outline"
-                color={'green'}
-                leftIcon={<Checks/>}
-              >
-                Resolve feedback
-              </Button>
-
-              <Button
-                onClick={() => props.toggleRejectModalShown()}
-                variant="outline"
-                color={'red'}
-                leftIcon={<X/>}
-              >
-                Reject feedback
-              </Button>
-            </>
-          ) : (
-            <div></div>
-          )}
           <Button
             leftIcon={<X/>}
             color="orange"

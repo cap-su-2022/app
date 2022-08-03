@@ -118,7 +118,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           </Th>
 
           <Th sorted={null} reversed={null} onSort={null}>
-            Sended at
+            Sent at
           </Th>
 
           <Th sorted={null} reversed={null} onSort={null}>

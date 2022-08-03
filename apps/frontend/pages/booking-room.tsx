@@ -1,11 +1,11 @@
 import ManageRoomBooking from "../components/booking-room";
 
-function RoomType() {
+function BookingRoom() {
   return (
     <>
-      <ManageRoomBooking />
+      <ManageRoomBooking/>
     </>
   );
 }
 
-export default RoomType;
+export default BookingRoom;
