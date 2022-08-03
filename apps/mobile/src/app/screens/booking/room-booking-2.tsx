@@ -126,20 +126,49 @@ const RoomBooking2: React.FC = () => {
     index: number;
   }> = (props) => {
     const [quantity, setQuantity] = useState<number>(1);
-    console.log(deviceSelectedDevice.filter((id) => id === props.device.id)[0]);
+
+    const handleSelectedDevice = () => {
+      deviceSelectedDevice.filter((device) => device.id === props.device.id)[0]
+        ? setDeviceSelectedDevice(
+            deviceSelectedDevice.filter(
+              (device) => device.id !== props.device.id
+            )
+          )
+        : setDeviceSelectedDevice([...deviceSelectedDevice, props.device]);
+    };
+
+    const handlePlusQuantity = () => {
+      if (quantity >= 0) {
+        const copyArray = deviceSelectedDevice;
+        const itemSelectedIndex = copyArray.findIndex(
+          (device) => device.id === props.device.id
+        );
+        copyArray[itemSelectedIndex].quantity += 1;
+        setDeviceSelectedDevice(copyArray);
+        setQuantity(quantity + 1);
+      }
+    };
+
+    const handleReduceQuantity = () => {
+      if (quantity - 1 === 0) {
+        return setDeviceSelectedDevice(
+          deviceSelectedDevice.filter((device) => device.id !== props.device.id)
+        );
+      }
+      setQuantity(quantity - 1);
+      const copyArray = deviceSelectedDevice;
+      const itemSelectedIndex = copyArray.findIndex(
+        (device) => device.id === props.device.id
+      );
+      copyArray[itemSelectedIndex].quantity -= 1;
+      setDeviceSelectedDevice(copyArray);
+    };
+
     return (
       <TouchableOpacity
         key={props.device}
         onPress={() => {
-          deviceSelectedDevice.filter(
-            (device) => device.id === props.device.id
-          )[0]
-            ? setDeviceSelectedDevice(
-                deviceSelectedDevice.filter(
-                  (device) => device.id !== props.device.id
-                )
-              )
-            : setDeviceSelectedDevice([...deviceSelectedDevice, props.device]);
+          handleSelectedDevice();
         }}
         style={[
           styles.selectCircleButton,
@@ -220,20 +249,7 @@ const RoomBooking2: React.FC = () => {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    if (quantity - 1 === 0) {
-                      return setDeviceSelectedDevice(
-                        deviceSelectedDevice.filter(
-                          (device) => device.id !== props.device.id
-                        )
-                      );
-                    }
-                    setQuantity(quantity - 1);
-                    const copyArray = deviceSelectedDevice;
-                    const itemSelectedIndex = copyArray.findIndex(
-                      (device) => device.id === props.device.id
-                    );
-                    copyArray[itemSelectedIndex].quantity -= 1;
-                    setDeviceSelectedDevice(copyArray);
+                    handleReduceQuantity();
                   }}
                   style={{
                     height: 30,
@@ -287,15 +303,7 @@ const RoomBooking2: React.FC = () => {
                 />
                 <TouchableOpacity
                   onPress={() => {
-                    if (quantity >= 0) {
-                      const copyArray = deviceSelectedDevice;
-                      const itemSelectedIndex = copyArray.findIndex(
-                        (device) => device.id === props.device.id
-                      );
-                      copyArray[itemSelectedIndex].quantity += 1;
-                      setDeviceSelectedDevice(copyArray);
-                      setQuantity(quantity + 1);
-                    }
+                    handlePlusQuantity();
                   }}
                   style={{
                     height: 30,
