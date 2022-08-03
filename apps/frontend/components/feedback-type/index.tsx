@@ -192,14 +192,6 @@ const ManageFeedbackType: React.FC<any> = () => {
 
   const infoFields = [
     {
-      label: 'Id',
-      id: 'id',
-      name: 'id',
-      value: feedbackType.id,
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
-    {
       label: 'Name',
       id: 'name',
       name: 'name',
@@ -427,6 +419,10 @@ const ManageFeedbackType: React.FC<any> = () => {
             toggleShown={() => setInfoShown(!isInfoShown)}
             // toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
             isShown={isInfoShown}
+            itemsOfDataButton={null}
+            isShowListItems={null}
+            itemsOfData={null}
+            title={null}
           />
 
           <UpdateModal

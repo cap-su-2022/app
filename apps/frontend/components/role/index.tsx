@@ -31,6 +31,7 @@ import DeleteModal from '../role/delete-modal.component';
 import dayjs from 'dayjs';
 import { showNotification } from '@mantine/notifications';
 import NoDataFound from '../no-data-found';
+import { fetchAccountByRole } from '../../redux/features/account/thunk/fetch-accounts-by-role';
 
 const AddRoleValidation = Yup.object().shape({
   name: Yup.string()
@@ -128,10 +129,28 @@ const ManageRole: React.FC<any> = () => {
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
+  const [isListAccountShown, setListAccountShown] = useState<boolean>(false);
+  const [listAccountOfRole, setListAccountOfRole] = useState<any[]>();
   const role = useAppSelector((state) => state.role.role);
 
   const handleFetchById = (idVal) => {
     return dispatch(fetchRoleById(idVal));
+  };
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchAccountByRole(id))
+        .unwrap()
+        .then((response) => setListAccountOfRole(response));
+    }
+  }, [dispatch, id]);
+
+  const ShowAccountOfRoleButton: React.FC<any> = () => {
+    return (
+      <Button onClick={() => setListAccountShown(!isListAccountShown)}>
+        Accounts
+      </Button>
+    );
   };
 
   const ActionsFilter: React.FC = () => {
@@ -177,14 +196,6 @@ const ManageRole: React.FC<any> = () => {
   };
 
   const infoFields = [
-    {
-      label: 'Id',
-      id: 'id',
-      name: 'id',
-      value: role.id,
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
     {
       label: 'Name',
       id: 'name',
@@ -350,6 +361,11 @@ const ManageRole: React.FC<any> = () => {
     updateFormik.resetForm();
   };
 
+  const handleCloseInfoModal = () => {
+    setInfoShown(!isInfoShown);
+    setListAccountShown(false);
+  };
+
   const addFormik = useFormik({
     validationSchema: AddRoleValidation,
     initialValues: {
@@ -386,8 +402,12 @@ const ManageRole: React.FC<any> = () => {
           <InfoModal
             header="Role Information"
             fields={infoFields}
-            toggleShown={() => setInfoShown(!isInfoShown)}
+            toggleShown={() => handleCloseInfoModal()}
             isShown={isInfoShown}
+            itemsOfDataButton={<ShowAccountOfRoleButton />}
+            isShowListItems={isListAccountShown}
+            itemsOfData={listAccountOfRole}
+            title="LIST ACCOUNT OF ROLE"
           />
 
           <UpdateModal

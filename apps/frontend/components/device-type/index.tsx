@@ -40,6 +40,7 @@ import { showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
 import { fetchDeviceTypeNames } from '../../redux/features/device-type/thunk/fetch-device-type-names.thunk';
 import NoDataFound from '../no-data-found';
+import { fetchDevicesByDeviceType } from '../../redux/features/devices/thunk/fetch-devices-by-device-type';
 
 const AddDeviceTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -131,6 +132,15 @@ const ManageDeviceType: React.FC<any> = () => {
   const [isRestoreDeletedShown, setRestoreDeletedShown] =
     useState<boolean>(false);
   const [deviceTypeNames, setDeviceTypeNames] = useState([]);
+  const [isListDeviceShown, setListDeviceShown] = useState<boolean>(false);
+  const [listDeviceOfType, setListDeviceOfType] = useState<any[]>();
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchDevicesByDeviceType(id))
+        .unwrap()
+        .then((response) => setListDeviceOfType(response));
+    }
+  }, [dispatch, id]);
 
   const deviceType = useAppSelector((state) => state.deviceType.deviceType);
 
@@ -170,6 +180,14 @@ const ManageDeviceType: React.FC<any> = () => {
     );
   };
 
+  const ShowDeviceOfTypeButton: React.FC<any> = () => {
+    return (
+      <Button onClick={() => setListDeviceShown(!isListDeviceShown)}>
+        Devices
+      </Button>
+    );
+  };
+
   const handleActionsCb = {
     info: (id) => {
       setId(id);
@@ -192,14 +210,6 @@ const ManageDeviceType: React.FC<any> = () => {
   };
 
   const infoFields = [
-    {
-      label: 'Id',
-      id: 'id',
-      name: 'id',
-      value: deviceType.id,
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
     {
       label: 'Name',
       id: 'name',
@@ -386,6 +396,11 @@ const ManageDeviceType: React.FC<any> = () => {
     updateFormik.resetForm();
   };
 
+  const handleCloseInfoModal = () => {
+    setInfoShown(!isInfoShown);
+    setListDeviceShown(false);
+  };
+
   const addFormik = useFormik({
     validationSchema: AddDeviceTypeValidation,
     initialValues: {
@@ -424,9 +439,12 @@ const ManageDeviceType: React.FC<any> = () => {
           <InfoModal
             header="Device Type Information"
             fields={infoFields}
-            toggleShown={() => setInfoShown(!isInfoShown)}
-            // toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
+            toggleShown={() => handleCloseInfoModal()}
             isShown={isInfoShown}
+            itemsOfDataButton={<ShowDeviceOfTypeButton />}
+            isShowListItems={isListDeviceShown}
+            itemsOfData={listDeviceOfType}
+            title="LIST DEVICE OF TYPE"
           />
 
           <UpdateModal

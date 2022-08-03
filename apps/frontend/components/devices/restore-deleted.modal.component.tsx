@@ -11,9 +11,6 @@ import {
 } from '@mantine/core';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {Check, RotateClockwise, Search, X} from 'tabler-icons-react';
-import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
-import {fetchDeletedRooms} from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import {restoreDeletedRoom} from '../../redux/features/room/thunk/restore-deleted.thunk';
 import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import dayjs from 'dayjs';
 import {useDebouncedValue} from '@mantine/hooks';

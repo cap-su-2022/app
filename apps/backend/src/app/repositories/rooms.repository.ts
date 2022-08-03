@@ -204,6 +204,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .where(`rooms.deleted_at IS NULL`)
       .andWhere(`rooms.disabled_at IS NOT NULL`)
       .andWhere('rooms.name ILIKE :search', { search: `%${search.trim()}%` })
+      .orderBy('rooms.disabled_at', "DESC")
       .getRawMany<Rooms>();
   }
 
@@ -280,27 +281,11 @@ export class RoomsRepository extends Repository<Rooms> {
       .where(`rooms.deleted_at IS NOT NULL`)
       .andWhere(`rooms.disabled_at IS NULL`)
       .andWhere('rooms.name ILIKE :name', { name: `%${search.trim()}%` })
+      .orderBy('rooms.deleted_at', "DESC")
       .getRawMany<Rooms>();
   }
 
-  async restoreDeletedRoomById(
-    accountId: string,
-    id: string,
-    queryRunner: QueryRunner
-  ) {
-    const oldData = await this.findOneOrFail({
-      where: {
-        id: id,
-      },
-    });
-    return queryRunner.manager.save(Rooms, {
-      ...oldData,
-      deletedBy: null,
-      deletedAt: null,
-      updatedBy: accountId,
-      updatedAt: new Date(),
-    });
-  }
+
 
   getAllRoomsForElasticIndex(): Promise<Rooms[]> {
     return this.createQueryBuilder('rooms')
@@ -313,6 +298,25 @@ export class RoomsRepository extends Repository<Rooms> {
       ])
       .getMany();
   }
+
+  // async restoreDeletedRoomById(
+  //   accountId: string,
+  //   id: string,
+  //   queryRunner: QueryRunner
+  // ) {
+  //   const oldData = await this.findOneOrFail({
+  //     where: {
+  //       id: id,
+  //     },
+  //   });
+  //   return queryRunner.manager.save(Rooms, {
+  //     ...oldData,
+  //     deletedBy: null,
+  //     deletedAt: null,
+  //     updatedBy: accountId,
+  //     updatedAt: new Date(),
+  //   });
+  // }
 
   // filterByNameAndType(payload: ChooseBookingRoomFilterPayload) {
   //   const query = this.createQueryBuilder('rooms')
