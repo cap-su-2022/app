@@ -174,12 +174,11 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          Delete this room will make it <b>unusable</b> even if it has been
-          booked before.
-          <b> Users who booked this room</b> will receive a notification about
-          this and that associated booking will also be <b>cancelled</b>!<br />
-          <br />
-          This room also will not be available from now on after being deleted.
+          This room will <b>not be available</b> from now on after being deleted and
+          will <b>not be able to restore</b>. <br />
+          <br /> Deleting this room will make it unusable even if it has been
+          booked before. Users who booked this room will receive a notification
+          about this and that associated booking will also be cancelled!
         </Text>
         <div className={classes.modalFooter}>
           {listRequest.length > 0 ? (

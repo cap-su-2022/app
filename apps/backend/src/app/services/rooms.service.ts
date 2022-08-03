@@ -339,44 +339,44 @@ export class RoomsService {
     }
   }
 
-  async handleRestoreDeletedRoomById(accountId: string, id: string) {
-    const queryRunner = this.dataSource.createQueryRunner();
+  // async handleRestoreDeletedRoomById(accountId: string, id: string) {
+  //   const queryRunner = this.dataSource.createQueryRunner();
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
 
-    try {
-      const isExisted = await this.repository.existsById(id);
-      if (!isExisted) {
-        throw new BadRequestException(
-          'Room does not found with the provided id'
-        );
-      }
-      const isDisabled = await this.repository.checkIfRoomIsDisabledById(id);
-      if (isDisabled) {
-        throw new BadRequestException('This room is already disabled');
-      }
-      const isDeleted = await this.repository.checkIfRoomIsDeletedById(id);
-      if (!isDeleted) {
-        throw new BadRequestException(
-          'This room ID is now active. Cannot restore it'
-        );
-      }
+  //   try {
+  //     const isExisted = await this.repository.existsById(id);
+  //     if (!isExisted) {
+  //       throw new BadRequestException(
+  //         'Room does not found with the provided id'
+  //       );
+  //     }
+  //     const isDisabled = await this.repository.checkIfRoomIsDisabledById(id);
+  //     if (isDisabled) {
+  //       throw new BadRequestException('This room is already disabled');
+  //     }
+  //     const isDeleted = await this.repository.checkIfRoomIsDeletedById(id);
+  //     if (!isDeleted) {
+  //       throw new BadRequestException(
+  //         'This room ID is now active. Cannot restore it'
+  //       );
+  //     }
 
-      const room = await this.repository.restoreDeletedRoomById(
-        accountId,
-        id,
-        queryRunner
-      );
-      await this.histService.createNew(room, queryRunner);
-      await queryRunner.commitTransaction();
-      return room;
-    } catch (e) {
-      this.logger.error(e.message);
-      await queryRunner.rollbackTransaction();
-      throw new BadRequestException(e.message);
-    }
-  }
+  //     const room = await this.repository.restoreDeletedRoomById(
+  //       accountId,
+  //       id,
+  //       queryRunner
+  //     );
+  //     await this.histService.createNew(room, queryRunner);
+  //     await queryRunner.commitTransaction();
+  //     return room;
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     await queryRunner.rollbackTransaction();
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
   // getAllWithoutPagination(): Promise<Rooms[]> {
   //   try {

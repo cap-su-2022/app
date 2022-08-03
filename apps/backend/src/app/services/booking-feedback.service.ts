@@ -60,7 +60,7 @@ export class BookingFeedbackService {
       );
       if (request.userId !== accountId) {
         throw new BadRequestException(
-          "You did't use this request, so you can't feedback"
+          "You didn't use this request, so you can't feedback"
         );
       } else {
         if (request.status !== 'CHECKED_OUT') {

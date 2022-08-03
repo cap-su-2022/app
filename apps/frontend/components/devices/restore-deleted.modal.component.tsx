@@ -11,15 +11,11 @@ import {
 } from '@mantine/core';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {Check, RotateClockwise, Search, X} from 'tabler-icons-react';
-import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
-import {fetchDeletedRooms} from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import {restoreDeletedRoom} from '../../redux/features/room/thunk/restore-deleted.thunk';
 import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import dayjs from 'dayjs';
 import {useDebouncedValue} from '@mantine/hooks';
 import NoDataFound from '../no-data-found';
 import {fetchDeletedDevices} from '../../redux/features/devices/thunk/fetch-deleted.thunk';
-import {restoreDeletedDevice} from '../../redux/features/devices/thunk/restore-deleted.thunk';
 import {fetchDevices} from '../../redux/features/devices/thunk/fetch-devices.thunk';
 import {showNotification} from "@mantine/notifications";
 
@@ -46,57 +42,13 @@ const RestoreDeletedDeviceModal: React.FC<RestoreDeletedDeviceModalProps> = (
     dispatch(fetchDeletedDevices(search));
   }, [searchDebounced]);
 
-  const handleRestoreDeletedDevice = (id: string) => {
-    dispatch(restoreDeletedDevice(id))
-      .unwrap()
-      .catch(
-        (e) =>
-          showNotification({
-              id: 'restore-data',
-              color: 'red',
-              title: 'Error while restore device',
-              message: e.message ?? 'Failed to restore device',
-              icon: <X/>,
-              autoClose: 3000,
-            }
-          )).then(() =>
-      showNotification({
-        id: 'restore-data',
-        color: 'teal',
-        title: 'This device was restored',
-        message: 'This device was successfully restored',
-        icon: <Check/>,
-        autoClose: 3000,
-      })
-    )
-      .then(() => dispatch(fetchDeletedDevices('')))
-      .then(() => dispatch(fetchDevices(props.pagination)));
-  };
   const rows = deletedDevices?.map((row, index) => (
-    <tr key={row.id}>
+    <tr key={row.id} style={{height: 50}}>
       <td>{index + 1}</td>
       <td>{row.name}</td>
       <td>{row.deviceTypeName}</td>
       <td>{dayjs(row.updatedAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.deletedBy}</td>
-      <td
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <Button
-          onClick={() => handleRestoreDeletedDevice(row.id)}
-          style={{
-            margin: 5,
-          }}
-          variant="outline"
-          color="green"
-          leftIcon={<RotateClockwise/>}
-        >
-          Restore
-        </Button>
-      </td>
     </tr>
   ));
 
@@ -145,7 +97,6 @@ const RestoreDeletedDeviceModal: React.FC<RestoreDeletedDeviceModalProps> = (
                 <th>Type</th>
                 <th>Delete At</th>
                 <th>Delete By</th>
-                <th>Action</th>
               </tr>
               </thead>
               <tbody>{rows}</tbody>

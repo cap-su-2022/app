@@ -9,7 +9,6 @@ import { fetchDeletedDevices } from "./thunk/fetch-deleted.thunk";
 import { fetchDisabledDevices } from "./thunk/fetch-disabled.thunk";
 import { PaginationResponse } from '../../../models/pagination-response.payload';
 import { restoreDisabledDevice } from "./thunk/restore-disabled.thunk";
-import { restoreDeletedDevice } from "./thunk/restore-deleted.thunk";
 import { updateDeviceById } from "./thunk/update-by-id";
 import { fetchDeviceNames } from "./thunk/fetch-device-names.thunk";
 
@@ -70,10 +69,6 @@ const devicesSlice = createSlice({
     });
     builder.addCase(restoreDisabledDevice.fulfilled, (state, {payload}) => {
       return;
-    });
-    builder.addCase(restoreDeletedDevice.fulfilled, (state, {payload}) => {
-      return;
-
     });
     builder.addCase(deleteDeviceById.fulfilled, (state, {payload}) => {
       return;

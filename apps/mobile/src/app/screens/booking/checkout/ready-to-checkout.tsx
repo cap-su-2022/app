@@ -17,48 +17,71 @@ import {
   LibraryIcon,
 } from 'react-native-heroicons/outline';
 import Divider from '../../../components/text/divider';
-import Signature, { SignatureViewRef } from 'react-native-signature-canvas';
 import QRCode from 'react-native-qrcode-svg';
 import AlertModal from '../../../components/modals/alert-modal.component';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import dayjs from 'dayjs';
 import { checkOutBookingRoom } from '../../../redux/features/room-booking/thunk/checkout-booking-room.thunk';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
+import { fetchAllSlots } from '../../../redux/features/slot';
 
 const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
 
   const scrollView = useRef<ScrollView>(null);
-  const signature = useRef<SignatureViewRef>(null);
 
   const { roomBookingCheckout } = useAppSelector((state) => state.roomBooking);
 
-  navigate.addListener('focus', (a) => {
-    setHidden(false);
-  });
-
-  useEffect(() => {
-    return () => {
-      setHidden(false);
-    };
-  }, []);
-  const [isScrollEnabled, setScrollEnabled] = useState<boolean>(true);
-
-  const [isHidden, setHidden] = useState(false);
-
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('Error');
+  const [timeSlotCheckin, setTimeSlotCheckin] = useState('');
+  const [timeSlotCheckout, setTimeSlotCheckout] = useState('');
 
-  const handleGetData = (e) => {};
+  useEffect(() => {
+    dispatch(fetchAllSlots())
+      .unwrap()
+      .then((value) => {
+        setTimeSlotCheckin(
+          value
+            .find((slot) => slot.slotNum === roomBookingCheckout.checkinSlot)
+            .timeStart.slice(0, 5)
+        );
+        setTimeSlotCheckout(
+          value
+            .find((slot) => slot.slotNum === roomBookingCheckout.checkoutSlot)
+            .timeEnd.slice(0, 5)
+        );
+      });
+  }, []);
+
 
   const handleCheckoutBookingRoom = () => {
-
     dispatch(checkOutBookingRoom(roomBookingCheckout.id))
       .unwrap()
       .then(() => navigate.navigate('CHECKOUT_SUCCESSFULLY'))
       .catch((e) => alert('Failed while checking out booking room'));
+  };
 
+  const renderDevice = (device) => {
+    return (
+      <View style={styles.deviceDetailWrapper}>
+        <View style={styles.deviceContainer}>
+          <View style={styles.deviceIconContainer}>
+            <DeviceMobileIcon
+              color={FPT_ORANGE_COLOR}
+              size={deviceWidth / 13}
+            />
+          </View>
+          <View style={styles.deviceDetailInfoContainer}>
+            <Text style={styles.deviceDetailName}>Name: {device.deviceName}</Text>
+            <Text style={styles.deviceDetailName}>
+              Quantity: {device.deviceQuantity}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
   };
 
   const ErrorAlertModal: React.FC = () => {
@@ -124,7 +147,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <ScrollView
-          scrollEnabled={isScrollEnabled}
+          scrollEnabled={true}
           ref={scrollView}
           bounces
           style={styles.bodyContainer}
@@ -160,8 +183,12 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
               >
                 <View style={styles.bookingInforSlotInfo}>
                   <View style={styles.slotStart}>
-                    <Text style={styles.slotStartTimeText}>07:00</Text>
-                    <Text style={styles.slotStartSlotText}>Slot 1</Text>
+                    <Text style={styles.slotStartTimeText}>
+                      {timeSlotCheckin}
+                    </Text>
+                    <Text style={styles.slotStartSlotText}>
+                      Slot {roomBookingCheckout.checkinSlot}
+                    </Text>
                   </View>
 
                   <View style={styles.slotNavigation}>
@@ -171,8 +198,12 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
                     />
                   </View>
                   <View style={styles.slotEnd}>
-                    <Text style={styles.slotEndTimeText}>17:30</Text>
-                    <Text style={styles.slotEndSlotText}>Slot 6</Text>
+                    <Text style={styles.slotEndTimeText}>
+                      {timeSlotCheckout}
+                    </Text>
+                    <Text style={styles.slotEndSlotText}>
+                      Slot {roomBookingCheckout.checkoutSlot}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -196,7 +227,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
                       color: BLACK,
                     }}
                   >
-                    bangnn
+                    {roomBookingCheckout.requestedBy}
                   </Text>
                 </View>
                 <View style={[styles.bookingInforDetail, { marginTop: 5 }]}>
@@ -276,27 +307,10 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
 
           <View style={styles.deviceDetailContainer}>
             <Text style={styles.deviceDetailHeaderText}>DEVICE(S) DETAIL</Text>
-            <View style={styles.deviceDetailWrapper}>
-              <View style={styles.deviceContainer}>
-                <View style={styles.deviceIconContainer}>
-                  <DeviceMobileIcon
-                    color={FPT_ORANGE_COLOR}
-                    size={deviceWidth / 13}
-                  />
-                </View>
-                <View style={styles.deviceDetailInfoContainer}>
-                  <Text style={styles.deviceDetailName}>
-                    Name: Charging Socket Station
-                  </Text>
-                  <Text style={styles.deviceDetailName}>Quantity: 2</Text>
-                  <Text style={styles.deviceDetailName}>
-                    Requested at: 12:12 15/06/2022
-                  </Text>
-                </View>
-              </View>
-            </View>
+            {roomBookingCheckout.listDevice.map((device) =>
+              renderDevice(device)
+            )}
           </View>
-
         </ScrollView>
         <View style={styles.footer}>
           <TouchableOpacity
@@ -446,6 +460,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'row',
+    marginVertical: 5
   },
   deviceDetailInfoContainer: {
     display: 'flex',

@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Button, createStyles} from '@mantine/core';
+import React, { useEffect, useState } from 'react';
+import { Button, createStyles } from '@mantine/core';
 import Header from '../common/header.component';
 import {
   ArchiveOff,
@@ -10,7 +10,7 @@ import {
   Plus,
   X,
 } from 'tabler-icons-react';
-import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fetchRoomTypeById,
   fetchRoomTypeNames,
@@ -27,13 +27,13 @@ import TableFooter from '../actions/table-footer.component';
 import InfoModal from '../actions/modal/info-modal.component';
 import * as Yup from 'yup';
 import AddModal from '../actions/modal/add-modal.component';
-import {FormikValues, useFormik} from 'formik';
-import {addRoomType} from '../../redux/features/room-type/thunk/add-room-type.thunk';
-import {InputAddProps} from '../actions/models/input-add-props.model';
-import {InputTypes} from '../actions/models/input-type.constant';
+import { FormikValues, useFormik } from 'formik';
+import { addRoomType } from '../../redux/features/room-type/thunk/add-room-type.thunk';
+import { InputAddProps } from '../actions/models/input-add-props.model';
+import { InputTypes } from '../actions/models/input-type.constant';
 import UpdateModal from '../actions/modal/update-modal.component';
-import {updateRoomTypeById} from '../../redux/features/room-type/thunk/update-room-type-by-id.thunk';
-import {InputUpdateProps} from '../actions/models/input-update-props.model';
+import { updateRoomTypeById } from '../../redux/features/room-type/thunk/update-room-type-by-id.thunk';
+import { InputUpdateProps } from '../actions/models/input-update-props.model';
 import DeleteModal from './delete-modal.component';
 import AdminLayout from '../layout/admin.layout';
 import RestoreDeletedModal from './restore-deleted.modal.component';
@@ -42,6 +42,7 @@ import {PaginationResponse} from '../../models/pagination-response.payload';
 import {showNotification} from '@mantine/notifications';
 import dayjs from 'dayjs';
 import NoDataFound from '../no-data-found';
+import { fetchRoomsByRoomType } from '../../redux/features/room/thunk/fetch-rooms-by-room-type';
 
 const AddRoomTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -134,12 +135,27 @@ const ManageRoomType: React.FC<any> = () => {
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
+  const [isListRoomShown, setListRoomShown] = useState<boolean>(false);
   const [isRestoreDeletedShown, setRestoreDeletedShown] =
     useState<boolean>(false);
   const roomType = useAppSelector((state) => state.roomType.roomType);
+  const [listRoomOfType, setListRoomOfType] = useState<any[]>();
+
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchRoomsByRoomType(id))
+        .unwrap()
+        .then((response) => setListRoomOfType(response));
+    }
+  }, [dispatch, id]);
 
   const handleFetchById = (idVal) => {
     return dispatch(fetchRoomTypeById(idVal));
+  };
+
+  const ShowRoomOfTypeButton: React.FC<any> = () => {
+    return <Button onClick={() => setListRoomShown(!isListRoomShown)}>Rooms</Button>;
   };
 
   const ActionsFilter: React.FC = () => {
@@ -166,7 +182,7 @@ const ManageRoomType: React.FC<any> = () => {
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
         >
-          <ArchiveOff/>
+          <ArchiveOff />
         </Button>
       </div>
     );
@@ -195,14 +211,6 @@ const ManageRoomType: React.FC<any> = () => {
 
   const infoFields = [
     {
-      label: 'Room Type Id',
-      id: 'id',
-      name: 'id',
-      value: roomType.id,
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
-    {
       label: 'Room Type Name',
       id: 'name',
       name: 'name',
@@ -218,7 +226,6 @@ const ManageRoomType: React.FC<any> = () => {
       value: roomType.description,
       readOnly: true,
       inputtype: InputTypes.TextArea,
-
     },
     {
       label: 'Created at',
@@ -227,7 +234,6 @@ const ManageRoomType: React.FC<any> = () => {
       value: dayjs(roomType.createdAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
       inputtype: InputTypes.TextInput,
-
     },
     {
       label: 'Created By',
@@ -236,7 +242,6 @@ const ManageRoomType: React.FC<any> = () => {
       value: roomType.createdBy,
       readOnly: true,
       inputtype: InputTypes.TextInput,
-
     },
     {
       label: 'Updated At',
@@ -245,7 +250,6 @@ const ManageRoomType: React.FC<any> = () => {
       value: dayjs(roomType.updatedAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
       inputtype: InputTypes.TextInput,
-
     },
     {
       label: 'Updated By',
@@ -254,7 +258,6 @@ const ManageRoomType: React.FC<any> = () => {
       value: roomType.updatedBy,
       readOnly: true,
       inputtype: InputTypes.TextInput,
-
     },
   ];
 
@@ -288,7 +291,7 @@ const ManageRoomType: React.FC<any> = () => {
       readOnly: true,
       required: false,
       value: roomType.id,
-      disabled: true
+      disabled: true,
     },
     {
       id: 'name',
@@ -298,7 +301,7 @@ const ManageRoomType: React.FC<any> = () => {
       readOnly: false,
       required: true,
       value: roomType.name,
-      disabled: false
+      disabled: false,
     },
     {
       id: 'description',
@@ -308,7 +311,7 @@ const ManageRoomType: React.FC<any> = () => {
       readOnly: false,
       required: false,
       value: roomType.description,
-      disabled: false
+      disabled: false,
     },
   ];
   const handleAddModalClose = () => {
@@ -394,6 +397,11 @@ const ManageRoomType: React.FC<any> = () => {
     updateFormik.resetForm();
   };
 
+  const handleCloseInfoModal = () => {
+    setInfoShown(!isInfoShown);
+    setListRoomShown(false);
+  };
+
   const addFormik = useFormik({
     validationSchema: AddRoomTypeValidation,
     initialValues: {
@@ -431,8 +439,12 @@ const ManageRoomType: React.FC<any> = () => {
           <InfoModal
             header="Room Type Information"
             fields={infoFields}
-            toggleShown={() => setInfoShown(!isInfoShown)}
+            toggleShown={() => handleCloseInfoModal()}
             isShown={isInfoShown}
+            itemsOfDataButton={<ShowRoomOfTypeButton />}
+            isShowListItems={isListRoomShown}
+            itemsOfData={listRoomOfType}
+            title='LIST ROOM OF TYPE'
           />
 
           <UpdateModal
@@ -451,7 +463,7 @@ const ManageRoomType: React.FC<any> = () => {
             roomTypes={roomTypeNames}
           />
         </>
-      ) : <NoDataFound/>}
+      ) : (<NoDataFound/> )}
       <AddModal
         header="Add new room type"
         isShown={isAddShown}

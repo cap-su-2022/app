@@ -11,6 +11,7 @@ import { deviceWidth } from '../../../utils/device';
 import {
   CalendarIcon,
   ChevronDoubleRightIcon,
+  LibraryIcon,
   TagIcon,
 } from 'react-native-heroicons/outline';
 import RNPickerSelect from 'react-native-picker-select';
@@ -21,22 +22,24 @@ import {
   resetGlobalDateEnd,
   resetGlobalDateStart,
 } from '../../../redux/features/room-booking/slice';
-import TrackBookingRoomFilterStatusSelection from './status-selection';
+import TrackBookingRoomFilterStarSelection from './status-selection';
 import { fetchAllFeedBackTypes } from '../../../redux/features/feed-back-type/thunk/fetch-all-feed-back-types.thunk';
 import dayjs from 'dayjs';
+import { fetchAllRooms } from '../../../redux/features/room/thunk/fetch-all';
 
 interface TrackBookingRoomFilterHandler {
   fromDate: string;
   toDate: string;
-  type: string;
-  status: string[] | undefined;
+  feedbackTypeId: string;
+  star: number[] | undefined;
+  roomId: string;
 }
 
 interface TrackBookingRoomFilterProps {
   handleFilterSearch(): void;
 }
 
-const TrackFeedbackFilter: React.ForwardRefRenderFunction<
+const TrackRoomBookingFeedbackFilter: React.ForwardRefRenderFunction<
   TrackBookingRoomFilterHandler,
   TrackBookingRoomFilterProps
 > = (props, ref) => {
@@ -44,9 +47,18 @@ const TrackFeedbackFilter: React.ForwardRefRenderFunction<
   const dispatch = useAppDispatch();
 
   const { feedbackTypes } = useAppSelector((state) => state.feedbackTypes);
+  const rooms = useAppSelector((state) => state.room.rooms);
+
+  const [roomId, setRoomId] = useState<string>();
 
   useEffect(() => {
     dispatch(fetchAllFeedBackTypes())
+      .unwrap()
+      .catch((e) => alert(JSON.stringify(e)));
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetchAllRooms())
       .unwrap()
       .catch((e) => alert(JSON.stringify(e)));
   }, []);
@@ -55,7 +67,8 @@ const TrackFeedbackFilter: React.ForwardRefRenderFunction<
     (state) => state.roomBooking
   );
 
-  const [status, setStatus] = useState<string[]>([]);
+  const [star, setStar] = useState<number[]>([]);
+
   const [feedbackType, setFeedbackType] = useState<string>();
 
   const handleSearch = () => {
@@ -64,7 +77,7 @@ const TrackFeedbackFilter: React.ForwardRefRenderFunction<
 
   useEffect(() => {
     handleSearch();
-  }, [feedbackType, globalDateStart, globalDateEnd, status]);
+  }, [roomId, feedbackType, globalDateStart, globalDateEnd, star]);
 
   useEffect(() => {
     if (!feedbackType) {
@@ -73,15 +86,16 @@ const TrackFeedbackFilter: React.ForwardRefRenderFunction<
   }, [feedbackType]);
 
   useImperativeHandle(ref, () => ({
-    type: feedbackType,
+    roomId: roomId,
+    feedbackTypeId: feedbackType,
     fromDate: globalDateStart,
     toDate: globalDateEnd,
-    status: status.length > 0 ? status : undefined,
+    star: star.length > 0 ? star : undefined,
   }));
 
   const handleClearFilter = useCallback(() => {
     setFeedbackType(undefined);
-    setStatus([]);
+    setStar([]);
     dispatch(resetGlobalDateStart());
     dispatch(resetGlobalDateEnd());
   }, []);
@@ -154,7 +168,7 @@ const TrackFeedbackFilter: React.ForwardRefRenderFunction<
                   borderBottomRightRadius: 8,
                   borderColor: GRAY,
                   display: 'flex',
-                  width: deviceWidth / 1.23,
+                  width: deviceWidth / 3,
                   justifyContent: 'center',
                 },
                 inputAndroid: {
@@ -169,7 +183,58 @@ const TrackFeedbackFilter: React.ForwardRefRenderFunction<
               items={feedbackTypes.map((type) => {
                 return {
                   label: type.name,
-                  value: type.name,
+                  value: type.id,
+                };
+              })}
+            />
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+            }}
+          >
+            <View
+              style={{
+                borderTopLeftRadius: 8,
+                borderBottomLeftRadius: 8,
+                borderWidth: 2,
+                borderColor: GRAY,
+                height: 35,
+                width: 35,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <LibraryIcon size={deviceWidth / 16} color={GRAY} />
+            </View>
+            <RNPickerSelect
+              style={{
+                viewContainer: {
+                  borderTopWidth: 2,
+                  borderRightWidth: 2,
+                  borderBottomWidth: 2,
+                  borderTopRightRadius: 8,
+                  borderBottomRightRadius: 8,
+                  borderColor: GRAY,
+                  display: 'flex',
+                  width: deviceWidth / 3,
+                  justifyContent: 'center',
+                },
+                inputAndroid: {
+                  height: 35,
+                  color: GRAY,
+                },
+                inputIOSContainer: {
+                  paddingHorizontal: 10,
+                },
+              }}
+              onValueChange={(e) => setRoomId(e)}
+              items={rooms.map((room) => {
+                return {
+                  label: room.name,
+                  value: room.id,
                 };
               })}
             />
@@ -262,9 +327,9 @@ const TrackFeedbackFilter: React.ForwardRefRenderFunction<
           </View>
         </View>
 
-        <TrackBookingRoomFilterStatusSelection
-          status={status}
-          setStatus={setStatus}
+        <TrackBookingRoomFilterStarSelection
+          star={star}
+          setStar={setStar}
           handleSearch={handleSearch}
         />
       </View>
@@ -350,4 +415,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default forwardRef(TrackFeedbackFilter);
+export default forwardRef(TrackRoomBookingFeedbackFilter);

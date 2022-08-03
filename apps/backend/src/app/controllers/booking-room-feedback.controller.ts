@@ -25,7 +25,7 @@ export class BookingFeedbackController {
   constructor(private readonly service: BookingFeedbackService) {}
 
   @Get()
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Get all booking room feedbacks',
     description: 'Get the list of booking room feedbacks',

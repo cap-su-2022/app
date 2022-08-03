@@ -146,7 +146,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
                   })}
                 >
                   <tr>
-                    <th>STT</th>
+                    <th style={{width: 50}}>STT</th>
                     <th>Name</th>
                     <th>Type</th>
                     <th>Disabled at</th>

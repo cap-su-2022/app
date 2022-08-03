@@ -396,42 +396,42 @@ export class RoomsController {
     return this.service.getDeletedRooms(search);
   }
 
-  @Put('restore-deleted/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Restore the deleted library room by id',
-    description: 'Restore the deleted library room by provided id',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully restored the deleted library room',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while restoring the deleted library room',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @ApiParam({
-    name: 'id',
-    description: "The ID of deleted room",
-    type: String,
-    required: true,
-    example: 'ABCD1234',
-  })
-  restoreDeletedRoomById(
-    @Param() payload: { id: string },
-    @User() user: KeycloakUserInstance
-  ) {
-    return this.service.handleRestoreDeletedRoomById(
-      user.account_id,
-      payload.id
-    );
-  }
+  // @Put('restore-deleted/:id')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  // @ApiOperation({
+  //   summary: 'Restore the deleted library room by id',
+  //   description: 'Restore the deleted library room by provided id',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully restored the deleted library room',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while restoring the deleted library room',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Invalid access token',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // @ApiParam({
+  //   name: 'id',
+  //   description: "The ID of deleted room",
+  //   type: String,
+  //   required: true,
+  //   example: 'ABCD1234',
+  // })
+  // restoreDeletedRoomById(
+  //   @Param() payload: { id: string },
+  //   @User() user: KeycloakUserInstance
+  // ) {
+  //   return this.service.handleRestoreDeletedRoomById(
+  //     user.account_id,
+  //     payload.id
+  //   );
+  // }
 }

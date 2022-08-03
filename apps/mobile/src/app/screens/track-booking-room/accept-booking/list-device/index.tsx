@@ -55,7 +55,7 @@ const ListDevice: React.FC<any> = () => {
     return (
       <View
         style={{
-          height: 100,
+          height: 80,
           width: deviceWidth / 1.1,
           borderRadius: 8,
           backgroundColor: WHITE,
@@ -93,7 +93,7 @@ const ListDevice: React.FC<any> = () => {
           <View
             style={{
               display: 'flex',
-              justifyContent: 'flex-start',
+              justifyContent: 'center',
               marginLeft: 10,
               marginTop: 10,
             }}
@@ -112,7 +112,7 @@ const ListDevice: React.FC<any> = () => {
                 fontWeight: '400',
               }}
             >
-              Device type
+              Quantity: {props.item.deviceQuantity}
             </Text>
           </View>
         </View>

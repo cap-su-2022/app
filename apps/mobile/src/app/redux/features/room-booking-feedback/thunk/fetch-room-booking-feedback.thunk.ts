@@ -10,10 +10,13 @@ export const fetchRoomBookingFeedback = createAsyncThunk<
       message: string;
     };
   }
->('room-booking-feedback', async (payload, thunkAPI) => {
-  return await axiosGetAPICall(
-    `${API_URL}/room-booking-feedbacks/${payload}`,
-    undefined,
-    thunkAPI
-  );
-});
+>(
+  'room-booking-feedback/fetch-all-booking-room-feedbacks',
+  async (payload, thunkAPI) => {
+    return await axiosGetAPICall(
+      `${API_URL}/booking-room-feedbacks/${payload}`,
+      undefined,
+      thunkAPI
+    );
+  }
+);

@@ -11,17 +11,6 @@ interface TrackBookingRequestItemContentProps {
 const TrackFeedbackItemContent: React.FC<
   TrackBookingRequestItemContentProps
 > = (props) => {
-  const SlotRender = () => {
-    if (props.item.createdAt === props.item.createdAt) {
-      return <Text style={styles.textValue}>Slot {props.item.createdAt}</Text>;
-    }
-    return (
-      <Text style={styles.textValue}>
-        Slot {props.item.createdAt} - Slot {props.item.createdAt}
-      </Text>
-    );
-  };
-
   return (
     <View style={styles.wrapper}>
       <View style={styles.rowRender}>
@@ -35,15 +24,15 @@ const TrackFeedbackItemContent: React.FC<
         </Text>
       </View>
       <View style={[{ marginTop: 10 }, styles.rowRender]}>
-        <Text style={styles.textTitle}>Feedback type:</Text>
-        <Text style={styles.textValue}>{props.item.feedbackTypeName ?? "Other"}</Text>
+        <Text style={styles.textTitle}>Booking room:</Text>
+        <Text style={styles.textValue}>{props.item.roomName ?? 'Other'}</Text>
       </View>
-      {props.item.status !== "PENDING" ? <View style={[{ marginTop: 10 }, styles.rowRender]}>
-        <Text style={styles.textTitle}>{props.item.status === "REJECTED" ? "Rejected" : "Resolved"} at:</Text>
+      <View style={[{ marginTop: 10 }, styles.rowRender]}>
+        <Text style={styles.textTitle}>Feedback type:</Text>
         <Text style={styles.textValue}>
-          {dayjs(props.item.status === "REJECTED" ? props.item.rejectedAt : props.item.resolvedAt).format('DD/MM/YYYY')}
+          {props.item.feedbackTypeName ?? 'Other'}
         </Text>
-      </View> : null}
+      </View>
     </View>
   );
 };

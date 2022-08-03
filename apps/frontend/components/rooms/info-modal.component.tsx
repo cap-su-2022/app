@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
   Button,
   createStyles,
@@ -30,7 +30,7 @@ interface RoomInfoModalProps {
 }
 
 const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   const room = useAppSelector((state) => state.room.room);
 
   const ModalHeaderTitle: React.FC = () => {
@@ -47,9 +47,9 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
         onClose={() => props.toggleShown()}
       >
         <div className={classes.modalBody}>
-          <InputWrapper label="Room ID" style={{marginBottom: 20}}>
-            <TextInput icon={<Id/>} radius="md" readOnly value={room.id}/>
-          </InputWrapper>
+          {/* <InputWrapper label="Room ID" style={{ marginBottom: 20 }}>
+            <TextInput icon={<Id />} radius="md" readOnly value={room.id} />
+          </InputWrapper> */}
           <div
             style={{
               display: 'flex',

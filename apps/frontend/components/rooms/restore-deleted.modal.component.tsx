@@ -13,7 +13,6 @@ import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {Check, RotateClockwise, Search, X} from 'tabler-icons-react';
 import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
 import {fetchDeletedRooms} from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import {restoreDeletedRoom} from '../../redux/features/room/thunk/restore-deleted.thunk';
 import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import dayjs from 'dayjs';
 import {useDebouncedValue} from '@mantine/hooks';
@@ -42,40 +41,40 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
     dispatch(fetchDeletedRooms(search));
   }, [searchDebounced]);
 
-  const handleRestoreDeletedRoom = (id: string) => {
-    dispatch(restoreDeletedRoom(id))
-      .unwrap()
-      .then(() => dispatch(fetchDeletedRooms('')))
-      .then(() => dispatch(fetchRooms(props.pagination)))
-      .then(() =>
-        showNotification({
-          id: 'restore-room',
-          color: 'teal',
-          title: 'Library room was restored',
-          message: 'Library room was successfully restored',
-          icon: <Check/>,
-          autoClose: 3000,
-        })
-      )
-      .catch((e) => {
-        showNotification({
-          id: 'restore-room',
-          color: 'red',
-          title: 'Error while restore room',
-          message: `${e.message}`,
-          icon: <X/>,
-          autoClose: 3000,
-        });
-      });
-  };
+  // const handleRestoreDeletedRoom = (id: string) => {
+  //   dispatch(restoreDeletedRoom(id))
+  //     .unwrap()
+  //     .then(() => dispatch(fetchDeletedRooms('')))
+  //     .then(() => dispatch(fetchRooms(props.pagination)))
+  //     .then(() =>
+  //       showNotification({
+  //         id: 'restore-room',
+  //         color: 'teal',
+  //         title: 'Library room was restored',
+  //         message: 'Library room was successfully restored',
+  //         icon: <Check/>,
+  //         autoClose: 3000,
+  //       })
+  //     )
+  //     .catch((e) => {
+  //       showNotification({
+  //         id: 'restore-room',
+  //         color: 'red',
+  //         title: 'Error while restore room',
+  //         message: `${e.message}`,
+  //         icon: <X/>,
+  //         autoClose: 3000,
+  //       });
+  //     });
+  // };
   const rows = deletedRooms?.map((row, index) => (
-    <tr key={row.id}>
+    <tr key={row.id} style={{height: 60}}>
       <td>{index + 1}</td>
       <td>{row.name}</td>
       <td>{row.roomTypeName}</td>
       <td>{dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.deletedBy}</td>
-      <td
+      {/* <td
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -92,7 +91,7 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
         >
           Restore
         </Button>
-      </td>
+      </td> */}
     </tr>
   ));
 
@@ -141,7 +140,7 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
                 <th>Type</th>
                 <th>Deleted At</th>
                 <th>Deleted By</th>
-                <th>Action</th>
+                {/* <th>Action</th> */}
               </tr>
               </thead>
               <tbody>{rows}</tbody>

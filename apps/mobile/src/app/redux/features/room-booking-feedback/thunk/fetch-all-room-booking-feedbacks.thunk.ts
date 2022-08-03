@@ -7,6 +7,8 @@ interface RequestPayload {
   star: number[];
   roomId: string;
   feedbackTypeId: string;
+  fromDate: string;
+  toDate: string;
 }
 
 export const fetchRoomBookingFeedbacks = createAsyncThunk<
@@ -17,10 +19,16 @@ export const fetchRoomBookingFeedbacks = createAsyncThunk<
       message: string;
     };
   }
->('room-booking-feedback', async (payload, thunkAPI) => {
+>('room-booking-feedback/fetch-by-id', async (payload, thunkAPI) => {
   return await axiosGetAPICall(
-    `${API_URL}/room-booking-feedbacks/`,
-    undefined,
+    `${API_URL}/booking-room-feedbacks`,
+    {
+      star: JSON.stringify(payload.star),
+      type: payload.feedbackTypeId,
+      room: payload.roomId,
+      fromDate: payload.fromDate,
+      toDate: payload.toDate,
+    },
     thunkAPI
   );
 });
