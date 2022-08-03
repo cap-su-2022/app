@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Button, createStyles } from '@mantine/core';
+import { Button } from '@mantine/core';
 import Header from '../common/header.component';
-import { ArchiveOff, BuildingWarehouse, Check, Plus, X } from 'tabler-icons-react';
+import {
+  ArchiveOff,
+  BuildingWarehouse,
+  Check,
+  Plus,
+  X,
+} from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fetchRoleById,
@@ -72,7 +78,7 @@ const ManageRole: React.FC<any> = () => {
 
   useEffect(() => {
     if (roles.items) {
-      const tmp = roles.items.map((row, index) => ({
+      const tmp = roles.items.map((row) => ({
         value: row.id,
         label: row.name,
       }));
@@ -176,21 +182,21 @@ const ManageRole: React.FC<any> = () => {
   };
 
   const handleActionsCb = {
-    info: (id) => {
-      setId(id);
-      handleFetchById(id)
+    info: (itemId) => {
+      setId(itemId);
+      handleFetchById(itemId)
         .unwrap()
         .then(() => setInfoShown(!isInfoShown));
     },
-    update: (id) => {
-      setId(id);
-      handleFetchById(id)
+    update: (itemId) => {
+      setId(itemId);
+      handleFetchById(itemId)
         .unwrap()
         .then(() => setUpdateShown(!isUpdateShown));
     },
-    delete: (id) => {
-      setId(id);
-      handleFetchById(id);
+    delete: (itemId) => {
+      setId(itemId);
+      handleFetchById(itemId);
       setDeleteShown(!isDeleteShown);
     },
   };
@@ -275,7 +281,7 @@ const ManageRole: React.FC<any> = () => {
       readOnly: true,
       required: false,
       value: role.id,
-      disabled: true
+      disabled: true,
     },
     {
       id: 'name',
@@ -285,7 +291,7 @@ const ManageRole: React.FC<any> = () => {
       readOnly: true,
       required: true,
       value: role.name,
-      disabled: false
+      disabled: false,
     },
     {
       id: 'description',
@@ -295,7 +301,7 @@ const ManageRole: React.FC<any> = () => {
       readOnly: false,
       required: false,
       value: role.description,
-      disabled: false
+      disabled: false,
     },
   ];
   const handleAddModalClose = () => {
@@ -320,7 +326,7 @@ const ManageRole: React.FC<any> = () => {
           autoClose: 3000,
         })
       )
-      .then((e) => handleAddModalClose())
+      .then(() => handleAddModalClose())
       .catch((e) =>
         showNotification({
           id: 'add-role',
@@ -330,7 +336,7 @@ const ManageRole: React.FC<any> = () => {
           icon: <X />,
           autoClose: 3000,
         })
-      )
+      );
   };
 
   const handleUpdateSubmit = (values: FormikValues) => {
@@ -342,7 +348,7 @@ const ManageRole: React.FC<any> = () => {
       })
     )
       .unwrap()
-      .then((e) => handleUpdateModalClose());
+      .then(() => handleUpdateModalClose());
   };
 
   const updateFormik = useFormik({
@@ -426,7 +432,9 @@ const ManageRole: React.FC<any> = () => {
             roles={roleNames}
           />
         </>
-      ) : <NoDataFound />}
+      ) : (
+        <NoDataFound />
+      )}
       <AddModal
         header="Add new role"
         isShown={isAddShown}
@@ -445,11 +453,5 @@ const ManageRole: React.FC<any> = () => {
     </AdminLayout>
   );
 };
-
-const useStyles = createStyles((theme) => {
-  return {
-    container: {},
-  };
-});
 
 export default ManageRole;
