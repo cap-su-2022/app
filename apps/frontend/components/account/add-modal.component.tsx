@@ -5,7 +5,6 @@ import {
   InputWrapper,
   Modal,
   Select,
-  Switch,
   Text,
   Textarea,
   TextInput,
@@ -20,12 +19,9 @@ import {
 } from 'tabler-icons-react';
 import { useAppDispatch } from '../../redux/hooks';
 import { Form, FormikProvider, useFormik } from 'formik';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { addRoom } from '../../redux/features/room/thunk/add-room';
 import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
 
 interface AddAccountModalProps {
   isShown: boolean;
@@ -129,7 +125,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
     } else {
       setAddDisabled(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     formik.values.username,
     formik.values.description,
@@ -139,7 +135,11 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
   ]);
 
   const ModalHeaderTitle: React.FC = () => {
-    return <Text className={classes.modalHeaderTitle}>Add new room (Chưa add được đâu, khỏi test)</Text>;
+    return (
+      <Text className={classes.modalHeaderTitle}>
+        Add new room (Chưa add được đâu, khỏi test)
+      </Text>
+    );
   };
 
   const handleCancelAddModal = () => {
@@ -174,10 +174,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
         <FormikProvider value={formik}>
           <Form onSubmit={formik.handleSubmit}>
             <div className={classes.modalBody}>
-              <InputWrapper
-                required
-                label="Username"
-              >
+              <InputWrapper required label="Username">
                 <TextInput
                   icon={<ClipboardText />}
                   id="username"
@@ -190,10 +187,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
                 />
               </InputWrapper>
 
-              <InputWrapper
-                required
-                label="Fullname"
-              >
+              <InputWrapper required label="Fullname">
                 <TextInput
                   icon={<ClipboardText />}
                   id="fullname"
@@ -206,10 +200,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
                 />
               </InputWrapper>
 
-              <InputWrapper
-                required
-                label="Email"
-              >
+              <InputWrapper required label="Email">
                 <TextInput
                   icon={<ClipboardText />}
                   id="email"
@@ -222,10 +213,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
                 />
               </InputWrapper>
 
-              <InputWrapper
-                required
-                label="Phone"
-              >
+              <InputWrapper required label="Phone">
                 <TextInput
                   icon={<ClipboardText />}
                   id="phone"
@@ -253,10 +241,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
                   value={formik.values.description}
                 />
               </InputWrapper>
-              <InputWrapper
-                required
-                label="Role"
-              >
+              <InputWrapper required label="Role">
                 <Select
                   name="role"
                   id="role"

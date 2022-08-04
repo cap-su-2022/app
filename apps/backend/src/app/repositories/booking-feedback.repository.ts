@@ -49,7 +49,7 @@ export class BookingFeedbackRepository extends Repository<BookingRoomFeedback> {
     }
 
     if (accountId) {
-      query.andWhere('f.created_by = :accountId', { accountId: accountId });
+      query.andWhere(`f.${pagination.sort} = :accountId`, { accountId: accountId });
     }
 
     if (pagination.star) {
