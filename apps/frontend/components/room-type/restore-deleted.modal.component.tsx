@@ -178,7 +178,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           icon={<Search />}
         />
       </InputWrapper>
-        {deletedRoomTypes.length > 0 ?  (
+        {deletedRoomTypes?.length > 0 ?  (
         <ScrollArea
           sx={{ height: 500 }}
           onScrollPositionChange={({ y }) => setScrolled(y !== 0)}

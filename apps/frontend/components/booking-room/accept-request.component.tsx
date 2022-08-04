@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Button, createStyles, Modal, Table, Text} from '@mantine/core';
-import {Archive, Check, ScanEye, X} from 'tabler-icons-react';
+import {Button, createStyles, Text} from '@mantine/core';
+import { Check, ScanEye, X} from 'tabler-icons-react';
 import {FPT_ORANGE_COLOR} from '@app/constants';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {BookingRequestParams} from '../../models/pagination-params/booking-room-params.model';

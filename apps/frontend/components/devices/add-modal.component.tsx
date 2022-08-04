@@ -5,7 +5,6 @@ import {
   InputWrapper,
   Modal,
   Select,
-  Switch,
   Text,
   Textarea,
   TextInput,
@@ -20,15 +19,14 @@ import {
 } from 'tabler-icons-react';
 import { useAppDispatch } from '../../redux/hooks';
 import { Form, FormikProvider, useFormik } from 'formik';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { addRoom } from '../../redux/features/room/thunk/add-room';
 import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
-import { addDevice } from '../../redux/features/devices/thunk/add.thunk';
-import { fetchDevices } from '../../redux/features/devices/thunk/fetch-devices.thunk';
-import { fetchDisabledDevices } from '../../redux/features/devices/thunk/fetch-disabled.thunk';
+import {
+  addDevice,
+  fetchDevices,
+  fetchDisabledDevices,
+} from '../../redux/features/devices';
 
 interface AddDeviceModalProps {
   isShown: boolean;

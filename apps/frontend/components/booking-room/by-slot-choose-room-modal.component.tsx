@@ -3,26 +3,16 @@ import {
   Button,
   createStyles,
   InputWrapper,
-  Modal,
   ScrollArea,
-  Select,
-  Table,
-  Text,
-  Textarea,
   TextInput,
 } from '@mantine/core';
-import { useWindowDimensions } from '../../hooks/use-window-dimensions';
 import { Search, X } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useAppDispatch } from '../../redux/hooks';
 import dayjs from 'dayjs';
-import autoAnimate from '@formkit/auto-animate';
 import { FormikProps } from 'formik';
-import { DatePicker } from '@mantine/dates';
 import { showNotification } from '@mantine/notifications';
-import { fetchListBookingByRoomInWeek } from '../../redux/features/room-booking/thunk/fetch-list-booking-by-room-in-week.thunk';
 import { fetchRoomFreeAtTime } from '../../redux/features/room-booking/thunk/fetch-room-free-at-time';
 import { fetchRoomFreeAtMultiDay } from '../../redux/features/room-booking/thunk/fetch-room-free-in-multi-day';
-import { FPT_ORANGE_COLOR } from '@app/constants';
 import { getRoomById } from '../../redux/features/room/thunk/get-room-by-id';
 
 interface ChooseSlotModalProps {
@@ -108,21 +98,26 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
             />
           </InputWrapper>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 10}}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            paddingBottom: 10,
+          }}
+        >
           All room free at{' '}
           {dayjs(props.formik.values.checkinDate).format('DD-MM-YYYY')}
           {props.formik.values.checkoutDate
-            ? ' -> ' + dayjs(props.formik.values.checkoutDate).format('DD-MM-YYYY')
+            ? ' -> ' +
+              dayjs(props.formik.values.checkoutDate).format('DD-MM-YYYY')
             : null}
           {', '}
           {props.slotInName === props.slotOutName
             ? props.slotInName
             : props.slotInName + ' -> ' + props.slotOutName}
-          {/* {props.slotInName}{' --> '}
-          {props.slotOutName} */}
         </div>
-        <ScrollArea style={{ height: 300}}>
-          <div style={{ display: 'flex', flexDirection: "column"}}>
+        <ScrollArea style={{ height: 300 }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             {listRoom?.map((room) => {
               return (
                 <div
@@ -137,11 +132,11 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
                   <div
                     style={{
                       // textAlign: 'center',
-                      padding: "10px",
+                      padding: '10px',
                       // backgroundColor: '#fff',
                       borderRadius: '5px',
                       minHeight: 35,
-                      height: "100%",
+                      height: '100%',
                       color: '#000',
                     }}
                   >
@@ -155,7 +150,6 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
             })}
           </div>
         </ScrollArea>
-        
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -191,9 +185,9 @@ const useStyles = createStyles({
     borderRadius: 5,
     cursor: 'pointer',
     boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
-    "&:hover": {
-      backgroundColor: '#fff'
-    }
+    '&:hover': {
+      backgroundColor: '#fff',
+    },
   },
   roomChoosedDiv: {
     height: '100px',

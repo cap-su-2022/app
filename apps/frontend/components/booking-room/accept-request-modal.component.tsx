@@ -1,12 +1,12 @@
 import React from 'react';
-import { createStyles, Modal, Table, Text } from '@mantine/core';
+import { createStyles, Modal, Text } from '@mantine/core';
 import { BookingRequestParams } from '../../models/pagination-params/booking-room-params.model';
 import AcceptRequestComponent from './accept-request.component';
 
 interface AcceptRequestModalProps {
   isShown: boolean;
   toggleShown(): void;
-  toggleInforModalShown(): void;
+  toggleInfoModalShown(): void;
   pagination: BookingRequestParams;
 }
 const AcceptRequestModal: React.FC<AcceptRequestModalProps> = (props) => {
@@ -28,7 +28,7 @@ const AcceptRequestModal: React.FC<AcceptRequestModalProps> = (props) => {
       <AcceptRequestComponent
         isShown={props.isShown}
         toggleShown={props.toggleShown}
-        toggleInforModalShown={props.toggleInforModalShown}
+        toggleInforModalShown={props.toggleInfoModalShown}
         pagination={props.pagination}
       />
     </Modal>

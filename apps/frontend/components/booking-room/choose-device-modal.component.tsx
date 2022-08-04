@@ -78,11 +78,11 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
       });
     } else {
       if (deviceNames.length) {
-        for (let i = 0; i < deviceNames.length; i++) {
-          if (deviceNames[i].value === device) {
-            setChoosedDevice((choosedDevice) => [
-              ...choosedDevice,
-              { ...deviceNames[i], quantity: value },
+        for (const de of deviceNames) {
+          if (de.value === device) {
+            setChoosedDevice((devices) => [
+              ...devices,
+              { ...de, quantity: value },
             ]);
             setDevice('');
             setValue(0);
@@ -108,17 +108,17 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   };
 
   const remove = (item) => {
-    for (let i = 0; i < choosedDevice.length; i++) {
-      if (choosedDevice[i].value === item) {
+    for (const d of choosedDevice) {
+      if (d.value === item) {
         setDeviceNames((devicename) => [
           ...devicename,
-          { value: choosedDevice[i].value, label: choosedDevice[i].label },
+          { value: d.value, label: d.label },
         ]);
         break;
       }
     }
     const chooesdDeviceUpdated = choosedDevice.filter(
-      (device) => device.value !== item
+      (d) => d.value !== item
     );
     setChoosedDevice(chooesdDeviceUpdated);
   };

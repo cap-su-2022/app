@@ -10,17 +10,14 @@ import {
 import { Archive, Check, ScanEye, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { disableRoomById } from '../../redux/features/room/thunk/disable-room-by-id';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
-import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
-import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-request-by-room';
-import { disableDeviceById } from '../../redux/features/devices/thunk/disable-by-id';
-import { fetchDisabledDevices } from '../../redux/features/devices/thunk/fetch-disabled.thunk';
-import { fetchDevices } from '../../redux/features/devices/thunk/fetch-devices.thunk';
+import {
+  disableDeviceById,
+  fetchDisabledDevices,
+  fetchDevices,
+} from '../../redux/features/devices';
 import { fetchRequestByDeviceId } from '../../redux/features/room-booking/thunk/fetch-request-by-device';
 import { showNotification } from '@mantine/notifications';
 
@@ -39,44 +36,45 @@ const DisableDeviceModal: React.FC<DisableDeviceModalProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const handleDisableSelectedDevice = () => {
-    if (listRequest.length > 0) {
-      showNotification({
-        id: 'delete-data',
-        color: 'red',
-        title: 'Error while delete device',
-        message: 'Chưa xử lý vụ delete device đã có người book',
-        icon: <X />,
-        autoClose: 3000,
+    // if (listRequest.length > 0) {
+    //   showNotification({
+    //     id: 'delete-data',
+    //     color: 'red',
+    //     title: 'Error while delete device',
+    //     message:
+    //       'There are already request in BOOKED state using this device. You cannot delete it.',
+    //     icon: <X />,
+    //     autoClose: 3000,
+    //   });
+    // } else {
+    dispatch(disableDeviceById(selectedDeviceId))
+      .catch((e) =>
+        showNotification({
+          id: 'delete-data',
+          color: 'red',
+          title: 'Error while delete device',
+          message: e.message ?? 'Failed to delete device',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'delete-data',
+          color: 'teal',
+          title: 'Device was deleted',
+          message: 'Device was successfully deleted',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
+      .then(() => {
+        props.toggleShown();
+        props.toggleInforModalShown();
+        dispatch(fetchDisabledDevices(''));
+        dispatch(fetchDevices(props.pagination));
       });
-    } else {
-      dispatch(disableDeviceById(selectedDeviceId))
-        .catch((e) =>
-          showNotification({
-            id: 'delete-data',
-            color: 'red',
-            title: 'Error while delete device',
-            message: e.message ?? 'Failed to delete device',
-            icon: <X />,
-            autoClose: 3000,
-          })
-        )
-        .then(() =>
-          showNotification({
-            id: 'delete-data',
-            color: 'teal',
-            title: 'Device was deleted',
-            message: 'Device was successfully deleted',
-            icon: <Check />,
-            autoClose: 3000,
-          })
-        )
-        .then(() => {
-          props.toggleShown();
-          props.toggleInforModalShown();
-          dispatch(fetchDisabledDevices(''));
-          dispatch(fetchDevices(props.pagination));
-        });
-    }
+    // }
   };
 
   useEffect(() => {
@@ -87,12 +85,21 @@ const DisableDeviceModal: React.FC<DisableDeviceModalProps> = (props) => {
     }
   }, [dispatch, selectedDeviceId]);
 
-  console.log('listRequest DEVICESSS:', listRequest);
+  const RenderStatus: React.FC<{ status: string }> = (_props) => {
+    switch (_props.status) {
+      case 'PENDING':
+        return <div className={classes.pendingDisplay}>Pending</div>;
+      case 'BOOKED':
+        return <div className={classes.bookedDisplay}>Booked</div>;
+      default:
+        return null;
+    }
+  };
 
   const ListRequestByDeviceId = () => {
     const rows =
       listRequest && listRequest.length > 0
-        ? listRequest.map((row, index) => (
+        ? listRequest.map((row) => (
             <tr key={row.id}>
               <td>{row.roomName}</td>
               <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
@@ -100,11 +107,7 @@ const DisableDeviceModal: React.FC<DisableDeviceModalProps> = (props) => {
               <td>{row.checkinSlot}</td>
               <td>{row.checkoutSlot}</td>
               <td>
-                {row.status === 'PENDING' ? (
-                  <div className={classes.pendingDisplay}>{row.status}</div>
-                ) : row.status === 'BOOKED' ? (
-                  <div className={classes.bookedDisplay}>{row.status}</div>
-                ) : null}
+                <RenderStatus status={row.status} />
               </td>
             </tr>
           ))
@@ -170,7 +173,11 @@ const DisableDeviceModal: React.FC<DisableDeviceModalProps> = (props) => {
       onClose={() => props.toggleShown()}
     >
       <div className={classes.modalContainer}>
-        <Text className={classes.modalBody}>Thay đổi thông báo này sau đi</Text>
+        <Text className={classes.modalBody}>
+          This device can still be restored after disabling. This device can
+          still be restored after being turned off. If there is already a
+          request to use this device, it will <b>continue to happen</b>.
+        </Text>
         <div className={classes.modalFooter}>
           {listRequest.length > 0 ? (
             <Button

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, createStyles } from '@mantine/core';
+import { Button } from '@mantine/core';
 import AdminLayout from '../../components/layout/admin.layout';
 import Header from '../../components/common/header.component';
 import {
   ArchiveOff,
   BuildingWarehouse,
   Check,
-  InfoCircle,
   Plus,
   X,
 } from 'tabler-icons-react';
@@ -15,7 +14,6 @@ import {
   fetchDeviceTypes,
   fetchDeviceTypeById,
   updateDeviceTypeById,
-  deleteDeviceTypeById,
   addDeviceType,
 } from '../../redux/features/device-type';
 import {
@@ -24,23 +22,23 @@ import {
 } from '../../models/pagination-params.model';
 import { useDebouncedValue } from '@mantine/hooks';
 import TableHeader from '../../components/actions/table-header.component';
-import { TableBody } from '../../components/actions/table-body.component';
+import { TableBody } from '../actions/table-body.component';
 import TableFooter from '../../components/actions/table-footer.component';
 import * as Yup from 'yup';
 import AddModal from '../../components/actions/modal/add-modal.component';
 import { FormikValues, useFormik } from 'formik';
-import { InputAddProps } from '../../components/actions/models/input-add-props.model';
-import { InputTypes } from '../../components/actions/models/input-type.constant';
+import { InputAddProps } from '../actions/models/input-add-props.model';
+import { InputTypes } from '../actions/models/input-type.constant';
 import InfoModal from '../../components/actions/modal/info-modal.component';
 import UpdateModal from '../../components/actions/modal/update-modal.component';
-import { InputUpdateProps } from '../../components/actions/models/input-update-props.model';
+import { InputUpdateProps } from '../actions/models/input-update-props.model';
 import RestoreDeletedModal from '../../components/device-type/restore-deleted.modal.component';
 import DeleteModal from '../device-type/delete-modal.component';
 import { showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
 import { fetchDeviceTypeNames } from '../../redux/features/device-type/thunk/fetch-device-type-names.thunk';
 import NoDataFound from '../no-data-found';
-import { fetchDevicesByDeviceType } from '../../redux/features/devices/thunk/fetch-devices-by-device-type';
+import { fetchDevicesByDeviceType } from '../../redux/features/devices';
 
 const AddDeviceTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -66,7 +64,6 @@ const UpdateDeviceTypeValidation = Yup.object().shape({
 });
 
 const ManageDeviceType: React.FC<any> = () => {
-  const styles = useStyles();
   const deviceTypes = useAppSelector((state) => state.deviceType.deviceTypes);
   const [pagination, setPagination] = useState<PaginationParams>(
     defaultPaginationParams
@@ -189,21 +186,21 @@ const ManageDeviceType: React.FC<any> = () => {
   };
 
   const handleActionsCb = {
-    info: (id) => {
-      setId(id);
-      handleFetchById(id)
+    info: (_id: string) => {
+      setId(_id);
+      handleFetchById(_id)
         .unwrap()
         .then(() => setInfoShown(!isInfoShown));
     },
-    update: (id) => {
-      setId(id);
-      handleFetchById(id)
+    update: (_id: string) => {
+      setId(_id);
+      handleFetchById(_id)
         .unwrap()
         .then(() => setUpdateShown(!isUpdateShown));
     },
-    delete: (id) => {
-      setId(id);
-      handleFetchById(id)
+    delete: (_id: string) => {
+      setId(_id);
+      handleFetchById(_id)
         .unwrap()
         .then(() => setDeleteShown(!isDeleteShown));
     },
@@ -335,7 +332,7 @@ const ManageDeviceType: React.FC<any> = () => {
           autoClose: 3000,
         })
       )
-      .then((e) => handleAddModalClose())
+      .then(() => handleAddModalClose())
       .catch((e) => {
         showNotification({
           id: 'Add-device-type',
@@ -367,7 +364,7 @@ const ManageDeviceType: React.FC<any> = () => {
           autoClose: 3000,
         })
       )
-      .then((e) => handleUpdateModalClose())
+      .then(() => handleUpdateModalClose())
       .catch((e) => {
         showNotification({
           id: 'Update-device-type',
@@ -483,11 +480,5 @@ const ManageDeviceType: React.FC<any> = () => {
     </AdminLayout>
   );
 };
-
-const useStyles = createStyles((theme) => {
-  return {
-    container: {},
-  };
-});
 
 export default ManageDeviceType;

@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Button,
-  createStyles,
-  Modal,
-  Text,
-  Textarea,
-  TextInput,
-} from '@mantine/core';
+import { Button, createStyles, Modal, Text, Textarea } from '@mantine/core';
 import { Archive, Check, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';

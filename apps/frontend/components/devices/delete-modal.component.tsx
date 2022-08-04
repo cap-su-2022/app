@@ -4,7 +4,6 @@ import {
   createStyles,
   Modal,
   ScrollArea,
-  Select,
   Table,
   Text,
 } from '@mantine/core';
@@ -14,9 +13,11 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
-import { deleteDeviceById } from '../../redux/features/devices/thunk/delete-by-id';
-import { fetchDevices } from '../../redux/features/devices/thunk/fetch-devices.thunk';
-import { fetchDeletedDevices } from '../../redux/features/devices/thunk/fetch-deleted.thunk';
+import {
+  deleteDeviceById,
+  fetchDevices,
+  fetchDeletedDevices,
+} from '../../redux/features/devices';
 import { fetchRequestByDeviceId } from '../../redux/features/room-booking/thunk/fetch-request-by-device';
 import { showNotification } from '@mantine/notifications';
 
@@ -31,37 +32,49 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
   const selectedDeviceId = useAppSelector((state) => state.device.device.id);
   const [listRequest, setListRequest] = useState([]);
   const [isShownListRequest, setShownListRequest] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   const dispatch = useAppDispatch();
 
   const handleDeleteDevice = () => {
-    dispatch(deleteDeviceById(selectedDeviceId))
-      .catch((e) =>
-        showNotification({
-          id: 'delete-data',
-          color: 'red',
-          title: 'Error while delete device',
-          message: e.message ?? 'Failed to delete device',
-          icon: <X />,
-          autoClose: 3000,
-        })
-      )
-      .then(() =>
-        showNotification({
-          id: 'delete-data',
-          color: 'teal',
-          title: 'Device was deleted',
-          message: 'Device was successfully deleted',
-          icon: <Check />,
-          autoClose: 3000,
-        })
-      )
-      .then(() => {
-        props.toggleShown();
-        dispatch(fetchDevices(props.pagination));
-        dispatch(fetchDeletedDevices(''));
+    if (listRequest.length > 0) {
+      showNotification({
+        id: 'delete-data',
+        color: 'red',
+        title: 'Error while delete device',
+        message:
+          'There are already request in BOOKED state using this device. You cannot delete it.',
+        icon: <X />,
+        autoClose: 3000,
       });
+    } else {
+      dispatch(deleteDeviceById(selectedDeviceId))
+        .unwrap()
+        .catch((e) =>
+          showNotification({
+            id: 'delete-data',
+            color: 'red',
+            title: 'Error while delete device',
+            message: e.message ?? 'Failed to delete device',
+            icon: <X />,
+            autoClose: 3000,
+          })
+        )
+        .then(() =>
+          showNotification({
+            id: 'delete-data',
+            color: 'teal',
+            title: 'Device was deleted',
+            message: 'Device was successfully deleted',
+            icon: <Check />,
+            autoClose: 3000,
+          })
+        )
+        .then(() => {
+          props.toggleShown();
+          dispatch(fetchDevices(props.pagination));
+          dispatch(fetchDeletedDevices(''));
+        });
+    }
   };
 
   useEffect(() => {
@@ -78,10 +91,21 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
     }
   }, [props.isShown]);
 
+  const RenderStatus: React.FC<{ status: string }> = (_props) => {
+    switch (_props.status) {
+      case 'PENDING':
+        return <div className={classes.pendingDisplay}>Pending</div>;
+      case 'BOOKED':
+        return <div className={classes.bookedDisplay}>Booked</div>;
+      default:
+        return null;
+    }
+  };
+
   const ListRequestByDeviceId = () => {
     const rows =
       listRequest && listRequest.length > 0
-        ? listRequest.map((row, index) => (
+        ? listRequest.map((row) => (
             <tr key={row.id}>
               <td>{row.roomName}</td>
               <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
@@ -89,11 +113,7 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
               <td>{row.checkinSlot}</td>
               <td>{row.checkoutSlot}</td>
               <td>
-                {row.status === 'PENDING' ? (
-                  <div className={classes.pendingDisplay}>{row.status}</div>
-                ) : row.status === 'BOOKED' ? (
-                  <div className={classes.bookedDisplay}>{row.status}</div>
-                ) : null}
+                <RenderStatus status={row.status} />
               </td>
             </tr>
           ))
@@ -105,9 +125,7 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
           verticalSpacing="xs"
           sx={{ tableLayout: 'fixed' }}
         >
-          <thead
-            className={cx(classes.header, { [classes.scrolled]: scrolled })}
-          >
+          <thead className={cx(classes.header, [classes.scrolled])}>
             <tr>
               <Th sorted={null} reversed={null} onSort={null}>
                 Name
@@ -162,9 +180,10 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          Once deleted, this device will <b>not be able to restore</b>. If there is a
-          booking request that will use this device, the delete action will not
-          be possible. Please cancel booking requests then delete this device.{' '}
+          Once deleted, this device will <b>not be able to restore</b>. If there
+          is a booking request that will use this device, the delete action will
+          not be possible. Please cancel booking requests then delete this
+          device.{' '}
         </Text>
         <div className={classes.modalFooter}>
           {listRequest.length > 0 ? (

@@ -1,23 +1,7 @@
-import React, { CSSProperties, useState } from 'react';
-import {
-  createStyles,
-  Table,
-  UnstyledButton,
-  Group,
-  Text,
-  Center,
-  Button,
-} from '@mantine/core';
-import {
-  Selector,
-  ChevronDown,
-  ChevronUp,
-  InfoCircle,
-  Pencil,
-  Trash,
-} from 'tabler-icons-react';
+import React, { useState } from 'react';
+import { createStyles, Table, Button } from '@mantine/core';
+import { InfoCircle } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
-import moment from 'moment';
 import Th from '../../components/table/th.table.component';
 import dayjs from 'dayjs';
 
@@ -26,37 +10,6 @@ interface RowData {
   requested_at: string;
   checkin_date: string;
 }
-
-// interface ThProps {
-//   children: React.ReactNode;
-//   reversed: boolean;
-//   sorted: boolean;
-//   style?: CSSProperties;
-//   onSort(): void;
-// }
-
-// function Th({ style, children, reversed, sorted, onSort }: ThProps) {
-//   const { classes } = useStyles();
-//   const Icon = sorted ? (reversed ? ChevronUp : ChevronDown) : Selector;
-//   return (
-//     <th style={style} className={classes.th}>
-//       {onSort === null ? (
-//         <div className={classes.control}>{children}</div>
-//       ) : (
-//         <UnstyledButton onClick={onSort} className={classes.control}>
-//           <Group position="apart">
-//             <Text weight={500} size="sm">
-//               {children}
-//             </Text>
-//             <Center className={classes.icon}>
-//               <Icon size={14} />
-//             </Center>
-//           </Group>
-//         </UnstyledButton>
-//       )}
-//     </th>
-//   );
-// }
 
 interface TableBodyProps {
   data: any[];
@@ -67,7 +20,7 @@ interface TableBodyProps {
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
-  const [sortBy, setSortBy] = useState<keyof RowData>(null);
+  const [sortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
   const { classes } = useStyles();
@@ -75,6 +28,23 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
     props.toggleSortDirection(field);
+  };
+
+  const RenderStatus: React.FC<{ status: string }> = (_props) => {
+    switch (_props.status) {
+      case 'PENDING':
+        return <div className={classes.pendingDisplay}>Pending</div>;
+      case 'BOOKED':
+        return <div className={classes.bookedDisplay}>Booked</div>;
+      case 'CHECKED_OUT':
+        return <div className={classes.checkedOutDisplay}>Checked out</div>;
+      case 'CHECKED_IN':
+        return <div className={classes.checkedInDisplay}>Checked in</div>;
+      case 'CANCELLED':
+        return <div className={classes.canceledDisplay}>Cancelled</div>;
+      default:
+        return null;
+    }
   };
 
   const rows = props.data.map((row, index) => (
@@ -89,17 +59,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
       <td>{dayjs(row.checkinDate).format('ddd DD-MM-YYYY')}</td>
       <td>{row.requestedBy}</td>
       <td>
-        {row.status === 'PENDING' ? (
-          <div className={classes.pendingDisplay}>{row.status}</div>
-        ) : row.status === 'BOOKED' ? (
-          <div className={classes.bookedDisplay}>{row.status}</div>
-        ) : row.status === 'CHECKED_OUT' ? (
-          <div className={classes.checkedOutDisplay}>{row.status}</div>
-        ) : row.status === 'CHECKED_IN' ? (
-          <div className={classes.checkedInDisplay}>{row.status}</div>
-        ) : row.status === 'CANCELLED' ? (
-          <div className={classes.canceledDisplay}>{row.status}</div>
-        ) : null}
+        <RenderStatus status={row.status} />
       </td>
       <td className={classes.actionButtonContainer}>
         <Button
@@ -155,11 +115,21 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             Checkin Date
           </Th>
 
-          <Th sorted={null} reversed={null} onSort={null} style={{width: 120}}>
+          <Th
+            sorted={null}
+            reversed={null}
+            onSort={null}
+            style={{ width: 120 }}
+          >
             Request by
           </Th>
 
-          <Th sorted={null} reversed={reverseSortDirection} onSort={null} style={{width: 120}}>
+          <Th
+            sorted={null}
+            reversed={reverseSortDirection}
+            onSort={null}
+            style={{ width: 120 }}
+          >
             Status
           </Th>
 

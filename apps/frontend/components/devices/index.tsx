@@ -54,8 +54,7 @@ const defaultPagination = {
   dir: 'ASC',
 };
 
-function DevicesManagement(props: any) {
-  const { classes } = useStyles();
+function DevicesManagement() {
   const devices = useAppSelector((state) => state.device.devices);
   const [deviceTypeNames, setDeviceTypeNames] = useState([]);
   const [pagination, setPagination] = useState<PagingParams>(defaultPagination);
@@ -119,7 +118,6 @@ function DevicesManagement(props: any) {
     return dispatch(fetchDeviceById(idVal));
   };
 
-  const [id, setId] = useState<string>('');
   const [isInfoShown, setInfoShown] = useState<boolean>(false);
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
@@ -167,19 +165,16 @@ function DevicesManagement(props: any) {
 
   const handleActionsCb = {
     info: (id) => {
-      setId(id);
       handleFetchById(id)
         .unwrap()
         .then(() => setInfoShown(!isInfoShown));
     },
     update: (id) => {
-      setId(id);
       handleFetchById(id)
         .unwrap()
         .then(() => setUpdateShown(!isUpdateShown));
     },
     delete: (id) => {
-      setId(id);
       handleFetchById(id)
         .unwrap()
         .then(() => setDeleteShown(!isDeleteShown));
@@ -300,17 +295,6 @@ function DevicesManagement(props: any) {
     </>
   );
 }
-
-const useStyles = createStyles({
-  tableContainer: {
-    margin: 10,
-  },
-  table: {
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 10,
-  },
-});
 
 export default DevicesManagement;
 

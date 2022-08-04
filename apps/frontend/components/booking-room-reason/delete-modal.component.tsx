@@ -1,22 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  createStyles,
-  Modal,
-  Text,
-} from '@mantine/core';
-import {
-  Check,
-  Trash,
-  X,
-} from 'tabler-icons-react';
+import React from 'react';
+import { Button, createStyles, Modal, Text } from '@mantine/core';
+import { Check, Trash, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fetchDeletedBookingReasons,
   fetchBookingReasons,
+  deleteBookingReasonById,
 } from '../../redux/features/booking-reason';
-import { deleteBookingReasonById } from '../../redux/features/booking-reason';
 import { PaginationParams } from '../../models/pagination-params.model';
 import { showNotification } from '@mantine/notifications';
 
@@ -78,10 +69,10 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-         Are you sure to delete this booking reason? Deleting this reason does not affect to booking room process.
+          Are you sure to delete this booking reason? Deleting this reason does
+          not affect to booking room process.
         </Text>
         <div className={classes.modalFooter}>
-
           <Button
             color="red"
             leftIcon={<Trash />}
@@ -120,7 +111,7 @@ const useStyles = createStyles({
   },
   modalBody: {
     margin: 10,
-    textAlign: 'justify'
+    textAlign: 'justify',
   },
   modalFooter: {
     display: 'flex',

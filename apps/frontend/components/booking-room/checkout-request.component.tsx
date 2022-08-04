@@ -1,21 +1,11 @@
 import React from 'react';
-import {
-  Button,
-  createStyles,
-  Modal,
-  Text,
-  Textarea,
-  TextInput,
-} from '@mantine/core';
-import { Archive, Check, CircleCheck, X } from 'tabler-icons-react';
+import { Button, createStyles, Modal, Text } from '@mantine/core';
+import { Check, CircleCheck, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
 import { BookingRequestParams } from '../../models/pagination-params/booking-room-params.model';
 import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
 import { showNotification } from '@mantine/notifications';
-import { Form, FormikProvider, useFormik } from 'formik';
-import * as Yup from 'yup';
 import { acceptCheckoutRequest } from '../../redux/features/room-booking/thunk/accept-checkout-request';
 
 interface CheckoutRequestModalProps {

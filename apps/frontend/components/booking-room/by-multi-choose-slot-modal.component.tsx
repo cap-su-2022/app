@@ -124,34 +124,19 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
       const currTime = dayjs(curr).format('HH:mm:ss');
       const choosedDay = new Date(props.formik.values.checkinDate).getDate();
 
-      const result = slotInfors?.map((slot, indexSlot) => {
+      const result = slotInfors?.map((slot) => {
         let isFree = true;
-        let isOverSlot = false;
 
         if (choosedDay === curr.getDate() && currTime > slot.timeStart) {
           isFree = false;
         }
 
-        if (choosedDay === curr.getDate() - curr.getDay() + 6) {
-          if (indexSlot > 2) {
-            isOverSlot = true;
-          }
-        }
-
-        if (!isOverSlot) {
-          if (isFree) {
-            return {
-              value: slot.id,
-              label: slot.name,
-              disabled: false,
-            };
-          } else {
-            return {
-              value: slot.id,
-              label: slot.name,
-              disabled: true,
-            };
-          }
+        if (isFree) {
+          return {
+            value: slot.id,
+            label: slot.name,
+            disabled: false,
+          };
         } else {
           return {
             value: slot.id,
