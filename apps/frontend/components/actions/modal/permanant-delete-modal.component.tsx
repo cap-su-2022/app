@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Button, createStyles, Modal, Text } from '@mantine/core';
-import { Check, Trash, X } from 'tabler-icons-react';
+import { Trash, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 
 interface PermanentDeleteModalProps {
@@ -28,7 +28,7 @@ const PermanentDeleteModal: React.FC<PermanentDeleteModalProps> = (props) => {
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
           Once permanently deleted, you will not be able to recover in any way.
-          Make sure you still want to continue deleting!!! 
+          Make sure you still want to continue deleting!!!
         </Text>
         <div className={classes.modalFooter}>
           <Button

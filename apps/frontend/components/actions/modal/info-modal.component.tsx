@@ -1,22 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import {
-  Button,
-  createStyles,
-  InputWrapper,
-  Modal,
-  TextInput,
-} from '@mantine/core';
-import {
-  CalendarStats,
-  ClipboardText,
-  FileDescription,
-  Id,
-  User,
-  X,
-} from 'tabler-icons-react';
+import React from 'react';
+import { createStyles, Modal } from '@mantine/core';
 import { InputInfoProps } from '../models/input-info-props.model';
-import InputType from '../common/input-type.component';
-import autoAnimate from '@formkit/auto-animate';
 import InfoComponent from './info-component.component';
 
 interface InfoModalProps {

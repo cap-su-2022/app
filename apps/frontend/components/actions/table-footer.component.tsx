@@ -1,9 +1,7 @@
 import React from 'react';
 import { usePagination } from '@mantine/hooks';
-import { Button, createStyles, Pagination, Select } from '@mantine/core';
+import { createStyles, Pagination, Select } from '@mantine/core';
 import { PaginationMeta } from '../../models/pagination-meta.model';
-import { RotateClockwise } from 'tabler-icons-react';
-import { FPT_ORANGE_COLOR } from '@app/constants';
 
 const limitPaginationData = [
   {

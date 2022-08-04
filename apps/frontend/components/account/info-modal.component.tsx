@@ -1,18 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   createStyles,
-  InputWrapper,
   Modal,
   Text,
   Textarea,
   TextInput,
-  useMantineTheme,
 } from '@mantine/core';
-import {useWindowDimensions} from '../../hooks/use-window-dimensions';
 import {
   Archive,
-  CalendarStats,
   ClipboardText,
   Clock,
   FileDescription,
@@ -20,12 +16,8 @@ import {
   User,
   X,
 } from 'tabler-icons-react';
-import {convertDateToLocalDateString} from '../../utils/date.util';
-import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import { useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
-
-
-
 
 interface InfoModalProps {
   isShown: boolean;
@@ -36,14 +28,12 @@ interface InfoModalProps {
 }
 
 const InfoModal: React.FC<InfoModalProps> = (props) => {
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   const user = useAppSelector((state) => state.account.account);
-  const dispatch = useAppDispatch();
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
-  }, [])
-
+  }, []);
 
   const ModalHeaderTitle: React.FC = () => {
     return (
@@ -54,7 +44,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
   return (
     <>
       <Modal
-        title={<ModalHeaderTitle/>}
+        title={<ModalHeaderTitle />}
         size={'50%'}
         centered
         opened={props.isShown}
@@ -62,7 +52,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
       >
         <div className={classes.modalBody}>
           <TextInput
-            icon={<Id/>}
+            icon={<Id />}
             className={classes.textInput}
             radius="md"
             label="Account ID"
@@ -71,7 +61,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
           />
           <div className={classes.displayGrid}>
             <TextInput
-              icon={<ClipboardText/>}
+              icon={<ClipboardText />}
               className={classes.textInput}
               radius="md"
               label="Username"
@@ -79,7 +69,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
               value={user.username}
             />
             <TextInput
-              icon={<ClipboardText/>}
+              icon={<ClipboardText />}
               className={classes.textInput}
               radius="md"
               label="Fullname"
@@ -87,7 +77,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
               value={user.fullname}
             />
             <TextInput
-              icon={<ClipboardText/>}
+              icon={<ClipboardText />}
               className={classes.textInput}
               radius="md"
               label="Email"
@@ -95,7 +85,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
               value={user.email}
             />
             <TextInput
-              icon={<ClipboardText/>}
+              icon={<ClipboardText />}
               className={classes.textInput}
               radius="md"
               label="Phone"
@@ -105,7 +95,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
           </div>
 
           <TextInput
-            icon={<ClipboardText/>}
+            icon={<ClipboardText />}
             className={classes.textInput}
             radius="md"
             label="Role"
@@ -113,7 +103,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             value={user.role}
           />
           <Textarea
-            icon={<FileDescription/>}
+            icon={<FileDescription />}
             className={classes.textInput}
             radius="md"
             label="Description"
@@ -123,7 +113,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
           <div className={classes.displayGrid}>
             <TextInput
               id="createdAt"
-              icon={<Clock/>}
+              icon={<Clock />}
               className={classes.textInput}
               radius="md"
               label="Created At"
@@ -133,7 +123,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             <TextInput
               id="updatedAt"
               label="Updated At"
-              icon={<Clock/>}
+              icon={<Clock />}
               className={classes.textInput}
               radius="md"
               readOnly
@@ -142,7 +132,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
 
             <TextInput
               id="createdBy"
-              icon={<User/>}
+              icon={<User />}
               className={classes.textInput}
               radius="md"
               label="Created By"
@@ -152,7 +142,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             <TextInput
               id="updatedBy"
               label="Updated By"
-              icon={<User/>}
+              icon={<User />}
               className={classes.textInput}
               radius="md"
               readOnly
@@ -162,17 +152,17 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
         </div>
 
         <div className={classes.modalFooter}>
-          {userInfo.id !== user.id ?
+          {userInfo.id !== user.id ? (
             <Button
               onClick={() => props.toggleDisableModalShown()}
               variant="outline"
               color={'red'}
-              leftIcon={<Archive/>}
+              leftIcon={<Archive />}
             >
               Disable this account
-            </Button> : null
-          }
-          <Button onClick={() => props.toggleShown()} leftIcon={<X/>}>
+            </Button>
+          ) : null}
+          <Button onClick={() => props.toggleShown()} leftIcon={<X />}>
             Close
           </Button>
         </div>

@@ -31,7 +31,6 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const selectedAccountId = useAppSelector((state) => state.account.account.id);
   const [listRequest, setListRequest] = useState([]);
   const [isShownListRequest, setShownListRequest] = useState(false);
-  // const [scrolled, setScrolled] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -125,17 +124,6 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
               <Th sorted={null} reversed={null} onSort={null}>
                 Time end
               </Th>
-
-              {/* <Th
-              style={{
-                width: '100px',
-              }}
-              sorted={null}
-              reversed={null}
-              onSort={null}
-            >
-              Actions
-            </Th> */}
             </tr>
           </thead>
           <tbody>{rows}</tbody>

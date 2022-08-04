@@ -1,21 +1,10 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   createStyles,
   Table,
-  ScrollArea,
-  UnstyledButton,
-  Group,
-  Text,
-  Center,
-  TextInput,
   Button,
-  Image,
-  InputWrapper,
 } from '@mantine/core';
 import {
-  Selector,
-  ChevronDown,
-  ChevronUp,
   InfoCircle,
   Pencil,
   Trash,
@@ -36,7 +25,7 @@ interface TableBodyProps {
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
-  const [sortBy, setSortBy] = useState<keyof RowData>(null);
+  const [sortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
   const { classes } = useStyles();

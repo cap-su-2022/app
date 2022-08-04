@@ -72,8 +72,8 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
       .then(() =>
         dispatch(fetchDisabledAccounts(search))
           .unwrap()
-          .then((disabledAccounts) =>
-            disabledAccounts.length < 1 ? props.toggleShown() : null
+          .then((listDisabledAccount) =>
+          listDisabledAccount.length < 1 ? props.toggleShown() : null
           )
       );
   };
@@ -105,8 +105,8 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
       .then(() =>
         dispatch(fetchDisabledAccounts(search))
           .unwrap()
-          .then((disabledAccounts) =>
-            disabledAccounts.length < 1 ? props.toggleShown() : null
+          .then((listDisabledAccount) =>
+          listDisabledAccount.length < 1 ? props.toggleShown() : null
           )
           .then(() => {
             dispatch(fetchDeletedAccounts(''));

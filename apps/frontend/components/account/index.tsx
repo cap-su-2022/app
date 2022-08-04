@@ -1,6 +1,6 @@
-import {GetServerSideProps} from 'next';
+import { GetServerSideProps } from 'next';
 import AdminLayout from '../layout/admin.layout';
-import {Button, createStyles, ScrollArea, Table} from '@mantine/core';
+import { Button } from '@mantine/core';
 import {
   ArchiveOff,
   BuildingWarehouse,
@@ -8,38 +8,28 @@ import {
   PencilOff,
   Plus,
 } from 'tabler-icons-react';
-import React, {useEffect, useReducer, useState} from 'react';
-import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {useDebouncedValue} from '@mantine/hooks';
-import {getRoomById} from '../../redux/features/room/thunk/get-room-by-id';
+import React, { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useDebouncedValue } from '@mantine/hooks';
 import NoDataFound from '../no-data-found';
 import TableHeader from '../actions/table-header.component';
-import {TableBody} from './table-body.component';
+import { TableBody } from './table-body.component';
 import TableFooter from '../actions/table-footer.component';
 import DisableModal from './disable-modal.component';
-import DeleteRoomModal from '../rooms/delete-modal.component';
-import AddRoomModal from '../rooms/add-modal.component';
-import DownloadModal from '../rooms/download-modal.compnent';
-import RestoreDisabledRoomModal from '../rooms/restore-disabled.modal.component';
-import RestoreDeletedRoomModal from '../rooms/restore-deleted.modal.component';
-import {PagingParams} from '../../models/pagination-params/paging-params.model';
-import {FormikValues, useFormik} from 'formik';
+import { PagingParams } from '../../models/pagination-params/paging-params.model';
+import { FormikValues, useFormik } from 'formik';
 import Header from '../common/header.component';
-import {fetchRoleNames} from '../../redux/features/role';
+import { fetchRoleNames } from '../../redux/features/role';
 import * as Yup from 'yup';
-import dayjs from 'dayjs';
-import {RoomType} from '../../models/room-type.model';
-import {PaginationResponse} from '../../models/pagination-response.payload';
-import {fetchAccounts} from '../../redux/features/account/thunk/fetch-accounts.thunk';
+import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 import InfoModal from './info-modal.component';
-import {fetchAccountById} from '../../redux/features/account/thunk/fetch-by-id.thunk';
+import { fetchAccountById } from '../../redux/features/account/thunk/fetch-by-id.thunk';
 import RestoreDisabledModal from './restore-disabled.modal.component';
 import AccountUpdateModal from './update-modal.component';
-import {updateAccountById} from '../../redux/features/account/thunk/update-account-by-id';
+import { updateAccountById } from '../../redux/features/account/thunk/update-account-by-id';
 import AddAccountModal from './add-modal.component';
 import RestoreDeletedModal from './restore-deleted.modal.component';
 import DeleteModal from './delete-modal.component';
-
 
 const UpdateAccountValidation = Yup.object().shape({
   name: Yup.string()
@@ -60,8 +50,7 @@ const defaultPagination = {
   dir: 'ASC',
 };
 
-function AccountsManagement(props: any) {
-  const {classes} = useStyles();
+function AccountsManagement() {
   const accounts = useAppSelector((state) => state.account.accounts);
   const [roleNames, setRoleNames] = useState([]);
   const [pagination, setPagination] = useState<PagingParams>(defaultPagination);
@@ -125,7 +114,6 @@ function AccountsManagement(props: any) {
     return dispatch(fetchAccountById(idVal));
   };
 
-  const [id, setId] = useState<string>('id');
   const [isInfoShown, setInfoShown] = useState<boolean>(false);
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
@@ -141,10 +129,10 @@ function AccountsManagement(props: any) {
     return (
       <>
         <Button
-          leftIcon={<Plus/>}
+          leftIcon={<Plus />}
           color="green"
           onClick={() => setAddShown(true)}
-          style={{marginRight: 10}}
+          style={{ marginRight: 10 }}
         >
           Add
         </Button>
@@ -152,20 +140,20 @@ function AccountsManagement(props: any) {
           variant="outline"
           color="red"
           onClick={() => setRestoreDisabledShown(true)}
-          style={{marginRight: 10}}
+          style={{ marginRight: 10 }}
         >
-          <PencilOff color={'red'}/>
+          <PencilOff color={'red'} />
         </Button>
         <Button
           variant="outline"
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
-          style={{marginRight: 10}}
+          style={{ marginRight: 10 }}
         >
-          <ArchiveOff/>
+          <ArchiveOff />
         </Button>
         <Button variant="outline" color="violet">
-          <Download/>
+          <Download />
         </Button>
       </>
     );
@@ -173,19 +161,16 @@ function AccountsManagement(props: any) {
 
   const handleActionsCb = {
     info: (id) => {
-      setId(id);
       handleFetchById(id)
         .unwrap()
         .then(() => setInfoShown(!isInfoShown));
     },
     update: (id) => {
-      setId(id);
       handleFetchById(id)
         .unwrap()
         .then(() => setUpdateShown(!isUpdateShown));
     },
     delete: (id) => {
-      setId(id);
       handleFetchById(id)
         .unwrap()
         .then(() => setDeleteShown(!isDeleteShown));
@@ -204,7 +189,7 @@ function AccountsManagement(props: any) {
       })
     )
       .unwrap()
-      .then((e) => handleUpdateModalClose());
+      .then(() => handleUpdateModalClose());
   };
 
   const updateFormik = useFormik({
@@ -228,12 +213,12 @@ function AccountsManagement(props: any) {
       <AdminLayout>
         <Header
           title="Accounts Management"
-          icon={<BuildingWarehouse size={50}/>}
+          icon={<BuildingWarehouse size={50} />}
         />
         <TableHeader
           actionsLeft={null}
           handleResetFilter={() => handleResetFilter()}
-          actions={<ActionsFilter/>}
+          actions={<ActionsFilter />}
           setSearch={(val) => handleSearchValue(val)}
           search={pagination.search}
         />
@@ -259,8 +244,6 @@ function AccountsManagement(props: any) {
               itemsPerPage={pagination.limit}
             />
             <InfoModal
-              // header="Room Information"
-              // fields={infoFields}
               toggleShown={() => setInfoShown(!isInfoShown)}
               isShown={isInfoShown}
               toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
@@ -287,7 +270,7 @@ function AccountsManagement(props: any) {
             />
           </>
         ) : (
-          <NoDataFound/>
+          <NoDataFound />
         )}
 
         <AddAccountModal
@@ -308,20 +291,9 @@ function AccountsManagement(props: any) {
   );
 }
 
-const useStyles = createStyles({
-  tableContainer: {
-    margin: 10,
-  },
-  table: {
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 10,
-  },
-});
-
 export default AccountsManagement;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   return {
     props: {
       assa: null,

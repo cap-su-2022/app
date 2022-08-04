@@ -1,8 +1,5 @@
 import React from 'react';
-import { Button, createStyles, Drawer } from '@mantine/core';
-import { useAppDispatch } from '../../../redux/hooks';
-import { DatePicker } from '@mantine/dates';
-import { X } from 'tabler-icons-react';
+import {  createStyles, Drawer } from '@mantine/core';
 
 interface FilterProps {
   isShown: boolean;
@@ -11,7 +8,6 @@ interface FilterProps {
 
 const Filter: React.FC<FilterProps> = (props) => {
   const { classes } = useStyles();
-  const dispatch = useAppDispatch();
 
   return (
     <Drawer
@@ -30,7 +26,7 @@ const Filter: React.FC<FilterProps> = (props) => {
   );
 };
 
-const useStyles = createStyles((theme) => {
+const useStyles = createStyles(() => {
   return {
     container: {
       display: 'flex',
