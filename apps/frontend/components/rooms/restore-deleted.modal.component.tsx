@@ -124,7 +124,7 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
           icon={<Search/>}
         />
       </InputWrapper>
-      {deletedRooms.length > 0 ? (
+      {deletedRooms?.length > 0 ? (
         <>
           <ScrollArea
             sx={{height: 500}}

@@ -25,8 +25,6 @@ import { deleteRoomTypeById } from '../../redux/features/room-type/';
 import { PaginationParams } from '../../models/pagination-params.model';
 import Th from '../../components/table/th.table.component';
 import { fetchRoomsByRoomType } from '../../redux/features/room/thunk/fetch-rooms-by-room-type';
-import { Formik, Field, Form } from 'formik';
-import { Room } from '../../models/room.model';
 import { showNotification } from '@mantine/notifications';
 import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
 

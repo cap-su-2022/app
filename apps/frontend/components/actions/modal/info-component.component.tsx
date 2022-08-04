@@ -40,6 +40,23 @@ const InfoComponent: React.FC<InfoComponentProps> = (props) => {
         ))
       : null;
 
+  const RenderIcon: React.FC<{field: string}> = (props) => {
+    switch (props.field) {
+      case 'id':
+        return <Id />;
+      case 'name':
+        return <ClipboardText />;
+      case 'description':
+        return <FileDescription />;
+      case 'createAt' || 'updateAt':
+        return <CalendarStats />;
+      case 'createBy' || 'updateBy':
+        return <User />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div style={{ display: 'flex' }} ref={parent}>
       <div className={classes.body}>
@@ -54,19 +71,7 @@ const InfoComponent: React.FC<InfoComponentProps> = (props) => {
                 id={field.id}
                 name={field.name}
                 inputtype={field.inputtype}
-                icon={
-                  field.id === 'id' ? (
-                    <Id />
-                  ) : field.id === 'name' ? (
-                    <ClipboardText />
-                  ) : field.id === 'description' ? (
-                    <FileDescription />
-                  ) : field.id === 'createAt' || field.id === 'updateAt' ? (
-                    <CalendarStats />
-                  ) : field.id === 'createBy' || field.id === 'updateBy' ? (
-                    <User />
-                  ) : null
-                }
+                icon={<RenderIcon field={field.id} />}
                 defaultValue={field.value}
                 readOnly={field.readOnly}
               />

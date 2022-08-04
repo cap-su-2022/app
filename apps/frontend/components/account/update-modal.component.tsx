@@ -10,7 +10,6 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core';
-import {useWindowDimensions} from '../../hooks/use-window-dimensions';
 import {
   Check,
   ClipboardText,
@@ -66,7 +65,6 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
   const [role, setRole] = useState<string>('');
 
   const dispatch = useAppDispatch();
-  const dimension = useWindowDimensions();
 
   useEffect(() => {
     setRole(account.roleId);
@@ -269,7 +267,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
             <div className={classes.modalFooter}>
               <Button
                 color="green"
-                // disabled={isUpdateDisabled}
+                disabled={isUpdateDisabled}
                 onClick={() => formik.submitForm()}
                 leftIcon={<Pencil/>}
               >

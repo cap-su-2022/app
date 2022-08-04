@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   createStyles,
@@ -7,22 +7,18 @@ import {
   Table,
   Text,
 } from '@mantine/core';
-import {Archive, Check, ScanEye, X} from 'tabler-icons-react';
-import {FPT_ORANGE_COLOR} from '@app/constants';
-import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {disableRoomById} from '../../redux/features/room/thunk/disable-room-by-id';
-import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
-import {PagingParams} from '../../models/pagination-params/paging-params.model';
-import {fetchDisabledRooms} from '../../redux/features/room/thunk/fetch-disabled-rooms';
-import {cancelBooking} from '../../redux/features/room-booking/thunk/cancel-booking';
+import { Archive, Check, ScanEye, X } from 'tabler-icons-react';
+import { FPT_ORANGE_COLOR } from '@app/constants';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { PagingParams } from '../../models/pagination-params/paging-params.model';
+import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
-import {fetchRequestByRoomId} from '../../redux/features/room-booking/thunk/fetch-request-by-room';
-import {fetchAccounts} from '../../redux/features/account/thunk/fetch-accounts.thunk';
-import {disableAccountById} from '../../redux/features/account/thunk/disable-by-id';
-import {fetchDisabledAccounts} from '../../redux/features/account/thunk/fetch-disabled.thunk';
-import {fetchRequestByAccountId} from '../../redux/features/room-booking/thunk/fetch-room-booking-by-account';
-import {showNotification} from "@mantine/notifications";
+import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
+import { disableAccountById } from '../../redux/features/account/thunk/disable-by-id';
+import { fetchDisabledAccounts } from '../../redux/features/account/thunk/fetch-disabled.thunk';
+import { fetchRequestByAccountId } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-account';
+import { showNotification } from '@mantine/notifications';
 
 interface DisableModalProps {
   isShown: boolean;
@@ -35,7 +31,7 @@ interface DisableModalProps {
 }
 
 const DisableModal: React.FC<DisableModalProps> = (props) => {
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   const selectedAccountId = useAppSelector((state) => state.account.account.id);
   const [listRequest, setListRequest] = useState([]);
   const [isShownListRequest, setShownListRequest] = useState(false);
@@ -44,32 +40,32 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
 
   const handleDisableSelectedAccount = () => {
     dispatch(disableAccountById(selectedAccountId))
-      .catch(
-        (e) =>
-          showNotification({
-              id: 'disable-data',
-              color: 'red',
-              title: 'Error while disable account',
-              message: e.message ?? 'Failed to disable account',
-              icon: <X/>,
-              autoClose: 3000,
-            }
-          )).then(() =>
-      showNotification({
-        id: 'restore-data',
-        color: 'teal',
-        title: 'This account was disabled',
-        message: 'This account was successfully disabled',
-        icon: <Check/>,
-        autoClose: 3000,
-      })
-    )
+      .catch((e) =>
+        showNotification({
+          id: 'disable-data',
+          color: 'red',
+          title: 'Error while disable account',
+          message: e.message ?? 'Failed to disable account',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'restore-data',
+          color: 'teal',
+          title: 'This account was disabled',
+          message: 'This account was successfully disabled',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
       .then(() => {
         props.toggleShown();
         props.toggleInforModalShown();
         dispatch(fetchDisabledAccounts(''));
         dispatch(fetchAccounts(props.pagination));
-        listRequest.map((request) => dispatch(cancelBooking(request.id)));
+        listRequest.forEach((request) => dispatch(cancelBooking(request.id)));
       });
   };
   useEffect(() => {
@@ -84,45 +80,45 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
     const rows =
       listRequest && listRequest.length > 0
         ? listRequest.map((row, index) => (
-          <tr key={row.id}>
-            <td>{index + 1}</td>
-            <td>{row.roomName}</td>
-            <td>{dayjs(row.timeCheckin).format('HH:mm DD/MM/YYYY')}</td>
-            <td>{dayjs(row.timeCheckout).format('HH:mm DD/MM/YYYY')}</td>
-          </tr>
-        ))
+            <tr key={row.id}>
+              <td>{index + 1}</td>
+              <td>{row.roomName}</td>
+              <td>{dayjs(row.timeCheckin).format('HH:mm DD/MM/YYYY')}</td>
+              <td>{dayjs(row.timeCheckout).format('HH:mm DD/MM/YYYY')}</td>
+            </tr>
+          ))
         : null;
     return listRequest && listRequest.length > 0 ? (
-      <ScrollArea sx={{height: 300}}>
+      <ScrollArea sx={{ height: 300 }}>
         <Table
           horizontalSpacing="md"
           verticalSpacing="xs"
-          sx={{tableLayout: 'fixed'}}
+          sx={{ tableLayout: 'fixed' }}
         >
           <thead className={classes.header}>
-          <tr>
-            <Th
-              style={{
-                width: '60px',
-              }}
-              sorted={null}
-              reversed={null}
-              onSort={null}
-            >
-              STT
-            </Th>
+            <tr>
+              <Th
+                style={{
+                  width: '60px',
+                }}
+                sorted={null}
+                reversed={null}
+                onSort={null}
+              >
+                STT
+              </Th>
 
-            <Th sorted={null} reversed={null} onSort={null}>
-              Room requested
-            </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Room requested
+              </Th>
 
-            <Th sorted={null} reversed={null} onSort={null}>
-              Time start
-            </Th>
-            <Th sorted={null} reversed={null} onSort={null}>
-              Time end
-            </Th>
-          </tr>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Time start
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Time end
+              </Th>
+            </tr>
           </thead>
           <tbody>{rows}</tbody>
         </Table>
@@ -149,7 +145,7 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
       closeOnClickOutside={true}
       centered
       zIndex={200}
-      title={<ModalHeaderTitle/>}
+      title={<ModalHeaderTitle />}
       size={isShownListRequest && listRequest.length > 0 ? '50%' : null}
       opened={props.isShown}
       onClose={() => props.toggleShown()}
@@ -162,8 +158,8 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
         <div className={classes.modalFooter}>
           {listRequest.length > 0 ? (
             <Button
-              leftIcon={<ScanEye/>}
-              style={{backgroundColor: 'blue', width: '60%', margin: 10}}
+              leftIcon={<ScanEye />}
+              style={{ backgroundColor: 'blue', width: '60%', margin: 10 }}
               onClick={() => setShownListRequest(!isShownListRequest)}
             >
               List request on this room
@@ -172,7 +168,7 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
 
           <Button
             color="red"
-            leftIcon={<Archive/>}
+            leftIcon={<Archive />}
             onClick={() => handleDisableSelectedAccount()}
             style={{
               width: '60%',
@@ -183,7 +179,7 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
           </Button>
           <Button
             onClick={() => props.toggleShown()}
-            leftIcon={<X/>}
+            leftIcon={<X />}
             style={{
               backgroundColor: FPT_ORANGE_COLOR,
               width: '60%',
@@ -195,7 +191,7 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
         </div>
       </div>
       {isShownListRequest && listRequest.length > 0 ? (
-        <ListRequestByAccountId/>
+        <ListRequestByAccountId />
       ) : null}
     </Modal>
   );

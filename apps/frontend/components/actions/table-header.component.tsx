@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, createStyles, InputWrapper, TextInput } from '@mantine/core';
 import { RotateClockwise, Search } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
-import { useDebouncedValue } from '@mantine/hooks';
 import Filter from './drawer/filter.drawer';
 
 interface TableHeaderProps {
@@ -60,7 +59,7 @@ const TableHeader: React.FC<TableHeaderProps> = (props) => {
   );
 };
 
-const useStyles = createStyles((theme) => {
+const useStyles = createStyles(() => {
   return {
     container: {
       display: 'flex',

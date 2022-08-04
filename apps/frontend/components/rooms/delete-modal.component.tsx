@@ -31,7 +31,6 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
   const selectedRoomId = useAppSelector((state) => state.room.room.id);
   const [listRequest, setListRequest] = useState([]);
   const [isShownListRequest, setShownListRequest] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -63,7 +62,6 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
         dispatch(fetchDeletedRooms(''));
         listRequest.forEach((request) => dispatch(cancelBooking(request.id)));
       });
-    // }
   };
 
   useEffect(() => {
@@ -107,9 +105,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
           verticalSpacing="xs"
           sx={{ tableLayout: 'fixed' }}
         >
-          <thead
-            className={cx(classes.header, { [classes.scrolled]: scrolled })}
-          >
+          <thead className={cx(classes.header, [classes.scrolled])}>
             <tr>
               <Th sorted={null} reversed={null} onSort={null}>
                 Name

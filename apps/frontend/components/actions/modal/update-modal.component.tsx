@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button, createStyles, InputWrapper, Modal } from '@mantine/core';
-import { useAppDispatch } from '../../../redux/hooks';
-import { CalendarStats, ClipboardText, FileDescription, Id, Pencil, User } from 'tabler-icons-react';
+import { ClipboardText, FileDescription, Id, Pencil } from 'tabler-icons-react';
 import { FormikProps, FormikProvider } from 'formik';
 import { InputUpdateProps } from '../models/input-update-props.model';
 import InputType from '../common/input-type.component';
@@ -14,6 +13,19 @@ interface UpdateModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
 }
+
+const RenderIcon: React.FC<{ field: string }> = (props) => {
+  switch (props.field) {
+    case 'id':
+      return <Id />;
+    case 'name':
+      return <ClipboardText />;
+    case 'description':
+      return <FileDescription />;
+    default:
+      return null;
+  }
+};
 
 const UpdateModal: React.FC<UpdateModalProps> = (props) => {
   const { classes } = useStyles();
@@ -41,20 +53,18 @@ const UpdateModal: React.FC<UpdateModalProps> = (props) => {
                 key={index}
                 label={field.label}
                 required={field.required}
-                style={{marginBottom: 20}}
+                style={{ marginBottom: 20 }}
               >
                 <InputType
                   readOnly={field.readOnly}
                   id={field.id}
                   name={field.name}
-                  icon={(field.id === 'id' ? <Id /> :
-                      field.id === 'name'? <ClipboardText /> : 
-                      field.id === 'description'? <FileDescription /> : null)}
+                  icon={<RenderIcon field={field.id} />}
                   onChange={props.formik.handleChange}
                   error={props.formik.errors[field.id]}
                   inputtype={field.inputtype}
                   data={field.data}
-                  value={props.formik.values[field.id] || ""}
+                  value={props.formik.values[field.id] || ''}
                   disabled={field.disabled}
                 />
               </InputWrapper>
@@ -93,6 +103,6 @@ const useStyles = createStyles({
     alignItems: 'center',
     marginTop: 20,
   },
-})
+});
 
 export default UpdateModal;
