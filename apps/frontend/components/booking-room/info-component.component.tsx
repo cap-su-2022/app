@@ -197,14 +197,6 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
     <div style={{display: 'flex'}} ref={parent}>
       <div style={{width: 600}}>
         <div className={classes.modalBody}>
-          <InputWrapper label="Request ID" className={classes.inputWrapper}>
-            <TextInput
-              icon={<Id/>}
-              radius="md"
-              readOnly
-              value={requestBooking.id}
-            />
-          </InputWrapper>
           <div
             style={{
               display: 'flex',

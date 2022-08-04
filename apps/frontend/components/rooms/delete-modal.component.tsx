@@ -36,16 +36,6 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const handleDeleteRoom = () => {
-    // if (listRequest.length > 0) {
-    //   showNotification({
-    //     id: 'delete-data',
-    //     color: 'red',
-    //     title: 'Error while delete room',
-    //     message: 'Chưa xử lý vụ delete room đã có người book',
-    //     icon: <X />,
-    //     autoClose: 3000,
-    //   });
-    // } else {
     dispatch(deleteRoomById(selectedRoomId))
       .catch((e) =>
         showNotification({
@@ -71,7 +61,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
         props.toggleShown();
         dispatch(fetchRooms(props.pagination));
         dispatch(fetchDeletedRooms(''));
-        listRequest.map((request) => dispatch(cancelBooking(request.id)));
+        listRequest.forEach((request) => dispatch(cancelBooking(request.id)));
       });
     // }
   };
@@ -93,7 +83,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
   const ListRequestByRoomId = () => {
     const rows =
       listRequest && listRequest.length > 0
-        ? listRequest.map((row, index) => (
+        ? listRequest.map((row) => (
             <tr key={row.id}>
               <td>{row.roomName}</td>
               <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
@@ -174,8 +164,8 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          This room will <b>not be available</b> from now on after being deleted and
-          will <b>not be able to restore</b>. <br />
+          This room will <b>not be available</b> from now on after being deleted
+          and will <b>not be able to restore</b>. <br />
           <br /> Deleting this room will make it unusable even if it has been
           booked before. Users who booked this room will receive a notification
           about this and that associated booking will also be cancelled!
