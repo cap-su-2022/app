@@ -105,7 +105,7 @@ export class RoomsService {
     await queryRunner.startTransaction();
 
     try {
-      const isExisted = await this.repository.isExistedByName(room.name);
+      const isExisted = await this.repository.isExistedByNameActive(room.name);
       if (isExisted) {
         throw new BadRequestException('Room name is duplicated!');
       }

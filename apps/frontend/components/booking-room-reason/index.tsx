@@ -177,14 +177,7 @@ const ManageBookingReason: React.FC<any> = () => {
   };
 
   const infoFields = [
-    {
-      label: 'Id',
-      id: 'id',
-      name: 'id',
-      value: bookingReason.id,
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
+
     {
       label: 'Name',
       id: 'name',
@@ -410,6 +403,10 @@ const ManageBookingReason: React.FC<any> = () => {
             fields={infoFields}
             toggleShown={() => setInfoShown(!isInfoShown)}
             isShown={isInfoShown}
+            itemsOfDataButton={null}
+            isShowListItems={null}
+            itemsOfData={null}
+            title={null}
           />
 
           <UpdateModal

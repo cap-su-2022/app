@@ -45,9 +45,6 @@ const DeviceInfoModal: React.FC<DeviceInfoModalProps> = (props) => {
         onClose={() => props.toggleShown()}
       >
         <div className={classes.modalBody}>
-          <InputWrapper label="Device ID" style={{ marginBottom: 20 }}>
-            <TextInput icon={<Id />} radius="md" readOnly value={device.id} />
-          </InputWrapper>
           <div
             style={{
               display: 'flex',
