@@ -7,26 +7,21 @@ import {
   Table,
   Text,
 } from '@mantine/core';
-import {
-  Check,
-  InfoCircle,
-  Pencil,
-  ScanEye,
-  Trash,
-  X,
-} from 'tabler-icons-react';
+import { Check, ScanEye, Trash, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fetchDeletedDeviceTypes,
   fetchDeviceTypes,
+  deleteDeviceTypeById,
 } from '../../redux/features/device-type/';
-import { deleteDeviceTypeById } from '../../redux/features/device-type/';
 import { PaginationParams } from '../../models/pagination-params.model';
 import Th from '../../components/table/th.table.component';
-import { fetchDevicesByDeviceType } from '../../redux/features/devices/thunk/fetch-devices-by-device-type';
+import {
+  fetchDevicesByDeviceType,
+  updateDeviceById,
+} from '../../redux/features/devices/';
 import { showNotification } from '@mantine/notifications';
-import { updateDeviceById } from '../../redux/features/devices/thunk/update-by-id';
 
 interface DeleteModalProps {
   isShown: boolean;

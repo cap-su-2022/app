@@ -1,25 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  ActionIcon,
-  Button,
-  createStyles,
-  Group,
-  NumberInput,
-  NumberInputHandlers,
-  ScrollArea,
-  Select,
-  Textarea,
-} from '@mantine/core';
-import { ChevronsRight, Plus, X } from 'tabler-icons-react';
+import React, { useEffect, useState } from 'react';
+import { Button, createStyles, ScrollArea } from '@mantine/core';
+import { ChevronsRight } from 'tabler-icons-react';
 import { FormikProps } from 'formik';
-import { showNotification } from '@mantine/notifications';
-import { useAutoAnimate } from '@formkit/auto-animate/react';
-import autoAnimate from '@formkit/auto-animate';
 import { useAppSelector } from '../../redux/hooks';
 import { Slot } from '../../models/slot.model';
-import { BookingReason } from '../../models/booking-reason.model';
 import dayjs from 'dayjs';
-import { FPT_ORANGE_COLOR } from '@app/constants';
 
 interface ConfirmModalProps {
   formik: FormikProps<any>;
@@ -65,7 +50,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
 
   useEffect(() => {
     const result = reasonNames?.filter(
-      (reason) => reason.value === props.formik.values.bookingReasonId
+      (re) => re.value === props.formik.values.bookingReasonId
     );
     setReason(result[0]);
   }, []);

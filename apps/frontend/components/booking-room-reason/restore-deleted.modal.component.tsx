@@ -40,13 +40,13 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
     dispatch(fetchDeletedBookingReasons());
   }, []);
 
-  const handelPermanentDeleteButton = (id) => {
-    setId(id);
+  const handelPermanentDeleteButton = (rowId: string) => {
+    setId(rowId);
     setPermanentDeleteShown(true);
   };
 
-  const handleRestoreDeletedRoomType = (id: string) => {
-    dispatch(restoreDeletedBookingReasonById(id))
+  const handleRestoreDeletedRoomType = (rowId: string) => {
+    dispatch(restoreDeletedBookingReasonById(rowId))
       .unwrap()
       .catch((e) =>
         showNotification({
@@ -80,7 +80,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
     setPermanentDeleteShown(false);
   };
 
-  const handlePermanentDeleted = (id: string) => {
+  const handlePermanentDeleted = () => {
     dispatch(permanentlyDeleteBookingReasonById(id))
       .unwrap()
       .then(() => dispatch(fetchDeletedBookingReasons()))
@@ -191,7 +191,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
         </ScrollArea>
       </Modal>
       <PermanentDeleteModal
-        handleSubmit={() => handlePermanentDeleted(id)}
+        handleSubmit={() => handlePermanentDeleted()}
         isShown={isPermanentDeleteShown}
         toggleShown={() => handelPermanentDeleteButtonOut()}
       />

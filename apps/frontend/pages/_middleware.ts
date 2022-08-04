@@ -23,7 +23,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url));
   } else if (
     request.cookies['accessToken'] &&
-    !request.nextUrl.pathname.includes('.')
+    !request.nextUrl.pathname.includes('.') &&
+    request.nextUrl.pathname !== '/api/v1/login' 
   ) {
     if (
       request.cookies['accessToken'] &&

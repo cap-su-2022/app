@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createStyles, Modal, Text } from '@mantine/core';
 import { useAppSelector } from '../../redux/hooks';
 import autoAnimate from '@formkit/auto-animate';
@@ -26,6 +26,48 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
 
+  const RenderStatus: React.FC = () => {
+    switch (requestBooking.status) {
+      case 'PENDING':
+        return <div className={classes.pendingDisplay}>Pending</div>;
+      case 'BOOKED':
+        return (
+          <div style={{ display: 'flex' }}>
+            <div className={classes.bookedDisplay}>Booked</div>
+            <span className={classes.acceptedByDiv}>
+              Accepted by{' '}
+              <b>
+                {requestBooking.acceptedBy !== requestBooking.requestedBy
+                  ? requestBooking.acceptedBy
+                  : 'system'}
+              </b>
+            </span>
+          </div>
+        );
+      case 'CHECKED_IN':
+        return <div className={classes.checkedInDisplay}>Checked in</div>;
+      case 'CHECKED_OUT':
+        return (
+          <div className={classes.checkedOutDisplay}>
+            Checked out
+          </div>
+        );
+      case 'CANCELLED':
+        return (
+          <div style={{ display: 'flex' }}>
+            <div className={classes.canceledDisplay}>
+              Cancelled
+            </div>
+            <span className={classes.cancelledByDiv}>
+              by <b>{requestBooking.cancelledBy}</b>
+            </span>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   const ModalHeaderTitle: React.FC = () => {
     return (
       <div
@@ -41,42 +83,7 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
         </Text>
 
         <div style={{ marginLeft: 10 }}>
-          {requestBooking.status === 'PENDING' ? (
-            <div className={classes.pendingDisplay}>
-              {requestBooking.status}
-            </div>
-          ) : requestBooking.status === 'BOOKED' ? (
-            <div style={{ display: 'flex' }}>
-              <div className={classes.bookedDisplay}>
-                {requestBooking.status}
-              </div>
-              <span className={classes.acceptedByDiv}>
-                Accepted by{' '}
-                <b>
-                  {requestBooking.acceptedBy !== requestBooking.requestedBy
-                    ? requestBooking.acceptedBy
-                    : 'system'}
-                </b>
-              </span>
-            </div>
-          ) : requestBooking.status === 'CHECKED_IN' ? (
-            <div className={classes.checkedInDisplay}>
-              {requestBooking.status}
-            </div>
-          ) : requestBooking.status === 'CHECKED_OUT' ? (
-            <div className={classes.checkedOutDisplay}>
-              {requestBooking.status}
-            </div>
-          ) : requestBooking.status === 'CANCELLED' ? (
-            <div style={{ display: 'flex' }}>
-              <div className={classes.canceledDisplay}>
-                {requestBooking.status}
-              </div>
-              <span className={classes.cancelledByDiv}>
-                by <b>{requestBooking.cancelledBy}</b>
-              </span>
-            </div>
-          ) : null}
+          <RenderStatus />
         </div>
       </div>
     );

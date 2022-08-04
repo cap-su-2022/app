@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, createStyles, Select, Table } from '@mantine/core';
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsDown,
-  ChevronsRight,
-  X,
-} from 'tabler-icons-react';
+import { ChevronLeft, ChevronRight, ChevronsDown, X } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
 import { FormikProps } from 'formik';
@@ -110,17 +104,17 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     props.formik.values.checkinSlot = null;
     props.formik.values.checkoutSlot = null;
     if (props.formik.values.checkinDate) {
-      const curr = new Date();
+      // const curr = new Date();
       const currTime = dayjs(curr).format('HH:mm:ss');
       const choosedDay = new Date(props.formik.values.checkinDate).getDate();
 
-      const result = slotInfors?.map((slot, indexSlot) => {
+      const result = slotInfors?.map((slot) => {
         let isFree = true;
 
         if (choosedDay === curr.getDate() && currTime > slot.timeStart) {
           isFree = false;
         }
-        listRequest.map((request) => {
+        listRequest.forEach((request) => {
           if (request.checkinDate === choosedDay) {
             return request.checkinDate === choosedDay &&
               request.slotIn <= slot.slotNum &&
@@ -197,10 +191,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
                         if (day < curr.setHours(0, 0, 0, 0)) {
                           isPassed = true;
                         }
-                        if (
-                          // request.checkinSlot === request.checkoutSlot &&
-                          request.checkinDate === day.getDate()
-                        ) {
+                        if (request.checkinDate === day.getDate()) {
                           return request.checkinDate === day.getDate() &&
                             request.slotIn <= slot.slotNum &&
                             request.slotOut >= slot.slotNum
@@ -209,12 +200,6 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
                               : (isPending = true)
                             : null;
                         }
-                        // if (
-                        //   slotInThisDayBeBooked === day &&
-                        //   slotBeBooked !== slot.id
-                        // ) {
-                        //   isFree = false;
-                        // }
                       })
                     : day < curr.setHours(0, 0, 0, 0)
                     ? (isPassed = true)
@@ -352,9 +337,9 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       <div
         style={{
           paddingLeft: 20,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
         }}
       >
         <div
