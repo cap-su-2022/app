@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, {CSSProperties, useEffect, useState} from 'react';
 import {
   createStyles,
   Table,
@@ -25,12 +25,17 @@ import Th from '../../components/table/th.table.component';
 import dayjs from 'dayjs';
 
 interface RowData {
-  name: string;
+  createdAt: string;
+  roomName: string,
+  feedbackType: string,
+  rateNum: string
 }
 
 interface TableBodyProps {
   data: any[];
-  toggleSortDirection(): void;
+
+  toggleSortDirection(label): void;
+
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
@@ -39,7 +44,7 @@ interface TableBodyProps {
 export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
@@ -48,7 +53,8 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
-    props.toggleSortDirection();
+    props.toggleSortDirection(field);
+
   };
 
   const rows = props.data.map((row, index) => (
@@ -58,23 +64,20 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           ? index + 1
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
+      <td>{row.roomName}</td>
+      <td>{row.feedbackType}</td>
       <td>{row.createdByName}</td>
       <td>{dayjs(row.createdAt).format('DD-MM-YYYY')}</td>
+
       <td>
-        {row.status === 'PENDING' ? (
-          <div className={classes.pendingDisplay}>{row.status}</div>
-        ) : row.status === 'RESOLVED' ? (
-          <div className={classes.resolvedDisplay}>{row.status}</div>
-        ) : row.status === 'REJECTED' ? (
-          <div className={classes.rejectedDisplay}>{row.status}</div>
-        ) : null}
+        <div className={classes.resolvedDisplay}>{row.rateNum}</div>
       </td>
       <td className={classes.actionButtonContainer}>
         <Button
           variant="outline"
           onClick={() => props.actionButtonCb.info(row.id)}
         >
-          <InfoCircle />
+          <InfoCircle/>
         </Button>
         {/* <Button
           variant="outline"
@@ -91,54 +94,81 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{ tableLayout: 'fixed' }}
+      sx={{tableLayout: 'fixed'}}
     >
       <thead>
-        <tr>
-          <Th
-            style={{
-              width: '50px',
-            }}
-            sorted={null}
-            reversed={reverseSortDirection}
-            onSort={null}
-          >
-            STT
-          </Th>
+      <tr>
+        <Th
+          style={{
+            width: '50px',
+          }}
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+        >
+          STT
+        </Th>
 
-          <Th
-            // style={{
-            //   width: '75%',
-            // }}
-            sorted={null}
-            reversed={null}
-            onSort={null}
-          >
-            Sender
-          </Th>
+        <Th
+          // style={{
+          //   width: '75%',
+          // }}
 
-          <Th sorted={null} reversed={null} onSort={null}>
-            Sent at
-          </Th>
+          sorted={sortBy === 'roomName'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('roomName')}
+        >
+          Room Name
+        </Th>
 
-          <Th sorted={null} reversed={null} onSort={null}>
-            Status
-          </Th>
+        <Th
+          sorted={sortBy === 'feedbackType'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('feedbackType')}
+        >
+          Feedback Type
+        </Th>
 
-          <Th
-            sorted={null}
-            reversed={reverseSortDirection}
-            onSort={null}
-            style={{ width: 160 }}
-          >
-            Actions
-          </Th>
-        </tr>
+        <Th sorted={null} reversed={null} onSort={null}>
+          Created By
+        </Th>
+
+        <Th
+          sorted={sortBy === 'createdAt'}
+          reversed={reverseSortDirection}
+          onSort={() => {
+            setSorting('createdAt')
+            console.log('created sort');
+          }}
+          style={{width: 160}}
+        >
+          Created At
+        </Th>
+        <Th
+          sorted={sortBy === 'rateNum'}
+          reversed={reverseSortDirection}
+          onSort={() => {
+            setSorting('rateNum')
+          }}
+        >
+          Rate Number
+        </Th>
+
+
+        <Th
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+          style={{width: 160}}
+        >
+          Actions
+        </Th>
+      </tr>
       </thead>
       <tbody>{rows}</tbody>
     </Table>
   ) : (
-    <NoDataFound />
+    <NoDataFound/>
   );
 };
 

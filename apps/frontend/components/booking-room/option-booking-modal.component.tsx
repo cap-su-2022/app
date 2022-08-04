@@ -1,32 +1,34 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, createStyles, Modal, Text } from '@mantine/core';
-import { BuildingWarehouse, Check, X } from 'tabler-icons-react';
-import { useAppDispatch } from '../../redux/hooks';
+import React, {useEffect, useRef, useState} from 'react';
+import {Button, createStyles, Modal, Text} from '@mantine/core';
+import {BuildingWarehouse, Check, X} from 'tabler-icons-react';
+import {useAppDispatch} from '../../redux/hooks';
 import ChooseRoomModal from './by-room-choose-room-modal.component';
 import autoAnimate from '@formkit/auto-animate';
-import { useFormik } from 'formik';
-import { fetchRoomNames } from '../../redux/features/room/thunk/fetch-room-names.thunk';
-import { fetchSlotNames } from '../../redux/features/slot/thunk/fetch-slot-names.thunk';
-import { fetchDeviceNames } from '../../redux/features/devices/thunk/fetch-device-names.thunk';
-import { fetchReasonNames } from '../../redux/features/booking-reason/thunk/fetch-booking-reason-names.thunk';
-import { addNewRequest } from '../../redux/features/room-booking/thunk/add-new-booking';
-import { showNotification } from '@mantine/notifications';
-import { BookingRequestParams } from '../../models/pagination-params/booking-room-params.model';
-import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
+import {useFormik} from 'formik';
+import {fetchRoomNames} from '../../redux/features/room/thunk/fetch-room-names.thunk';
+import {fetchSlotNames} from '../../redux/features/slot/thunk/fetch-slot-names.thunk';
+import {fetchDeviceNames} from '../../redux/features/devices/thunk/fetch-device-names.thunk';
+import {fetchReasonNames} from '../../redux/features/booking-reason/thunk/fetch-booking-reason-names.thunk';
+import {addNewRequest} from '../../redux/features/room-booking/thunk/add-new-booking';
+import {showNotification} from '@mantine/notifications';
+import {BookingRequestParams} from '../../models/pagination-params/booking-room-params.model';
+import {fetchRoomBookings} from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
 import BySlotChooseSlotModal from './by-slot-choose-slot-modal.component';
-import { fetchListusernames } from '../../redux/features/account/thunk/fetch-user-names.thunk';
+import {fetchListusernames} from '../../redux/features/account/thunk/fetch-user-names.thunk';
 import ByMultiChooseSlotModal from './by-multi-choose-slot-modal.component';
-import { addMultiRequest } from '../../redux/features/room-booking/thunk/add-multi-booking';
+import {addMultiRequest} from '../../redux/features/room-booking/thunk/add-multi-booking';
 import * as Yup from 'yup';
 
 interface SendBookingModalProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   pagination: BookingRequestParams;
 }
 
 const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
 
   const dispatch = useAppDispatch();
   const [roomNames, setRoomNames] = useState([]);
@@ -57,7 +59,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
 
   const ModalHeaderTitle: React.FC = () => {
     return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{display: 'flex', alignItems: 'center'}}>
         <Text className={classes.modalHeaderTitle}>Booking Room</Text>
       </div>
     );
@@ -112,11 +114,11 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
         .unwrap()
         .then(() =>
           showNotification({
-            id: 'add-reuqest',
+            id: 'add-request',
             color: 'teal',
-            title: 'Your request was sended',
-            message: 'You request was successfully sended',
-            icon: <Check />,
+            title: 'Your request was sent',
+            message: 'You request was successfully sent',
+            icon: <Check/>,
             autoClose: 3000,
           })
         )
@@ -126,11 +128,11 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
         })
         .catch((e) =>
           showNotification({
-            id: 'add-reuqest',
+            id: 'add-request',
             color: 'red',
-            title: 'Error while send request',
+            title: 'Error while sending request',
             message: e.message ?? 'Failed to send request',
-            icon: <X />,
+            icon: <X/>,
             autoClose: 3000,
           })
         );
@@ -149,7 +151,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
         description: '',
         bookedFor: null,
       },
-      
+
       enableReinitialize: true,
       onSubmit: (e) => handleSubmit(e),
     });
@@ -160,9 +162,9 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
           <div>
             {!showChooseSlot && !showChooseMultiDay && (
               <Button
-                style={{ marginRight: 10 }}
+                style={{marginRight: 10}}
                 onClick={revealRoom}
-                leftIcon={<BuildingWarehouse />}
+                leftIcon={<BuildingWarehouse/>}
               >
                 Book by room
               </Button>
@@ -171,9 +173,9 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
           <div>
             {!showChooseRoom && !showChooseMultiDay && (
               <Button
-                style={{ marginRight: 10 }}
+                style={{marginRight: 10}}
                 onClick={revealSlot}
-                leftIcon={<BuildingWarehouse />}
+                leftIcon={<BuildingWarehouse/>}
               >
                 Book by slot
               </Button>
@@ -182,9 +184,9 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
           <div>
             {!showChooseRoom && !showChooseSlot && (
               <Button
-                style={{ marginRight: 10 }}
+                style={{marginRight: 10}}
                 onClick={revealMultiDay}
-                leftIcon={<BuildingWarehouse />}
+                leftIcon={<BuildingWarehouse/>}
               >
                 Multi Day Booking
               </Button>
@@ -228,15 +230,15 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
   return (
     <>
       <Modal
-        title={<ModalHeaderTitle />}
+        title={<ModalHeaderTitle/>}
         closeOnClickOutside={false}
         size="auto"
         centered
         opened={props.isShown}
         onClose={() => props.toggleShown()}
       >
-        <div style={{ minWidth: 600 }}>
-          <Dropdown />
+        <div style={{minWidth: 600}}>
+          <Dropdown/>
         </div>
       </Modal>
     </>

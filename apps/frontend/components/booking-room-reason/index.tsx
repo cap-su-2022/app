@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, createStyles } from '@mantine/core';
+import { Button } from '@mantine/core';
 import Header from '../common/header.component';
 import {
   ArchiveOff,
@@ -121,7 +121,7 @@ const ManageBookingReason: React.FC<any> = () => {
     setPagination(defaultPaginationParams);
   };
 
-  const [id, setId] = useState<string>('');
+  const [_, setId] = useState<string>('');
   const [isInfoShown, setInfoShown] = useState<boolean>(false);
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
@@ -313,7 +313,7 @@ const ManageBookingReason: React.FC<any> = () => {
           autoClose: 3000,
         })
       )
-      .then((e) => handleAddModalClose());
+      .then(() => handleAddModalClose());
   };
 
   const handleUpdateSubmit = (values: FormikValues) => {
@@ -345,7 +345,7 @@ const ManageBookingReason: React.FC<any> = () => {
           autoClose: 3000,
         })
       )
-      .then((e) => handleUpdateModalClose());
+      .then(() => handleUpdateModalClose());
   };
 
   const updateFormik = useFormik({
@@ -445,11 +445,5 @@ const ManageBookingReason: React.FC<any> = () => {
     </AdminLayout>
   );
 };
-
-const useStyles = createStyles((theme) => {
-  return {
-    container: {},
-  };
-});
 
 export default ManageBookingReason;

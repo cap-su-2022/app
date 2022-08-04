@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Button, createStyles } from '@mantine/core';
+import { Button } from '@mantine/core';
 import Header from '../common/header.component';
-import { ArchiveOff, BuildingWarehouse, Check, Plus, X } from 'tabler-icons-react';
+import {
+  ArchiveOff,
+  BuildingWarehouse,
+  Check,
+  Plus,
+  X,
+} from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fetchRoleById,
@@ -320,7 +326,7 @@ const ManageRole: React.FC<any> = () => {
           autoClose: 3000,
         })
       )
-      .then((e) => handleAddModalClose())
+      .then(() => handleAddModalClose())
       .catch((e) =>
         showNotification({
           id: 'add-role',
@@ -330,7 +336,7 @@ const ManageRole: React.FC<any> = () => {
           icon: <X />,
           autoClose: 3000,
         })
-      )
+      );
   };
 
   const handleUpdateSubmit = (values: FormikValues) => {
@@ -342,7 +348,7 @@ const ManageRole: React.FC<any> = () => {
       })
     )
       .unwrap()
-      .then((e) => handleUpdateModalClose());
+      .then(() => handleUpdateModalClose());
   };
 
   const updateFormik = useFormik({
@@ -426,7 +432,9 @@ const ManageRole: React.FC<any> = () => {
             roles={roleNames}
           />
         </>
-      ) : <NoDataFound />}
+      ) : (
+        <NoDataFound />
+      )}
       <AddModal
         header="Add new role"
         isShown={isAddShown}
@@ -445,11 +453,5 @@ const ManageRole: React.FC<any> = () => {
     </AdminLayout>
   );
 };
-
-const useStyles = createStyles((theme) => {
-  return {
-    container: {},
-  };
-});
 
 export default ManageRole;

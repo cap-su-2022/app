@@ -108,6 +108,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             radius="md"
             label="Description"
             readOnly
+            autosize
             value={user.description || undefined}
           />
           <div className={classes.displayGrid}>

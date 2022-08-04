@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { PaginationParams } from '../controllers/pagination.model';
-import { Feedback } from '../models';
-import { BookingFeedbackSendRequestPayload } from '../payload/request/booking-feedback-send.request.payload';
-import { BookingFeedbackRepository } from '../repositories/booking-feedback.repository';
-import { BookingRoomService } from './booking-room.service';
-import { AccountRepository } from '../repositories';
+import {BadRequestException, Injectable, Logger} from '@nestjs/common';
+import {DataSource} from 'typeorm';
+import {PaginationParams} from '../controllers/pagination.model';
+import {BookingRoomFeedback, Feedback} from '../models';
+import {BookingFeedbackSendRequestPayload} from '../payload/request/booking-feedback-send.request.payload';
+import {BookingFeedbackRepository} from '../repositories/booking-feedback.repository';
+import {BookingRoomService} from './booking-room.service';
+import {AccountRepository} from '../repositories';
 
 @Injectable()
 export class BookingFeedbackService {
@@ -16,7 +16,8 @@ export class BookingFeedbackService {
     private readonly repository: BookingFeedbackRepository,
     private readonly bookingRoomService: BookingRoomService,
     private readonly accountRepository: AccountRepository
-  ) {}
+  ) {
+  }
 
   async getAllFeedbacks(accountId: string, param: PaginationParams) {
     try {
@@ -69,10 +70,10 @@ export class BookingFeedbackService {
         }
       }
 
-      const isFeedbacked = await this.repository.isAlreadyFeedback(
+      const isFeedback = await this.repository.isAlreadyFeedback(
         payload.bookingRoomId
       );
-      if (isFeedbacked) {
+      if (isFeedback) {
         throw new BadRequestException('You already feedback this request');
       }
 
@@ -91,7 +92,7 @@ export class BookingFeedbackService {
     }
   }
 
-  async getFeedbackById(id: string): Promise<Feedback> {
+  async getFeedbackById(id: string): Promise<BookingRoomFeedback> {
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -106,4 +107,5 @@ export class BookingFeedbackService {
       throw new BadRequestException(e.message);
     }
   }
+
 }

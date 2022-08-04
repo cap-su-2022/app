@@ -18,7 +18,9 @@ interface RowData {
 
 interface TableBodyProps {
   data: any[];
+
   toggleSortDirection(): void;
+
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
@@ -28,7 +30,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
-  const { classes } = useStyles();
+  const {classes} = useStyles();
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -49,22 +51,29 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           variant="outline"
           onClick={() => props.actionButtonCb.info(row.id)}
         >
-          <InfoCircle />
+          <InfoCircle/>
         </Button>
-        <Button
-          variant="outline"
-          color="green"
-          onClick={() => props.actionButtonCb.update(row.id)}
-        >
-          <Pencil />
-        </Button>
-        <Button
-          variant="outline"
-          color="red"
-          onClick={() => props.actionButtonCb.delete(row.id)}
-        >
-          <Trash />
-        </Button>
+        {props.actionButtonCb.update !== undefined ?
+          <Button
+            variant="outline"
+            color="green"
+            onClick={() => props.actionButtonCb.update(row.id)}
+          >
+            <Pencil/>
+          </Button> : null
+        }
+
+        {props.actionButtonCb.delete !== undefined ?
+          <Button
+            variant="outline"
+            color="red"
+            onClick={() => props.actionButtonCb.delete(row.id)}
+          >
+            <Trash/>
+          </Button> : null
+
+        }
+
       </td>
     </tr>
   ));
@@ -73,41 +82,41 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{ tableLayout: 'fixed'}}
+      sx={{tableLayout: 'fixed'}}
     >
       <thead>
-        <tr>
-          <Th
-            style={{
-              width: '50px',
-            }}
-            sorted={null}
-            reversed={reverseSortDirection}
-            onSort={null}
-          >
-            STT
-          </Th>
+      <tr>
+        <Th
+          style={{
+            width: '50px',
+          }}
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+        >
+          STT
+        </Th>
 
-          <Th
-            style={{
-              width: '75%',
-            }}
-            sorted={sortBy === 'name'}
-            reversed={reverseSortDirection}
-            onSort={() => setSorting('name')}
-          >
-            Name
-          </Th>
+        <Th
+          style={{
+            width: '75%',
+          }}
+          sorted={sortBy === 'name'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('name')}
+        >
+          Name
+        </Th>
 
-          <Th sorted={null} reversed={reverseSortDirection} onSort={null} style={{width: 220}}>
-            Actions
-          </Th>
-        </tr>
+        <Th sorted={null} reversed={reverseSortDirection} onSort={null} style={{width: 220}}>
+          Actions
+        </Th>
+      </tr>
       </thead>
       <tbody>{rows}</tbody>
     </Table>
   ) : (
-    <NoDataFound />
+    <NoDataFound/>
   );
 };
 

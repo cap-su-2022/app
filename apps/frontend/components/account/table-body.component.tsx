@@ -11,6 +11,7 @@ interface RowData {
 
 interface TableBodyProps {
   data: any[];
+  search?: React.ReactNode;
 
   toggleSortDirection(label): void;
 
@@ -36,45 +37,41 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
-  const rows = props.data.map((row, index) => (
-    <tr key={index}>
-      <td>
-        {props.page === 1
-          ? index + 1
-          : (props.page - 1) * props.itemsPerPage + (index + 1)}
-      </td>
-      <td>{row.fullname}</td>
-      <td>{row.email}</td>
-      <td className={classes.actionButtonContainer}>
-        <Button
-          variant="outline"
-          onClick={() => props.actionButtonCb.info(row.id)}
-        >
-          <InfoCircle />
-        </Button>
-
-        {userInfo.id !== row.id ? (
+  const rows = props.data.map((row, index) =>
+    (
+      userInfo.id !== row.id ? <tr key={index}>
+        <td>
+          {props.page === 1
+            ? index + 1
+            : (props.page - 1) * props.itemsPerPage + (index + 1)}
+        </td>
+        <td>{row.fullname}</td>
+        <td>{row.email}</td>
+        <td className={classes.actionButtonContainer}>
+          <Button
+            variant="outline"
+            onClick={() => props.actionButtonCb.info(row.id)}
+          >
+            <InfoCircle/>
+          </Button>
           <Button
             variant="outline"
             color="green"
             onClick={() => props.actionButtonCb.update(row.id)}
           >
-            <Pencil />
+            <Pencil/>
           </Button>
-        ) : null}
-
-        {userInfo.id !== row.id ? (
           <Button
             variant="outline"
             color="red"
             onClick={() => props.actionButtonCb.delete(row.id)}
           >
-            <Trash />
+            <Trash/>
           </Button>
-        ) : null}
-      </td>
-    </tr>
-  ));
+        </td>
+      </tr> : null
+    )
+  );
 
   return props.data.length > 0 ? (
     <Table
@@ -95,13 +92,13 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             STT
           </Th>
 
-          <Th
-            sorted={sortBy === 'name'}
-            reversed={reverseSortDirection}
-            onSort={() => setSorting('name')}
-          >
-            Fullname
-          </Th>
+        <Th
+          sorted={sortBy === 'name'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('name')}
+        >
+          Full name
+        </Th>
 
           <Th
             sorted={sortBy === 'booked_at'}

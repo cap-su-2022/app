@@ -18,12 +18,14 @@ import {
   User,
   X,
 } from 'tabler-icons-react';
-import { useAppSelector } from '../../redux/hooks';
+import {useAppSelector} from '../../redux/hooks';
 import dayjs from 'dayjs';
 
 interface RoomInfoModalProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   toggleDisableModalShown(): void;
 }
 
@@ -38,7 +40,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
   return (
     <>
       <Modal
-        title={<ModalHeaderTitle />}
+        title={<ModalHeaderTitle/>}
         size="lg"
         centered
         opened={props.isShown}
@@ -57,7 +59,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
           >
             <InputWrapper label="Room name">
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={room.name}
@@ -65,19 +67,19 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
             </InputWrapper>
             <InputWrapper label="Room type">
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={room.roomTypeName}
               />
             </InputWrapper>
           </div>
-          <InputWrapper label="Room description" style={{ marginBottom: 20 }}>
+          <InputWrapper label="Room description" style={{marginBottom: 20}}>
             <Textarea
-              icon={<FileDescription />}
+              icon={<FileDescription/>}
               radius="md"
               readOnly
-              minRows={4}
+              autosize
               value={room.description}
             />
           </InputWrapper>
@@ -90,7 +92,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
           >
             <InputWrapper label="Created at">
               <TextInput
-                icon={<Clock />}
+                icon={<Clock/>}
                 radius="md"
                 readOnly
                 value={dayjs(room.createdAt).format('HH:mm DD/MM/YYYY')}
@@ -98,7 +100,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
             </InputWrapper>
             <InputWrapper label="Created by">
               <TextInput
-                icon={<User />}
+                icon={<User/>}
                 radius="md"
                 readOnly
                 id="room-createdby"
@@ -116,7 +118,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
             <InputWrapper label="Updated at">
               <TextInput
                 id="room-updatedat"
-                icon={<CalendarStats />}
+                icon={<CalendarStats/>}
                 radius="md"
                 readOnly
                 value={dayjs(room.updatedAt).format('HH:mm DD/MM/YYYY')}
@@ -125,7 +127,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
             <InputWrapper label="Updated by">
               <TextInput
                 id="room-updatedby"
-                icon={<User />}
+                icon={<User/>}
                 radius="md"
                 readOnly
                 value={room.updatedBy}
@@ -139,12 +141,12 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
             onClick={() => props.toggleDisableModalShown()}
             variant="outline"
             color={'red'}
-            leftIcon={<Archive />}
+            leftIcon={<Archive/>}
           >
             Disable this room
           </Button>
 
-          <Button onClick={() => props.toggleShown()} leftIcon={<X />}>
+          <Button onClick={() => props.toggleShown()} leftIcon={<X/>}>
             Close
           </Button>
         </div>

@@ -242,6 +242,7 @@ function AccountsManagement() {
               data={accounts.items}
               page={pagination.page}
               itemsPerPage={pagination.limit}
+              search={pagination.search}
             />
             <InfoModal
               toggleShown={() => setInfoShown(!isInfoShown)}

@@ -19,6 +19,17 @@ export const fetchAllDevices = createAsyncThunk<
     rejectValue: RejectPayload;
   }
 >('device/fetch-all', async (payload, thunkAPI) => {
+  thunkAPI.dispatch(toggleSpinnerOn());
+  try {
+    const response = await axios.get(
+      `${API_URL}/devices/name?search=${payload.search}&dir=${payload.dir}`
+    );
+    return await response.data;
+  } catch (e) {
+    return thunkAPI.rejectWithValue(e.message);
+  } finally {
+    thunkAPI.dispatch(toggleSpinnerOff());
+  }
   return await axiosGetAPICall(
     `${API_URL}/devices/name`,
     {
