@@ -4,18 +4,13 @@ import {
   createStyles,
   Modal,
   ScrollArea,
-  Select,
   Table,
   Text,
 } from '@mantine/core';
-import { Archive, Check, ScanEye, Trash, X } from 'tabler-icons-react';
+import { Check, ScanEye, Trash, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-id';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
-import { fetchRequestByRoomId } from '../../redux/features/room-booking/thunk/fetch-request-by-room';
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
 import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
@@ -36,7 +31,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const selectedAccountId = useAppSelector((state) => state.account.account.id);
   const [listRequest, setListRequest] = useState([]);
   const [isShownListRequest, setShownListRequest] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  // const [scrolled, setScrolled] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -68,7 +63,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
         props.toggleShown();
         dispatch(fetchAccounts(props.pagination));
         dispatch(fetchDeletedAccounts(''));
-        listRequest.map((request) => dispatch(cancelBooking(request.id)));
+        listRequest.forEach((request) => dispatch(cancelBooking(request.id)));
       });
   };
 
@@ -106,7 +101,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           sx={{ tableLayout: 'fixed' }}
         >
           <thead
-            className={cx(classes.header, { [classes.scrolled]: scrolled })}
+            className={cx(classes.header, [classes.scrolled])}
           >
             <tr>
               <Th
