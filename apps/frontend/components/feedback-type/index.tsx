@@ -414,6 +414,7 @@ const ManageFeedbackType: React.FC<any> = () => {
             itemsPerPage={pagination.limit}
           />
           <InfoModal
+
             header="Feedback Type Information"
             fields={infoFields}
             toggleShown={() => setInfoShown(!isInfoShown)}
@@ -440,7 +441,7 @@ const ManageFeedbackType: React.FC<any> = () => {
             feedbackTypes={feedbackTypeNames}
           />
         </>
-      ) : <NoDataFound />}
+      ) : <NoDataFound/>}
       <AddModal
         header="Add new feedback type"
         isShown={isAddShown}

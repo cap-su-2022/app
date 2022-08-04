@@ -25,8 +25,6 @@ import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import dayjs from 'dayjs';
 
 
-
-
 interface InfoModalProps {
   isShown: boolean;
 
@@ -118,6 +116,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             radius="md"
             label="Description"
             readOnly
+            autosize
             value={user.description || undefined}
           />
           <div className={classes.displayGrid}>

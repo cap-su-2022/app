@@ -78,7 +78,7 @@ const ManageRole: React.FC<any> = () => {
 
   useEffect(() => {
     if (roles.items) {
-      const tmp = roles.items.map((row) => ({
+      const tmp = roles.items.map((row, index) => ({
         value: row.id,
         label: row.name,
       }));
@@ -182,21 +182,21 @@ const ManageRole: React.FC<any> = () => {
   };
 
   const handleActionsCb = {
-    info: (itemId) => {
-      setId(itemId);
-      handleFetchById(itemId)
+    info: (id) => {
+      setId(id);
+      handleFetchById(id)
         .unwrap()
         .then(() => setInfoShown(!isInfoShown));
     },
-    update: (itemId) => {
-      setId(itemId);
-      handleFetchById(itemId)
+    update: (id) => {
+      setId(id);
+      handleFetchById(id)
         .unwrap()
         .then(() => setUpdateShown(!isUpdateShown));
     },
-    delete: (itemId) => {
-      setId(itemId);
-      handleFetchById(itemId);
+    delete: (id) => {
+      setId(id);
+      handleFetchById(id);
       setDeleteShown(!isDeleteShown);
     },
   };
@@ -281,7 +281,7 @@ const ManageRole: React.FC<any> = () => {
       readOnly: true,
       required: false,
       value: role.id,
-      disabled: true,
+      disabled: true
     },
     {
       id: 'name',
@@ -291,7 +291,7 @@ const ManageRole: React.FC<any> = () => {
       readOnly: true,
       required: true,
       value: role.name,
-      disabled: false,
+      disabled: false
     },
     {
       id: 'description',
@@ -301,7 +301,7 @@ const ManageRole: React.FC<any> = () => {
       readOnly: false,
       required: false,
       value: role.description,
-      disabled: false,
+      disabled: false
     },
   ];
   const handleAddModalClose = () => {

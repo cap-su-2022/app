@@ -20,9 +20,9 @@ import {
   defaultPaginationParams,
   PaginationParams,
 } from '../../models/pagination-params.model';
-import { useDebouncedValue } from '@mantine/hooks';
+import {useDebouncedValue} from '@mantine/hooks';
 import TableHeader from '../actions/table-header.component';
-import { TableBody } from '../actions/table-body.component';
+import {TableBody} from '../actions/table-body.component';
 import TableFooter from '../actions/table-footer.component';
 import InfoModal from '../actions/modal/info-modal.component';
 import * as Yup from 'yup';
@@ -37,7 +37,9 @@ import { InputUpdateProps } from '../actions/models/input-update-props.model';
 import DeleteModal from './delete-modal.component';
 import AdminLayout from '../layout/admin.layout';
 import RestoreDeletedModal from './restore-deleted.modal.component';
-import { showNotification } from '@mantine/notifications';
+import {RoomType} from '../../models/room-type.model';
+import {PaginationResponse} from '../../models/pagination-response.payload';
+import {showNotification} from '@mantine/notifications';
 import dayjs from 'dayjs';
 import NoDataFound from '../no-data-found';
 import { fetchRoomsByRoomType } from '../../redux/features/room/thunk/fetch-rooms-by-room-type';
@@ -123,6 +125,7 @@ const ManageRoomType: React.FC<any> = () => {
       page: val,
     });
   };
+
   const handleResetFilter = () => {
     setPagination(defaultPaginationParams);
   };
@@ -137,7 +140,7 @@ const ManageRoomType: React.FC<any> = () => {
     useState<boolean>(false);
   const roomType = useAppSelector((state) => state.roomType.roomType);
   const [listRoomOfType, setListRoomOfType] = useState<any[]>();
-  
+
 
   useEffect(() => {
     if (id) {
@@ -159,13 +162,21 @@ const ManageRoomType: React.FC<any> = () => {
     return (
       <div>
         <Button
-          leftIcon={<Plus />}
+          leftIcon={<Plus/>}
           color="green"
           onClick={() => setAddShown(!isAddShown)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
           Add
         </Button>
+        {/* <Button
+          variant="outline"
+          color="red"
+          onClick={() => setRestoreDisabledShown(true)}
+          style={{ marginRight: 10 }}
+        >
+          <PencilOff color={'red'} />
+        </Button> */}
         <Button
           variant="outline"
           color="red"
@@ -206,6 +217,7 @@ const ManageRoomType: React.FC<any> = () => {
       value: roomType.name,
       readOnly: true,
       inputtype: InputTypes.TextInput,
+
     },
     {
       label: 'Room Type Description',
@@ -216,7 +228,7 @@ const ManageRoomType: React.FC<any> = () => {
       inputtype: InputTypes.TextArea,
     },
     {
-      label: 'Create at',
+      label: 'Created at',
       id: 'createAt',
       name: 'createAt',
       value: dayjs(roomType.createdAt).format('HH:mm DD/MM/YYYY'),
@@ -224,7 +236,7 @@ const ManageRoomType: React.FC<any> = () => {
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Create By',
+      label: 'Created By',
       id: 'createBy',
       name: 'createBy',
       value: roomType.createdBy,
@@ -232,7 +244,7 @@ const ManageRoomType: React.FC<any> = () => {
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Update At',
+      label: 'Updated At',
       id: 'updateAt',
       name: 'updateAt',
       value: dayjs(roomType.updatedAt).format('HH:mm DD/MM/YYYY'),
@@ -240,7 +252,7 @@ const ManageRoomType: React.FC<any> = () => {
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Update By',
+      label: 'Updated By',
       id: 'updateBy',
       name: 'updateBy',
       value: roomType.updatedBy,
@@ -320,7 +332,7 @@ const ManageRoomType: React.FC<any> = () => {
           color: 'teal',
           title: 'Room type was added',
           message: 'Room type was successfully added',
-          icon: <Check />,
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -331,7 +343,7 @@ const ManageRoomType: React.FC<any> = () => {
           color: 'red',
           title: 'Error while add room type',
           message: `${e.message}`,
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         });
       });
@@ -352,7 +364,7 @@ const ManageRoomType: React.FC<any> = () => {
           color: 'teal',
           title: 'Room type was updated',
           message: 'Room type was successfully updated',
-          icon: <Check />,
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -363,7 +375,7 @@ const ManageRoomType: React.FC<any> = () => {
           color: 'red',
           title: 'Error while update room type',
           message: `${e.message}`,
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         });
       });
@@ -402,11 +414,11 @@ const ManageRoomType: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Room Type" icon={<BuildingWarehouse size={50} />} />
+      <Header title="Room Type" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actionsLeft={null}
-        actions={<ActionsFilter />}
+        actions={<ActionsFilter/>}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
       />
@@ -451,9 +463,7 @@ const ManageRoomType: React.FC<any> = () => {
             roomTypes={roomTypeNames}
           />
         </>
-      ) : (
-        <NoDataFound />
-      )}
+      ) : (<NoDataFound/> )}
       <AddModal
         header="Add new room type"
         isShown={isAddShown}

@@ -14,7 +14,6 @@ import {
   BLACK,
   FPT_ORANGE_COLOR,
   GRAY,
-  INPUT_GRAY_COLOR,
   LIGHT_GRAY,
   WHITE,
 } from '@app/constants';

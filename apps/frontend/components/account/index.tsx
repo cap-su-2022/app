@@ -257,6 +257,7 @@ function AccountsManagement(props: any) {
               data={accounts.items}
               page={pagination.page}
               itemsPerPage={pagination.limit}
+              search={pagination.search}
             />
             <InfoModal
               // header="Room Information"

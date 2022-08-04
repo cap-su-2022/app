@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Button,
   createStyles,
@@ -9,7 +9,7 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core';
-import { useWindowDimensions } from '../../hooks/use-window-dimensions';
+import {useWindowDimensions} from '../../hooks/use-window-dimensions';
 import {
   Check,
   ClipboardText,
@@ -19,22 +19,24 @@ import {
   Trash,
   X,
 } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { Form, FormikProvider, useFormik, FormikProps } from 'formik';
-import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { LIBRARY_ROOM_TYPE } from '../../constants/library-room-type.model';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {Form, FormikProvider, useFormik, FormikProps} from 'formik';
+import {updateRoomById} from '../../redux/features/room/thunk/update-room-by-id';
+import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
+import {LIBRARY_ROOM_TYPE} from '../../constants/library-room-type.model';
 import * as Yup from 'yup';
-import { showNotification } from '@mantine/notifications';
-import { InputUpdateProps } from '../../components/actions/models/input-update-props.model';
-import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchRoomTypes } from '../../redux/features/room-type';
-import { PaginationResponse } from '../../models/pagination-response.payload';
-import { RoomType } from '../../models/room-type.model';
+import {showNotification} from '@mantine/notifications';
+import {InputUpdateProps} from '../../components/actions/models/input-update-props.model';
+import {PagingParams} from '../../models/pagination-params/paging-params.model';
+import {fetchRoomTypes} from '../../redux/features/room-type';
+import {PaginationResponse} from '../../models/pagination-response.payload';
+import {RoomType} from '../../models/room-type.model';
 
 interface UpdateModalProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   pagination: PagingParams;
   roomTypes: any[];
 }
@@ -52,7 +54,7 @@ const UpdateRoomValidation = Yup.object().shape({
 });
 
 const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const room = useAppSelector((state) => state.room.room);
   const [isUpdateDisabled, setUpdateDisabled] = useState<boolean>(false);
   const [roomType, setRoomType] = useState<string>('');
@@ -81,7 +83,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
           color: 'red',
           title: 'Error while updating library room',
           message: e.message ?? 'Failed to update library room',
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         })
       )
@@ -91,7 +93,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
           color: 'teal',
           title: 'Library room was updated',
           message: 'Library room was successfully updated',
-          icon: <Check />,
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -134,7 +136,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
   return (
     <>
       <Modal
-        title={<ModalHeaderTitle />}
+        title={<ModalHeaderTitle/>}
         size='lg'
         centered
         opened={props.isShown}
@@ -151,7 +153,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 style={{marginBottom: 20}}
               >
                 <TextInput
-                  icon={<Id />}
+                  icon={<Id/>}
                   disabled
                   id="room-id"
                   name="id"
@@ -167,7 +169,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 style={{marginBottom: 20}}
               >
                 <TextInput
-                  icon={<ClipboardText />}
+                  icon={<ClipboardText/>}
                   id="room-name"
                   name="name"
                   error={formik.errors.name}
@@ -201,11 +203,11 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 <Textarea
                   id="room-description"
                   name="description"
-                  icon={<FileDescription />}
+                  icon={<FileDescription/>}
                   error={formik.errors.description}
                   onChange={formik.handleChange}
                   radius="md"
-                  minRows={4}
+                  autosize
                   value={formik.values.description}
                 />
               </InputWrapper>
@@ -216,7 +218,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 color="green"
                 disabled={isUpdateDisabled}
                 onClick={() => formik.submitForm()}
-                leftIcon={<Pencil />}
+                leftIcon={<Pencil/>}
               >
                 Update
               </Button>

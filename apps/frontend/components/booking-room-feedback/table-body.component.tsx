@@ -2,11 +2,15 @@ import React, {CSSProperties, useEffect, useState} from 'react';
 import {
   createStyles,
   Table,
+  ScrollArea,
   UnstyledButton,
   Group,
   Text,
   Center,
-  Button, Highlight,
+  TextInput,
+  Button,
+  Image,
+  InputWrapper,
 } from '@mantine/core';
 import {
   Selector,
@@ -17,18 +21,18 @@ import {
   Trash,
 } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
-import moment from 'moment';
 import Th from '../../components/table/th.table.component';
-
+import dayjs from 'dayjs';
 
 interface RowData {
-  name: string;
-  booked_at: string;
+  createdAt: string;
+  roomName: string,
+  feedbackType: string,
+  rateNum: string
 }
 
 interface TableBodyProps {
   data: any[];
-  search?: React.ReactNode;
 
   toggleSortDirection(label): void;
 
@@ -40,58 +44,51 @@ interface TableBodyProps {
 export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
-
   const {classes} = useStyles();
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
+
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
     props.toggleSortDirection(field);
+
   };
 
-  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  const rows = props.data.map((row, index) => (
+    <tr key={row.id}>
+      <td>
+        {props.page === 1
+          ? index + 1
+          : (props.page - 1) * props.itemsPerPage + (index + 1)}
+      </td>
+      <td>{row.roomName}</td>
+      <td>{row.feedbackType}</td>
+      <td>{row.createdByName}</td>
+      <td>{dayjs(row.createdAt).format('DD-MM-YYYY')}</td>
 
-  useEffect(() => {
-    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
-  }, [])
-
-  const rows = props.data.map((row, index) =>
-    (
-      userInfo.id !== row.id ? <tr key={index}>
-        <td>
-          {props.page === 1
-            ? index + 1
-            : (props.page - 1) * props.itemsPerPage + (index + 1)}
-        </td>
-        <td>{row.fullname}</td>
-        <td>{row.email}</td>
-        <td className={classes.actionButtonContainer}>
-          <Button
-            variant="outline"
-            onClick={() => props.actionButtonCb.info(row.id)}
-          >
-            <InfoCircle/>
-          </Button>
-
-
-          <Button
-            variant="outline"
-            color="green"
-            onClick={() => props.actionButtonCb.update(row.id)}
-          >
-            <Pencil/>
-          </Button>
-
-          <Button
-            variant="outline"
-            color="red"
-            onClick={() => props.actionButtonCb.delete(row.id)}
-          >
-            <Trash/>
-          </Button>
-        </td>
-      </tr> : null
-    )
-  );
+      <td>
+        <div className={classes.resolvedDisplay}>{row.rateNum}</div>
+      </td>
+      <td className={classes.actionButtonContainer}>
+        <Button
+          variant="outline"
+          onClick={() => props.actionButtonCb.info(row.id)}
+        >
+          <InfoCircle/>
+        </Button>
+        {/* <Button
+          variant="outline"
+          color="red"
+          onClick={() => props.actionButtonCb.delete(row.id)}
+        >
+          <Trash />
+        </Button> */}
+      </td>
+    </tr>
+  ));
 
   return props.data.length > 0 ? (
     <Table
@@ -113,26 +110,56 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
         </Th>
 
         <Th
-          sorted={sortBy === 'name'}
+          // style={{
+          //   width: '75%',
+          // }}
+
+          sorted={sortBy === 'roomName'}
           reversed={reverseSortDirection}
-          onSort={() => setSorting('name')}
+          onSort={() => setSorting('roomName')}
         >
-          Full name
+          Room Name
         </Th>
 
         <Th
-          sorted={sortBy === 'booked_at'}
+          sorted={sortBy === 'feedbackType'}
           reversed={reverseSortDirection}
-          onSort={() => setSorting('booked_at')}
+          onSort={() => setSorting('feedbackType')}
         >
-          Email
+          Feedback Type
         </Th>
+
+        <Th sorted={null} reversed={null} onSort={null}>
+          Created By
+        </Th>
+
+        <Th
+          sorted={sortBy === 'createdAt'}
+          reversed={reverseSortDirection}
+          onSort={() => {
+            setSorting('createdAt')
+            console.log('created sort');
+          }}
+          style={{width: 160}}
+        >
+          Created At
+        </Th>
+        <Th
+          sorted={sortBy === 'rateNum'}
+          reversed={reverseSortDirection}
+          onSort={() => {
+            setSorting('rateNum')
+          }}
+        >
+          Rate Number
+        </Th>
+
 
         <Th
           sorted={null}
           reversed={reverseSortDirection}
           onSort={null}
-          style={{width: 220}}
+          style={{width: 160}}
         >
           Actions
         </Th>
@@ -183,7 +210,7 @@ const useStyles = createStyles((theme) => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  bookingDisplay: {
+  pendingDisplay: {
     color: '#228be6',
     textAlign: 'center',
     borderRadius: 50,
@@ -191,15 +218,7 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: '#0000ff1c',
     fontWeight: 600,
   },
-  bookedDisplay: {
-    color: '#fd7e14',
-    textAlign: 'center',
-    borderRadius: 50,
-    width: 100,
-    backgroundColor: '#fd7e1442',
-    fontWeight: 600,
-  },
-  canceledDisplay: {
+  rejectedDisplay: {
     color: 'red',
     textAlign: 'center',
     borderRadius: 50,
@@ -207,7 +226,7 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: '#ff00001c',
     fontWeight: 600,
   },
-  processingDisplay: {
+  resolvedDisplay: {
     color: '#40c057',
     textAlign: 'center',
     borderRadius: 50,

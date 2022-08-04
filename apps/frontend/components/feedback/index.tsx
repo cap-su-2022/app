@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Button, createStyles } from '@mantine/core';
+import React, {useEffect, useState} from 'react';
+import {Button, createStyles} from '@mantine/core';
 import Header from '../common/header.component';
 import {
   BrandHipchat,
@@ -8,25 +8,25 @@ import {
   Plus,
   X,
 } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { useDebouncedValue } from '@mantine/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {useDebouncedValue} from '@mantine/hooks';
 import TableHeader from '../actions/table-header.component';
-import { TableBody } from './table-body.component';
+import {TableBody} from './table-body.component';
 import TableFooter from '../actions/table-footer.component';
 import InfoModal from './info-modal.component';
 import * as Yup from 'yup';
-import { FormikValues, useFormik } from 'formik';
+import {FormikValues, useFormik} from 'formik';
 import AdminLayout from '../layout/admin.layout';
-import { showNotification } from '@mantine/notifications';
+import {showNotification} from '@mantine/notifications';
 import NoDataFound from '../no-data-found';
-import { fetchFeedbacks } from '../../redux/features/feedback/thunk/fetch-feedback';
-import { fetchFeedbackById } from '../../redux/features/feedback/thunk/fetch-feedback-by-id.thunk';
+import {fetchFeedbacks} from '../../redux/features/feedback/thunk/fetch-feedback';
+import {fetchFeedbackById} from '../../redux/features/feedback/thunk/fetch-feedback-by-id.thunk';
 import RejectFeedbackModal from './reject-feedback.component';
 import ResolveFeedbackModal from './resolve-feedback.component';
-import { FeedbackPaginationParams } from '../../models/pagination-params/feedback-paging-params.model';
-import { sendFeedback } from '../../redux/features/feedback/thunk/send-feedback.thunk';
+import {FeedbackPaginationParams} from '../../models/pagination-params/feedback-paging-params.model';
+import {sendFeedback} from '../../redux/features/feedback/thunk/send-feedback.thunk';
 import DownloadModal from './download-modal.compnent';
-import { fetchFeedbackTypeNames } from '../../redux/features/feedback-type/thunk/fetch-feedback-type-names.thunk';
+import {fetchFeedbackTypeNames} from '../../redux/features/feedback-type/thunk/fetch-feedback-type-names.thunk';
 import AddFeedbackModal from './add-modal.component';
 
 const AddRoomTypeValidation = Yup.object().shape({
@@ -141,12 +141,12 @@ const ManageFeedback: React.FC<any> = () => {
   const ActionsFilterLeft: React.FC = () => {
     return (
       <>
-        <div style={{ display: 'flex' }}>
+        <div style={{display: 'flex'}}>
           <Button
             variant="outline"
             color="blue"
             onClick={() => handleChangeStatus('PENDING')}
-            style={{ marginRight: 10 }}
+            style={{marginRight: 10}}
             size="xs"
           >
             Pending
@@ -155,7 +155,7 @@ const ManageFeedback: React.FC<any> = () => {
             variant="outline"
             color="green"
             onClick={() => handleChangeStatus('RESOLVED')}
-            style={{ marginRight: 10 }}
+            style={{marginRight: 10}}
             size="xs"
           >
             Resolved
@@ -164,7 +164,7 @@ const ManageFeedback: React.FC<any> = () => {
             variant="outline"
             color="red"
             onClick={() => handleChangeStatus('REJECTED')}
-            style={{ marginRight: 10 }}
+            style={{marginRight: 10}}
             size="xs"
           >
             Rejected
@@ -183,7 +183,7 @@ const ManageFeedback: React.FC<any> = () => {
             color="violet"
             onClick={() => setDownShown(true)}
           >
-            <Download />
+            <Download/>
           </Button>
         </>
       );
@@ -191,10 +191,10 @@ const ManageFeedback: React.FC<any> = () => {
       return (
         <div>
           <Button
-            leftIcon={<Plus />}
+            leftIcon={<Plus/>}
             color="green"
             onClick={() => setAddShown(!isAddShown)}
-            style={{ marginRight: 10 }}
+            style={{marginRight: 10}}
           >
             Add
           </Button>
@@ -233,9 +233,9 @@ const ManageFeedback: React.FC<any> = () => {
         showNotification({
           id: 'Add-feedback',
           color: 'teal',
-          title: 'Feedback was sended',
-          message: 'Feedback was successfully sended',
-          icon: <Check />,
+          title: 'Feedback was sent',
+          message: 'Feedback was successfully sent',
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -244,9 +244,9 @@ const ManageFeedback: React.FC<any> = () => {
         showNotification({
           id: 'Add-feedback',
           color: 'red',
-          title: 'Error while send feedback',
+          title: 'Error while sending feedback',
           message: `${e.message}`,
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         });
       });
@@ -264,11 +264,11 @@ const ManageFeedback: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Feedback" icon={<BrandHipchat size={50} />} />
+      <Header title="Feedback" icon={<BrandHipchat size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
-        actionsLeft={<ActionsFilterLeft />}
-        actions={<ActionsFilter />}
+        actionsLeft={<ActionsFilterLeft/>}
+        actions={<ActionsFilter/>}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
       />
@@ -313,7 +313,7 @@ const ManageFeedback: React.FC<any> = () => {
           />
         </>
       ) : (
-        <NoDataFound />
+        <NoDataFound/>
       )}
       <AddFeedbackModal
         isShown={isAddShown}

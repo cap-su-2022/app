@@ -1,25 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, createStyles, Modal, Table, Text } from '@mantine/core';
-import { Archive, Check, ScanEye, X } from 'tabler-icons-react';
-import { FPT_ORANGE_COLOR } from '@app/constants';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { BookingRequestParams } from '../../models/pagination-params/booking-room-params.model';
-import { fetchListRequestWithSameSlot } from '../../redux/features/room-booking/thunk/fetch-list-booking-with-same-slot.thunk';
+import React, {useEffect, useRef, useState} from 'react';
+import {Button, createStyles, Modal, Table, Text} from '@mantine/core';
+import {Archive, Check, ScanEye, X} from 'tabler-icons-react';
+import {FPT_ORANGE_COLOR} from '@app/constants';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {BookingRequestParams} from '../../models/pagination-params/booking-room-params.model';
+import {
+  fetchListRequestWithSameSlot
+} from '../../redux/features/room-booking/thunk/fetch-list-booking-with-same-slot.thunk';
 import dayjs from 'dayjs';
 import autoAnimate from '@formkit/auto-animate';
-import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
-import { acceptRequest } from '../../redux/features/room-booking/thunk/accept-request';
+import {fetchRoomBookings} from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
+import {acceptRequest} from '../../redux/features/room-booking/thunk/accept-request';
 
 interface AcceptRequestComponentProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   toggleInforModalShown(): void;
+
   pagination: BookingRequestParams;
 }
+
 const AcceptRequestComponent: React.FC<AcceptRequestComponentProps> = (
   props
 ) => {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const request = useAppSelector((state) => state.roomBooking.roomBooking);
   const [listRequest, setListRequest] = useState([]);
   const [show, setShow] = useState(false);
@@ -60,26 +66,26 @@ const AcceptRequestComponent: React.FC<AcceptRequestComponentProps> = (
     const rows =
       listRequest && listRequest.length > 0
         ? listRequest.map((row, index) => (
-            <>
-              <li className={classes.tableRow}>
-                <div className={classes.col1} data-label="STT">
-                  {index + 1}
-                </div>
-                <div className={classes.col2} data-label="Slot in">
-                  {row.slotInName}
-                </div>
-                <div className={classes.col3} data-label="Slot out">
-                  {row.slotOutName}
-                </div>
-                <div className={classes.col4} data-label="Request by">
-                  {row.requestedBy}
-                </div>
-                <div className={classes.col5} data-label="Reason">
-                  {row.reason}
-                </div>
-              </li>
-            </>
-          ))
+          <>
+            <li className={classes.tableRow}>
+              <div className={classes.col1} data-label="STT">
+                {index + 1}
+              </div>
+              <div className={classes.col2} data-label="Slot in">
+                {row.slotInName}
+              </div>
+              <div className={classes.col3} data-label="Slot out">
+                {row.slotOutName}
+              </div>
+              <div className={classes.col4} data-label="Request by">
+                {row.requestedBy}
+              </div>
+              <div className={classes.col5} data-label="Reason">
+                {row.reason}
+              </div>
+            </li>
+          </>
+        ))
         : null;
     return (
       listRequest &&
@@ -109,8 +115,8 @@ const AcceptRequestComponent: React.FC<AcceptRequestComponentProps> = (
       <div className={classes.modalFooter}>
         {listRequest && listRequest.length > 0 ? (
           <Button
-            leftIcon={<ScanEye />}
-            style={{ backgroundColor: 'blue', width: '60%', margin: 10 }}
+            leftIcon={<ScanEye/>}
+            style={{backgroundColor: 'blue', width: '60%', margin: 10}}
             onClick={reveal}
           >
             List request same slot
@@ -118,7 +124,7 @@ const AcceptRequestComponent: React.FC<AcceptRequestComponentProps> = (
         ) : null}
         <Button
           color="green"
-          leftIcon={<Check />}
+          leftIcon={<Check/>}
           onClick={() => handleAcceptSelectedRequest()}
           style={{
             width: '60%',
@@ -129,7 +135,7 @@ const AcceptRequestComponent: React.FC<AcceptRequestComponentProps> = (
         </Button>
         <Button
           onClick={() => props.toggleShown()}
-          leftIcon={<X />}
+          leftIcon={<X/>}
           style={{
             backgroundColor: FPT_ORANGE_COLOR,
             width: '60%',
@@ -139,7 +145,7 @@ const AcceptRequestComponent: React.FC<AcceptRequestComponentProps> = (
           Cancel
         </Button>
       </div>
-      {show && <ListRequestPendingAtSameSlot />}
+      {show && <ListRequestPendingAtSameSlot/>}
     </div>
   );
 };

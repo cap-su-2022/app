@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import {
   Button,
   createStyles,
@@ -64,7 +64,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
 };
 
 const useStyles = createStyles({
-  headerTitle: { fontWeight: 600, fontSize: 20 },
+  headerTitle: {fontWeight: 600, fontSize: 20},
   body: {
     display: 'flex',
     flexDirection: 'column',
@@ -82,6 +82,10 @@ const useStyles = createStyles({
       gridColumnEnd: 3,
     },
     '&:nth-of-type(2)': {
+      gridColumnStart: 1,
+      gridColumnEnd: 3,
+    },
+    '&:nth-of-type(3)': {
       gridColumnStart: 1,
       gridColumnEnd: 3,
     },

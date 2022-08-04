@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Button,
   createStyles,
@@ -10,7 +10,7 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core';
-import { useWindowDimensions } from '../../hooks/use-window-dimensions';
+import {useWindowDimensions} from '../../hooks/use-window-dimensions';
 import {
   Check,
   ClipboardText,
@@ -19,19 +19,23 @@ import {
   Pencil,
   X,
 } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { Form, FormikProvider, useFormik, FormikProps } from 'formik';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {Form, FormikProvider, useFormik, FormikProps} from 'formik';
 import * as Yup from 'yup';
-import { showNotification } from '@mantine/notifications';
-import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { updateAccountById } from '../../redux/features/account/thunk/update-account-by-id';
-import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
+import {showNotification} from '@mantine/notifications';
+import {PagingParams} from '../../models/pagination-params/paging-params.model';
+import {updateAccountById} from '../../redux/features/account/thunk/update-account-by-id';
+import {fetchAccounts} from '../../redux/features/account/thunk/fetch-accounts.thunk';
 
 interface UpdateModalProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   formik: FormikProps<any>;
+
   handleSubmit(): void;
+
   pagination: PagingParams;
   role: any[];
 }
@@ -56,7 +60,7 @@ const UpdateAccountValidation = Yup.object().shape({
 });
 
 const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const account = useAppSelector((state) => state.account.account);
   const [isUpdateDisabled, setUpdateDisabled] = useState<boolean>(false);
   const [role, setRole] = useState<string>('');
@@ -85,7 +89,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
           color: 'red',
           title: 'Error while updating account',
           message: e.message ?? 'Failed to update account',
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         })
       )
@@ -95,7 +99,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
           color: 'teal',
           title: 'Account was updated',
           message: 'Account was successfully updated',
-          icon: <Check />,
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -152,7 +156,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
   return (
     <>
       <Modal
-        title={<ModalHeaderTitle />}
+        title={<ModalHeaderTitle/>}
         size="lg"
         centered
         opened={props.isShown}
@@ -167,10 +171,10 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
               <InputWrapper
                 required
                 label="Account ID"
-                style={{ marginBottom: 20 }}
+                style={{marginBottom: 20}}
               >
                 <TextInput
-                  icon={<Id />}
+                  icon={<Id/>}
                   disabled
                   id="account-id"
                   name="id"
@@ -179,14 +183,14 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   value={formik.values.id}
                 />
               </InputWrapper>
-              <div className={classes.displayGrid} style={{ marginBottom: 20 }}>
+              <div className={classes.displayGrid} style={{marginBottom: 20}}>
                 <InputWrapper
                   required
                   label="Username"
-                  style={{ marginBottom: 20 }}
+                  style={{marginBottom: 20}}
                 >
                   <TextInput
-                    icon={<Id />}
+                    icon={<Id/>}
                     disabled
                     id="username"
                     name="username"
@@ -198,10 +202,10 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 <InputWrapper
                   required
                   label="Fullname"
-                  style={{ marginBottom: 20 }}
+                  style={{marginBottom: 20}}
                 >
                   <TextInput
-                    icon={<ClipboardText />}
+                    icon={<ClipboardText/>}
                     id="fullname"
                     name="fullname"
                     error={formik.errors.fullname}
@@ -212,7 +216,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 </InputWrapper>
                 <InputWrapper required label="Email">
                   <TextInput
-                    icon={<ClipboardText />}
+                    icon={<ClipboardText/>}
                     id="email"
                     name="email"
                     error={formik.errors.email}
@@ -224,7 +228,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
 
                 <InputWrapper required label="Phone">
                   <TextInput
-                    icon={<ClipboardText />}
+                    icon={<ClipboardText/>}
                     id="phone"
                     name="phone"
                     error={formik.errors.phone}
@@ -234,7 +238,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   />
                 </InputWrapper>
               </div>
-              <InputWrapper required label="Role" style={{ marginBottom: 20 }}>
+              <InputWrapper required label="Role" style={{marginBottom: 20}}>
                 <Select
                   onChange={(e) => {
                     setUpdateDisabled(false);
@@ -252,10 +256,10 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 <Textarea
                   id="description"
                   name="description"
-                  icon={<FileDescription />}
+                  icon={<FileDescription/>}
                   error={formik.errors.description}
                   onChange={formik.handleChange}
-                  radius="md"
+                  autosize
                   value={formik.values.description || undefined}
                   minRows={4}
                 />
@@ -267,7 +271,7 @@ const AccountUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 color="green"
                 // disabled={isUpdateDisabled}
                 onClick={() => formik.submitForm()}
-                leftIcon={<Pencil />}
+                leftIcon={<Pencil/>}
               >
                 Update
               </Button>
