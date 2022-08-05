@@ -281,7 +281,7 @@ const ManageRole: React.FC<any> = () => {
       readOnly: true,
       required: false,
       value: role.id,
-      disabled: true
+      disabled: true,
     },
     {
       id: 'name',
@@ -291,7 +291,7 @@ const ManageRole: React.FC<any> = () => {
       readOnly: true,
       required: true,
       value: role.name,
-      disabled: false
+      disabled: false,
     },
     {
       id: 'description',
@@ -301,7 +301,7 @@ const ManageRole: React.FC<any> = () => {
       readOnly: false,
       required: false,
       value: role.description,
-      disabled: false
+      disabled: false,
     },
   ];
   const handleAddModalClose = () => {
@@ -348,6 +348,26 @@ const ManageRole: React.FC<any> = () => {
       })
     )
       .unwrap()
+      .catch((e) =>
+        showNotification({
+          id: 'update-data',
+          color: 'red',
+          title: 'Error while update role',
+          message: e.message ?? 'Failed to update role',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'update-data',
+          color: 'teal',
+          title: 'Role was updated',
+          message: 'Role was successfully updated',
+          icon: <Check />,
+          autoClose: 3000,
+        })
+      )
       .then(() => handleUpdateModalClose());
   };
 

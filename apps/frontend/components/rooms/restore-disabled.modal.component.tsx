@@ -20,23 +20,26 @@ import {useDebouncedValue} from '@mantine/hooks';
 import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import {fetchDeletedRooms} from '../../redux/features/room/thunk/fetch-deleted-rooms';
 import NoDataFound from '../no-data-found';
+import RoomUpdateTypeModal from './update-type-modal.component';
+import { getRoomById } from '../../redux/features/room/thunk/get-room-by-id';
 
 interface RestoreDisabledRoomModalProps {
   isShown: boolean;
 
   toggleShown(): void;
-
   pagination: PagingParams;
+  roomTypes: any[];
 }
 
 const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
   props
 ) => {
-  const {classes, cx} = useStyles();
+  const { classes, cx } = useStyles();
   const disabledRooms = useAppSelector((state) => state.room.disabledRooms);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
   const [search, setSearch] = useState<string>('');
+  const [isShowUpdateType, setIsShowUpdateType] = useState<boolean>(false);
 
   const [searchDebounced] = useDebouncedValue<string>(search, 400);
 
@@ -44,17 +47,26 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
     dispatch(fetchDisabledRooms(search));
   }, [searchDebounced]);
 
-  const handleActiveRoom = (id: string) => {
-    dispatch(restoreDisabledRoom(id))
-      .unwrap()
-      .then(() => dispatch(fetchRooms(props.pagination)))
-      .then(() =>
-        dispatch(fetchDisabledRooms(search))
-          .unwrap()
-          .then((disabledRooms) =>
-            disabledRooms.length < 1 ? props.toggleShown() : null
-          )
-      );
+  const handleActiveRoom = (
+    id: string,
+    roomType: string,
+    isDeleted: string
+  ) => {
+    if (!roomType || isDeleted) {
+      dispatch(getRoomById(id));
+      setIsShowUpdateType(true);
+    } else {
+      dispatch(restoreDisabledRoom(id))
+        .unwrap()
+        .then(() => dispatch(fetchRooms(props.pagination)))
+        .then(() =>
+          dispatch(fetchDisabledRooms(search))
+            .unwrap()
+            .then((disabledRooms) =>
+              disabledRooms.length < 1 ? props.toggleShown() : null
+            )
+        );
+    }
   };
 
   const handleDeleteRoom = (id: string) => {
@@ -93,13 +105,15 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
         }}
       >
         <Button
-          onClick={() => handleActiveRoom(row.id)}
+          onClick={() =>
+            handleActiveRoom(row.id, row.roomTypeName, row.isTypeDeleted)
+          }
           style={{
             margin: 5,
           }}
           variant="outline"
           color="green"
-          leftIcon={<RotateClockwise/>}
+          leftIcon={<RotateClockwise />}
         >
           Restore
         </Button>
@@ -110,7 +124,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
           }}
           variant="outline"
           color="red"
-          leftIcon={<Trash/>}
+          leftIcon={<Trash />}
         >
           Delete
         </Button>
@@ -130,37 +144,37 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
       onClose={() => props.toggleShown()}
       centered
       size="70%"
-      title={<ModalHeaderTitle/>}
+      title={<ModalHeaderTitle />}
       closeOnClickOutside={true}
       closeOnEscape={false}
     >
       <InputWrapper label="Search">
         <TextInput
           onChange={(e) => setSearch(e.target.value)}
-          icon={<Search/>}
+          icon={<Search />}
         />
       </InputWrapper>
       {disabledRooms.length > 0 ? (
         <>
           <ScrollArea
-            sx={{height: 500}}
-            onScrollPositionChange={({y}) => setScrolled(y !== 0)}
+            sx={{ height: 500 }}
+            onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
           >
             <div>
-              <Table sx={{minWidth: 700}}>
+              <Table sx={{ minWidth: 700 }}>
                 <thead
                   className={cx(classes.header, {
                     [classes.scrolled]: scrolled,
                   })}
                 >
-                <tr>
-                  <th style={{width: 50}}>STT</th>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Disabled at</th>
-                  <th>Disabled by</th>
-                  <th>Action</th>
-                </tr>
+                  <tr>
+                    <th style={{ width: 50 }}>STT</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Disabled at</th>
+                    <th>Disabled by</th>
+                    <th>Action</th>
+                  </tr>
                 </thead>
                 <tbody>{rows}</tbody>
               </Table>
@@ -168,8 +182,15 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
           </ScrollArea>
         </>
       ) : (
-        <NoDataFound/>
+        <NoDataFound />
       )}
+
+      <RoomUpdateTypeModal
+        isShown={isShowUpdateType}
+        toggleShown={() => setIsShowUpdateType(!isShowUpdateType)}
+        pagination={props.pagination}
+        roomTypes={props.roomTypes}
+      />
     </Modal>
   );
 };

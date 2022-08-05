@@ -14,21 +14,21 @@ import { UsersRequestPayload } from '../payload/request/users.payload';
 import { CloudinaryService } from './cloudinary.service';
 import { AccountsResponsePayload } from '../payload/response/accounts.payload';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { Direction } from '../models/search-pagination.payload';
 import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
 import { randomUUID } from 'crypto';
 import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
 import { AccountHistService } from './account-hist.service';
 import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
 import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
-import {Role} from '../enum/roles.enum';
-import { PaginationParams } from '../controllers/pagination.model';
+import { Role } from '../enum/roles.enum';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class AccountsService {
   private readonly logger = new Logger(AccountsService.name);
 
   constructor(
+    private readonly dataSource: DataSource,
     private readonly cloudinaryService: CloudinaryService,
     private readonly keycloakService: KeycloakService,
     private readonly repository: AccountRepository,
@@ -38,14 +38,19 @@ export class AccountsService {
   async getAll(request: AccountsPaginationParams) {
     try {
       const result = await this.repository.searchAccount(request);
-      if(result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages){
+      if (
+        result.meta.totalPages > 0 &&
+        result.meta.currentPage > result.meta.totalPages
+      ) {
         throw new BadRequestException('Current page is over');
-      } 
+      }
 
-      return result
+      return result;
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException(e.message || 'One or more parameters is invalid');
+      throw new BadRequestException(
+        e.message || 'One or more parameters is invalid'
+      );
     }
   }
 
@@ -143,16 +148,18 @@ export class AccountsService {
     id: string,
     body: AccountAddRequestPayload
   ) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
       if (accountId === id) {
         throw new BadRequestException('Cannot update your own account');
       }
       const accountBeUpdated = await this.repository.getRoleOfAccount(id);
 
-      if(accountBeUpdated.role_name === Role.APP_ADMIN) {
-        throw new BadRequestException(
-          "Can't update admin"
-        );
+      if (accountBeUpdated.role_name === Role.APP_ADMIN) {
+        throw new BadRequestException("Can't update admin");
       }
 
       const data = await this.repository.findById(id);
@@ -165,12 +172,16 @@ export class AccountsService {
       const accountUpdated = await this.repository.updatePartially(
         body,
         accountBeUpdated,
-        accountId
+        accountId,
+        queryRunner
       );
+
+      await queryRunner.commitTransaction();
       await this.histService.createNew(accountUpdated);
       return accountUpdated;
     } catch (e) {
       this.logger.error(e);
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(
         e.message ?? 'Error occurred while updating this account'
       );
@@ -256,7 +267,6 @@ export class AccountsService {
 
   async deleteById(accountId: string, id: string) {
     try {
-
       if (accountId === id) {
         throw new BadRequestException('Cannot delete your own account');
       }
@@ -271,10 +281,8 @@ export class AccountsService {
       const userDelete = await this.repository.getRoleOfAccount(accountId);
       const userBeDeleted = await this.repository.getRoleOfAccount(id);
 
-      if(userBeDeleted.role_name === Role.APP_ADMIN) {
-        throw new BadRequestException(
-          "Can't delete admin"
-        );
+      if (userBeDeleted.role_name === Role.APP_ADMIN) {
+        throw new BadRequestException("Can't delete admin");
       }
 
       if (userDelete?.role_name === userBeDeleted?.role_name) {

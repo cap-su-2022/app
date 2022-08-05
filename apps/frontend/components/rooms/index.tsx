@@ -68,9 +68,10 @@ function RoomsManagement(props: any) {
       .then((roomTypes) => setRoomTypeNames(roomTypes));
   }, []);
 
-  const toggleSortDirection = () => {
+  const toggleSortDirection = (field) => {
     setPagination({
       ...pagination,
+      sort: field,
       dir: pagination.dir === 'ASC' ? 'DESC' : 'ASC',
     });
   };
@@ -204,6 +205,7 @@ function RoomsManagement(props: any) {
         />
 
         <RestoreDisabledRoomModal
+          roomTypes={roomTypeNames}
           isShown={isRestoreDisabledShown}
           toggleShown={() => setRestoreDisabledShown(!isRestoreDisabledShown)}
           pagination={pagination}
@@ -218,7 +220,7 @@ function RoomsManagement(props: any) {
           <>
             <TableBody
               actionButtonCb={handleActionsCb}
-              toggleSortDirection={() => toggleSortDirection()}
+              toggleSortDirection={(field) => toggleSortDirection(field)}
               data={rooms.items}
               page={pagination.page}
               itemsPerPage={pagination.limit}

@@ -24,6 +24,7 @@ import { showNotification } from '@mantine/notifications';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import {
   addDevice,
+  fetchDeletedDevices,
   fetchDevices,
   fetchDisabledDevices,
 } from '../../redux/features/devices';
@@ -79,6 +80,7 @@ const AddDeviceModal: React.FC<AddDeviceModalProps> = (props) => {
           formik.resetForm()
         );
         dispatch(fetchDisabledDevices(''));
+        dispatch(fetchDeletedDevices(''));
       })
       .catch((e) =>
         showNotification({

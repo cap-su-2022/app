@@ -94,6 +94,7 @@ const BookingRoom = () => {
   const handleChangeStatus = (val: string) => {
     setPagination({
       ...pagination,
+      page: 1,
       status: val,
     });
   };

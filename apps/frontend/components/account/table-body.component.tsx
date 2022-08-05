@@ -5,8 +5,8 @@ import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
 
 interface RowData {
-  name: string;
-  booked_at: string;
+  fullname: string;
+  email: string;
 }
 
 interface TableBodyProps {
@@ -97,20 +97,20 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
         </Th>
 
         <Th
-          sorted={sortBy === 'name'}
+          sorted={sortBy === 'fullname'}
           reversed={reverseSortDirection}
-          onSort={() => setSorting('name')}
+          onSort={() => setSorting('fullname')}
         >
           Full name
         </Th>
 
-        <Th
-          sorted={sortBy === 'booked_at'}
-          reversed={reverseSortDirection}
-          onSort={() => setSorting('booked_at')}
-        >
-          Email
-        </Th>
+          <Th
+            sorted={sortBy === 'email'}
+            reversed={reverseSortDirection}
+            onSort={() => setSorting('email')}
+          >
+            Email
+          </Th>
 
         <Th
           sorted={null}

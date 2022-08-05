@@ -1,4 +1,5 @@
 export interface Room {
+  isTypeDeleted: string;
   stt: number;
   id: string;
   name: string;

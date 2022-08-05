@@ -224,6 +224,45 @@ export class DevicesController {
     return this.service.updateById(user.account_id, payload.id, body);
   }
 
+  @Put('update-type-then-restore/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Update library device by id',
+    description: 'Update library device by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully updated the library device',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while updating the library device',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active device",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
+  updateTypeThenRestore(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string },
+    @Body() body: {type: string}
+  ) {
+
+    console.log("CMMMMMM: ", body.type)
+    return this.service.updateTypeThenRestore(user.account_id, payload.id, body);
+  }
+
   @Put('disable/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
