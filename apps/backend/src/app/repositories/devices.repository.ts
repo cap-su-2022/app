@@ -33,12 +33,20 @@ export class DevicesRepository extends Repository<Devices> {
     return result.size;
   }
 
-  async isExistedByName(name: string): Promise<boolean> {
+  async isExistedByNameActive(name: string): Promise<boolean> {
     return this.createQueryBuilder('devices')
       .select('COUNT(devices.name)')
       .where('devices.name = :name', { name })
       .getRawOne()
       .then((data) => data['count'] > 0);
+  }
+
+  getDeviceDeletedByName(name: string) {
+    return this.createQueryBuilder('device')
+      .select('device.id', 'id')
+      .where('device.deleted_at IS NOT NULL')
+      .andWhere('device.name = :name', { name })
+      .getRawOne();
   }
 
   searchDevices(payload: DevicesPaginationParams) {
@@ -120,25 +128,24 @@ export class DevicesRepository extends Repository<Devices> {
       .innerJoin(Accounts, 'a', 'devices.created_by = a.id')
       .leftJoin(Accounts, 'aa', 'devices.updated_by = aa.id')
       .innerJoin(DeviceType, 'dt', 'dt.id = devices.type')
-      .where('devices.disabled_at IS NULL')
-      .andWhere('devices.deleted_at IS NULL')
+      // .where('devices.disabled_at IS NULL')
+      .where('devices.deleted_at IS NULL')
       .andWhere('devices.id = :deviceId', { deviceId: id })
       .getRawOne<Devices>();
   }
 
-  createNewDevice(payload: AddDeviceRequest, userId: string): Promise<Devices> {
-    return this.save(
-      {
-        name: payload.name.trim(),
-        description: payload.description,
-        type: payload.type,
-        createdBy: userId,
-        createdAt: new Date(),
-      },
-      {
-        transaction: true,
-      }
-    );
+  createNewDevice(
+    payload: AddDeviceRequest,
+    userId: string,
+    queryRunner: QueryRunner
+  ): Promise<Devices> {
+    return queryRunner.manager.save(Devices, {
+      name: payload.name.trim(),
+      description: payload.description,
+      type: payload.type,
+      createdBy: userId,
+      createdAt: new Date(),
+    });
   }
 
   async updateById(
@@ -163,6 +170,31 @@ export class DevicesRepository extends Repository<Devices> {
       },
       {
         transaction: true,
+      }
+    );
+  }
+
+  async updateTypeThenRestore(
+    accountId: string,
+    deviceId: string,
+    payload: { type: string },
+    queryRunner: QueryRunner
+  ) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: deviceId,
+      },
+    });
+    return queryRunner.manager.save(
+      Devices,
+      {
+        ...oldData,
+        id: deviceId,
+        type: payload.type,
+        updatedBy: accountId,
+        updatedAt: new Date(),
+        disabledBy: null,
+        disabledAt: null,
       }
     );
   }
@@ -207,9 +239,10 @@ export class DevicesRepository extends Repository<Devices> {
       .addSelect('devices.name', 'name')
       .addSelect('devices.disabled_at', 'disabledAt')
       .addSelect('a.username', 'disabledBy')
-      .addSelect('dt.name', 'roomTypeName')
+      .addSelect('dt.name', 'deviceTypeName')
+      .addSelect('dt.deleted_at', 'isTypeDeleted')
       .innerJoin(Accounts, 'a', 'devices.disabled_by = a.id')
-      .innerJoin(DeviceType, 'dt', 'devices.type = dt.id')
+      .leftJoin(DeviceType, 'dt', 'devices.type = dt.id')
       .where(`devices.deleted_at IS NULL`)
       .andWhere(`devices.disabled_at IS NOT NULL`)
       .andWhere('devices.name ILIKE :search', { search: `%${search.trim()}%` })
@@ -266,23 +299,25 @@ export class DevicesRepository extends Repository<Devices> {
       .getRawMany<Devices>();
   }
 
-  // async restoreDeletedDeviceById(id: string) {
-  //   const isRestored = await this.createQueryBuilder('devices')
-  //     .update({
-  //       deletedBy: null,
-  //       deletedAt: null,
-  //     })
-  //     .where('devices.id = :id', { id: id })
-  //     .useTransaction(true)
-  //     .execute();
-  //   if (isRestored.affected > 0) {
-  //     return this.findOneOrFail({
-  //       where: {
-  //         id: id,
-  //       },
-  //     });
-  //   }
-  // }
+  async restoreDeletedDeviceById(
+    device: Devices,
+    accountId: string,
+    id: string,
+    queryRunner: QueryRunner
+  ) {
+    return queryRunner.manager.save(Devices, {
+      id: id,
+      name: device.name,
+      description: device.description,
+      type: device.type,
+      deletedBy: null,
+      deletedAt: null,
+      createdBy: accountId,
+      createdAt: new Date(),
+      updatedBy: accountId,
+      updatedAt: new Date(),
+    });
+  }
 
   // findDeviceListByBookingRoomRequest(name: string, type: string, sort: string) {
   //   return this.createQueryBuilder('devices')

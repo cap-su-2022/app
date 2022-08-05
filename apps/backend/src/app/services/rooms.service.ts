@@ -30,13 +30,18 @@ export class RoomsService {
   async getAll(request: RoomsPaginationParams) {
     try {
       const result = await this.repository.searchRoom(request);
-      if(result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages){
+      if (
+        result.meta.totalPages > 0 &&
+        result.meta.currentPage > result.meta.totalPages
+      ) {
         throw new BadRequestException('Current page is over');
-      } 
-      return result
+      }
+      return result;
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException(e.message || 'One or more parameters is invalid');
+      throw new BadRequestException(
+        e.message || 'One or more parameters is invalid'
+      );
     }
   }
 
@@ -83,7 +88,7 @@ export class RoomsService {
       const result = await this.repository.findById(id);
       if (!result) {
         throw new BadRequestException(
-          'This room is already deleted or disabled'
+          'This room is already deleted'
         );
       }
       return result;
@@ -105,16 +110,33 @@ export class RoomsService {
     await queryRunner.startTransaction();
 
     try {
-      const isExisted = await this.repository.isExistedByNameActive(room.name);
-      if (isExisted) {
-        throw new BadRequestException('Room name is duplicated!');
-      }
-      const roomAdded = await this.repository.createNewRoom(
-        room,
-        user.account_id,
-        queryRunner
+      const roomDeletedSameName = await this.repository.getRoomDeletedByName(
+        room.name
       );
-      await this.histService.createNew(roomAdded, queryRunner);
+
+      let roomAdded;
+
+      if (roomDeletedSameName) {
+        roomAdded = await this.repository.restoreDeletedRoomById(
+          room,
+          user.account_id,
+          roomDeletedSameName.id,
+          queryRunner
+        );
+      } else {
+        const isExisted = await this.repository.isExistedByNameActive(
+          room.name
+        );
+        if (isExisted) {
+          throw new BadRequestException('Room name is duplicated!');
+        }
+        roomAdded = await this.repository.createNewRoom(
+          room,
+          user.account_id,
+          queryRunner
+        );
+        await this.histService.createNew(roomAdded, queryRunner);
+      }
 
       await queryRunner.commitTransaction();
       return roomAdded;
@@ -178,6 +200,49 @@ export class RoomsService {
     }
   }
 
+  async updateTypeThenRestore(accountId: string, id: string, body: {type: string}) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const isExisted = await this.repository.existsById(id);
+    if (!isExisted) {
+      throw new BadRequestException('Room does not found with the provided id');
+    }
+    const data = await this.repository.findById(id);
+    if (data === undefined) {
+      throw new BadRequestException('This room is already deleted');
+    }
+    try {
+      const roomUpdated = await this.repository.updateTypeThenRestore(
+        accountId,
+        id,
+        body,
+        queryRunner
+      );
+
+      await this.histService.createNew(roomUpdated, queryRunner);
+
+      await queryRunner.commitTransaction();
+      return roomUpdated;
+    } catch (e) {
+      this.logger.error(e);
+      await queryRunner.rollbackTransaction();
+      if (
+        e.message.includes('constraint') &&
+        e.message.includes('rooms_room_type_id_fk')
+      ) {
+        throw new BadRequestException(
+          'There is no room type with the provided id'
+        );
+      }
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while updating this room'
+      );
+    }
+  }
+
   async disableById(accountId: string, id: string): Promise<any> {
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -205,7 +270,7 @@ export class RoomsService {
       const listRequestBooked =
         await this.bookingRoomService.getRequestByRoomId(id);
       if (listRequestBooked.length > 0) {
-        const reason = `Room ${data?.name} was deleted. Request in this room was auto cancelled`
+        const reason = `Room ${data?.name} was deleted. Request in this room was auto cancelled`;
         for (let i = 0; i < listRequestBooked.length; i++) {
           await this.bookingRoomService.cancelRequest(
             accountId,
@@ -306,7 +371,7 @@ export class RoomsService {
       const listRequestBooked =
         await this.bookingRoomService.getRequestByRoomId(id);
       if (listRequestBooked.length > 0) {
-        const reason = `Room ${data?.name} was deleted. Request in this room was auto cancelled`
+        const reason = `Room ${data?.name} was deleted. Request in this room was auto cancelled`;
         for (let i = 0; i < listRequestBooked.length; i++) {
           await this.bookingRoomService.cancelRequest(
             accountId,

@@ -104,13 +104,11 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     props.formik.values.checkinSlot = null;
     props.formik.values.checkoutSlot = null;
     if (props.formik.values.checkinDate) {
-      // const curr = new Date();
-      const currTime = dayjs(curr).format('HH:mm:ss');
+      const currTime = dayjs(new Date()).format('HH:mm:ss');
       const choosedDay = new Date(props.formik.values.checkinDate).getDate();
 
       const result = slotInfors?.map((slot) => {
         let isFree = true;
-
         if (choosedDay === curr.getDate() && currTime > slot.timeStart) {
           isFree = false;
         }

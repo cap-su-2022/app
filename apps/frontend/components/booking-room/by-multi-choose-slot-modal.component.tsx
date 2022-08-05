@@ -256,7 +256,6 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             onChange={(date) => {
               props.formik.setFieldValue('checkoutDate', date);
             }}
-            excludeDate={(date) => date.getDay() === 0 || date.getDay() === 7}
           />
         </div>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
