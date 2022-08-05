@@ -246,6 +246,7 @@ function DevicesManagement() {
               data={devices.items}
               page={pagination.page}
               itemsPerPage={pagination.limit}
+              search={pagination.search}
             />
             <DeviceInfoModal
               // header="Room Information"

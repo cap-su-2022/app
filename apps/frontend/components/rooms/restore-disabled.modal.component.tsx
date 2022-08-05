@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   createStyles,
   Table,
@@ -7,30 +7,32 @@ import {
   Text,
   Button,
   InputWrapper,
-  TextInput,
+  TextInput, Highlight,
 } from '@mantine/core';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { RotateClockwise, Search, Trash } from 'tabler-icons-react';
-import { restoreDisabledRoom } from '../../redux/features/room/thunk/restore-disabled.thunk';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
-import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-id';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {RotateClockwise, Search, Trash} from 'tabler-icons-react';
+import {restoreDisabledRoom} from '../../redux/features/room/thunk/restore-disabled.thunk';
+import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
+import {fetchDisabledRooms} from '../../redux/features/room/thunk/fetch-disabled-rooms';
+import {deleteRoomById} from '../../redux/features/room/thunk/delete-room-by-id';
 import dayjs from 'dayjs';
-import { useDebouncedValue } from '@mantine/hooks';
-import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
+import {useDebouncedValue} from '@mantine/hooks';
+import {PagingParams} from '../../models/pagination-params/paging-params.model';
+import {fetchDeletedRooms} from '../../redux/features/room/thunk/fetch-deleted-rooms';
 import NoDataFound from '../no-data-found';
 
 interface RestoreDisabledRoomModalProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   pagination: PagingParams;
 }
 
 const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
   props
 ) => {
-  const { classes, cx } = useStyles();
+  const {classes, cx} = useStyles();
   const disabledRooms = useAppSelector((state) => state.room.disabledRooms);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
@@ -74,8 +76,14 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
   const rows = disabledRooms?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
-      <td>{row.name}</td>
-      <td>{row.roomTypeName}</td>
+      <td>
+        <Highlight highlight={search}>
+          {row.name}
+        </Highlight>
+      </td>
+      <td>
+        {row.roomTypeName}
+      </td>
       <td>{dayjs(row.disabledAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.disabledBy}</td>
       <td
@@ -91,9 +99,9 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
           }}
           variant="outline"
           color="green"
-          leftIcon={<RotateClockwise />}
+          leftIcon={<RotateClockwise/>}
         >
-         Restore
+          Restore
         </Button>
         <Button
           onClick={() => handleDeleteRoom(row.id)}
@@ -102,7 +110,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
           }}
           variant="outline"
           color="red"
-          leftIcon={<Trash />}
+          leftIcon={<Trash/>}
         >
           Delete
         </Button>
@@ -122,37 +130,37 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
       onClose={() => props.toggleShown()}
       centered
       size="70%"
-      title={<ModalHeaderTitle />}
+      title={<ModalHeaderTitle/>}
       closeOnClickOutside={true}
       closeOnEscape={false}
     >
       <InputWrapper label="Search">
         <TextInput
           onChange={(e) => setSearch(e.target.value)}
-          icon={<Search />}
+          icon={<Search/>}
         />
       </InputWrapper>
       {disabledRooms.length > 0 ? (
         <>
           <ScrollArea
-            sx={{ height: 500 }}
-            onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+            sx={{height: 500}}
+            onScrollPositionChange={({y}) => setScrolled(y !== 0)}
           >
             <div>
-              <Table sx={{ minWidth: 700 }}>
+              <Table sx={{minWidth: 700}}>
                 <thead
                   className={cx(classes.header, {
                     [classes.scrolled]: scrolled,
                   })}
                 >
-                  <tr>
-                    <th style={{width: 50}}>STT</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Disabled at</th>
-                    <th>Disabled by</th>
-                    <th>Action</th>
-                  </tr>
+                <tr>
+                  <th style={{width: 50}}>STT</th>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Disabled at</th>
+                  <th>Disabled by</th>
+                  <th>Action</th>
+                </tr>
                 </thead>
                 <tbody>{rows}</tbody>
               </Table>
@@ -160,7 +168,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
           </ScrollArea>
         </>
       ) : (
-        <NoDataFound />
+        <NoDataFound/>
       )}
     </Modal>
   );

@@ -7,7 +7,7 @@ import {
   Text,
   Button,
   InputWrapper,
-  TextInput,
+  TextInput, Highlight,
 } from '@mantine/core';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {Check, RotateClockwise, Search, Trash, X} from 'tabler-icons-react';
@@ -73,7 +73,7 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
         dispatch(fetchDisabledAccounts(search))
           .unwrap()
           .then((listDisabledAccount) =>
-          listDisabledAccount.length < 1 ? props.toggleShown() : null
+            listDisabledAccount.length < 1 ? props.toggleShown() : null
           )
       );
   };
@@ -106,7 +106,7 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
         dispatch(fetchDisabledAccounts(search))
           .unwrap()
           .then((listDisabledAccount) =>
-          listDisabledAccount.length < 1 ? props.toggleShown() : null
+            listDisabledAccount.length < 1 ? props.toggleShown() : null
           )
           .then(() => {
             dispatch(fetchDeletedAccounts(''));
@@ -117,7 +117,11 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
   const rows = disabledAccounts?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
-      <td>{row.username}</td>
+      <td>
+        <Highlight highlight={search}>
+          {row.username}
+        </Highlight>
+      </td>
       <td>{row.fullname}</td>
       <td>{dayjs(row.disabledAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.disabledBy}</td>

@@ -375,7 +375,7 @@ const ManageBookingReason: React.FC<any> = () => {
   });
   return (
     <AdminLayout>
-      <Header title="Booking Reason" icon={<BuildingWarehouse size={50}/>}/>
+      <Header title="Booking Reasons Management" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter/>}
@@ -397,6 +397,7 @@ const ManageBookingReason: React.FC<any> = () => {
             data={bookingReasons.items}
             page={pagination.page}
             itemsPerPage={pagination.limit}
+            search={pagination.search}
           />
           <InfoModal
             header="Booking Reason Information"

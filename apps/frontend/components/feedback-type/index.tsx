@@ -389,7 +389,7 @@ const ManageFeedbackType: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Feedback Type" icon={<BuildingWarehouse size={50}/>}/>
+      <Header title="Feedback Types Management" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter/>}
@@ -412,6 +412,7 @@ const ManageFeedbackType: React.FC<any> = () => {
             data={feedbackTypes.items}
             page={pagination.page}
             itemsPerPage={pagination.limit}
+            search={pagination.search}
           />
           <InfoModal
 

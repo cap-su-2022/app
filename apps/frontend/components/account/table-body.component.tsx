@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { createStyles, Table, Button } from '@mantine/core';
-import { InfoCircle, Pencil, Trash } from 'tabler-icons-react';
+import React, {useEffect, useState} from 'react';
+import {createStyles, Table, Button, Highlight} from '@mantine/core';
+import {InfoCircle, Pencil, Trash} from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
 
@@ -11,7 +11,7 @@ interface RowData {
 
 interface TableBodyProps {
   data: any[];
-  search?: React.ReactNode;
+  search?: string | string[];
 
   toggleSortDirection(label): void;
 
@@ -24,7 +24,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
@@ -45,7 +45,11 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             ? index + 1
             : (props.page - 1) * props.itemsPerPage + (index + 1)}
         </td>
-        <td>{row.fullname}</td>
+        <td>
+          <Highlight highlight={props.search}>
+            {row.fullname}
+          </Highlight>
+        </td>
         <td>{row.email}</td>
         <td className={classes.actionButtonContainer}>
           <Button
@@ -77,20 +81,20 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{ tableLayout: 'fixed' }}
+      sx={{tableLayout: 'fixed'}}
     >
       <thead>
-        <tr>
-          <Th
-            style={{
-              width: '50px',
-            }}
-            sorted={null}
-            reversed={reverseSortDirection}
-            onSort={null}
-          >
-            STT
-          </Th>
+      <tr>
+        <Th
+          style={{
+            width: '50px',
+          }}
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+        >
+          STT
+        </Th>
 
         <Th
           sorted={sortBy === 'name'}
@@ -100,28 +104,28 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           Full name
         </Th>
 
-          <Th
-            sorted={sortBy === 'booked_at'}
-            reversed={reverseSortDirection}
-            onSort={() => setSorting('booked_at')}
-          >
-            Email
-          </Th>
+        <Th
+          sorted={sortBy === 'booked_at'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('booked_at')}
+        >
+          Email
+        </Th>
 
-          <Th
-            sorted={null}
-            reversed={reverseSortDirection}
-            onSort={null}
-            style={{ width: 220 }}
-          >
-            Actions
-          </Th>
-        </tr>
+        <Th
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+          style={{width: 220}}
+        >
+          Actions
+        </Th>
+      </tr>
       </thead>
       <tbody>{rows}</tbody>
     </Table>
   ) : (
-    <NoDataFound />
+    <NoDataFound/>
   );
 };
 

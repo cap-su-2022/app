@@ -7,7 +7,7 @@ import {
   Text,
   Button,
   InputWrapper,
-  TextInput,
+  TextInput, Highlight,
 } from '@mantine/core';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {Ban, Check, RotateClockwise, Search, X} from 'tabler-icons-react';
@@ -23,11 +23,11 @@ import {
 import {fetchFeedbackTypes} from '../../redux/features/feedback-type/thunk/fetch-feedback-types.thunk'
 
 
-
 interface RestoreDisabledModalProps {
   isShown: boolean;
 
   toggleShown(): void;
+
 
   pagination: PaginationParams;
 }
@@ -82,7 +82,12 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
   const rows = disabledFeedbackTypes?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
-      <td>{row.name}</td>
+      <td>
+        <Highlight highlight={search}>
+          {row.name}
+        </Highlight>
+
+      </td>
       <td>{dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.deletedBy}</td>
       <td

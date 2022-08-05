@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { PaginationParams } from '../../models/pagination-params.model';
-import { useDebouncedValue } from '@mantine/hooks';
-import { BuildingWarehouse, Download } from 'tabler-icons-react';
+import React, {useEffect, useState} from 'react';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {PaginationParams} from '../../models/pagination-params.model';
+import {useDebouncedValue} from '@mantine/hooks';
+import {BuildingWarehouse, Download} from 'tabler-icons-react';
 import AdminLayout from '../layout/admin.layout';
 import Header from '../common/header.component';
 import TableHeader from '../actions/table-header.component';
-import { TableBody } from './table-body.component';
+import {TableBody} from './table-body.component';
 import InfoModal from './info-modal.component';
 import NoDataFound from '../no-data-found';
 import TableFooter from '../actions/table-footer.component';
-import { fetchBookingRoomFeedbacks } from '../../redux/features/booking-room-feedback/thunk/fetch-booking-room-feedbacks.thunk';
-import { fetchBookingRoomFeedbackById } from '../../redux/features/booking-room-feedback/thunk/fetch-booking-room-feedback-by-id.thunk';
-import { Button, createStyles } from '@mantine/core';
+import {
+  fetchBookingRoomFeedbacks
+} from '../../redux/features/booking-room-feedback/thunk/fetch-booking-room-feedbacks.thunk';
+import {
+  fetchBookingRoomFeedbackById
+} from '../../redux/features/booking-room-feedback/thunk/fetch-booking-room-feedback-by-id.thunk';
+import {Button, createStyles} from '@mantine/core';
 
 const defaultPaginationParams = {
   page: 1,
@@ -105,7 +109,7 @@ const ManageBookingRoomFeedback: React.FC<any> = () => {
           color="violet"
           onClick={() => setDownShown(true)}
         >
-          <Download />
+          <Download/>
         </Button>
       </>
     );
@@ -114,13 +118,13 @@ const ManageBookingRoomFeedback: React.FC<any> = () => {
   return (
     <AdminLayout>
       <Header
-        title="Booking Room Feedback"
-        icon={<BuildingWarehouse size={50} />}
+        title="Booking Room Feedbacks"
+        icon={<BuildingWarehouse size={50}/>}
       />
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         search={pagination.search}
-        actions={<ActionsFilter />}
+        actions={<ActionsFilter/>}
         setSearch={(val) => handleSearchValue(val)}
         actionsLeft={null}
       />
@@ -133,6 +137,7 @@ const ManageBookingRoomFeedback: React.FC<any> = () => {
             data={bookingRoomFeedbacks.items}
             page={pagination.page}
             itemsPerPage={pagination.limit}
+            search={pagination.search}
           />
           <InfoModal
             header="Booking Room Feedback Information"
@@ -141,7 +146,7 @@ const ManageBookingRoomFeedback: React.FC<any> = () => {
           />
         </>
       ) : (
-        <NoDataFound />
+        <NoDataFound/>
       )}
 
       {bookingRoomFeedbacks?.meta ? (

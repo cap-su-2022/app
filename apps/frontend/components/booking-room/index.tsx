@@ -1,17 +1,17 @@
-import { Button, createStyles, Space } from '@mantine/core';
+import {Button, createStyles, Space} from '@mantine/core';
 import AdminLayout from '../../components/layout/admin.layout';
-import React, { useEffect, useState } from 'react';
-import { Download, Plus, Ticket } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
-import { fetchRoomBookingById } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-id';
+import React, {useEffect, useState} from 'react';
+import {Download, Plus, Ticket} from 'tabler-icons-react';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {fetchRoomBookings} from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
+import {fetchRoomBookingById} from '../../redux/features/room-booking/thunk/fetch-room-booking-by-id';
 import TableHeader from '../../components/actions/table-header.component';
-import { TableBody } from './table-body.component';
+import {TableBody} from './table-body.component';
 import TableFooter from '../../components/actions/table-footer.component';
 import NoDataFound from '../../components/no-data-found';
-import { BookingRequestParams } from '../../models/pagination-params/booking-room-params.model';
+import {BookingRequestParams} from '../../models/pagination-params/booking-room-params.model';
 import CancelRequestModal from '../../components/booking-room/cancel-request.component';
-import { useDebouncedValue } from '@mantine/hooks';
+import {useDebouncedValue} from '@mantine/hooks';
 import Header from '../../components/common/header.component';
 import RequestInfoModal from '../../components/booking-room/info-modal.component';
 import SendBookingModal from './option-booking-modal.component';
@@ -20,7 +20,7 @@ import RejectRequestModal from './reject-request.component';
 import CheckinRequestModal from './checkin-request.component';
 import CheckoutRequestModal from './checkout-request.component';
 
-import { fetchCountRequestBooking } from '../../redux/features/room-booking/thunk/fetch-count-request-booking';
+import {fetchCountRequestBooking} from '../../redux/features/room-booking/thunk/fetch-count-request-booking';
 
 const defaultPagination = {
   limit: 5,
@@ -35,7 +35,7 @@ const defaultPagination = {
 };
 
 const BookingRoom = () => {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const [isInfoShown, setInfoShown] = useState<boolean>(false);
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isCancelShown, setCancelShown] = useState<boolean>(false);
@@ -135,12 +135,12 @@ const BookingRoom = () => {
           variant="outline"
           color="violet"
           onClick={() => setAddShown(true)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
-          <Plus />
+          <Plus/>
         </Button>
         <Button variant="outline" color="violet">
-          <Download />
+          <Download/>
         </Button>
       </>
     );
@@ -149,7 +149,7 @@ const BookingRoom = () => {
   const ActionsFilterLeft: React.FC = () => {
     return (
       <>
-        <div style={{ display: 'flex' }}>
+        <div style={{display: 'flex'}}>
           <Button
             variant="outline"
             color="blue"
@@ -160,14 +160,14 @@ const BookingRoom = () => {
             {count && count[0]?.count > 0 ? (
               <div
                 className={classes.badge}
-                style={{ backgroundColor: '#228be6' }}
+                style={{backgroundColor: '#228be6'}}
               >
                 {count[0].count}
               </div>
             ) : null}
           </Button>
 
-          <Space w="xl" />
+          <Space w="xl"/>
 
           <Button
             variant="outline"
@@ -179,14 +179,14 @@ const BookingRoom = () => {
             {count && count[1]?.count > 0 ? (
               <div
                 className={classes.badge}
-                style={{ backgroundColor: '#40c057' }}
+                style={{backgroundColor: '#40c057'}}
               >
                 {count[1].count}
               </div>
             ) : null}
           </Button>
 
-          <Space w="xl" />
+          <Space w="xl"/>
 
           <Button
             variant="outline"
@@ -198,14 +198,14 @@ const BookingRoom = () => {
             {count && count[2]?.count > 0 ? (
               <div
                 className={classes.badge}
-                style={{ backgroundColor: '#fd7e14' }}
+                style={{backgroundColor: '#fd7e14'}}
               >
                 {count[2].count}
               </div>
             ) : null}
           </Button>
 
-          <Space w="xl" />
+          <Space w="xl"/>
           <Button
             variant="outline"
             color="violet"
@@ -216,14 +216,14 @@ const BookingRoom = () => {
             {count && count[3]?.count > 0 ? (
               <div
                 className={classes.badge}
-                style={{ backgroundColor: '#7950f2' }}
+                style={{backgroundColor: '#7950f2'}}
               >
                 {count[3].count}
               </div>
             ) : null}
           </Button>
 
-          <Space w="xl" />
+          <Space w="xl"/>
 
           <Button
             variant="outline"
@@ -235,7 +235,7 @@ const BookingRoom = () => {
             {count && count[4]?.count > 0 ? (
               <div
                 className={classes.badge}
-                style={{ backgroundColor: '#fa5252' }}
+                style={{backgroundColor: '#fa5252'}}
               >
                 {count[4].count}
               </div>
@@ -248,12 +248,12 @@ const BookingRoom = () => {
 
   return (
     <AdminLayout>
-      <Header title="Room Booking" icon={<Ticket size={50} />} />
+      <Header title="Booking Room" icon={<Ticket size={50}/>}/>
 
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
-        actions={<ActionsFilter />}
-        actionsLeft={<ActionsFilterLeft />}
+        actions={<ActionsFilter/>}
+        actionsLeft={<ActionsFilterLeft/>}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
       />
@@ -266,6 +266,7 @@ const BookingRoom = () => {
             data={roomBookingList.items}
             page={pagination.page}
             itemsPerPage={pagination.limit}
+            search={pagination.search}
           />
           <RequestInfoModal
             toggleShown={() => setInfoShown(!isInfoShown)}
@@ -313,7 +314,7 @@ const BookingRoom = () => {
           />
         </>
       ) : (
-        <NoDataFound />
+        <NoDataFound/>
       )}
 
       <SendBookingModal

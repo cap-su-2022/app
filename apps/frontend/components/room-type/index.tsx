@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Button, createStyles } from '@mantine/core';
+import React, {useEffect, useState} from 'react';
+import {Button, createStyles} from '@mantine/core';
 import Header from '../common/header.component';
 import {
   ArchiveOff,
@@ -10,7 +10,7 @@ import {
   Plus,
   X,
 } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {
   fetchRoomTypeById,
   fetchRoomTypeNames,
@@ -27,13 +27,13 @@ import TableFooter from '../actions/table-footer.component';
 import InfoModal from '../actions/modal/info-modal.component';
 import * as Yup from 'yup';
 import AddModal from '../actions/modal/add-modal.component';
-import { FormikValues, useFormik } from 'formik';
-import { addRoomType } from '../../redux/features/room-type/thunk/add-room-type.thunk';
-import { InputAddProps } from '../actions/models/input-add-props.model';
-import { InputTypes } from '../actions/models/input-type.constant';
+import {FormikValues, useFormik} from 'formik';
+import {addRoomType} from '../../redux/features/room-type/thunk/add-room-type.thunk';
+import {InputAddProps} from '../actions/models/input-add-props.model';
+import {InputTypes} from '../actions/models/input-type.constant';
 import UpdateModal from '../actions/modal/update-modal.component';
-import { updateRoomTypeById } from '../../redux/features/room-type/thunk/update-room-type-by-id.thunk';
-import { InputUpdateProps } from '../actions/models/input-update-props.model';
+import {updateRoomTypeById} from '../../redux/features/room-type/thunk/update-room-type-by-id.thunk';
+import {InputUpdateProps} from '../actions/models/input-update-props.model';
 import DeleteModal from './delete-modal.component';
 import AdminLayout from '../layout/admin.layout';
 import RestoreDeletedModal from './restore-deleted.modal.component';
@@ -42,7 +42,7 @@ import {PaginationResponse} from '../../models/pagination-response.payload';
 import {showNotification} from '@mantine/notifications';
 import dayjs from 'dayjs';
 import NoDataFound from '../no-data-found';
-import { fetchRoomsByRoomType } from '../../redux/features/room/thunk/fetch-rooms-by-room-type';
+import {fetchRoomsByRoomType} from '../../redux/features/room/thunk/fetch-rooms-by-room-type';
 
 const AddRoomTypeValidation = Yup.object().shape({
   name: Yup.string()
@@ -182,7 +182,7 @@ const ManageRoomType: React.FC<any> = () => {
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
         >
-          <ArchiveOff />
+          <ArchiveOff/>
         </Button>
       </div>
     );
@@ -414,7 +414,7 @@ const ManageRoomType: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Room Type" icon={<BuildingWarehouse size={50}/>}/>
+      <Header title="Room Types Management" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actionsLeft={null}
@@ -435,13 +435,14 @@ const ManageRoomType: React.FC<any> = () => {
             data={roomTypes.items}
             page={pagination.page}
             itemsPerPage={pagination.limit}
+            search={pagination.search}
           />
           <InfoModal
             header="Room Type Information"
             fields={infoFields}
             toggleShown={() => handleCloseInfoModal()}
             isShown={isInfoShown}
-            itemsOfDataButton={<ShowRoomOfTypeButton />}
+            itemsOfDataButton={<ShowRoomOfTypeButton/>}
             isShowListItems={isListRoomShown}
             itemsOfData={listRoomOfType}
             title='LIST ROOM OF TYPE'
@@ -463,7 +464,7 @@ const ManageRoomType: React.FC<any> = () => {
             roomTypes={roomTypeNames}
           />
         </>
-      ) : (<NoDataFound/> )}
+      ) : (<NoDataFound/>)}
       <AddModal
         header="Add new room type"
         isShown={isAddShown}
