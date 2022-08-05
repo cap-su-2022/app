@@ -102,6 +102,7 @@ const BookingRoom = () => {
   const handleLimitChange = (val: number) => {
     setPagination({
       ...pagination,
+      page: 1,
       limit: val,
     });
   };
