@@ -68,7 +68,7 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       isRender: isAdmin,
     },
     {link: '/accounts', label: 'Accounts', icon: Users, isRender: isAdmin},
-    {link: '/role', label: 'Role', icon: BarrierBlock, isRender: isAdmin},
+    {link: '/role', label: 'Roles', icon: BarrierBlock, isRender: isAdmin},
     {
       link: '/feedbacks',
       label: 'Feedbacks',

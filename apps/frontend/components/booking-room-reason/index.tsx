@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Button } from '@mantine/core';
+import React, {useEffect, useState} from 'react';
+import {Button} from '@mantine/core';
 import Header from '../common/header.component';
 import {
   ArchiveOff,
@@ -8,7 +8,7 @@ import {
   Plus,
   X,
 } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {
   fetchBookingReasonById,
   fetchBookingReasons,
@@ -19,23 +19,23 @@ import {
   defaultPaginationParams,
   PaginationParams,
 } from '../../models/pagination-params.model';
-import { useDebouncedValue } from '@mantine/hooks';
-import { TableBody } from '../actions/table-body.component';
+import {useDebouncedValue} from '@mantine/hooks';
+import {TableBody} from '../actions/table-body.component';
 import TableFooter from '../actions/table-footer.component';
 import TableHeader from '../actions/table-header.component';
 import InfoModal from '../actions/modal/info-modal.component';
 import * as Yup from 'yup';
 import AddModal from '../actions/modal/add-modal.component';
-import { FormikValues, useFormik } from 'formik';
-import { InputAddProps } from '../actions/models/input-add-props.model';
-import { InputTypes } from '../actions/models/input-type.constant';
+import {FormikValues, useFormik} from 'formik';
+import {InputAddProps} from '../actions/models/input-add-props.model';
+import {InputTypes} from '../actions/models/input-type.constant';
 import UpdateModal from '../actions/modal/update-modal.component';
-import { InputUpdateProps } from '../actions/models/input-update-props.model';
+import {InputUpdateProps} from '../actions/models/input-update-props.model';
 import AdminLayout from '../layout/admin.layout';
 import dayjs from 'dayjs';
 import RestoreDeletedModal from './restore-deleted.modal.component';
 import DeleteModal from './delete-modal.component';
-import { showNotification } from '@mantine/notifications';
+import {showNotification} from '@mantine/notifications';
 import NoDataFound from '../no-data-found';
 
 const AddBookingReasonValidation = Yup.object().shape({
@@ -138,10 +138,10 @@ const ManageBookingReason: React.FC<any> = () => {
     return (
       <div>
         <Button
-          leftIcon={<Plus />}
+          leftIcon={<Plus/>}
           color="green"
           onClick={() => setAddShown(!isAddShown)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
           Add
         </Button>
@@ -150,7 +150,7 @@ const ManageBookingReason: React.FC<any> = () => {
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
         >
-          <ArchiveOff />
+          <ArchiveOff/>
         </Button>
       </div>
     );
@@ -195,7 +195,7 @@ const ManageBookingReason: React.FC<any> = () => {
       inputtype: InputTypes.TextArea,
     },
     {
-      label: 'Create at',
+      label: 'Created at',
       id: 'createAt',
       name: 'createAt',
       value: dayjs(bookingReason.createdAt).format('HH:mm DD/MM/YYYY'),
@@ -203,7 +203,7 @@ const ManageBookingReason: React.FC<any> = () => {
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Create By',
+      label: 'Created By',
       id: 'createBy',
       name: 'createBy',
       value: bookingReason.createdBy,
@@ -299,7 +299,7 @@ const ManageBookingReason: React.FC<any> = () => {
           color: 'red',
           title: 'Error while add booking reason',
           message: e.message ?? 'Failed to add booking reason',
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         })
       )
@@ -309,7 +309,7 @@ const ManageBookingReason: React.FC<any> = () => {
           color: 'teal',
           title: 'New booking reason was added',
           message: 'New booking reason successfully added',
-          icon: <Check />,
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -331,7 +331,7 @@ const ManageBookingReason: React.FC<any> = () => {
           color: 'red',
           title: 'Error while update booking reason',
           message: e.message ?? 'Failed to update booking reason',
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         })
       )
@@ -341,7 +341,7 @@ const ManageBookingReason: React.FC<any> = () => {
           color: 'teal',
           title: 'New booking reason was updated',
           message: 'New booking reason successfully updated',
-          icon: <Check />,
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -375,10 +375,10 @@ const ManageBookingReason: React.FC<any> = () => {
   });
   return (
     <AdminLayout>
-      <Header title="Booking Reason" icon={<BuildingWarehouse size={50} />} />
+      <Header title="Booking Reason" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
-        actions={<ActionsFilter />}
+        actions={<ActionsFilter/>}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
         actionsLeft={null}
@@ -425,7 +425,7 @@ const ManageBookingReason: React.FC<any> = () => {
           />
         </>
       ) : (
-        <NoDataFound />
+        <NoDataFound/>
       )}
       <AddModal
         header="Add new booking reason"

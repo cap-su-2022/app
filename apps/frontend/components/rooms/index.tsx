@@ -224,6 +224,7 @@ function RoomsManagement(props: any) {
               data={rooms.items}
               page={pagination.page}
               itemsPerPage={pagination.limit}
+              search={pagination.search}
             />
             <RoomInfoModal
               // header="Room Information"

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   createStyles,
   Header,
@@ -9,8 +9,8 @@ import {
   Text,
   Avatar,
 } from '@mantine/core';
-import { useBooleanToggle } from '@mantine/hooks';
-import { Bell, ChevronDown, Logout, User } from 'tabler-icons-react';
+import {useBooleanToggle} from '@mantine/hooks';
+import {Bell, ChevronDown, Logout, User} from 'tabler-icons-react';
 import {
   BLACK,
   FPT_ORANGE_COLOR,
@@ -18,10 +18,10 @@ import {
   LIGHT_GRAY,
   WHITE,
 } from '@app/constants';
-import { useOuterClick } from '../../hooks/use-outer-clickk';
+import {useOuterClick} from '../../hooks/use-outer-clickk';
 import PreferencesModal from '../preferences.modal.component';
 import LogoutModal from '../logout.modal';
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 
 interface UserInfoModel {
   avatar: string;
@@ -37,16 +37,18 @@ interface UserInfoModel {
   description: string;
   img: File;
 }
+
 interface HeaderSearchProps {
   // links: { link: string; label: string }[];
   toggleOpened(): void
+
   opened: boolean
 }
 
 const LayoutHeader: React.FC<HeaderSearchProps> = (props) => {
   // const [opened, toggleOpened] = useBooleanToggle(false);
   const router = useRouter();
-  const { classes } = useStyles();
+  const {classes} = useStyles();
 
   const [isNotificationShown, setNotificationShown] = useState<boolean>(false);
   const [isPreferencesShown, setPreferencesShown] = useState<boolean>(false);
@@ -72,7 +74,7 @@ const LayoutHeader: React.FC<HeaderSearchProps> = (props) => {
     <Header height={56} className={classes.header} mb={20}>
       <div className={classes.inner}>
         <Group>
-          <Burger opened={props.opened} onClick={() => props.toggleOpened()} size="sm" />
+          <Burger opened={props.opened} onClick={() => props.toggleOpened()} size="sm"/>
           <></>
         </Group>
 
@@ -83,7 +85,7 @@ const LayoutHeader: React.FC<HeaderSearchProps> = (props) => {
               onClick={() => setPreferencesShown(!isPreferencesShown)}
             >
               <div className={classes.avatarImage}>
-                <Avatar src={userInfo?.avatar} radius="md" />
+                <Avatar src={userInfo?.avatar} radius="md"/>
               </div>
               <Text
                 style={{
@@ -98,7 +100,7 @@ const LayoutHeader: React.FC<HeaderSearchProps> = (props) => {
               className={classes.button}
               onClick={() => toggleNotificationShown()}
             >
-              <Bell className={classes.innerButton} />
+              <Bell className={classes.innerButton}/>
               {isNotificationShown ? (
                 <div>
                   <div>
@@ -742,13 +744,13 @@ const LayoutHeader: React.FC<HeaderSearchProps> = (props) => {
               ) : null}
             </Button>
             <Button className={classes.button}>
-              <ChevronDown className={classes.innerButton} />
+              <ChevronDown className={classes.innerButton}/>
             </Button>
             <Button
               className={classes.button}
               onClick={() => handleLogoutSubmit()}
             >
-              <Logout color={BLACK} />
+              <Logout color={BLACK}/>
             </Button>
           </Group>
         </Group>
