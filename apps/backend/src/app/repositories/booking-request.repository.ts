@@ -1,5 +1,4 @@
-import {Entity} from 'typeorm';
-import {DataSource, QueryRunner, Repository, UpdateResult} from 'typeorm';
+import { QueryRunner, Repository} from 'typeorm';
 import {
   Accounts,
   BookingRequest,
@@ -9,14 +8,12 @@ import {
 } from '../models';
 import {CustomRepository} from '../decorators/typeorm-ex.decorator';
 import {BookingRoomStatus} from '../enum/booking-room-status.enum';
-import {GetBookingRoomsPaginationPayload} from '../payload/request/get-booking-rooms-pagination.payload';
 import {IPaginationMeta, paginateRaw} from 'nestjs-typeorm-paginate';
 import {Slot} from '../models/slot.entity';
 import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.payload';
 import {BookingReason} from '../models/booking-reason.entity';
 import {BadRequestException} from '@nestjs/common';
 import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
-import dayjs = require('dayjs');
 import {BookingRoomPaginationParams} from '../controllers/booking-room-pagination.model';
 
 @CustomRepository(BookingRequest)

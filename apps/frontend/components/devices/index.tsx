@@ -13,7 +13,7 @@ import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {useDebouncedValue} from '@mantine/hooks';
 import NoDataFound from '../../components/no-data-found';
 import TableHeader from '../../components/actions/table-header.component';
-import {TableBody} from '../../components/rooms/table-body.component';
+import { TableBody } from './table-body.component';
 import TableFooter from '../../components/actions/table-footer.component';
 import DisableDeviceModal from '../../components/devices/disable-modal.component';
 import {PagingParams} from '../../models/pagination-params/paging-params.model';
@@ -82,9 +82,10 @@ function DevicesManagement() {
       .then((deviceTypes) => setDeviceTypeNames(deviceTypes));
   }, []);
 
-  const toggleSortDirection = () => {
+  const toggleSortDirection = (field) => {
     setPagination({
       ...pagination,
+      sort: field,
       dir: pagination.dir === 'ASC' ? 'DESC' : 'ASC',
     });
   };
@@ -231,6 +232,7 @@ function DevicesManagement() {
           isShown={isRestoreDisabledShown}
           toggleShown={() => setRestoreDisabledShown(!isRestoreDisabledShown)}
           pagination={pagination}
+          deviceTypes={deviceTypeNames}
         />
         <RestoreDeletedDeviceModal
           isShown={isRestoreDeletedShown}
@@ -242,7 +244,7 @@ function DevicesManagement() {
           <>
             <TableBody
               actionButtonCb={handleActionsCb}
-              toggleSortDirection={() => toggleSortDirection()}
+              toggleSortDirection={(field) => toggleSortDirection(field)}
               data={devices.items}
               page={pagination.page}
               itemsPerPage={pagination.limit}
@@ -284,7 +286,7 @@ function DevicesManagement() {
           toggleShown={() => handleAddModalClose()}
           deviceTypes={deviceTypeNames}
         />
-        {devices.meta ? (
+        {devices?.meta ? (
           <TableFooter
             handlePageChange={(val) => handlePageChange(val)}
             handleLimitChange={(val) => handleLimitChange(val)}

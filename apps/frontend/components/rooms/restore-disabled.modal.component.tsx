@@ -20,11 +20,14 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
 import NoDataFound from '../no-data-found';
+import RoomUpdateTypeModal from './update-type-modal.component';
+import { getRoomById } from '../../redux/features/room/thunk/get-room-by-id';
 
 interface RestoreDisabledRoomModalProps {
   isShown: boolean;
   toggleShown(): void;
   pagination: PagingParams;
+  roomTypes: any[];
 }
 
 const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
@@ -35,6 +38,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
   const [search, setSearch] = useState<string>('');
+  const [isShowUpdateType, setIsShowUpdateType] = useState<boolean>(false);
 
   const [searchDebounced] = useDebouncedValue<string>(search, 400);
 
@@ -42,17 +46,26 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
     dispatch(fetchDisabledRooms(search));
   }, [searchDebounced]);
 
-  const handleActiveRoom = (id: string) => {
-    dispatch(restoreDisabledRoom(id))
-      .unwrap()
-      .then(() => dispatch(fetchRooms(props.pagination)))
-      .then(() =>
-        dispatch(fetchDisabledRooms(search))
-          .unwrap()
-          .then((disabledRooms) =>
-            disabledRooms.length < 1 ? props.toggleShown() : null
-          )
-      );
+  const handleActiveRoom = (
+    id: string,
+    roomType: string,
+    isDeleted: string
+  ) => {
+    if (!roomType || isDeleted) {
+      dispatch(getRoomById(id));
+      setIsShowUpdateType(true);
+    } else {
+      dispatch(restoreDisabledRoom(id))
+        .unwrap()
+        .then(() => dispatch(fetchRooms(props.pagination)))
+        .then(() =>
+          dispatch(fetchDisabledRooms(search))
+            .unwrap()
+            .then((disabledRooms) =>
+              disabledRooms.length < 1 ? props.toggleShown() : null
+            )
+        );
+    }
   };
 
   const handleDeleteRoom = (id: string) => {
@@ -85,7 +98,9 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
         }}
       >
         <Button
-          onClick={() => handleActiveRoom(row.id)}
+          onClick={() =>
+            handleActiveRoom(row.id, row.roomTypeName, row.isTypeDeleted)
+          }
           style={{
             margin: 5,
           }}
@@ -93,7 +108,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
           color="green"
           leftIcon={<RotateClockwise />}
         >
-         Restore
+          Restore
         </Button>
         <Button
           onClick={() => handleDeleteRoom(row.id)}
@@ -146,7 +161,7 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
                   })}
                 >
                   <tr>
-                    <th style={{width: 50}}>STT</th>
+                    <th style={{ width: 50 }}>STT</th>
                     <th>Name</th>
                     <th>Type</th>
                     <th>Disabled at</th>
@@ -162,6 +177,13 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
       ) : (
         <NoDataFound />
       )}
+
+      <RoomUpdateTypeModal
+        isShown={isShowUpdateType}
+        toggleShown={() => setIsShowUpdateType(!isShowUpdateType)}
+        pagination={props.pagination}
+        roomTypes={props.roomTypes}
+      />
     </Modal>
   );
 };

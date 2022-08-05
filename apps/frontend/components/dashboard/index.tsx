@@ -17,7 +17,6 @@ function Dashboard() {
   }, []);
 
   const StatRender: React.FC<any> = ({ stat }) => {
-
     return (
       <Paper
         withBorder

@@ -14,5 +14,6 @@ export interface Device {
   isDeleted: boolean;
   deviceTypeName: string;
   deviceTypeId: string;
+  isTypeDeleted: string; 
 }
 

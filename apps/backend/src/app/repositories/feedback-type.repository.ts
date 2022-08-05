@@ -16,6 +16,14 @@ export class FeedbackTypeRepository extends Repository<FeedbackType> {
       .then((data) => data?.count > 0);
   }
 
+  async isExistedByName(name: string): Promise<boolean> {
+    return this.createQueryBuilder('fbt')
+      .select('COUNT(fbt.name)')
+      .where('fbt.name = :name', { name })
+      .getRawOne()
+      .then((data) => data['count'] > 0);
+  }
+
   findByPagination(
     pagination: PaginationParams
   ): Promise<Pagination<FeedbackType>> {
