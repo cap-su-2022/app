@@ -16,6 +16,7 @@ import { SlotModule } from './slot.module';
 import { BookingRoomDevicesService } from '../services/booking-request-devices.service';
 import { BookingRoomDevicesRepository } from '../repositories';
 import { NotificationModule } from './notification.module';
+import { BookingRoomGateway } from '../gateway/booking-room.gateway';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { NotificationModule } from './notification.module';
     TasksService,
     BookingRequestHistService,
     BookingRoomDevicesService,
+    BookingRoomGateway
   ],
   exports: [
     BookingRoomService,
