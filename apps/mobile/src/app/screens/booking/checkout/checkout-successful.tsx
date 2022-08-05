@@ -16,7 +16,7 @@ import {
   INPUT_GRAY_COLOR,
   WHITE,
 } from '@app/constants';
-import { deviceWidth } from '../../../utils/device';
+import { deviceHeight, deviceWidth } from '../../../utils/device';
 import {
   ExclamationCircleIcon,
   HomeIcon,
@@ -118,8 +118,8 @@ const CheckoutSuccessfully: React.FC<any> = () => {
     )
       .unwrap()
       .then(() => {
-        alert('Feed Back Successful! Thank you for your feedback');
-        setTimeout(() => navigate.pop(3), 1000);
+        setTimeout(() => alert('Feed Back Successful! Thank you for your feedback'), 1000);
+        navigate.replace('MAIN')
       })
       .catch((e) => {
         alert(JSON.stringify(e));
@@ -134,7 +134,7 @@ const CheckoutSuccessfully: React.FC<any> = () => {
     return (
       <AlertModal
         isOpened={isNotLeavingFeedbackModalOpened}
-        height={100}
+        height={deviceHeight / 4}
         width={deviceWidth / 1.2}
         toggleShown={() =>
           setNotLeavingFeedbackModalOpened(!isNotLeavingFeedbackModalOpened)
@@ -157,7 +157,7 @@ const CheckoutSuccessfully: React.FC<any> = () => {
           <Text
             style={{
               textAlign: 'center',
-              paddingHorizontal: 20,
+              paddingHorizontal: 10,
               color: BLACK,
               fontWeight: '500',
               fontSize: deviceWidth / 23,
@@ -166,27 +166,33 @@ const CheckoutSuccessfully: React.FC<any> = () => {
             Are you sure don't want to leave a feedback for us?
           </Text>
 
-          <View
-            style={{
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              flexDirection: 'row',
-            }}
-          >
+          <View>
             <TouchableOpacity
               style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignContent: 'center',
+                alignItems: 'center',
+                backgroundColor: FPT_ORANGE_COLOR,
                 borderRadius: 8,
-                borderColor: FPT_ORANGE_COLOR,
-                borderWidth: 2,
+                width: deviceWidth / 2.3,
+                height: 50,
+              }}
+              onPress={() => {
+                navigate.replace('MAIN');
               }}
             >
               <Text
                 style={{
-                  color: FPT_ORANGE_COLOR,
-                  fontWeight: '500',
-                  fontSize: deviceWidth / 234,
+                  textAlign: 'center',
+                  color: WHITE,
+                  fontWeight: '600',
+                  fontSize: deviceWidth / 23,
+                  width: deviceWidth / 1.75,
                 }}
-              ></Text>
+              >
+                Go Home
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
