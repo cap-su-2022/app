@@ -5,23 +5,23 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { Accounts } from '../models';
-import { BaseService } from './base.service';
-import { UpdateDeviceRequest, UsersDTO } from '@app/models';
-import { AccountRepository } from '../repositories';
-import { KeycloakService } from './keycloak.service';
-import { UsersRequestPayload } from '../payload/request/users.payload';
-import { CloudinaryService } from './cloudinary.service';
-import { AccountsResponsePayload } from '../payload/response/accounts.payload';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
-import { randomUUID } from 'crypto';
-import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
-import { AccountHistService } from './account-hist.service';
-import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
-import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
-import { Role } from '../enum/roles.enum';
-import { DataSource } from 'typeorm';
+import {Accounts} from '../models';
+import {BaseService} from './base.service';
+import {UpdateDeviceRequest, UsersDTO} from '@app/models';
+import {AccountRepository} from '../repositories';
+import {KeycloakService} from './keycloak.service';
+import {UsersRequestPayload} from '../payload/request/users.payload';
+import {CloudinaryService} from './cloudinary.service';
+import {AccountsResponsePayload} from '../payload/response/accounts.payload';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {ChangeProfilePasswordRequest} from '../payload/request/change-password.request.payload';
+import {randomUUID} from 'crypto';
+import {AccountsPaginationParams} from '../controllers/accounts-pagination.model';
+import {AccountHistService} from './account-hist.service';
+import {AccountAddRequestPayload} from '../payload/request/account-add.request.payload';
+import {AccountUpdateProfilePayload} from '../payload/request/account-update-profile.request.payload';
+import {Role} from '../enum/roles.enum';
+import {DataSource} from 'typeorm';
 
 @Injectable()
 export class AccountsService {
@@ -33,7 +33,8 @@ export class AccountsService {
     private readonly keycloakService: KeycloakService,
     private readonly repository: AccountRepository,
     private readonly histService: AccountHistService
-  ) {}
+  ) {
+  }
 
   async getAll(request: AccountsPaginationParams) {
     try {
@@ -260,7 +261,7 @@ export class AccountsService {
       this.logger.error(e);
       throw new BadRequestException(
         e.message ??
-          'Error occurred while restore the disabled status of this account'
+        'Error occurred while restore the disabled status of this account'
       );
     }
   }

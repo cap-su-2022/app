@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createStyles, Table, Button } from '@mantine/core';
+import {createStyles, Table, Button, Highlight} from '@mantine/core';
 import { InfoCircle } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
@@ -17,6 +17,7 @@ interface TableBodyProps {
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
+  search: string | string[];
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
@@ -54,7 +55,11 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           ? index + 1
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
-      <td>{row.roomName}</td>
+      <td>
+        <Highlight highlight={props.search}>
+          {row.roomName}
+        </Highlight>
+      </td>
       <td>{dayjs(row.bookedAt).format('ddd DD-MM-YYYY, HH:mm ')}</td>
       <td>{dayjs(row.checkinDate).format('ddd DD-MM-YYYY')}</td>
       <td>{row.requestedBy}</td>

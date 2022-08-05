@@ -140,7 +140,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           color="red"
           leftIcon={<Ban />}
         >
-          Permanẹnt Delete
+          Permanent Delete
         </Button>
       </td>
     </tr>
@@ -154,7 +154,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           fontSize: 22,
         }}
       >
-        Restore Deleted Room Type
+        Restore Deleted Booking Room Reasons
       </Text>
     );
   };

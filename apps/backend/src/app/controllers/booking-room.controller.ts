@@ -1132,7 +1132,7 @@ export class BookingRoomController {
   }
 
 
-  @Get('count')
+  @Get('count/')
   @ApiOperation({
     summary: 'Get count booking requests',
     description: 'Get count booking requests',
@@ -1153,8 +1153,16 @@ export class BookingRoomController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getCountRequestBooking() {
-    return this.service.getCountRequestBooking();
+  @ApiParam({
+    name: 'accountId',
+    description: 'Account ID booked for',
+    example: 'abcd-add',
+    type: String,
+    required: true,
+  })
+  getCountRequestBooking(@User() user: KeycloakUserInstance) {
+
+    return this.service.getCountRequestBooking(user.account_id);
   }
 
 

@@ -7,7 +7,7 @@ import {
   Text,
   Button,
   InputWrapper,
-  TextInput,
+  TextInput, Highlight,
 } from '@mantine/core';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {Ban, Check, RotateClockwise, Search, X} from 'tabler-icons-react';
@@ -112,7 +112,12 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
   const rows = deletedRoles?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
-      <td>{row.name}</td>
+      <td>
+        <Highlight highlight={search}>
+          {row.name}
+        </Highlight>
+
+      </td>
       <td>{dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.deletedBy}</td>
       <td
@@ -142,7 +147,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           color="red"
           leftIcon={<Ban/>}
         >
-          Permanat Delete
+          Permanent Delete
         </Button>
       </td>
     </tr>

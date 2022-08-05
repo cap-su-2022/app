@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   createStyles,
   Table,
@@ -7,31 +7,33 @@ import {
   Text,
   Button,
   InputWrapper,
-  TextInput,
+  TextInput, Highlight,
 } from '@mantine/core';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { Ban, Check, RotateClockwise, Search, X } from 'tabler-icons-react';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {Ban, Check, RotateClockwise, Search, X} from 'tabler-icons-react';
 import {
   restoreDeletedDeviceTypeById,
   permanentlyDeleteDeviceTypeById,
   fetchDeletedDeviceTypes,
   fetchDeviceTypes,
 } from '../../redux/features/device-type';
-import { PaginationParams } from '../../models/pagination-params.model';
+import {PaginationParams} from '../../models/pagination-params.model';
 import dayjs from 'dayjs';
-import { showNotification } from '@mantine/notifications';
+import {showNotification} from '@mantine/notifications';
 import PermanentDeleteModal from '../actions/modal/permanant-delete-modal.component';
 import NoDataFound from '../no-data-found';
-import { useDebouncedValue } from '@mantine/hooks';
+import {useDebouncedValue} from '@mantine/hooks';
 
 interface RestoreDeletedModalProps {
   isShown: boolean;
+
   toggleShown(): void;
+
   pagination: PaginationParams;
 }
 
 const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
-  const { classes, cx } = useStyles();
+  const {classes, cx} = useStyles();
   const deletedDeviceTypes = useAppSelector(
     (state) => state.deviceType.deletedDeviceTypes
   );
@@ -55,7 +57,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           color: 'red',
           title: 'Error while restore device type',
           message: e.message ?? 'Failed to restore device type',
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         })
       )
@@ -65,7 +67,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           color: 'teal',
           title: 'Device type was restored',
           message: 'Device type was successfully restored',
-          icon: <Check />,
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -94,9 +96,9 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
         showNotification({
           id: 'delete-device-type',
           color: 'teal',
-          title: 'Device type was permanent deleted',
-          message: 'Device type was successfully permanent deleted',
-          icon: <Check />,
+          title: 'Device type was permanently deleted',
+          message: 'Device type was successfully permanently deleted',
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -106,7 +108,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           color: 'red',
           title: 'Error while permanent deleted device type',
           message: `${e.message}`,
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         });
       });
@@ -115,7 +117,11 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
   const rows = deletedDeviceTypes?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
-      <td>{row.name}</td>
+      <td>
+        <Highlight highlight={search}>
+          {row.name}
+        </Highlight>
+      </td>
       <td>{dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.deletedBy}</td>
       <td
@@ -131,7 +137,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           }}
           variant="outline"
           color="green"
-          leftIcon={<RotateClockwise />}
+          leftIcon={<RotateClockwise/>}
         >
           Restore
         </Button>
@@ -142,7 +148,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           }}
           variant="outline"
           color="red"
-          leftIcon={<Ban />}
+          leftIcon={<Ban/>}
         >
           Permanent Delete
         </Button>
@@ -170,38 +176,38 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
         onClose={() => props.toggleShown()}
         centered
         size="70%"
-        title={<ModalHeaderTitle />}
+        title={<ModalHeaderTitle/>}
         closeOnClickOutside={true}
         closeOnEscape={false}
       >
         <InputWrapper label="Search">
           <TextInput
             onChange={(e) => setSearch(e.target.value)}
-            icon={<Search />}
+            icon={<Search/>}
           />
         </InputWrapper>
         {deletedDeviceTypes?.length > 0 ? (
           <ScrollArea
-            sx={{ height: 500 }}
-            onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+            sx={{height: 500}}
+            onScrollPositionChange={({y}) => setScrolled(y !== 0)}
           >
             <Table>
               <thead
-                className={cx(classes.header, { [classes.scrolled]: scrolled })}
+                className={cx(classes.header, {[classes.scrolled]: scrolled})}
               >
-                <tr>
-                  <th>STT</th>
-                  <th>Name</th>
-                  <th>Deleted At</th>
-                  <th>Deleted By</th>
-                  <th>Action</th>
-                </tr>
+              <tr>
+                <th>STT</th>
+                <th>Name</th>
+                <th>Deleted At</th>
+                <th>Deleted By</th>
+                <th>Action</th>
+              </tr>
               </thead>
               <tbody>{rows}</tbody>
             </Table>
           </ScrollArea>
         ) : (
-          <NoDataFound />
+          <NoDataFound/>
         )}
       </Modal>
       <PermanentDeleteModal

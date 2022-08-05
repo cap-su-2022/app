@@ -10,7 +10,7 @@ import {
   TextInput,
   Button,
   Image,
-  InputWrapper,
+  InputWrapper, Highlight,
 } from '@mantine/core';
 import {
   Selector,
@@ -36,6 +36,7 @@ interface TableBodyProps {
 
   toggleSortDirection(label): void;
 
+  search: string | string[];
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
@@ -64,7 +65,12 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           ? index + 1
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
-      <td>{row.roomName}</td>
+      <td>
+        <Highlight highlight={props.search}>
+          {row.roomName}
+        </Highlight>
+
+      </td>
       <td>{row.feedbackType}</td>
       <td>{row.createdByName}</td>
       <td>{dayjs(row.createdAt).format('DD-MM-YYYY')}</td>

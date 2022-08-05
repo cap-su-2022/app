@@ -295,7 +295,7 @@ const ManageFeedback: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Feedback" icon={<BrandHipchat size={50}/>}/>
+      <Header title="Feedbacks Management" icon={<BrandHipchat size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actionsLeft={<ActionsFilterLeft/>}
@@ -320,6 +320,7 @@ const ManageFeedback: React.FC<any> = () => {
             data={feedbacks.items}
             page={pagination.page}
             itemsPerPage={pagination.limit}
+            search={pagination.search}
           />
           <InfoModal
             header="Feedback Information"

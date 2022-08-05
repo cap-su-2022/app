@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   createStyles,
   Table,
-  Button,
+  Button, Highlight,
 } from '@mantine/core';
 import {
   InfoCircle,
@@ -21,6 +21,7 @@ interface TableBodyProps {
 
   toggleSortDirection(): void;
 
+  search: string | string[];
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
@@ -45,7 +46,11 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           ? index + 1
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
-      <td>{row.name}</td>
+      <td>
+        <Highlight highlight={props.search}>
+          {row.name}
+        </Highlight>
+      </td>
       <td className={classes.actionButtonContainer}>
         <Button
           variant="outline"

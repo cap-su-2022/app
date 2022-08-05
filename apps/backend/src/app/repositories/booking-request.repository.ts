@@ -654,6 +654,18 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
 
 
 
+  async getCountRequestBookingForAccountId(id: string) {
+    console.log(id);
+   return await this
+      .query(`SELECT COUNT(1) as count FROM booking_request br  WHERE br.status = 'PENDING' AND br.booked_for = '${id}' UNION ALL
+                    SELECT COUNT(1) FROM booking_request br WHERE br.status = 'BOOKED' AND br.booked_for = '${id}'  UNION ALL
+                    SELECT COUNT(1) FROM booking_request br WHERE br.status = 'CHECKED_IN'  AND br.booked_for = '${id}'  UNION ALL
+                    SELECT COUNT(1) FROM booking_request br WHERE br.status = 'CHECKED_OUT'  AND br.booked_for = '${id}'  UNION ALL
+                    SELECT COUNT(1) FROM booking_request br WHERE br.status = 'CANCELLED' `);
+  }
+
+
+
   async getInforToFeedback(
     id: string
   ): Promise<{ userId: string; status: string }> {

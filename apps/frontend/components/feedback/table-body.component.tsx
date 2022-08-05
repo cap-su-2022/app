@@ -10,7 +10,7 @@ import {
   TextInput,
   Button,
   Image,
-  InputWrapper,
+  InputWrapper, Highlight,
 } from '@mantine/core';
 import {
   Selector,
@@ -34,6 +34,7 @@ interface TableBodyProps {
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
+  search: string | string[]
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
@@ -58,7 +59,11 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           ? index + 1
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
-      <td>{row.createdByName}</td>
+      <td>
+        <Highlight highlight={props.search}>
+          {row.createdByName}
+        </Highlight>
+      </td>
       <td>{dayjs(row.createdAt).format('DD-MM-YYYY')}</td>
       <td>
         {row.status === 'PENDING' ? (
