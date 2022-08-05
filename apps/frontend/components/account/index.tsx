@@ -78,9 +78,10 @@ function AccountsManagement() {
       .then((roleName) => setRoleNames(roleName));
   }, []);
 
-  const toggleSortDirection = () => {
+  const toggleSortDirection = (field) => {
     setPagination({
       ...pagination,
+      sort: field,
       dir: pagination.dir === 'ASC' ? 'DESC' : 'ASC',
     });
   };
@@ -238,7 +239,7 @@ function AccountsManagement() {
           <>
             <TableBody
               actionButtonCb={handleActionsCb}
-              toggleSortDirection={() => toggleSortDirection()}
+              toggleSortDirection={(field) => toggleSortDirection(field)}
               data={accounts.items}
               page={pagination.page}
               itemsPerPage={pagination.limit}

@@ -6,8 +6,8 @@ import moment from 'moment';
 import Th from '../../components/table/th.table.component';
 
 interface RowData {
-  'r.name': string;
-  'rt.name': string;
+  'd.name': string;
+  'dt.name': string;
 }
 
 interface TableBodyProps {
@@ -93,17 +93,17 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           </Th>
 
           <Th
-            sorted={sortBy === 'r.name'}
+            sorted={sortBy === 'd.name'}
             reversed={reverseSortDirection}
-            onSort={() => setSorting('r.name')}
+            onSort={() => setSorting('d.name')}
           >
             Name
           </Th>
 
           <Th
-            sorted={sortBy === 'rt.name'}
+            sorted={sortBy === 'dt.name'}
             reversed={reverseSortDirection}
-            onSort={() => setSorting('rt.name')}
+            onSort={() => setSorting('dt.name')}
           >
             Type
           </Th>
