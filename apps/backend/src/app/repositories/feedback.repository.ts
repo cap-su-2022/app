@@ -106,6 +106,13 @@ export class FeedbackRepository extends Repository<Feedback> {
       .getRawOne<Feedback>();
   }
 
+
+  async getCountRequestFeedbacks() {
+    return await this.query(`SELECT COUNT(1) as count FROM feedback fb WHERE fb.status = 'PENDING' UNION ALL
+                                    SELECT COUNT(1) FROM feedback fb WHERE fb.status = 'RESOLVED' UNION ALL
+                                    SELECT COUNT(1) FROM feedback fb WHERE fb.status = 'REJECTED'`);
+  }
+
   async addNew(
     accountId: string,
     payload: FeedbackSendRequestPayload,

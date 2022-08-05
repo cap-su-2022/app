@@ -41,6 +41,15 @@ export class FeedbackService {
     }
   }
 
+  async getCountRequestFeedbacks() {
+    try {
+      return await this.repository.getCountRequestFeedbacks();
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async addNewFeedback(accountId: string, payload: FeedbackSendRequestPayload) {
     const queryRunner = this.dataSource.createQueryRunner();
 

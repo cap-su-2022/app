@@ -1,6 +1,6 @@
-import { GetServerSideProps } from 'next';
+import {GetServerSideProps} from 'next';
 import AdminLayout from '../../components/layout/admin.layout';
-import { Button, createStyles } from '@mantine/core';
+import {Button, createStyles} from '@mantine/core';
 import {
   ArchiveOff,
   BuildingWarehouse,
@@ -8,24 +8,24 @@ import {
   PencilOff,
   Plus,
 } from 'tabler-icons-react';
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { useDebouncedValue } from '@mantine/hooks';
+import React, {useEffect, useState} from 'react';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {useDebouncedValue} from '@mantine/hooks';
 import NoDataFound from '../../components/no-data-found';
 import TableHeader from '../../components/actions/table-header.component';
-import { TableBody } from '../../components/rooms/table-body.component';
+import {TableBody} from '../../components/rooms/table-body.component';
 import TableFooter from '../../components/actions/table-footer.component';
 import DisableDeviceModal from '../../components/devices/disable-modal.component';
-import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { FormikValues, useFormik } from 'formik';
+import {PagingParams} from '../../models/pagination-params/paging-params.model';
+import {FormikValues, useFormik} from 'formik';
 import Header from '../../components/common/header.component';
 import UpdateModal from '../../components/devices/update-modal.component';
 
 import * as Yup from 'yup';
-import { fetchDevices } from '../../redux/features/devices/thunk/fetch-devices.thunk';
-import { fetchDeviceById } from '../../redux/features/devices/thunk/fetch-by-id.thunk';
-import { fetchDeviceTypeNames } from '../../redux/features/device-type/thunk/fetch-device-type-names.thunk';
-import { updateDeviceById } from '../../redux/features/devices/thunk/update-by-id';
+import {fetchDevices} from '../../redux/features/devices/thunk/fetch-devices.thunk';
+import {fetchDeviceById} from '../../redux/features/devices/thunk/fetch-by-id.thunk';
+import {fetchDeviceTypeNames} from '../../redux/features/device-type/thunk/fetch-device-type-names.thunk';
+import {updateDeviceById} from '../../redux/features/devices/thunk/update-by-id';
 import DeviceInfoModal from './info-modal.component';
 import RestoreDisabledDeviceModal from './restore-disabled.modal.component';
 import DeleteDeviceModal from './delete-modal.component';
@@ -133,10 +133,10 @@ function DevicesManagement() {
     return (
       <>
         <Button
-          leftIcon={<Plus />}
+          leftIcon={<Plus/>}
           color="green"
           onClick={() => setAddShown(true)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
           Add
         </Button>
@@ -144,20 +144,20 @@ function DevicesManagement() {
           variant="outline"
           color="red"
           onClick={() => setRestoreDisabledShown(true)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
-          <PencilOff color={'red'} />
+          <PencilOff color={'red'}/>
         </Button>
         <Button
           variant="outline"
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
-          <ArchiveOff />
+          <ArchiveOff/>
         </Button>
         <Button variant="outline" color="violet">
-          <Download />
+          <Download/>
         </Button>
       </>
     );
@@ -217,12 +217,12 @@ function DevicesManagement() {
       <AdminLayout>
         <Header
           title="Devices Management"
-          icon={<BuildingWarehouse size={50} />}
+          icon={<BuildingWarehouse size={50}/>}
         />
         <TableHeader
           actionsLeft={null}
           handleResetFilter={() => handleResetFilter()}
-          actions={<ActionsFilter />}
+          actions={<ActionsFilter/>}
           setSearch={(val) => handleSearchValue(val)}
           search={pagination.search}
         />
@@ -275,7 +275,7 @@ function DevicesManagement() {
             />
           </>
         ) : (
-          <NoDataFound />
+          <NoDataFound/>
         )}
 
         <AddDeviceModal
@@ -293,7 +293,7 @@ function DevicesManagement() {
         ) : null}
       </AdminLayout>
     </>
-  );
+  )
 }
 
 export default DevicesManagement;
@@ -305,3 +305,5 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
+
+

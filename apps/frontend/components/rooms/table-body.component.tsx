@@ -1,5 +1,5 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
-import { createStyles, Table, Button } from '@mantine/core';
+import {createStyles, Table, Button, Highlight} from '@mantine/core';
 import { InfoCircle, Pencil, Trash } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import moment from 'moment';
@@ -16,6 +16,7 @@ interface TableBodyProps {
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
+  search: string | string[]
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
@@ -35,42 +36,45 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
   };
 
   const rows = props.data.map((row, index) => (
-    <tr key={index}>
-      <td>
-        {props.page === 1
-          ? index + 1
-          : (props.page - 1) * props.itemsPerPage + (index + 1)}
-      </td>
-      <td>{row.name}</td>
-      <td>{row.type}</td>
-      <td className={classes.actionButtonContainer}>
-        <Button
-          variant="outline"
-          onClick={() => props.actionButtonCb.info(row.id)}
-        >
-          <InfoCircle />
-        </Button>
+    <Highlight highlight={props.search}>
+      <tr key={index}>
+        <td>
+          {props.page === 1
+            ? index + 1
+            : (props.page - 1) * props.itemsPerPage + (index + 1)}
+        </td>
+        <td>{row.name}</td>
+        <td>{row.type}</td>
+        <td className={classes.actionButtonContainer}>
+          <Button
+            variant="outline"
+            onClick={() => props.actionButtonCb.info(row.id)}
+          >
+            <InfoCircle />
+          </Button>
 
-        {userInfo.role === 'System Admin' ? (
-          <>
-            <Button
-              variant="outline"
-              color="green"
-              onClick={() => props.actionButtonCb.update(row.id)}
-            >
-              <Pencil />
-            </Button>
-            <Button
-              variant="outline"
-              color="red"
-              onClick={() => props.actionButtonCb.delete(row.id)}
-            >
-              <Trash />
-            </Button>
-          </>
-        ) : null}
-      </td>
-    </tr>
+          {userInfo.role === 'System Admin' ? (
+            <>
+              <Button
+                variant="outline"
+                color="green"
+                onClick={() => props.actionButtonCb.update(row.id)}
+              >
+                <Pencil />
+              </Button>
+              <Button
+                variant="outline"
+                color="red"
+                onClick={() => props.actionButtonCb.delete(row.id)}
+              >
+                <Trash />
+              </Button>
+            </>
+          ) : null}
+        </td>
+      </tr>
+    </Highlight>
+
   ));
 
   return props.data.length > 0 ? (

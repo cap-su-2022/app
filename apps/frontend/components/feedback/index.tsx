@@ -28,6 +28,8 @@ import {sendFeedback} from '../../redux/features/feedback/thunk/send-feedback.th
 import DownloadModal from './download-modal.compnent';
 import {fetchFeedbackTypeNames} from '../../redux/features/feedback-type/thunk/fetch-feedback-type-names.thunk';
 import AddFeedbackModal from './add-modal.component';
+import {fetchCountRequestBooking} from "../../redux/features/room-booking/thunk/fetch-count-request-booking";
+import {fetchCountRequestFeedbacks} from "../../redux/features/feedback/thunk/fetch-count-feedbacks";
 
 const AddRoomTypeValidation = Yup.object().shape({
   feedback: Yup.string()
@@ -45,7 +47,7 @@ const defaultPaginationParams = {
 };
 
 const ManageFeedback: React.FC<any> = () => {
-  const styles = useStyles();
+  const {classes} = useStyles();
   const [isRejectShown, setRejectShown] = useState<boolean>(false);
   const [isResolveShown, setResolveShown] = useState<boolean>(false);
   const [isDownShown, setDownShown] = useState<boolean>(false);
@@ -54,7 +56,12 @@ const ManageFeedback: React.FC<any> = () => {
   const [pagination, setPagination] = useState<FeedbackPaginationParams>(
     defaultPaginationParams
   );
+  const [count, setCount] = useState<{ count: number }[]>([]);
 
+
+  useEffect(() => {
+    dispatch(fetchCountRequestFeedbacks()).unwrap().then(setCount);
+  }, []);
   const [debounceSearchValue] = useDebouncedValue(pagination.search, 400);
 
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
@@ -150,6 +157,14 @@ const ManageFeedback: React.FC<any> = () => {
             size="xs"
           >
             Pending
+            {count && count[0]?.count > 0 ? (
+              <div
+                className={classes.badge}
+                style={{backgroundColor: '#228be6'}}
+              >
+                {count[0].count}
+              </div>
+            ) : null}
           </Button>
           <Button
             variant="outline"
@@ -159,6 +174,14 @@ const ManageFeedback: React.FC<any> = () => {
             size="xs"
           >
             Resolved
+            {count && count[0]?.count > 0 ? (
+              <div
+                className={classes.badge}
+                style={{backgroundColor: '#40c057'}}
+              >
+                {count[1].count}
+              </div>
+            ) : null}
           </Button>
           <Button
             variant="outline"
@@ -168,6 +191,14 @@ const ManageFeedback: React.FC<any> = () => {
             size="xs"
           >
             Rejected
+            {count && count[0]?.count > 0 ? (
+              <div
+                className={classes.badge}
+                style={{backgroundColor: '#fa5252'}}
+              >
+                {count[2].count}
+              </div>
+            ) : null}
           </Button>
         </div>
       </>
@@ -335,7 +366,18 @@ const ManageFeedback: React.FC<any> = () => {
 const useStyles = createStyles((theme) => {
   return {
     container: {},
+    badge: {
+      borderRadius: 50,
+      marginLeft: 10,
+      height: 20,
+      width: 25,
+      color: 'white',
+      justifyContent: 'center',
+      display: 'flex',
+      alignItems: 'center',
+    }
   };
+
 });
 
 export default ManageFeedback;

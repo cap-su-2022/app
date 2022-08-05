@@ -164,4 +164,30 @@ export class FeedbackController {
   ) {
     return this.service.rejectFeedbackById(user.account_id, id, payload);
   }
+
+  @Get('count')
+  @ApiOperation({
+    summary: 'Get count feedback requests',
+    description: 'Get count feedback requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully getting count feedback requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting count feedback requests',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getCountRequestFeedbacks() {
+    return this.service.getCountRequestFeedbacks();
+  }
+
 }
