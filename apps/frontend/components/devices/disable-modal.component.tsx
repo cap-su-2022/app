@@ -50,20 +50,20 @@ const DisableDeviceModal: React.FC<DisableDeviceModalProps> = (props) => {
     dispatch(disableDeviceById(selectedDeviceId))
       .catch((e) =>
         showNotification({
-          id: 'delete-data',
+          id: 'disable-data',
           color: 'red',
-          title: 'Error while delete device',
-          message: e.message ?? 'Failed to delete device',
+          title: 'Error while disable device',
+          message: e.message ?? 'Failed to disable device',
           icon: <X />,
           autoClose: 3000,
         })
       )
       .then(() =>
         showNotification({
-          id: 'delete-data',
+          id: 'disable-data',
           color: 'teal',
-          title: 'Device was deleted',
-          message: 'Device was successfully deleted',
+          title: 'Device was disabled',
+          message: 'Device was successfully disabled',
           icon: <Check />,
           autoClose: 3000,
         })

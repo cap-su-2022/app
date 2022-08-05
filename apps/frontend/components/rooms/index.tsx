@@ -204,6 +204,7 @@ function RoomsManagement(props: any) {
         />
 
         <RestoreDisabledRoomModal
+          roomTypes={roomTypeNames}
           isShown={isRestoreDisabledShown}
           toggleShown={() => setRestoreDisabledShown(!isRestoreDisabledShown)}
           pagination={pagination}

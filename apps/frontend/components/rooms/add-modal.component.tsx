@@ -26,6 +26,7 @@ import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
+import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
 
 interface AddRoomModalProps {
   isShown: boolean;
@@ -78,6 +79,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
           formik.resetForm()
         );
         dispatch(fetchDisabledRooms(''))
+        dispatch(fetchDeletedRooms(''))
       })
       .catch((e) =>
       showNotification({

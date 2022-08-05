@@ -60,6 +60,10 @@ export class FeedbackTypeService {
     payload: MasterDataAddRequestPayload
   ) {
     try {
+      const isExistedByName = this.repository.isExistedByName(payload.name);
+      if(isExistedByName) {
+        throw new BadRequestException("There already exists a feedback type with the this name. Try with another name.")
+      }
       return this.repository.addNew(accountId, payload);
     } catch (e) {
       this.logger.error(e);

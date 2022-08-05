@@ -231,6 +231,7 @@ function DevicesManagement() {
           isShown={isRestoreDisabledShown}
           toggleShown={() => setRestoreDisabledShown(!isRestoreDisabledShown)}
           pagination={pagination}
+          deviceTypes={deviceTypeNames}
         />
         <RestoreDeletedDeviceModal
           isShown={isRestoreDeletedShown}

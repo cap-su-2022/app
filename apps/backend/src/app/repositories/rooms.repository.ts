@@ -1,21 +1,8 @@
-import {
-  Brackets,
-  In,
-  Like,
-  QueryRunner,
-  Repository,
-  UpdateResult,
-} from 'typeorm';
-import { RepositoryPaginationPayload } from '../models/search-pagination.payload';
+import { QueryRunner, Repository } from 'typeorm';
 import { Rooms } from '../models';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Accounts, Devices } from '../models';
-import { ChooseBookingRoomFilterPayload } from '../payload/request/choose-booking-room-filter.payload';
-import {
-  IPaginationMeta,
-  paginateRaw,
-  Pagination,
-} from 'nestjs-typeorm-paginate';
+import { Accounts } from '../models';
+import { paginateRaw } from 'nestjs-typeorm-paginate';
 import { RoomsPaginationParams } from '../controllers/rooms-pagination.model';
 import { RoomType } from '../models/room-type.entity';
 import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
@@ -75,6 +62,14 @@ export class RoomsRepository extends Repository<Rooms> {
       .then((data) => data['count'] > 0);
   }
 
+  getRoomDeletedByName(name: string) {
+    return this.createQueryBuilder('room')
+      .select('room.id', 'id')
+      .where('room.deleted_at IS NOT NULL')
+      .andWhere('room.name = :name', { name })
+      .getRawOne();
+  }
+
   searchRoom(payload: RoomsPaginationParams) {
     const query = this.createQueryBuilder('r')
       .leftJoin(Accounts, 'a', 'r.created_by = a.id')
@@ -115,8 +110,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .getRawMany<Rooms>();
   }
 
-
-  async getRoomName(id: string): Promise<{name: string}> {
+  async getRoomName(id: string): Promise<{ name: string }> {
     return this.createQueryBuilder('rooms')
       .select('rooms.name', 'name')
       .andWhere('rooms.id = :roomId', { roomId: id })
@@ -124,23 +118,25 @@ export class RoomsRepository extends Repository<Rooms> {
   }
 
   async findById(id: string): Promise<Rooms> {
-    return this.createQueryBuilder('rooms')
-      .select('rooms.id', 'id')
-      .addSelect('rooms.name', 'name')
-      .addSelect('rt.id', 'roomTypeId')
-      .addSelect('rt.name', 'roomTypeName')
-      .addSelect('rooms.created_at', 'createdAt')
-      .addSelect('a.username', 'createdBy')
-      .addSelect('rooms.updated_at', 'updatedAt')
-      .addSelect('aa.username', 'updatedBy')
-      .addSelect('rooms.description', 'description')
-      .leftJoin(Accounts, 'a', 'rooms.created_by = a.id')
-      .leftJoin(Accounts, 'aa', 'rooms.updated_by = aa.id')
-      .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
-      .where('rooms.disabled_at IS NULL')
-      .andWhere('rooms.deleted_at IS NULL')
-      .andWhere('rooms.id = :roomId', { roomId: id })
-      .getRawOne<Rooms>();
+    return (
+      this.createQueryBuilder('rooms')
+        .select('rooms.id', 'id')
+        .addSelect('rooms.name', 'name')
+        .addSelect('rt.id', 'roomTypeId')
+        .addSelect('rt.name', 'roomTypeName')
+        .addSelect('rooms.created_at', 'createdAt')
+        .addSelect('a.username', 'createdBy')
+        .addSelect('rooms.updated_at', 'updatedAt')
+        .addSelect('aa.username', 'updatedBy')
+        .addSelect('rooms.description', 'description')
+        .leftJoin(Accounts, 'a', 'rooms.created_by = a.id')
+        .leftJoin(Accounts, 'aa', 'rooms.updated_by = aa.id')
+        .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
+        // .where('rooms.disabled_at IS NULL')
+        .andWhere('rooms.deleted_at IS NULL')
+        .andWhere('rooms.id = :roomId', { roomId: id })
+        .getRawOne<Rooms>()
+    );
   }
 
   createNewRoom(
@@ -172,6 +168,31 @@ export class RoomsRepository extends Repository<Rooms> {
         }
       );
     }
+  }
+
+  async updateTypeThenRestore(
+    accountId: string,
+    roomId: string,
+    payload: { type: string },
+    queryRunner: QueryRunner
+  ) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: roomId,
+      },
+    });
+    return queryRunner.manager.save(
+      Rooms,
+      {
+        ...oldData,
+        id: roomId,
+        type: payload.type,
+        updatedBy: accountId,
+        updatedAt: new Date(),
+        disabledBy: null,
+        disabledAt: null,
+      }
+    );
   }
 
   async updateById(
@@ -209,12 +230,13 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('rooms.disabled_at', 'disabledAt')
       .addSelect('a.username', 'disabledBy')
       .addSelect('rt.name', 'roomTypeName')
+      .addSelect('rt.deleted_at', 'isTypeDeleted')
       .innerJoin(Accounts, 'a', 'rooms.disabled_by = a.id')
-      .innerJoin(RoomType, 'rt', 'rooms.type = rt.id')
+      .leftJoin(RoomType, 'rt', 'rooms.type = rt.id')
       .where(`rooms.deleted_at IS NULL`)
       .andWhere(`rooms.disabled_at IS NOT NULL`)
       .andWhere('rooms.name ILIKE :search', { search: `%${search.trim()}%` })
-      .orderBy('rooms.disabled_at', "DESC")
+      .orderBy('rooms.disabled_at', 'DESC')
       .getRawMany<Rooms>();
   }
 
@@ -225,9 +247,9 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('rooms.type', 'type')
       .addSelect('rt.name', 'roomTypeName')
       .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
-      .where(`rooms.deleted_at IS NULL`)
-      .andWhere(`rooms.disabled_at IS NULL`)
       .where('rooms.type = :type', { type: roomTypeId })
+      .andWhere(`rooms.disabled_at IS NULL`)
+      .andWhere(`rooms.deleted_at IS NULL`)
 
       .getRawMany<Rooms>();
   }
@@ -291,11 +313,9 @@ export class RoomsRepository extends Repository<Rooms> {
       .where(`rooms.deleted_at IS NOT NULL`)
       .andWhere(`rooms.disabled_at IS NULL`)
       .andWhere('rooms.name ILIKE :name', { name: `%${search.trim()}%` })
-      .orderBy('rooms.deleted_at', "DESC")
+      .orderBy('rooms.deleted_at', 'DESC')
       .getRawMany<Rooms>();
   }
-
-
 
   getAllRoomsForElasticIndex(): Promise<Rooms[]> {
     return this.createQueryBuilder('rooms')
@@ -309,24 +329,25 @@ export class RoomsRepository extends Repository<Rooms> {
       .getMany();
   }
 
-  // async restoreDeletedRoomById(
-  //   accountId: string,
-  //   id: string,
-  //   queryRunner: QueryRunner
-  // ) {
-  //   const oldData = await this.findOneOrFail({
-  //     where: {
-  //       id: id,
-  //     },
-  //   });
-  //   return queryRunner.manager.save(Rooms, {
-  //     ...oldData,
-  //     deletedBy: null,
-  //     deletedAt: null,
-  //     updatedBy: accountId,
-  //     updatedAt: new Date(),
-  //   });
-  // }
+  async restoreDeletedRoomById(
+    room: Rooms,
+    accountId: string,
+    id: string,
+    queryRunner: QueryRunner
+  ) {
+    return queryRunner.manager.save(Rooms, {
+      id: id,
+      name: room.name,
+      description: room.description,
+      type: room.type,
+      deletedBy: null,
+      deletedAt: null,
+      createdBy: accountId,
+      createdAt: new Date(),
+      updatedBy: accountId,
+      updatedAt: new Date(),
+    });
+  }
 
   // filterByNameAndType(payload: ChooseBookingRoomFilterPayload) {
   //   const query = this.createQueryBuilder('rooms')

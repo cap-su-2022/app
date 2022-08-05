@@ -33,7 +33,10 @@ export class DevicesService {
   async getAll(request: DevicesPaginationParams) {
     try {
       const result = await this.repository.searchDevices(request);
-      if (result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages) {
+      if (
+        result.meta.totalPages > 0 &&
+        result.meta.currentPage > result.meta.totalPages
+      ) {
         throw new BadRequestException('Current page is over');
       }
       return result;
@@ -76,7 +79,7 @@ export class DevicesService {
       const result = await this.repository.findById(id);
       if (!result) {
         throw new BadRequestException(
-          'This device is already deleted or disabled'
+          'This device is already deleted'
         );
       }
       return result;
@@ -94,36 +97,43 @@ export class DevicesService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const isExisted = await this.repository.isExistedByName(payload.name);
-      if (isExisted) {
-        throw new BadRequestException('Device name is duplicated!');
+      const deviceDeletedSameName =
+        await this.repository.getDeviceDeletedByName(payload.name);
+
+      let deviceAdded;
+
+      if (deviceDeletedSameName) {
+        deviceAdded = await this.repository.restoreDeletedDeviceById(
+          payload,
+          userId,
+          deviceDeletedSameName.id,
+          queryRunner
+        );
+      } else {
+        const isExisted = await this.repository.isExistedByNameActive(
+          payload.name.trim()
+        );
+        if (isExisted) {
+          throw new BadRequestException('Device name is duplicated!');
+        }
+        deviceAdded = await this.repository.createNewDevice(
+          payload,
+          userId,
+          queryRunner
+        );
+        await this.histService.createNew(deviceAdded, queryRunner);
       }
-      const deviceAdded = await this.repository.createNewDevice(
-        payload,
-        userId
-      );
-      await this.histService.createNew(deviceAdded, queryRunner);
 
       await queryRunner.commitTransaction();
       return deviceAdded;
     } catch (e) {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
-      if (
-        e.message.includes('constraint') &&
-        e.message.includes('devices_device_type_id_fk')
-      ) {
-        throw new BadRequestException(
-          'There is no device type with the provided id'
-        );
-      }
-      throw new BadRequestException('Error while creating a new device');
+      throw new BadRequestException(
+        e.message || 'Error while creating a new device'
+      );
     }
   }
-
-  // addAll(models: any[]): Promise<any[]> {
-  //   return Promise.resolve([]);
-  // }
 
   async updateById(accountId: string, id: string, body: DataAddRequestPayload) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -164,6 +174,41 @@ export class DevicesService {
         );
       }
       throw new BadRequestException(e.message);
+    }
+  }
+
+  async updateTypeThenRestore(accountId: string, id: string, body: {type: string}) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const isExisted = await this.repository.existsById(id);
+    if (!isExisted) {
+      throw new BadRequestException('Device does not found with the provided id');
+    }
+    const data = await this.repository.findById(id);
+    if (data === undefined) {
+      throw new BadRequestException('This device is already deleted');
+    }
+    try {
+      const deviceUpdated = await this.repository.updateTypeThenRestore(
+        accountId,
+        id,
+        body,
+        queryRunner
+      );
+
+      await this.histService.createNew(deviceUpdated, queryRunner);
+
+      await queryRunner.commitTransaction();
+      return deviceUpdated;
+    } catch (e) {
+      this.logger.error(e);
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while updating this room'
+      );
     }
   }
 

@@ -220,6 +220,43 @@ export class RoomsController {
     return this.service.updateById(user.account_id, payload.id, body);
   }
 
+  @Put('update-type-then-restore/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Update library room by id',
+    description: 'Update library room by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully updated the library room',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while updating the library room',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active room",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
+  updateTypeThenRestore(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string },
+    @Body() body: {type: string}
+  ) {
+    return this.service.updateTypeThenRestore(user.account_id, payload.id, body);
+  }
+
   @Put('disable/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
