@@ -1,5 +1,5 @@
-import { SafeAreaView, ScrollView } from 'react-native';
-import React, { useRef } from 'react';
+import { SafeAreaView, ScrollView, Text } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import HomeScreenHeader from './header';
 import HomeScreenSection from './section';
 
