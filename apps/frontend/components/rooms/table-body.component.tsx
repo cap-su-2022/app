@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { createStyles, Table, Button, Highlight } from '@mantine/core';
-import { InfoCircle, Pencil, Trash } from 'tabler-icons-react';
+import React, {useEffect, useState} from 'react';
+import {createStyles, Table, Button, Highlight} from '@mantine/core';
+import {InfoCircle, Pencil, Trash} from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
 
@@ -11,7 +11,9 @@ interface RowData {
 
 interface TableBodyProps {
   data: any[];
+
   toggleSortDirection(label): void;
+
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
@@ -44,13 +46,15 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
       <td>
         <Highlight highlight={props.search}>{row.name}</Highlight>
       </td>
-      <td>{row.type}</td>
+      <td>
+        <Highlight highlight={props.search}>{row.type}</Highlight>
+      </td>
       <td className={classes.actionButtonContainer}>
         <Button
           variant="outline"
           onClick={() => props.actionButtonCb.info(row.id)}
         >
-          <InfoCircle />
+          <InfoCircle/>
         </Button>
 
         {userInfo.role === 'System Admin' ? (
@@ -60,14 +64,14 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
               color="green"
               onClick={() => props.actionButtonCb.update(row.id)}
             >
-              <Pencil />
+              <Pencil/>
             </Button>
             <Button
               variant="outline"
               color="red"
               onClick={() => props.actionButtonCb.delete(row.id)}
             >
-              <Trash />
+              <Trash/>
             </Button>
           </>
         ) : null}
@@ -94,21 +98,21 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           STT
         </Th>
 
-          <Th
-            sorted={sortBy === 'r.name'}
-            reversed={reverseSortDirection}
-            onSort={() => setSorting('r.name')}
-          >
-            Name
-          </Th>
+        <Th
+          sorted={sortBy === 'r.name'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('r.name')}
+        >
+          Name
+        </Th>
 
-          <Th
-            sorted={sortBy === 'rt.name'}
-            reversed={reverseSortDirection}
-            onSort={() => setSorting('rt.name')}
-          >
-            Type
-          </Th>
+        <Th
+          sorted={sortBy === 'rt.name'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('rt.name')}
+        >
+          Type
+        </Th>
 
         <Th
           sorted={null}

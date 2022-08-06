@@ -16,6 +16,7 @@ interface TableBodyProps {
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
+  search: string | string[]
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
