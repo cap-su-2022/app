@@ -35,10 +35,6 @@ export class AccountRepository extends Repository<Accounts> {
       .getRawOne();
   }
 
-
-
-
-
   async findUserNames(): Promise<Accounts[]> {
     return this.createQueryBuilder('a')
       .select('a.username', 'name')
@@ -116,7 +112,7 @@ export class AccountRepository extends Repository<Accounts> {
       .getOneOrFail();
   }
 
-  searchAccount(payload: AccountsPaginationParams) {
+  searchAccount(payload: AccountsPaginationParams, userId: string) {
     const query = this.createQueryBuilder('account')
       .select('account.id', 'id')
       .addSelect('account.username', 'username')
@@ -128,14 +124,15 @@ export class AccountRepository extends Repository<Accounts> {
       .addSelect('role.name', 'role')
       .addSelect('a.username', 'createdBy')
       .addSelect('aa.username', 'updatedBy')
+      .addSelect('account.disabled_at', 'disabledAt')
       .leftJoin(Accounts, 'a', 'a.id = account.created_by')
       .leftJoin(Accounts, 'aa', 'aa.id = account.updated_by')
       .innerJoin(Roles, 'role', 'role.id = account.role_id')
-      .where('LOWER(account.fullname) ILIKE LOWER(:search)', {
+      .where('account.fullname ILIKE :search', {
         search: `%${payload.search?.trim() || ''}%`,
       })
       .andWhere('account.deleted_at IS NULL')
-      .andWhere('account.disabled_at IS NULL')
+      .andWhere('account.id != :id', { id: userId })
       .orderBy(payload.sort, payload.dir as 'ASC' | 'DESC');
     if (payload.role && payload.role !== '') {
       query.andWhere('role.name = :role', {
@@ -440,13 +437,13 @@ export class AccountRepository extends Repository<Accounts> {
       .addSelect('account.role_id', 'roleId')
       .addSelect('account.email', 'email')
       .addSelect('account.phone', 'phone')
+      .addSelect('account.disabled_at', 'disabledAt')
       .addSelect('role.name', 'role')
       .addSelect('a.username', 'createdBy')
       .addSelect('aa.username', 'updatedBy')
       .leftJoin(Accounts, 'a', 'a.id = account.created_by')
       .leftJoin(Accounts, 'aa', 'aa.id = account.updated_by')
       .innerJoin(Roles, 'role', 'role.id = account.role_id')
-      .where('account.disabled_at IS NULL')
       .andWhere('account.deleted_at IS NULL')
       .andWhere('account.id = :accountId', { accountId: id })
       .getRawOne<Accounts>();

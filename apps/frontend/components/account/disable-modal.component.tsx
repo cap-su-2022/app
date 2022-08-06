@@ -11,7 +11,6 @@ import { Archive, Check, ScanEye, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
 import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
@@ -40,16 +39,7 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
 
   const handleDisableSelectedAccount = () => {
     dispatch(disableAccountById(selectedAccountId))
-      .catch((e) =>
-        showNotification({
-          id: 'disable-data',
-          color: 'red',
-          title: 'Error while disable account',
-          message: e.message ?? 'Failed to disable account',
-          icon: <X />,
-          autoClose: 3000,
-        })
-      )
+      .unwrap()
       .then(() =>
         showNotification({
           id: 'restore-data',
@@ -65,8 +55,17 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
         props.toggleInforModalShown();
         dispatch(fetchDisabledAccounts(''));
         dispatch(fetchAccounts(props.pagination));
-        listRequest.forEach((request) => dispatch(cancelBooking(request.id)));
-      });
+      })
+      .catch((e) =>
+        showNotification({
+          id: 'disable-data',
+          color: 'red',
+          title: 'Error while disable account',
+          message: e.message ?? 'Failed to disable account',
+          icon: <X />,
+          autoClose: 3000,
+        })
+      );
   };
   useEffect(() => {
     if (selectedAccountId) {

@@ -5,23 +5,23 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import {Accounts} from '../models';
-import {BaseService} from './base.service';
-import {UpdateDeviceRequest, UsersDTO} from '@app/models';
-import {AccountRepository} from '../repositories';
-import {KeycloakService} from './keycloak.service';
-import {UsersRequestPayload} from '../payload/request/users.payload';
-import {CloudinaryService} from './cloudinary.service';
-import {AccountsResponsePayload} from '../payload/response/accounts.payload';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {ChangeProfilePasswordRequest} from '../payload/request/change-password.request.payload';
-import {randomUUID} from 'crypto';
-import {AccountsPaginationParams} from '../controllers/accounts-pagination.model';
-import {AccountHistService} from './account-hist.service';
-import {AccountAddRequestPayload} from '../payload/request/account-add.request.payload';
-import {AccountUpdateProfilePayload} from '../payload/request/account-update-profile.request.payload';
-import {Role} from '../enum/roles.enum';
-import {DataSource} from 'typeorm';
+import { Accounts } from '../models';
+import { BaseService } from './base.service';
+import { UpdateDeviceRequest, UsersDTO } from '@app/models';
+import { AccountRepository } from '../repositories';
+import { KeycloakService } from './keycloak.service';
+import { UsersRequestPayload } from '../payload/request/users.payload';
+import { CloudinaryService } from './cloudinary.service';
+import { AccountsResponsePayload } from '../payload/response/accounts.payload';
+import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
+import { randomUUID } from 'crypto';
+import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
+import { AccountHistService } from './account-hist.service';
+import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
+import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
+import { Role } from '../enum/roles.enum';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class AccountsService {
@@ -33,12 +33,11 @@ export class AccountsService {
     private readonly keycloakService: KeycloakService,
     private readonly repository: AccountRepository,
     private readonly histService: AccountHistService
-  ) {
-  }
+  ) {}
 
-  async getAll(request: AccountsPaginationParams) {
+  async getAll(request: AccountsPaginationParams, userId: string) {
     try {
-      const result = await this.repository.searchAccount(request);
+      const result = await this.repository.searchAccount(request, userId);
       if (
         result.meta.totalPages > 0 &&
         result.meta.currentPage > result.meta.totalPages
@@ -189,11 +188,7 @@ export class AccountsService {
     }
   }
 
-  async disableById(
-    accountId: string,
-    id: string,
-    user: KeycloakUserInstance
-  ): Promise<any> {
+  async disableById(accountId: string, id: string): Promise<any> {
     try {
       if (accountId === id) {
         throw new BadRequestException('Cannot disable your own account');
@@ -214,9 +209,17 @@ export class AccountsService {
           'This account is already deleted, can not disable'
         );
       }
-      const account = await this.repository.disableById(accountId, id);
-      await this.histService.createNew(account);
-      return account;
+
+      const account = await this.repository.getRoleOfAccount(id);
+      if (account.role_name === 'System Admin') {
+        throw new BadRequestException(
+          "You can't disable the system admin"
+        );
+      }
+
+      const accountDisabled = await this.repository.disableById(accountId, id);
+      await this.histService.createNew(accountDisabled);
+      return accountDisabled;
     } catch (e) {
       throw new BadRequestException(
         e.message ?? 'Error occurred while disable this account'
@@ -261,7 +264,7 @@ export class AccountsService {
       this.logger.error(e);
       throw new BadRequestException(
         e.message ??
-        'Error occurred while restore the disabled status of this account'
+          'Error occurred while restore the disabled status of this account'
       );
     }
   }
