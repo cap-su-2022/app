@@ -4,32 +4,31 @@ import {
   SubscribeMessage,
   MessageBody,
   WebSocketServer,
+  ConnectedSocket,
 } from '@nestjs/websockets';
-import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
-import { User } from '../decorators/keycloak-user.decorator';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import {Server} from 'socket.io'
+import { Server, Socket } from 'socket.io';
+import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
 
 @WebSocketGateway({
-    cors: {
-        origin: '*'
-    }
+  cors: {
+    origin: '*',
+  },
 })
 export class BookingRoomGateway {
-    @WebSocketServer()
-    server: Server
+  @WebSocketServer()
+  server: Server;
   constructor(private readonly bookingRoomService: BookingRoomService) {}
 
-  @SubscribeMessage('new-request')
-  async addNewRequest(
-    @User() user: KeycloakUserInstance,
-    @MessageBody() request: BookingRequestAddRequestPayload
+  @SubscribeMessage('findAllRequests')
+  async findAllRequest(
+    @MessageBody() pagination: BookingRoomPaginationParams,
+    @ConnectedSocket() client: Socket
   ) {
-    const requestSent = await this.bookingRoomService.addNewRequest(request, user.account_id);
-
-    this.server.emit('new-request', requestSent)
-
-    console.log("RUN HEREEEEEEEEEEEEEEEEEEEEEE")
-    return requestSent
+    console.log("B SERVICE: ", this.bookingRoomService)
+    // const requestSent = await this.bookingRoomService.getAllBookingRoomsPagination(
+    //   pagination,
+    //   client.id
+    // );
+    return null;
   }
 }
