@@ -36,7 +36,7 @@ export class FeedbackRepository extends Repository<Feedback> {
       .where('f.deleted_at IS NULL')
       .andWhere('f.deleted_by IS NULL');
     if (pagination.search) {
-      query.andWhere('a.username ILIKE :search', {
+      query.andWhere('a.username ILIKE :search OR ft.name ILIKE :search', {
         search: `%${pagination.search.trim()}%`,
       });
     }
