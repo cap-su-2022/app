@@ -1,4 +1,4 @@
-import React, {CSSProperties, useEffect, useState} from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import {
   createStyles,
   Table,
@@ -10,7 +10,8 @@ import {
   TextInput,
   Button,
   Image,
-  InputWrapper, Highlight,
+  InputWrapper,
+  Highlight,
 } from '@mantine/core';
 import {
   Selector,
@@ -25,10 +26,10 @@ import Th from '../../components/table/th.table.component';
 import dayjs from 'dayjs';
 
 interface RowData {
-  createdAt: string;
-  roomName: string,
-  feedbackType: string,
-  rateNum: string
+  'f.created_at': string;
+  'r.name': string;
+  'ft.name': string;
+  rate_num: string;
 }
 
 interface TableBodyProps {
@@ -45,7 +46,7 @@ interface TableBodyProps {
 export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
@@ -55,7 +56,6 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
     props.toggleSortDirection(field);
-
   };
 
   const rows = props.data.map((row, index) => (
@@ -66,10 +66,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
       <td>
-        <Highlight highlight={props.search}>
-          {row.roomName}
-        </Highlight>
-
+        <Highlight highlight={props.search}>{row.roomName}</Highlight>
       </td>
       <td>{row.feedbackType}</td>
       <td>{row.createdByName}</td>
@@ -83,7 +80,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           variant="outline"
           onClick={() => props.actionButtonCb.info(row.id)}
         >
-          <InfoCircle/>
+          <InfoCircle />
         </Button>
         {/* <Button
           variant="outline"
@@ -100,81 +97,75 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{tableLayout: 'fixed'}}
+      sx={{ tableLayout: 'fixed' }}
     >
       <thead>
-      <tr>
-        <Th
-          style={{
-            width: '50px',
-          }}
-          sorted={null}
-          reversed={reverseSortDirection}
-          onSort={null}
-        >
-          STT
-        </Th>
+        <tr>
+          <Th
+            style={{
+              width: '50px',
+            }}
+            sorted={null}
+            reversed={reverseSortDirection}
+            onSort={null}
+          >
+            STT
+          </Th>
 
-        <Th
-          // style={{
-          //   width: '75%',
-          // }}
+          <Th
+            sorted={sortBy === 'r.name'}
+            reversed={reverseSortDirection}
+            onSort={() => setSorting('r.name')}
+          >
+            Room Name
+          </Th>
 
-          sorted={sortBy === 'roomName'}
-          reversed={reverseSortDirection}
-          onSort={() => setSorting('roomName')}
-        >
-          Room Name
-        </Th>
+          <Th
+            sorted={sortBy === 'ft.name'}
+            reversed={reverseSortDirection}
+            onSort={() => setSorting('ft.name')}
+          >
+            Feedback Type
+          </Th>
 
-        <Th
-          sorted={sortBy === 'feedbackType'}
-          reversed={reverseSortDirection}
-          onSort={() => setSorting('feedbackType')}
-        >
-          Feedback Type
-        </Th>
+          <Th sorted={null} reversed={null} onSort={null}>
+            Created By
+          </Th>
 
-        <Th sorted={null} reversed={null} onSort={null}>
-          Created By
-        </Th>
+          <Th
+            sorted={sortBy === 'f.created_at'}
+            reversed={reverseSortDirection}
+            onSort={() => {
+              setSorting('f.created_at');
+            }}
+            style={{ width: 160 }}
+          >
+            Created At
+          </Th>
+          <Th
+            sorted={sortBy === 'rate_num'}
+            reversed={reverseSortDirection}
+            onSort={() => {
+              setSorting('rate_num');
+            }}
+          >
+            Rate Number
+          </Th>
 
-        <Th
-          sorted={sortBy === 'createdAt'}
-          reversed={reverseSortDirection}
-          onSort={() => {
-            setSorting('createdAt')
-            console.log('created sort');
-          }}
-          style={{width: 160}}
-        >
-          Created At
-        </Th>
-        <Th
-          sorted={sortBy === 'rateNum'}
-          reversed={reverseSortDirection}
-          onSort={() => {
-            setSorting('rateNum')
-          }}
-        >
-          Rate Number
-        </Th>
-
-
-        <Th
-          sorted={null}
-          reversed={reverseSortDirection}
-          onSort={null}
-          style={{width: 160}}
-        >
-          Actions
-        </Th>
-      </tr>
+          <Th
+            sorted={null}
+            reversed={reverseSortDirection}
+            onSort={null}
+            style={{ width: 160 }}
+          >
+            Actions
+          </Th>
+        </tr>
       </thead>
       <tbody>{rows}</tbody>
     </Table>
   ) : (
-    <NoDataFound/>
+    <NoDataFound />
   );
 };
 
