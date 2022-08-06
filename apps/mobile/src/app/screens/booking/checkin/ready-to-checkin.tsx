@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -28,7 +28,6 @@ import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import SignatureAlertModal from './signature-alert-modal';
 import ReadyToCheckinBookingInformation from './booking-information';
 import ReadyToCheckinMoreInformation from './more-information';
-import ReadyToCheckinSignature from './signature';
 import { attemptCheckinBookingRoom } from '../../../redux/features/room-booking/thunk/attempt-checkin-booking-room.thunk';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import AlertModal from '../../../components/modals/alert-modal.component';
@@ -36,6 +35,7 @@ import QRCode from 'react-native-qrcode-svg';
 import Divider from '../../../components/text/divider';
 import dayjs from 'dayjs';
 import { fetchAllSlots } from '../../../redux/features/slot';
+import SocketIOClient from 'socket.io-client/dist/socket.io.js';
 
 const RoomBookingReadyToCheckIn: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -64,19 +64,45 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
     (state) => state.roomBooking.currentCheckinInformation
   );
 
-  const [timeSlotCheckin, setTimeSlotCheckin] = useState('')
-  const [timeSlotCheckout, setTimeSlotCheckout] = useState('')
+  const [timeSlotCheckin, setTimeSlotCheckin] = useState('');
+  const [timeSlotCheckout, setTimeSlotCheckout] = useState('');
   const [isQRModalShown, setQRModalShown] = useState<boolean>(false);
 
+  const socket = useMemo(() => {
+    return SocketIOClient('http://192.168.100.44:5000/booking', {
+      jsonp: false,
+    });
+  }, []);
+
   useEffect(() => {
-    dispatch(fetchAllSlots()).unwrap().then((value) => {
-      setTimeSlotCheckin(value
-        .find((slot) => slot.slotNum === bookingRoom.checkinSlot)
-        .timeStart.slice(0, 5))
-      setTimeSlotCheckout(value
-        .find((slot) => slot.slotNum === bookingRoom.checkoutSlot)
-        .timeStart.slice(0, 5))    })
-  }, [])
+    if (isQRModalShown) {
+      socket.on('msgToServer', (e) => {
+        if (e === bookingRoom.id) {
+          setQRModalShown(false);
+          setTimeout(() => {
+            navigate.replace('MAIN');
+          }, 1);
+        }
+      });
+    }
+  }, [isQRModalShown]);
+
+  useEffect(() => {
+    dispatch(fetchAllSlots())
+      .unwrap()
+      .then((value) => {
+        setTimeSlotCheckin(
+          value
+            .find((slot) => slot.slotNum === bookingRoom.checkinSlot)
+            .timeStart.slice(0, 5)
+        );
+        setTimeSlotCheckout(
+          value
+            .find((slot) => slot.slotNum === bookingRoom.checkoutSlot)
+            .timeStart.slice(0, 5)
+        );
+      });
+  }, []);
 
   useEffect(() => {
     dispatch(fetchAllSlots())
@@ -103,19 +129,6 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
         );
         setErrorModalShown(true);
       });
-  };
-
-  const handleCheckinBookingRoom = () => {
-    if (signature.current) {
-      signature.current.readSignature();
-      //    dispatch((currentCheckinInformation.id))
-      //   .unwrap()
-      //    .then(() => navigate.navigate('CHECKOUT_SUCCESSFULLY'))
-      //    .catch((e) => alert('Failed while checking out booking room'));
-    } else {
-      setErrorMessage('Please sign the signature');
-      setErrorModalShown(true);
-    }
   };
 
   const ReadyToCheckinHeader: React.FC<any> = () => {
@@ -242,35 +255,10 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
           }}
         >
           <TouchableOpacity
-            onPress={() => setQRModalShown(!isQRModalShown)}
-            style={{
-              height: 50,
-              borderRadius: 8,
-              width: deviceWidth / 3,
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              alignItems: 'center',
-              borderColor: FPT_ORANGE_COLOR,
-              borderWidth: 2,
-              flexDirection: 'row',
-            }}
-          >
-            <PencilIcon size={deviceWidth / 18} color={FPT_ORANGE_COLOR} />
-            <Text
-              style={{
-                color: FPT_ORANGE_COLOR,
-                fontWeight: '600',
-                fontSize: deviceWidth / 23,
-              }}
-            >
-              Sign again
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
             onPress={() => navigate.replace('MAIN')}
             style={{
               height: 50,
-              width: deviceWidth / 2.5,
+              width: deviceWidth / 2,
               backgroundColor: FPT_ORANGE_COLOR,
               borderRadius: 8,
               display: 'flex',

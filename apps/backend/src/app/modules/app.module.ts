@@ -5,7 +5,6 @@ import { RoomsModule } from './rooms.module';
 import { HealthCheckModule } from './health-check.module';
 import { AccountsModule } from './accounts.module';
 import { DevicesModule } from './devices.module';
-import GlobalCacheModule from './global/cache.module';
 import GlobalConfigModule from './global/config.module';
 import GlobalTypeOrmModule from './global/typeorm.module';
 import { HttpModule } from '@nestjs/axios';
@@ -31,7 +30,6 @@ export class AppModule {
     return {
       module: AppModule,
       imports: [
-        GlobalCacheModule,
         GlobalConfigModule,
         GlobalTypeOrmModule,
         HttpModule,

@@ -2,6 +2,7 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -48,9 +49,9 @@ import { acceptCheckoutBookingRequest } from '../../../redux/features/room-booki
 import { rejectCheckoutBookingRequest } from '../../../redux/features/room-booking/thunk/reject-checkout-booking-request.thunk';
 import { fetchDeviceInUseByBookingRequestId } from '../../../redux/features/room-booking/thunk/fetch-devices-in-use-by-booking-request-id.thunk';
 import AlertModal from '../../../components/modals/alert-modal.component';
-import { cancelFeedback } from '../../../redux/features/feedback/thunk/cancel-feedback.thunk';
 import { cancelBookingRoom } from '../../../redux/features/room-booking/thunk/cancel-room-booking.thunk';
 import { fetchAllSlots } from '../../../redux/features/slot';
+import SocketIOClient from 'socket.io-client/dist/socket.io.js';
 
 const AcceptBooking: React.FC<any> = () => {
   const dispatch = useAppDispatch();
@@ -65,6 +66,19 @@ const AcceptBooking: React.FC<any> = () => {
     useRef<React.ElementRef<typeof CancelAlertModalRef>>();
   const rejectBookingRequestModal =
     useRef<React.ElementRef<typeof RejectAlertModalRef>>();
+
+  const socket = useMemo(() => {
+    return SocketIOClient('http://192.168.100.44:5000/booking', {
+      jsonp: false,
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.on('connect_error', (err) => {
+      console.log(err instanceof Error);
+      console.log(err.message);
+    });
+  }, []);
 
   useEffect(() => {
     dispatch(fetchAllSlots())
@@ -118,6 +132,9 @@ const AcceptBooking: React.FC<any> = () => {
   const handleAcceptCheckin = () => {
     dispatch(acceptCheckinBookingRequest(bookingRoom.id))
       .unwrap()
+      .then(() => {
+        socket.emit('msgToServer', bookingRoom.id);
+      })
       .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
       .catch((e) => alert(e.message));
   };
@@ -158,7 +175,7 @@ const AcceptBooking: React.FC<any> = () => {
     dispatch(fetchDeviceInUseByBookingRequestId(id))
       .unwrap()
       .then((val) => {
-        console.log(val)
+        console.log(val);
         navigate.navigate('ACCEPT_BOOKING_LIST_DEVICES');
       });
   };
@@ -205,6 +222,7 @@ const AcceptBooking: React.FC<any> = () => {
         </View>
       );
     }
+
     return bookingRoom.status !== CANCELLED &&
       bookingRoom.status !== CHECKED_OUT ? (
       <AcceptBookingFooter
