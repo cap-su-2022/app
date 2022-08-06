@@ -10,38 +10,36 @@ import {
   Put,
   Query,
   UploadedFile,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common';
-import {AccountsService} from '../services';
+import { AccountsService } from '../services';
 import {
-  ApiBearerAuth, ApiBody,
+  ApiBearerAuth,
+  ApiBody,
   ApiConsumes,
-  ApiOperation, ApiParam,
+  ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import {User} from '../decorators/keycloak-user.decorator';
-import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
-import {Roles} from '../decorators/role.decorator';
-import {Role} from '../enum/roles.enum';
-import {Accounts} from '../models';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {FastifyFileInterceptor} from '../interceptors/fastify-file.interceptor';
-import {ChangeProfilePasswordRequest} from '../payload/request/change-password.request.payload';
-import {AccountsPaginationParams} from './accounts-pagination.model';
-import {AccountAddRequestPayload} from '../payload/request/account-add.request.payload';
-import {
-  AccountUpdateProfilePayload
-} from '../payload/request/account-update-profile.request.payload';
-
+import { User } from '../decorators/keycloak-user.decorator';
+import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
+import { Roles } from '../decorators/role.decorator';
+import { Role } from '../enum/roles.enum';
+import { Accounts } from '../models';
+import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { FastifyFileInterceptor } from '../interceptors/fastify-file.interceptor';
+import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
+import { AccountsPaginationParams } from './accounts-pagination.model';
+import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
+import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
 
 @Controller('v1/accounts')
 @ApiBearerAuth()
 @ApiTags('Accounts')
 @UseInterceptors(new PathLoggerInterceptor(AccountsController.name))
 export class AccountsController {
-  constructor(private readonly service: AccountsService) {
-  }
+  constructor(private readonly service: AccountsService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -68,8 +66,10 @@ export class AccountsController {
     description: 'Not enough privileges',
   })
   getAll(
-    @Query() payload: AccountsPaginationParams) {
-    return this.service.getAll(payload);
+    @Query() payload: AccountsPaginationParams,
+    @User() user: KeycloakUserInstance
+  ) {
+    return this.service.getAll(payload, user.account_id);
   }
 
   @Get('name')
@@ -144,7 +144,7 @@ export class AccountsController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of active account",
+    description: 'The ID of active account',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -205,7 +205,7 @@ export class AccountsController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of keycloak ",
+    description: 'The ID of keycloak ',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -238,7 +238,7 @@ export class AccountsController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of Keycloak account",
+    description: 'The ID of Keycloak account',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -271,7 +271,7 @@ export class AccountsController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of role",
+    description: 'The ID of role',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -338,7 +338,7 @@ export class AccountsController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of active account to update",
+    description: 'The ID of active account to update',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -404,7 +404,7 @@ export class AccountsController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of active account",
+    description: 'The ID of active account',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -413,7 +413,7 @@ export class AccountsController {
     @User() user: KeycloakUserInstance,
     @Param('id') id: string
   ) {
-    return this.service.disableById(user.account_id, id, user);
+    return this.service.disableById(user.account_id, id);
   }
 
   @Get('disabled')
@@ -429,11 +429,10 @@ export class AccountsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-
   @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiParam({
     name: 'search',
-    description: "Search disabled accounts",
+    description: 'Search disabled accounts',
     type: String,
     required: false,
     example: 'Staff',
@@ -466,7 +465,7 @@ export class AccountsController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of disabled account",
+    description: 'The ID of disabled account',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -505,7 +504,7 @@ export class AccountsController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of active or disabled account",
+    description: 'The ID of active or disabled account',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -541,7 +540,7 @@ export class AccountsController {
   })
   @ApiParam({
     name: 'search',
-    description: "Search deleted accounts",
+    description: 'Search deleted accounts',
     type: String,
     required: false,
     example: 'Staff',
@@ -562,8 +561,7 @@ export class AccountsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description:
-      'Request params for deleted deleted account is not validated',
+    description: 'Request params for deleted deleted account is not validated',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -575,7 +573,7 @@ export class AccountsController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of deleted account",
+    description: 'The ID of deleted account',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -589,7 +587,6 @@ export class AccountsController {
       payload.id
     );
   }
-
 
   @Put('update/upload-avatar/:id')
   @ApiConsumes('multipart/form-data')
@@ -605,8 +602,7 @@ export class AccountsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description:
-      'Error while updating avatar for account',
+    description: 'Error while updating avatar for account',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -618,7 +614,7 @@ export class AccountsController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of active account",
+    description: 'The ID of active account',
     type: String,
     required: true,
     example: 'ABCD1234',
@@ -627,8 +623,8 @@ export class AccountsController {
     schema: {
       type: 'object',
       properties: {
-        comment: {type: 'string'},
-        outletId: {type: 'integer'},
+        comment: { type: 'string' },
+        outletId: { type: 'integer' },
         file: {
           type: 'string',
           format: 'binary',
@@ -666,15 +662,14 @@ export class AccountsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description:
-      'Error while updating avatar for account',
+    description: 'Error while updating avatar for account',
   })
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
-        comment: {type: 'string'},
-        outletId: {type: 'integer'},
+        comment: { type: 'string' },
+        outletId: { type: 'integer' },
         file: {
           type: 'string',
           format: 'binary',
@@ -701,8 +696,7 @@ export class AccountsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description:
-      'Error while changing password for account',
+    description: 'Error while changing password for account',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -731,8 +725,7 @@ export class AccountsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description:
-      'Error while changing password by keycloak ID',
+    description: 'Error while changing password by keycloak ID',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -744,13 +737,11 @@ export class AccountsController {
   })
   @ApiParam({
     name: 'id',
-    description: "The ID of keycloak ID",
+    description: 'The ID of keycloak ID',
     type: String,
     required: true,
     example: 'ABCD1234',
   })
-
-
   changePasswordByKeycloakId(
     @Param() payload: { id: string },
     @Body() requestPayload: ChangeProfilePasswordRequest
@@ -760,6 +751,4 @@ export class AccountsController {
       requestPayload.password
     );
   }
-
-
 }

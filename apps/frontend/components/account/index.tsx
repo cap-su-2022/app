@@ -2,11 +2,11 @@ import { GetServerSideProps } from 'next';
 import AdminLayout from '../layout/admin.layout';
 import { Button } from '@mantine/core';
 import {
-  ArchiveOff,
   BuildingWarehouse,
   Download,
   PencilOff,
   Plus,
+  TrashOff,
 } from 'tabler-icons-react';
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -24,12 +24,12 @@ import * as Yup from 'yup';
 import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 import InfoModal from './info-modal.component';
 import { fetchAccountById } from '../../redux/features/account/thunk/fetch-by-id.thunk';
-import RestoreDisabledModal from './restore-disabled.modal.component';
 import AccountUpdateModal from './update-modal.component';
 import { updateAccountById } from '../../redux/features/account/thunk/update-account-by-id';
 import AddAccountModal from './add-modal.component';
 import RestoreDeletedModal from './restore-deleted.modal.component';
 import DeleteModal from './delete-modal.component';
+import RestoreModal from './restore-modal.component';
 
 const UpdateAccountValidation = Yup.object().shape({
   name: Yup.string()
@@ -96,6 +96,7 @@ function AccountsManagement() {
   const handleLimitChange = (val: number) => {
     setPagination({
       ...pagination,
+      page: 1,
       limit: val,
     });
   };
@@ -119,11 +120,10 @@ function AccountsManagement() {
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
+  const [isRestoreShown, setRestoreShown] = useState<boolean>(false);
   const [isRestoreDeletedShown, setRestoreDeletedShown] =
     useState<boolean>(false);
   const [isDisableShown, setDisableShown] = useState<boolean>(false);
-  const [isRestoreDisabledShown, setRestoreDisabledShown] =
-    useState<boolean>(false);
   const account = useAppSelector((state) => state.account.account);
 
   const ActionsFilter: React.FC = () => {
@@ -140,18 +140,10 @@ function AccountsManagement() {
         <Button
           variant="outline"
           color="red"
-          onClick={() => setRestoreDisabledShown(true)}
-          style={{ marginRight: 10 }}
-        >
-          <PencilOff color={'red'} />
-        </Button>
-        <Button
-          variant="outline"
-          color="red"
           onClick={() => setRestoreDeletedShown(true)}
           style={{ marginRight: 10 }}
         >
-          <ArchiveOff />
+          <TrashOff />
         </Button>
         <Button variant="outline" color="violet">
           <Download />
@@ -171,10 +163,15 @@ function AccountsManagement() {
         .unwrap()
         .then(() => setUpdateShown(!isUpdateShown));
     },
-    delete: (id) => {
+    disable: (id) => {
       handleFetchById(id)
         .unwrap()
-        .then(() => setDeleteShown(!isDeleteShown));
+        .then(() => setDisableShown(!isDeleteShown));
+    },
+    restore: (id) => {
+      handleFetchById(id)
+        .unwrap()
+        .then(() => setRestoreShown(!isRestoreShown));
     },
   };
 
@@ -223,12 +220,6 @@ function AccountsManagement() {
           setSearch={(val) => handleSearchValue(val)}
           search={pagination.search}
         />
-
-        <RestoreDisabledModal
-          isShown={isRestoreDisabledShown}
-          toggleShown={() => setRestoreDisabledShown(!isRestoreDisabledShown)}
-          pagination={pagination}
-        />
         <RestoreDeletedModal
           isShown={isRestoreDeletedShown}
           toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
@@ -253,6 +244,13 @@ function AccountsManagement() {
             <DisableModal
               isShown={isDisableShown}
               toggleShown={() => setDisableShown(!isDisableShown)}
+              toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+              pagination={pagination}
+            />
+
+            <RestoreModal
+              isShown={isRestoreShown}
+              toggleShown={() => setRestoreShown(!isRestoreShown)}
               toggleInforModalShown={() => setInfoShown(!isInfoShown)}
               pagination={pagination}
             />

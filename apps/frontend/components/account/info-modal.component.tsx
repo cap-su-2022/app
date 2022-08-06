@@ -13,6 +13,7 @@ import {
   Clock,
   FileDescription,
   Id,
+  Trash,
   User,
   X,
 } from 'tabler-icons-react';
@@ -34,18 +35,29 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
-
   const ModalHeaderTitle: React.FC = () => {
-    return (
-      <Text className={classes.modalHeaderTitle}>Account Information</Text>
-    );
+    if (user?.disabledAt) {
+      return (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Text className={classes.modalHeaderTitle}>Account Information</Text>
+          <p className={classes.disabledDisplay}>Disable</p>
+        </div>
+      );
+    } else {
+      return (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Text className={classes.modalHeaderTitle}>Account Information</Text>
+          <p className={classes.activeDisplay}>Active</p>
+        </div>
+      );
+    }
   };
 
   return (
     <>
       <Modal
         title={<ModalHeaderTitle />}
-        size={'50%'}
+        size={'40vw'}
         centered
         opened={props.isShown}
         onClose={() => props.toggleShown()}
@@ -158,9 +170,9 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
               onClick={() => props.toggleDisableModalShown()}
               variant="outline"
               color={'red'}
-              leftIcon={<Archive />}
+              leftIcon={<Trash />}
             >
-              Disable this account
+              Delete this account
             </Button>
           ) : null}
           <Button onClick={() => props.toggleShown()} leftIcon={<X />}>
@@ -176,6 +188,7 @@ const useStyles = createStyles({
   modalHeaderTitle: {
     fontWeight: 600,
     fontSize: 22,
+    marginRight: 10
   },
   modalBody: {
     display: 'flex',
@@ -195,6 +208,22 @@ const useStyles = createStyles({
   },
   textInput: {
     marginTop: 10,
+  },
+  activeDisplay: {
+    color: '#40c057',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#00800024',
+    fontWeight: 600,
+  },
+  disabledDisplay: {
+    color: 'red',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#ff00001c',
+    fontWeight: 600,
   },
 });
 
