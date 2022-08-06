@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Button,
   createStyles,
@@ -32,10 +32,14 @@ interface RoomInfoModalProps {
 const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
   const { classes } = useStyles();
   const room = useAppSelector((state) => state.room.room);
-
   const ModalHeaderTitle: React.FC = () => {
     return <Text className={classes.modalHeaderTitle}>Room Information</Text>;
   };
+
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
 
   return (
     <>
@@ -137,14 +141,17 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
         </div>
 
         <div className={classes.modalFooter}>
-          <Button
-            onClick={() => props.toggleDisableModalShown()}
-            variant="outline"
-            color={'red'}
-            leftIcon={<Archive/>}
-          >
-            Disable this room
-          </Button>
+          {userInfo.role !== 'Staff' ?
+            <Button
+              onClick={() => props.toggleDisableModalShown()}
+              variant="outline"
+              color={'red'}
+              leftIcon={<Archive/>}
+            >
+              Disable this room
+            </Button> : null
+          }
+
 
           <Button onClick={() => props.toggleShown()} leftIcon={<X/>}>
             Close
