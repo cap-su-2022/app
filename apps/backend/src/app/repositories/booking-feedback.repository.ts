@@ -1,10 +1,10 @@
-import {paginateRaw, Pagination} from 'nestjs-typeorm-paginate';
-import {QueryRunner, Repository} from 'typeorm';
-import {PaginationParams} from '../controllers/pagination.model';
-import {CustomRepository} from '../decorators/typeorm-ex.decorator';
-import {Accounts, BookingRequest, FeedbackType, Rooms} from '../models';
-import {BookingRoomFeedback} from '../models/booking-room-feedback.entity';
-import {BookingFeedbackSendRequestPayload} from '../payload/request/booking-feedback-send.request.payload';
+import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
+import { QueryRunner, Repository } from 'typeorm';
+import { PaginationParams } from '../controllers/pagination.model';
+import { CustomRepository } from '../decorators/typeorm-ex.decorator';
+import { Accounts, BookingRequest, FeedbackType, Rooms } from '../models';
+import { BookingRoomFeedback } from '../models/booking-room-feedback.entity';
+import { BookingFeedbackSendRequestPayload } from '../payload/request/booking-feedback-send.request.payload';
 import dayjs = require('dayjs');
 
 @CustomRepository(BookingRoomFeedback)
@@ -12,7 +12,7 @@ export class BookingFeedbackRepository extends Repository<BookingRoomFeedback> {
   existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('f')
       .select('COUNT(1)', 'count')
-      .where('f.id = :id', {id: id})
+      .where('f.id = :id', { id: id })
       .getRawOne()
       .then((data) => data?.count > 0);
   }
@@ -20,7 +20,7 @@ export class BookingFeedbackRepository extends Repository<BookingRoomFeedback> {
   isAlreadyFeedback(id: string): Promise<boolean> {
     return this.createQueryBuilder('f')
       .select('COUNT(1)', 'count')
-      .where('f.booking_room_id = :id', {id: id})
+      .where('f.booking_room_id = :id', { id: id })
       .getRawOne()
       .then((data) => data?.count > 0);
   }
@@ -39,17 +39,19 @@ export class BookingFeedbackRepository extends Repository<BookingRoomFeedback> {
       .innerJoin(Rooms, 'r', 'r.id = br.room_id')
       .innerJoin(Accounts, 'a', 'a.id = f.created_by')
       .innerJoin(FeedbackType, 'ft', 'f.feedback_type = ft.id')
-        .andWhere('ft.name ILIKE :search OR r.name ILIKE :search', {
-          search: `%${pagination.search.trim()}%`,
-        })
+      .andWhere('ft.name ILIKE :search OR r.name ILIKE :search', {
+        search: `%${typeof pagination.search !== 'undefined' ? pagination.search.trim() : ''}%`,
+      })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
 
     if (pagination.room) {
-      query.andWhere('r.id = :roomId', {roomId: pagination.room});
+      query.andWhere('r.id = :roomId', { roomId: pagination.room });
     }
 
     if (accountId) {
-      query.andWhere(`f.${pagination.sort} = :accountId`, { accountId: accountId });
+      query.andWhere(`f.${pagination.sort} = :accountId`, {
+        accountId: accountId,
+      });
     }
 
     if (pagination.star) {
@@ -96,7 +98,7 @@ export class BookingFeedbackRepository extends Repository<BookingRoomFeedback> {
       .addSelect('aa.email', 'createdByEmail')
       .innerJoin(FeedbackType, 'ft', 'fb.feedback_type = ft.id')
       .innerJoin(Accounts, 'aa', 'aa.id = fb.created_by')
-      .where('fb.id = :id', {id: id})
+      .where('fb.id = :id', { id: id })
       .getRawOne<BookingRoomFeedback>();
   }
 
