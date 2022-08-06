@@ -685,7 +685,6 @@ export class BookingRoomService {
   async getCountRequestBooking(id: string) {
     try {
       const roleName = await this.accountService.getAccountRoleById(id);
-      console.log(roleName);
       if (roleName === "Librarian" || roleName === "System Admin") {
         return await this.repository.getCountRequestBooking();
       } else if (roleName === "Staff") {
