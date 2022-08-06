@@ -30,8 +30,6 @@ export class RoomsService {
   async getAll(request: RoomsPaginationParams) {
     try {
       const result = await this.repository.searchRoom(request);
-
-      console.log("CMMMMMMMMMM: ", result.items);
       if (
         result.meta.totalPages > 0 &&
         result.meta.currentPage > result.meta.totalPages
