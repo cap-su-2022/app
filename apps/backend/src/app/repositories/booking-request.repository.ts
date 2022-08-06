@@ -94,7 +94,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .where('booking_request.status LIKE :status', {
         status: `%${payload.status}%`,
       })
-      .andWhere('(r.name ILIKE :search OR a.username ILIKE :search OR booking_request.requested_by ILIKE :search)', {
+      .andWhere('(r.name ILIKE :search OR a.username ILIKE :search)', {
         search: `%${payload.search}%`,
       })
       .orderBy(payload.sort, payload.dir as 'ASC' | 'DESC');

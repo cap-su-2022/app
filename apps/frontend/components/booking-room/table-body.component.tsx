@@ -9,8 +9,8 @@ interface RowData {
   name: string;
   requested_at: string;
   checkin_date: string;
-  request_by: string;
-
+  requested_by: string;
+  status: string
 }
 
 interface TableBodyProps {
@@ -129,18 +129,18 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
         </Th>
 
         <Th
-          sorted={sortBy === 'request_by'}
+          sorted={sortBy === 'requested_by'}
           reversed={reverseSortDirection}
-          onSort={() => setSorting('request_by')}
+          onSort={() => setSorting('requested_by')}
           style={{width: 200}}
         >
           Requested by
         </Th>
 
         <Th
-          sorted={null}
+          sorted={sortBy === 'status'}
           reversed={reverseSortDirection}
-          onSort={null}
+          onSort={() => setSorting('status')}
           style={{width: 200}}
         >
           Status
