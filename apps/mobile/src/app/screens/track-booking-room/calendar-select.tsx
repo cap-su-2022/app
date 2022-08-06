@@ -67,7 +67,6 @@ const CalendarDateSelect: React.FC<CalendarDateSelectProps> = (props) => {
               ? globalDateStart
               : globalDateEnd
           }
-          minDate={new Date().toISOString()}
           onDayPress={(e) =>
             navigationState.params.type === 'dateStart'
               ? handleSetGlobalStartDate(e.dateString)

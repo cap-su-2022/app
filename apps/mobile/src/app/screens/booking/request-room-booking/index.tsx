@@ -268,7 +268,12 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
             <DateSelect
               isChecked={isMultiDateChecked}
               handleCheck={() => {
-                dispatch(saveMultiDate(!isMultiDateChecked));
+                console.log('index:', !isMultiDateChecked);
+                dispatch(
+                  saveMultiDate({
+                    isMultiDate: !isMultiDateChecked,
+                  })
+                );
                 setMultiDateChecked(!isMultiDateChecked);
               }}
             />

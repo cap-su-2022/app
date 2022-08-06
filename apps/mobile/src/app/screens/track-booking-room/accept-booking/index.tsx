@@ -206,7 +206,7 @@ const AcceptBooking: React.FC<any> = () => {
       );
     }
     return bookingRoom.status !== CANCELLED &&
-      bookingRoom.status !== CHECKED_OUT ? (
+      bookingRoom.status !== CHECKED_OUT  ? (
       <AcceptBookingFooter
         handleReject={() => {
           setRejectModalShown(!isRejectModalShow);

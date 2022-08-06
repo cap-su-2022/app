@@ -58,7 +58,7 @@ const UserNavigator = () => {
           headerShown: true,
           headerTitle: 'Change Password',
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.pop()}>
+            <TouchableOpacity onPress={() => navigation.replace('MAIN')}>
               <XIcon color={BLACK} />
             </TouchableOpacity>
           ),
