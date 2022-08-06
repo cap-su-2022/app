@@ -23,7 +23,6 @@ import { showNotification } from '@mantine/notifications';
 interface DisableRoomModalProps {
   isShown: boolean;
   toggleShown(): void;
-  toggleInforModalShown(): void;
   pagination: PagingParams;
 }
 const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
@@ -68,7 +67,6 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
         )
         .then(() => {
           props.toggleShown();
-          props.toggleInforModalShown();
           dispatch(fetchDisabledRooms(''));
           dispatch(fetchRooms(props.pagination));
         });

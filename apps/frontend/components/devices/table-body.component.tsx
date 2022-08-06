@@ -1,6 +1,6 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
 import {createStyles, Table, Button, Highlight} from '@mantine/core';
-import { InfoCircle, Pencil, Trash } from 'tabler-icons-react';
+import { Archive, InfoCircle, Pencil, Trash } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import moment from 'moment';
 import Th from '../../components/table/th.table.component';
@@ -72,9 +72,9 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             <Button
               variant="outline"
               color="red"
-              onClick={() => props.actionButtonCb.delete(row.id)}
+              onClick={() => props.actionButtonCb.disable(row.id)}
             >
-              <Trash />
+              <Archive />
             </Button>
           </>
         ) : null}

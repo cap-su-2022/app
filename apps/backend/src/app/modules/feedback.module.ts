@@ -11,7 +11,7 @@ import { FeedbackController } from '../controllers/feedback.controller';
 import ConfigModule from './global/config.module';
 import { AccountsModule } from './accounts.module';
 import { NotificationModule } from './notification.module';
-import { FeedbackGateway } from '../gateway/feedback.gateway';
+import { FeedbacksGateway } from '../gateway/feedbacks.gateway';
 
 @Module({
   imports: [
@@ -29,7 +29,7 @@ import { FeedbackGateway } from '../gateway/feedback.gateway';
     FeedbackService,
     KeycloakService,
     FeedbackHistService,
-    FeedbackGateway,
+    FeedbacksGateway,
   ],
   exports: [FeedbackHistService, FeedbackService],
 })

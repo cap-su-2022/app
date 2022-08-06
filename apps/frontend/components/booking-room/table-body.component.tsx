@@ -212,11 +212,11 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 600,
   },
   checkedOutDisplay: {
-    color: '#fd7e14',
+    color: '#7950f2',
     textAlign: 'center',
     borderRadius: 50,
     width: 100,
-    backgroundColor: '#fd7e1442',
+    backgroundColor: '#7950f240',
     fontWeight: 600,
   },
   canceledDisplay: {

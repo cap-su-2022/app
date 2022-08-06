@@ -1,11 +1,11 @@
-import {BadRequestException, Injectable, Logger} from '@nestjs/common';
-import {DataSource} from 'typeorm';
-import {PaginationParams} from '../controllers/pagination.model';
-import {BookingRoomFeedback, Feedback} from '../models';
-import {BookingFeedbackSendRequestPayload} from '../payload/request/booking-feedback-send.request.payload';
-import {BookingFeedbackRepository} from '../repositories/booking-feedback.repository';
-import {BookingRoomService} from './booking-room.service';
-import {AccountRepository} from '../repositories';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { PaginationParams } from '../controllers/pagination.model';
+import { BookingRoomFeedback, Feedback } from '../models';
+import { BookingFeedbackSendRequestPayload } from '../payload/request/booking-feedback-send.request.payload';
+import { BookingFeedbackRepository } from '../repositories/booking-feedback.repository';
+import { BookingRoomService } from './booking-room.service';
+import { AccountRepository } from '../repositories';
 
 @Injectable()
 export class BookingFeedbackService {
@@ -16,25 +16,32 @@ export class BookingFeedbackService {
     private readonly repository: BookingFeedbackRepository,
     private readonly bookingRoomService: BookingRoomService,
     private readonly accountRepository: AccountRepository
-  ) {
-  }
+  ) {}
 
   async getAllFeedbacks(accountId: string, param: PaginationParams) {
     try {
-      if (!param.page) {
-        const roleName = await this.accountRepository.findRoleNameById(
-          accountId
-        );
-        if (roleName === 'Staff') {
-          return await this.repository.findByPagination(accountId, param);
-        }
-        return await this.repository.findByPagination(undefined, param);
+      let result
+      const roleName = await this.accountRepository.findRoleNameById(accountId);
+      if (roleName === 'Staff') {
+        result = await this.repository.findByPagination(accountId, param);
+      } else {
+        result = await this.repository.findByPagination(undefined, param);
       }
 
-      const result = await this.repository.findByPagination(undefined, param);
+      // if (!param.page) {
+      //   const roleName = await this.accountRepository.findRoleNameById(
+      //     accountId
+      //   );
+      //   if (roleName === 'Staff') {
+      //     return await this.repository.findByPagination(accountId, param);
+      //   }
+      //   return await this.repository.findByPagination(undefined, param);
+      // }
+
+      // const result = await this.repository.findByPagination(undefined, param);
       if (
-        result.meta.totalPages > 0 &&
-        result.meta.currentPage > result.meta.totalPages
+        result.meta?.totalPages > 0 &&
+        result.meta?.currentPage > result.meta?.totalPages
       ) {
         throw new BadRequestException('Current page is over');
       }
@@ -107,5 +114,4 @@ export class BookingFeedbackService {
       throw new BadRequestException(e.message);
     }
   }
-
 }

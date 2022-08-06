@@ -7,6 +7,7 @@ import {
   Download,
   PencilOff,
   Plus,
+  TrashOff,
 } from 'tabler-icons-react';
 import React, {useEffect, useState} from 'react';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
@@ -147,7 +148,7 @@ function DevicesManagement() {
           onClick={() => setRestoreDisabledShown(true)}
           style={{marginRight: 10}}
         >
-          <PencilOff color={'red'}/>
+          <ArchiveOff color={'red'}/>
         </Button>
         <Button
           variant="outline"
@@ -155,7 +156,7 @@ function DevicesManagement() {
           onClick={() => setRestoreDeletedShown(true)}
           style={{marginRight: 10}}
         >
-          <ArchiveOff/>
+          <TrashOff/>
         </Button>
         <Button variant="outline" color="violet">
           <Download/>
@@ -175,10 +176,10 @@ function DevicesManagement() {
         .unwrap()
         .then(() => setUpdateShown(!isUpdateShown));
     },
-    delete: (id) => {
+    disable: (id) => {
       handleFetchById(id)
         .unwrap()
-        .then(() => setDeleteShown(!isDeleteShown));
+        .then(() => setDisableShown(!isDisableShown));
     },
   };
 
@@ -255,17 +256,17 @@ function DevicesManagement() {
               // fields={infoFields}
               toggleShown={() => setInfoShown(!isInfoShown)}
               isShown={isInfoShown}
-              toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
+              toggleDeleteModalShown={() => setDeleteShown(!isDeleteShown)}
             />
             <DisableDeviceModal
               isShown={isDisableShown}
               toggleShown={() => setDisableShown(!isDisableShown)}
-              toggleInforModalShown={() => setInfoShown(!isInfoShown)}
               pagination={pagination}
             />
             <DeleteDeviceModal
               isShown={isDeleteShown}
               toggleShown={() => setDeleteShown(!isDeleteShown)}
+              toggleInforModalShown={() => setInfoShown(!isInfoShown)}
               pagination={pagination}
             />
             <UpdateModal
