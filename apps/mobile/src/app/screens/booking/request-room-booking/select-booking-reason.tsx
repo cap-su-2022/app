@@ -12,6 +12,7 @@ const SelectSlots: React.FC<any> = (props) => {
           <Text style={styles.title}>Booking Reason</Text>
           <View style={styles.slotPicker}>
             <RNPickerSelect
+              placeholder={{}}
               fixAndroidTouchableBug={true}
               items={props.bookingReasonSelections}
               style={{
