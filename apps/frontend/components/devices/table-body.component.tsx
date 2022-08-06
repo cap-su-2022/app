@@ -1,5 +1,5 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
-import { createStyles, Table, Button } from '@mantine/core';
+import {createStyles, Table, Button, Highlight} from '@mantine/core';
 import { InfoCircle, Pencil, Trash } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import moment from 'moment';
@@ -42,8 +42,16 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           ? index + 1
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
-      <td>{row.name}</td>
-      <td>{row.type}</td>
+      <td>
+        <Highlight highlight={props.search}>
+          {row.name}
+        </Highlight>
+      </td>
+      <td>
+        <Highlight highlight={props.search}>
+        {row.type}
+        </Highlight>
+      </td>
       <td className={classes.actionButtonContainer}>
         <Button
           variant="outline"
