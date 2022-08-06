@@ -42,7 +42,7 @@ import { BookingRoomGateway } from '../gateway/booking-room.gateway';
     TasksService,
     BookingRequestHistService,
     BookingRoomDevicesService,
-    BookingRoomGateway
+    BookingRoomGateway,
   ],
   exports: [
     BookingRoomService,

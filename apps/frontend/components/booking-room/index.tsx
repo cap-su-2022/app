@@ -19,6 +19,7 @@ import AcceptRequestModal from './accept-request-modal.component';
 import RejectRequestModal from './reject-request.component';
 import CheckinRequestModal from './checkin-request.component';
 import CheckoutRequestModal from './checkout-request.component';
+import {io} from 'socket.io-client'
 
 import {fetchCountRequestBooking} from '../../redux/features/room-booking/thunk/fetch-count-request-booking';
 
@@ -36,6 +37,7 @@ const defaultPagination = {
 
 const BookingRoom = () => {
   const {classes} = useStyles();
+  const socket = io('ws://localhost:5000')
   const [isInfoShown, setInfoShown] = useState<boolean>(false);
   const [isAddShown, setAddShown] = useState<boolean>(false);
   const [isCancelShown, setCancelShown] = useState<boolean>(false);
@@ -45,6 +47,12 @@ const BookingRoom = () => {
   const [isCheckoutShown, setCheckoutShown] = useState<boolean>(false);
 
   const [count, setCount] = useState<{ count: number }[]>([]);
+
+  useEffect(() => {
+    socket.emit('findAllRequests', pagination, (response) => {
+      console.log("AHHHHHHHHHHHHHHHHHH: ", response);
+    })
+  })
 
   useEffect(() => {
     dispatch(fetchCountRequestBooking()).unwrap().then(setCount);
