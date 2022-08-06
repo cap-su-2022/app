@@ -23,7 +23,7 @@ const defaultPaginationParams = {
   limit: 5,
   search: '',
   dir: 'DESC',
-  sort: 'createdAt',
+  sort: 'f.created_at',
 };
 
 const ManageBookingRoomFeedback: React.FC<any> = () => {
@@ -55,9 +55,10 @@ const ManageBookingRoomFeedback: React.FC<any> = () => {
     dispatch,
   ]);
 
-  const toggleSortDirection = () => {
+  const toggleSortDirection = (field: string) => {
     setPagination({
       ...pagination,
+      sort: field,
       dir: pagination.dir === 'ASC' ? 'DESC' : 'ASC',
     });
   };
@@ -133,7 +134,7 @@ const ManageBookingRoomFeedback: React.FC<any> = () => {
         <>
           <TableBody
             actionButtonCb={handleActionsCb}
-            toggleSortDirection={() => toggleSortDirection()}
+            toggleSortDirection={(field) => toggleSortDirection(field)}
             data={bookingRoomFeedbacks.items}
             page={pagination.page}
             itemsPerPage={pagination.limit}
