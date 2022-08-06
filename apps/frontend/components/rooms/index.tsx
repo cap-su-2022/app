@@ -7,6 +7,7 @@ import {
   Download,
   PencilOff,
   Plus,
+  TrashOff,
 } from 'tabler-icons-react';
 import React, {useEffect, useState} from 'react';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
@@ -139,7 +140,7 @@ function RoomsManagement(props: any) {
           onClick={() => setRestoreDisabledShown(true)}
           style={{marginRight: 10}}
         >
-          <PencilOff color={'red'}/>
+          <ArchiveOff color={'red'}/>
         </Button>
         <Button
           variant="outline"
@@ -147,7 +148,7 @@ function RoomsManagement(props: any) {
           onClick={() => setRestoreDeletedShown(true)}
           style={{marginRight: 10}}
         >
-          <ArchiveOff/>
+          <TrashOff/>
         </Button>
         <Button
           variant="outline"
@@ -173,11 +174,11 @@ function RoomsManagement(props: any) {
         .unwrap()
         .then(() => setUpdateShown(!isUpdateShown));
     },
-    delete: (id) => {
+    disable: (id) => {
       setId(id);
       handleFetchById(id)
         .unwrap()
-        .then(() => setDeleteShown(!isDeleteShown));
+        .then(() => setDisableShown(!isDisableShown));
     },
   };
 
@@ -231,17 +232,17 @@ function RoomsManagement(props: any) {
               // fields={infoFields}
               toggleShown={() => setInfoShown(!isInfoShown)}
               isShown={isInfoShown}
-              toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
+              toggleDeleteModalShown={() => setDeleteShown(!isDeleteShown)}
             />
             <DisableRoomModal
               isShown={isDisableShown}
               toggleShown={() => setDisableShown(!isDisableShown)}
-              toggleInforModalShown={() => setInfoShown(!isInfoShown)}
               pagination={pagination}
             />
             <DeleteRoomModal
               isShown={isDeleteShown}
               toggleShown={() => setDeleteShown(!isDeleteShown)}
+              toggleInforModalShown={() => setInfoShown(!isInfoShown)}
               pagination={pagination}
             />
             <UpdateModal

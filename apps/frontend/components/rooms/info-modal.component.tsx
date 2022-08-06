@@ -15,6 +15,7 @@ import {
   Clock,
   FileDescription,
   Id,
+  Trash,
   User,
   X,
 } from 'tabler-icons-react';
@@ -26,7 +27,7 @@ interface RoomInfoModalProps {
 
   toggleShown(): void;
 
-  toggleDisableModalShown(): void;
+  toggleDeleteModalShown(): void;
 }
 
 const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
@@ -143,12 +144,12 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
         <div className={classes.modalFooter}>
           {userInfo.role !== 'Staff' ?
             <Button
-              onClick={() => props.toggleDisableModalShown()}
+              onClick={() => props.toggleDeleteModalShown()}
               variant="outline"
               color={'red'}
-              leftIcon={<Archive/>}
+              leftIcon={<Trash/>}
             >
-              Disable this room
+              Delete this room
             </Button> : null
           }
 

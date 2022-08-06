@@ -15,6 +15,7 @@ import {
   Clock,
   FileDescription,
   Id,
+  Trash,
   User,
   X,
 } from 'tabler-icons-react';
@@ -24,7 +25,7 @@ import dayjs from 'dayjs';
 interface DeviceInfoModalProps {
   isShown: boolean;
   toggleShown(): void;
-  toggleDisableModalShown(): void;
+  toggleDeleteModalShown(): void;
 }
 
 const DeviceInfoModal: React.FC<DeviceInfoModalProps> = (props) => {
@@ -134,12 +135,12 @@ const DeviceInfoModal: React.FC<DeviceInfoModalProps> = (props) => {
 
         <div className={classes.modalFooter}>
           <Button
-            onClick={() => props.toggleDisableModalShown()}
+            onClick={() => props.toggleDeleteModalShown()}
             variant="outline"
             color={'red'}
-            leftIcon={<Archive />}
+            leftIcon={<Trash />}
           >
-            Disable this device
+            Delete this device
           </Button>
 
           <Button onClick={() => props.toggleShown()} leftIcon={<X />}>

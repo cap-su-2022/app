@@ -24,6 +24,7 @@ import { showNotification } from '@mantine/notifications';
 interface DeleteDeviceModalProps {
   isShown: boolean;
   toggleShown(): void;
+  toggleInforModalShown(): void;
   pagination: PagingParams;
 }
 
@@ -71,6 +72,7 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
         )
         .then(() => {
           props.toggleShown();
+          props.toggleInforModalShown();
           dispatch(fetchDevices(props.pagination));
           dispatch(fetchDeletedDevices(''));
         });
@@ -173,7 +175,7 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
       closeOnClickOutside={true}
       centered
       size={isShownListRequest && listRequest.length > 0 ? '50%' : null}
-      zIndex={100}
+      zIndex={200}
       title={<ModalHeaderTitle />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}

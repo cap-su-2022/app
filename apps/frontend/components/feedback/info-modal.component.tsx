@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   createStyles,
@@ -18,7 +18,7 @@ import {
   User,
   X,
 } from 'tabler-icons-react';
-import {useAppSelector} from '../../redux/hooks';
+import { useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
 
 interface InfoModalProps {
@@ -48,32 +48,43 @@ interface UserInfoModel {
 }
 
 const InfoModal: React.FC<InfoModalProps> = (props) => {
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   const feedback = useAppSelector((state) => state.feedback.feedback);
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
+  const RenderStatusr: React.FC = () => {
+    switch (feedback.status) {
+      case 'PENDING':
+        return <div className={classes.pendingDisplay}>{feedback.status}</div>;
+      case 'RESOLVED':
+        return (
+          <div style={{ display: 'flex' }}>
+            <div className={classes.resolvedDisplay}>{feedback.status}</div>
+            <span className={classes.resolvedByDiv}>
+              Resolved by <b>{feedback.resolvedBy || 'system'}</b>
+            </span>
+          </div>
+        );
+      case 'REJECTED':
+        return (
+          <div style={{ display: 'flex' }}>
+            <div className={classes.rejectedDisplay}>{feedback.status}</div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   const HeaderTitle: React.FC = () => {
     return (
-      <div style={{display: 'flex'}}>
+      <div style={{ display: 'flex' }}>
         <div className={classes.headerTitle}>{props.header}</div>
-        <div style={{marginLeft: 10}}>
-          {feedback.status === 'PENDING' ? (
-            <div className={classes.pendingDisplay}>{feedback.status}</div>
-          ) : feedback.status === 'RESOLVED' ? (
-            <div style={{display: 'flex'}}>
-              <div className={classes.resolvedDisplay}>{feedback.status}</div>
-              <span className={classes.resolvedByDiv}>
-                Resolved by <b>{feedback.resolvedBy || 'system'}</b>
-              </span>
-            </div>
-          ) : feedback.status === 'REJECTED' ? (
-            <div style={{display: 'flex'}}>
-              <div className={classes.rejectedDisplay}>{feedback.status}</div>
-            </div>
-          ) : null}
+        <div style={{ marginLeft: 10 }}>
+          <RenderStatusr />
         </div>
       </div>
     );
@@ -83,10 +94,10 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
     return (
       <>
         <div>
-          <div style={{display: 'flex', justifyContent: 'space-between'}}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <InputWrapper label="Created at" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText/>}
+                icon={<ClipboardText />}
                 radius="md"
                 readOnly
                 value={dayjs(feedback.createdAt).format('DD-MM-YYYY')}
@@ -94,7 +105,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             </InputWrapper>
             <InputWrapper label="Created by" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText/>}
+                icon={<ClipboardText />}
                 radius="md"
                 readOnly
                 value={feedback.createdBy}
@@ -104,7 +115,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
 
           <InputWrapper label="Feedback type" className={classes.inputWrapper}>
             <TextInput
-              icon={<ClipboardText/>}
+              icon={<ClipboardText />}
               radius="md"
               readOnly
               value={feedback.feedbackType}
@@ -115,7 +126,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             className={classes.inputWrapper}
           >
             <Textarea
-              icon={<ClipboardText/>}
+              icon={<ClipboardText />}
               radius="md"
               readOnly
               value={feedback.feedbackMess}
@@ -130,10 +141,10 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
     return (
       <>
         <div>
-          <div style={{display: 'flex', justifyContent: 'space-between'}}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <InputWrapper label="Resolved at" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText/>}
+                icon={<ClipboardText />}
                 radius="md"
                 readOnly
                 value={dayjs(feedback.resolvedAt).format('DD-MM-YYYY')}
@@ -141,7 +152,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             </InputWrapper>
             <InputWrapper label="Resolved by" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText/>}
+                icon={<ClipboardText />}
                 radius="md"
                 readOnly
                 value={feedback.resolvedBy}
@@ -153,7 +164,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             className={classes.inputWrapper}
           >
             <Textarea
-              icon={<ClipboardText/>}
+              icon={<ClipboardText />}
               radius="md"
               readOnly
               value={feedback.replyMess}
@@ -168,10 +179,10 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
     return (
       <>
         <div>
-          <div style={{display: 'flex', justifyContent: 'space-between'}}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <InputWrapper label="Rejected at" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText/>}
+                icon={<ClipboardText />}
                 radius="md"
                 readOnly
                 value={dayjs(feedback.rejectedAt).format('DD-MM-YYYY')}
@@ -179,7 +190,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             </InputWrapper>
             <InputWrapper label="Rejected by" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText/>}
+                icon={<ClipboardText />}
                 radius="md"
                 readOnly
                 value={feedback.rejectedBy}
@@ -191,7 +202,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             className={classes.inputWrapper}
           >
             <Textarea
-              icon={<ClipboardText/>}
+              icon={<ClipboardText />}
               radius="md"
               readOnly
               value={feedback.replyMess}
@@ -206,7 +217,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
     <Modal
       size="lg"
       centered
-      title={<HeaderTitle/>}
+      title={<HeaderTitle />}
       padding="lg"
       transition="pop"
       withinPortal
@@ -218,19 +229,20 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
       onClose={() => props.toggleShown()}
     >
       <div className={classes.body}>
-        <Infor/>
-        {feedback.status === 'RESOLVED' && <InforResolved/>}
-        {feedback.status === 'REJECTED' && <InforRejected/>}
+        <Infor />
+        {feedback.status === 'RESOLVED' && <InforResolved />}
+        {feedback.status === 'REJECTED' && <InforRejected />}
 
         <div className={classes.footer}>
           {feedback.status === 'PENDING' &&
-          userInfo.id !== feedback.createdBy && userInfo.role !== 'Staff' ? (
+          userInfo.id !== feedback.createdBy &&
+          userInfo.role === 'System Admin' ? (
             <>
               <Button
                 onClick={() => props.toggleResolveModalShown()}
                 variant="outline"
                 color={'green'}
-                leftIcon={<Checks/>}
+                leftIcon={<Checks />}
               >
                 Resolve feedback
               </Button>
@@ -239,7 +251,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
                 onClick={() => props.toggleRejectModalShown()}
                 variant="outline"
                 color={'red'}
-                leftIcon={<X/>}
+                leftIcon={<X />}
               >
                 Reject feedback
               </Button>
@@ -248,7 +260,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             <div></div>
           )}
           <Button
-            leftIcon={<X/>}
+            leftIcon={<X />}
             color="orange"
             onClick={() => props.toggleShown()}
           >
@@ -261,7 +273,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
 };
 
 const useStyles = createStyles({
-  headerTitle: {fontWeight: 600, fontSize: 20},
+  headerTitle: { fontWeight: 600, fontSize: 20 },
   body: {
     display: 'flex',
     flexDirection: 'column',
