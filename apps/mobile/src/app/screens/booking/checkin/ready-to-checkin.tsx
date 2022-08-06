@@ -242,35 +242,10 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
           }}
         >
           <TouchableOpacity
-            onPress={() => setQRModalShown(!isQRModalShown)}
-            style={{
-              height: 50,
-              borderRadius: 8,
-              width: deviceWidth / 3,
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              alignItems: 'center',
-              borderColor: FPT_ORANGE_COLOR,
-              borderWidth: 2,
-              flexDirection: 'row',
-            }}
-          >
-            <PencilIcon size={deviceWidth / 18} color={FPT_ORANGE_COLOR} />
-            <Text
-              style={{
-                color: FPT_ORANGE_COLOR,
-                fontWeight: '600',
-                fontSize: deviceWidth / 23,
-              }}
-            >
-              Sign again
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
             onPress={() => navigate.replace('MAIN')}
             style={{
               height: 50,
-              width: deviceWidth / 2.5,
+              width: deviceWidth / 2,
               backgroundColor: FPT_ORANGE_COLOR,
               borderRadius: 8,
               display: 'flex',

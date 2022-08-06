@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CalendarProvider, WeekCalendar } from 'react-native-calendars';
 import RNPickerSelect, { PickerStyle } from 'react-native-picker-select';
 import { useAppSelector } from '../../../../hooks/use-app-selector.hook';
@@ -26,6 +26,24 @@ interface ChooseSlotHeaderProps {
 
 const ChooseSlotHeader: React.FC<ChooseSlotHeaderProps> = (props) => {
   const { rooms } = useAppSelector((state) => state.room);
+  const [selectedDay, setSelectedDay] = useState(props.currentDate);
+
+  useEffect(() => {
+    if (
+      props.currentDate < props.minDate ||
+      props.currentDate > props.maxDate
+    ) {
+      setSelectedDay(props.minDate);
+    }
+  }, [props.currentDate]);
+
+  const handleOnDaySelected = (dayString) => {
+    if (dayString < props.currentDate || dayString > props.maxDate) {
+      props.handleOnDayPress(selectedDay);
+    } else {
+      props.handleOnDayPress(dayString);
+    }
+  };
 
   const RoomFilter = () => {
     return (
@@ -67,12 +85,12 @@ const ChooseSlotHeader: React.FC<ChooseSlotHeaderProps> = (props) => {
           minDate={props.minDate}
           maxDate={props.maxDate}
           markedDates={{
-            [props.currentDate]: {
+            [selectedDay]: {
               selected: true,
               selectedColor: FPT_ORANGE_COLOR,
             },
           }}
-          onDayPress={(day) => props.handleOnDayPress(day.dateString)}
+          onDayPress={(day) => handleOnDaySelected(day.dateString)}
           firstDay={1}
           showsHorizontalScrollIndicator={true}
           pagingEnabled={true}
