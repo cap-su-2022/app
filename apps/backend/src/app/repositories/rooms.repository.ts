@@ -83,7 +83,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('a.username', 'createdBy')
       .addSelect('aa.username', 'updatedBy')
       .innerJoin(RoomType, 'rt', 'rt.id = r.type')
-      .where('LOWER(r.name) LIKE LOWER(:search) OR rt.name ILIKE :search', {
+      .where('(LOWER(r.name) LIKE LOWER(:search) OR rt.name ILIKE :search)', {
         search: `%${payload.search?.trim() || ''}%`,
       })
       .andWhere(`r.deleted_at IS NULL`)
