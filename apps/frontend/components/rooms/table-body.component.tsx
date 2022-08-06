@@ -1,8 +1,7 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {createStyles, Table, Button, Highlight} from '@mantine/core';
-import { InfoCircle, Pencil, Trash } from 'tabler-icons-react';
+import {InfoCircle, Pencil, Trash} from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
-import moment from 'moment';
 import Th from '../../components/table/th.table.component';
 
 interface RowData {
@@ -12,11 +11,13 @@ interface RowData {
 
 interface TableBodyProps {
   data: any[];
+
   toggleSortDirection(label): void;
+
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
-  search: string | string[]
+  search: string | string[];
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
@@ -28,7 +29,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
@@ -36,96 +37,97 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
   };
 
   const rows = props.data.map((row, index) => (
-    <Highlight highlight={props.search}>
-      <tr key={index}>
-        <td>
-          {props.page === 1
-            ? index + 1
-            : (props.page - 1) * props.itemsPerPage + (index + 1)}
-        </td>
-        <td>{row.name}</td>
-        <td>{row.type}</td>
-        <td className={classes.actionButtonContainer}>
-          <Button
-            variant="outline"
-            onClick={() => props.actionButtonCb.info(row.id)}
-          >
-            <InfoCircle />
-          </Button>
+    <tr key={index}>
+      <td>
+        {props.page === 1
+          ? index + 1
+          : (props.page - 1) * props.itemsPerPage + (index + 1)}
+      </td>
+      <td>
+        <Highlight highlight={props.search}>{row.name}</Highlight>
+      </td>
+      <td>
+        <Highlight highlight={props.search}>{row.type}</Highlight>
+      </td>
+      <td className={classes.actionButtonContainer}>
+        <Button
+          variant="outline"
+          onClick={() => props.actionButtonCb.info(row.id)}
+        >
+          <InfoCircle/>
+        </Button>
 
-          {userInfo.role === 'System Admin' ? (
-            <>
-              <Button
-                variant="outline"
-                color="green"
-                onClick={() => props.actionButtonCb.update(row.id)}
-              >
-                <Pencil />
-              </Button>
-              <Button
-                variant="outline"
-                color="red"
-                onClick={() => props.actionButtonCb.delete(row.id)}
-              >
-                <Trash />
-              </Button>
-            </>
-          ) : null}
-        </td>
-      </tr>
-    </Highlight>
-
+        {userInfo.role === 'System Admin' ? (
+          <>
+            <Button
+              variant="outline"
+              color="green"
+              onClick={() => props.actionButtonCb.update(row.id)}
+            >
+              <Pencil/>
+            </Button>
+            <Button
+              variant="outline"
+              color="red"
+              onClick={() => props.actionButtonCb.delete(row.id)}
+            >
+              <Trash/>
+            </Button>
+          </>
+        ) : null}
+      </td>
+    </tr>
   ));
 
   return props.data.length > 0 ? (
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{ tableLayout: 'fixed' }}
+      sx={{tableLayout: 'fixed'}}
     >
       <thead>
-        <tr>
-          <Th
-            style={{
-              width: '50px',
-            }}
-            sorted={null}
-            reversed={reverseSortDirection}
-            onSort={null}
-          >
-            STT
-          </Th>
+      <tr>
+        <Th
+          style={{
+            width: '50px',
+          }}
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+        >
+          STT
+        </Th>
 
-          <Th
-            sorted={sortBy === 'r.name'}
-            reversed={reverseSortDirection}
-            onSort={() => setSorting('r.name')}
-          >
-            Name
-          </Th>
+        <Th
+          sorted={sortBy === 'r.name'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('r.name')}
+        >
+          Name
+        </Th>
 
-          <Th
-            sorted={sortBy === 'rt.name'}
-            reversed={reverseSortDirection}
-            onSort={() => setSorting('rt.name')}
-          >
-            Type
-          </Th>
+        <Th
+          sorted={sortBy === 'rt.name'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('rt.name')}
+        >
+          Type
+        </Th>
 
-          <Th
-            sorted={null}
-            reversed={reverseSortDirection}
-            onSort={null}
-            style={{ width: 220 }}
-          >
-            Actions
-          </Th>
-        </tr>
+        <Th
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+          style={{width: 220}}
+        >
+          Actions
+        </Th>
+      </tr>
       </thead>
       <tbody>{rows}</tbody>
     </Table>
   ) : (
-    <NoDataFound />
+    <NoDataFound/>
   );
 };
 

@@ -55,6 +55,7 @@ export class BookingFeedbackController {
   }
 
   @Get(':id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Get booking room feedback by id',
     description: 'Get booking room feedback by id',

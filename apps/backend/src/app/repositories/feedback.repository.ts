@@ -36,7 +36,7 @@ export class FeedbackRepository extends Repository<Feedback> {
       .where('f.deleted_at IS NULL')
       .andWhere('f.deleted_by IS NULL');
     if (pagination.search) {
-      query.andWhere('a.username ILIKE :search', {
+      query.andWhere('a.username ILIKE :search OR ft.name ILIKE :search', {
         search: `%${pagination.search.trim()}%`,
       });
     }
@@ -111,6 +111,12 @@ export class FeedbackRepository extends Repository<Feedback> {
     return await this.query(`SELECT COUNT(1) as count FROM feedback fb WHERE fb.status = 'PENDING' UNION ALL
                                     SELECT COUNT(1) FROM feedback fb WHERE fb.status = 'RESOLVED' UNION ALL
                                     SELECT COUNT(1) FROM feedback fb WHERE fb.status = 'REJECTED'`);
+  }
+
+  async getCountRequestFeedbacksCreatedBy(id: string) {
+    return await this.query(`SELECT COUNT(1) as count FROM feedback fb WHERE fb.status = 'PENDING' AND fb.created_by = '${id}' UNION ALL
+                                    SELECT COUNT(1) FROM feedback fb WHERE fb.status = 'RESOLVED' AND fb.created_by = '${id}' UNION ALL
+                                    SELECT COUNT(1) FROM feedback fb WHERE fb.status = 'REJECTED' AND fb.created_by = '${id}'`);
   }
 
   async addNew(

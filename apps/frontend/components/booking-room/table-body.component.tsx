@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { createStyles, Table, Button } from '@mantine/core';
-import { InfoCircle } from 'tabler-icons-react';
+import React, {useState} from 'react';
+import {createStyles, Table, Button, Highlight} from '@mantine/core';
+import {InfoCircle} from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
 import dayjs from 'dayjs';
@@ -9,21 +9,26 @@ interface RowData {
   name: string;
   requested_at: string;
   checkin_date: string;
+  requested_by: string;
+  status: string
 }
 
 interface TableBodyProps {
   data: any[];
+
   toggleSortDirection(label): void;
+
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
+  search: string | string[];
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
@@ -54,19 +59,27 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           ? index + 1
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
-      <td>{row.roomName}</td>
+      <td>
+        <Highlight highlight={props.search}>
+          {row.roomName}
+        </Highlight>
+      </td>
       <td>{dayjs(row.bookedAt).format('ddd DD-MM-YYYY, HH:mm ')}</td>
       <td>{dayjs(row.checkinDate).format('ddd DD-MM-YYYY')}</td>
-      <td>{row.requestedBy}</td>
       <td>
-        <RenderStatus status={row.status} />
+        <Highlight highlight={props.search}>
+          {row.requestedBy}
+        </Highlight>
+      </td>
+      <td>
+        <RenderStatus status={row.status}/>
       </td>
       <td className={classes.actionButtonContainer}>
         <Button
           variant="outline"
           onClick={() => props.actionButtonCb.info(row.id)}
         >
-          <InfoCircle />
+          <InfoCircle/>
         </Button>
       </td>
     </tr>
@@ -76,79 +89,79 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{ tableLayout: 'fixed', minWidth: 700 }}
+      sx={{tableLayout: 'fixed', minWidth: 700}}
     >
       <thead>
-        <tr>
-          <Th
-            style={{
-              width: '5%',
-            }}
-            sorted={null}
-            reversed={reverseSortDirection}
-            onSort={null}
-          >
-            STT
-          </Th>
+      <tr>
+        <Th
+          style={{
+            width: '5%',
+          }}
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+        >
+          STT
+        </Th>
 
-          <Th
-            sorted={sortBy === 'name'}
-            reversed={reverseSortDirection}
-            onSort={() => setSorting('name')}
-          >
-            Room Name
-          </Th>
+        <Th
+          sorted={sortBy === 'name'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('name')}
+        >
+          Room Name
+        </Th>
 
-          <Th
-            sorted={sortBy === 'requested_at'}
-            reversed={reverseSortDirection}
-            onSort={() => setSorting('requested_at')}
-          >
-            Booked At
-          </Th>
+        <Th
+          sorted={sortBy === 'requested_at'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('requested_at')}
+        >
+          Booked At
+        </Th>
 
-          <Th
-            sorted={sortBy === 'checkin_date'}
-            reversed={reverseSortDirection}
-            onSort={() => setSorting('checkin_date')}
-          >
-            Checkin Date
-          </Th>
+        <Th
+          sorted={sortBy === 'checkin_date'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('checkin_date')}
+        >
+          Check in Date
+        </Th>
 
-          <Th
-            sorted={null}
-            reversed={null}
-            onSort={null}
-            style={{ width: 120 }}
-          >
-            Request by
-          </Th>
+        <Th
+          sorted={sortBy === 'requested_by'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('requested_by')}
+          style={{width: 200}}
+        >
+          Requested by
+        </Th>
 
-          <Th
-            sorted={null}
-            reversed={reverseSortDirection}
-            onSort={null}
-            style={{ width: 120 }}
-          >
-            Status
-          </Th>
+        <Th
+          sorted={sortBy === 'status'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('status')}
+          style={{width: 200}}
+        >
+          Status
+        </Th>
 
-          <Th
-            style={{
-              width: '10%',
-            }}
-            sorted={null}
-            reversed={reverseSortDirection}
-            onSort={null}
-          >
-            Actions
-          </Th>
-        </tr>
+        <Th
+          style={{
+            width: '10%',
+          }}
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+        >
+          Actions
+        </Th>
+      </tr>
       </thead>
       <tbody>{rows}</tbody>
     </Table>
   ) : (
-    <NoDataFound />
+    <NoDataFound/>
   );
 };
 

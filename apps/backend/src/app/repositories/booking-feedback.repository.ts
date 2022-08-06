@@ -39,10 +39,10 @@ export class BookingFeedbackRepository extends Repository<BookingRoomFeedback> {
       .innerJoin(Rooms, 'r', 'r.id = br.room_id')
       .innerJoin(Accounts, 'a', 'a.id = f.created_by')
       .innerJoin(FeedbackType, 'ft', 'f.feedback_type = ft.id')
-      //   .andWhere('f.name ILIKE :search', {
-      //     search: `%${pagination.search.trim()}%`,
-      //   })
-      .orderBy('f.created_at', 'DESC');
+        .andWhere('ft.name ILIKE :search OR r.name ILIKE :search', {
+          search: `%${pagination.search.trim()}%`,
+        })
+      .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
 
     if (pagination.room) {
       query.andWhere('r.id = :roomId', {roomId: pagination.room});

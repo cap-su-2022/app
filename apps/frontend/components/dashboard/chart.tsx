@@ -1,14 +1,30 @@
-import React from 'react';
-import ReactApexChart from 'react-apexcharts';
+import React, { useEffect } from 'react';
+import dynamic from 'next/dynamic';
 
-const ApexChart: React.FC = () => {
+const ReactApexChart = dynamic(() => import('react-apexcharts'), {
+  ssr: false,
+});
+
+interface ChartProps {
+  total: number;
+  booked: number;
+  cancelled: number;
+}
+
+const ApexChart: React.FC<ChartProps> = (props) => {
   const state = {
-    series: [44, 55, 41, 17, 15],
+    series: [
+      props?.booked,
+      props?.cancelled,
+      props?.total - props?.booked - props?.cancelled,
+    ],
     options: {
       chart: {
-        width: 380,
+        width: 600,
         type: 'donut',
       },
+      labels: ['Booked', 'Cancelled', 'Pending'],
+      colors: ['#13bd00', '#ff0000', '#000dff'],
       plotOptions: {
         pie: {
           startAngle: -90,
@@ -27,7 +43,7 @@ const ApexChart: React.FC = () => {
         },
       },
       title: {
-        text: 'Gradient Donut with custom Start-angle',
+        text: 'Statistics of the number of requests',
       },
       responsive: [
         {
@@ -45,17 +61,24 @@ const ApexChart: React.FC = () => {
     },
   };
 
+  if (
+    props?.booked &&
+    props?.cancelled &&
+    props?.total
+  ) {
     return (
-      <div id="chart">
+      <div id="chart" style={{ display: 'flex', justifyContent: 'center'}}>
         <ReactApexChart
-          option={state.options}
+          options={state.options}
           series={state.series}
           type="donut"
-          width={380}
+          width={600}
         />
       </div>
     );
-  
-}
+  } else {
+    return null
+  }
+};
 
-export default ApexChart
+export default ApexChart;

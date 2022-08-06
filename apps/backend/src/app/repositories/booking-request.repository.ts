@@ -1,4 +1,4 @@
-import { QueryRunner, Repository} from 'typeorm';
+import {QueryRunner, Repository} from 'typeorm';
 import {
   Accounts,
   BookingRequest,
@@ -645,13 +645,54 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   }
 
   async getCountRequestBooking() {
-    return await this.query(`SELECT COUNT(1) as count FROM booking_request br WHERE br.status = 'PENDING' UNION ALL
-                                    SELECT COUNT(1) FROM booking_request br WHERE br.status = 'BOOKED' UNION ALL
-                                    SELECT COUNT(1) FROM booking_request br WHERE br.status = 'CHECKED_IN' UNION ALL
-                                    SELECT COUNT(1) FROM booking_request br WHERE br.status = 'CHECKED_OUT' UNION ALL
-                                    SELECT COUNT(1) FROM booking_request br WHERE br.status = 'CANCELLED'`);
+    return await this.query(`SELECT COUNT(1) as count
+                             FROM booking_request br
+                             WHERE br.status = 'PENDING'
+                             UNION ALL
+    SELECT COUNT(1)
+    FROM booking_request br
+    WHERE br.status = 'BOOKED'
+    UNION ALL
+    SELECT COUNT(1)
+    FROM booking_request br
+    WHERE br.status = 'CHECKED_IN'
+    UNION ALL
+    SELECT COUNT(1)
+    FROM booking_request br
+    WHERE br.status = 'CHECKED_OUT'
+    UNION ALL
+    SELECT COUNT(1)
+    FROM booking_request br
+    WHERE br.status = 'CANCELLED'`);
   }
 
+
+  async getCountRequestBookingForAccountId(id: string) {
+    console.log(id);
+    return await this
+      .query(`SELECT COUNT(1) as count
+              FROM booking_request br
+              WHERE br.status = 'PENDING' AND br.booked_for = '${id}'
+              UNION ALL
+      SELECT COUNT(1)
+      FROM booking_request br
+      WHERE br.status = 'BOOKED'
+        AND br.booked_for = '${id}'
+      UNION ALL
+      SELECT COUNT(1)
+      FROM booking_request br
+      WHERE br.status = 'CHECKED_IN'
+        AND br.booked_for = '${id}'
+      UNION ALL
+      SELECT COUNT(1)
+      FROM booking_request br
+      WHERE br.status = 'CHECKED_OUT'
+        AND br.booked_for = '${id}'
+      UNION ALL
+      SELECT COUNT(1)
+      FROM booking_request br
+      WHERE br.status = 'CANCELLED' `);
+  }
 
 
   async getInforToFeedback(

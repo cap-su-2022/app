@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   createStyles,
   Table,
@@ -7,24 +7,25 @@ import {
   Text,
   Button,
   InputWrapper,
-  TextInput,
+  TextInput, Highlight,
 } from '@mantine/core';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { RotateClockwise, Search, Trash } from 'tabler-icons-react';
-import { restoreDisabledRoom } from '../../redux/features/room/thunk/restore-disabled.thunk';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
-import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-id';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {RotateClockwise, Search, Trash} from 'tabler-icons-react';
+import {restoreDisabledRoom} from '../../redux/features/room/thunk/restore-disabled.thunk';
+import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
+import {fetchDisabledRooms} from '../../redux/features/room/thunk/fetch-disabled-rooms';
+import {deleteRoomById} from '../../redux/features/room/thunk/delete-room-by-id';
 import dayjs from 'dayjs';
-import { useDebouncedValue } from '@mantine/hooks';
-import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
+import {useDebouncedValue} from '@mantine/hooks';
+import {PagingParams} from '../../models/pagination-params/paging-params.model';
+import {fetchDeletedRooms} from '../../redux/features/room/thunk/fetch-deleted-rooms';
 import NoDataFound from '../no-data-found';
 import RoomUpdateTypeModal from './update-type-modal.component';
 import { getRoomById } from '../../redux/features/room/thunk/get-room-by-id';
 
 interface RestoreDisabledRoomModalProps {
   isShown: boolean;
+
   toggleShown(): void;
   pagination: PagingParams;
   roomTypes: any[];
@@ -87,8 +88,14 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
   const rows = disabledRooms?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
-      <td>{row.name}</td>
-      <td>{row.roomTypeName}</td>
+      <td>
+        <Highlight highlight={search}>
+          {row.name}
+        </Highlight>
+      </td>
+      <td>
+        {row.roomTypeName}
+      </td>
       <td>{dayjs(row.disabledAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.disabledBy}</td>
       <td

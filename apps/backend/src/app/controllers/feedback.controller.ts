@@ -98,7 +98,7 @@ export class FeedbackController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  addNewFeedbackType(
+  addNewFeedback(
     @User() user: KeycloakUserInstance,
     @Body() payload: FeedbackSendRequestPayload
   ) {
@@ -186,8 +186,8 @@ export class FeedbackController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getCountRequestFeedbacks() {
-    return this.service.getCountRequestFeedbacks();
+  getCountRequestFeedbacks(@User() user: KeycloakUserInstance) {
+    return this.service.getCountRequestFeedbacks(user.account_id);
   }
 
 }

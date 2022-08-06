@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, {CSSProperties, useEffect, useState} from 'react';
 import {
   createStyles,
   Table,
@@ -10,7 +10,7 @@ import {
   TextInput,
   Button,
   Image,
-  InputWrapper,
+  InputWrapper, Highlight,
 } from '@mantine/core';
 import {
   Selector,
@@ -25,21 +25,27 @@ import Th from '../../components/table/th.table.component';
 import dayjs from 'dayjs';
 
 interface RowData {
-  name: string;
+  'ft.name': string;
+  'f.created_at': string;
+  'f.created_by': string;
+  'f.status': string;
 }
 
 interface TableBodyProps {
   data: any[];
+
   toggleSortDirection(): void;
+
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
+  search: string | string[]
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
@@ -58,7 +64,18 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           ? index + 1
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
-      <td>{row.createdByName}</td>
+      {userInfo.role !== 'Staff' ?
+        <td>
+          <Highlight highlight={props.search}>
+            {row.createdByName}
+          </Highlight>
+        </td> : null
+      }
+      <td>
+        <Highlight highlight={props.search}>
+          {row.feedbackTypeName}
+        </Highlight>
+      </td>
       <td>{dayjs(row.createdAt).format('DD-MM-YYYY')}</td>
       <td>
         {row.status === 'PENDING' ? (
@@ -74,7 +91,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           variant="outline"
           onClick={() => props.actionButtonCb.info(row.id)}
         >
-          <InfoCircle />
+          <InfoCircle/>
         </Button>
         {/* <Button
           variant="outline"
@@ -91,54 +108,63 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{ tableLayout: 'fixed' }}
+      sx={{tableLayout: 'fixed'}}
     >
       <thead>
-        <tr>
+      <tr>
+        <Th
+          style={{
+            width: '50px',
+          }}
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+        >
+          STT
+        </Th>
+        {userInfo.role !== 'Staff' ?
           <Th
-            style={{
-              width: '50px',
-            }}
-            sorted={null}
+            sorted={sortBy === 'f.created_by'}
             reversed={reverseSortDirection}
-            onSort={null}
-          >
-            STT
-          </Th>
-
-          <Th
-            // style={{
-            //   width: '75%',
-            // }}
-            sorted={null}
-            reversed={null}
-            onSort={null}
+            onSort={() => setSorting('f.created_by')}
           >
             Sender
-          </Th>
+          </Th> : null
+        }
 
-          <Th sorted={null} reversed={null} onSort={null}>
-            Sent at
-          </Th>
+        <Th
+          sorted={sortBy === 'ft.name'}
+          reversed={reverseSortDirection}
+          onSort={() => setSorting('ft.name')}>
+          Feedback type
+        </Th>
 
-          <Th sorted={null} reversed={null} onSort={null}>
-            Status
-          </Th>
-
-          <Th
-            sorted={null}
+        <Th sorted={sortBy === 'f.created_at'}
             reversed={reverseSortDirection}
-            onSort={null}
-            style={{ width: 160 }}
-          >
-            Actions
-          </Th>
-        </tr>
+            onSort={() => setSorting('f.created_at')}>
+          Sent at
+        </Th>
+
+        <Th sorted={sortBy === 'f.status'}
+            reversed={reverseSortDirection}
+            onSort={() => setSorting('f.status')}>
+          Status
+        </Th>
+
+        <Th
+          sorted={null}
+          reversed={reverseSortDirection}
+          onSort={null}
+          style={{width: 160}}
+        >
+          Actions
+        </Th>
+      </tr>
       </thead>
       <tbody>{rows}</tbody>
     </Table>
   ) : (
-    <NoDataFound />
+    <NoDataFound/>
   );
 };
 

@@ -1,15 +1,15 @@
 import React from 'react';
-import { createStyles, Modal } from '@mantine/core';
-import { InputInfoProps } from '../models/input-info-props.model';
+import {createStyles, Modal} from '@mantine/core';
+import {InputInfoProps} from '../models/input-info-props.model';
 import InfoComponent from './info-component.component';
 
 interface InfoModalProps {
   header: React.ReactNode;
+  fields: InputInfoProps[];
+  toggleShown(): void;
   isShown: boolean;
 
-  toggleShown(): void;
 
-  fields: InputInfoProps[];
 
   isShowListItems: boolean;
   itemsOfData: any[];
@@ -18,7 +18,7 @@ interface InfoModalProps {
 }
 
 const InfoModal: React.FC<InfoModalProps> = (props) => {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
 
   return (
     <Modal

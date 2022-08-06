@@ -224,7 +224,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
 
         <div className={classes.footer}>
           {feedback.status === 'PENDING' &&
-          userInfo.id !== feedback.createdBy ? (
+          userInfo.id !== feedback.createdBy && userInfo.role !== 'Staff' ? (
             <>
               <Button
                 onClick={() => props.toggleResolveModalShown()}

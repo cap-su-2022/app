@@ -7,7 +7,7 @@ import {
   Text,
   Button,
   InputWrapper,
-  TextInput,
+  TextInput, Highlight,
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { Check, RotateClockwise, Search, Trash, X } from 'tabler-icons-react';
@@ -118,7 +118,11 @@ const RestoreDisabledDeviceModal: React.FC<RestoreDisabledDeviceModalProps> = (
   const rows = disabledDevices?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
-      <td>{row.name}</td>
+      <td>
+        <Highlight highlight={search}>
+          {row.name}
+        </Highlight>
+      </td>
       <td>{row.deviceTypeName}</td>
       <td>{dayjs(row.disabledAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.disabledBy}</td>

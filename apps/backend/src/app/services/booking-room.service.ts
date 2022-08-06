@@ -682,9 +682,14 @@ export class BookingRoomService {
     }
   }
 
-  async getCountRequestBooking() {
+  async getCountRequestBooking(id: string) {
     try {
-      return await this.repository.getCountRequestBooking();
+      const roleName = await this.accountService.getAccountRoleById(id);
+      if (roleName === "Librarian" || roleName === "System Admin") {
+        return await this.repository.getCountRequestBooking();
+      } else if (roleName === "Staff") {
+        return await this.repository.getCountRequestBookingForAccountId(id);
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

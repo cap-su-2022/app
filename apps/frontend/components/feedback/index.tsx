@@ -28,8 +28,8 @@ import {sendFeedback} from '../../redux/features/feedback/thunk/send-feedback.th
 import DownloadModal from './download-modal.compnent';
 import {fetchFeedbackTypeNames} from '../../redux/features/feedback-type/thunk/fetch-feedback-type-names.thunk';
 import AddFeedbackModal from './add-modal.component';
-import {fetchCountRequestBooking} from "../../redux/features/room-booking/thunk/fetch-count-request-booking";
 import {fetchCountRequestFeedbacks} from "../../redux/features/feedback/thunk/fetch-count-feedbacks";
+import {io} from 'socket.io-client'
 
 const AddRoomTypeValidation = Yup.object().shape({
   feedback: Yup.string()
@@ -48,6 +48,7 @@ const defaultPaginationParams = {
 
 const ManageFeedback: React.FC<any> = () => {
   const {classes} = useStyles();
+  const socket = io('ws://localhost:5000')
   const [isRejectShown, setRejectShown] = useState<boolean>(false);
   const [isResolveShown, setResolveShown] = useState<boolean>(false);
   const [isDownShown, setDownShown] = useState<boolean>(false);
@@ -58,6 +59,12 @@ const ManageFeedback: React.FC<any> = () => {
   );
   const [count, setCount] = useState<{ count: number }[]>([]);
 
+
+  useEffect(() => {
+    socket.emit('findAllFeedbacks', pagination, (response) => {
+      console.log("AHHHHHHHHHHHHHHHHHH: ", response);
+    })
+  })
 
   useEffect(() => {
     dispatch(fetchCountRequestFeedbacks()).unwrap().then(setCount);
@@ -295,7 +302,7 @@ const ManageFeedback: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Feedback" icon={<BrandHipchat size={50}/>}/>
+      <Header title="Feedbacks Management" icon={<BrandHipchat size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actionsLeft={<ActionsFilterLeft/>}
@@ -320,6 +327,7 @@ const ManageFeedback: React.FC<any> = () => {
             data={feedbacks.items}
             page={pagination.page}
             itemsPerPage={pagination.limit}
+            search={pagination.search}
           />
           <InfoModal
             header="Feedback Information"

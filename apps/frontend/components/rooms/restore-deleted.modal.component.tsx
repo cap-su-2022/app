@@ -7,7 +7,7 @@ import {
   Text,
   Button,
   InputWrapper,
-  TextInput,
+  TextInput, Highlight,
 } from '@mantine/core';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {Check, RotateClockwise, Search, X} from 'tabler-icons-react';
@@ -69,8 +69,13 @@ const RestoreDeletedRoomModal: React.FC<RestoreDeletedRoomModalProps> = (
   // };
   const rows = deletedRooms?.map((row, index) => (
     <tr key={row.id} style={{height: 60}}>
-      <td>{index + 1}</td>
-      <td>{row.name}</td>
+      <td>
+        {index + 1}</td>
+      <td>
+        <Highlight highlight={search}>
+          {row.name}
+        </Highlight>
+      </td>
       <td>{row.roomTypeName}</td>
       <td>{dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.deletedBy}</td>

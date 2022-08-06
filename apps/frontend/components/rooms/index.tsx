@@ -1,6 +1,6 @@
-import { GetServerSideProps } from 'next';
+import {GetServerSideProps} from 'next';
 import AdminLayout from '../../components/layout/admin.layout';
-import { Button, createStyles } from '@mantine/core';
+import {Button, createStyles} from '@mantine/core';
 import {
   ArchiveOff,
   BuildingWarehouse,
@@ -8,14 +8,14 @@ import {
   PencilOff,
   Plus,
 } from 'tabler-icons-react';
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { useDebouncedValue } from '@mantine/hooks';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { getRoomById } from '../../redux/features/room/thunk/get-room-by-id';
+import React, {useEffect, useState} from 'react';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {useDebouncedValue} from '@mantine/hooks';
+import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
+import {getRoomById} from '../../redux/features/room/thunk/get-room-by-id';
 import NoDataFound from '../../components/no-data-found';
 import TableHeader from '../../components/actions/table-header.component';
-import { TableBody } from '../../components/rooms/table-body.component';
+import {TableBody} from '../../components/rooms/table-body.component';
 import TableFooter from '../../components/actions/table-footer.component';
 import AddRoomModal from '../../components/rooms/add-modal.component';
 import DeleteRoomModal from '../../components/rooms/delete-modal.component';
@@ -25,9 +25,9 @@ import RoomInfoModal from '../../components/rooms/info-modal.component';
 import RestoreDisabledRoomModal from '../../components/rooms/restore-disabled.modal.component';
 import RestoreDeletedRoomModal from '../../components/rooms/restore-deleted.modal.component';
 import UpdateModal from '../../components/rooms/update-modal.component';
-import { PagingParams } from '../../models/pagination-params/paging-params.model';
+import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import Header from '../../components/common/header.component';
-import { fetchRoomTypeNames } from '../../redux/features/room-type';
+import {fetchRoomTypeNames} from '../../redux/features/room-type';
 
 const defaultPagination = {
   limit: 5,
@@ -40,7 +40,7 @@ const defaultPagination = {
 };
 
 function RoomsManagement(props: any) {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const rooms = useAppSelector((state) => state.room.rooms);
   const [roomTypeNames, setRoomTypeNames] = useState([]);
   const [pagination, setPagination] = useState<PagingParams>(defaultPagination);
@@ -126,10 +126,10 @@ function RoomsManagement(props: any) {
     return (
       <>
         <Button
-          leftIcon={<Plus />}
+          leftIcon={<Plus/>}
           color="green"
           onClick={() => setAddShown(true)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
           Add
         </Button>
@@ -137,24 +137,24 @@ function RoomsManagement(props: any) {
           variant="outline"
           color="red"
           onClick={() => setRestoreDisabledShown(true)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
-          <PencilOff color={'red'} />
+          <PencilOff color={'red'}/>
         </Button>
         <Button
           variant="outline"
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
-          <ArchiveOff />
+          <ArchiveOff/>
         </Button>
         <Button
           variant="outline"
           color="violet"
           onClick={() => setDownShown(true)}
         >
-          <Download />
+          <Download/>
         </Button>
       </>
     );
@@ -194,12 +194,12 @@ function RoomsManagement(props: any) {
       <AdminLayout>
         <Header
           title="Rooms Management"
-          icon={<BuildingWarehouse size={50} />}
+          icon={<BuildingWarehouse size={50}/>}
         />
         <TableHeader
           actionsLeft={null}
           handleResetFilter={() => handleResetFilter()}
-          actions={userInfo.role === 'System Admin' ? <ActionsFilter /> : null}
+          actions={userInfo.role === 'System Admin' ? <ActionsFilter/> : null}
           setSearch={(val) => handleSearchValue(val)}
           search={pagination.search}
         />
@@ -254,7 +254,7 @@ function RoomsManagement(props: any) {
             />
           </>
         ) : (
-          <NoDataFound />
+          <NoDataFound/>
         )}
         <DownloadModal
           isShown={isDownShown}

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Button } from '@mantine/core';
+import React, {useEffect, useState} from 'react';
+import {Button} from '@mantine/core';
 import Header from '../common/header.component';
 import {
   ArchiveOff,
@@ -8,7 +8,7 @@ import {
   Plus,
   X,
 } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {
   fetchRoleById,
   fetchRoles,
@@ -19,25 +19,25 @@ import {
   defaultPaginationParams,
   PaginationParams,
 } from '../../models/pagination-params.model';
-import { useDebouncedValue } from '@mantine/hooks';
-import { TableBody } from '../actions/table-body.component';
+import {useDebouncedValue} from '@mantine/hooks';
+import {TableBody} from '../actions/table-body.component';
 import TableFooter from '../actions/table-footer.component';
 import TableHeader from '../actions/table-header.component';
 import InfoModal from '../actions/modal/info-modal.component';
 import * as Yup from 'yup';
 import AddModal from '../actions/modal/add-modal.component';
-import { FormikValues, useFormik } from 'formik';
-import { InputAddProps } from '../actions/models/input-add-props.model';
-import { InputTypes } from '../actions/models/input-type.constant';
+import {FormikValues, useFormik} from 'formik';
+import {InputAddProps} from '../actions/models/input-add-props.model';
+import {InputTypes} from '../actions/models/input-type.constant';
 import UpdateModal from '../actions/modal/update-modal.component';
-import { InputUpdateProps } from '../actions/models/input-update-props.model';
+import {InputUpdateProps} from '../actions/models/input-update-props.model';
 import AdminLayout from '../layout/admin.layout';
 import RestoreDeletedModal from '../role/restore-deleted.modal.component';
 import DeleteModal from '../role/delete-modal.component';
 import dayjs from 'dayjs';
-import { showNotification } from '@mantine/notifications';
+import {showNotification} from '@mantine/notifications';
 import NoDataFound from '../no-data-found';
-import { fetchAccountByRole } from '../../redux/features/account/thunk/fetch-accounts-by-role';
+import {fetchAccountByRole} from '../../redux/features/account/thunk/fetch-accounts-by-role';
 
 const AddRoleValidation = Yup.object().shape({
   name: Yup.string()
@@ -163,10 +163,10 @@ const ManageRole: React.FC<any> = () => {
     return (
       <div>
         <Button
-          leftIcon={<Plus />}
+          leftIcon={<Plus/>}
           color="green"
           onClick={() => setAddShown(!isAddShown)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
           Add
         </Button>
@@ -175,7 +175,7 @@ const ManageRole: React.FC<any> = () => {
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
         >
-          <ArchiveOff />
+          <ArchiveOff/>
         </Button>
       </div>
     );
@@ -219,7 +219,7 @@ const ManageRole: React.FC<any> = () => {
       inputtype: InputTypes.TextArea,
     },
     {
-      label: 'Create at',
+      label: 'Created at',
       id: 'createAt',
       name: 'createAt',
       value: dayjs(role.createdAt).format('HH:mm DD/MM/YYYY'),
@@ -227,7 +227,7 @@ const ManageRole: React.FC<any> = () => {
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Create By',
+      label: 'Created By',
       id: 'createBy',
       name: 'createBy',
       value: role.createdBy,
@@ -235,7 +235,7 @@ const ManageRole: React.FC<any> = () => {
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Update At',
+      label: 'Updated At',
       id: 'updateAt',
       name: 'updateAt',
       value: dayjs(role.updatedAt).format('HH:mm DD/MM/YYYY'),
@@ -322,7 +322,7 @@ const ManageRole: React.FC<any> = () => {
           color: 'teal',
           title: 'Role was added',
           message: 'Role was successfully added to the system',
-          icon: <Check />,
+          icon: <Check/>,
           autoClose: 3000,
         })
       )
@@ -333,7 +333,7 @@ const ManageRole: React.FC<any> = () => {
           color: 'red',
           title: 'Error while adding role',
           message: e.message ?? 'Failed to add role',
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         })
       );
@@ -403,11 +403,11 @@ const ManageRole: React.FC<any> = () => {
   });
   return (
     <AdminLayout>
-      <Header title="Role Manager" icon={<BuildingWarehouse size={50} />} />
+      <Header title="Role Manager" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
         actionsLeft={null}
         handleResetFilter={() => handleResetFilter()}
-        actions={<ActionsFilter />}
+        actions={<ActionsFilter/>}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
       />
@@ -424,16 +424,17 @@ const ManageRole: React.FC<any> = () => {
             data={roles.items}
             page={pagination.page}
             itemsPerPage={pagination.limit}
+            search={pagination.search}
           />
           <InfoModal
             header="Role Information"
             fields={infoFields}
             toggleShown={() => handleCloseInfoModal()}
             isShown={isInfoShown}
-            itemsOfDataButton={<ShowAccountOfRoleButton />}
+            itemsOfDataButton={<ShowAccountOfRoleButton/>}
             isShowListItems={isListAccountShown}
             itemsOfData={listAccountOfRole}
-            title="LIST ACCOUNT OF ROLE"
+            title="LIST ACCOUNTS OF ROLE"
           />
 
           <UpdateModal
@@ -453,7 +454,7 @@ const ManageRole: React.FC<any> = () => {
           />
         </>
       ) : (
-        <NoDataFound />
+        <NoDataFound/>
       )}
       <AddModal
         header="Add new role"

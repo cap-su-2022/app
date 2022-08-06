@@ -7,7 +7,7 @@ import {
   Text,
   Button,
   InputWrapper,
-  TextInput,
+  TextInput, Highlight,
 } from '@mantine/core';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {Check, RotateClockwise, Search, X} from 'tabler-icons-react';
@@ -72,7 +72,11 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   const rows = deletedAccounts?.map((row, index) => (
     <tr key={row.id}>
       <td>{index + 1}</td>
-      <td>{row.username}</td>
+      <td>
+        <Highlight highlight={search}>
+          {row.username}
+        </Highlight>
+      </td>
       <td>{row.fullname}</td>
       <td>{dayjs(row.deletedAt).format('HH:mm DD/MM/YYYY')}</td>
       <td>{row.deletedBy}</td>
