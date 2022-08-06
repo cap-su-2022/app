@@ -113,6 +113,12 @@ export class FeedbackRepository extends Repository<Feedback> {
                                     SELECT COUNT(1) FROM feedback fb WHERE fb.status = 'REJECTED'`);
   }
 
+  async getCountRequestFeedbacksCreatedBy(id: string) {
+    return await this.query(`SELECT COUNT(1) as count FROM feedback fb WHERE fb.status = 'PENDING' AND fb.created_by = '${id}' UNION ALL
+                                    SELECT COUNT(1) FROM feedback fb WHERE fb.status = 'RESOLVED' AND fb.created_by = '${id}' UNION ALL
+                                    SELECT COUNT(1) FROM feedback fb WHERE fb.status = 'REJECTED' AND fb.created_by = '${id}'`);
+  }
+
   async addNew(
     accountId: string,
     payload: FeedbackSendRequestPayload,

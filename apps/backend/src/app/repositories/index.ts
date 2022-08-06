@@ -13,5 +13,5 @@ export * from './booking-reason.repository';
 export * from './booking-reason-hist.repository';
 export * from './booking-request-devices.repository';
 export * from './booking-request.repository';
-export * from './booking-room-feedback.repository';
+export * from './booking-feedback.repository';
 export * from './room-wishlist-hist.repository';

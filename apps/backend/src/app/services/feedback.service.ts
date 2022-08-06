@@ -1,14 +1,14 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { PaginationParams } from '../controllers/pagination.model';
-import { Feedback } from '../models';
-import { FeedbackPaginationPayload } from '../payload/request/feedback-pagination.payload';
-import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
-import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
-import { FeedbackRepository } from '../repositories';
-import { AccountsService } from './accounts.service';
-import { FeedbackHistService } from './feedback-hist.service';
-import { NotificationService } from './notification.service';
+import {BadRequestException, Injectable, Logger} from '@nestjs/common';
+import {DataSource} from 'typeorm';
+import {PaginationParams} from '../controllers/pagination.model';
+import {Feedback} from '../models';
+import {FeedbackPaginationPayload} from '../payload/request/feedback-pagination.payload';
+import {FeedbackReplyRequestPayload} from '../payload/request/feedback-resolve.request.payload';
+import {FeedbackSendRequestPayload} from '../payload/request/feedback-send.request.payload';
+import {FeedbackRepository} from '../repositories';
+import {AccountsService} from './accounts.service';
+import {FeedbackHistService} from './feedback-hist.service';
+import {NotificationService} from './notification.service';
 
 @Injectable()
 export class FeedbackService {
@@ -20,7 +20,8 @@ export class FeedbackService {
     private readonly histService: FeedbackHistService,
     private readonly notificationService: NotificationService,
     private readonly accountService: AccountsService
-  ) {}
+  ) {
+  }
 
   async getAllFeedbacks(accountId: string, param: FeedbackPaginationPayload) {
     try {
@@ -41,9 +42,14 @@ export class FeedbackService {
     }
   }
 
-  async getCountRequestFeedbacks() {
+  async getCountRequestFeedbacks(id: string) {
     try {
-      return await this.repository.getCountRequestFeedbacks();
+      const roleName = await this.accountService.getAccountRoleById(id);
+      if (roleName === "Librarian" || roleName === "System Admin") {
+        return await this.repository.getCountRequestFeedbacks();
+      } else if (roleName === 'Staff') {
+        return await this.repository.getCountRequestFeedbacksCreatedBy(id);
+      }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
