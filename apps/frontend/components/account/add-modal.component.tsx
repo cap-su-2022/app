@@ -22,6 +22,7 @@ import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
+import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 
 interface AddAccountModalProps {
   isShown: boolean;
@@ -65,7 +66,8 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
   const dimension = useWindowDimensions();
 
   const handleAddSubmit = async (values) => {
-    dispatch(
+    return;
+    /* dispatch(
       addAccount({
         ...values,
         role: role,
@@ -97,7 +99,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
         dispatch(fetchAccounts(props.pagination)).finally(() =>
           formik.resetForm()
         );
-      });
+      });*/
   };
 
   const formik = useFormik({
