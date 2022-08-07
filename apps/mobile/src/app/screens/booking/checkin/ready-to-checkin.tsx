@@ -23,7 +23,6 @@ import {
   LibraryIcon,
   PencilIcon,
 } from 'react-native-heroicons/outline';
-import { SignatureViewRef } from 'react-native-signature-canvas';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import SignatureAlertModal from './signature-alert-modal';
 import ReadyToCheckinBookingInformation from './booking-information';
@@ -42,7 +41,6 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
   const dispatch = useAppDispatch();
 
   const scrollView = useRef<ScrollView>(null);
-  const signature = useRef<SignatureViewRef>(null);
 
   navigate.addListener('focus', (a) => {
     setHidden(false);
