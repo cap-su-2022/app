@@ -1,15 +1,12 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {Device} from "../../../models/device.model";
 import {fetchDevices} from "./thunk/fetch-devices.thunk";
-import {addDevice} from "./thunk/add.thunk";
 import {fetchDeviceById} from "./thunk/fetch-by-id.thunk";
-import {disableDeviceById} from "./thunk/disable-by-id";
 import {deleteDeviceById} from "./thunk/delete-by-id";
 import { fetchDeletedDevices } from "./thunk/fetch-deleted.thunk";
 import { fetchDisabledDevices } from "./thunk/fetch-disabled.thunk";
 import { PaginationResponse } from '../../../models/pagination-response.payload';
 import { restoreDisabledDevice } from "./thunk/restore-disabled.thunk";
-import { updateDeviceById } from "./thunk/update-by-id";
 import { fetchDeviceNames } from "./thunk/fetch-device-names.thunk";
 
 interface DevicesState {

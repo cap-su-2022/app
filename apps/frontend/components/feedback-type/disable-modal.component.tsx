@@ -1,24 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   Button,
   createStyles,
   Modal,
-  Select,
-  Table,
   Text,
 } from '@mantine/core';
 import {
   Check,
-  InfoCircle,
-  Pencil,
-  ScanEye,
   Trash,
   X,
 } from 'tabler-icons-react';
 import {FPT_ORANGE_COLOR} from '@app/constants';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {PaginationParams} from '../../models/pagination-params.model';
-import Th from '../../components/table/th.table.component';
 import {showNotification} from '@mantine/notifications';
 import {disableFeedbackTypeById} from "../../redux/features/feedback-type/thunk/disable-feedback-type-by-id.thunk";
 import {fetchFeedbackTypes} from "../../redux/features/feedback-type/thunk/fetch-feedback-types.thunk";

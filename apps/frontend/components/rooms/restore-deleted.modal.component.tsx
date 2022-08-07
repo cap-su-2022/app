@@ -5,19 +5,16 @@ import {
   ScrollArea,
   Modal,
   Text,
-  Button,
   InputWrapper,
   TextInput, Highlight,
 } from '@mantine/core';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {Check, RotateClockwise, Search, X} from 'tabler-icons-react';
-import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
+import {Search} from 'tabler-icons-react';
 import {fetchDeletedRooms} from '../../redux/features/room/thunk/fetch-deleted-rooms';
 import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import dayjs from 'dayjs';
 import {useDebouncedValue} from '@mantine/hooks';
 import NoDataFound from '../no-data-found';
-import {showNotification} from "@mantine/notifications";
 
 interface RestoreDeletedRoomModalProps {
   isShown: boolean;

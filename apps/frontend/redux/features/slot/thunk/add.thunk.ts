@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';

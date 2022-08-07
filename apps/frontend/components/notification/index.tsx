@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchNotifications } from '../../redux/features/notification/';
 import moment from 'moment';
 import { fetchDetailNotification } from '../../redux/features/notification/thunk/fetch-detail-noti';
-import { Notification as NotificationModel } from '../../models/notification.model';
 import { setDetailNull } from '../../redux/features/notification/notification.slice';
 import dayjs from 'dayjs';
 import autoAnimate from '@formkit/auto-animate';
@@ -19,7 +18,6 @@ function NotificationManagement(props: any) {
   );
 
   const detail = useAppSelector((state) => state.notification.notification);
-  console.log('DETAIL: ', detail);
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const parent = useRef(null);

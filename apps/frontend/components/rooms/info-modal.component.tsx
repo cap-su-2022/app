@@ -9,18 +9,17 @@ import {
   TextInput,
 } from '@mantine/core';
 import {
-  Archive,
   CalendarStats,
   ClipboardText,
   Clock,
   FileDescription,
-  Id,
   Trash,
   User,
   X,
 } from 'tabler-icons-react';
 import {useAppSelector} from '../../redux/hooks';
 import dayjs from 'dayjs';
+import { UserInfoModel } from '../../models/user/user-info.model';
 
 interface RoomInfoModalProps {
   isShown: boolean;

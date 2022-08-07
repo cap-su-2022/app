@@ -4,7 +4,6 @@ import { Button } from '@mantine/core';
 import {
   BuildingWarehouse,
   Download,
-  PencilOff,
   Plus,
   TrashOff,
 } from 'tabler-icons-react';

@@ -3,8 +3,7 @@ import Head from 'next/head';
 import './styles.css';
 import { MantineProvider } from '@mantine/core';
 import { wrapper } from '../redux/store';
-import { useEffect, useState } from 'react';
-import { useAppDispatch } from '../redux/hooks';
+import {  useState } from 'react';
 import { useRouter } from 'next/router';
 import SystemErrorModal from '../components/generic/system-error.modal';
 import Spinner from '../components/generic/spinner';
@@ -12,8 +11,6 @@ import { NotificationsProvider } from '@mantine/notifications';
 import 'firebase/messaging';
 import {
   firebaseConfig,
-  getCloudMessagingToken,
-  onMessageListener,
 } from '../utils/webpush';
 import { initializeApp } from 'firebase/app';
 initializeApp(firebaseConfig);
@@ -21,12 +18,8 @@ initializeApp(firebaseConfig);
 function CustomApp({ Component, pageProps }: AppProps) {
   const [isSystemErrorModalShown, setSystemErrorModalShown] =
     useState<boolean>(false);
-  const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const [show, setShow] = useState(false);
-  const [notification, setNotification] = useState({ title: '', body: '' });
-  const [isTokenFound, setTokenFound] = useState(false);
 
   return (
     <NotificationsProvider>

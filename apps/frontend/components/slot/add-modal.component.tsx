@@ -4,13 +4,10 @@ import {
   createStyles,
   InputWrapper,
   Modal,
-  Select,
-  Switch,
   Text,
   Textarea,
   TextInput,
 } from '@mantine/core';
-import { useWindowDimensions } from '../../hooks/use-window-dimensions';
 import {
   Check,
   ChevronsRight,
@@ -24,7 +21,6 @@ import { Form, FormikProvider, FormikValues, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
 import { addSlot } from '../../redux/features/slot/thunk/add.thunk';
 import { fetchAllSlots } from '../../redux/features/slot';
 import { TimeInput } from '@mantine/dates';
@@ -52,7 +48,6 @@ const AddSlotModal: React.FC<AddModalProps> = (props) => {
   const [isAddDisabled, setAddDisabled] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
-  const dimension = useWindowDimensions();
 
   const handleAddSubmit = (values: FormikValues) => {
     if (!Number(values.slotNum)) {

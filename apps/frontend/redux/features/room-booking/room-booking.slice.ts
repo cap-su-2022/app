@@ -42,7 +42,6 @@ export const roomBookingSlice = createSlice({
       state.roomBooking = payload;
     });
     builder.addCase(fetchStatistic.fulfilled, (state, {payload}) => {
-      //vay co api len , rồi mở cmt mấy cái kia đi
       state.bookingRoomStatistics = payload;
     })
 

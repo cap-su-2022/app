@@ -27,7 +27,6 @@ export const fetchRoomFreeAtMultiDay = createAsyncThunk<
         checkoutSlotId: payload.checkoutSlotId,
       },
     });
-    console.log("DATA NÈ: ", response.data)
     return response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

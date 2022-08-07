@@ -3,7 +3,6 @@ import {Button} from '@mantine/core';
 import AdminLayout from '../../components/layout/admin.layout';
 import Header from '../../components/common/header.component';
 import {
-  ArchiveOff,
   BuildingWarehouse,
   Check,
   Plus,

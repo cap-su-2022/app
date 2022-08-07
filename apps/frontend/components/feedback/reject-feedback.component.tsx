@@ -5,7 +5,6 @@ import {
   Modal,
   Text,
   Textarea,
-  TextInput,
 } from '@mantine/core';
 import { Archive, Check, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
@@ -13,7 +12,6 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { showNotification } from '@mantine/notifications';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
-import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import { fetchFeedbacks } from '../../redux/features/feedback/thunk/fetch-feedback';
 import { rejectFeedback } from '../../redux/features/feedback/thunk/reject-feedback';
 import { FeedbackPaginationParams } from '../../models/pagination-params/feedback-paging-params.model';

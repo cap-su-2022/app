@@ -1,11 +1,10 @@
 import {GetServerSideProps} from 'next';
 import AdminLayout from '../../components/layout/admin.layout';
-import {Button, createStyles} from '@mantine/core';
+import {Button} from '@mantine/core';
 import {
   ArchiveOff,
   BuildingWarehouse,
   Download,
-  PencilOff,
   Plus,
   TrashOff,
 } from 'tabler-icons-react';
@@ -29,6 +28,7 @@ import UpdateModal from '../../components/rooms/update-modal.component';
 import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import Header from '../../components/common/header.component';
 import {fetchRoomTypeNames} from '../../redux/features/room-type';
+import { UserInfoModel } from '../../models/user/user-info.model';
 
 const defaultPagination = {
   limit: 5,
@@ -41,7 +41,6 @@ const defaultPagination = {
 };
 
 function RoomsManagement(props: any) {
-  const {classes} = useStyles();
   const rooms = useAppSelector((state) => state.room.rooms);
   const [roomTypeNames, setRoomTypeNames] = useState([]);
   const [pagination, setPagination] = useState<PagingParams>(defaultPagination);
@@ -278,17 +277,6 @@ function RoomsManagement(props: any) {
     </>
   );
 }
-
-const useStyles = createStyles({
-  tableContainer: {
-    margin: 10,
-  },
-  table: {
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 10,
-  },
-});
 
 export default RoomsManagement;
 

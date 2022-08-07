@@ -11,7 +11,6 @@ import {
 } from '@mantine/core';
 import { useWindowDimensions } from '../../hooks/use-window-dimensions';
 import {
-  Check,
   ClipboardText,
   FileDescription,
   Plus,
@@ -22,7 +21,6 @@ import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 
 interface AddAccountModalProps {
   isShown: boolean;

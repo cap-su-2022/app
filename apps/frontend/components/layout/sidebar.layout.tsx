@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  createStyles,
-  Navbar,
-  Group,
-  Code,
-  Badge,
-  Image,
-  Text,
-} from '@mantine/core';
+import { createStyles, Navbar, Group, Code, Image, Text } from '@mantine/core';
 import {
   BuildingWarehouse,
   Users,
@@ -27,7 +19,7 @@ import { FPT_ORANGE_COLOR } from '@app/constants';
 import { BLACK, WHITE } from '@app/constants';
 import { useRouter } from 'next/router';
 import { useAppDispatch } from '../../redux/hooks';
-import { fetchCountRequestBooking } from '../../redux/features/room-booking/thunk/fetch-count-request-booking';
+import { UserInfoModel } from '../../models/user/user-info.model';
 
 interface SideBarProps {
   opened: boolean;
@@ -119,10 +111,7 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
   ];
 
   const [active, setActive] = useState('Billing');
-  const dispatch = useAppDispatch();
   const router = useRouter();
-
-  const [count, setCount] = useState<number>();
 
   console.log(isStaff);
 
@@ -150,15 +139,9 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
           }}
         >
           <item.icon
-            className={
-              item.link === '/booking-room' && props.opened && count > 0
-                ? cx(classes.linkRedIcon, {
-                    [classes.iconActive]: isMenuSelect(item),
-                  })
-                : cx(classes.linkIcon, {
-                    [classes.iconActive]: isMenuSelect(item),
-                  })
-            }
+            className={cx(classes.linkIcon, {
+              [classes.iconActive]: isMenuSelect(item),
+            })}
           />
           <span className={cx({ [classes.labelActive]: isMenuSelect(item) })}>
             {item.label}

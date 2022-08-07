@@ -3,10 +3,8 @@ import {Button, createStyles} from '@mantine/core';
 import AdminLayout from '../../components/layout/admin.layout';
 import Header from '../../components/common/header.component';
 import {
-  ArchiveOff,
   BuildingWarehouse,
   Check,
-  InfoCircle,
   Plus,
   TrashOff,
   X,
@@ -35,7 +33,6 @@ import dayjs from 'dayjs';
 import {fetchFeedbackTypes} from '../../redux/features/feedback-type/thunk/fetch-feedback-types.thunk'
 import {fetchFeedbackTypeNames} from "../../redux/features/feedback-type/thunk/fetch-feedback-type-names.thunk";
 import {updateFeedbackTypeById} from "../../redux/features/feedback-type/thunk/update-feedback-type-by-id.thunk";
-import {log} from "util";
 import {fetchFeedbackTypeById} from "../../redux/features/feedback-type/thunk/fetch-feedback-type-by-id.thunk";
 import {addFeedbackType} from "../../redux/features/feedback-type/thunk/add-feedback-type.thunk";
 import NoDataFound from '../no-data-found';

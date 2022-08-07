@@ -7,7 +7,6 @@ import {
   Switch,
   Text,
 } from '@mantine/core';
-import { useAppDispatch } from '../../redux/hooks';
 import { Download, FileDownload } from 'tabler-icons-react';
 
 interface DownloadModalProps {
@@ -17,7 +16,6 @@ interface DownloadModalProps {
 
 const DownloadModal: React.FC<DownloadModalProps> = (props) => {
   const { classes } = useStyles();
-  const dispatch = useAppDispatch();
 
   const ModalHeaderTitle: React.FC = () => {
     return <Text className={classes.modalTitleText}>Export to Excel file</Text>;

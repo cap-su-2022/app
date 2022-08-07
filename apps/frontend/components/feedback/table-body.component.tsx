@@ -1,28 +1,10 @@
-import React, {CSSProperties, useEffect, useState} from 'react';
-import {
-  createStyles,
-  Table,
-  ScrollArea,
-  UnstyledButton,
-  Group,
-  Text,
-  Center,
-  TextInput,
-  Button,
-  Image,
-  InputWrapper, Highlight,
-} from '@mantine/core';
-import {
-  Selector,
-  ChevronDown,
-  ChevronUp,
-  InfoCircle,
-  Pencil,
-  Trash,
-} from 'tabler-icons-react';
+import React, { useEffect, useState } from 'react';
+import { createStyles, Table, Button, Highlight } from '@mantine/core';
+import { InfoCircle } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
 import dayjs from 'dayjs';
+import { UserInfoModel } from '../../models/user/user-info.model';
 
 interface RowData {
   'ft.name': string;
@@ -39,13 +21,13 @@ interface TableBodyProps {
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
-  search: string | string[]
+  search: string | string[];
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
@@ -64,17 +46,13 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           ? index + 1
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
-      {userInfo.role !== 'Staff' ?
+      {userInfo.role !== 'Staff' ? (
         <td>
-          <Highlight highlight={props.search}>
-            {row.createdByName}
-          </Highlight>
-        </td> : null
-      }
+          <Highlight highlight={props.search}>{row.createdByName}</Highlight>
+        </td>
+      ) : null}
       <td>
-        <Highlight highlight={props.search}>
-          {row.feedbackTypeName}
-        </Highlight>
+        <Highlight highlight={props.search}>{row.feedbackTypeName}</Highlight>
       </td>
       <td>{dayjs(row.createdAt).format('DD-MM-YYYY')}</td>
       <td>
@@ -91,7 +69,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           variant="outline"
           onClick={() => props.actionButtonCb.info(row.id)}
         >
-          <InfoCircle/>
+          <InfoCircle />
         </Button>
         {/* <Button
           variant="outline"
@@ -108,63 +86,68 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{tableLayout: 'fixed'}}
+      sx={{ tableLayout: 'fixed' }}
     >
       <thead>
-      <tr>
-        <Th
-          style={{
-            width: '50px',
-          }}
-          sorted={null}
-          reversed={reverseSortDirection}
-          onSort={null}
-        >
-          STT
-        </Th>
-        {userInfo.role !== 'Staff' ?
+        <tr>
           <Th
-            sorted={sortBy === 'f.created_by'}
+            style={{
+              width: '50px',
+            }}
+            sorted={null}
             reversed={reverseSortDirection}
-            onSort={() => setSorting('f.created_by')}
+            onSort={null}
           >
-            Sender
-          </Th> : null
-        }
+            STT
+          </Th>
+          {userInfo.role !== 'Staff' ? (
+            <Th
+              sorted={sortBy === 'f.created_by'}
+              reversed={reverseSortDirection}
+              onSort={() => setSorting('f.created_by')}
+            >
+              Sender
+            </Th>
+          ) : null}
 
-        <Th
-          sorted={sortBy === 'ft.name'}
-          reversed={reverseSortDirection}
-          onSort={() => setSorting('ft.name')}>
-          Feedback type
-        </Th>
-
-        <Th sorted={sortBy === 'f.created_at'}
+          <Th
+            sorted={sortBy === 'ft.name'}
             reversed={reverseSortDirection}
-            onSort={() => setSorting('f.created_at')}>
-          Sent at
-        </Th>
+            onSort={() => setSorting('ft.name')}
+          >
+            Feedback type
+          </Th>
 
-        <Th sorted={sortBy === 'f.status'}
+          <Th
+            sorted={sortBy === 'f.created_at'}
             reversed={reverseSortDirection}
-            onSort={() => setSorting('f.status')}>
-          Status
-        </Th>
+            onSort={() => setSorting('f.created_at')}
+          >
+            Sent at
+          </Th>
 
-        <Th
-          sorted={null}
-          reversed={reverseSortDirection}
-          onSort={null}
-          style={{width: 160}}
-        >
-          Actions
-        </Th>
-      </tr>
+          <Th
+            sorted={sortBy === 'f.status'}
+            reversed={reverseSortDirection}
+            onSort={() => setSorting('f.status')}
+          >
+            Status
+          </Th>
+
+          <Th
+            sorted={null}
+            reversed={reverseSortDirection}
+            onSort={null}
+            style={{ width: 160 }}
+          >
+            Actions
+          </Th>
+        </tr>
       </thead>
       <tbody>{rows}</tbody>
     </Table>
   ) : (
-    <NoDataFound/>
+    <NoDataFound />
   );
 };
 
