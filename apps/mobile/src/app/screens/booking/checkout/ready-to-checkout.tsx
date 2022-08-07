@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -24,6 +24,8 @@ import dayjs from 'dayjs';
 import { checkOutBookingRoom } from '../../../redux/features/room-booking/thunk/checkout-booking-room.thunk';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import { fetchAllSlots } from '../../../redux/features/slot';
+import SocketIOClient from 'socket.io-client/dist/socket.io.js';
+
 
 const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -37,6 +39,23 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const [errorMessage, setErrorMessage] = useState<string>('Error');
   const [timeSlotCheckin, setTimeSlotCheckin] = useState('');
   const [timeSlotCheckout, setTimeSlotCheckout] = useState('');
+
+  const socket = useMemo(() => {
+    return SocketIOClient('http://192.168.100.44:5000/booking', {
+      jsonp: false,
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.on('msgToServer', (e) => {
+      if (e === roomBookingCheckout.id) {
+        setTimeout(() => {
+          alert('Check-out Success')
+        }, 2000)
+        navigate.replace('MAIN')
+      }
+    })
+  })
 
   useEffect(() => {
     dispatch(fetchAllSlots())
@@ -312,14 +331,14 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
             )}
           </View>
         </ScrollView>
-        <View style={styles.footer}>
-          <TouchableOpacity
-            onPress={() => handleCheckoutBookingRoom()}
-            style={styles.checkOutButton}
-          >
-            <Text style={styles.checkOutButtonText}>Proceed to check out</Text>
-          </TouchableOpacity>
-        </View>
+        {/*<View style={styles.footer}>*/}
+        {/*  <TouchableOpacity*/}
+        {/*    onPress={() => handleCheckoutBookingRoom()}*/}
+        {/*    style={styles.checkOutButton}*/}
+        {/*  >*/}
+        {/*    <Text style={styles.checkOutButtonText}>Proceed to check out</Text>*/}
+        {/*  </TouchableOpacity>*/}
+        {/*</View>*/}
       </View>
       <ErrorAlertModal />
     </SafeAreaView>

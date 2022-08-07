@@ -125,6 +125,9 @@ const AcceptBooking: React.FC<any> = () => {
   const handleAcceptCheckout = () => {
     dispatch(acceptCheckoutBookingRequest(bookingRoom.id))
       .unwrap()
+      .then(() => {
+        socket.emit('msgToServer', bookingRoom.id);
+      })
       .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
       .catch((e) => alert(e.message));
   };
