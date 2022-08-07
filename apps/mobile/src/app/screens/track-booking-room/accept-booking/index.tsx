@@ -70,6 +70,7 @@ const AcceptBooking: React.FC<any> = () => {
   const socket = useMemo(() => {
     return SocketIOClient('http://192.168.100.44:5000/booking', {
       jsonp: false,
+      transports: ['websocket']
     });
   }, []);
 
@@ -125,6 +126,9 @@ const AcceptBooking: React.FC<any> = () => {
   const handleAcceptCheckout = () => {
     dispatch(acceptCheckoutBookingRequest(bookingRoom.id))
       .unwrap()
+      .then(() => {
+        socket.emit('msgToServer', bookingRoom.id);
+      })
       .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
       .catch((e) => alert(e.message));
   };

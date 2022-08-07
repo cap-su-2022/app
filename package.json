@@ -41,7 +41,7 @@
     "@nestjs/swagger": "^5.2.1",
     "@nestjs/typeorm": "^9.0.0-next.2",
     "@nestjs/websockets": "^8.4.7",
-    "@nrwl/next": "14.4.3",
+    "@nrwl/next": "14.5.4",
     "@react-native-firebase/app": "^14.11.1",
     "@react-native-firebase/auth": "^14.11.1",
     "@react-native-google-signin/google-signin": "^7.2.2",
@@ -116,20 +116,20 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@nrwl/cli": "14.4.3",
-    "@nrwl/eslint-plugin-nx": "14.4.3",
-    "@nrwl/jest": "14.4.3",
-    "@nrwl/linter": "14.4.3",
-    "@nrwl/nest": "^14.4.3",
-    "@nrwl/node": "14.4.3",
+    "@nrwl/cli": "14.5.4",
+    "@nrwl/eslint-plugin-nx": "14.5.4",
+    "@nrwl/jest": "14.5.4",
+    "@nrwl/linter": "14.5.4",
+    "@nrwl/nest": "^14.5.4",
+    "@nrwl/node": "14.5.4",
     "@nrwl/nx-cloud": "latest",
-    "@nrwl/react": "14.4.3",
-    "@nrwl/react-native": "^14.4.3",
-    "@nrwl/web": "14.4.3",
-    "@nrwl/workspace": "14.4.3",
-    "@react-native-community/cli": "7.0.1",
-    "@react-native-community/cli-platform-android": "7.0.1",
-    "@react-native-community/cli-platform-ios": "7.0.1",
+    "@nrwl/react": "14.5.4",
+    "@nrwl/react-native": "^13.10.6",
+    "@nrwl/web": "14.5.4",
+    "@nrwl/workspace": "14.5.4",
+    "@react-native-community/cli": "6.4.0",
+    "@react-native-community/cli-platform-android": "6.3.1",
+    "@react-native-community/cli-platform-ios": "6.2.1",
     "@types/cookie": "^0.5.1",
     "@types/cron": "^2.0.0",
     "@types/jest": "27.4.1",
@@ -164,6 +164,11 @@
     "sass": "1.54.0",
     "ts-jest": "27.1.4",
     "typescript": "~4.7.4"
+  },
+  "overrides": {
+    "@formkit/auto-animate": {
+      "react": "17.0.2"
+    }
   },
   "resolutions": {
     "react-native-picker-select/**/@react-native-picker/picker": "1.8.3"

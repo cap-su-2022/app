@@ -7,7 +7,7 @@ import {
 } from '../services';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import { FeedbackHistRepository, FeedbackRepository } from '../repositories';
-import { FeedbackController } from '../controllers/feedback.controller';
+import { FeedbackController } from '../controllers';
 import ConfigModule from './global/config.module';
 import { AccountsModule } from './accounts.module';
 import { NotificationModule } from './notification.module';

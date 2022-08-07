@@ -26,7 +26,6 @@
     "react-native-camera": "*",
     "react-native-date-picker": "*",
     "react-native-calendars": "*",
-    "react-native-signature-canvas": "*",
     "react-native-snap-carousel": "*",
     "react-native-webview": "*",
     "axios": "*",
@@ -44,7 +43,6 @@
     "next": "*",
     "yup": "*",
     "@mantine/notifications": "*",
-    "react-spring": "*",
     "@mantine/dates": "*",
     "@nrwl/next": "*",
     "@mantine/next": "*",
@@ -53,6 +51,7 @@
     "redux-logger": "*",
     "@react-native-picker/picker": "*",
     "@formkit/auto-animate": "*",
-    "@nestjs/common": "*"
+    "@nestjs/common": "*",
+    "socket.io-client": "*"
   }
 }
