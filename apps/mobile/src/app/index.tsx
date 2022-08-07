@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import App from './App';
 import { makeStore } from './redux/store';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import messaging from '@react-native-firebase/messaging';
 
 GoogleSignin.configure({
   iosClientId:
@@ -11,6 +12,9 @@ GoogleSignin.configure({
     '1013204251190-nkd63gan2a17tj8lffmh83jl6scco9g6.apps.googleusercontent.com',
 
   offlineAccess: false,
+});
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('Message handled in the background!', remoteMessage);
 });
 
 export const Index = () => {
