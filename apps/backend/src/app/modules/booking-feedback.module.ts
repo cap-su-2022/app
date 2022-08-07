@@ -1,5 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { KeycloakService } from '../services';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import ConfigModule from './global/config.module';
@@ -15,7 +15,7 @@ import { AccountRepository } from '../repositories';
     ConfigModule,
     HttpModule,
     AccountsModule,
-    BookingRoomModule,
+    forwardRef(() => BookingRoomModule),
     TypeOrmExModule.forCustomRepository([
       BookingFeedbackRepository,
       AccountRepository,

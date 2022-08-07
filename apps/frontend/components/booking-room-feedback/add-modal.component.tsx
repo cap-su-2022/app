@@ -10,41 +10,44 @@ import {
 } from '@mantine/core';
 import { useWindowDimensions } from '../../hooks/use-window-dimensions';
 import { Check, FileDescription, Plus, X } from 'tabler-icons-react';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
-import { fetchFeedbacks } from '../../redux/features/feedback/thunk/fetch-feedback';
-import { fetchFeedbackTypeNames } from '../../redux/features/feedback-type/thunk/fetch-feedback-type-names.thunk';
-import { FeedbackPaginationParams } from '../../models/pagination-params/feedback-paging-params.model';
-import { sendFeedback } from '../../redux/features/feedback/thunk/send-feedback.thunk';
+import ReactStars from 'react-stars';
+import { addBookingRoomFeedback } from '../../redux/features/booking-room-feedback/thunk/add-booking-room-feedback.thunk';
+import { fetchRoomBookingById } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-id';
 
-interface AddFeedbackModalProps {
+interface AddBookingFeedbackModalProps {
   isShown: boolean;
   toggleShown(): void;
-  pagination: FeedbackPaginationParams;
   feedbackTypes: any[];
 }
 
-const AddFeedbackValidation = Yup.object().shape({
+const AddBookingFeedbackValidation = Yup.object().shape({
   feedback: Yup.string()
     .trim()
-    .min(10, 'Feedback message must have at least 1 character.')
+    .min(10, 'Feedback message must have at least 10 character.')
     .max(100, 'Feedback message can only have at most 100 characters.')
     .required('Feedback message is required!'),
 });
 
-const AddFeedbackModal: React.FC<AddFeedbackModalProps> = (props) => {
+const AddBookingFeedbackModal: React.FC<AddBookingFeedbackModalProps> = (
+  props
+) => {
   const { classes } = useStyles();
   const [isAddDisabled, setAddDisabled] = useState<boolean>(false);
-  const [feedbackType, setFeedbackType] = useState<string>('');
+  const [feedbackType, setFeedbackType] = useState<string>(null);
+  const requestBooking = useAppSelector(
+    (state) => state.roomBooking.roomBooking
+  );
 
   const dispatch = useAppDispatch();
   const dimension = useWindowDimensions();
 
   const handleAddSubmit = async (values) => {
     dispatch(
-      sendFeedback({
+      addBookingRoomFeedback({
         ...values,
         type: feedbackType,
       })
@@ -62,9 +65,9 @@ const AddFeedbackModal: React.FC<AddFeedbackModalProps> = (props) => {
       )
       .then(() => {
         props.toggleShown();
-        dispatch(fetchFeedbacks(props.pagination)).finally(() =>
-          formik.resetForm()
-        );
+        formik.resetForm();
+        setFeedbackType(null);
+        dispatch(fetchRoomBookingById(requestBooking.id))
       })
       .catch((e) =>
         showNotification({
@@ -81,10 +84,13 @@ const AddFeedbackModal: React.FC<AddFeedbackModalProps> = (props) => {
   const formik = useFormik({
     initialValues: {
       feedback: '',
+      rateNum: 1,
+      bookingRoomId: requestBooking?.id,
       type: null,
     },
+    enableReinitialize: true,
     onSubmit: (values) => handleAddSubmit(values),
-    validationSchema: AddFeedbackValidation,
+    validationSchema: AddBookingFeedbackValidation,
   });
 
   useEffect(() => {
@@ -134,9 +140,19 @@ const AddFeedbackModal: React.FC<AddFeedbackModalProps> = (props) => {
         <FormikProvider value={formik}>
           <Form onSubmit={formik.handleSubmit}>
             <div className={classes.modalBody}>
+              <InputWrapper required label="Feedback type">
+                <Select
+                  name="type"
+                  id="feedback-type"
+                  onChange={(e) => setFeedbackType(e)}
+                  searchable
+                  value={feedbackType}
+                  data={props.feedbackTypes}
+                />
+              </InputWrapper>
               <InputWrapper
                 label="Feedback"
-                description="(Optional) Maximum length is 500 characters."
+                description="(Optional) Maximum length is 100 characters."
               >
                 <Textarea
                   icon={<FileDescription />}
@@ -149,16 +165,15 @@ const AddFeedbackModal: React.FC<AddFeedbackModalProps> = (props) => {
                   value={formik.values.feedback}
                 />
               </InputWrapper>
-              <InputWrapper required label="Feedback type">
-                <Select
-                  name="type"
-                  id="feedback-type"
-                  onChange={(e) => setFeedbackType(e)}
-                  searchable
-                  value={feedbackType}
-                  data={props.feedbackTypes}
-                />
-              </InputWrapper>
+
+              <ReactStars
+                count={5}
+                onChange={(value) => formik.setFieldValue('rateNum', value)}
+                value={formik.values.rateNum}
+                size={40}
+                color2={'#ffd700'}
+                half={false}
+              />
             </div>
 
             <div className={classes.modalFooter}>
@@ -212,4 +227,4 @@ const useStyles = createStyles({
   },
 });
 
-export default AddFeedbackModal;
+export default AddBookingFeedbackModal;

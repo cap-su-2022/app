@@ -30,6 +30,7 @@ import {BookingRoomDevicesService} from './booking-request-devices.service';
 import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
 import {NotificationService} from './notification.service';
 import {BookingRoomPaginationParams} from '../controllers/booking-room-pagination.model';
+import { BookingFeedbackService } from './booking-feedback.service';
 
 @Injectable()
 export class BookingRoomService {
@@ -48,6 +49,8 @@ export class BookingRoomService {
     @Inject(forwardRef(() => RoomTypeService))
     private readonly roomTypeService: RoomTypeService,
     private readonly bookingRoomDeviceService: BookingRoomDevicesService,
+    @Inject(forwardRef(() => BookingFeedbackService))
+    private readonly bookingFeedbackService: BookingFeedbackService,
     private readonly histService: BookingRequestHistService
   ) {
   }
@@ -669,9 +672,12 @@ export class BookingRoomService {
         const listDevice = await this.bookingRoomDeviceService.findByRequestId(
           id
         );
+
+        const feedback = await this.bookingFeedbackService.isAlreadyFeedback(id)
         return {
           ...requestInfo,
           listDevice: listDevice,
+          feedback: feedback
         };
       } else {
         throw new BadRequestException('Not found request with provided id');

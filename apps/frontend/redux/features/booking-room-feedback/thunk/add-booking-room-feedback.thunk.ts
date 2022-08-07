@@ -1,34 +1,35 @@
-import {createAsyncThunk} from '@reduxjs/toolkit';
-import {toggleSpinnerOff, toggleSpinnerOn} from '../../spinner';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
-import {defaultPaginationParams} from '../../../../models/pagination-params.model';
-import {fetchBookingRoomFeedback} from "./fetch-booking-room-feedbacks.thunk";
 
-
-export const addBookingRoomFeedback = createAsyncThunk<void,
+export const addBookingRoomFeedback = createAsyncThunk<
+  void,
   {
-    name?: string;
-    description?: string;
+    feedback?: string;
+    bookingRoomId?: string;
+    rateNum?: number;
+    type?: string;
   },
   {
     rejectValue: {
       message: string;
     };
-  }>('booking-room-feedback/add', async (payload, thunkAPI) => {
+  }
+>('booking-room-feedback/add', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.post(`api/booking-room-feedback`, {
-      name: payload.name,
-      description: payload.description,
-    });
+    const response = await axios.post(
+      `api/booking-room-feedbacks/send-feedback`,
+      {
+        message: payload.feedback,
+        rateNum: payload.rateNum,
+        type: payload.type,
+        bookingRoomId: payload.bookingRoomId,
+      }
+    );
     return await response.data;
   } catch (e) {
-    if (e.response.data.message.includes('duplicate')) {
-      return thunkAPI.rejectWithValue({
-        message:
-          'There already exists a booking room feedback with the this name. Try with another name.',
-      });
-    } else if (e.response.status === 401 || e.response.status === 403) {
+    if (e.response.status === 401 || e.response.status === 403) {
       return thunkAPI.rejectWithValue({
         message: 'Access token is invalid',
       });
@@ -38,6 +39,5 @@ export const addBookingRoomFeedback = createAsyncThunk<void,
     });
   } finally {
     thunkAPI.dispatch(toggleSpinnerOff());
-    thunkAPI.dispatch(fetchBookingRoomFeedback(defaultPaginationParams));
   }
 });

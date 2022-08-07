@@ -12,11 +12,14 @@ import {
   CircleCheck,
   ClipboardText,
   Devices,
+  PencilPlus,
+  Star,
   X,
 } from 'tabler-icons-react';
 import { useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
 import autoAnimate from '@formkit/auto-animate';
+import ReactStars from 'react-stars';
 
 interface UserInfoModel {
   avatar: string;
@@ -43,6 +46,8 @@ interface RequestInfoComponentProps {
   toggleCheckinModalShown(): void;
 
   toggleCheckoutModalShown(): void;
+
+  toggleSendFeedbackModalShown(): void;
 }
 
 const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
@@ -51,6 +56,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
     (state) => state.roomBooking.roomBooking
   );
   const [isShowListDevice, setShowListDevice] = useState(false);
+  const [isShowFeedback, setShowFeedback] = useState(false);
   const parent = useRef(null);
 
   useEffect(() => {
@@ -75,7 +81,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         </Button>
       );
     } else {
-      return null;
+      return <div></div>;
     }
   };
 
@@ -177,6 +183,57 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               <RenderDeviceButton />
             </>
           );
+        } else return null;
+
+      case 'CHECKED_OUT':
+        if (userInfo.id === requestBooking.requestedById) {
+          if (requestBooking.feedback) {
+            return (
+              <>
+                <Button
+                  onClick={() => setShowFeedback(!isShowFeedback)}
+                  variant="outline"
+                  color={'blue'}
+                >
+                  Feedback
+                </Button>
+
+                <RenderDeviceButton />
+              </>
+            );
+          } else {
+            return (
+              <>
+                <Button
+                  onClick={() => props.toggleSendFeedbackModalShown()}
+                  variant="outline"
+                  color={'green'}
+                >
+                  Send feedback
+                </Button>
+
+                <RenderDeviceButton />
+              </>
+            );
+          }
+        } else {
+          if (requestBooking.feedback) {
+            return (
+              <>
+                <Button
+                  onClick={() => setShowFeedback(!isShowFeedback)}
+                  variant="outline"
+                  color={'blue'}
+                >
+                  Feedback
+                </Button>
+
+                <RenderDeviceButton />
+              </>
+            );
+          } else {
+            return null;
+          }
         }
     }
   };
@@ -191,9 +248,46 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         ))
       : null;
 
+  const FeedbackDiv: React.FC<{ feedback: any }> = (props) => {
+    return (
+      <div style={{ width: '250px', maxHeight: 400 }}>
+        <div>
+          <b>FEEDBACK</b>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <ReactStars
+            count={5}
+            value={props.feedback.rateNum}
+            edit={false}
+            size={35}
+            color2={'#ffd700'}
+          />
+        </div>
+        <p>
+          <b>Feedback type:</b> {props.feedback.feedbackType || 'none'}
+        </p>
+        <p>
+          <b>Feedback messgase:</b>
+        </p>
+        <div
+          style={{
+            backgroundColor: '#d3d3d3',
+            padding: 5,
+            borderRadius: 5,
+            minHeight: 100,
+          }}
+        >
+          <p>{props.feedback.feedbackMess}</p>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div style={{ display: 'flex' }} ref={parent}>
-      <div style={{ width: 600 }}>
+      {isShowFeedback && <FeedbackDiv feedback={requestBooking?.feedback} />}
+
+      <div style={{ width: 550, flex: 1, margin: 20 }}>
         <div className={classes.modalBody}>
           <div
             style={{
@@ -348,13 +442,13 @@ const useStyles = createStyles({
   modalBody: {
     display: 'flex',
     flexDirection: 'column',
-    margin: 20,
-    width: 560,
+    width: 550,
   },
   modalFooter: {
     display: 'flex',
     justifyContent: 'space-between',
     margin: 10,
+    // width: 550,
   },
   modalInputDate: {
     display: 'flex',

@@ -17,12 +17,20 @@ export class BookingFeedbackRepository extends Repository<BookingRoomFeedback> {
       .then((data) => data?.count > 0);
   }
 
-  isAlreadyFeedback(id: string): Promise<boolean> {
-    return this.createQueryBuilder('f')
-      .select('COUNT(1)', 'count')
-      .where('f.booking_room_id = :id', { id: id })
-      .getRawOne()
-      .then((data) => data?.count > 0);
+  isAlreadyFeedback(id: string): Promise<BookingRoomFeedback> {
+    return this.createQueryBuilder('fb')
+      .select('fb.id', 'id')
+      .addSelect('fb.feedback_msg', 'feedbackMess')
+      .addSelect('ft.name', 'feedbackType')
+      .addSelect('fb.rate_num', 'rateNum')
+      .addSelect('fb.booking_room_id', 'bookingRoomId')
+      .addSelect('aa.username', 'createdBy')
+      .addSelect('fb.created_at', 'createdAt')
+      .addSelect('aa.email', 'createdByEmail')
+      .innerJoin(FeedbackType, 'ft', 'fb.feedback_type = ft.id')
+      .innerJoin(Accounts, 'aa', 'aa.id = fb.created_by')
+      .where('fb.booking_room_id = :id', { id: id })
+      .getRawOne<BookingRoomFeedback>();
   }
 
   findByPagination(accountId: string, pagination: any): Promise<any> {
@@ -53,7 +61,7 @@ export class BookingFeedbackRepository extends Repository<BookingRoomFeedback> {
       query.addOrderBy('f.created_at', 'DESC');
     }
     if (pagination.sort) {
-      query.orderBy('f.' + pagination.sort, pagination.dir as 'ASC' | 'DESC');
+      query.orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
     }
 
     if (pagination.fromDate && pagination.toDate) {

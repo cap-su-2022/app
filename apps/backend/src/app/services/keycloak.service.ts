@@ -281,7 +281,7 @@ export class KeycloakService {
   }
 
   async getUserInfo(accessToken: string): Promise<KeycloakUserInstance> {
-    if (!accessToken.includes('Bearer')) {
+    if (!accessToken?.includes('Bearer')) {
       accessToken = `Bearer ${accessToken}`;
     }
     try {
