@@ -7,11 +7,11 @@ import {
 } from '../services';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import { FeedbackHistRepository, FeedbackRepository } from '../repositories';
-import { FeedbackController } from '../controllers/feedback.controller';
+import { FeedbackController } from '../controllers';
 import ConfigModule from './global/config.module';
 import { AccountsModule } from './accounts.module';
 import { NotificationModule } from './notification.module';
-import { FeedbacksGateway } from '../gateway/feedbacks.gateway';
+import { FeedbackGateway } from '../gateway/feedback.gateway';
 
 @Module({
   imports: [
@@ -29,7 +29,7 @@ import { FeedbacksGateway } from '../gateway/feedbacks.gateway';
     FeedbackService,
     KeycloakService,
     FeedbackHistService,
-    FeedbacksGateway,
+    FeedbackGateway,
   ],
   exports: [FeedbackHistService, FeedbackService],
 })
