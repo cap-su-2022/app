@@ -117,9 +117,7 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
         break;
       }
     }
-    const chooesdDeviceUpdated = choosedDevice.filter(
-      (d) => d.value !== item
-    );
+    const chooesdDeviceUpdated = choosedDevice.filter((d) => d.value !== item);
     setChoosedDevice(chooesdDeviceUpdated);
   };
 
@@ -221,6 +219,8 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
                 </Button>
               </div>
             )}
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+            {/* @ts-ignore */}
             <div ref={parent} style={{ width: '300px' }}>
               {choosedDevice
                 ? choosedDevice.map((item) => (
