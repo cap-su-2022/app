@@ -1,25 +1,12 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   createStyles,
   Table,
-  ScrollArea,
-  UnstyledButton,
-  Group,
-  Text,
-  Center,
-  TextInput,
   Button,
-  Image,
-  InputWrapper,
   Highlight,
 } from '@mantine/core';
 import {
-  Selector,
-  ChevronDown,
-  ChevronUp,
   InfoCircle,
-  Pencil,
-  Trash,
 } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
@@ -48,10 +35,6 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
   const [sortBy, setSortBy] = useState<keyof RowData>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const { classes } = useStyles();
-  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
-  useEffect(() => {
-    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
-  }, []);
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;

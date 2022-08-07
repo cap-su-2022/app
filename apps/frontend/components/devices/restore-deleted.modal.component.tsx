@@ -5,19 +5,16 @@ import {
   ScrollArea,
   Modal,
   Text,
-  Button,
   InputWrapper,
   TextInput, Highlight,
 } from '@mantine/core';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {Check, RotateClockwise, Search, X} from 'tabler-icons-react';
+import { Search} from 'tabler-icons-react';
 import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import dayjs from 'dayjs';
 import {useDebouncedValue} from '@mantine/hooks';
 import NoDataFound from '../no-data-found';
 import {fetchDeletedDevices} from '../../redux/features/devices/thunk/fetch-deleted.thunk';
-import {fetchDevices} from '../../redux/features/devices/thunk/fetch-devices.thunk';
-import {showNotification} from "@mantine/notifications";
 
 interface RestoreDeletedDeviceModalProps {
   isShown: boolean;

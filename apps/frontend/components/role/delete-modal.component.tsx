@@ -9,8 +9,6 @@ import {
 } from '@mantine/core';
 import {
   Check,
-  InfoCircle,
-  Pencil,
   ScanEye,
   Trash,
   X,

@@ -2,11 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {Button, createStyles} from '@mantine/core';
 import Header from '../common/header.component';
 import {
-  ArchiveOff,
   BuildingWarehouse,
   Check,
-  InfoCircle,
-  PencilOff,
   Plus,
   TrashOff,
   X,
@@ -38,8 +35,6 @@ import {InputUpdateProps} from '../actions/models/input-update-props.model';
 import DeleteModal from './delete-modal.component';
 import AdminLayout from '../layout/admin.layout';
 import RestoreDeletedModal from './restore-deleted.modal.component';
-import {RoomType} from '../../models/room-type.model';
-import {PaginationResponse} from '../../models/pagination-response.payload';
 import {showNotification} from '@mantine/notifications';
 import dayjs from 'dayjs';
 import NoDataFound from '../no-data-found';
@@ -70,7 +65,6 @@ const UpdateRoomTypeValidation = Yup.object().shape({
 });
 
 const ManageRoomType: React.FC<any> = () => {
-  const styles = useStyles();
   const roomTypes = useAppSelector((state) => state.roomType.roomTypes);
   const [roomTypeNames, setRoomTypeNames] = useState([]);
   const [pagination, setPagination] = useState<PaginationParams>(
@@ -484,11 +478,5 @@ const ManageRoomType: React.FC<any> = () => {
     </AdminLayout>
   );
 };
-
-const useStyles = createStyles((theme) => {
-  return {
-    container: {},
-  };
-});
 
 export default ManageRoomType;

@@ -3,7 +3,6 @@ import { fetchFeedbacks } from './thunk/fetch-feedback';
 import { fetchFeedbackById } from './thunk/fetch-feedback-by-id.thunk';
 import { Feedback } from '../../../models/feedback.model';
 import { PaginationResponse } from '../../../models/pagination-response.payload';
-import { ConsoleLogger } from '@nestjs/common';
 
 interface InitialState {
   feedbacks: PaginationResponse<Feedback>;

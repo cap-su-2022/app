@@ -8,14 +8,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import {
-  Archive,
-  CalendarStats,
-  Checks,
   ClipboardText,
-  FileDescription,
-  Id,
-  PencilOff,
-  User,
   X,
 } from 'tabler-icons-react';
 import {useAppSelector} from '../../redux/hooks';
@@ -29,28 +22,9 @@ interface InfoModalProps {
 
 }
 
-interface UserInfoModel {
-  avatar: string;
-  fullname: string;
-  role: string;
-  phone: string;
-  email: string;
-  username: string;
-  id: string;
-  googleId: string;
-  keycloakId: string;
-  effdate: string;
-  description: string;
-  img: File;
-}
-
 const InfoModal: React.FC<InfoModalProps> = (props) => {
   const {classes} = useStyles();
   const bookingRoomFeedback = useAppSelector((state) => state.bookingRoomFeedback.bookingRoomFeedback);
-  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
-  useEffect(() => {
-    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
-  }, []);
 
   const HeaderTitle: React.FC = () => {
     return (

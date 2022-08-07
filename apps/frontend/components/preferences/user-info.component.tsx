@@ -19,6 +19,7 @@ import { uploadAvatar } from '../../redux/features/account/thunk/upload-avatar.t
 import { fetchProfile } from '../../redux/features/account/thunk/fetch-profile.thunk';
 import ChangePassword from './change-password.component';
 import { useTransition, animated } from 'react-spring';
+import { UserInfoModel } from '../../models/user/user-info.model';
 // interface UserInfoPreferneceProps {}
 
 
@@ -51,11 +52,6 @@ const UserInfoPreference: React.FC = () => {
 
   // const [image, setImage] = useState<File>(null);
   const avatarInputRef = useRef<HTMLInputElement>();
-
-  function formatDate(string) {
-    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-    return new Date(string).toLocaleDateString(undefined, options as unknown);
-  }
 
 
 
@@ -111,8 +107,6 @@ const UserInfoPreference: React.FC = () => {
       phone: userInfo.phone,
       description: userInfo.description,
     };
-
-    console.log("USERINFOR: ", userInfo)
 
     const UpdateSchema = Yup.object().shape({
       email: Yup.string().email('Invalid email').required('Required'),

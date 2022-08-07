@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, createStyles, Select } from '@mantine/core';
+import { Button,  Select } from '@mantine/core';
 import { ChevronsRight, X } from 'tabler-icons-react';
 import { useAppSelector } from '../../redux/hooks';
 import { FormikProps } from 'formik';
@@ -311,7 +311,5 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     </>
   );
 };
-
-const useStyles = createStyles({});
 
 export default BySlotChooseSlotModal;

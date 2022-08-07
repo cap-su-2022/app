@@ -10,7 +10,7 @@ import {
   TextInput, Highlight,
 } from '@mantine/core';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {Ban, Check, RotateClockwise, Search, X} from 'tabler-icons-react';
+import { Check, RotateClockwise, Search, X} from 'tabler-icons-react';
 import {PaginationParams} from '../../models/pagination-params.model';
 import dayjs from 'dayjs';
 import {showNotification} from '@mantine/notifications';
@@ -39,10 +39,8 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
   const disabledFeedbackTypes = useAppSelector((state) => state.feedbackType.disabledFeedbackTypes);
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
-  const [id, setId] = useState('');
   const [search, setSearch] = useState<string>('');
   const [searchDebounced] = useDebouncedValue<string>(search, 400);
-  const [isDisabledShown, setDisabledShown] = useState(false);
 
 
   useEffect(() => {
@@ -197,9 +195,6 @@ const useStyles = createStyles((theme) => ({
 
 export default RestoreDisabledModal;
 
-function dispatch(arg0: unknown) {
-  throw new Error('Function not implemented.');
-}
 
 function setDisabledShown(arg0: boolean) {
   throw new Error('Function not implemented.');

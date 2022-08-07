@@ -9,14 +9,12 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core';
-import { useWindowDimensions } from '../../hooks/use-window-dimensions';
 import {
   Check,
   ClipboardText,
   FileDescription,
   Id,
   Pencil,
-  Trash,
   X,
 } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -53,7 +51,6 @@ const DeviceUpdateModal: React.FC<UpdateModalProps> = (props) => {
   const [deviceType, setDeviceType] = useState<string>('');
 
   const dispatch = useAppDispatch();
-  const dimension = useWindowDimensions();
 
   useEffect(() => {
     setDeviceType(device.deviceTypeId);

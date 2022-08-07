@@ -3,7 +3,6 @@ import React, { ReactNode } from 'react';
 import { createStyles } from '@mantine/core';
 import LayoutHeader from './header.layout';
 import LayoutSidebar from './sidebar.layout';
-import LayoutFooter from './footer.layout';
 import { useBooleanToggle } from '@mantine/hooks';
 
 interface AdminLayoutProps {

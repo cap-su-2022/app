@@ -3,23 +3,15 @@ import {
   Button,
   createStyles,
   Modal,
-  Select,
   Table,
   Text,
 } from '@mantine/core';
 import { Check, ScanEye, Trash, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  fetchDeletedRoomTypes,
-  fetchRoomTypes,
-} from '../../redux/features/room-type/';
-import { deleteRoomTypeById } from '../../redux/features/room-type/';
 import { PaginationParams } from '../../models/pagination-params.model';
 import Th from '../../components/table/th.table.component';
-import { fetchRoomsByRoomType } from '../../redux/features/room/thunk/fetch-rooms-by-room-type';
 import { showNotification } from '@mantine/notifications';
-import { updateRoomById } from '../../redux/features/room/thunk/update-room-by-id';
 import { fetchAllSlots } from '../../redux/features/slot/thunk/fetch-slots.thunk';
 import { fetchDeletedSlots } from '../../redux/features/slot/thunk/fetch-deleted-device-types';
 import dayjs from 'dayjs';
@@ -36,11 +28,9 @@ interface DeleteModalProps {
 const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const { classes } = useStyles();
   const selectedSlotId = useAppSelector((state) => state.slot.slot.id);
-  const [slot, setSlot] = useState<string>('');
   const [isShownListRequest, setShownListRequest] = useState(false);
 
   const [listRequest, setListRequest] = useState([]);
-  console.log('LIST REQUEST: ', listRequest);
 
   const dispatch = useAppDispatch();
 

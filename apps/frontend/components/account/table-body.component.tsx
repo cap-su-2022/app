@@ -5,7 +5,6 @@ import {
   InfoCircle,
   Pencil,
   RotateClockwise,
-  Trash,
 } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';

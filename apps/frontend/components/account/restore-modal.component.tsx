@@ -5,13 +5,13 @@ import {
   Modal,
   Text,
 } from '@mantine/core';
-import { Check, RotateClockwise, ScanEye, X } from 'tabler-icons-react';
+import { Check, RotateClockwise, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 import { showNotification } from '@mantine/notifications';
-import { restoreDisabledAccount } from 'apps/frontend/redux/features/account/thunk/restore-disabled.thunk';
+import { restoreDisabledAccount } from '../../redux/features/account/thunk/restore-disabled.thunk';
 
 interface RestoreModalProps {
   isShown: boolean;

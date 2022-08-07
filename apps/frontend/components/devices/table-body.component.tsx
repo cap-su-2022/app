@@ -1,9 +1,9 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import {createStyles, Table, Button, Highlight} from '@mantine/core';
-import { Archive, InfoCircle, Pencil, Trash } from 'tabler-icons-react';
+import { Archive, InfoCircle, Pencil } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
-import moment from 'moment';
 import Th from '../../components/table/th.table.component';
+import { UserInfoModel } from '../../models/user/user-info.model';
 
 interface RowData {
   'd.name': string;

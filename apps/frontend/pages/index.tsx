@@ -1,6 +1,4 @@
 import styles from './index.module.scss';
-import { WebNextRequest } from 'next/dist/server/base-http/web';
-import axios from 'axios';
 import { GetServerSideProps } from 'next';
 
 export function Index() {

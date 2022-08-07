@@ -44,14 +44,14 @@ export const authSlice = createSlice({
       state.isLoading = false;
     });
     builder.addCase(doValidateAccessToken.fulfilled, (state, {payload}) => {
-
+      return null
     });
     builder.addCase(doValidateAccessToken.rejected, (state, {payload}) => {
       state.userLoginResponse = undefined;
 
     });
     builder.addCase(doLoginWithGoogle.fulfilled, (state, {payload}) => {
-
+      return null
     });
     builder.addCase(doLoginWithGoogle.rejected, (state, {payload}) => {
       state.isLoginFailed = true;
