@@ -1,25 +1,27 @@
-import React from "react";
-import {createStyles, Pagination} from "@mantine/core";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {changeRoomsCurrentPage} from "../../redux/features/room/room.slice";
+import React from 'react';
+import { createStyles, Pagination } from '@mantine/core';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 const TableFooter: React.FC = () => {
-  const {classes} = useStyles();
+  const { classes } = useStyles();
 
   const dispatch = useAppDispatch();
   const activePage = useAppSelector((state) => state.device.currentPage);
   const totalPage = useAppSelector((state) => state.device.totalPage);
 
   const handleChangePageIndex = (index: number) => {
-    dispatch(changeRoomsCurrentPage(index));
-  }
+    return;
+  };
 
   return (
     <div className={classes.pagination}>
-      <Pagination total={totalPage} page={activePage}
-                  onChange={(e) => handleChangePageIndex(e)}
-                  withEdges
-                  color="orange"/>
+      <Pagination
+        total={totalPage}
+        page={activePage}
+        onChange={(e) => handleChangePageIndex(e)}
+        withEdges
+        color="orange"
+      />
     </div>
   );
 };
@@ -27,8 +29,8 @@ const TableFooter: React.FC = () => {
 const useStyles = createStyles({
   pagination: {
     display: 'flex',
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 });
 
 export default TableFooter;
