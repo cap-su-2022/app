@@ -24,7 +24,6 @@ import { showNotification } from '@mantine/notifications';
 interface DisableDeviceModalProps {
   isShown: boolean;
   toggleShown(): void;
-  toggleInforModalShown(): void;
   pagination: PagingParams;
 }
 const DisableDeviceModal: React.FC<DisableDeviceModalProps> = (props) => {
@@ -70,7 +69,6 @@ const DisableDeviceModal: React.FC<DisableDeviceModalProps> = (props) => {
       )
       .then(() => {
         props.toggleShown();
-        props.toggleInforModalShown();
         dispatch(fetchDisabledDevices(''));
         dispatch(fetchDevices(props.pagination));
       });

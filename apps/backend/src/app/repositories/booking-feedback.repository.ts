@@ -39,31 +39,21 @@ export class BookingFeedbackRepository extends Repository<BookingRoomFeedback> {
       .innerJoin(Rooms, 'r', 'r.id = br.room_id')
       .innerJoin(Accounts, 'a', 'a.id = f.created_by')
       .innerJoin(FeedbackType, 'ft', 'f.feedback_type = ft.id')
-      .andWhere('ft.name ILIKE :search OR r.name ILIKE :search', {
-        search: `%${typeof pagination.search !== 'undefined' ? pagination.search.trim() : ''}%`,
-      })
       .orderBy(pagination.sort, pagination.dir as 'ASC' | 'DESC');
-
-    if (pagination.room) {
-      query.andWhere('r.id = :roomId', { roomId: pagination.room });
+    if (pagination.search) {
+      query.andWhere(
+        '(a.username ILIKE :search OR ft.name ILIKE :search OR r.name ILIKE :search)',
+        {
+          search: `%${pagination.search.trim()}%`,
+        }
+      );
     }
 
-    if (accountId) {
-      query.andWhere(`f.${pagination.sort} = :accountId`, {
-        accountId: accountId,
-      });
+    if (!pagination || !pagination.page) {
+      query.addOrderBy('f.created_at', 'DESC');
     }
-
-    if (pagination.star) {
-      query.andWhere('f.rate_num IN (:...rateNum)', {
-        rateNum: JSON.parse(pagination.star),
-      });
-    }
-
-    if (pagination.type) {
-      query.andWhere('f.feedback_type = :feedbackTypeId', {
-        feedbackTypeId: pagination.type,
-      });
+    if (pagination.sort) {
+      query.orderBy('f.' + pagination.sort, pagination.dir as 'ASC' | 'DESC');
     }
 
     if (pagination.fromDate && pagination.toDate) {
@@ -74,6 +64,28 @@ export class BookingFeedbackRepository extends Repository<BookingRoomFeedback> {
         .andWhere('f.created_at <= :toDate', {
           toDate: dayjs(pagination.toDate).endOf('day').toDate(),
         });
+    }
+
+    if (accountId) {
+      query.andWhere('f.created_by = :createdBy', { createdBy: accountId });
+    }
+
+    if (pagination.star) {
+      query.andWhere('f.rate_num IN (:...star)', {
+        star: JSON.parse(pagination.star),
+      });
+    }
+
+    if (pagination.type) {
+      query.andWhere('f.feedbackType = :feedbackTypeName', {
+        feedbackTypeName: pagination.type,
+      });
+    }
+
+    if (pagination.room) {
+      query.andWhere('f.booking_room_id = :bookingRoomId', {
+        feedbackTypeName: pagination.room,
+      });
     }
 
     if (!pagination || !pagination.page) {

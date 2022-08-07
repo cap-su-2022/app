@@ -8,6 +8,7 @@ import {
   InfoCircle,
   PencilOff,
   Plus,
+  TrashOff,
   X,
 } from 'tabler-icons-react';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
@@ -182,7 +183,7 @@ const ManageRoomType: React.FC<any> = () => {
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
         >
-          <ArchiveOff/>
+          <TrashOff/>
         </Button>
       </div>
     );

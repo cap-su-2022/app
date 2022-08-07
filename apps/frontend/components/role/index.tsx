@@ -6,6 +6,7 @@ import {
   BuildingWarehouse,
   Check,
   Plus,
+  TrashOff,
   X,
 } from 'tabler-icons-react';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
@@ -175,7 +176,7 @@ const ManageRole: React.FC<any> = () => {
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
         >
-          <ArchiveOff/>
+          <TrashOff/>
         </Button>
       </div>
     );

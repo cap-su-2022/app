@@ -58,7 +58,7 @@ export class DevicesRepository extends Repository<Devices> {
       .addSelect('d.updatedAt', 'updatedAt')
       .addSelect('dt.name', 'type')
       .innerJoin(DeviceType, 'dt', 'dt.id = d.type')
-      .where('LOWER(d.name) ILIKE LOWER(:search) OR dt.name ILIKE :search', {
+      .where('(d.name ILIKE :search OR dt.name ILIKE :search)', {
         search: `%${payload.search?.trim() || ''}%`,
       })
       .andWhere(`d.deleted_at IS NULL`)

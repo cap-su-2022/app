@@ -23,6 +23,7 @@ import { showNotification } from '@mantine/notifications';
 interface DeleteRoomModalProps {
   isShown: boolean;
   toggleShown(): void;
+  toggleInforModalShown(): void;
   pagination: PagingParams;
 }
 
@@ -58,6 +59,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
       )
       .then(() => {
         props.toggleShown();
+        props.toggleInforModalShown();
         dispatch(fetchRooms(props.pagination));
         dispatch(fetchDeletedRooms(''));
         listRequest.forEach((request) => dispatch(cancelBooking(request.id)));
@@ -153,7 +155,7 @@ const DeleteRoomModal: React.FC<DeleteRoomModalProps> = (props) => {
       closeOnClickOutside={true}
       size={isShownListRequest && listRequest.length > 0 ? '50%' : null}
       centered
-      zIndex={100}
+      zIndex={200}
       title={<ModalHeaderTitle />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}
