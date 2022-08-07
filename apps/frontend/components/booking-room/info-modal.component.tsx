@@ -12,6 +12,7 @@ interface RequestInfoModalProps {
   toggleAcceptModalShown(): void;
   toggleCheckinModalShown(): void;
   toggleCheckoutModalShown(): void;
+  toggleSendFeedbackModalShown(): void;
 }
 
 const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
@@ -104,6 +105,7 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
           toggleAcceptModalShown={props.toggleAcceptModalShown}
           toggleCheckinModalShown={props.toggleCheckinModalShown}
           toggleCheckoutModalShown={props.toggleCheckoutModalShown}
+          toggleSendFeedbackModalShown={props.toggleSendFeedbackModalShown}
         />
       </Modal>
     </>

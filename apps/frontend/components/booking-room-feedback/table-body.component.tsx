@@ -24,6 +24,7 @@ import {
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
 import dayjs from 'dayjs';
+import ReactStars from 'react-stars';
 
 interface RowData {
   'f.created_at': string;
@@ -73,7 +74,14 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
       <td>{dayjs(row.createdAt).format('DD-MM-YYYY')}</td>
 
       <td>
-        <div className={classes.resolvedDisplay}>{row.rateNum}</div>
+        <ReactStars
+                count={5}
+                value={row.rateNum}
+                size={25}
+                edit={false}
+                color2={'#ffd700'}
+                half={false}
+              />
       </td>
       <td className={classes.actionButtonContainer}>
         <Button

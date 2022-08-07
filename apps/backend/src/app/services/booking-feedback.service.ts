@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { PaginationParams } from '../controllers/pagination.model';
 import { BookingRoomFeedback, Feedback } from '../models';
@@ -14,9 +14,14 @@ export class BookingFeedbackService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly repository: BookingFeedbackRepository,
+    @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService,
     private readonly accountRepository: AccountRepository
   ) {}
+
+  async isAlreadyFeedback(id: string){
+    return await this.repository.isAlreadyFeedback(id)
+  }
 
   async getAllFeedbacks(accountId: string, param: PaginationParams) {
     try {

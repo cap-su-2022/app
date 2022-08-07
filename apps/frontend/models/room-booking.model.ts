@@ -1,4 +1,5 @@
 export interface RoomBooking {
+  feedback: any;
   checkoutTime: string;
   checkinTime: string;
   bookedFor: string;
