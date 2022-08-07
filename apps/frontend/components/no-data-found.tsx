@@ -31,7 +31,7 @@ const useStyles = createStyles({
     alignItems: 'center',
   },
   text: {
-    fontWeight: '600',
+    fontWeight: 600,
     fontSize: 30,
     marginTop: 20,
     textAlign: 'center',

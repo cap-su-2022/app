@@ -8,7 +8,6 @@ import {
   TextInput,
 } from '@mantine/core';
 import {
-  Archive,
   ClipboardText,
   Clock,
   FileDescription,
@@ -19,6 +18,7 @@ import {
 } from 'tabler-icons-react';
 import { useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
+import { UserInfoModel } from '../../models/user/user-info.model';
 
 interface InfoModalProps {
   isShown: boolean;

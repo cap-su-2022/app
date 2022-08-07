@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import axios, { Axios } from 'axios';
-import * as fs from 'fs';
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
@@ -15,16 +13,9 @@ export async function middleware(request: NextRequest) {
   };
 
   if (
-    request.nextUrl.pathname !== '/api/v1/login' &&
-    !request.nextUrl.pathname.includes('.') &&
-    request.nextUrl.pathname !== '/login' &&
-    !request.cookies['accessToken']
-  ) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  } else if (
     request.cookies['accessToken'] &&
     !request.nextUrl.pathname.includes('.') &&
-    request.nextUrl.pathname !== '/api/v1/login' 
+    request.nextUrl.pathname !== '/api/v1/login'
   ) {
     if (
       request.cookies['accessToken'] &&
@@ -36,6 +27,7 @@ export async function middleware(request: NextRequest) {
       !parseJwt(request.cookies['accessToken']) &&
       request.nextUrl.pathname !== '/login'
     ) {
+      console.log('faillllll');
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }

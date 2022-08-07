@@ -1,7 +1,6 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {toggleSpinnerOff, toggleSpinnerOn} from "../../spinner";
 import axios from "axios";
-import {Room} from "../../../../models/room.model";
 import { RoomBooking } from "../../../../models/room-booking.model";
 
 interface RejectValue {

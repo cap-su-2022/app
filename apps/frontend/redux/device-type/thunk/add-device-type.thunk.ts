@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../features/spinner';
 import axios from 'axios';
-import { fetchDeviceTypes } from './fetch-device-types.thunk';
 import { defaultPaginationParams } from '../../../models/pagination-params.model';
+import { fetchDeviceTypes } from '../../features/device-type';
 
 export const addDeviceType = createAsyncThunk<
   void,

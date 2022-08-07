@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { createStyles, Table, Button, Highlight } from '@mantine/core';
-import { Archive, InfoCircle, Pencil, RotateClockwise, Trash } from 'tabler-icons-react';
+import {
+  Archive,
+  InfoCircle,
+  Pencil,
+  RotateClockwise,
+} from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
+import { UserInfoModel } from '../../models/user/user-info.model';
 
 interface RowData {
   fullname: string;
@@ -146,7 +152,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             sorted={sortBy === 'account.disabled_at'}
             reversed={reverseSortDirection}
             onSort={() => setSorting('account.disabled_at')}
-            style={{width: '150px'}}
+            style={{ width: '150px' }}
           >
             Status
           </Th>

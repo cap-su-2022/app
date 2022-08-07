@@ -12,8 +12,6 @@ import {
   CircleCheck,
   ClipboardText,
   Devices,
-  PencilPlus,
-  Star,
   X,
 } from 'tabler-icons-react';
 import { useAppSelector } from '../../redux/hooks';

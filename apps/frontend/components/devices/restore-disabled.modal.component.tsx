@@ -11,14 +11,9 @@ import {
 } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { Check, RotateClockwise, Search, Trash, X } from 'tabler-icons-react';
-import { restoreDisabledRoom } from '../../redux/features/room/thunk/restore-disabled.thunk';
-import { fetchRooms } from '../../redux/features/room/thunk/fetch-rooms';
-import { fetchDisabledRooms } from '../../redux/features/room/thunk/fetch-disabled-rooms';
-import { deleteRoomById } from '../../redux/features/room/thunk/delete-room-by-id';
 import dayjs from 'dayjs';
 import { useDebouncedValue } from '@mantine/hooks';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
-import { fetchDeletedRooms } from '../../redux/features/room/thunk/fetch-deleted-rooms';
 import NoDataFound from '../no-data-found';
 import { fetchDisabledDevices } from '../../redux/features/devices/thunk/fetch-disabled.thunk';
 import { restoreDisabledDevice } from '../../redux/features/devices/thunk/restore-disabled.thunk';

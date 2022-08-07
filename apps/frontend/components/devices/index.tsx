@@ -1,11 +1,10 @@
 import {GetServerSideProps} from 'next';
 import AdminLayout from '../../components/layout/admin.layout';
-import {Button, createStyles} from '@mantine/core';
+import {Button} from '@mantine/core';
 import {
   ArchiveOff,
   BuildingWarehouse,
   Download,
-  PencilOff,
   Plus,
   TrashOff,
 } from 'tabler-icons-react';

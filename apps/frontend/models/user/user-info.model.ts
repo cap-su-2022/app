@@ -1,4 +1,4 @@
-interface UserInfoModel {
+export interface UserInfoModel {
   avatar: string;
   fullname: string;
   role: string;

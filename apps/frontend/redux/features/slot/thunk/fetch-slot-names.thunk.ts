@@ -2,7 +2,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
 import { Slot } from '../../../../models/slot.model';
-import { PaginationParams } from '../../../../models/pagination-params.model';
 
 export const fetchSlotNames = createAsyncThunk<
   Slot[],

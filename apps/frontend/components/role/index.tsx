@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {Button} from '@mantine/core';
 import Header from '../common/header.component';
 import {
-  ArchiveOff,
   BuildingWarehouse,
   Check,
   Plus,

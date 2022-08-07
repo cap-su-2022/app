@@ -15,7 +15,6 @@ import { invalidateAuthUser } from '../redux/features/account/auth.slice';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../redux/features/spinner';
 import Divider from '../components/generic/divider';
 import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
-import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { doLoginWithGoogle } from '../redux/features/account/google-login.thunk';
 import Logo from '../components/logo';

@@ -8,14 +8,8 @@ import {
   TextInput,
 } from '@mantine/core';
 import {
-  Archive,
-  CalendarStats,
   Checks,
   ClipboardText,
-  FileDescription,
-  Id,
-  PencilOff,
-  User,
   X,
 } from 'tabler-icons-react';
 import { useAppSelector } from '../../redux/hooks';

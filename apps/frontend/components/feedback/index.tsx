@@ -19,11 +19,11 @@ import RejectFeedbackModal from './reject-feedback.component';
 import ResolveFeedbackModal from './resolve-feedback.component';
 import { FeedbackPaginationParams } from '../../models/pagination-params/feedback-paging-params.model';
 import { sendFeedback } from '../../redux/features/feedback/thunk/send-feedback.thunk';
-import DownloadModal from './download-modal.compnent';
 import { fetchFeedbackTypeNames } from '../../redux/features/feedback-type/thunk/fetch-feedback-type-names.thunk';
 import AddFeedbackModal from './add-modal.component';
 import { fetchCountRequestFeedbacks } from '../../redux/features/feedback/thunk/fetch-count-feedbacks';
 import { io } from 'socket.io-client';
+import { UserInfoModel } from '../../models/user/user-info.model';
 
 const AddRoomTypeValidation = Yup.object().shape({
   feedback: Yup.string()
@@ -47,7 +47,6 @@ const ManageFeedback: React.FC<any> = () => {
   }, []);
   const [isRejectShown, setRejectShown] = useState<boolean>(false);
   const [isResolveShown, setResolveShown] = useState<boolean>(false);
-  const [isDownShown, setDownShown] = useState<boolean>(false);
   const [feedbackTypeNames, setFeedbackTypeNames] = useState<any[]>(null);
   const feedbacks = useAppSelector((state) => state.feedback.feedbacks);
   const [pagination, setPagination] = useState<FeedbackPaginationParams>(
@@ -134,17 +133,10 @@ const ManageFeedback: React.FC<any> = () => {
   const [id, setId] = useState<string>('');
   const [isInfoShown, setInfoShown] = useState<boolean>(false);
   const [isAddShown, setAddShown] = useState<boolean>(false);
-  // const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
-  // const [isRestoreDeletedShown, setRestoreDeletedShown] =
-  //   useState<boolean>(false);
 
   const handleFetchById = (idVal) => {
     return dispatch(fetchFeedbackById(idVal));
-  };
-
-  const handleDownModalClose = () => {
-    setDownShown(false);
   };
 
   const ActionsFilterLeft: React.FC = () => {
@@ -208,19 +200,7 @@ const ManageFeedback: React.FC<any> = () => {
   };
 
   const ActionsFilter: React.FC = () => {
-    if (userInfo.role !== 'Staff') {
-      return (
-        <>
-          <Button
-            variant="outline"
-            color="violet"
-            onClick={() => setDownShown(true)}
-          >
-            <Download />
-          </Button>
-        </>
-      );
-    } else {
+    if (userInfo.role === 'Staff') {
       return (
         <div>
           <Button
@@ -233,6 +213,8 @@ const ManageFeedback: React.FC<any> = () => {
           </Button>
         </div>
       );
+    } else {
+      return null;
     }
   };
 
@@ -304,15 +286,6 @@ const ManageFeedback: React.FC<any> = () => {
         actions={<ActionsFilter />}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
-      />
-      {/* <RestoreDeletedModal
-        isShown={isRestoreDeletedShown}
-        toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
-        pagination={pagination}
-      /> */}
-      <DownloadModal
-        isShown={isDownShown}
-        toggleShown={() => handleDownModalClose()}
       />
       {feedbacks.items ? (
         <>
