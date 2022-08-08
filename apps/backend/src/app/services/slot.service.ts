@@ -141,6 +141,8 @@ export class SlotService {
       this.logger.error(e);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 

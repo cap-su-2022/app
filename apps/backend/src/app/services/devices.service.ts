@@ -132,6 +132,8 @@ export class DevicesService {
       throw new BadRequestException(
         e.message || 'Error while creating a new device'
       );
+    } finally{
+      await queryRunner.release();
     }
   }
 

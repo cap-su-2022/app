@@ -87,9 +87,7 @@ export class RoomsService {
       }
       const result = await this.repository.findById(id);
       if (!result) {
-        throw new BadRequestException(
-          'This room is already deleted'
-        );
+        throw new BadRequestException('This room is already deleted');
       }
       return result;
     } catch (e) {
@@ -154,6 +152,8 @@ export class RoomsService {
       throw new BadRequestException(
         e.message ?? 'Error occurred while adding this room'
       );
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -197,10 +197,16 @@ export class RoomsService {
       throw new BadRequestException(
         e.message ?? 'Error occurred while updating this room'
       );
+    } finally {
+      await queryRunner.release();
     }
   }
 
-  async updateTypeThenRestore(accountId: string, id: string, body: {type: string}) {
+  async updateTypeThenRestore(
+    accountId: string,
+    id: string,
+    body: { type: string }
+  ) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -240,6 +246,8 @@ export class RoomsService {
       throw new BadRequestException(
         e.message ?? 'Error occurred while updating this room'
       );
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -293,6 +301,8 @@ export class RoomsService {
       this.logger.error(e);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -346,6 +356,8 @@ export class RoomsService {
         e.message ??
           'Error occurred while restore the disabled status of this room'
       );
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -390,6 +402,8 @@ export class RoomsService {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 

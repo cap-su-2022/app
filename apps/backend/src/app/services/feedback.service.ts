@@ -1,6 +1,5 @@
 import {BadRequestException, Injectable, Logger} from '@nestjs/common';
 import {DataSource} from 'typeorm';
-import {PaginationParams} from '../controllers/pagination.model';
 import {Feedback} from '../models';
 import {FeedbackPaginationPayload} from '../payload/request/feedback-pagination.payload';
 import {FeedbackReplyRequestPayload} from '../payload/request/feedback-resolve.request.payload';
@@ -76,6 +75,8 @@ export class FeedbackService {
       this.logger.error(e);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -147,6 +148,8 @@ export class FeedbackService {
       this.logger.error(e);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -202,6 +205,8 @@ export class FeedbackService {
       this.logger.error(e);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 }
