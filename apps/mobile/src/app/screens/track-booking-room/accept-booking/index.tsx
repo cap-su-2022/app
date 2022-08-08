@@ -70,14 +70,7 @@ const AcceptBooking: React.FC<any> = () => {
   const socket = useMemo(() => {
     return SocketIOClient('http://192.168.100.44:5000/booking', {
       jsonp: false,
-      transports: ['websocket']
-    });
-  }, []);
-
-  useEffect(() => {
-    socket.on('connect_error', (err) => {
-      console.log(err instanceof Error);
-      console.log(err.message);
+      transports: ['websocket'],
     });
   }, []);
 
@@ -179,7 +172,6 @@ const AcceptBooking: React.FC<any> = () => {
     dispatch(fetchDeviceInUseByBookingRequestId(id))
       .unwrap()
       .then((val) => {
-        console.log(val);
         navigate.navigate('ACCEPT_BOOKING_LIST_DEVICES');
       });
   };
