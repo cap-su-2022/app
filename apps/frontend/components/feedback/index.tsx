@@ -25,7 +25,7 @@ import { fetchCountRequestFeedbacks } from '../../redux/features/feedback/thunk/
 import { io } from 'socket.io-client';
 import { UserInfoModel } from '../../models/user/user-info.model';
 
-const AddRoomTypeValidation = Yup.object().shape({
+const SendFeedbackValidation = Yup.object().shape({
   feedback: Yup.string()
     .max(500, 'Maximum room type description is 500 characters')
     .required('Feedback is required'),
@@ -200,7 +200,7 @@ const ManageFeedback: React.FC<any> = () => {
   };
 
   const ActionsFilter: React.FC = () => {
-    if (userInfo.role === 'Staff') {
+    if (userInfo.role !== 'System Admin') {
       return (
         <div>
           <Button
@@ -268,7 +268,7 @@ const ManageFeedback: React.FC<any> = () => {
   };
 
   const addFormik = useFormik({
-    validationSchema: AddRoomTypeValidation,
+    validationSchema: SendFeedbackValidation,
     initialValues: {
       feedback: '',
       type: '',

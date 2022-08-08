@@ -20,7 +20,7 @@ interface RejectRequestModalProps {
 const validation = Yup.object().shape({
   reason: Yup.string()
     .trim()
-    .min(10, 'Reason must be at least 10 characters')
+    .min(2, 'Reason must be at least 2 characters')
     .max(100, 'Reason can only maximum at 100 characters')
     .required('Reason is required'),
 });

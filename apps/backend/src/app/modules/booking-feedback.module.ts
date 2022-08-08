@@ -14,7 +14,7 @@ import { AccountRepository } from '../repositories';
   imports: [
     ConfigModule,
     HttpModule,
-    AccountsModule,
+    forwardRef(() => AccountsModule),
     forwardRef(() => BookingRoomModule),
     TypeOrmExModule.forCustomRepository([
       BookingFeedbackRepository,

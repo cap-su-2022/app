@@ -619,10 +619,11 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('r.name', 'roomName')
       .addSelect('a.username', 'requestedBy')
       .addSelect('booking_request.checkin_Date', 'checkinDate')
+      .addSelect('booking_request.status', 'status')
 
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
-      .where(`booking_request.status = :status`, { status: 'BOOKING' })
+      .where(`booking_request.status IN (:...status)`, { status: ['PENDING', 'BOOKED'] })
       .andWhere('booking_request.requested_by = :account_id', {
         account_id: accountId,
       })

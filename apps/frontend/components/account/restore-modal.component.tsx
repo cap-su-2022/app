@@ -12,6 +12,7 @@ import { PagingParams } from '../../models/pagination-params/paging-params.model
 import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 import { showNotification } from '@mantine/notifications';
 import { restoreDisabledAccount } from '../../redux/features/account/thunk/restore-disabled.thunk';
+import { fetchAccountById } from '../../redux/features/account/thunk/fetch-by-id.thunk';
 
 interface RestoreModalProps {
   isShown: boolean;
@@ -52,9 +53,10 @@ const RestoreModal: React.FC<RestoreModalProps> = (props) => {
         })
       )
       .then(() => {
+        dispatch(fetchAccountById(selectedAccountId))
+        dispatch(fetchAccounts(props.pagination));
         props.toggleShown();
         props.toggleInforModalShown();
-        dispatch(fetchAccounts(props.pagination));
       });
   };
 

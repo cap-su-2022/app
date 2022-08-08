@@ -13,7 +13,6 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { PagingParams } from '../../models/pagination-params/paging-params.model';
 import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
-import { cancelBooking } from '../../redux/features/room-booking/thunk/cancel-booking';
 import { deleteAccountById } from '../../redux/features/account/thunk/delete-by-id';
 import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 import { fetchDeletedAccounts } from '../../redux/features/account/thunk/fetch-deleted.thunk';
@@ -23,6 +22,7 @@ import { showNotification } from '@mantine/notifications';
 interface DeleteModalProps {
   isShown: boolean;
   toggleShown(): void;
+  toggleInforModalShown(): void;
   pagination: PagingParams;
 }
 
@@ -60,9 +60,9 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
 
       .then(() => {
         props.toggleShown();
+        props.toggleInforModalShown();
         dispatch(fetchAccounts(props.pagination));
         dispatch(fetchDeletedAccounts(''));
-        listRequest.forEach((request) => dispatch(cancelBooking(request.id)));
       });
   };
 
@@ -80,6 +80,17 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
     }
   }, [props.isShown]);
 
+  const RenderStatus: React.FC<{ status: string }> = (_props) => {
+    switch (_props.status) {
+      case 'PENDING':
+        return <div className={classes.pendingDisplay}>Pending</div>;
+      case 'BOOKED':
+        return <div className={classes.bookedDisplay}>Booked</div>;
+      default:
+        return null;
+    }
+  };
+
   const ListRequestByAccountId = () => {
     const rows =
       listRequest && listRequest.length > 0
@@ -89,6 +100,9 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
               <td>{row.requestedBy}</td>
               <td>{dayjs(row.timeCheckin).format('HH:mm DD/MM/YYYY')}</td>
               <td>{dayjs(row.timeCheckout).format('HH:mm DD/MM/YYYY')}</td>
+              <td>
+                <RenderStatus status={row.status} />
+              </td>
             </tr>
           ))
         : null;
@@ -99,9 +113,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           verticalSpacing="xs"
           sx={{ tableLayout: 'fixed' }}
         >
-          <thead
-            className={cx(classes.header, [classes.scrolled])}
-          >
+          <thead className={cx(classes.header, [classes.scrolled])}>
             <tr>
               <Th
                 style={{
@@ -123,6 +135,10 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
                 Time end
+              </Th>
+
+              <Th sorted={null} reversed={null} onSort={null}>
+                Status
               </Th>
             </tr>
           </thead>
@@ -151,7 +167,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       closeOnClickOutside={true}
       size={isShownListRequest && listRequest.length > 0 ? '50%' : null}
       centered
-      zIndex={2000}
+      zIndex={200}
       title={<ModalHeaderTitle />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}
@@ -220,6 +236,22 @@ const useStyles = createStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
+  },
+  bookedDisplay: {
+    color: '#40c057',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#00800024',
+    fontWeight: 600,
+  },
+  pendingDisplay: {
+    color: '#228be6',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#0000ff1c',
+    fontWeight: 600,
   },
   actionButtonContainer: {
     display: 'flex',

@@ -15,8 +15,8 @@ import { BookingRoomModule } from './booking-room.module';
   imports: [
     ConfigModule,
     HttpModule,
-    KeycloakModule,
-    AccountsModule,
+    forwardRef(() => AccountsModule),
+    forwardRef(() => KeycloakModule),
     forwardRef(() => BookingRoomModule),
     TypeOrmExModule.forCustomRepository([RoomsRepository, RoomHistRepository]),
   ],

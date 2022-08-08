@@ -1,5 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import {
   FeedbackHistService,
   FeedbackService,
@@ -17,8 +17,8 @@ import { FeedbackGateway } from '../gateway/feedback.gateway';
   imports: [
     ConfigModule,
     HttpModule,
-    AccountsModule,
-    NotificationModule,
+    forwardRef(() => AccountsModule),
+    forwardRef(() => NotificationModule),
     TypeOrmExModule.forCustomRepository([
       FeedbackRepository,
       FeedbackHistRepository,

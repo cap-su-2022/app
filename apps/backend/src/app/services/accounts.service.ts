@@ -1,7 +1,9 @@
 import {
   BadRequestException,
+  forwardRef,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   Logger,
 } from '@nestjs/common';
@@ -22,6 +24,7 @@ import { AccountAddRequestPayload } from '../payload/request/account-add.request
 import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
 import { Role } from '../enum/roles.enum';
 import { DataSource } from 'typeorm';
+import { BookingRoomService } from './booking-room.service';
 
 @Injectable()
 export class AccountsService {
@@ -30,9 +33,18 @@ export class AccountsService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly cloudinaryService: CloudinaryService,
+
+    @Inject(forwardRef(() => KeycloakService))
     private readonly keycloakService: KeycloakService,
+
+    @Inject(forwardRef(() => AccountRepository))
     private readonly repository: AccountRepository,
-    private readonly histService: AccountHistService
+
+    @Inject(forwardRef(() => AccountHistService))
+    private readonly histService: AccountHistService,
+
+    @Inject(forwardRef(() => BookingRoomService))
+    private readonly bookingRoomService: BookingRoomService
   ) {}
 
   async getAll(request: AccountsPaginationParams, userId: string) {
@@ -112,30 +124,34 @@ export class AccountsService {
     payload: AccountAddRequestPayload,
     userId: string
   ): Promise<Accounts> {
-    const isExisted = await this.repository.isExistedByUsername(
-      payload.username
-    );
-    if (isExisted) {
-      throw new BadRequestException('Username is duplicated!');
-    }
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
+      const isExisted = await this.repository.isExistedByUsername(
+        payload.username
+      );
+      if (isExisted) {
+        throw new BadRequestException('Username is duplicated!');
+      }
       const accountAdded = await this.repository.createNewAccount(
         payload,
-        userId
+        userId,
+        queryRunner
       );
-      await this.histService.createNew(accountAdded);
+      await this.histService.createNew(accountAdded, queryRunner);
+      await queryRunner.commitTransaction();
       return accountAdded;
     } catch (e) {
       this.logger.error(e.message);
-      if (
-        e.message.includes('constraint') &&
-        e.message.includes('devices_device_type_id_fk')
-      ) {
-        throw new BadRequestException(
-          'There is no device type with the provided id'
-        );
-      }
-      throw new BadRequestException('Error while creating a new device');
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(
+        e.message || 'Error while creating a new device'
+      );
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -176,8 +192,8 @@ export class AccountsService {
         queryRunner
       );
 
+      await this.histService.createNew(accountUpdated, queryRunner);
       await queryRunner.commitTransaction();
-      await this.histService.createNew(accountUpdated);
       return accountUpdated;
     } catch (e) {
       this.logger.error(e);
@@ -189,6 +205,11 @@ export class AccountsService {
   }
 
   async disableById(accountId: string, id: string): Promise<any> {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
       if (accountId === id) {
         throw new BadRequestException('Cannot disable your own account');
@@ -212,18 +233,39 @@ export class AccountsService {
 
       const account = await this.repository.getRoleOfAccount(id);
       if (account.role_name === 'System Admin') {
-        throw new BadRequestException(
-          "You can't disable the system admin"
-        );
+        throw new BadRequestException("You can't disable the system admin");
       }
 
-      const accountDisabled = await this.repository.disableById(accountId, id);
-      await this.histService.createNew(accountDisabled);
+      const listRequestOfAccount =
+        await this.bookingRoomService.getRequestBookingByAccountId(id);
+      if (listRequestOfAccount.length > 0) {
+        const reason = 'This account was disabled, request was be cancelled';
+        listRequestOfAccount.forEach(async (request) => {
+          await this.bookingRoomService.cancelRequest(
+            accountId,
+            request.id,
+            reason,
+            queryRunner
+          );
+        });
+      }
+
+      const accountDisabled = await this.repository.disableById(
+        accountId,
+        id,
+        queryRunner
+      );
+      await this.histService.createNew(accountDisabled, queryRunner);
+
+      await queryRunner.commitTransaction();
       return accountDisabled;
     } catch (e) {
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(
         e.message ?? 'Error occurred while disable this account'
       );
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -237,6 +279,10 @@ export class AccountsService {
   }
 
   async handleRestoreDisabledAccountById(accountId: string, id: string) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -256,20 +302,29 @@ export class AccountsService {
       }
       const account = await this.repository.restoreDisabledAccountById(
         accountId,
-        id
+        id,
+        queryRunner
       );
-      await this.histService.createNew(account);
+      await this.histService.createNew(account, queryRunner);
+      await queryRunner.commitTransaction();
       return account;
     } catch (e) {
       this.logger.error(e);
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(
         e.message ??
           'Error occurred while restore the disabled status of this account'
       );
+    } finally {
+      await queryRunner.release();
     }
   }
 
   async deleteById(accountId: string, id: string) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
       if (accountId === id) {
         throw new BadRequestException('Cannot delete your own account');
@@ -298,12 +353,35 @@ export class AccountsService {
       if (isDeleted) {
         throw new BadRequestException('This account is already deleted');
       }
-      const account = await this.repository.deleteById(accountId, id);
-      await this.histService.createNew(account);
+
+      const listRequestOfAccount =
+        await this.bookingRoomService.getRequestBookingByAccountId(id);
+      if (listRequestOfAccount.length > 0) {
+        const reason = 'This account was deleted, request was be cancelled';
+        listRequestOfAccount.forEach(async (request) => {
+          await this.bookingRoomService.cancelRequest(
+            accountId,
+            request.id,
+            reason,
+            queryRunner
+          );
+        });
+      }
+
+      const account = await this.repository.deleteById(
+        accountId,
+        id,
+        queryRunner
+      );
+      await this.histService.createNew(account, queryRunner);
+      await queryRunner.commitTransaction();
       return account;
     } catch (e) {
       this.logger.error(e.message);
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -317,6 +395,10 @@ export class AccountsService {
   }
 
   async handleRestoreDeletedAccountById(accountId: string, id: string) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -339,11 +421,15 @@ export class AccountsService {
         accountId,
         id
       );
-      await this.histService.createNew(account);
+      await this.histService.createNew(account, queryRunner);
+      await queryRunner.commitTransaction();
       return account;
     } catch (e) {
       this.logger.error(e.message);
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
