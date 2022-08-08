@@ -48,7 +48,6 @@ const RoomBooking2: React.FC = () => {
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
 
-  console.log(deviceSelectedDevice);
   useEffect(() => {
     dispatch(
       fetchAllDevices({

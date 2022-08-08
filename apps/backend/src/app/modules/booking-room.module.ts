@@ -21,10 +21,10 @@ import { BookingFeedbackModule } from './booking-feedback.module';
 
 @Module({
   imports: [
-    RoomWishlistModule,
-    KeycloakModule,
-    AccountsModule,
-    NotificationModule,
+    forwardRef(() => NotificationModule),
+    forwardRef(() => KeycloakModule),
+    forwardRef(() => RoomWishlistModule),
+    forwardRef(() => AccountsModule),
     forwardRef(() => RoomTypeModule),
     forwardRef(() => DevicesModule),
     forwardRef(() => RoomsModule),

@@ -16,7 +16,7 @@ import { RoomsModule } from './rooms.module';
   imports: [
     ConfigModule,
     HttpModule,
-    AccountsModule,
+    forwardRef(() => AccountsModule),
     forwardRef(() => RoomsModule),
     TypeOrmExModule.forCustomRepository([
       RoomTypeRepository,

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { FeedbackTypeController } from '../controllers/feedback-type.controller';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import { FeedbackTypeService } from '../services';
@@ -12,7 +12,7 @@ import { KeycloakService } from '../services';
   imports: [
     ConfigModule,
     HttpModule,
-    AccountsModule,
+    forwardRef(() => AccountsModule),
     TypeOrmExModule.forCustomRepository([FeedbackTypeRepository]),
   ],
   providers: [FeedbackTypeService, KeycloakService],

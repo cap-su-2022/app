@@ -30,11 +30,7 @@ const RequestRoomBookingHeader: React.FC<any> = () => {
         <Text style={[styles.titleText, boxShadow(styles)]}>
           Request for room booking
         </Text>
-        <TouchableOpacity
-          onPress={() => console.log('Do nothing')}
-        >
-
-        </TouchableOpacity>
+        <TouchableOpacity onPress={() => null}></TouchableOpacity>
       </View>
     </>
   );

@@ -1,4 +1,10 @@
-import { BadRequestException, forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { PaginationParams } from '../controllers/pagination.model';
 import { BookingRoomFeedback } from '../models';
@@ -13,19 +19,21 @@ export class BookingFeedbackService {
 
   constructor(
     private readonly dataSource: DataSource,
+    @Inject(forwardRef(() => BookingFeedbackRepository))
     private readonly repository: BookingFeedbackRepository,
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService,
+    @Inject(forwardRef(() => AccountRepository))
     private readonly accountRepository: AccountRepository
   ) {}
 
-  async isAlreadyFeedback(id: string){
-    return await this.repository.isAlreadyFeedback(id)
+  async isAlreadyFeedback(id: string) {
+    return await this.repository.isAlreadyFeedback(id);
   }
 
   async getAllFeedbacks(accountId: string, param: PaginationParams) {
     try {
-      let result
+      let result;
       const roleName = await this.accountRepository.findRoleNameById(accountId);
       if (roleName === 'Staff') {
         result = await this.repository.findByPagination(accountId, param);

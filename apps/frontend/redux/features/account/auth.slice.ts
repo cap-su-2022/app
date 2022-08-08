@@ -1,22 +1,22 @@
-import {UserLoginSuccessModel} from "../../../models/user/user-login-success-response.model";
-import {createSlice} from "@reduxjs/toolkit";
-import {doLogin} from "./login.thunk";
-import {doValidateAccessToken} from "./validate-token.thunk";
-import {doLoginWithGoogle} from "./google-login.thunk";
+import { UserLoginSuccessModel } from '../../../models/user/user-login-success-response.model';
+import { createSlice } from '@reduxjs/toolkit';
+import { doLogin } from './login.thunk';
+import { doValidateAccessToken } from './validate-token.thunk';
+import { doLoginWithGoogle } from './google-login.thunk';
 
 type AuthState = {
   isLoading: boolean;
   isLoginFailed: boolean;
   error: string | null;
   userLoginResponse: UserLoginSuccessModel;
-}
+};
 
 const initialState: AuthState = {
   isLoading: false,
   isLoginFailed: false,
   error: null,
   userLoginResponse: undefined,
-}
+};
 
 export const authSlice = createSlice({
   initialState: initialState,
@@ -27,7 +27,7 @@ export const authSlice = createSlice({
     },
     invalidateAuthUser(state) {
       state.userLoginResponse = undefined;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(doLogin.pending, (state) => {
@@ -37,29 +37,21 @@ export const authSlice = createSlice({
     builder.addCase(doLogin.fulfilled, (state, thunk) => {
       state.userLoginResponse = thunk.payload;
       state.isLoading = false;
-    })
+    });
     builder.addCase(doLogin.rejected, (state, thunk) => {
       state.isLoginFailed = true;
       state.error = thunk.payload.message;
       state.isLoading = false;
     });
-    builder.addCase(doValidateAccessToken.fulfilled, (state, {payload}) => {
-      return null
-    });
-    builder.addCase(doValidateAccessToken.rejected, (state, {payload}) => {
+    builder.addCase(doValidateAccessToken.rejected, (state, { payload }) => {
       state.userLoginResponse = undefined;
-
     });
-    builder.addCase(doLoginWithGoogle.fulfilled, (state, {payload}) => {
-      return null
-    });
-    builder.addCase(doLoginWithGoogle.rejected, (state, {payload}) => {
+    builder.addCase(doLoginWithGoogle.rejected, (state, { payload }) => {
       state.isLoginFailed = true;
       state.error = payload.message;
     });
-  }
+  },
 });
 
-
 export const authReducer = authSlice.reducer;
-export const {resetLoginFailedStatus, invalidateAuthUser} = authSlice.actions;
+export const { resetLoginFailedStatus, invalidateAuthUser } = authSlice.actions;

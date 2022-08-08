@@ -232,7 +232,8 @@ export class AccountRepository extends Repository<Accounts> {
 
   createNewAccount(
     payload: AccountAddRequestPayload,
-    userId: string
+    userId: string,
+    queryRunner: QueryRunner
   ): Promise<Accounts> {
     if (payload.isDisabled) {
       this.createQueryBuilder('a').where((qb) => {
@@ -308,22 +309,19 @@ export class AccountRepository extends Repository<Accounts> {
       .execute();
   }
 
-  async disableById(accountId: string, id: string) {
-    const isDisabled = await this.createQueryBuilder('accounts')
-      .update({
-        disabledBy: accountId,
-        disabledAt: new Date(),
-      })
-      .where('accounts.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-    if (isDisabled.affected > 0) {
-      return this.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
-    }
+  async disableById(accountId: string, id: string, queryRunner: QueryRunner) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: id,
+      },
+    });
+    return await queryRunner.manager.save(Accounts, {
+      ...oldData,
+      updatedBy: accountId,
+      updatedAt: new Date(),
+      disabledBy: accountId,
+      disabledAt: new Date(),
+    });
   }
 
   findDisabledAccounts(search: string): Promise<Accounts[]> {
@@ -345,44 +343,38 @@ export class AccountRepository extends Repository<Accounts> {
       .getRawMany<Accounts>();
   }
 
-  async restoreDisabledAccountById(accountId: string, id: string) {
-    const isRestored = await this.createQueryBuilder('accounts')
-      .update({
-        disabledAt: null,
-        disabledBy: null,
-        updatedBy: accountId,
-        updatedAt: new Date(),
-      })
-      .where('accounts.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-    if (isRestored.affected > 0) {
-      return this.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
-    }
+  async restoreDisabledAccountById(
+    accountId: string,
+    id: string,
+    queryRunner: QueryRunner
+  ) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: id,
+      },
+    });
+    return await queryRunner.manager.save(Accounts, {
+      ...oldData,
+      disabledAt: null,
+      disabledBy: null,
+      updatedBy: accountId,
+      updatedAt: new Date(),
+    });
   }
 
-  async deleteById(accountId: string, id: string) {
-    const isDeleted = await this.createQueryBuilder('accounts')
-      .update({
-        deletedAt: new Date(),
-        deletedBy: accountId,
-        disabledAt: null,
-        disabledBy: null,
-      })
-      .where('accounts.id = :id', { id: id })
-      .useTransaction(true)
-      .execute();
-    if (isDeleted.affected > 0) {
-      return this.findOneOrFail({
-        where: {
-          id: id,
-        },
-      });
-    }
+  async deleteById(accountId: string, id: string, queryRunner: QueryRunner) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: id,
+      },
+    });
+    return await queryRunner.manager.save(Accounts, {
+      ...oldData,
+      deletedAt: new Date(),
+      deletedBy: accountId,
+      disabledAt: null,
+      disabledBy: null,
+    });
   }
 
   findDeletedAccounts(search: string): Promise<Accounts[]> {

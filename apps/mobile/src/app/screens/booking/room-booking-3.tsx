@@ -117,7 +117,6 @@ export const RoomBooking3: React.FC = () => {
       })
       .catch((e) => {
         alert('This room has already been booked. Please book another room');
-        console.log(e)
         navigate.pop(2);
       });
   };

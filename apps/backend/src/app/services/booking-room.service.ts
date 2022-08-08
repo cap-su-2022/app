@@ -38,16 +38,19 @@ export class BookingRoomService {
 
   constructor(
     private readonly dataSource: DataSource,
+    @Inject(forwardRef(() => BookingRoomRepository))
     private readonly repository: BookingRoomRepository,
+    @Inject(forwardRef(() => NotificationService))
     private readonly notificationService: NotificationService,
+    @Inject(forwardRef(() => RoomWishlistService))
     private readonly roomWishlistService: RoomWishlistService,
+    @Inject(forwardRef(() => AccountsService))
     private readonly accountService: AccountsService,
     @Inject(forwardRef(() => SlotService))
     private readonly slotService: SlotService,
     @Inject(forwardRef(() => RoomsService))
     private readonly roomService: RoomsService,
-    @Inject(forwardRef(() => RoomTypeService))
-    private readonly roomTypeService: RoomTypeService,
+    @Inject(forwardRef(() => BookingRoomDevicesService))
     private readonly bookingRoomDeviceService: BookingRoomDevicesService,
     @Inject(forwardRef(() => BookingFeedbackService))
     private readonly bookingFeedbackService: BookingFeedbackService,
