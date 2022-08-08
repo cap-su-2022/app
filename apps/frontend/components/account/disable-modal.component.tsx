@@ -15,9 +15,9 @@ import Th from '../table/th.table.component';
 import dayjs from 'dayjs';
 import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 import { disableAccountById } from '../../redux/features/account/thunk/disable-by-id';
-import { fetchDisabledAccounts } from '../../redux/features/account/thunk/fetch-disabled.thunk';
 import { fetchRequestByAccountId } from '../../redux/features/room-booking/thunk/fetch-room-booking-by-account';
 import { showNotification } from '@mantine/notifications';
+import { fetchAccountById } from '../../redux/features/account/thunk/fetch-by-id.thunk';
 
 interface DisableModalProps {
   isShown: boolean;
@@ -51,10 +51,13 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
         })
       )
       .then(() => {
+        dispatch(fetchAccountById(selectedAccountId));
+        dispatch(fetchAccounts(props.pagination));
+        dispatch(fetchRequestByAccountId(selectedAccountId))
+          .unwrap()
+          .then((response) => setListRequest(response));
         props.toggleShown();
         props.toggleInforModalShown();
-        dispatch(fetchDisabledAccounts(''));
-        dispatch(fetchAccounts(props.pagination));
       })
       .catch((e) =>
         showNotification({
@@ -75,6 +78,17 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
     }
   }, [dispatch, selectedAccountId]);
 
+  const RenderStatus: React.FC<{ status: string }> = (_props) => {
+    switch (_props.status) {
+      case 'PENDING':
+        return <div className={classes.pendingDisplay}>Pending</div>;
+      case 'BOOKED':
+        return <div className={classes.bookedDisplay}>Booked</div>;
+      default:
+        return null;
+    }
+  };
+
   const ListRequestByAccountId = () => {
     const rows =
       listRequest && listRequest.length > 0
@@ -84,6 +98,9 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
               <td>{row.roomName}</td>
               <td>{dayjs(row.timeCheckin).format('HH:mm DD/MM/YYYY')}</td>
               <td>{dayjs(row.timeCheckout).format('HH:mm DD/MM/YYYY')}</td>
+              <td>
+                <RenderStatus status={row.status} />
+              </td>
             </tr>
           ))
         : null;
@@ -116,6 +133,9 @@ const DisableModal: React.FC<DisableModalProps> = (props) => {
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
                 Time end
+              </Th>
+              <Th sorted={null} reversed={null} onSort={null}>
+                Status
               </Th>
             </tr>
           </thead>
@@ -213,6 +233,22 @@ const useStyles = createStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
+  },
+  bookedDisplay: {
+    color: '#40c057',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#00800024',
+    fontWeight: 600,
+  },
+  pendingDisplay: {
+    color: '#228be6',
+    textAlign: 'center',
+    borderRadius: 50,
+    width: 100,
+    backgroundColor: '#0000ff1c',
+    fontWeight: 600,
   },
   header: {
     position: 'sticky',

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AccountsController } from '../controllers';
 import { AccountsService } from '../services';
 import { AccountRepository } from '../repositories';
@@ -9,11 +9,13 @@ import { CloudinaryService } from '../services';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import { AccountHistService } from '../services/account-hist.service';
 import { AccountHistRepository } from '../repositories/account-hist.repository';
+import { BookingRoomModule } from './booking-room.module';
 
 @Module({
   imports: [
     ConfigModule,
     HttpModule,
+    forwardRef(() => BookingRoomModule),
     TypeOrmExModule.forCustomRepository([
       AccountRepository,
       AccountHistRepository,

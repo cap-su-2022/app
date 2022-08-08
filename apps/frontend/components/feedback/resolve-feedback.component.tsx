@@ -26,7 +26,7 @@ interface ResolveFeedbackModalProps {
 const validation = Yup.object().shape({
   replyMessage: Yup.string()
     .trim()
-    .min(10, 'Solution must be at least 10 characters')
+    .min(2, 'Solution must be at least 2 characters')
     .max(100, 'Solution can only maximum at 100 characters')
     .required('Solution is required'),
 });

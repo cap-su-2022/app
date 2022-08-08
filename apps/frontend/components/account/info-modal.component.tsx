@@ -25,7 +25,7 @@ interface InfoModalProps {
 
   toggleShown(): void;
 
-  toggleDisableModalShown(): void;
+  toggleDeleteModalShown(): void;
 }
 
 const InfoModal: React.FC<InfoModalProps> = (props) => {
@@ -167,7 +167,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
         <div className={classes.modalFooter}>
           {userInfo.id !== user.id ? (
             <Button
-              onClick={() => props.toggleDisableModalShown()}
+              onClick={() => props.toggleDeleteModalShown()}
               variant="outline"
               color={'red'}
               leftIcon={<Trash />}

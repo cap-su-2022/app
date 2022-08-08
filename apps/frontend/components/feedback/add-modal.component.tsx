@@ -29,7 +29,7 @@ interface AddFeedbackModalProps {
 const AddFeedbackValidation = Yup.object().shape({
   feedback: Yup.string()
     .trim()
-    .min(10, 'Feedback message must have at least 1 character.')
+    .min(2, 'Feedback message must have at least 2 character.')
     .max(100, 'Feedback message can only have at most 100 characters.')
     .required('Feedback message is required!'),
 });

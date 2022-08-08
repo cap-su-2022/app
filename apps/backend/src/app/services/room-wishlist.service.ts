@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { RoomWishlistRepository } from '../repositories';
 import { WishlistBookingRoomRequestDTO } from '../dto/wishlist-booking-room.request.dto';
 import { AccountsService } from './accounts.service';
@@ -13,8 +19,11 @@ export class RoomWishlistService {
 
   constructor(
     private readonly repository: RoomWishlistRepository,
+    @Inject(forwardRef(() => AccountsService))
     private readonly accountService: AccountsService,
+    @Inject(forwardRef(() => RoomWishlistHistService))
     private readonly histService: RoomWishlistHistService,
+    @Inject(forwardRef(() => SlotService))
     private readonly slotService: SlotService
   ) {}
 
@@ -33,7 +42,7 @@ export class RoomWishlistService {
   ) {
     console.log(wishlist.slotId);
     const slot = await this.slotService.getNumOfSlot(wishlist.slotId);
-    console.log("SLOT:", slot);
+    console.log('SLOT:', slot);
     const isWishlistExisted = await this.repository.checkIfWishlistAlreadyExist(
       {
         ...wishlist,

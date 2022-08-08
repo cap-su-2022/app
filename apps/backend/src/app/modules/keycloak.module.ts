@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { KeycloakService } from '../services';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,9 +12,9 @@ import { AuthenticationController } from '../controllers';
 @Module({
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([AccountRepository]),
     ConfigModule,
-    AccountsModule,
+    forwardRef(() => AccountsModule),
+    TypeOrmModule.forFeature([AccountRepository]),
   ],
   controllers: [AuthenticationController],
   providers: [KeycloakService, AuthenticationService, CloudinaryService],

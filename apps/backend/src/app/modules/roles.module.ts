@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { RoleService } from '../services/role.service';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import { RoleController } from '../controllers/role.controller';
@@ -14,7 +14,8 @@ import { RoleHistService } from '../services/role-hist.service';
   imports: [
     ConfigModule,
     HttpModule,
-    AccountsModule,
+    forwardRef(() => AccountsModule),
+
     TypeOrmExModule.forCustomRepository([RolesRepository, RoleHistRepository]),
   ],
   controllers: [RoleController],

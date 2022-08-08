@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import {
   RoomWishlistHistRepository,
   RoomWishlistRepository,
@@ -11,8 +11,8 @@ import { SlotModule } from './slot.module';
 
 @Module({
   imports: [
-    AccountsModule,
-    SlotModule,
+    forwardRef(() => SlotModule),
+    forwardRef(() => AccountsModule),
     TypeOrmExModule.forCustomRepository([
       RoomWishlistRepository,
       RoomWishlistHistRepository,

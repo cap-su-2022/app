@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { DeviceTypeController } from '../controllers/device-type.controller';
 import { DeviceTypeService } from '../services/device-type.service';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
@@ -15,9 +15,13 @@ import { DevicesModule } from './devices.module';
   imports: [
     ConfigModule,
     HttpModule,
-    AccountsModule,
-    DevicesModule,
-    TypeOrmExModule.forCustomRepository([DeviceTypeRepository, DeviceTypeHistRepository]),
+    forwardRef(() => DevicesModule),
+    forwardRef(() => AccountsModule),
+
+    TypeOrmExModule.forCustomRepository([
+      DeviceTypeRepository,
+      DeviceTypeHistRepository,
+    ]),
   ],
   controllers: [DeviceTypeController],
   exports: [DeviceTypeService, DeviceTypeHistService],

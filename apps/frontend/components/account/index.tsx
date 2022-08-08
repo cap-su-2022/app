@@ -238,7 +238,7 @@ function AccountsManagement() {
             <InfoModal
               toggleShown={() => setInfoShown(!isInfoShown)}
               isShown={isInfoShown}
-              toggleDisableModalShown={() => setDisableShown(!isDisableShown)}
+              toggleDeleteModalShown={() => setDeleteShown(!isDeleteShown)}
             />
             <DisableModal
               isShown={isDisableShown}
@@ -258,6 +258,7 @@ function AccountsManagement() {
               isShown={isDeleteShown}
               toggleShown={() => setDeleteShown(!isDeleteShown)}
               pagination={pagination}
+              toggleInforModalShown={() => setInfoShown(!isInfoShown)}
             />
             <AccountUpdateModal
               formik={updateFormik}

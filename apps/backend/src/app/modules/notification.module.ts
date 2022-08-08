@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import {  NotificationController } from '../controllers';
-import {  NotificationService } from '../services';
+import { forwardRef, Module } from '@nestjs/common';
+import { NotificationController } from '../controllers';
+import { NotificationService } from '../services';
 import { KeycloakService } from '../services';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
@@ -12,10 +12,9 @@ import { NotificationRepository } from '../repositories/notification.repository'
   imports: [
     ConfigModule,
     HttpModule,
-    AccountsModule,
-    TypeOrmExModule.forCustomRepository([
-      NotificationRepository,
-    ]),
+    forwardRef(() => AccountsModule),
+
+    TypeOrmExModule.forCustomRepository([NotificationRepository]),
   ],
   controllers: [NotificationController],
   providers: [NotificationService, KeycloakService],
