@@ -75,6 +75,13 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
     logging: ['query'],
     cache: false,
     timezone: '+7',
+    extra: {
+      // based on  https://node-postgres.com/api/pool
+      // max connection pool size
+      max: 10,
+      // connection timeout
+      connectionTimeoutMillis: 1000,
+    },
   }),
   inject: [ConfigService],
 });

@@ -6,30 +6,30 @@ import {
   Logger,
   Scope,
 } from '@nestjs/common';
-import {RoomsService} from './rooms.service';
-import {BookingRoomRepository} from '../repositories';
-import {BookingRoomResponseDTO} from '../dto/booking-room.response.dto';
-import {WishlistBookingRoomResponseDTO} from '../dto/wishlist-booking-room.response.dto';
-import {RoomWishlistService} from './room-wishlist.service';
-import {WishlistBookingRoomRequestDTO} from '../dto/wishlist-booking-room.request.dto';
-import {BookingRoomsFilterRequestPayload} from '../payload/request/booking-rooms.request.payload';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {RemoveWishlistRequest} from '../payload/request/remove-from-booking-room-wishlist.request.payload';
-import {DevicesService} from './devices.service';
-import {AccountsService} from './accounts.service';
-import {ChooseBookingRoomFilterPayload} from '../payload/request/choose-booking-room-filter.payload';
-import {GetBookingRoomsPaginationPayload} from '../payload/request/get-booking-rooms-pagination.payload';
-import {BookingRequest, Devices} from '../models';
-import {RoomTypeService} from './room-type.service';
-import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.payload';
-import {BookingRequestHistService} from './booking-room-hist.service';
-import {SlotService} from './slot.service';
+import { RoomsService } from './rooms.service';
+import { BookingRoomRepository } from '../repositories';
+import { BookingRoomResponseDTO } from '../dto/booking-room.response.dto';
+import { WishlistBookingRoomResponseDTO } from '../dto/wishlist-booking-room.response.dto';
+import { RoomWishlistService } from './room-wishlist.service';
+import { WishlistBookingRoomRequestDTO } from '../dto/wishlist-booking-room.request.dto';
+import { BookingRoomsFilterRequestPayload } from '../payload/request/booking-rooms.request.payload';
+import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { RemoveWishlistRequest } from '../payload/request/remove-from-booking-room-wishlist.request.payload';
+import { DevicesService } from './devices.service';
+import { AccountsService } from './accounts.service';
+import { ChooseBookingRoomFilterPayload } from '../payload/request/choose-booking-room-filter.payload';
+import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
+import { BookingRequest, Devices } from '../models';
+import { RoomTypeService } from './room-type.service';
+import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
+import { BookingRequestHistService } from './booking-room-hist.service';
+import { SlotService } from './slot.service';
 import dayjs = require('dayjs');
-import {DataSource, QueryRunner} from 'typeorm';
-import {BookingRoomDevicesService} from './booking-request-devices.service';
-import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
-import {NotificationService} from './notification.service';
-import {BookingRoomPaginationParams} from '../controllers/booking-room-pagination.model';
+import { DataSource, QueryRunner } from 'typeorm';
+import { BookingRoomDevicesService } from './booking-request-devices.service';
+import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
+import { NotificationService } from './notification.service';
+import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
 import { BookingFeedbackService } from './booking-feedback.service';
 
 @Injectable()
@@ -52,8 +52,7 @@ export class BookingRoomService {
     @Inject(forwardRef(() => BookingFeedbackService))
     private readonly bookingFeedbackService: BookingFeedbackService,
     private readonly histService: BookingRequestHistService
-  ) {
-  }
+  ) {}
 
   private getExampleStatistics() {
     return {
@@ -138,7 +137,6 @@ export class BookingRoomService {
       }
     }
 
-    console.log(result);
     return result;
   }
 
@@ -202,7 +200,7 @@ export class BookingRoomService {
       this.logger.error(e.message);
       throw new BadRequestException(
         e.message ||
-        'An error occurred while getting request by room id ' + roomId
+          'An error occurred while getting request by room id ' + roomId
       );
     }
   }
@@ -309,13 +307,13 @@ export class BookingRoomService {
   //   return this.deviceService.getBookingRoomDeviceList(name, type, sort);
   // }
 
-  async getUsernameList(): Promise<string[]> {
-    return await this.accountService.getUsernameList();
-  }
+  // async getUsernameList(): Promise<string[]> {
+  //   return await this.accountService.getUsernameList();
+  // }
 
-  async getRoomNames(): Promise<Devices[]> {
-    return await this.roomService.getRoomNames();
-  }
+  // async getRoomNames(): Promise<Devices[]> {
+  //   return await this.roomService.getRoomNames();
+  // }
 
   // async getChoosingBookingRooms(filter: string) {
   //   try {
@@ -430,7 +428,6 @@ export class BookingRoomService {
     checkoutSlotId: string;
   }) {
     try {
-      console.log('PAYLOAD: ', payload);
       const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlotId);
       const slotOut = await this.slotService.getNumOfSlot(
         payload.checkoutSlotId
@@ -572,7 +569,6 @@ export class BookingRoomService {
       const result = await this.roomService.filterRoomFreeByRoomBooked(
         listRoomBookedInDaySameSlot
       );
-      console.log('LIST ROOM FREE: ', result);
       return result;
     } catch (e) {
       this.logger.error(e.message);
@@ -667,17 +663,18 @@ export class BookingRoomService {
   async getBookingRoomById(id: string) {
     try {
       const requestInfo = await this.repository.findById(id);
-      console.log(requestInfo);
       if (requestInfo) {
         const listDevice = await this.bookingRoomDeviceService.findByRequestId(
           id
         );
 
-        const feedback = await this.bookingFeedbackService.isAlreadyFeedback(id)
+        const feedback = await this.bookingFeedbackService.isAlreadyFeedback(
+          id
+        );
         return {
           ...requestInfo,
           listDevice: listDevice,
-          feedback: feedback
+          feedback: feedback,
         };
       } else {
         throw new BadRequestException('Not found request with provided id');
@@ -691,9 +688,9 @@ export class BookingRoomService {
   async getCountRequestBooking(id: string) {
     try {
       const roleName = await this.accountService.getAccountRoleById(id);
-      if (roleName === "Librarian" || roleName === "System Admin") {
+      if (roleName === 'Librarian' || roleName === 'System Admin') {
         return await this.repository.getCountRequestBooking();
-      } else if (roleName === "Staff") {
+      } else if (roleName === 'Staff') {
         return await this.repository.getCountRequestBookingForAccountId(id);
       }
     } catch (e) {
@@ -701,7 +698,6 @@ export class BookingRoomService {
       throw new BadRequestException(e.message);
     }
   }
-
 
   async addNewRequest(
     payload: BookingRequestAddRequestPayload,
@@ -868,6 +864,8 @@ export class BookingRoomService {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -1046,6 +1044,8 @@ export class BookingRoomService {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -1079,7 +1079,6 @@ export class BookingRoomService {
         checkinSlotId: request.checkinSlotId,
         checkoutSlotId: request.checkoutSlotId,
       });
-      console.log('list request same slot: ', listRequestSameSlot);
       if (listRequestSameSlot) {
         const reason = 'This room is given priority for another request';
         listRequestSameSlot.forEach((requestSameSlot) => {
@@ -1114,6 +1113,8 @@ export class BookingRoomService {
       throw new BadRequestException(
         e.message ?? 'Error occurred while accept request'
       );
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -1179,6 +1180,8 @@ export class BookingRoomService {
       throw new BadRequestException(
         e.message ?? 'Error occurred while reject request'
       );
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -1248,6 +1251,8 @@ export class BookingRoomService {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -1258,12 +1263,16 @@ export class BookingRoomService {
     try {
       const roleName = await this.accountService.getAccountRoleById(accountId);
       if (roleName === 'System Admin' || roleName === 'Librarian') {
-        return await this.repository.findBookingRoomRequestsByFilter(filters);
+        return await this.repository.findBookingRequestsByFilter(
+          filters,
+          undefined
+        );
+      } else {
+        return await this.repository.findBookingRequestsByFilter(
+          filters,
+          accountId
+        );
       }
-      return await this.repository.findBookingRequestsByFilterAndRequestedBy(
-        filters,
-        accountId
-      );
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -1275,7 +1284,6 @@ export class BookingRoomService {
       const requestInfo = await this.repository.findCurrentCheckoutInformation(
         accountId
       );
-      console.log(requestInfo);
       if (requestInfo) {
         const listDevice = await this.bookingRoomDeviceService.findByRequestId(
           requestInfo.id
@@ -1352,7 +1360,6 @@ export class BookingRoomService {
 
   async acceptCheckinById(accountId: string, id: string) {
     try {
-      console.error('assss');
       await this.repository.acceptCheckinById(accountId, id);
     } catch (e) {
       this.logger.error(e.message);
@@ -1360,14 +1367,14 @@ export class BookingRoomService {
     }
   }
 
-  async rejectCheckinById(accountId: string, id: string, reason: string) {
-    try {
-      await this.repository.rejectCheckinById(accountId, id);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async rejectCheckinById(accountId: string, id: string, reason: string) {
+  //   try {
+  //     await this.repository.rejectCheckinById(accountId, id);
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
   async acceptCheckoutById(accountId: string, id: string) {
     try {
@@ -1378,12 +1385,12 @@ export class BookingRoomService {
     }
   }
 
-  async rejectCheckoutById(accountId: string, id: string, reason: string) {
-    try {
-      await this.repository.rejectCheckoutById(accountId, id);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async rejectCheckoutById(accountId: string, id: string, reason: string) {
+  //   try {
+  //     await this.repository.rejectCheckoutById(accountId, id);
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 }

@@ -1,11 +1,10 @@
 import React, { Ref } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Signature, { SignatureViewRef } from 'react-native-signature-canvas';
 import { deviceHeight, deviceWidth } from '../../../../utils/device';
 import { GRAY, INPUT_GRAY_COLOR, WHITE } from '@app/constants';
 
 interface ReadyToCheckinSignatureProps {
-  signatureRef: Ref<SignatureViewRef>;
+  signatureRef?: any;
   isSignatureBoardHidden: boolean;
   handleSignatureBoardHidden(): void;
   handleOnFinishSigning(): void;
@@ -37,22 +36,7 @@ const ReadyToCheckinSignature: React.FC<ReadyToCheckinSignatureProps> = (
               : null
           }
           style={styles.signatureBoard}
-        >
-          {props.isSignatureBoardHidden ? (
-            <Signature
-              ref={props.signatureRef}
-              onEmpty={() => props.handleSignatureEmptyAction()}
-              onOK={(e) => props.handleGetSignatureData(e)}
-              onBegin={() => {
-                props.handleScrollViewEnabled(false);
-              }}
-              onEnd={() => props.handleOnFinishSigning()}
-              style={{
-                borderRadius: 8,
-              }}
-            />
-          ) : null}
-        </View>
+        ></View>
       </View>
     </View>
   );
