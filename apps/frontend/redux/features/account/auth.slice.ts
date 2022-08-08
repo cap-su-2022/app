@@ -43,14 +43,9 @@ export const authSlice = createSlice({
       state.error = thunk.payload.message;
       state.isLoading = false;
     });
-    builder.addCase(
-      doValidateAccessToken.fulfilled,
-      (state, { payload }) => {}
-    );
     builder.addCase(doValidateAccessToken.rejected, (state, { payload }) => {
       state.userLoginResponse = undefined;
     });
-    builder.addCase(doLoginWithGoogle.fulfilled, (state, { payload }) => {});
     builder.addCase(doLoginWithGoogle.rejected, (state, { payload }) => {
       state.isLoginFailed = true;
       state.error = payload.message;
