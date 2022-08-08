@@ -20,7 +20,6 @@ import TableFooter from '../../components/actions/table-footer.component';
 import AddRoomModal from '../../components/rooms/add-modal.component';
 import DeleteRoomModal from '../../components/rooms/delete-modal.component';
 import DisableRoomModal from '../../components/rooms/disable-modal.component';
-import DownloadModal from '../../components/rooms/download-modal.compnent';
 import RoomInfoModal from '../../components/rooms/info-modal.component';
 import RestoreDisabledRoomModal from '../../components/rooms/restore-disabled.modal.component';
 import RestoreDeletedRoomModal from '../../components/rooms/restore-deleted.modal.component';
@@ -28,7 +27,7 @@ import UpdateModal from '../../components/rooms/update-modal.component';
 import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import Header from '../../components/common/header.component';
 import {fetchRoomTypeNames} from '../../redux/features/room-type';
-import { UserInfoModel } from '../../models/user/user-info.model';
+import {UserInfoModel} from '../../models/user/user-info.model';
 
 const defaultPagination = {
   limit: 5,
@@ -149,13 +148,6 @@ function RoomsManagement(props: any) {
         >
           <TrashOff/>
         </Button>
-        <Button
-          variant="outline"
-          color="violet"
-          onClick={() => setDownShown(true)}
-        >
-          <Download/>
-        </Button>
       </>
     );
   };
@@ -256,10 +248,6 @@ function RoomsManagement(props: any) {
         ) : (
           <NoDataFound/>
         )}
-        <DownloadModal
-          isShown={isDownShown}
-          toggleShown={() => handleDownModalClose()}
-        />
         <AddRoomModal
           isShown={isAddShown}
           pagination={pagination}

@@ -157,9 +157,6 @@ function DevicesManagement() {
         >
           <TrashOff/>
         </Button>
-        <Button variant="outline" color="violet">
-          <Download/>
-        </Button>
       </>
     );
   };
