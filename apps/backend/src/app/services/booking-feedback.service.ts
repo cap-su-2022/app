@@ -1,7 +1,7 @@
 import { BadRequestException, forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { PaginationParams } from '../controllers/pagination.model';
-import { BookingRoomFeedback, Feedback } from '../models';
+import { BookingRoomFeedback } from '../models';
 import { BookingFeedbackSendRequestPayload } from '../payload/request/booking-feedback-send.request.payload';
 import { BookingFeedbackRepository } from '../repositories/booking-feedback.repository';
 import { BookingRoomService } from './booking-room.service';
@@ -101,6 +101,8 @@ export class BookingFeedbackService {
       this.logger.error(e);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 

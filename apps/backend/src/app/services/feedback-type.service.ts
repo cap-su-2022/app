@@ -2,7 +2,6 @@ import {BadRequestException, Injectable, Logger} from '@nestjs/common';
 import {PaginationParams} from '../controllers/pagination.model';
 import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
 import {FeedbackTypeRepository} from '../repositories';
-import {FeedbackService} from './feedback.service';
 
 @Injectable()
 export class FeedbackTypeService {

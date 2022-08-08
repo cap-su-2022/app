@@ -737,35 +737,35 @@ export class BookingRoomController {
     return this.service.acceptCheckinById(user.account_id, payload.id);
   }
 
-  @Put('reject-checkin/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Reject checking by id',
-    description: 'Reject request by provided id',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully accepted the request',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while rejecting the request',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  rejectCheckinRequestById(
-    @Param('id') id: string,
-    @Body() payload: CancelRequestPayload,
-    @User() user: KeycloakUserInstance
-  ) {
-    return this.service.rejectCheckinById(user.account_id, id, payload.reason);
-  }
+  // @Put('reject-checkin/:id')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  // @ApiOperation({
+  //   summary: 'Reject checking by id',
+  //   description: 'Reject request by provided id',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully accepted the request',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while rejecting the request',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Invalid access token',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // rejectCheckinRequestById(
+  //   @Param('id') id: string,
+  //   @Body() payload: CancelRequestPayload,
+  //   @User() user: KeycloakUserInstance
+  // ) {
+  //   return this.service.rejectCheckinById(user.account_id, id, payload.reason);
+  // }
 
   @Put('accept-checkout/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -796,35 +796,35 @@ export class BookingRoomController {
     return this.service.acceptCheckoutById(user.account_id, payload.id);
   }
 
-  @Put('reject-checkout/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Reject room checkout by id',
-    description: 'Reject room checkout by provided id',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully rejected the request',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while rejecting the request',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  rejectCheckOutRequestById(
-    @Param('id') id: string,
-    @Body() payload: CancelRequestPayload,
-    @User() user: KeycloakUserInstance
-  ) {
-    return this.service.rejectCheckoutById(user.account_id, id, payload.reason);
-  }
+  // @Put('reject-checkout/:id')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  // @ApiOperation({
+  //   summary: 'Reject room checkout by id',
+  //   description: 'Reject room checkout by provided id',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully rejected the request',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while rejecting the request',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Invalid access token',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // rejectCheckOutRequestById(
+  //   @Param('id') id: string,
+  //   @Body() payload: CancelRequestPayload,
+  //   @User() user: KeycloakUserInstance
+  // ) {
+  //   return this.service.rejectCheckoutById(user.account_id, id, payload.reason);
+  // }
 
   @Put('reject/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -911,9 +911,9 @@ export class BookingRoomController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getUsernameList() {
-    return this.service.getUsernameList();
-  }
+  // getUsernameList() {
+  //   return this.service.getUsernameList();
+  // }
 
   // @Get('rooms-name')
   // getRoomsName() {
