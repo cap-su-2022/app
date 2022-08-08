@@ -24,7 +24,7 @@ const TrackRoomBookingFeedbackNavigator: React.FC<any> = () => {
         options={{
           headerShown: false,
         }}
-        name="ACCEPT_FEEDBACK_ROUTE"
+        name="ACCEPT_FEEDBACK_ROOM_ROUTE"
         component={AcceptFeedbackNavigator}
       />
       <StackScreen

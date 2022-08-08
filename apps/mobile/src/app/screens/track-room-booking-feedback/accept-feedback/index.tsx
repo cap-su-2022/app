@@ -38,10 +38,10 @@ import AlertModal from '../../../components/modals/alert-modal.component';
 import { resolveFeedback } from '../../../redux/features/feedback/thunk/resolve-feedback.thunk';
 import { cancelFeedback } from '../../../redux/features/feedback/thunk/cancel-feedback.thunk';
 
-const AcceptFeedback: React.FC<any> = () => {
+const AcceptRoomFeedback: React.FC<any> = () => {
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
-  const { feedback } = useAppSelector((state) => state.feedback);
+  const { roomBookingFeedback } = useAppSelector((state) => state.roomBookingFeedback);
   const authUser = useAppSelector((state) => state.auth.authUser);
 
   const handleResolveAction = () => {
@@ -59,7 +59,7 @@ const AcceptFeedback: React.FC<any> = () => {
     if (authUser.role === 'Staff') {
       return <></>;
     }
-    return feedback.status !== 'REJECTED' && feedback.status !== 'RESOLVED' ? (
+    return roomBookingFeedback.status !== 'REJECTED' && roomBookingFeedback.status !== 'RESOLVED' ? (
       <ResolveFeedbackFooter
         handleReject={() => handleCancelAction()}
         handleAccept={() => handleResolveAction()}
@@ -76,7 +76,7 @@ const AcceptFeedback: React.FC<any> = () => {
     // @ts-ignore
     dispatch(
       resolveFeedback({
-        id: feedback.id,
+        id: roomBookingFeedback.id,
         replyMessage: resolveFeedbackModal.current
           ? resolveFeedbackModal.current.message
           : undefined,
@@ -91,7 +91,7 @@ const AcceptFeedback: React.FC<any> = () => {
   const handleAttemptCancelFeedback = () => {
     dispatch(
       cancelFeedback({
-        id: feedback.id,
+        id: roomBookingFeedback.id,
         replyMessage: rejectFeedbackModal.current
           ? rejectFeedbackModal.current.message
           : undefined,
@@ -336,7 +336,7 @@ const AcceptFeedback: React.FC<any> = () => {
             />
           </TouchableOpacity>
           <Text style={styles.headerTitleText}>
-            {feedback.status !== 'RESOLVED' && feedback.status !== 'REJECTED'
+            {roomBookingFeedback.status !== 'RESOLVED' && roomBookingFeedback.status !== 'REJECTED'
               ? 'Incoming feedback'
               : 'Review feedback'}
           </Text>
@@ -353,8 +353,8 @@ const AcceptFeedback: React.FC<any> = () => {
             }}
           >
             {authUser.role !== 'Staff' &&
-            feedback.status !== 'RESOLVED' &&
-            feedback.status !== 'REJECTED' ? (
+            roomBookingFeedback.status !== 'RESOLVED' &&
+            roomBookingFeedback.status !== 'REJECTED' ? (
               <View style={styles.warningMessageContainer}>
                 <ExclamationIcon
                   color={FPT_ORANGE_COLOR}
@@ -367,10 +367,10 @@ const AcceptFeedback: React.FC<any> = () => {
               </View>
             ) : null}
             {authUser.role !== 'Staff' &&
-            feedback.status !== 'RESOLVED' &&
-            feedback.status !== 'REJECTED' ? (
+            roomBookingFeedback.status !== 'RESOLVED' &&
+            roomBookingFeedback.status !== 'REJECTED' ? (
               <Text style={styles.textStatus}>
-                {feedback.createdBy} sent the feedback
+                {roomBookingFeedback.createdBy} sent the feedback
               </Text>
             ) : null}
             <Text style={styles.informationHeaderTitle}>
@@ -379,14 +379,14 @@ const AcceptFeedback: React.FC<any> = () => {
             <View style={styles.bookingInformationContainer}>
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Created By</Text>
-                <Text style={styles.valueText}>{feedback.createdBy}</Text>
+                <Text style={styles.valueText}>{roomBookingFeedback.createdBy}</Text>
               </View>
               <Divider num={deviceWidth / 10} />
 
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Created at</Text>
                 <Text style={styles.valueText}>
-                  {dayjs(new Date(feedback.createdAt)).format(
+                  {dayjs(new Date(roomBookingFeedback.createdAt)).format(
                     'HH:mm DD/MM/YYYY'
                   )}
                 </Text>
@@ -396,12 +396,12 @@ const AcceptFeedback: React.FC<any> = () => {
 
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Feedback type</Text>
-                <Text style={styles.valueText}>{feedback.feedbackType}</Text>
+                <Text style={styles.valueText}>{roomBookingFeedback.feedbackType}</Text>
               </View>
             </View>
 
-            {feedback.status === 'RESOLVED' ||
-            feedback.status === 'REJECTED' ? (
+            {roomBookingFeedback.status === 'RESOLVED' ||
+            roomBookingFeedback.status === 'REJECTED' ? (
               <View>
                 <Text style={styles.informationHeaderTitle}>
                   FEEDBACK STATUS
@@ -414,14 +414,14 @@ const AcceptFeedback: React.FC<any> = () => {
                 >
                   <View style={styles.dataRowContainer}>
                     <Text style={styles.titleText}>Status</Text>
-                    <Text style={styles.valueText}>{feedback.status}</Text>
+                    <Text style={styles.valueText}>{roomBookingFeedback.status}</Text>
                   </View>
 
                   <>
                     <Divider num={deviceWidth / 10} />
                     <View style={styles.dataRowContainer}>
                       <Text style={styles.titleText}>Reply Message</Text>
-                      <Text style={styles.valueText}>{feedback.replyMess}</Text>
+                      <Text style={styles.valueText}>{roomBookingFeedback.replyMess}</Text>
                     </View>
                   </>
                 </View>
@@ -440,7 +440,7 @@ const AcceptFeedback: React.FC<any> = () => {
               >
                 <View style={styles.dataRowContainer}>
                   <Text style={styles.titleText}>Feedback ID</Text>
-                  <Text style={styles.valueText}>{feedback.id}</Text>
+                  <Text style={styles.valueText}>{roomBookingFeedback.id}</Text>
                 </View>
 
                 <>
@@ -448,7 +448,7 @@ const AcceptFeedback: React.FC<any> = () => {
                   <View style={styles.dataRowContainer}>
                     <Text style={styles.titleText}>Message</Text>
                     <Text style={styles.valueText}>
-                      {feedback.feedbackMess}
+                      {roomBookingFeedback.feedbackMess}
                     </Text>
                   </View>
                 </>
@@ -582,4 +582,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AcceptFeedback;
+export default AcceptRoomFeedback;

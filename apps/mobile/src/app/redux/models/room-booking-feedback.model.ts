@@ -7,4 +7,6 @@ export interface RoomBookingFeedback {
   createdBy: string;
   createdAt: string;
   rateNum: number;
+  status: string;
+  replyMess: string;
 }
