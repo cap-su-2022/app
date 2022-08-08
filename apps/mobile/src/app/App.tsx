@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { StatusBar } from 'react-native';
+import { AsyncStorage, StatusBar } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { StackNavigator, StackScreen } from '@app/utils';
@@ -21,6 +21,7 @@ import {
 import { DEFAULT_QUICK_ACCESS } from './constants/quick-access-navigation.constant';
 import { useAppSelector } from './hooks/use-app-selector.hook';
 import { addUserAfterCloseApp } from './redux/features/auth/slice';
+import messaging from '@react-native-firebase/messaging';
 
 export const App = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -40,6 +41,52 @@ export const App = () => {
       }
     }
   };
+
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  };
+
+  const getFCMToken = async () => {
+    const fcmToken = await AsyncStorage.getItem('fcmToken')
+    console.log(fcmToken, 'old token')
+    if (!fcmToken){
+      try {
+        const fcmToken =await messaging().getToken()
+        if (fcmToken){
+          console.log(fcmToken, 'new token')
+          await  AsyncStorage.setItem('fcmToken', fcmToken)
+        }
+      } catch (e){
+        console.log(e, 'Error in fcmToken')
+      }
+    }
+  }
+  const notificationListener = () => {
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(
+        'notification caused app to open from background state: ',
+        remoteMessage.notification
+      );
+    });
+
+    messaging().onMessage(async remoteMessage => {
+      console.log('notification on foreground state ', remoteMessage)
+    })
+  };
+
+  useEffect(() => {
+    console.log('aaaa')
+    requestUserPermission().then(r => console.log(r))
+    notificationListener()
+    getFCMToken().then(r => console.log(r))
+  },[])
 
   useEffect(() => {
     if (!LOCAL_STORAGE.contains('QUICK_ACCESS')) {
