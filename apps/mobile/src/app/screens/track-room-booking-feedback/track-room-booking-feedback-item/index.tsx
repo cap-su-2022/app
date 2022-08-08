@@ -22,12 +22,14 @@ const RoomBookingFeedbackItem: React.FC<BookingRequestItemProps> = (props) => {
   const handleFetchBookingRequest = (id: string) => {
     dispatch(fetchRoomBookingFeedback(id))
       .unwrap()
-      .then(() => navigate.navigate('ACCEPT_FEEDBACK_ROUTE'))
+      .then(() => navigate.navigate('ACCEPT_FEEDBACK_ROOM_ROUTE'))
       .catch(() => alert('Failed while fetching data'));
   };
 
   return (
     <TouchableOpacity
+      // @ts-ignore
+      key={props.item}
       onPress={() => handleFetchBookingRequest(props.item.id)}
       style={[
         boxShadow(styles),
