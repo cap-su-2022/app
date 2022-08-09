@@ -168,7 +168,6 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         if (userInfo.role !== 'Staff') {
           return (
             <>
-              <div></div>
               <Button
                 onClick={() => props.toggleCheckoutModalShown()}
                 variant="outline"
@@ -184,7 +183,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         } else return null;
 
       case 'CHECKED_OUT':
-        if (userInfo.id === requestBooking.requestedById) {
+        if (userInfo.id === requestBooking.bookedForId) {
           if (requestBooking.feedback) {
             return (
               <>
@@ -400,7 +399,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               icon={<ClipboardText />}
               radius="md"
               readOnly
-              value={requestBooking.reason}
+              value={requestBooking.reason || 'Other'}
             />
           </InputWrapper>
 
@@ -446,7 +445,7 @@ const useStyles = createStyles({
     display: 'flex',
     justifyContent: 'space-between',
     margin: 10,
-    // width: 550,
+    width: 530,
   },
   modalInputDate: {
     display: 'flex',

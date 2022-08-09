@@ -737,6 +737,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('br.cancel_reason', 'cancelReason')
       .addSelect('br.accepted_at', 'acceptedAt')
       .addSelect('bf.username', 'bookedFor')
+      .addSelect('br.booked_for', 'bookedForId')
       .addSelect('s.name', 'checkinSlot')
       .addSelect('s.time_start', 'checkinTime')
       .addSelect('ss.name', 'checkoutSlot')
@@ -751,7 +752,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .leftJoin(Accounts, 'bf', 'bf.id = br.booked_for')
       .leftJoin(Slot, 's', 's.id = br.checkin_slot')
       .leftJoin(Slot, 'ss', 'ss.id = br.checkout_slot')
-      .innerJoin(BookingReason, 'bkr', 'bkr.id = br.booking_reason_id')
+      .leftJoin(BookingReason, 'bkr', 'bkr.id = br.booking_reason_id')
       .where('br.id = :id', { id: id })
       .getRawOne<BookingRequest>();
   }
@@ -767,7 +768,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       requestedBy: userId,
       requestedAt: new Date(),
       status: status,
-      bookingReasonId: payload.bookingReasonId,
+      bookingReasonId: payload.bookingReasonId === 'null' ? null : payload.bookingReasonId,
       description: payload.description,
       checkinSlot: payload.checkinSlot,
       checkoutSlot: payload.checkoutSlot,

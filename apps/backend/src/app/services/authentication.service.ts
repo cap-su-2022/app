@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { KeycloakService } from './keycloak.service';
 import {
@@ -125,6 +131,25 @@ export class AuthenticationService {
   async handleUsernamePasswordLogin(
     credentials: UsernamePasswordCredentials
   ): Promise<UsernamePasswordLoginResponse> {
+    const isDeleted = await this.accountService.isDeletedByUsername(
+      credentials.username
+    );
+    if (isDeleted) {
+      throw new BadRequestException(
+        `Your account was be deleted.
+        You can't login!`
+      );
+    }
+
+    const isDisable = await this.accountService.isDisabledByUsername(
+      credentials.username
+    );
+    if (isDisable) {
+      throw new BadRequestException(
+        'Your account was be disbaled, connect to library to reactive account!'
+      );
+    }
+
     const keycloakToken = await this.keycloakService.signInToKeycloak(
       credentials.username,
       credentials.password

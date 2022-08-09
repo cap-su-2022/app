@@ -54,12 +54,12 @@ export class FeedbackTypeService {
     }
   }
 
-  addNewFeedbackType(
+  async addNewFeedbackType(
     accountId: string,
     payload: MasterDataAddRequestPayload
   ) {
     try {
-      const isExistedByName = this.repository.isExistedByName(payload.name);
+      const isExistedByName = await this.repository.isExistedByName(payload.name);
       if(isExistedByName) {
         throw new BadRequestException("There already exists a feedback type with the this name. Try with another name.")
       }

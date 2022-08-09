@@ -41,7 +41,7 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   const dropdown = useRef(null);
 
   useEffect(() => {
-    props.formik.setFieldValue('bookingReasonId', reasonNames[0].value);
+    props.formik.setFieldValue('bookingReasonId', reasonNames[0]?.value);
   }, []);
 
   useEffect(() => {

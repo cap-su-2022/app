@@ -30,7 +30,7 @@ const AddFeedbackValidation = Yup.object().shape({
   feedback: Yup.string()
     .trim()
     .min(2, 'Feedback message must have at least 2 character.')
-    .max(100, 'Feedback message can only have at most 100 characters.')
+    .max(500, 'Feedback message can only have at most 500 characters.')
     .required('Feedback message is required!'),
 });
 
