@@ -54,6 +54,7 @@
     "@nestjs/common": "*",
     "socket.io-client": "*",
     "react-native-device-info": "*",
-    "react-native-signature-canvas": "*"
+    "react-native-signature-canvas": "*",
+    "@react-native-firebase/messaging": "*"
   }
 }
