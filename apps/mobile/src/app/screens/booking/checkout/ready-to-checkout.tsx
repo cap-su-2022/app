@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -26,7 +26,6 @@ import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import { fetchAllSlots } from '../../../redux/features/slot';
 import SocketIOClient from 'socket.io-client/dist/socket.io.js';
 
-
 const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
@@ -49,10 +48,10 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   useEffect(() => {
     socket.on('msgToServer', (e) => {
       if (e === roomBookingCheckout.id) {
-        navigate.navigate('CHECKOUT_SUCCESSFULLY')
+        navigate.navigate('CHECKOUT_SUCCESSFULLY');
       }
-    })
-  })
+    });
+  });
 
   useEffect(() => {
     dispatch(fetchAllSlots())
@@ -70,7 +69,6 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
         );
       });
   }, []);
-
 
   const handleCheckoutBookingRoom = () => {
     dispatch(checkOutBookingRoom(roomBookingCheckout.id))
@@ -90,7 +88,9 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
             />
           </View>
           <View style={styles.deviceDetailInfoContainer}>
-            <Text style={styles.deviceDetailName}>Name: {device.deviceName}</Text>
+            <Text style={styles.deviceDetailName}>
+              Name: {device.deviceName}
+            </Text>
             <Text style={styles.deviceDetailName}>
               Quantity: {device.deviceQuantity}
             </Text>
@@ -322,14 +322,16 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
           </View>
 
           <View style={styles.deviceDetailContainer}>
-            <Text style={styles.deviceDetailHeaderText}>DEVICE(S) DETAIL</Text>
+            {roomBookingCheckout.listDevice.length > 0 ? (
+              <Text style={styles.deviceDetailHeaderText}>
+                DEVICE(S) DETAIL
+              </Text>
+            ) : null}
             {roomBookingCheckout.listDevice.map((device) =>
               renderDevice(device)
             )}
           </View>
         </ScrollView>
-        <View style={styles.footer}>
-        </View>
       </View>
       <ErrorAlertModal />
     </SafeAreaView>
@@ -470,7 +472,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'row',
-    marginVertical: 5
+    marginVertical: 5,
   },
   deviceDetailInfoContainer: {
     display: 'flex',
