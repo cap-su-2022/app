@@ -40,7 +40,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const [timeSlotCheckout, setTimeSlotCheckout] = useState('');
 
   const socket = useMemo(() => {
-    return SocketIOClient('http://34.142.193.100:5000/booking', {
+    return SocketIOClient('http://192.168.100.44:5000/booking', {
       jsonp: false,
     });
   }, []);
@@ -48,10 +48,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   useEffect(() => {
     socket.on('msgToServer', (e) => {
       if (e === roomBookingCheckout.id) {
-        setTimeout(() => {
-          alert('Check-out Success');
-        }, 2000);
-        navigate.replace('MAIN');
+        navigate.navigate('CHECKOUT_SUCCESSFULLY');
       }
     });
   });
@@ -325,20 +322,16 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
           </View>
 
           <View style={styles.deviceDetailContainer}>
-            <Text style={styles.deviceDetailHeaderText}>DEVICE(S) DETAIL</Text>
+            {roomBookingCheckout.listDevice.length > 0 ? (
+              <Text style={styles.deviceDetailHeaderText}>
+                DEVICE(S) DETAIL
+              </Text>
+            ) : null}
             {roomBookingCheckout.listDevice.map((device) =>
               renderDevice(device)
             )}
           </View>
         </ScrollView>
-        {/*<View style={styles.footer}>*/}
-        {/*  <TouchableOpacity*/}
-        {/*    onPress={() => handleCheckoutBookingRoom()}*/}
-        {/*    style={styles.checkOutButton}*/}
-        {/*  >*/}
-        {/*    <Text style={styles.checkOutButtonText}>Proceed to check out</Text>*/}
-        {/*  </TouchableOpacity>*/}
-        {/*</View>*/}
       </View>
       <ErrorAlertModal />
     </SafeAreaView>

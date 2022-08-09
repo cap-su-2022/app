@@ -219,7 +219,6 @@ const CheckoutSuccessfully: React.FC<any> = () => {
     },
     onSubmit: (values) => handleSubmit(values),
   });
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <NotLeavingFeedbackAlertModal />
@@ -236,8 +235,9 @@ const CheckoutSuccessfully: React.FC<any> = () => {
             <Text style={styles.title}>Please rate our services</Text>
             <View style={[styles.ratingContainer, boxShadow(styles)]}>
               <StarRating
-                rating={formik.values.rateNum}
+                rating={rating}
                 setRating={(rate) => {
+                  console.log(rate)
                   setRating(rate);
                 }}
               />

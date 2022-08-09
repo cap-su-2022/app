@@ -97,7 +97,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
         setTimeSlotCheckout(
           value
             .find((slot) => slot.slotNum === bookingRoom.checkoutSlot)
-            .timeStart.slice(0, 5)
+            .timeEnd.slice(0, 5)
         );
       });
   }, []);
