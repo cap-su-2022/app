@@ -17,15 +17,14 @@ const ApexChart: React.FC<ChartProps> = (props) => {
       series: [
         props?.booked,
         props?.cancelled,
-        props?.total - props?.booked - props?.cancelled,
       ],
       options: {
         chart: {
           width: 600,
           type: 'donut',
         },
-        labels: ['Booked', 'Cancelled', 'Pending'],
-        colors: ['#13bd00', '#ff0000', '#000dff'],
+        labels: ['Booked', 'Cancelled'],
+        colors: ['#13bd00', '#ff0000'],
         plotOptions: {
           pie: {
             startAngle: -90,
