@@ -21,7 +21,7 @@ const HomeScreenSectionRoomCheckout: React.FC<any> = () => {
     dispatch(fetchCurrentCheckoutInformation())
       .unwrap()
       .then(() => navigate.navigate('ROOM_CHECKOUT'))
-      .catch(() => alert('Failed while fetching checkout information'));
+      .catch(() => navigate.navigate('NO_ROOM_CHECKOUT'));
   };
 
   return (

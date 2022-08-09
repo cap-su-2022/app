@@ -20,7 +20,14 @@ const HomeScreenSectionRoomCheckin: React.FC<any> = () => {
   const handleNavigateTrackBookingRoom = () => {
     dispatch(fetchCurrentCheckinInformation())
       .unwrap()
-      .then(() => navigate.navigate('CHECK_IN'))
+      .then((value) => {
+        if (typeof value === "object"){
+          navigate.navigate('CHECK_IN')
+        } else {
+          navigate.navigate('CHECK_IN_NOT_FOUND')
+        }
+
+      })
       .catch(() => alert('Failed to fetch check-in information'));
   };
 

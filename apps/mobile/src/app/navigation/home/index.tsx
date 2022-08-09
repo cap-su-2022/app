@@ -13,6 +13,8 @@ import NotificationNavigator from './notification';
 import CheckinBookingRoomNavigator from './check-in-booking-room';
 import TrackFeedbackNavigator from './track-feedback';
 import TrackRoomBookingFeedbackNavigator from './track-room-booking-feedback';
+import NoRoomBookingCheckOut from '../../screens/booking/checkout/no-room-booking';
+import CheckinBookingRoomNotFound from '../../screens/booking/check-in-booking-room/not-found';
 
 const HomeNavigator: React.FC = () => {
   const navigate = useAppNavigation();
@@ -47,6 +49,11 @@ const HomeNavigator: React.FC = () => {
           headerShown: false,
         }}
         component={RoomBookingCheckoutNavigator}
+      />
+      <StackScreen name="NO_ROOM_CHECKOUT" component={NoRoomBookingCheckOut} />
+      <StackScreen
+        name="CHECK_IN_NOT_FOUND"
+        component={CheckinBookingRoomNotFound}
       />
       <StackScreen
         name="TRACK_BOOKING_ROOM"
