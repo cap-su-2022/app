@@ -13,38 +13,37 @@ interface StarRatingProps {
 }
 
 const StarRating: React.FC<StarRatingProps> = (props) => {
-
   return (
     <>
-      {props.rating > 0 && props.rating <= 5
+      {props.rating >= 1
         ? <TouchableOpacity onPress={() => props.setRating(1)}>
           <SolidStarIcon size={deviceWidth / 10} color={FPT_ORANGE_COLOR} />
         </TouchableOpacity>
         : <TouchableOpacity onPress={() => props.setRating(1)}>
           <OutlineStarIcon size={deviceWidth / 10} color={GRAY} />
         </TouchableOpacity>}
-      {props.rating > 1 && props.rating <= 5
+      {props.rating >= 2
         ? <TouchableOpacity onPress={() => props.setRating(2)}>
           <SolidStarIcon size={deviceWidth / 10} color={FPT_ORANGE_COLOR} />
         </TouchableOpacity>
         : <TouchableOpacity onPress={() => props.setRating(2)}>
           <OutlineStarIcon size={deviceWidth / 10} color={GRAY} />
         </TouchableOpacity>}
-      {props.rating > 2 && props.rating <= 5
+      {props.rating >= 3
         ? <TouchableOpacity onPress={() => props.setRating(3)}>
           <SolidStarIcon size={deviceWidth / 10} color={FPT_ORANGE_COLOR} />
         </TouchableOpacity>
         : <TouchableOpacity onPress={() => props.setRating(3)}>
           <OutlineStarIcon size={deviceWidth / 10} color={GRAY} />
         </TouchableOpacity>}
-      {props.rating > 3 && props.rating <= 5
+      {props.rating >= 4
         ? <TouchableOpacity onPress={() => props.setRating(4)}>
           <SolidStarIcon size={deviceWidth / 10} color={FPT_ORANGE_COLOR} />
         </TouchableOpacity>
         : <TouchableOpacity onPress={() => props.setRating(4)}>
           <OutlineStarIcon size={deviceWidth / 10} color={GRAY} />
         </TouchableOpacity>}
-      {props.rating > 4 && props.rating <= 5
+      {props.rating === 5
         ? <TouchableOpacity onPress={() => props.setRating(5)}>
           <SolidStarIcon size={deviceWidth / 10} color={FPT_ORANGE_COLOR} />
         </TouchableOpacity>
