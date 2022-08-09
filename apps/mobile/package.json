@@ -17,7 +17,6 @@
     "react-redux": "*",
     "@reduxjs/toolkit": "*",
     "@react-native-firebase/app": "*",
-    "@react-native-google-signin/google-signin": "*",
     "@react-native-firebase/auth": "*",
     "formik": "*",
     "react-native-permissions": "*",
@@ -37,6 +36,12 @@
     "react-native-gesture-handler": "*",
     "react-native-qrcode-svg": "*",
     "dayjs": "*",
+    "@react-native-picker/picker": "*",
+    "@nestjs/common": "*",
+    "socket.io-client": "*",
+    "react-native-device-info": "*",
+    "@react-native-firebase/messaging": "*",
+    "@react-native-google-signin/google-signin": "*",
     "@mantine/core": "*",
     "tabler-icons-react": "*",
     "@mantine/hooks": "*",
@@ -49,12 +54,6 @@
     "firebase": "*",
     "next-redux-wrapper": "*",
     "redux-logger": "*",
-    "@react-native-picker/picker": "*",
-    "@formkit/auto-animate": "*",
-    "@nestjs/common": "*",
-    "socket.io-client": "*",
-    "react-native-device-info": "*",
-    "react-native-signature-canvas": "*",
-    "@react-native-firebase/messaging": "*"
+    "@formkit/auto-animate": "*"
   }
 }
