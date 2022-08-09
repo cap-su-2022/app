@@ -1,5 +1,5 @@
-import React, {  useEffect, useState } from 'react';
-import {createStyles, Table, Button, Highlight} from '@mantine/core';
+import React, { useEffect, useState } from 'react';
+import { createStyles, Table, Button, Highlight } from '@mantine/core';
 import { Archive, InfoCircle, Pencil } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
@@ -16,7 +16,7 @@ interface TableBodyProps {
   actionButtonCb: any;
   page: number;
   itemsPerPage: number;
-  search: string | string[]
+  search: string | string[];
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
@@ -43,14 +43,10 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           : (props.page - 1) * props.itemsPerPage + (index + 1)}
       </td>
       <td>
-        <Highlight highlight={props.search}>
-          {row.name}
-        </Highlight>
+        <Highlight highlight={props.search}>{row.name}</Highlight>
       </td>
       <td>
-        <Highlight highlight={props.search}>
-        {row.type}
-        </Highlight>
+        <Highlight highlight={props.search}>{row.type}</Highlight>
       </td>
       <td className={classes.actionButtonContainer}>
         <Button
@@ -60,7 +56,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           <InfoCircle />
         </Button>
 
-        {userInfo.role === 'System Admin' ? (
+        {userInfo.role !== 'Staff' ? (
           <>
             <Button
               variant="outline"
