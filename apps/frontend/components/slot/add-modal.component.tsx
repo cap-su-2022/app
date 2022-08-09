@@ -217,7 +217,7 @@ const AddSlotModal: React.FC<AddModalProps> = (props) => {
                 </InputWrapper>
               </div>
               <InputWrapper
-                label="Room description"
+                label="Slot description"
                 description="(Optional) Maximum length is 500 characters."
               >
                 <Textarea
