@@ -67,7 +67,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
   const [isQRModalShown, setQRModalShown] = useState<boolean>(false);
 
   const socket = useMemo(() => {
-    return SocketIOClient('http://192.168.100.44:5000/booking', {
+    return SocketIOClient('http://34.142.193.100:5000/booking', {
       jsonp: false,
     });
   }, []);

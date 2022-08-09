@@ -68,7 +68,7 @@ const AcceptBooking: React.FC<any> = () => {
     useRef<React.ElementRef<typeof RejectAlertModalRef>>();
 
   const socket = useMemo(() => {
-    return SocketIOClient('http://192.168.100.44:5000/booking', {
+    return SocketIOClient('http://34.142.193.100:5000/booking', {
       jsonp: false,
       transports: ['websocket'],
     });

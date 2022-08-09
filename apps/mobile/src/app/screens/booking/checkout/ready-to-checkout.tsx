@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -26,7 +26,6 @@ import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import { fetchAllSlots } from '../../../redux/features/slot';
 import SocketIOClient from 'socket.io-client/dist/socket.io.js';
 
-
 const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
@@ -41,7 +40,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const [timeSlotCheckout, setTimeSlotCheckout] = useState('');
 
   const socket = useMemo(() => {
-    return SocketIOClient('http://192.168.100.44:5000/booking', {
+    return SocketIOClient('http://34.142.193.100:5000/booking', {
       jsonp: false,
     });
   }, []);
@@ -50,12 +49,12 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
     socket.on('msgToServer', (e) => {
       if (e === roomBookingCheckout.id) {
         setTimeout(() => {
-          alert('Check-out Success')
-        }, 2000)
-        navigate.replace('MAIN')
+          alert('Check-out Success');
+        }, 2000);
+        navigate.replace('MAIN');
       }
-    })
-  })
+    });
+  });
 
   useEffect(() => {
     dispatch(fetchAllSlots())
@@ -73,7 +72,6 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
         );
       });
   }, []);
-
 
   const handleCheckoutBookingRoom = () => {
     dispatch(checkOutBookingRoom(roomBookingCheckout.id))
@@ -93,7 +91,9 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
             />
           </View>
           <View style={styles.deviceDetailInfoContainer}>
-            <Text style={styles.deviceDetailName}>Name: {device.deviceName}</Text>
+            <Text style={styles.deviceDetailName}>
+              Name: {device.deviceName}
+            </Text>
             <Text style={styles.deviceDetailName}>
               Quantity: {device.deviceQuantity}
             </Text>
@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'row',
-    marginVertical: 5
+    marginVertical: 5,
   },
   deviceDetailInfoContainer: {
     display: 'flex',
