@@ -61,6 +61,22 @@ export class AccountRepository extends Repository<Accounts> {
       .then((data) => (data ? data['disabled_at'] : true));
   }
 
+  async isDeletedByUsername(username: string): Promise<boolean> {
+    return this.createQueryBuilder('accounts')
+      .select('accounts.deleted_at')
+      .where('accounts.username = :username', { username: username })
+      .getRawOne<boolean>()
+      .then((data) => (data ? data['deleted_at'] : true));
+  }
+
+  async isDisabledByUsername(username: string): Promise<boolean> {
+    return this.createQueryBuilder('accounts')
+      .select('accounts.disabled_at')
+      .where('accounts.username = :username', { username: username })
+      .getRawOne<boolean>()
+      .then((data) => (data ? data['disabled_at'] : true));
+  }
+
   findKeycloakIdByGoogleId(googleId: string): Promise<string> {
     return this.createQueryBuilder('accounts')
       .select('accounts.keycloak_id', 'keycloakId')

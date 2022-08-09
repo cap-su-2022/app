@@ -12,7 +12,7 @@ export class FeedbackSendRequestPayload {
     title: 'Message',
     example: '',
     minLength: 1,
-    maxLength: 256,
+    maxLength: 500,
   })
   @IsNotEmpty({
     message: `Message can't be empty`,

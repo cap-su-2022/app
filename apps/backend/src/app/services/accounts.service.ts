@@ -47,6 +47,14 @@ export class AccountsService {
     private readonly bookingRoomService: BookingRoomService
   ) {}
 
+  async isDeletedByUsername(id: string): Promise<boolean> {
+    return await this.repository.isDeletedByUsername(id);
+  }
+
+  async isDisabledByUsername(id: string): Promise<boolean> {
+    return await this.repository.isDisabledByUsername(id);
+  }
+
   async getAll(request: AccountsPaginationParams, userId: string) {
     try {
       const result = await this.repository.searchAccount(request, userId);
