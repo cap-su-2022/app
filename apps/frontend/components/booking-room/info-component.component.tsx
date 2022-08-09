@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Button,
   createStyles,
@@ -14,7 +14,7 @@ import {
   Devices,
   X,
 } from 'tabler-icons-react';
-import { useAppSelector } from '../../redux/hooks';
+import {useAppSelector} from '../../redux/hooks';
 import dayjs from 'dayjs';
 import autoAnimate from '@formkit/auto-animate';
 import ReactStars from 'react-stars';
@@ -49,7 +49,7 @@ interface RequestInfoComponentProps {
 }
 
 const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const requestBooking = useAppSelector(
     (state) => state.roomBooking.roomBooking
   );
@@ -73,7 +73,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
           onClick={() => setShowListDevice(!isShowListDevice)}
           variant="outline"
           color={'blue'}
-          leftIcon={<Devices />}
+          leftIcon={<Devices/>}
         >
           Device
         </Button>
@@ -93,11 +93,11 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleCancelModalShown()}
                 variant="outline"
                 color={'red'}
-                leftIcon={<X />}
+                leftIcon={<X/>}
               >
                 Cancel request
               </Button>
-              <RenderDeviceButton />
+              <RenderDeviceButton/>
             </>
           );
         } else {
@@ -107,7 +107,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleRejectModalShown()}
                 variant="outline"
                 color={'red'}
-                leftIcon={<X />}
+                leftIcon={<X/>}
               >
                 Reject request
               </Button>
@@ -116,12 +116,12 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleAcceptModalShown()}
                 variant="outline"
                 color={'green'}
-                leftIcon={<Check />}
+                leftIcon={<Check/>}
               >
                 Accept request
               </Button>
 
-              <RenderDeviceButton />
+              <RenderDeviceButton/>
             </>
           );
         }
@@ -133,7 +133,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleCancelModalShown()}
                 variant="outline"
                 color={'red'}
-                leftIcon={<X />}
+                leftIcon={<X/>}
               >
                 Cancel request
               </Button>
@@ -141,12 +141,12 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleCheckinModalShown()}
                 variant="outline"
                 color={'green'}
-                leftIcon={<CircleCheck />}
+                leftIcon={<CircleCheck/>}
               >
                 Check in
               </Button>
 
-              <RenderDeviceButton />
+              <RenderDeviceButton/>
             </>
           );
         } else {
@@ -156,11 +156,11 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleCancelModalShown()}
                 variant="outline"
                 color={'red'}
-                leftIcon={<X />}
+                leftIcon={<X/>}
               >
                 Cancel request
               </Button>
-              <RenderDeviceButton />
+              <RenderDeviceButton/>
             </>
           );
         }
@@ -173,12 +173,12 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleCheckoutModalShown()}
                 variant="outline"
                 color={'green'}
-                leftIcon={<CircleCheck />}
+                leftIcon={<CircleCheck/>}
               >
                 Check out
               </Button>
 
-              <RenderDeviceButton />
+              <RenderDeviceButton/>
             </>
           );
         } else return null;
@@ -196,7 +196,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                   Feedback
                 </Button>
 
-                <RenderDeviceButton />
+                <RenderDeviceButton/>
               </>
             );
           } else {
@@ -210,7 +210,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                   Send feedback
                 </Button>
 
-                <RenderDeviceButton />
+                <RenderDeviceButton/>
               </>
             );
           }
@@ -226,7 +226,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                   Feedback
                 </Button>
 
-                <RenderDeviceButton />
+                <RenderDeviceButton/>
               </>
             );
           } else {
@@ -239,20 +239,20 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
   const listDeviceDiv =
     requestBooking.listDevice && requestBooking.listDevice.length > 0
       ? requestBooking.listDevice.map((device) => (
-          <div key={device.id} className={classes.deviceRow}>
-            <p className={classes.col1}>{device.deviceName}</p>
-            <p className={classes.col2}>{device.deviceQuantity}</p>
-          </div>
-        ))
+        <div key={device.id} className={classes.deviceRow}>
+          <p className={classes.col1}>{device.deviceName}</p>
+          <p className={classes.col2}>{device.deviceQuantity}</p>
+        </div>
+      ))
       : null;
 
   const FeedbackDiv: React.FC<{ feedback: any }> = (props) => {
     return (
-      <div style={{ width: '250px', maxHeight: 400 }}>
+      <div style={{width: '250px', maxHeight: 400}}>
         <div>
           <b>FEEDBACK</b>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{display: 'flex', justifyContent: 'center'}}>
           <ReactStars
             count={5}
             value={props.feedback.rateNum}
@@ -282,10 +282,10 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
   };
 
   return (
-    <div style={{ display: 'flex' }} ref={parent}>
-      {isShowFeedback && <FeedbackDiv feedback={requestBooking?.feedback} />}
+    <div style={{display: 'flex'}} ref={parent}>
+      {isShowFeedback && <FeedbackDiv feedback={requestBooking?.feedback}/>}
 
-      <div style={{ width: 550, flex: 1, margin: 20 }}>
+      <div style={{width: 550, flex: 1, margin: 20}}>
         <div className={classes.modalBody}>
           <div
             style={{
@@ -296,7 +296,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
           >
             <InputWrapper label="Room name" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={requestBooking.roomName}
@@ -304,7 +304,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
             </InputWrapper>
             <InputWrapper label="Room user" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={requestBooking.bookedFor}
@@ -312,10 +312,10 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
             </InputWrapper>
           </div>
 
-          <div style={{ display: 'flex' }}>
+          <div style={{display: 'flex'}}>
             <InputWrapper label="Request at" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={dayjs(requestBooking.requestedAt).format(
@@ -326,7 +326,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
 
             <InputWrapper label="Request by" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={requestBooking.requestedBy}
@@ -334,10 +334,10 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
             </InputWrapper>
           </div>
 
-          <div style={{ display: 'flex' }}>
+          <div style={{display: 'flex'}}>
             <InputWrapper label="Checkin date" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={dayjs(requestBooking.checkinDate).format('DD/MM/YYYY')}
@@ -346,7 +346,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
 
             <InputWrapper label="Slot in" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={
@@ -354,15 +354,15 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                   '   ' +
                   requestBooking.checkinTime.slice(0, 5)
                 }
-                style={{ width: 150 }}
+                style={{width: 150}}
               />
             </InputWrapper>
-            <div style={{ position: 'relative', top: '45px' }}>
-              <ChevronsRight size={28} strokeWidth={2} color={'black'} />
+            <div style={{position: 'relative', top: '45px'}}>
+              <ChevronsRight size={28} strokeWidth={2} color={'black'}/>
             </div>
             <InputWrapper label="Slot out" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={
@@ -370,7 +370,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                   '   ' +
                   requestBooking.checkoutTime.slice(0, 5)
                 }
-                style={{ width: 150 }}
+                style={{width: 150}}
               />
             </InputWrapper>
           </div>
@@ -386,7 +386,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 })}
               >
                 <TextInput
-                  icon={<ClipboardText />}
+                  icon={<ClipboardText/>}
                   radius="md"
                   readOnly
                   value={requestBooking.cancelReason}
@@ -397,7 +397,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
 
           <InputWrapper label="Reason Booking" className={classes.inputWrapper}>
             <TextInput
-              icon={<ClipboardText />}
+              icon={<ClipboardText/>}
               radius="md"
               readOnly
               value={requestBooking.reason}
@@ -406,7 +406,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
 
           <InputWrapper label="Description" className={classes.inputWrapper}>
             <Textarea
-              icon={<ClipboardText />}
+              icon={<ClipboardText/>}
               autosize
               readOnly
               value={requestBooking.description}
@@ -422,7 +422,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         requestBooking.listDevice &&
         requestBooking.listDevice.length > 0 && (
           <div>
-            <div style={{ marginBottom: 35 }}>
+            <div style={{marginBottom: 35}}>
               <b>LIST DEVICES</b>
             </div>
             {listDeviceDiv}
