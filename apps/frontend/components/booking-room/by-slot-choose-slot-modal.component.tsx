@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button,  Select } from '@mantine/core';
+import { Button, Select } from '@mantine/core';
 import { ChevronsRight, X } from 'tabler-icons-react';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { FormikProps } from 'formik';
 import { showNotification } from '@mantine/notifications';
 import { DatePicker } from '@mantine/dates';
@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import BySlotChooseRoomModal from './by-slot-choose-room-modal.component';
 import ChooseDeviceModal from './choose-device-modal.component';
 import ConfirmModal from './confirm-modal.component';
+import { IsUserHaveBookedSameSlot } from '../../redux/features/room-booking/thunk/fetch-room-booked-same-slot-of-user.thunk';
 
 interface ChooseSlotModalProps {
   formik: FormikProps<any>;
@@ -42,6 +43,8 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const [slotInName, setSlotInName] = useState('');
   const [slotOutName, setSlotOutName] = useState('');
   const slotInfors = useAppSelector((state) => state.slot.slotInfor);
+
+  const dispatch = useAppDispatch();
 
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
@@ -157,8 +160,30 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
         autoClose: 3000,
       });
     } else {
-      setShowChooseRoom(true);
-      setShowChooseSlot(false);
+      dispatch(
+        IsUserHaveBookedSameSlot({
+          checkinDate: props.formik.values.checkinDate,
+          userId: props.formik.values.bookedFor || userInfo.id,
+          checkinSlot: props.formik.values.checkinSlot,
+          checkoutSlot: props.formik.values.checkoutSlot,
+        })
+      )
+      .unwrap()
+      .then((response) => {
+        if (!response) {
+          setShowChooseRoom(true);
+          setShowChooseSlot(false);
+        } else {
+          showNotification({
+            id: 'miss-data',
+            color: 'red',
+            title: `${props.formik.values.bookedFor? 'User' : 'You'} have orther requets at same time`,
+            message: `${props.formik.values.bookedFor? 'User' : 'You'} already have request booked for ${response} at same slot. Please choose another time`,
+            icon: <X />,
+            autoClose: 3000,
+          });
+        }
+      });
     }
   };
 

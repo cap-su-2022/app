@@ -80,7 +80,7 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
         }}
       >
         <Text className={classes.modalHeaderTitle}>
-          Request Booking Information
+          Room Booking Information
         </Text>
 
         <div style={{ marginLeft: 10 }}>

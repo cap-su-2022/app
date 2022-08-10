@@ -85,19 +85,19 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
     },
     {
       link: '/booking-room-feedbacks',
-      label: 'Booking Room Feedbacks',
+      label: 'Room Booking Feedbacks',
       icon: BrandHipchat,
       isRender: isAdmin || isLibrarian || isStaff,
     },
     {
       link: '/booking-room',
-      label: 'Booking Room',
+      label: 'Room Booking',
       icon: Ticket,
       isRender: isAdmin || isLibrarian || isStaff,
     },
     {
       link: '/booking-reason',
-      label: 'Booking Reason',
+      label: 'Room Booking Reason',
       icon: DeviceMobileMessage,
       isRender: isAdmin || isLibrarian,
     },

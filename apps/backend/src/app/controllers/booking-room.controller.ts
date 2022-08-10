@@ -12,10 +12,10 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import {BookingRoomService} from '../services';
-import {WishlistBookingRoomResponseDTO} from '../dto/wishlist-booking-room.response.dto';
-import {User} from '../decorators/keycloak-user.decorator';
-import {WishlistBookingRoomRequestDTO} from '../dto/wishlist-booking-room.request.dto';
+import { BookingRoomService } from '../services';
+import { WishlistBookingRoomResponseDTO } from '../dto/wishlist-booking-room.response.dto';
+import { User } from '../decorators/keycloak-user.decorator';
+import { WishlistBookingRoomRequestDTO } from '../dto/wishlist-booking-room.request.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -23,23 +23,22 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
-import {Roles} from '../decorators/role.decorator';
-import {Role} from '../enum/roles.enum';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {BookingRequest} from '../models';
-import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.payload';
-import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
-import {CancelRequestPayload} from '../payload/request/booking-request-cancel.payload';
-import {BookingRoomPaginationParams} from "./booking-room-pagination.model";
+import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
+import { Roles } from '../decorators/role.decorator';
+import { Role } from '../enum/roles.enum';
+import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { BookingRequest } from '../models';
+import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
+import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
+import { CancelRequestPayload } from '../payload/request/booking-request-cancel.payload';
+import { BookingRoomPaginationParams } from './booking-room-pagination.model';
 
 @Controller('/v1/booking-room')
 @ApiTags('Booking Room')
 @UseInterceptors(new PathLoggerInterceptor(BookingRoomController.name))
 @ApiBearerAuth()
 export class BookingRoomController {
-  constructor(private readonly service: BookingRoomService) {
-  }
+  constructor(private readonly service: BookingRoomService) {}
 
   @Get('search')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -68,18 +67,14 @@ export class BookingRoomController {
     @Query() payload: BookingRoomPaginationParams,
     @User() user: KeycloakUserInstance
   ) {
-    return this.service.getAllBookingRoomsPagination(
-      payload,
-      user.account_id
-    );
+    return this.service.getAllBookingRoomsPagination(payload, user.account_id);
   }
 
   @Get('check-slot-over-time')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Check slot over time',
-    description:
-      'Check slot over time',
+    description: 'Check slot over time',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -111,8 +106,7 @@ export class BookingRoomController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Get a list booking by room in week',
-    description:
-      'Get a list booking by room in week',
+    description: 'Get a list booking by room in week',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -143,8 +137,7 @@ export class BookingRoomController {
   @Get('list-booking-by-slot')
   @ApiOperation({
     summary: 'Get a list booking by slotID',
-    description:
-      'Get a list booking by slotID',
+    description: 'Get a list booking by slotID',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -171,8 +164,7 @@ export class BookingRoomController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Get a list booking by roomID',
-    description:
-      'Get a list booking by roomID',
+    description: 'Get a list booking by roomID',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -198,8 +190,7 @@ export class BookingRoomController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Get a list booking by deviceID',
-    description:
-      'Get a list booking by deviceID',
+    description: 'Get a list booking by deviceID',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -227,8 +218,7 @@ export class BookingRoomController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Get a list booking with same slot',
-    description:
-      'Get a list booking with same slot',
+    description: 'Get a list booking with same slot',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -266,8 +256,7 @@ export class BookingRoomController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Get a room free at time',
-    description:
-      'Get a room free at time',
+    description: 'Get a room free at time',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -301,8 +290,7 @@ export class BookingRoomController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Get a list room free a multi date',
-    description:
-      'Get a list room free a multi date',
+    description: 'Get a list room free a multi date',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -338,8 +326,7 @@ export class BookingRoomController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Get a list room free a multi date',
-    description:
-      'Get a list room free a multi date',
+    description: 'Get a list room free a multi date',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -375,8 +362,7 @@ export class BookingRoomController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Get booked requests',
-    description:
-      'Get booked requests',
+    description: 'Get booked requests',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -410,8 +396,7 @@ export class BookingRoomController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Get booking room by accountID',
-    description:
-      'Get booking room by accountID',
+    description: 'Get booking room by accountID',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -439,8 +424,7 @@ export class BookingRoomController {
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Get devices use in request by ID',
-    description:
-      'Get devices use in request by ID',
+    description: 'Get devices use in request by ID',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -521,7 +505,6 @@ export class BookingRoomController {
   getCurrentRoomBookingListOfCurrentUser(@User() user: KeycloakUserInstance) {
     return this.service.getCurrentRoomBookingList(user.account_id);
   }
-
 
   @Get('/statistics')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -618,6 +601,82 @@ export class BookingRoomController {
   //     slot: slot,
   //   });
   // }
+
+  @Get('get-room-name-booked-same-slot')
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get room name have booked in same slot',
+    description: 'Get room name have booked in same slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully get room name have booked in same slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request payload for request is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getRoomNameBookedSameSlot(
+    @Query('checkinDate') checkinDate: string,
+    @Query('userId') userId: string,
+    @Query('checkinSlot') checkinSlot: string,
+    @Query('checkoutSlot') checkoutSlot: string
+  ) {
+    return this.service.checkAlreadyHaveBookingSameSlotV2({
+      checkinDate: checkinDate,
+      userId: userId,
+      checkinSlot: checkinSlot,
+      checkoutSlot: checkoutSlot,
+    });
+  }
+
+  @Get('get-room-name-booked-same-slot-multi')
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get room name have booked in same slot',
+    description: 'Get room name have booked in same slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully get room name have booked in same slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request payload for request is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  checkAlreadyHaveBookingSameSlotMultiDay(
+    @Query('checkinDate') checkinDate: string,
+    @Query('checkoutDate') checkoutDate: string,
+    @Query('userId') userId: string,
+    @Query('checkinSlot') checkinSlot: string,
+    @Query('checkoutSlot') checkoutSlot: string
+  ) {
+    return this.service.checkAlreadyHaveBookingSameSlotMultiDay({
+      checkinDate: checkinDate,
+      checkoutDate: checkoutDate,
+      userId: userId,
+      checkinSlot: checkinSlot,
+      checkoutSlot: checkoutSlot,
+    });
+  }
 
   @Post('new-request')
   @HttpCode(HttpStatus.OK)
@@ -929,7 +988,6 @@ export class BookingRoomController {
   // ) {
   //   return this.service.getBookingRoomDevices(name, type, sort);
   // }
-
   @Get('wishlist')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
@@ -1120,7 +1178,7 @@ export class BookingRoomController {
     @User() user: KeycloakUserInstance,
     @Param('id') bookingRequestId: string,
     @Body()
-      checkinSignature: {
+    checkinSignature: {
       signature: string;
     }
   ) {
@@ -1130,7 +1188,6 @@ export class BookingRoomController {
       checkinSignature
     );
   }
-
 
   @Get('count/')
   @ApiOperation({
@@ -1161,10 +1218,8 @@ export class BookingRoomController {
     required: true,
   })
   getCountRequestBooking(@User() user: KeycloakUserInstance) {
-
     return this.service.getCountRequestBooking(user.account_id);
   }
-
 
   @Get('check-out')
   @ApiOperation({
@@ -1216,7 +1271,7 @@ export class BookingRoomController {
     @User() user: KeycloakUserInstance,
     @Param('id') bookingRequestId: string,
     @Body()
-      checkinSignature: {
+    checkinSignature: {
       signature: string;
     }
   ) {

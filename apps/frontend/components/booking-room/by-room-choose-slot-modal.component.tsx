@@ -1,19 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { Button, createStyles, Select, Table } from '@mantine/core';
-import { ChevronLeft, ChevronRight, ChevronsDown, X } from 'tabler-icons-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsDown,
+  Door,
+  X,
+} from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import dayjs from 'dayjs';
 import { FormikProps } from 'formik';
 import { DatePicker } from '@mantine/dates';
 import { showNotification } from '@mantine/notifications';
 import { fetchListBookingByRoomInWeek } from '../../redux/features/room-booking/thunk/fetch-list-booking-by-room-in-week.thunk';
+import { IsUserHaveBookedSameSlot } from '../../redux/features/room-booking/thunk/fetch-room-booked-same-slot-of-user.thunk';
+import { UserInfoModel } from '../../models/user/user-info.model';
+import { FPT_ORANGE_COLOR } from '@app/constants';
+
 
 interface ChooseSlotModalProps {
   formik: FormikProps<any>;
   handleSubmit(): void;
   handleBackChooseRoom(): void;
   handleNextChooseDevice(): void;
-  roomNames: any[];
+  roomName: string;
 }
 const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const { classes } = useStyles();
@@ -27,6 +37,10 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const sun = dayShowShecule.getDate() - dayShowShecule.getDay(); // First day is the day of the month - the day of the week
   const [days, setDays] = useState<any[]>();
   const [listRequest, setListRequest] = useState([]);
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
 
   const handleNextStep = () => {
     if (
@@ -43,7 +57,29 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
         autoClose: 3000,
       });
     } else {
-      props.handleNextChooseDevice();
+      dispatch(
+        IsUserHaveBookedSameSlot({
+          checkinDate: props.formik.values.checkinDate,
+          userId: props.formik.values.bookedFor || userInfo.id,
+          checkinSlot: props.formik.values.checkinSlot,
+          checkoutSlot: props.formik.values.checkoutSlot,
+        })
+      )
+        .unwrap()
+        .then((response) => {
+          if (!response) {
+            props.handleNextChooseDevice();
+          } else {
+            showNotification({
+              id: 'miss-data',
+              color: 'red',
+              title: 'You have orther requets at same time',
+              message: `You already have request booked for ${response} at same slot. Please choose another time`,
+              icon: <X />,
+              autoClose: 3000,
+            });
+          }
+        });
     }
   };
 
@@ -225,6 +261,12 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     <div style={{ display: 'flex' }}>
       <div>
         <div className={classes.divInfor}>
+          <div
+            className={classes.roomNameDiv}
+          >
+            <Door size={20} strokeWidth={2} color={'#fff'} /> Room:{' '}
+            {props.roomName}
+          </div>
           <div className={classes.divHeader}>
             <h3 style={{ margin: 0 }}>Choose time to book</h3>
           </div>
@@ -437,6 +479,17 @@ const useStyles = createStyles({
   },
   tdDiv: {
     margin: 'auto',
+  },
+  roomNameDiv: {
+    position: 'absolute',
+    top: 30,
+    left: 30,
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: FPT_ORANGE_COLOR,
+    padding: 5,
+    borderRadius: 10,
+    color: '#fff'
   },
   dayPassed: {
     backgroundColor: '#a6a6a6',
