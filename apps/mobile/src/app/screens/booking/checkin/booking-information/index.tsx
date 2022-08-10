@@ -36,7 +36,7 @@ const ReadyToCheckinBookingInformation: React.FC<
         .timeStart.slice(0, 5))
       setTimeSlotCheckout(value
         .find((slot) => slot.slotNum === currentCheckinInformation.checkoutSlot)
-        .timeStart.slice(0, 5))    })
+        .timeEnd.slice(0, 5))    })
   }, [])
 
   const handleViewDevices = (id) => {
