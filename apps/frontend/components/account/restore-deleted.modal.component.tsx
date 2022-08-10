@@ -123,7 +123,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
       title={<ModalHeaderTitle/>}
       closeOnClickOutside={true}
       closeOnEscape={false}
-    >
+    > 
       <InputWrapper label="Search">
         <TextInput
           onChange={(e) => setSearch(e.target.value)}

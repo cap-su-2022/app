@@ -140,7 +140,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
         <FormikProvider value={formik}>
           <Form onSubmit={formik.handleSubmit}>
             <div className={classes.modalBody}>
-              <InputWrapper
+              {/* <InputWrapper
                 label="Room ID"
                 style={{marginBottom: 20}}
               >
@@ -154,7 +154,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   readOnly
                   value={formik.values.id}
                 />
-              </InputWrapper>
+              </InputWrapper> */}
               <InputWrapper
                 required
                 label="Room name"
@@ -200,6 +200,8 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   onChange={formik.handleChange}
                   radius="md"
                   autosize
+                  minRows={4}
+                  maxRows={7}
                   value={formik.values.description}
                 />
               </InputWrapper>

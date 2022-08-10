@@ -275,11 +275,13 @@ export class BookingRoomController {
     description: 'Insufficient privileges',
   })
   getRoomFreeAtTime(
+    @Query('search', new DefaultValuePipe('')) search: string,
     @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
     @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
     @Query('date', new DefaultValuePipe('')) date: string
   ) {
     return this.service.getRoomFreeAtTime({
+      search: search,
       date: date,
       checkinSlotId: checkinSlotId,
       checkoutSlotId: checkoutSlotId,
@@ -309,12 +311,14 @@ export class BookingRoomController {
     description: 'Insufficient privileges',
   })
   getRoomFreeAtMultiDate(
+    @Query('search', new DefaultValuePipe('')) search: string,
     @Query('checkinSlot', new DefaultValuePipe('')) checkinSlot: number,
     @Query('checkoutSlot', new DefaultValuePipe('')) checkoutSlot: number,
     @Query('dateStart', new DefaultValuePipe('')) dateStart: string,
     @Query('dateEnd', new DefaultValuePipe('')) dateEnd: string
   ) {
     return this.service.getRoomFreeAtMultiDate({
+      search: search,
       dateStart: dateStart,
       dateEnd: dateEnd,
       checkinSlot: checkinSlot,
@@ -345,12 +349,14 @@ export class BookingRoomController {
     description: 'Insufficient privileges',
   })
   getRoomFreeAtMultiDateV2(
+    @Query('search', new DefaultValuePipe('')) search: string,
     @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
     @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
     @Query('dateStart', new DefaultValuePipe('')) dateStart: string,
     @Query('dateEnd', new DefaultValuePipe('')) dateEnd: string
   ) {
     return this.service.getRoomFreeAtMultiDateV2({
+      search: search,
       dateStart: dateStart,
       dateEnd: dateEnd,
       checkinSlotId: checkinSlotId,

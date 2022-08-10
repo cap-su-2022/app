@@ -40,7 +40,7 @@ const InfoComponent: React.FC<InfoComponentProps> = (props) => {
         ))
       : null;
 
-  const RenderIcon: React.FC<{field: string}> = (props) => {
+  const RenderIcon: React.FC<{ field: string }> = (props) => {
     switch (props.field) {
       case 'id':
         return <Id />;
@@ -48,9 +48,13 @@ const InfoComponent: React.FC<InfoComponentProps> = (props) => {
         return <ClipboardText />;
       case 'description':
         return <FileDescription />;
-      case 'createAt' || 'updateAt':
+      case 'createdAt':
         return <CalendarStats />;
-      case 'createBy' || 'updateBy':
+      case 'updatedAt':
+        return <CalendarStats />;
+      case 'updatedBy':
+        return <User />;
+      case 'createdBy':
         return <User />;
       default:
         return null;

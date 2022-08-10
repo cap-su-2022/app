@@ -127,6 +127,7 @@ export class NotificationService {
     },
     queryRunner: QueryRunner
   ) {
+    console.log("CCCCCC: ", payload)
     try {
       let notification = { title: '', message: '' };
       if (payload.status === 'RESOLVE') {

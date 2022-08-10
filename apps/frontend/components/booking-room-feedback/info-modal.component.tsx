@@ -115,6 +115,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
         <Infor/>
 
         <div className={classes.footer}>
+          <div></div>
           <Button
             leftIcon={<X/>}
             color="orange"

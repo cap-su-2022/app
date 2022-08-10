@@ -57,20 +57,20 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
     <>
       <Modal
         title={<ModalHeaderTitle />}
-        size={'40vw'}
+        size={'40%'}
         centered
         opened={props.isShown}
         onClose={() => props.toggleShown()}
       >
         <div className={classes.modalBody}>
-          <TextInput
+          {/* <TextInput
             icon={<Id />}
             className={classes.textInput}
             radius="md"
             label="Account ID"
             readOnly
             value={user.id}
-          />
+          /> */}
           <div className={classes.displayGrid}>
             <TextInput
               icon={<ClipboardText />}
@@ -121,6 +121,7 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
             label="Description"
             readOnly
             autosize
+            minRows={2}
             value={user.description || undefined}
           />
           <div className={classes.displayGrid}>

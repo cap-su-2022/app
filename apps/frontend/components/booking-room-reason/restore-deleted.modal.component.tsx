@@ -18,6 +18,7 @@ import {
   restoreDeletedBookingReasonById,
 } from '../../redux/features/booking-reason';
 import { showNotification } from '@mantine/notifications';
+import NoDataFound from '../no-data-found';
 import { permanentlyDeleteBookingReasonById } from '../../redux/features/booking-reason/thunk/permanently-delete-booking-reason-by-id.thunk';
 
 interface RestoreDeletedModalProps {
@@ -165,7 +166,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
         opened={props.isShown}
         onClose={() => props.toggleShown()}
         centered
-        size="85%"
+        size="70%"
         title={<ModalHeaderTitle />}
         closeOnClickOutside={true}
         closeOnEscape={false}
@@ -174,20 +175,24 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           sx={{ height: 500 }}
           onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
         >
-          <Table>
-            <thead
-              className={cx(classes.header, { [classes.scrolled]: scrolled })}
-            >
-              <tr>
-                <th>STT</th>
-                <th>Name</th>
-                <th>Deleted At</th>
-                <th>Deleted By</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>{rows}</tbody>
-          </Table>
+          {deletedBookingReasons.length > 0 ? (
+            <Table>
+              <thead
+                className={cx(classes.header, { [classes.scrolled]: scrolled })}
+              >
+                <tr>
+                  <th>STT</th>
+                  <th>Name</th>
+                  <th>Deleted At</th>
+                  <th>Deleted By</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>{rows}</tbody>
+            </Table>
+          ) : (
+            <NoDataFound />
+          )}
         </ScrollArea>
       </Modal>
       <PermanentDeleteModal

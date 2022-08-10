@@ -258,7 +258,6 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             onChange={(date) => {
               props.formik.setFieldValue('checkinDate', date);
             }}
-            excludeDate={(date) => date.getDay() === 0 || date.getDay() === 7}
           />
 
           <ChevronsRight

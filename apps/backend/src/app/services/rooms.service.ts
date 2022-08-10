@@ -476,7 +476,7 @@ export class RoomsService {
   //   return this.repository.filterByNameAndType(payload);
   // }
 
-  filterRoomFreeByRoomBooked(listIdRoomBooked: string[]) {
-    return this.repository.filterRoomFreeByRoomBooked(listIdRoomBooked);
+  filterRoomFreeByRoomBooked(search: string, listIdRoomBooked: string[]) {
+    return this.repository.filterRoomFreeByRoomBooked(search, listIdRoomBooked);
   }
 }
