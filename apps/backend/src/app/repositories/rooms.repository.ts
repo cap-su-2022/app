@@ -181,18 +181,15 @@ export class RoomsRepository extends Repository<Rooms> {
         id: roomId,
       },
     });
-    return queryRunner.manager.save(
-      Rooms,
-      {
-        ...oldData,
-        id: roomId,
-        type: payload.type,
-        updatedBy: accountId,
-        updatedAt: new Date(),
-        disabledBy: null,
-        disabledAt: null,
-      }
-    );
+    return queryRunner.manager.save(Rooms, {
+      ...oldData,
+      id: roomId,
+      type: payload.type,
+      updatedBy: accountId,
+      updatedAt: new Date(),
+      disabledBy: null,
+      disabledAt: null,
+    });
   }
 
   async updateById(
@@ -367,8 +364,7 @@ export class RoomsRepository extends Repository<Rooms> {
   //   return query.getRawMany<Rooms>();
   // }
 
-  filterRoomFreeByRoomBooked(listIdRoomBooked: string[]) {
-    console.log('AAAAAAAAa: ', listIdRoomBooked);
+  filterRoomFreeByRoomBooked(search: string, listIdRoomBooked: string[]) {
     const query = this.createQueryBuilder('rooms')
       .select('rooms.id', 'id')
       .addSelect('rooms.name', 'name')
@@ -377,7 +373,10 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('rt.name', 'type')
       .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
       .where('rooms.disabled_at IS NULL')
-      .andWhere('rooms.deleted_at IS NULL');
+      .andWhere('rooms.deleted_at IS NULL')
+      .andWhere('rooms.name ILIKE :search', {
+        search: `%${search?.trim() || ''}%`,
+      });
     if (listIdRoomBooked?.length > 0) {
       query.andWhere('rooms.id NOT IN (:...listIdRoomBooked)', {
         listIdRoomBooked: listIdRoomBooked,

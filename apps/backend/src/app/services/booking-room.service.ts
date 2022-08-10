@@ -556,10 +556,12 @@ export class BookingRoomService {
   }
 
   async getRoomFreeAtTime(payload: {
+    search: string,
     date: string;
     checkinSlotId: string;
     checkoutSlotId: string;
   }) {
+    console.log("HHHH: ", payload.search)
     try {
       const listRequestBookedInDaySameSlot =
         await this.getListRequestBookedInDayAndSlot(payload);
@@ -570,6 +572,7 @@ export class BookingRoomService {
         });
       }
       const result = await this.roomService.filterRoomFreeByRoomBooked(
+        payload.search,
         listRoomBookedInDaySameSlot
       );
       return result;
@@ -580,6 +583,7 @@ export class BookingRoomService {
   }
 
   async getRoomFreeAtMultiDate(payload: {
+    search: string,
     dateStart: string;
     dateEnd: string;
     checkinSlot: number;
@@ -595,6 +599,7 @@ export class BookingRoomService {
         });
       }
       const result = await this.roomService.filterRoomFreeByRoomBooked(
+        payload.search,
         listRoomBookedInMultiDaySameSlot
       );
       return result;
@@ -605,6 +610,7 @@ export class BookingRoomService {
   }
 
   async getRoomFreeAtMultiDateV2(payload: {
+    search: string,
     dateStart: string;
     dateEnd: string;
     checkinSlotId: string;
@@ -620,6 +626,7 @@ export class BookingRoomService {
         });
       }
       const result = await this.roomService.filterRoomFreeByRoomBooked(
+        payload.search,
         listRoomBookedInMultiDaySameSlot
       );
       return result;

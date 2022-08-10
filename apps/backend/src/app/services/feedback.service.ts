@@ -134,7 +134,7 @@ export class FeedbackService {
       const user = await this.accountService.getRoleOfAccount(accountId);
       await this.notificationService.sendReplyFeedbackNotification(
         {
-          status: 'REJECT',
+          status: 'RESOLVE',
           replier: user.username,
           receiver: feedback.createdBy,
           replyMess: payload.replyMessage,
@@ -191,7 +191,7 @@ export class FeedbackService {
       const user = await this.accountService.getRoleOfAccount(accountId);
       await this.notificationService.sendReplyFeedbackNotification(
         {
-          status: 'RESOLVE',
+          status: 'REJECT',
           replier: user.username,
           receiver: feedback.createdBy,
           replyMess: payload.replyMessage,

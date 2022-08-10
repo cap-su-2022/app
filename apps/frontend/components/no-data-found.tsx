@@ -10,8 +10,8 @@ const NoDataFound: React.FC = () => {
       <Image
         src="/undraw/no-data.svg"
         layout="fixed"
-        height={400}
-        width={400}
+        height={300}
+        width={300}
       />
       <Text className={classes.text}>
         No data found!

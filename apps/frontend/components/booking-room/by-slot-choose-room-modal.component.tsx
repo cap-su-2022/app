@@ -14,6 +14,7 @@ import { showNotification } from '@mantine/notifications';
 import { fetchRoomFreeAtTime } from '../../redux/features/room-booking/thunk/fetch-room-free-at-time';
 import { fetchRoomFreeAtMultiDay } from '../../redux/features/room-booking/thunk/fetch-room-free-in-multi-day';
 import { getRoomById } from '../../redux/features/room/thunk/get-room-by-id';
+import NoDataFound from '../no-data-found';
 
 interface ChooseSlotModalProps {
   formik: FormikProps<any>;
@@ -27,12 +28,21 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
   const { classes } = useStyles();
   const dispatch = useAppDispatch();
   const [listRoom, setListRoom] = useState([]);
+  const [search, setSearch] = useState('');
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.currentTarget;
+    setSearch(value);
+  };
+
+  console.log(search);
+
   console.log(listRoom);
 
   useEffect(() => {
     if (props.formik.values.checkoutDate) {
       dispatch(
         fetchRoomFreeAtMultiDay({
+          search: search,
           checkinDate: props.formik.values.checkinDate,
           checkoutDate: props.formik.values.checkoutDate,
           checkinSlotId: props.formik.values.checkinSlot,
@@ -44,6 +54,7 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
     } else {
       dispatch(
         fetchRoomFreeAtTime({
+          search: search,
           date: props.formik.values.checkinDate,
           checkinSlotId: props.formik.values.checkinSlot,
           checkoutSlotId: props.formik.values.checkoutSlot,
@@ -52,7 +63,7 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
         .unwrap()
         .then((roomFree) => setListRoom(roomFree));
     }
-  }, []);
+  }, [search]);
 
   const handleNextStep = () => {
     if (!props.formik.values.roomId) {
@@ -73,12 +84,6 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
   const handleBack = () => {
     props.formik.setFieldValue('roomId', null);
     props.handleBackChooseSlot();
-  };
-
-  const [search, setSearch] = useState('');
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.currentTarget;
-    setSearch(value);
   };
 
   return (
@@ -117,38 +122,44 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
             : props.slotInName + ' -> ' + props.slotOutName}
         </div>
         <ScrollArea style={{ height: 300 }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {listRoom?.map((room) => {
-              return (
-                <div
-                  key={room.id}
-                  className={
-                    room.id === props.formik.values.roomId
-                      ? classes.roomChoosedDiv
-                      : classes.roomDiv
-                  }
-                  onClick={() => props.formik.setFieldValue('roomId', room.id)}
-                >
+          {listRoom.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {listRoom?.map((room) => {
+                return (
                   <div
-                    style={{
-                      // textAlign: 'center',
-                      padding: '10px',
-                      // backgroundColor: '#fff',
-                      borderRadius: '5px',
-                      minHeight: 35,
-                      height: '100%',
-                      color: '#000',
-                    }}
+                    key={room.id}
+                    className={
+                      room.id === props.formik.values.roomId
+                        ? classes.roomChoosedDiv
+                        : classes.roomDiv
+                    }
+                    onClick={() =>
+                      props.formik.setFieldValue('roomId', room.id)
+                    }
                   >
-                    <b>Name: {room.name}</b>
-                    <p>Type: {room.type}</p>
-                  </div>
-                  {/* <div style={{ padding: '0 5px' }}>
+                    <div
+                      style={{
+                        // textAlign: 'center',
+                        padding: '10px',
+                        // backgroundColor: '#fff',
+                        borderRadius: '5px',
+                        minHeight: 35,
+                        height: '100%',
+                        color: '#000',
+                      }}
+                    >
+                      <b>Name: {room.name}</b>
+                      <p>Type: {room.type}</p>
+                    </div>
+                    {/* <div style={{ padding: '0 5px' }}>
                   </div> */}
-                </div>
-              );
-            })}
-          </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <NoDataFound />
+          )}
         </ScrollArea>
       </div>
 

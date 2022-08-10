@@ -206,7 +206,7 @@ const ManageRoomType: React.FC<any> = () => {
 
   const infoFields = [
     {
-      label: 'Room Type Name',
+      label: 'Room type name',
       id: 'name',
       name: 'name',
       value: roomType.name,
@@ -215,7 +215,7 @@ const ManageRoomType: React.FC<any> = () => {
 
     },
     {
-      label: 'Room Type Description',
+      label: 'Room type description',
       id: 'description',
       name: 'description',
       value: roomType.description,
@@ -224,32 +224,32 @@ const ManageRoomType: React.FC<any> = () => {
     },
     {
       label: 'Created at',
-      id: 'createAt',
-      name: 'createAt',
+      id: 'createdAt',
+      name: 'createdAt',
       value: dayjs(roomType.createdAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Created By',
-      id: 'createBy',
-      name: 'createBy',
+      label: 'Created by',
+      id: 'createdBy',
+      name: 'createdBy',
       value: roomType.createdBy,
       readOnly: true,
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Updated At',
-      id: 'updateAt',
-      name: 'updateAt',
+      label: 'Updated at',
+      id: 'updatedAt',
+      name: 'updatedAt',
       value: dayjs(roomType.updatedAt).format('HH:mm DD/MM/YYYY'),
       readOnly: true,
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Updated By',
-      id: 'updateBy',
-      name: 'updateBy',
+      label: 'Updated by',
+      id: 'updatedBy',
+      name: 'updatedBy',
       value: roomType.updatedBy,
       readOnly: true,
       inputtype: InputTypes.TextInput,
