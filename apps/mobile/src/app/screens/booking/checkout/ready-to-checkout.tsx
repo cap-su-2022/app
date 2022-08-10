@@ -38,9 +38,10 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const [errorMessage, setErrorMessage] = useState<string>('Error');
   const [timeSlotCheckin, setTimeSlotCheckin] = useState('');
   const [timeSlotCheckout, setTimeSlotCheckout] = useState('');
+  const [isCheckOutSuccessModalShown, setCheckOutSuccessModalShown] = useState(false)
 
   const socket = useMemo(() => {
-    return SocketIOClient('http://192.168.100.44:5000/booking', {
+    return SocketIOClient('http://34.142.193.100:5000/booking', {
       jsonp: false,
     });
   }, []);
@@ -48,7 +49,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   useEffect(() => {
     socket.on('msgToServer', (e) => {
       if (e === roomBookingCheckout.id) {
-        navigate.navigate('CHECKOUT_SUCCESSFULLY');
+        setCheckOutSuccessModalShown(!isCheckOutSuccessModalShown)
       }
     });
   });
@@ -75,6 +76,73 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
       .unwrap()
       .then(() => navigate.navigate('CHECKOUT_SUCCESSFULLY'))
       .catch((e) => alert('Failed while checking out booking room'));
+  };
+
+  const GenericAlertModal = () => {
+    return (
+      <AlertModal
+        isOpened={isCheckOutSuccessModalShown}
+        height={180}
+        width={deviceWidth / 1.1}
+        toggleShown={() =>   setTimeout(() => {
+          navigate.navigate('CHECKOUT_SUCCESSFULLY');
+        }, 1)}
+      >
+        <View
+          style={{
+            display: 'flex',
+            flex: 1,
+            flexGrow: 0.9,
+            justifyContent: 'space-between',
+            paddingHorizontal: 10,
+          }}
+        >
+          <ExclamationCircleIcon
+            style={{
+              alignSelf: 'center',
+            }}
+            size={deviceWidth / 8}
+            color={FPT_ORANGE_COLOR}
+          />
+          <Text
+            style={{
+              color: BLACK,
+              fontWeight: '500',
+              fontSize: deviceWidth / 23,
+              textAlign: 'center',
+            }}
+          >
+            You have successfully checked-out!
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              setCheckOutSuccessModalShown(!isCheckOutSuccessModalShown);
+              setTimeout(() => {
+                navigate.navigate('CHECKOUT_SUCCESSFULLY');
+              }, 1);
+            }}
+            style={{
+              backgroundColor: FPT_ORANGE_COLOR,
+              height: 40,
+              borderRadius: 8,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: '500',
+                fontSize: deviceWidth / 23,
+                color: WHITE,
+              }}
+            >
+              OK
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </AlertModal>
+    );
   };
 
   const renderDevice = (device) => {
@@ -334,6 +402,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
         </ScrollView>
       </View>
       <ErrorAlertModal />
+      <GenericAlertModal />
     </SafeAreaView>
   );
 };
