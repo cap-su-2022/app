@@ -265,7 +265,7 @@ const BookingRoom = () => {
 
   return (
     <AdminLayout>
-      <Header title="Booking Room" icon={<Ticket size={50}/>}/>
+      <Header title="Room Booking" icon={<Ticket size={50}/>}/>
 
       <TableHeader
         handleResetFilter={() => handleResetFilter()}

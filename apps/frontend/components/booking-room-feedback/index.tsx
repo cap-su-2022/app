@@ -96,7 +96,7 @@ const ManageBookingRoomFeedback: React.FC<any> = () => {
   return (
     <AdminLayout>
       <Header
-        title="Booking Room Feedbacks"
+        title="Room Booking Feedbacks"
         icon={<BuildingWarehouse size={50} />}
       />
       <TableHeader
@@ -118,7 +118,7 @@ const ManageBookingRoomFeedback: React.FC<any> = () => {
             search={pagination.search}
           />
           <InfoModal
-            header="Booking Room Feedback Information"
+            header="Room Booking Feedback Information"
             toggleShown={() => setInfoShown(!isInfoShown)}
             isShown={isInfoShown}
           />

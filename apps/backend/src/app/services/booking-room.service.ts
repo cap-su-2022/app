@@ -702,6 +702,73 @@ export class BookingRoomService {
     }
   }
 
+  async checkAlreadyHaveBookingSameSlot(payload: {
+    checkinDate: string;
+    userId: string;
+    slotNumIn: number;
+    slotNumOut: number;
+  }) {
+    try {
+      let alreadyBookedOtherRoom = '';
+      const listRequestBookedInDayOfUser =
+        await this.repository.getRequestBookedInDayOfUser(
+          payload.checkinDate,
+          payload.userId
+        );
+      if (listRequestBookedInDayOfUser.length > 0) {
+        listRequestBookedInDayOfUser.map(async (request) => {
+          for (let j = request.slotIn; j <= request.slotOut; j++) {
+            if (j >= payload.slotNumIn && j <= payload.slotNumOut) {
+              alreadyBookedOtherRoom = request.roomName;
+              break;
+            }
+          }
+        });
+      }
+      return alreadyBookedOtherRoom;
+    } catch (e) {
+      throw new BadRequestException(
+        'Have some errors when check isAlreadyBookedSameSlot'
+      );
+    }
+  }
+
+  async checkAlreadyHaveBookingSameSlotV2(payload: {
+    checkinDate: string;
+    userId: string;
+    checkinSlot: string;
+    checkoutSlot: string;
+  }) {
+    console.log('PAYLOAD: ', payload);
+    try {
+      const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlot);
+      const slotOut = await this.slotService.getNumOfSlot(payload.checkoutSlot);
+
+      let alreadyBookedOtherRoom = '';
+      const listRequestBookedInDayOfUser =
+        await this.repository.getRequestBookedInDayOfUser(
+          payload.checkinDate,
+          payload.userId
+        );
+      if (listRequestBookedInDayOfUser.length > 0) {
+        listRequestBookedInDayOfUser.map(async (request) => {
+          for (let j = request.slotIn; j <= request.slotOut; j++) {
+            if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+              alreadyBookedOtherRoom =
+                request.roomName + ' in ' + payload.checkinDate;
+              break;
+            }
+          }
+        });
+      }
+      return alreadyBookedOtherRoom;
+    } catch (e) {
+      throw new BadRequestException(
+        'Have some errors when check isAlreadyBookedSameSlot'
+      );
+    }
+  }
+
   async addNewRequest(
     payload: BookingRequestAddRequestPayload,
     userId: string
@@ -748,22 +815,15 @@ export class BookingRoomService {
         );
       }
 
-      let alreadyBookedOtherRoom = '';
-      const listRequestBookedInDayOfUser =
-        await this.repository.getRequestBookedInDayOfUser(
-          payload.checkinDate,
-          payload.bookedFor || userId
-        );
-      if (listRequestBookedInDayOfUser.length > 0) {
-        listRequestBookedInDayOfUser.map(async (request) => {
-          for (let j = request.slotIn; j <= request.slotOut; j++) {
-            if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
-              alreadyBookedOtherRoom = request.roomName;
-              break;
-            }
-          }
-        });
-      }
+      const alreadyBookedOtherRoom = await this.checkAlreadyHaveBookingSameSlotV2(
+        {
+          checkinDate: payload.checkinDate,
+          userId: payload.bookedFor || userId,
+          checkinSlot: payload.checkinSlot,
+          checkoutSlot: payload.checkoutSlot,
+        }
+      );
+
       if (alreadyBookedOtherRoom !== '') {
         throw new BadRequestException(
           payload.bookedFor
@@ -872,6 +932,46 @@ export class BookingRoomService {
     }
   }
 
+  async checkAlreadyHaveBookingSameSlotMultiDay(payload: {
+    checkinDate: string;
+    checkoutDate: string;
+    userId: string;
+    checkinSlot: string;
+    checkoutSlot: string;
+  }) {
+    try {
+      console.log("AAAAAAA: ", payload)
+      const fromDate = new Date(payload.checkinDate);
+      const toDate = new Date(payload.checkoutDate);
+      const alreadyBookedOtherRoom = [];
+
+      const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlot);
+      const slotOut = await this.slotService.getNumOfSlot(payload.checkoutSlot);
+
+      for (
+        let i = new Date(fromDate);
+        i <= toDate;
+        i.setDate(i.getDate() + 1)
+      ) {
+        const result = await this.checkAlreadyHaveBookingSameSlot({
+          checkinDate: dayjs(i).format('YYYY-MM-DD'),
+          userId: payload.userId,
+          slotNumIn: slotIn.slotNum,
+          slotNumOut: slotOut.slotNum,
+        });
+
+        if (result.length > 0) {
+          alreadyBookedOtherRoom.push(' ' + result + ' in ' + dayjs(i).format('DD-MM-YYYY'));
+        }
+      }
+
+      return alreadyBookedOtherRoom;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async addMultiRequest(
     payload: BookingRequestAddRequestPayload,
     userId: string
@@ -915,35 +1015,52 @@ export class BookingRoomService {
         );
       }
 
-      let alreadyBookedOtherRoom = [];
-      const listRequestBookedInDayOfUser = [];
-      for (
-        let i = new Date(fromDate);
-        i <= toDate;
-        i.setDate(i.getDate() + 1)
-      ) {
-        const result = await this.repository.getRequestBookedInDayOfUser(
-          dayjs(i).format('YYYY-MM-DD'),
-          userId
-        );
-        if (result.length > 0) {
-          listRequestBookedInDayOfUser.push(...result);
-        }
-      }
-
-      if (listRequestBookedInDayOfUser.length > 0) {
-        listRequestBookedInDayOfUser.map(async (request) => {
-          for (let j = request.slotIn; j <= request.slotOut; j++) {
-            if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
-              alreadyBookedOtherRoom = [
-                ...alreadyBookedOtherRoom,
-                request.roomName,
-              ];
-              break;
-            }
-          }
+      const alreadyBookedOtherRoom =
+        await this.checkAlreadyHaveBookingSameSlotMultiDay({
+          checkinDate: payload.checkinDate,
+          checkoutDate: payload.checkoutDate,
+          userId: payload.bookedFor || userId,
+          checkinSlot: payload.checkinSlot,
+          checkoutSlot: payload.checkoutSlot,
         });
-      }
+      const listRequestBookedInDayOfUser = [];
+      // for (
+      //   let i = new Date(fromDate);
+      //   i <= toDate;
+      //   i.setDate(i.getDate() + 1)
+      // ) {
+      //   // const result = await this.repository.getRequestBookedInDayOfUser(
+      //   //   dayjs(i).format('YYYY-MM-DD'),
+      //   //   userId
+      //   // );
+      //   // if (result.length > 0) {
+      //   //   listRequestBookedInDayOfUser.push(...result);
+      //   // }
+      //   const result = await this.checkAlreadyHaveBookingSameSlot({
+      //     checkinDate: dayjs(i).format('YYYY-MM-DD'),
+      //     userId: payload.bookedFor || userId,
+      //     slotNumIn: slotIn.slotNum,
+      //     slotNumOut: slotIn.slotNum,
+      //   });
+
+      //   if (result.length > 0) {
+      //     alreadyBookedOtherRoom.push(result);
+      //   }
+      // }
+
+      // if (listRequestBookedInDayOfUser.length > 0) {
+      //   listRequestBookedInDayOfUser.map(async (request) => {
+      //     for (let j = request.slotIn; j <= request.slotOut; j++) {
+      //       if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+      //         alreadyBookedOtherRoom = [
+      //           ...alreadyBookedOtherRoom,
+      //           request.roomName,
+      //         ];
+      //         break;
+      //       }
+      //     }
+      //   });
+      // }
       if (alreadyBookedOtherRoom.length > 0) {
         throw new BadRequestException(
           `You already have bookings for ${alreadyBookedOtherRoom} at same slot!`

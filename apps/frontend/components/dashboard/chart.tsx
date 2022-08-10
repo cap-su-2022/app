@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import dynamic from 'next/dynamic';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
@@ -14,10 +14,7 @@ interface ChartProps {
 const ApexChart: React.FC<ChartProps> = (props) => {
   const state = useMemo(() => {
     return {
-      series: [
-        props?.booked,
-        props?.cancelled,
-      ],
+      series: [props?.booked, props?.cancelled],
       options: {
         chart: {
           width: 600,

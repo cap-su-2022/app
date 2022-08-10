@@ -85,6 +85,8 @@ const InfoModal: React.FC<InfoModalProps> = (props) => {
               autosize
               radius="md"
               readOnly
+              minRows={4}
+              maxRows={4}
               value={bookingRoomFeedback.feedbackMess}
             />
           </InputWrapper>

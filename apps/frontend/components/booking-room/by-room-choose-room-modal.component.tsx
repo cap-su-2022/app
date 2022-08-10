@@ -197,7 +197,7 @@ const ChooseRoomModal: React.FC<ChooseRoomModalProps> = (props) => {
           handleSubmit={props.handleSubmit}
           handleBackChooseRoom={handleBackChooseRoom}
           handleNextChooseDevice={handleNextChooseDevice}
-          roomNames={props.roomNames}
+          roomName={room?.name}
         />
       )}
       {showChooseDevice && (

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Select } from '@mantine/core';
 import { ChevronsRight, X } from 'tabler-icons-react';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { FormikProps } from 'formik';
 import { showNotification } from '@mantine/notifications';
 import { DatePicker } from '@mantine/dates';
@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import BySlotChooseRoomModal from './by-slot-choose-room-modal.component';
 import ChooseDeviceModal from './choose-device-modal.component';
 import ConfirmModal from './confirm-modal.component';
+import { IsUserHaveBookedSameSlotMulti } from 'apps/frontend/redux/features/room-booking/thunk/fetch-room-booked-same-slot-multi-of-user.thunk';
 
 interface ChooseMultiDayModalProps {
   formik: FormikProps<any>;
@@ -41,6 +42,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
   const [slotNames, setSlotNames] = useState<any[]>();
   const [slotInName, setSlotInName] = useState('');
   const [slotOutName, setSlotOutName] = useState('');
+  const dispatch = useAppDispatch();
   const slotInfors = useAppSelector((state) => state.slot.slotInfor);
 
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
@@ -170,8 +172,35 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
         autoClose: 3000,
       });
     } else {
-      setShowChooseRoom(true);
-      setShowChooseSlot(false);
+      dispatch(
+        IsUserHaveBookedSameSlotMulti({
+          checkinDate: props.formik.values.checkinDate,
+          checkoutDate: props.formik.values.checkoutDate,
+          userId: props.formik.values.bookedFor || userInfo.id,
+          checkinSlot: props.formik.values.checkinSlot,
+          checkoutSlot: props.formik.values.checkoutSlot,
+        })
+      )
+        .unwrap()
+        .then((response) => {
+          if (response?.length > 0) {
+            showNotification({
+              id: 'miss-data',
+              color: 'red',
+              title: `${
+                props.formik.values.bookedFor ? 'User' : 'You'
+              } have orther requets at same time`,
+              message: `${
+                props.formik.values.bookedFor ? 'User' : 'You'
+              } already have request booked for ${response} at same slot. Please choose another time`,
+              icon: <X />,
+              autoClose: 3000,
+            });
+          } else {
+            setShowChooseRoom(true);
+            setShowChooseSlot(false);
+          }
+        });
     }
   };
 
@@ -357,6 +386,5 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
     </>
   );
 };
-
 
 export default ByMultiChooseSlotModal;
