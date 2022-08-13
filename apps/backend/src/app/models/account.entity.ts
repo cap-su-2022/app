@@ -91,4 +91,13 @@ export class Accounts extends BaseEntityWithDisabled {
     type: 'varchar',
   })
   avatar?: string;
+
+  @Column({
+    name: 'fcm_token',
+    nullable: false,
+    unique: true,
+    length: 500,
+    type: 'varchar',
+  })
+  fcmToken?: string;
 }

@@ -99,13 +99,13 @@ const UserInfoPreference: React.FC = () => {
     };
 
     const initialFormValues = {
-      id: userInfo.id,
-      avatar: userInfo.avatar,
-      username: userInfo.username,
-      fullname: userInfo.fullname,
-      email: userInfo.email,
-      phone: userInfo.phone,
-      description: userInfo.description,
+      id: userInfo?.id,
+      avatar: userInfo?.avatar,
+      username: userInfo?.username,
+      fullname: userInfo?.fullname,
+      email: userInfo?.email,
+      phone: userInfo?.phone,
+      description: userInfo?.description,
     };
 
     const UpdateSchema = Yup.object().shape({
@@ -195,27 +195,27 @@ const UserInfoPreference: React.FC = () => {
               weight={700}
               color="dimmed"
             >
-              {userInfo.role}
+              {userInfo?.role}
             </Text>
 
             <Text size="lg" weight={500} className={classes.name}>
-              {userInfo.fullname ??
-                userInfo.username ??
-                userInfo.email ??
-                userInfo.id}
+              {userInfo?.fullname ??
+                userInfo?.username ??
+                userInfo?.email ??
+                userInfo?.id}
             </Text>
 
             <Group noWrap spacing={10} mt={3}>
               <At size={16} className={classes.icon} />
               <Text size="xs" color="dimmed">
-                {userInfo.email}
+                {userInfo?.email}
               </Text>
             </Group>
 
             <Group noWrap spacing={10} mt={5}>
               <PhoneCall size={16} className={classes.icon} />
               <Text size="xs" color="dimmed">
-                {userInfo.phone}
+                {userInfo?.phone}
               </Text>
             </Group>
           </div>

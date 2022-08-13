@@ -54,20 +54,20 @@ export const App = () => {
   };
 
   const getFCMToken = async () => {
-    const fcmToken = await AsyncStorage.getItem('fcmToken')
-    console.log(fcmToken, 'old token')
-    if (!fcmToken){
+    const fcmToken = await LOCAL_STORAGE.getString('fcmToken');
+    console.log(fcmToken, 'old token');
+    if (!fcmToken) {
       try {
-        const fcmToken =await messaging().getToken()
-        if (fcmToken){
-          console.log(fcmToken, 'new token')
-          await  AsyncStorage.setItem('fcmToken', fcmToken)
+        const fcmToken = await messaging().getToken();
+        if (fcmToken) {
+          console.log(fcmToken, 'new token');
+          await LOCAL_STORAGE.set('fcmToken', fcmToken);
         }
-      } catch (e){
-        console.log(e, 'Error in fcmToken')
+      } catch (e) {
+        console.log(e, 'Error in fcmToken');
       }
     }
-  }
+  };
   const notificationListener = () => {
     messaging().onNotificationOpenedApp((remoteMessage) => {
       console.log(
@@ -76,17 +76,17 @@ export const App = () => {
       );
     });
 
-    messaging().onMessage(async remoteMessage => {
-      console.log('notification on foreground state ', remoteMessage)
-    })
+    messaging().onMessage(async (remoteMessage) => {
+      console.log('notification on foreground state ', remoteMessage);
+    });
   };
 
   useEffect(() => {
-    console.log('aaaa')
-    requestUserPermission().then(r => console.log(r))
-    notificationListener()
-    getFCMToken().then(r => console.log(r))
-  },[])
+    console.log('aaaa');
+    requestUserPermission().then((r) => console.log(r));
+    notificationListener();
+    getFCMToken().then((r) => console.log(r));
+  }, []);
 
   useEffect(() => {
     if (!LOCAL_STORAGE.contains('QUICK_ACCESS')) {

@@ -528,6 +528,49 @@ export class AccountsService {
   //   }
   // }
 
+  async saveFCMToken(
+    keycloakUser: KeycloakUserInstance,
+    body: {fcmToken: string}
+  ): Promise<Accounts> {
+    try {
+      const user = await this.repository.findByKeycloakId(keycloakUser.sub);
+      if (!user) {
+        throw new BadRequestException(
+          'Account does not exist with the provided id'
+        );
+      }
+
+      return await this.repository.save({
+        ...user,
+        ...body,
+      });
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException('Error while save fcm token.');
+    }
+  }
+
+  async removeFCMToken(
+    keycloakUser: KeycloakUserInstance,
+  ): Promise<Accounts> {
+    try {
+      const user = await this.repository.findByKeycloakId(keycloakUser.sub);
+      if (!user) {
+        throw new BadRequestException(
+          'Account does not exist with the provided id'
+        );
+      }
+
+      return await this.repository.save({
+        ...user,
+        fcmToken: null,
+      });
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException('Error while remove fcm token.');
+    }
+  }
+
   async updateMyProfile(
     keycloakUser: KeycloakUserInstance,
     body: AccountUpdateProfilePayload

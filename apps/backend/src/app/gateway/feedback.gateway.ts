@@ -44,14 +44,15 @@ export class FeedbackGateway {
     @MessageBody() payload: FeedbackPaginationPayload,
     @ConnectedSocket() client: Socket
   ) {
-    console.log('RUN getAllFeedbacks');
-    console.log('IDDDĐ: ', client.id);
-    console.log('SEVICE: ', this.feedbackService);
-    const result = await this.feedbackService.getAllFeedbacks(
-      client.id,
-      payload
-    );
-    console.log('RESULT: ', result);
-    return result;
+    // console.log('RUN getAllFeedbacks');
+    // console.log('IDDDĐ: ', client.id);
+    // console.log('SEVICE: ', this.feedbackService);
+    // const result = await this.feedbackService.getAllFeedbacks(
+    //   client.id,
+    //   payload
+    // );
+    // console.log('RESULT: ', result);
+    // return result;
+    return null
   }
 }

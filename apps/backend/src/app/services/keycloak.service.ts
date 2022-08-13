@@ -237,6 +237,7 @@ export class KeycloakService {
 
   signOutKeycloakUser(header: any, id: string): Promise<void> {
     try {
+      console.log("REMOVE FCM TOKEN HERE")
       return Promise.resolve();
     } catch (e) {
       this.logger.error(e.message);
