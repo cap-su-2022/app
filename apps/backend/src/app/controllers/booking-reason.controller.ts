@@ -1,18 +1,15 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Post,
   Put,
   Query,
 } from '@nestjs/common';
 import {BookingReasonService} from '../services/booking-reason.service';
-import {BookingReason} from '../models/booking-reason.entity';
 import {ApiOperation, ApiParam, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {Roles} from '../decorators/role.decorator';
 import {Role} from '../enum/roles.enum';
@@ -115,6 +112,7 @@ export class BookingReasonController {
   }
 
   @Post()
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Add a new booking reason',
     description: 'Add a new booking reason',
