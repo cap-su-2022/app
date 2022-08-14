@@ -10,7 +10,7 @@ import {
   TextInput, Highlight,
 } from '@mantine/core';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {RotateClockwise, Search, Trash} from 'tabler-icons-react';
+import {Check, RotateClockwise, Search, Trash, X} from 'tabler-icons-react';
 import {restoreDisabledRoom} from '../../redux/features/room/thunk/restore-disabled.thunk';
 import {fetchRooms} from '../../redux/features/room/thunk/fetch-rooms';
 import {fetchDisabledRooms} from '../../redux/features/room/thunk/fetch-disabled-rooms';
@@ -22,6 +22,7 @@ import {fetchDeletedRooms} from '../../redux/features/room/thunk/fetch-deleted-r
 import NoDataFound from '../no-data-found';
 import RoomUpdateTypeModal from './update-type-modal.component';
 import { getRoomById } from '../../redux/features/room/thunk/get-room-by-id';
+import { showNotification } from '@mantine/notifications';
 
 interface RestoreDisabledRoomModalProps {
   isShown: boolean;
@@ -58,6 +59,26 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
     } else {
       dispatch(restoreDisabledRoom(id))
         .unwrap()
+        .catch((e) =>
+        showNotification({
+          id: 'restore-room',
+          color: 'red',
+          title: 'Error while restoring library room',
+          message: e.message ?? 'Failed to update library room',
+          icon: <X/>,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'restore-room',
+          color: 'teal',
+          title: 'Library room was restore',
+          message: 'Library room was successfully restored',
+          icon: <Check/>,
+          autoClose: 3000,
+        })
+      )
         .then(() => dispatch(fetchRooms(props.pagination)))
         .then(() =>
           dispatch(fetchDisabledRooms(search))
@@ -72,6 +93,26 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
   const handleDeleteRoom = (id: string) => {
     dispatch(deleteRoomById(id))
       .unwrap()
+      .catch((e) =>
+        showNotification({
+          id: 'delete-room',
+          color: 'red',
+          title: 'Error while deleting library room',
+          message: e.message ?? 'Failed to deleting library room',
+          icon: <X/>,
+          autoClose: 3000,
+        })
+      )
+      .then(() =>
+        showNotification({
+          id: 'delete-room',
+          color: 'teal',
+          title: 'Library room was deleted',
+          message: 'Library room was successfully deleted',
+          icon: <Check/>,
+          autoClose: 3000,
+        })
+      )
       .then(() => dispatch(fetchRooms(props.pagination)))
       .then(() =>
         dispatch(fetchDisabledRooms(search))
