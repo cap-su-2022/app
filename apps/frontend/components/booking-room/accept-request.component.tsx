@@ -10,6 +10,7 @@ import autoAnimate from '@formkit/auto-animate';
 import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
 import { acceptRequest } from '../../redux/features/room-booking/thunk/accept-request';
 import { showNotification } from '@mantine/notifications';
+import { fetchCountRequestBooking } from '../../redux/features/room-booking/thunk/fetch-count-request-booking';
 
 interface AcceptRequestComponentProps {
   isShown: boolean;
@@ -17,7 +18,7 @@ interface AcceptRequestComponentProps {
   toggleShown(): void;
 
   toggleInforModalShown(): void;
-
+  setCount(val): void;
   pagination: BookingRequestParams;
 }
 
@@ -80,6 +81,7 @@ const AcceptRequestComponent: React.FC<AcceptRequestComponentProps> = (
         props.toggleShown();
         props.toggleInforModalShown();
         dispatch(fetchRoomBookings(props.pagination));
+        dispatch(fetchCountRequestBooking()).unwrap().then(val => props.setCount(val));
       });
   };
 
