@@ -8,7 +8,6 @@ import { FeedbackRepository } from '../repositories';
 import { AccountsService } from './accounts.service';
 import { FeedbackHistService } from './feedback-hist.service';
 import { NotificationService } from './notification.service';
-import * as admin from 'firebase-admin';
 
 @Injectable()
 export class FeedbackService {
@@ -30,30 +29,30 @@ export class FeedbackService {
         );
       }
 
-      const payload = {
-        data: {
-          score: '850',
-          time: '2:45',
-        },
-        notification: {
-          title: 'Chó kêu chỉ không chỉ',
-          body: 'ĐMM coi chừng mày đó l Nghiêm',
-        },
-      };
-      await admin
-        .messaging()
-        .sendToDevice(
-          'eRvkhdhgTieCMfTyb701dJ:APA91bGo95Vd1ScgvAFeB7V5Srf7I1qZ-NWtgukaIYezNifFjoocRYmJp1zTn6IhBwqu0rtxflf2cDiO6T9xeul87QgNOE5VdalDUJnk4HyLhrU44Qkg0BVc0iYmvv9ooq_LgFXiBfor',
-          payload
-        )
-        .then((response) => {
-          // See the MessagingDevicesResponse reference documentation for
-          // the contents of response.
-          console.log('Successfully sent message:', response);
-        })
-        .catch((error) => {
-          console.log('Error sending message:', error);
-        });
+      // const payload = {
+      //   data: {
+      //     score: '850',
+      //     time: '2:45',
+      //   },
+      //   notification: {
+      //     title: 'Chó kêu chỉ không chỉ',
+      //     body: 'ĐMM coi chừng mày đó l Nghiêm',
+      //   },
+      // };
+      // await admin
+      //   .messaging()
+      //   .sendToDevice(
+      //     'eRvkhdhgTieCMfTyb701dJ:APA91bGo95Vd1ScgvAFeB7V5Srf7I1qZ-NWtgukaIYezNifFjoocRYmJp1zTn6IhBwqu0rtxflf2cDiO6T9xeul87QgNOE5VdalDUJnk4HyLhrU44Qkg0BVc0iYmvv9ooq_LgFXiBfor',
+      //     payload
+      //   )
+      //   .then((response) => {
+      //     // See the MessagingDevicesResponse reference documentation for
+      //     // the contents of response.
+      //     console.log('Successfully sent message:', response);
+      //   })
+      //   .catch((error) => {
+      //     console.log('Error sending message:', error);
+      //   });
       const roleName = await this.accountService.getAccountRoleById(accountId);
       if (roleName === 'Staff') {
         return await this.repository.findByPagination(accountId, param);
@@ -225,6 +224,32 @@ export class FeedbackService {
       );
 
       await queryRunner.commitTransaction();
+
+      // const receiver = await this.accountService.getRoleOfAccount(
+      //   data.createdBy
+      // );
+      // if (receiver.fcmToken) {
+      //   const message = {
+      //     data: {
+      //       score: '850',
+      //       time: '2:45',
+      //     },
+      //     notification: {
+      //       title: 'FLBRMS',
+      //       body: 'Your feedback was rejected',
+      //     },
+      //   };
+      //   await admin
+      //     .messaging()
+      //     .sendToDevice(receiver.fcmToken, message)
+      //     .then((response) => {
+      //       console.log('Successfully sent message:', response);
+      //     })
+      //     .catch((error) => {
+      //       console.log('Error sending message:', error);
+      //     });
+      // }
+
       return feedback;
     } catch (e) {
       this.logger.error(e);

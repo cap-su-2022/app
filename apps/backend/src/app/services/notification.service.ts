@@ -1,15 +1,21 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { NotificationRepository } from '../repositories/notification.repository';
 import { Notification } from '../models/notification.entity';
+import * as admin from 'firebase-admin';
+import { AccountsService } from './accounts.service';
 
 @Injectable()
 export class NotificationService {
   private readonly logger = new Logger(NotificationService.name);
 
-  constructor(private readonly repository: NotificationRepository) {}
+  constructor(
+    private readonly repository: NotificationRepository,
+    @Inject(forwardRef(() => AccountsService))
+    private readonly accountService: AccountsService
+  ) {}
 
-  sendAcceptRequestNotification(
+  async sendAcceptRequestNotification(
     checkinDate: string,
     checkinSlotName: string,
     checkoutSlotName: string,
@@ -18,10 +24,39 @@ export class NotificationService {
     queryRunner: QueryRunner
   ) {
     try {
+      const slotText =
+        checkinSlotName === checkoutSlotName
+          ? `at ${checkinSlotName}`
+          : `from ${checkinSlotName} to ${checkoutSlotName}`;
       const notification = {
-        title: 'Your request booking was accepted',
-        message: `Your reservation request on ${checkinDate}, ${checkinSlotName} to ${checkoutSlotName} for room ${roomName} has been accepted.${' '}Please present the QR code at the reception to perform the check-in step`,
+        title: 'Your booking request was accepted',
+        message: `Your reservation request on ${checkinDate}, ${slotText} for room ${roomName} has been accepted. Please present the QR code at the reception to perform the check-in step`,
       };
+
+      const _receiver = await this.accountService.getRoleOfAccount(
+        receiver
+      );
+      if (_receiver.fcmToken) {
+        const message = {
+          data: {
+            score: '850',
+            time: '2:45',
+          },
+          notification: {
+            title: 'FLBRMS',
+            body: 'Your booking request was accepted',
+          },
+        };
+        await admin
+          .messaging()
+          .sendToDevice(_receiver.fcmToken, message)
+          .then((response) => {
+            console.log('Successfully sent message:', response);
+          })
+          .catch((error) => {
+            console.log('Error sending message:', error);
+          });
+      }
 
       return this.repository.sendNotification(
         notification,
@@ -36,7 +71,7 @@ export class NotificationService {
     }
   }
 
-  sendBookedForNotification(
+  async sendBookedForNotification(
     checkinDate: string,
     checkinSlotName: string,
     checkoutSlotName: string,
@@ -46,10 +81,40 @@ export class NotificationService {
     queryRunner: QueryRunner
   ) {
     try {
+      const slotText =
+        checkinSlotName === checkoutSlotName
+          ? `at ${checkinSlotName}`
+          : `from ${checkinSlotName} to ${checkoutSlotName}`;
+
       const notification = {
-        title: 'You have been booked by admin',
-        message: `You have been helped by ${sender} to book room ${roomName} on ${checkinDate}, from ${checkinSlotName} to ${checkoutSlotName}.`,
+        title: 'You have been booked by librarian',
+        message: `You have been helped by ${sender} to book room ${roomName} on ${checkinDate}, ${slotText}.`,
       };
+
+      const _receiver = await this.accountService.getRoleOfAccount(
+        receiver
+      );
+      if (_receiver.fcmToken) {
+        const message = {
+          data: {
+            score: '850',
+            time: '2:45',
+          },
+          notification: {
+            title: 'FLBRMS',
+            body: 'You have been booked by librarian',
+          },
+        };
+        await admin
+          .messaging()
+          .sendToDevice(_receiver.fcmToken, message)
+          .then((response) => {
+            console.log('Successfully sent message:', response);
+          })
+          .catch((error) => {
+            console.log('Error sending message:', error);
+          });
+      }
 
       return this.repository.sendNotification(
         notification,
@@ -74,10 +139,41 @@ export class NotificationService {
     queryRunner: QueryRunner
   ) {
     try {
+      const slotText =
+        checkinSlotName === checkoutSlotName
+          ? `at ${checkinSlotName}`
+          : `from ${checkinSlotName} to ${checkoutSlotName}`;
+
       const notification = {
         title: 'Your request booking was rejected',
-        message: `Your reservation request on ${checkinDate}, ${checkinSlotName} to ${checkoutSlotName} for room ${roomName} has been rejected. Reason is ${reason}`,
+        message: `Your reservation request on ${checkinDate}, ${slotText} for room ${roomName} has been rejected. Reason is ${reason}`,
       };
+
+      const _receiver = await this.accountService.getRoleOfAccount(
+        receiver
+      );
+      if (_receiver.fcmToken) {
+        const message = {
+          data: {
+            score: '850',
+            time: '2:45',
+          },
+          notification: {
+            title: 'FLBRMS',
+            body: 'Your request booking was rejected',
+          },
+        };
+        await admin
+          .messaging()
+          .sendToDevice(_receiver.fcmToken, message)
+          .then((response) => {
+            console.log('Successfully sent message:', response);
+          })
+          .catch((error) => {
+            console.log('Error sending message:', error);
+          });
+      }
+
       return await this.repository.sendNotification(
         notification,
         receiver,
@@ -101,10 +197,41 @@ export class NotificationService {
     queryRunner: QueryRunner
   ) {
     try {
+      const slotText =
+        checkinSlotName === checkoutSlotName
+          ? `at ${checkinSlotName}`
+          : `from ${checkinSlotName} to ${checkoutSlotName}`;
+
       const notification = {
         title: 'Your request booking was cancelled',
-        message: `Your reservation request on ${checkinDate}, ${checkinSlotName} to ${checkoutSlotName} for room ${roomName} has been cancelled. Reason is ${reason}`,
+        message: `Your reservation request on ${checkinDate}, ${slotText} for room ${roomName} has been cancelled. Reason is ${reason}`,
       };
+
+      const _receiver = await this.accountService.getRoleOfAccount(
+        receiver
+      );
+      if (_receiver.fcmToken) {
+        const message = {
+          data: {
+            score: '850',
+            time: '2:45',
+          },
+          notification: {
+            title: 'FLBRMS',
+            body: 'Your request booking was cancelled',
+          },
+        };
+        await admin
+          .messaging()
+          .sendToDevice(_receiver.fcmToken, message)
+          .then((response) => {
+            console.log('Successfully sent message:', response);
+          })
+          .catch((error) => {
+            console.log('Error sending message:', error);
+          });
+      }
+
       return await this.repository.sendNotification(
         notification,
         receiver,
@@ -118,7 +245,7 @@ export class NotificationService {
     }
   }
 
-  sendReplyFeedbackNotification(
+  async sendReplyFeedbackNotification(
     payload: {
       status: string;
       replier: string;
@@ -127,7 +254,6 @@ export class NotificationService {
     },
     queryRunner: QueryRunner
   ) {
-    console.log("CCCCCC: ", payload)
     try {
       let notification = { title: '', message: '' };
       if (payload.status === 'RESOLVE') {
@@ -141,6 +267,32 @@ export class NotificationService {
           message: `Your feedback has been rejected by ${payload.replier}. The reason given is: ${payload.replyMess}`,
         };
       }
+
+      const _receiver = await this.accountService.getRoleOfAccount(
+        payload.receiver
+      );
+      if (_receiver.fcmToken) {
+        const message = {
+          data: {
+            score: '850',
+            time: '2:45',
+          },
+          notification: {
+            title: 'FLBRMS',
+            body: notification.title,
+          },
+        };
+        await admin
+          .messaging()
+          .sendToDevice(_receiver.fcmToken, message)
+          .then((response) => {
+            console.log('Successfully sent message:', response);
+          })
+          .catch((error) => {
+            console.log('Error sending message:', error);
+          });
+      }
+
       return this.repository.sendNotification(
         notification,
         payload.receiver,

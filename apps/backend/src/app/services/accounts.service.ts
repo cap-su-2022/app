@@ -86,6 +86,7 @@ export class AccountsService {
   async getRoleOfAccount(id: string) {
     try {
       const role = await this.repository.getRoleOfAccount(id);
+      console.log("OI LA TROI: ", role);
       return role;
     } catch (e) {
       this.logger.error(e);

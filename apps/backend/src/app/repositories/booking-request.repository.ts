@@ -47,6 +47,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.checkin_slot', 'checkinSlotId')
       .addSelect('booking_request.checkout_slot', 'checkoutSlotId')
       .addSelect('booking_request.requested_by', 'requestedBy')
+      .addSelect('booking_request.booked_for', 'bookedFor')
       .addSelect('s.name', 'checkinSlotName')
       .addSelect('ss.name', 'checkoutSlotName')
       .addSelect('booking_request.status', 'status')
@@ -170,7 +171,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     requestId: string,
     date: string
   ): Promise<
-    { id: string; slotIn: number; slotOut: number; status: string }[]
+    { id: string; slotIn: number; slotOut: number; status: string, bookedFor: string }[]
   > {
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
@@ -179,10 +180,12 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('slot_in.name', 'slotInName')
       .addSelect('slot_out.name', 'slotOutName')
       .addSelect('a.username', 'requestedBy')
+      .addSelect('aa.username', 'bookedFor')
       .addSelect('r.name', 'reason')
       .addSelect('booking_request.status', 'status')
       .innerJoin(Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
+      .innerJoin(Accounts, 'aa', 'aa.id = booking_request.booked_for')
       .innerJoin(BookingReason, 'r', 'r.id = booking_request.booking_reason_id')
       .innerJoin(
         Slot,
@@ -204,6 +207,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       slotIn: number;
       slotOut: number;
       status: string;
+      bookedFor: string;
     }>();
   }
 

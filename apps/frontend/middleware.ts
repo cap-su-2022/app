@@ -5,11 +5,7 @@ import type { NextRequest } from 'next/server';
 export async function middleware(request: NextRequest) {
   const parseJwt = (token) => {
     const decode = JSON.parse(atob(token?.split('.')[1]));
-    if (decode.exp * 1000 < new Date().getTime()) {
-      return false;
-    } else {
-      return true;
-    }
+    return decode.exp * 1000 >= new Date().getTime();
   };
 
   if (
