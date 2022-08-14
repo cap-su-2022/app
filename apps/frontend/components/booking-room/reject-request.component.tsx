@@ -9,11 +9,13 @@ import { showNotification } from '@mantine/notifications';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { rejectBooking } from '../../redux/features/room-booking/thunk/reject-booking';
+import { fetchCountRequestBooking } from 'apps/frontend/redux/features/room-booking/thunk/fetch-count-request-booking';
 
 interface RejectRequestModalProps {
   isShown: boolean;
   toggleShown(): void;
   toggleInforModalShown(): void;
+  setCount(val): void;
   pagination: BookingRequestParams;
 }
 
@@ -69,6 +71,7 @@ const RejectRequestModal: React.FC<RejectRequestModalProps> = (props) => {
         props.toggleShown();
         props.toggleInforModalShown();
         dispatch(fetchRoomBookings(props.pagination));
+        dispatch(fetchCountRequestBooking()).unwrap().then(val => props.setCount(val));
       });
   };
 

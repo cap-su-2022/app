@@ -7,6 +7,7 @@ interface AcceptRequestModalProps {
   isShown: boolean;
   toggleShown(): void;
   toggleInfoModalShown(): void;
+  setCount(val): void;
   pagination: BookingRequestParams;
 }
 const AcceptRequestModal: React.FC<AcceptRequestModalProps> = (props) => {
@@ -29,6 +30,7 @@ const AcceptRequestModal: React.FC<AcceptRequestModalProps> = (props) => {
         isShown={props.isShown}
         toggleShown={props.toggleShown}
         toggleInforModalShown={props.toggleInfoModalShown}
+        setCount={props.setCount}
         pagination={props.pagination}
       />
     </Modal>

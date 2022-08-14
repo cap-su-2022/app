@@ -7,11 +7,13 @@ import { BookingRequestParams } from '../../models/pagination-params/booking-roo
 import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
 import { showNotification } from '@mantine/notifications';
 import { acceptCheckoutRequest } from '../../redux/features/room-booking/thunk/accept-checkout-request';
+import { fetchCountRequestBooking } from '../../redux/features/room-booking/thunk/fetch-count-request-booking';
 
 interface CheckoutRequestModalProps {
   isShown: boolean;
   toggleShown(): void;
   toggleInforModalShown(): void;
+  setCount(val): void;
   pagination: BookingRequestParams;
 }
 
@@ -49,6 +51,7 @@ const CheckoutRequestModal: React.FC<CheckoutRequestModalProps> = (props) => {
         props.toggleShown();
         props.toggleInforModalShown();
         dispatch(fetchRoomBookings(props.pagination));
+        dispatch(fetchCountRequestBooking()).unwrap().then(val => props.setCount(val));
       });
   };
 

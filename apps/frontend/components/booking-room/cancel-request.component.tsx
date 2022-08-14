@@ -9,11 +9,13 @@ import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch
 import { showNotification } from '@mantine/notifications';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
+import { fetchCountRequestBooking } from '../../redux/features/room-booking/thunk/fetch-count-request-booking';
 
 interface CancelRequestModalProps {
   isShown: boolean;
   toggleShown(): void;
   toggleInforModalShown(): void;
+  setCount(val): void;
   pagination: BookingRequestParams;
 }
 
@@ -69,6 +71,7 @@ const CancelRequestModal: React.FC<CancelRequestModalProps> = (props) => {
         props.toggleShown();
         props.toggleInforModalShown();
         dispatch(fetchRoomBookings(props.pagination));
+        dispatch(fetchCountRequestBooking()).unwrap().then(val => props.setCount(val));
       });
   };
 

@@ -1,7 +1,7 @@
 import {Button, createStyles, Space} from '@mantine/core';
 import AdminLayout from '../../components/layout/admin.layout';
 import React, {useEffect, useState} from 'react';
-import {Download, Plus, Ticket} from 'tabler-icons-react';
+import { Plus, Ticket} from 'tabler-icons-react';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {fetchRoomBookings} from '../../redux/features/room-booking/thunk/fetch-room-booking-list';
 import {fetchRoomBookingById} from '../../redux/features/room-booking/thunk/fetch-room-booking-by-id';
@@ -301,30 +301,35 @@ const BookingRoom = () => {
             isShown={isRejectShown}
             toggleShown={() => setRejectShown(!isRejectShown)}
             toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+            setCount={(val) => setCount(val)}
             pagination={pagination}
           />
           <CancelRequestModal
             isShown={isCancelShown}
             toggleShown={() => setCancelShown(!isCancelShown)}
             toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+            setCount={(val) => setCount(val)}
             pagination={pagination}
           />
           <AcceptRequestModal
             isShown={isAcceptShown}
             toggleShown={() => setAcceptShown(!isAcceptShown)}
             toggleInfoModalShown={() => setInfoShown(!isInfoShown)}
+            setCount={(val) => setCount(val)}
             pagination={pagination}
           />
           <CheckinRequestModal
             isShown={isCheckinShown}
             toggleShown={() => setCheckinShown(!isCheckinShown)}
             toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+            setCount={(val) => setCount(val)}
             pagination={pagination}
           />
           <CheckoutRequestModal
             isShown={isCheckoutShown}
             toggleShown={() => setCheckoutShown(!isCheckoutShown)}
             toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+            setCount={(val) => setCount(val)}
             pagination={pagination}
           />
           <TableFooter
