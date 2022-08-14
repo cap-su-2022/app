@@ -43,7 +43,7 @@ const defaultPaginationParams = {
 const ManageFeedback: React.FC<any> = () => {
   const { classes } = useStyles();
   const socket = useMemo(() => {
-    return io('ws://localhost:5000');
+    return io('ws://localhost:5000/feedback');
   }, []);
   const [isRejectShown, setRejectShown] = useState<boolean>(false);
   const [isResolveShown, setResolveShown] = useState<boolean>(false);

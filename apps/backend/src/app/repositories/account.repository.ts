@@ -24,10 +24,11 @@ export class AccountRepository extends Repository<Accounts> {
 
   async getRoleOfAccount(
     id: string
-  ): Promise<{ role_name: string; username: string }> {
+  ): Promise<{ role_name: string; username: string; fcmToken: string }> {
     return this.createQueryBuilder('account')
       .select('role.name', 'role_name')
       .addSelect('account.username', 'username')
+      .addSelect('account.fcm_token', 'fcmToken')
       .innerJoin(Roles, 'role', 'role.id = account.role_id')
       .where('account.disabled_at IS NULL')
       .andWhere('account.deleted_at IS NULL')

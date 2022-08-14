@@ -155,7 +155,7 @@ export class RoomsController {
   }
 
   @Post('add')
-  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_LIBRARIAN)
   @ApiOperation({
     summary: 'Create a new library room',
     description: 'Create new library room with the provided payload',

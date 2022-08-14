@@ -69,9 +69,9 @@ function NotificationManagement(props: any) {
                   )}
                 </div>
 
-                <div>
+                <div style={{flex: 1}}>
                   <b>{notification.title}</b>
-                  <Text size="sm" lineClamp={1}>
+                  <Text size="sm" lineClamp={1} style={{minWidth: '100%'}}>
                     {notification.message}
                   </Text>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

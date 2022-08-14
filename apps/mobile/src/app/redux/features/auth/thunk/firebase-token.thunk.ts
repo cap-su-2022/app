@@ -20,7 +20,7 @@ export const saveFCMToken = createAsyncThunk<
   >('account/save-fcmToken', async (payload, thunkAPI) => {
     thunkAPI.dispatch(toggleSpinnerOn())
   try {
-    const response = await axios.post(`${API_URL}/accounts/save-fcmtoken`, {
+    const response = await axios.put(`${API_URL}/accounts/save-fcmtoken`, {
       fcmToken: payload.fcmToken
     })
     return await response.data;
