@@ -73,7 +73,9 @@ const RestoreDisabledRoomModal: React.FC<RestoreDisabledRoomModalProps> = (
         showNotification({
           id: 'restore-room',
           color: 'teal',
+
           title: 'Library room was restored',
+
           message: 'Library room was successfully restored',
           icon: <Check/>,
           autoClose: 3000,

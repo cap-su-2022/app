@@ -162,7 +162,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
                 color: 'black',
               }}
             >
-              {roomUser || "It's you"}
+              {roomUser || "Yourself"}
             </div>
           </div>
 

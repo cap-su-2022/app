@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react';
 import {
+  ListRenderItemInfo,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -14,6 +15,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  VirtualizedList,
 } from 'react-native';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
@@ -34,6 +36,7 @@ import { deviceWidth } from '../../../utils/device';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
+  DeviceMobileIcon,
   ExclamationIcon,
   XIcon,
 } from 'react-native-heroicons/outline';
@@ -52,6 +55,9 @@ import AlertModal from '../../../components/modals/alert-modal.component';
 import { cancelBookingRoom } from '../../../redux/features/room-booking/thunk/cancel-room-booking.thunk';
 import { fetchAllSlots } from '../../../redux/features/slot';
 import SocketIOClient from 'socket.io-client/dist/socket.io.js';
+import { boxShadow } from '../../../utils/box-shadow.util';
+import { Device } from '../../../redux/models/device.model';
+import { CheckIcon } from 'react-native-heroicons/solid';
 
 const AcceptBooking: React.FC<any> = () => {
   const dispatch = useAppDispatch();
@@ -62,6 +68,8 @@ const AcceptBooking: React.FC<any> = () => {
   const [isRejectModalShow, setRejectModalShown] = useState(false);
   const [timeSlotCheckin, setTimeSlotCheckin] = useState('');
   const [timeSlotCheckout, setTimeSlotCheckout] = useState('');
+  const [deviceList, setDeviceList] = useState([]);
+  const [deviceSelectedDevice, setDeviceSelectedDevice] = useState([]);
   const cancelBookingRequestModal =
     useRef<React.ElementRef<typeof CancelAlertModalRef>>();
   const rejectBookingRequestModal =
@@ -91,6 +99,18 @@ const AcceptBooking: React.FC<any> = () => {
       });
   }, []);
 
+  useEffect(() => {
+    // @ts-ignore
+    dispatch(fetchDeviceInUseByBookingRequestId(bookingRoom.id))
+      .unwrap()
+      .then((devices) => {
+        setDeviceList(devices);
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  }, []);
+
   const handleRejectBookingRequest = () => {
     dispatch(rejectBookingRequest(bookingRoom.id))
       .unwrap()
@@ -117,13 +137,18 @@ const AcceptBooking: React.FC<any> = () => {
   };
 
   const handleAcceptCheckout = () => {
-    dispatch(acceptCheckoutBookingRequest(bookingRoom.id))
-      .unwrap()
-      .then(() => {
-        socket.emit('msgToServer', bookingRoom.id);
-      })
-      .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
-      .catch((e) => alert(e.message));
+    if (deviceList.length !== deviceSelectedDevice.length) {
+      alert('Please Check All Devices!');
+      return;
+    } else {
+      dispatch(acceptCheckoutBookingRequest(bookingRoom.id))
+        .unwrap()
+        .then(() => {
+          socket.emit('msgToServer', bookingRoom.id);
+        })
+        .then(() => navigate.navigate('SUCCESSFULLY_ACCEPTED_BOOKING_REQUEST'))
+        .catch((e) => alert(e.message));
+    }
   };
 
   const handleAcceptCheckin = () => {
@@ -168,14 +193,6 @@ const AcceptBooking: React.FC<any> = () => {
     }
   };
 
-  const handleViewDevices = (id) => {
-    dispatch(fetchDeviceInUseByBookingRequestId(id))
-      .unwrap()
-      .then((val) => {
-        navigate.navigate('ACCEPT_BOOKING_LIST_DEVICES');
-      });
-  };
-
   const handleRejectAction = () => {
     if (bookingRoom.status === BOOKED) {
       return handleRejectCheckin();
@@ -195,6 +212,152 @@ const AcceptBooking: React.FC<any> = () => {
       case CHECKED_IN:
         return 'check-out';
     }
+  };
+
+  const DeviceRenderCheckOutItem = (deviceRender) => {
+    const handleSelectedDevice = () => {
+      deviceSelectedDevice.filter(
+        (device) => device.deviceId === deviceRender.deviceId
+      )[0]
+        ? setDeviceSelectedDevice(
+            deviceSelectedDevice.filter(
+              (device) => device.deviceId !== deviceRender.deviceId
+            )
+          )
+        : setDeviceSelectedDevice([...deviceSelectedDevice, deviceRender]);
+    };
+
+    return (
+      <View>
+        <TouchableOpacity
+          key={deviceRender}
+          onPress={() => {
+            handleSelectedDevice();
+          }}
+          style={[
+            styles.selectCircleButton,
+            deviceSelectedDevice.filter(
+              (device) => device.deviceId === deviceRender.deviceId
+            )[0]
+              ? {
+                  borderWidth: 3,
+                  borderColor: FPT_ORANGE_COLOR,
+                }
+              : null,
+            boxShadow(styles),
+          ]}
+        >
+          <View style={styles.deviceIconContainer}>
+            <DeviceMobileIcon color={FPT_ORANGE_COLOR} />
+          </View>
+          <View style={styles.deviceContainer}>
+            <View style={styles.deviceDescriptionContainer}>
+              <Text
+                style={[
+                  {
+                    color: GRAY,
+                    marginLeft: 6,
+                  },
+                  styles.titleText,
+                ]}
+              >
+                <Text style={styles.valueText}>Name: </Text>
+                {deviceRender.deviceName}
+              </Text>
+
+              <Text
+                style={[
+                  {
+                    color: GRAY,
+                    marginLeft: 6,
+                  },
+                  styles.titleText,
+                ]}
+              >
+                <Text style={styles.valueText}>Quantity: </Text>
+                {deviceRender.deviceQuantity}
+              </Text>
+            </View>
+
+            <View
+              style={{
+                justifyContent: 'center',
+                height: 70,
+                paddingHorizontal: 10,
+              }}
+            >
+              {deviceSelectedDevice.filter(
+                (device) => device.deviceId === deviceRender.deviceId
+              )[0] ? (
+                <CheckIcon color={FPT_ORANGE_COLOR} size={35} />
+              ) : (
+                <CheckIcon color={WHITE} />
+              )}
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const DeviceRenderItem = (deviceRender) => {
+    return (
+      <View >
+        <View
+          key={deviceRender}
+          style={[styles.selectCircleButton, boxShadow(styles)]}
+        >
+          <View style={styles.deviceIconContainer}>
+            <DeviceMobileIcon color={FPT_ORANGE_COLOR} />
+          </View>
+          <View style={styles.deviceContainer}>
+            <View style={styles.deviceDescriptionContainer}>
+              <Text
+                style={[
+                  {
+                    color: GRAY,
+                    marginLeft: 6,
+                  },
+                  styles.titleText,
+                ]}
+              >
+                <Text style={styles.valueText}>Name: </Text>
+                {deviceRender.deviceName}
+              </Text>
+
+              <Text
+                style={[
+                  {
+                    color: GRAY,
+                    marginLeft: 6,
+                  },
+                  styles.titleText,
+                ]}
+              >
+                <Text style={styles.valueText}>Quantity: </Text>
+                {deviceRender.deviceQuantity}
+              </Text>
+            </View>
+
+            <View
+              style={{
+                justifyContent: 'center',
+                height: 70,
+                paddingHorizontal: 10,
+              }}
+            >
+              {deviceSelectedDevice.filter(
+                (device) => device.deviceId === deviceRender.deviceId
+              )[0] ? (
+                <CheckIcon color={FPT_ORANGE_COLOR} size={35} />
+              ) : (
+                <CheckIcon color={WHITE} />
+              )}
+            </View>
+          </View>
+        </View>
+      </View>
+    );
   };
 
   const renderFooter = () => {
@@ -561,34 +724,6 @@ const AcceptBooking: React.FC<any> = () => {
               <Divider num={deviceWidth / 10} />
 
               <View style={styles.dataRowContainer}>
-                <Text style={styles.titleText}>Requested devices</Text>
-                <TouchableOpacity
-                  onPress={() => handleViewDevices(bookingRoom.id)}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: FPT_ORANGE_COLOR,
-                      fontSize: deviceWidth / 23,
-                      fontWeight: '500',
-                    }}
-                  >
-                    View devices
-                  </Text>
-                  <ChevronRightIcon
-                    color={FPT_ORANGE_COLOR}
-                    size={deviceWidth / 14}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <Divider num={deviceWidth / 10} />
-
-              <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Booking Reason</Text>
                 <Text style={styles.valueText}>{bookingRoom.reason}</Text>
               </View>
@@ -621,11 +756,6 @@ const AcceptBooking: React.FC<any> = () => {
                 ]}
               >
                 <View style={styles.dataRowContainer}>
-                  <Text style={styles.titleText}>Booking ID</Text>
-                  <Text style={styles.valueText}>{bookingRoom.id}</Text>
-                </View>
-                <Divider num={deviceWidth / 10} />
-                <View style={styles.dataRowContainer}>
                   <Text style={styles.titleText}>Requested At</Text>
                   <Text style={styles.valueText}>
                     {dayjs(new Date(bookingRoom.requestedAt)).format(
@@ -644,6 +774,16 @@ const AcceptBooking: React.FC<any> = () => {
                     </View>
                   </>
                 ) : null}
+                {deviceList.length > 0 ? (
+                  <View style={styles.dataRowContainer}>
+                    <Text style={styles.titleText}>List Devices</Text>
+                    {bookingRoom.status === CHECKED_IN
+                      ? deviceList.map((device) =>
+                          DeviceRenderCheckOutItem(device)
+                        )
+                      : deviceList.map((device) => DeviceRenderItem(device))}
+                  </View>
+                ) : null}
               </View>
 
               {bookingRoom.status !== PENDING ? (
@@ -651,7 +791,7 @@ const AcceptBooking: React.FC<any> = () => {
                   style={{
                     marginTop: 20,
                   }}
-                ></View>
+                />
               ) : null}
             </View>
             <CancelAlertModalRef ref={cancelBookingRequestModal} />
@@ -782,6 +922,158 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: deviceWidth / 20,
     color: WHITE,
+  },
+  deviceDescriptionContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    width: 200,
+  },
+  deviceContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flexGrow: 1,
+  },
+  deviceIconContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
+    height: 50,
+    width: 50,
+    borderWidth: 2,
+    borderColor: FPT_ORANGE_COLOR,
+    marginLeft: 10,
+  },
+  selectCircleButton: {
+    backgroundColor: WHITE,
+    display: 'flex',
+    margin: 10,
+    height: 90,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  selectOn: {
+    height: 20,
+    width: 20,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: FPT_ORANGE_COLOR,
+    position: 'absolute',
+    zIndex: 2,
+    left: -10,
+    top: -10,
+    backgroundColor: WHITE,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectOff: {
+    height: 20,
+    width: 20,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: GRAY,
+    position: 'absolute',
+    zIndex: 2,
+    left: -10,
+    top: -10,
+    backgroundColor: WHITE,
+  },
+  viewDetailButtonText: {
+    color: FPT_ORANGE_COLOR,
+  },
+  viewDetailButton: {
+    borderColor: FPT_ORANGE_COLOR,
+    borderWidth: 1,
+    height: 30,
+    width: deviceWidth / 4.3,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  nextStepButtonText: {
+    fontWeight: '600',
+    fontSize: deviceWidth / 21,
+    color: WHITE,
+  },
+  nextStepButton: {
+    height: 50,
+    width: deviceWidth / 2.2,
+    backgroundColor: FPT_ORANGE_COLOR,
+    borderRadius: 8,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  footerContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    height: 90,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: WHITE,
+  },
+  filterContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: 10,
+    backgroundColor: WHITE,
+    height: 100,
+    borderRadius: 8,
+  },
+  filterHeaderText: {
+    color: BLACK,
+    fontSize: deviceWidth / 25,
+    fontWeight: '600',
+    paddingTop: 6,
+    paddingHorizontal: 10,
+  },
+  filterBodyContainer: {
+    margin: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  filterInputContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  filterInputIconContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 50,
+    height: 50,
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+    backgroundColor: LIGHT_GRAY,
+  },
+  filterInput: {
+    backgroundColor: LIGHT_GRAY,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
+    height: 50,
+    width: deviceWidth / 1.6,
+  },
+  filterSortButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: LIGHT_GRAY,
+    borderRadius: 8,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

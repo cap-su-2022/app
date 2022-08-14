@@ -84,6 +84,8 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
               radius="md"
               readOnly
               autosize
+              minRows={4}
+              maxRows={9}
               value={room.description}
             />
           </InputWrapper>

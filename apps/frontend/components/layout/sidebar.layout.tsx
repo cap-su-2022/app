@@ -33,9 +33,9 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
-  const isAdmin = userInfo.role === 'System Admin';
-  const isLibrarian = userInfo.role === 'Librarian';
-  const isStaff = userInfo.role === 'Staff';
+  const isAdmin = userInfo?.role === 'System Admin';
+  const isLibrarian = userInfo?.role === 'Librarian';
+  const isStaff = userInfo?.role === 'Staff';
   console.log(userInfo);
 
   const data = [

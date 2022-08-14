@@ -19,6 +19,7 @@ import { deviceHeight, deviceWidth } from '../../../utils/device';
 import {
   ChevronLeftIcon,
   ClockIcon,
+  ExclamationCircleIcon,
   HomeIcon,
   LibraryIcon,
   PencilIcon,
@@ -65,6 +66,8 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
   const [timeSlotCheckin, setTimeSlotCheckin] = useState('');
   const [timeSlotCheckout, setTimeSlotCheckout] = useState('');
   const [isQRModalShown, setQRModalShown] = useState<boolean>(false);
+  const [isCheckinSuccessModalShown, setCheckinSuccessModalShown] =
+    useState(false);
 
   const socket = useMemo(() => {
     return SocketIOClient('http://34.142.193.100:5000/booking', {
@@ -77,9 +80,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
       socket.on('msgToServer', (e) => {
         if (e === bookingRoom.id) {
           setQRModalShown(false);
-          setTimeout(() => {
-            navigate.replace('MAIN');
-          }, 1);
+          setCheckinSuccessModalShown(!isCheckinSuccessModalShown);
         }
       });
     }
@@ -112,6 +113,69 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
       setErrorModalShown(false);
     };
   }, []);
+
+  const GenericAlertModal = () => {
+    return (
+      <AlertModal
+        isOpened={isCheckinSuccessModalShown}
+        height={180}
+        width={deviceWidth / 1.1}
+        toggleShown={() => setTimeout(() => navigate.replace('MAIN'), 1)}
+      >
+        <View
+          style={{
+            display: 'flex',
+            flex: 1,
+            flexGrow: 0.9,
+            justifyContent: 'space-between',
+            paddingHorizontal: 10,
+          }}
+        >
+          <ExclamationCircleIcon
+            style={{
+              alignSelf: 'center',
+            }}
+            size={deviceWidth / 8}
+            color={FPT_ORANGE_COLOR}
+          />
+          <Text
+            style={{
+              color: BLACK,
+              fontWeight: '500',
+              fontSize: deviceWidth / 23,
+              textAlign: 'center',
+            }}
+          >
+            You have successfully checked-in!
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              setCheckinSuccessModalShown(!isCheckinSuccessModalShown);
+              setTimeout(() => navigate.replace('MAIN'), 1);
+            }}
+            style={{
+              backgroundColor: FPT_ORANGE_COLOR,
+              height: 40,
+              borderRadius: 8,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: '500',
+                fontSize: deviceWidth / 23,
+                color: WHITE,
+              }}
+            >
+              OK
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </AlertModal>
+    );
+  };
 
   const handleGetData = () => {
     dispatch(
@@ -303,6 +367,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
         handleShown={() => setErrorModalShown(!isErrorModalShown)}
         isShown={isErrorModalShown}
       />
+      <GenericAlertModal />
     </SafeAreaView>
   );
 };

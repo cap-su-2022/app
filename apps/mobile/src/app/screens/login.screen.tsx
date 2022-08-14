@@ -22,7 +22,7 @@ import {
   WHITE,
 } from '@app/constants';
 import { doLogin } from '../redux/features/auth/thunk/login.thunk';
-import { isUserSessionExisted } from '../utils/local-storage';
+import { isUserSessionExisted, LOCAL_STORAGE } from '../utils/local-storage';
 import { validateAccessToken } from '../redux/features/auth/thunk/validate-access-token.thunk';
 import { deviceHeight, deviceWidth } from '../utils/device';
 import { useAppDispatch } from '../hooks/use-app-dispatch.hook';
@@ -32,6 +32,7 @@ import { doGoogleLogin } from '../redux/features/auth/thunk/google-login.thunk';
 import { boxShadow } from '../utils/box-shadow.util';
 import AlertModal from '../components/modals/alert-modal.component';
 import { ExclamationCircleIcon } from 'react-native-heroicons/outline';
+import { saveFCMToken } from '../redux/features/auth/thunk/firebase-token.thunk';
 
 const LoginScreen = () => {
   const dispatch = useAppDispatch();
@@ -40,6 +41,7 @@ const LoginScreen = () => {
   const [isError, setError] = React.useState<boolean>(false);
   const [isLoginFailure, setLoginFailure] = React.useState<boolean>(false);
   const [loginErrMsg, setLoginErrMsg] = useState<string>();
+  const fcmToken = LOCAL_STORAGE.getString('fcmToken');
 
   useEffect(() => {
     if (isUserSessionExisted()) {
@@ -54,6 +56,15 @@ const LoginScreen = () => {
   const handleLoginWithGoogle = async () => {
     dispatch(doGoogleLogin())
       .unwrap()
+      .then(() => {
+        dispatch(
+          saveFCMToken({
+            fcmToken: fcmToken,
+          })
+        )
+          .unwrap()
+          .then((r) => console.log(r));
+      })
       .then(() => {
         setTimeout(() => {
           navigate.navigate('MAIN');
@@ -82,6 +93,15 @@ const LoginScreen = () => {
       })
     )
       .unwrap()
+      .then(() => {
+        dispatch(
+          saveFCMToken({
+            fcmToken: fcmToken,
+          })
+        )
+          .unwrap()
+          .then((r) => console.log(r));
+      })
       .then(() => {
         navigate.navigate('MAIN');
       })

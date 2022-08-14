@@ -15,11 +15,13 @@ import * as Yup from 'yup';
 import { fetchFeedbacks } from '../../redux/features/feedback/thunk/fetch-feedback';
 import { rejectFeedback } from '../../redux/features/feedback/thunk/reject-feedback';
 import { FeedbackPaginationParams } from '../../models/pagination-params/feedback-paging-params.model';
+import { fetchCountRequestFeedbacks } from '../../redux/features/feedback/thunk/fetch-count-feedbacks';
 
 interface RejectFeedbackModalProps {
   isShown: boolean;
   toggleShown(): void;
   toggleInforModalShown(): void;
+  setCount(val): void;
   pagination: FeedbackPaginationParams;
 }
 
@@ -75,6 +77,7 @@ const RejectFeedbackModal: React.FC<RejectFeedbackModalProps> = (props) => {
         props.toggleShown();
         props.toggleInforModalShown();
         dispatch(fetchFeedbacks(props.pagination));
+        dispatch(fetchCountRequestFeedbacks()).unwrap().then(val => props.setCount(val));
       });
   };
 

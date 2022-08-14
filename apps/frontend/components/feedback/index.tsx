@@ -43,7 +43,7 @@ const defaultPaginationParams = {
 const ManageFeedback: React.FC<any> = () => {
   const { classes } = useStyles();
   const socket = useMemo(() => {
-    return io('ws://localhost:5000');
+    return io('ws://localhost:5000/feedback');
   }, []);
   const [isRejectShown, setRejectShown] = useState<boolean>(false);
   const [isResolveShown, setResolveShown] = useState<boolean>(false);
@@ -168,7 +168,7 @@ const ManageFeedback: React.FC<any> = () => {
             size="xs"
           >
             Resolved
-            {count && count[0]?.count > 0 ? (
+            {count && count[1]?.count > 0 ? (
               <div
                 className={classes.badge}
                 style={{ backgroundColor: '#40c057' }}
@@ -185,7 +185,7 @@ const ManageFeedback: React.FC<any> = () => {
             size="xs"
           >
             Rejected
-            {count && count[0]?.count > 0 ? (
+            {count && count[2]?.count > 0 ? (
               <div
                 className={classes.badge}
                 style={{ backgroundColor: '#fa5252' }}
@@ -309,6 +309,7 @@ const ManageFeedback: React.FC<any> = () => {
             isShown={isRejectShown}
             toggleShown={() => setRejectShown(!isRejectShown)}
             toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+            setCount={(val) => setCount(val)}
             pagination={pagination}
           />
 
@@ -316,6 +317,7 @@ const ManageFeedback: React.FC<any> = () => {
             isShown={isResolveShown}
             toggleShown={() => setResolveShown(!isResolveShown)}
             toggleInforModalShown={() => setInfoShown(!isInfoShown)}
+            setCount={(val) => setCount(val)}
             pagination={pagination}
           />
         </>

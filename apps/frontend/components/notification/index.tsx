@@ -45,11 +45,15 @@ function NotificationManagement(props: any) {
 
   const NotificationDiv: React.FC = () => {
     return (
-      <ScrollArea style={{ height: '60vh', borderRadius: 5 }}>
+      <ScrollArea style={{ height: '70vh', borderRadius: 5 }}>
         {notifications?.length > 0
           ? notifications.map((notification) => (
               <div
-                className={classes.notificationDiv}
+                className={
+                  detail?.id === notification?.id
+                    ? classes.notificationChoosedDiv
+                    : classes.notificationDiv
+                }
                 key={notification.id}
                 onClick={() => handelGetDetailNoti(notification.id)}
               >
@@ -65,9 +69,9 @@ function NotificationManagement(props: any) {
                   )}
                 </div>
 
-                <div>
+                <div style={{flex: 1}}>
                   <b>{notification.title}</b>
-                  <Text size="sm" lineClamp={1}>
+                  <Text size="sm" lineClamp={1} style={{minWidth: '100%'}}>
                     {notification.message}
                   </Text>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -99,7 +103,7 @@ function NotificationManagement(props: any) {
                 <h1 className={classes.header}>Notification</h1>
                 <Dots size={20} strokeWidth={2} color={'black'} />
               </div>
-              <div style={{ margin: '10px 0' }}>
+              {/* <div style={{ margin: '10px 0' }}>
                 <Button variant="light" style={{ borderRadius: 50 }}>
                   All
                 </Button>
@@ -111,7 +115,7 @@ function NotificationManagement(props: any) {
                   Not read
                 </Button>
               </div>
-              <b style={{ margin: '10px 0' }}>Before</b>
+              <b style={{ margin: '10px 0' }}>Before</b> */}
               <NotificationDiv />
             </div>
           </div>
@@ -121,7 +125,9 @@ function NotificationManagement(props: any) {
                 <div className={classes.headerDiv}>
                   <h1 className={classes.header}>{detail?.title}</h1>
                 </div>
-                <p style={{fontSize: 13}}>{dayjs(detail?.createdAt).format('HH:mm DD-MM-YYYY')}</p>
+                <p style={{ fontSize: 13 }}>
+                  {dayjs(detail?.createdAt).format('HH:mm DD-MM-YYYY')}
+                </p>
                 <div className={classes.messageDiv}>{detail.message}</div>
               </div>
             </div>
@@ -173,7 +179,7 @@ const useStyles = createStyles({
     outline: 'none',
   },
   notificationDiv: {
-    backgroundColor: '#f3f3f3',
+    // backgroundColor: '#f3f3f3',
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
@@ -184,6 +190,16 @@ const useStyles = createStyles({
     '&:hover': {
       backgroundColor: '#b1dfff',
     },
+  },
+  notificationChoosedDiv: {
+    backgroundColor: '#b1dfff',
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    marginRight: 10,
   },
 });
 

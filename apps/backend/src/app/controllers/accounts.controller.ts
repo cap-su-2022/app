@@ -351,6 +351,35 @@ export class AccountsController {
     return this.service.updateById(user.account_id, payload.id, body);
   }
 
+  @Put('save-fcmtoken')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Save FCM Token',
+    description: 'Save FCM Token',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully save FCM Token',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while saving FCM Token',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Not enough privileges',
+  })
+  saveFCMToken(
+    @User() user: KeycloakUserInstance,
+    @Body() body: {fcmToken: string}
+  ) {
+    return this.service.saveFCMToken(user, body);
+  }
+
   @Put('update-profile')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({

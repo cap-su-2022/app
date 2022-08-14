@@ -4,23 +4,16 @@ import {
   Inject,
   Injectable,
   Logger,
-  Scope,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { BookingRoomRepository } from '../repositories';
-import { BookingRoomResponseDTO } from '../dto/booking-room.response.dto';
 import { WishlistBookingRoomResponseDTO } from '../dto/wishlist-booking-room.response.dto';
 import { RoomWishlistService } from './room-wishlist.service';
 import { WishlistBookingRoomRequestDTO } from '../dto/wishlist-booking-room.request.dto';
-import { BookingRoomsFilterRequestPayload } from '../payload/request/booking-rooms.request.payload';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { RemoveWishlistRequest } from '../payload/request/remove-from-booking-room-wishlist.request.payload';
-import { DevicesService } from './devices.service';
 import { AccountsService } from './accounts.service';
-import { ChooseBookingRoomFilterPayload } from '../payload/request/choose-booking-room-filter.payload';
-import { GetBookingRoomsPaginationPayload } from '../payload/request/get-booking-rooms-pagination.payload';
-import { BookingRequest, Devices } from '../models';
-import { RoomTypeService } from './room-type.service';
+import { BookingRequest } from '../models';
 import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
 import { BookingRequestHistService } from './booking-room-hist.service';
 import { SlotService } from './slot.service';
@@ -31,6 +24,7 @@ import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-
 import { NotificationService } from './notification.service';
 import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
 import { BookingFeedbackService } from './booking-feedback.service';
+import * as admin from 'firebase-admin';
 
 @Injectable()
 export class BookingRoomService {
@@ -104,7 +98,6 @@ export class BookingRoomService {
         result.day.total += 1;
       }
       if (checkinDate >= sunday && checkinDate <= satuday) {
-        // console.log("INWEEK: ", allRequest[i].checkinDate)
         result.week.total += 1;
       }
       if (checkinDate >= firstDayInMonth && checkinDate <= lastDayInMonth) {
@@ -351,7 +344,7 @@ export class BookingRoomService {
 
   async getAllBookingRoomsPagination(
     payload: BookingRoomPaginationParams,
-    accountId
+    accountId: string
   ) {
     try {
       const role = await this.accountService.getRoleOfAccount(accountId);
@@ -556,10 +549,12 @@ export class BookingRoomService {
   }
 
   async getRoomFreeAtTime(payload: {
+    search: string;
     date: string;
     checkinSlotId: string;
     checkoutSlotId: string;
   }) {
+    console.log('HHHH: ', payload.search);
     try {
       const listRequestBookedInDaySameSlot =
         await this.getListRequestBookedInDayAndSlot(payload);
@@ -570,6 +565,7 @@ export class BookingRoomService {
         });
       }
       const result = await this.roomService.filterRoomFreeByRoomBooked(
+        payload.search,
         listRoomBookedInDaySameSlot
       );
       return result;
@@ -580,6 +576,7 @@ export class BookingRoomService {
   }
 
   async getRoomFreeAtMultiDate(payload: {
+    search: string;
     dateStart: string;
     dateEnd: string;
     checkinSlot: number;
@@ -595,6 +592,7 @@ export class BookingRoomService {
         });
       }
       const result = await this.roomService.filterRoomFreeByRoomBooked(
+        payload.search,
         listRoomBookedInMultiDaySameSlot
       );
       return result;
@@ -605,6 +603,7 @@ export class BookingRoomService {
   }
 
   async getRoomFreeAtMultiDateV2(payload: {
+    search: string;
     dateStart: string;
     dateEnd: string;
     checkinSlotId: string;
@@ -620,6 +619,7 @@ export class BookingRoomService {
         });
       }
       const result = await this.roomService.filterRoomFreeByRoomBooked(
+        payload.search,
         listRoomBookedInMultiDaySameSlot
       );
       return result;
@@ -639,15 +639,6 @@ export class BookingRoomService {
       throw new BadRequestException(e.message);
     }
   }
-
-  // getCurrentRoomBookingDetail(accountId: string, id: string) {
-  //   try {
-  //     return this.repository.findByIdAndAccountId(accountId, id);
-  //   } catch (e) {
-  //     this.logger.error(e.message);
-  //     throw new BadRequestException(e.message);
-  //   }
-  // }
 
   async getInforToFeedback(id: string) {
     try {
@@ -815,14 +806,13 @@ export class BookingRoomService {
         );
       }
 
-      const alreadyBookedOtherRoom = await this.checkAlreadyHaveBookingSameSlotV2(
-        {
+      const alreadyBookedOtherRoom =
+        await this.checkAlreadyHaveBookingSameSlotV2({
           checkinDate: payload.checkinDate,
           userId: payload.bookedFor || userId,
           checkinSlot: payload.checkinSlot,
           checkoutSlot: payload.checkoutSlot,
-        }
-      );
+        });
 
       if (alreadyBookedOtherRoom !== '') {
         throw new BadRequestException(
@@ -918,8 +908,6 @@ export class BookingRoomService {
         );
       }
 
-      // await this.histService.createNew(request, queryRunner);
-
       await queryRunner.commitTransaction();
 
       return request;
@@ -940,7 +928,6 @@ export class BookingRoomService {
     checkoutSlot: string;
   }) {
     try {
-      console.log("AAAAAAA: ", payload)
       const fromDate = new Date(payload.checkinDate);
       const toDate = new Date(payload.checkoutDate);
       const alreadyBookedOtherRoom = [];
@@ -961,7 +948,9 @@ export class BookingRoomService {
         });
 
         if (result.length > 0) {
-          alreadyBookedOtherRoom.push(' ' + result + ' in ' + dayjs(i).format('DD-MM-YYYY'));
+          alreadyBookedOtherRoom.push(
+            ' ' + result + ' in ' + dayjs(i).format('DD-MM-YYYY')
+          );
         }
       }
 
@@ -1024,43 +1013,6 @@ export class BookingRoomService {
           checkoutSlot: payload.checkoutSlot,
         });
       const listRequestBookedInDayOfUser = [];
-      // for (
-      //   let i = new Date(fromDate);
-      //   i <= toDate;
-      //   i.setDate(i.getDate() + 1)
-      // ) {
-      //   // const result = await this.repository.getRequestBookedInDayOfUser(
-      //   //   dayjs(i).format('YYYY-MM-DD'),
-      //   //   userId
-      //   // );
-      //   // if (result.length > 0) {
-      //   //   listRequestBookedInDayOfUser.push(...result);
-      //   // }
-      //   const result = await this.checkAlreadyHaveBookingSameSlot({
-      //     checkinDate: dayjs(i).format('YYYY-MM-DD'),
-      //     userId: payload.bookedFor || userId,
-      //     slotNumIn: slotIn.slotNum,
-      //     slotNumOut: slotIn.slotNum,
-      //   });
-
-      //   if (result.length > 0) {
-      //     alreadyBookedOtherRoom.push(result);
-      //   }
-      // }
-
-      // if (listRequestBookedInDayOfUser.length > 0) {
-      //   listRequestBookedInDayOfUser.map(async (request) => {
-      //     for (let j = request.slotIn; j <= request.slotOut; j++) {
-      //       if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
-      //         alreadyBookedOtherRoom = [
-      //           ...alreadyBookedOtherRoom,
-      //           request.roomName,
-      //         ];
-      //         break;
-      //       }
-      //     }
-      //   });
-      // }
       if (alreadyBookedOtherRoom.length > 0) {
         throw new BadRequestException(
           `You already have bookings for ${alreadyBookedOtherRoom} at same slot!`
@@ -1201,13 +1153,38 @@ export class BookingRoomService {
       });
       if (listRequestSameSlot) {
         const reason = 'This room is given priority for another request';
-        listRequestSameSlot.forEach((requestSameSlot) => {
+        listRequestSameSlot.forEach(async (requestSameSlot) => {
           this.repository.rejectById(
             accountId,
             requestSameSlot.id,
             reason,
             queryRunner
           );
+
+          const _receiver = await this.accountService.getRoleOfAccount(
+            requestSameSlot.bookedFor
+          );
+          if (_receiver.fcmToken) {
+            const message = {
+              data: {
+                score: '850',
+                time: '2:45',
+              },
+              notification: {
+                title: 'FLBRMS',
+                body: 'Your request booking was rejected',
+              },
+            };
+            await admin
+              .messaging()
+              .sendToDevice(_receiver.fcmToken, message)
+              .then((response) => {
+                console.log('Successfully sent message:', response);
+              })
+              .catch((error) => {
+                console.log('Error sending message:', error);
+              });
+          }
         });
       }
       const requestAccepted = await this.repository.acceptById(
@@ -1244,26 +1221,32 @@ export class BookingRoomService {
     reason: string,
     queryRunner: QueryRunner
   ) {
-    const requestRejected = await this.repository.rejectById(
-      accountId,
-      id,
-      reason,
-      queryRunner
-    );
+    try {
+      const requestRejected = await this.repository.rejectById(
+        accountId,
+        id,
+        reason,
+        queryRunner
+      );
 
-    const request = await this.repository.getRequest(id);
+      const request = await this.repository.getRequest(id);
+      await this.notificationService.sendRejectRequestNotification(
+        dayjs(request.checkinDate).format('DD-MM-YYYY'),
+        request.checkinSlotName,
+        request.checkoutSlotName,
+        request.roomName,
+        reason,
+        request.requestedBy,
+        queryRunner
+      );
 
-    this.notificationService.sendRejectRequestNotification(
-      dayjs(request.checkinDate).format('DD-MM-YYYY'),
-      request.checkinSlotName,
-      request.checkoutSlotName,
-      request.roomName,
-      reason,
-      request.requestedBy,
-      queryRunner
-    );
-
-    return requestRejected;
+      return requestRejected;
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while reject request'
+      );
+    }
   }
 
   async rejectById(accountId: string, id: string, reason: string) {
@@ -1288,8 +1271,7 @@ export class BookingRoomService {
       if (isCancelled) {
         throw new BadRequestException('Request already cancelled!');
       }
-
-      const requestRejected = this.reject(accountId, id, reason, queryRunner);
+      const requestRejected = await this.reject(accountId, id, reason, queryRunner);
 
       await queryRunner.commitTransaction();
       return requestRejected;

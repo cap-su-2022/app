@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 export const fetchRoomFreeAtTime = createAsyncThunk<
   any[],
   {
+    search: string,
     date: string,
     checkinSlotId: string,
     checkoutSlotId: string,
@@ -20,6 +21,7 @@ export const fetchRoomFreeAtTime = createAsyncThunk<
   try {
     const response = await axios.get('api/booking-room/list-room-free-at-time', {
       params: {
+        search: payload.search,
         date: dayjs(payload.date).format("YYYY-MM-DD"),
         checkinSlotId: payload.checkinSlotId,
         checkoutSlotId: payload.checkoutSlotId,
