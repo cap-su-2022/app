@@ -48,7 +48,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       showNotification({
         id: 'delete-data',
         color: 'red',
-        title: 'Error while delete device type',
+        title: 'Error while deleting device type',
         message:
           'There are still devices of this type, please change the type of those devices before deleting type',
         icon: <X />,
@@ -76,7 +76,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           showNotification({
             id: 'delete-data',
             color: 'red',
-            title: 'Error while delete device type',
+            title: 'Error while deleting device type',
             message: e.message ?? 'Failed to delete device type',
             icon: <X />,
             autoClose: 3000,
@@ -220,7 +220,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           padding: '20px 0px',
         }}
       >
-        <h1>Dont have any device with this type</h1>
+        <h1>Don't have any device with this type</h1>
       </div>
     );
   };
