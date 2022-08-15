@@ -5,6 +5,8 @@ import {
   Button, Highlight,
 } from '@mantine/core';
 import {
+  Archive,
+  ArchiveOff,
   InfoCircle,
   Pencil,
   Trash,
@@ -74,7 +76,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             color="red"
             onClick={() => props.actionButtonCb.delete(row.id)}
           >
-            <Trash/>
+            <Archive/>
           </Button> : null
 
         }
