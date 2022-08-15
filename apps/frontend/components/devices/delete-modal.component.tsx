@@ -41,7 +41,7 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
       showNotification({
         id: 'delete-data',
         color: 'red',
-        title: 'Error while delete device',
+        title: 'Error while deleting device',
         message:
           'There are already request in BOOKED state using this device. You cannot delete it.',
         icon: <X />,
@@ -54,7 +54,7 @@ const DeleteDeviceModal: React.FC<DeleteDeviceModalProps> = (props) => {
           showNotification({
             id: 'delete-data',
             color: 'red',
-            title: 'Error while delete device',
+            title: 'Error while deleting device',
             message: e.message ?? 'Failed to delete device',
             icon: <X />,
             autoClose: 3000,
