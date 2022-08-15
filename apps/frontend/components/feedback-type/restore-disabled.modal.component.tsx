@@ -41,7 +41,7 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
   const [scrolled, setScrolled] = useState(false);
   const [search, setSearch] = useState<string>('');
   const [searchDebounced] = useDebouncedValue<string>(search, 400);
-
+  const [isRestoreDisabledShown, setRestoreDisabledShown] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(fetchDisabledFeedbackTypes(search));
@@ -57,7 +57,7 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
         showNotification({
           id: 'restore-data',
           color: 'red',
-          title: 'Error while restore feedback type',
+          title: 'Error while restoring feedback type',
           message: e.message ?? 'Failed to restore feedback type',
           icon: <X/>,
           autoClose: 3000,
@@ -73,7 +73,6 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
           autoClose: 3000,
         })
       )
-    setDisabledShown(false);
   };
 
 
@@ -196,7 +195,4 @@ const useStyles = createStyles((theme) => ({
 export default RestoreDisabledModal;
 
 
-function setDisabledShown(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}
 

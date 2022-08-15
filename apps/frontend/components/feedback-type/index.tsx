@@ -3,6 +3,7 @@ import {Button, createStyles} from '@mantine/core';
 import AdminLayout from '../../components/layout/admin.layout';
 import Header from '../../components/common/header.component';
 import {
+  Archive, ArchiveOff,
   BuildingWarehouse,
   Check,
   Plus,
@@ -161,7 +162,7 @@ const ManageFeedbackType: React.FC<any> = () => {
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
         >
-          <TrashOff/>
+          <ArchiveOff color={'red'}/>
         </Button>
       </div>
     );
