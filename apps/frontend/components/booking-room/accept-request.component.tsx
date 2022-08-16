@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, createStyles, Text } from '@mantine/core';
 import { Check, ScanEye, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
@@ -11,6 +11,7 @@ import { fetchRoomBookings } from '../../redux/features/room-booking/thunk/fetch
 import { acceptRequest } from '../../redux/features/room-booking/thunk/accept-request';
 import { showNotification } from '@mantine/notifications';
 import { fetchCountRequestBooking } from '../../redux/features/room-booking/thunk/fetch-count-request-booking';
+import { io } from 'socket.io-client';
 
 interface AcceptRequestComponentProps {
   isShown: boolean;
@@ -30,6 +31,9 @@ const AcceptRequestComponent: React.FC<AcceptRequestComponentProps> = (
   const [listRequest, setListRequest] = useState([]);
   const [show, setShow] = useState(false);
   const parent = useRef(null);
+  const socket = useMemo(() => {
+    return io('ws://localhost:5000/booking');
+  }, []);
 
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
@@ -57,6 +61,25 @@ const AcceptRequestComponent: React.FC<AcceptRequestComponentProps> = (
   const handleAcceptSelectedRequest = () => {
     dispatch(acceptRequest(request.id))
       .unwrap()
+      .then((response) => {
+        socket.emit('acceptRequest', response.bookedFor);
+        showNotification({
+          id: 'accept-request',
+          color: 'teal',
+          title: 'Request was accepted',
+          message: 'Request was successfully accepted',
+          icon: <Check />,
+          autoClose: 3000,
+        });
+      })
+      .then(() => {
+        props.toggleShown();
+        props.toggleInforModalShown();
+        dispatch(fetchRoomBookings(props.pagination));
+        dispatch(fetchCountRequestBooking())
+          .unwrap()
+          .then((val) => props.setCount(val));
+      })
       .catch((e) =>
         showNotification({
           id: 'accept-request',
@@ -66,23 +89,7 @@ const AcceptRequestComponent: React.FC<AcceptRequestComponentProps> = (
           icon: <X />,
           autoClose: 3000,
         })
-      )
-      .then(() =>
-        showNotification({
-          id: 'accept-request',
-          color: 'teal',
-          title: 'Request was accepted',
-          message: 'Request was successfully accepted',
-          icon: <Check />,
-          autoClose: 3000,
-        })
-      )
-      .then(() => {
-        props.toggleShown();
-        props.toggleInforModalShown();
-        dispatch(fetchRoomBookings(props.pagination));
-        dispatch(fetchCountRequestBooking()).unwrap().then(val => props.setCount(val));
-      });
+      );
   };
 
   const ListRequestPendingAtSameSlot = () => {

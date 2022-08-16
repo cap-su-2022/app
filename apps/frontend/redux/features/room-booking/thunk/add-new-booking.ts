@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import { RoomBooking } from '../../../../models/room-booking.model';
 
 interface AddRequestPayload {
   roomId: string;
@@ -19,7 +20,7 @@ interface AddRequestRejectValue {
 }
 
 export const addNewRequest = createAsyncThunk<
-  void,
+  RoomBooking,
   AddRequestPayload,
   {
     rejectValue: AddRequestRejectValue;

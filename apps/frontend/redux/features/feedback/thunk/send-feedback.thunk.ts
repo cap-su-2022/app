@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
 import axios from 'axios';
+import { Feedback } from '../../../../models/feedback.model';
 
 export const sendFeedback = createAsyncThunk<
-  void,
+  Feedback,
   {
     feedback?: string;
     type?: string;

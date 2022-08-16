@@ -48,20 +48,39 @@ export class FeedbackGateway
     return feedbackSent;
   }
 
-  @SubscribeMessage('findAllFeedbacks')
-  async getAllFeedbacks(
-    @MessageBody() payload: FeedbackPaginationPayload,
+  @SubscribeMessage('sendFeedback')
+  async sendFeedback(
+    @MessageBody() createdBy: string,
     @ConnectedSocket() client: Socket
   ) {
-    // console.log('RUN getAllFeedbacks');
-    // console.log('IDDDĐ: ', client.id);
-    // console.log('SEVICE: ', this.feedbackService);
-    // const result = await this.feedbackService.getAllFeedbacks(
-    //   client.id,
-    //   payload
-    // );
-    // console.log('RESULT: ', result);
-    // return result;
-    return null;
+    client.broadcast.emit('sendFeedback', createdBy);
+    return {
+      data: createdBy,
+      event: 'sendFeedback',
+    };
+  }
+
+  @SubscribeMessage('resolveFeedback')
+  async resolveFeedback(
+    @MessageBody() createdBy: string,
+    @ConnectedSocket() client: Socket
+  ) {
+    client.broadcast.emit('resolveFeedback', createdBy);
+    return {
+      data: createdBy,
+      event: 'resolveFeedback',
+    };
+  }
+
+  @SubscribeMessage('rejectFeedback')
+  async rejectFeedback(
+    @MessageBody() createdBy: string,
+    @ConnectedSocket() client: Socket
+  ) {
+    client.broadcast.emit('rejectFeedback', createdBy);
+    return {
+      data: createdBy,
+      event: 'rejectFeedback',
+    };
   }
 }

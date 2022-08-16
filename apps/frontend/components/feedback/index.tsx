@@ -54,21 +54,58 @@ const ManageFeedback: React.FC<any> = () => {
   );
   const [count, setCount] = useState<{ count: number }[]>([]);
 
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
-    socket.emit('findAllFeedbacks', pagination, (response) => {
-      console.log('AHHHHHHHHHHHHHHHHHH: ', response);
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
+
+  useEffect(() => {
+    socket.on('sendFeedback', (createdBy) => {
+      const _userInfor = JSON.parse(window.localStorage.getItem('user'));
+
+      if (
+        createdBy &&
+        createdBy !== _userInfor.id &&
+        _userInfor.role !== 'Staff'
+      ) {
+        dispatch(fetchFeedbacks(pagination));
+        dispatch(fetchCountRequestFeedbacks()).unwrap().then(setCount);
+      }
     });
-  });
+  }, [socket]);
+
+  useEffect(() => {
+    socket.on('resolveFeedback', (createdBy) => {
+      const _userInfor = JSON.parse(window.localStorage.getItem('user'));
+
+      if (
+        createdBy &&
+        (createdBy === _userInfor.id || _userInfor.role !== 'Staff')
+      ) {
+        dispatch(fetchFeedbacks(pagination));
+        dispatch(fetchCountRequestFeedbacks()).unwrap().then(setCount);
+      }
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    socket.on('rejectFeedback', (createdBy) => {
+      const _userInfor = JSON.parse(window.localStorage.getItem('user'));
+
+      if (
+        createdBy &&
+        (createdBy === _userInfor.id || _userInfor.role !== 'Staff')
+      ) {
+        dispatch(fetchFeedbacks(pagination));
+        dispatch(fetchCountRequestFeedbacks()).unwrap().then(setCount);
+      }
+    });
+  }, [socket]);
 
   useEffect(() => {
     dispatch(fetchCountRequestFeedbacks()).unwrap().then(setCount);
   }, []);
   const [debounceSearchValue] = useDebouncedValue(pagination.search, 400);
-
-  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
-  useEffect(() => {
-    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
-  }, []);
 
   const dispatch = useAppDispatch();
 
@@ -329,6 +366,7 @@ const ManageFeedback: React.FC<any> = () => {
         pagination={pagination}
         toggleShown={() => handleAddModalClose()}
         feedbackTypes={feedbackTypeNames}
+        setCount={(val) => setCount(val)}
       />
       {feedbacks.meta ? (
         <TableFooter

@@ -1,11 +1,5 @@
-import React from 'react';
-import {
-  Button,
-  createStyles,
-  Modal,
-  Text,
-  Textarea,
-} from '@mantine/core';
+import React, { useMemo } from 'react';
+import { Button, createStyles, Modal, Text, Textarea } from '@mantine/core';
 import { Archive, Check, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -16,6 +10,7 @@ import { fetchFeedbacks } from '../../redux/features/feedback/thunk/fetch-feedba
 import { rejectFeedback } from '../../redux/features/feedback/thunk/reject-feedback';
 import { FeedbackPaginationParams } from '../../models/pagination-params/feedback-paging-params.model';
 import { fetchCountRequestFeedbacks } from '../../redux/features/feedback/thunk/fetch-count-feedbacks';
+import { io } from 'socket.io-client';
 
 interface RejectFeedbackModalProps {
   isShown: boolean;
@@ -38,6 +33,9 @@ const RejectFeedbackModal: React.FC<RejectFeedbackModalProps> = (props) => {
   const selectedFeedbackId = useAppSelector(
     (state) => state.feedback.feedback.id
   );
+  const socket = useMemo(() => {
+    return io('ws://localhost:5000/feedback');
+  }, []);
 
   const dispatch = useAppDispatch();
 
@@ -53,6 +51,26 @@ const RejectFeedbackModal: React.FC<RejectFeedbackModalProps> = (props) => {
 
   const handleRejectSelectedFeedback = (values) => {
     dispatch(rejectFeedback(values))
+      .unwrap()
+      .then((response) => {
+        socket.emit('rejectFeedback', response.createdBy);
+        showNotification({
+          id: 'reject-feedback',
+          color: 'teal',
+          title: 'This feedback was rejectled',
+          message: 'This feedback was successfully rejectled',
+          icon: <Check />,
+          autoClose: 3000,
+        });
+      })
+      .then(() => {
+        props.toggleShown();
+        props.toggleInforModalShown();
+        dispatch(fetchFeedbacks(props.pagination));
+        dispatch(fetchCountRequestFeedbacks())
+          .unwrap()
+          .then((val) => props.setCount(val));
+      })
       .catch((e) =>
         showNotification({
           id: 'reject-feedback',
@@ -62,23 +80,7 @@ const RejectFeedbackModal: React.FC<RejectFeedbackModalProps> = (props) => {
           icon: <X />,
           autoClose: 3000,
         })
-      )
-      .then(() =>
-        showNotification({
-          id: 'reject-feedback',
-          color: 'teal',
-          title: 'This feedback was rejectled',
-          message: 'This feedback was successfully rejectled',
-          icon: <Check />,
-          autoClose: 3000,
-        })
-      )
-      .then(() => {
-        props.toggleShown();
-        props.toggleInforModalShown();
-        dispatch(fetchFeedbacks(props.pagination));
-        dispatch(fetchCountRequestFeedbacks()).unwrap().then(val => props.setCount(val));
-      });
+      );
   };
 
   const ModalHeaderTitle: React.FC = () => {
