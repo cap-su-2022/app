@@ -41,7 +41,6 @@ const RestoreDisabledModal: React.FC<RestoreDisabledModalProps> = (
   const [scrolled, setScrolled] = useState(false);
   const [search, setSearch] = useState<string>('');
   const [searchDebounced] = useDebouncedValue<string>(search, 400);
-  const [isRestoreDisabledShown, setRestoreDisabledShown] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(fetchDisabledFeedbackTypes(search));

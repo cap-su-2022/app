@@ -115,6 +115,13 @@ export class BookingReasonService {
 
   async deleteBookingReasonById(accountId: string, id: string) {
     try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Room Booking reason does not found with the provided id'
+        );
+      }
+
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException('This reason is already deleted!');
