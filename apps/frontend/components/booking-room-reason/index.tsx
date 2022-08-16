@@ -211,7 +211,7 @@ const ManageBookingReason: React.FC<any> = () => {
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Update At',
+      label: 'Updated At',
       id: 'updatedAt',
       name: 'updatedAt',
       value: dayjs(bookingReason.updatedAt).format('HH:mm DD/MM/YYYY'),
@@ -219,7 +219,7 @@ const ManageBookingReason: React.FC<any> = () => {
       inputtype: InputTypes.TextInput,
     },
     {
-      label: 'Update By',
+      label: 'Updated By',
       id: 'updatedBy',
       name: 'updatedBy',
       value: bookingReason.updatedBy,
@@ -297,7 +297,7 @@ const ManageBookingReason: React.FC<any> = () => {
         showNotification({
           id: 'restore-data',
           color: 'red',
-          title: 'Error while add booking reason',
+          title: 'Error while adding booking reason',
           message: e.message ?? 'Failed to add booking reason',
           icon: <X/>,
           autoClose: 3000,
@@ -329,7 +329,7 @@ const ManageBookingReason: React.FC<any> = () => {
         showNotification({
           id: 'restore-data',
           color: 'red',
-          title: 'Error while update booking reason',
+          title: 'Error while updating booking reason',
           message: e.message ?? 'Failed to update booking reason',
           icon: <X/>,
           autoClose: 3000,

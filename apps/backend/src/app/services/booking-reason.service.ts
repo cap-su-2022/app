@@ -98,8 +98,8 @@ export class BookingReasonService {
       const isExisted = await this.repository.isExistedByName(
         updatePayload.name
       );
-      if (isExisted) {
-        throw new BadRequestException('Booking reason name is duplicated!');
+      if (!isExisted) {
+        throw new BadRequestException('Room Booking reason does not found with the provided id');
       }
       const bookingReason = await this.repository.updateById(
         accountId,
