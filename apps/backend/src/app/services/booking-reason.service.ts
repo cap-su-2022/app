@@ -89,17 +89,15 @@ export class BookingReasonService {
     accountId: string,
     updatePayload: MasterDataAddRequestPayload,
     id: string
-  ): Promise<BookingReason> {
+  ){
     try {
-      const data = await this.repository.findById(id);
-      if (data === undefined) {
-        throw new BadRequestException('This reason already deleted!');
-      }
-      const isExisted = await this.repository.isExistedByName(
-        updatePayload.name
-      );
+      const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
         throw new BadRequestException('Room Booking reason does not found with the provided id');
+      }
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException('This reason is already deleted!');
       }
       const bookingReason = await this.repository.updateById(
         accountId,
@@ -109,6 +107,7 @@ export class BookingReasonService {
       await this.histService.createNew(bookingReason);
       return bookingReason;
     } catch (e) {
+
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
