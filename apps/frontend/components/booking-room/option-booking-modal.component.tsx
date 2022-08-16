@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, createStyles, Modal, Text } from '@mantine/core';
 import { BuildingWarehouse, Check, X } from 'tabler-icons-react';
 import { useAppDispatch } from '../../redux/hooks';
@@ -17,6 +17,8 @@ import BySlotChooseSlotModal from './by-slot-choose-slot-modal.component';
 import { fetchListusernames } from '../../redux/features/account/thunk/fetch-user-names.thunk';
 import ByMultiChooseSlotModal from './by-multi-choose-slot-modal.component';
 import { addMultiRequest } from '../../redux/features/room-booking/thunk/add-multi-booking';
+import { io } from 'socket.io-client';
+import { UserInfoModel } from '../../models/user/user-info.model';
 
 interface SendBookingModalProps {
   isShown: boolean;
@@ -32,6 +34,14 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
   const dispatch = useAppDispatch();
   const [roomNames, setRoomNames] = useState([]);
   const [listUsernames, setListUsernames] = useState([]);
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
+  const socket = useMemo(() => {
+    return io('ws://localhost:5000/booking');
+  }, []);
+
   useEffect(() => {
     dispatch(fetchRoomNames())
       .unwrap()
@@ -111,7 +121,14 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
           : addNewRequest(value)
       )
         .unwrap()
-        .then(() =>
+        .then((response) => {
+          if (userInfo.role === 'Staff') {
+            socket.emit('sendRequestForSelf', response.bookedFor);
+          } else {
+            if (response.bookedFor !== response.requestedBy) {
+              socket.emit('sendRequestForOther', response.bookedFor);
+            }
+          }
           showNotification({
             id: 'add-request',
             color: 'teal',
@@ -119,8 +136,8 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
             message: 'You request was successfully sent',
             icon: <Check />,
             autoClose: 3000,
-          })
-        )
+          });
+        })
         .then(() => {
           props.toggleShown();
           dispatch(fetchRoomBookings(props.pagination));

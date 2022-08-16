@@ -16,7 +16,6 @@ export const fetchFeedbacks = createAsyncThunk<
 >('feedback/fetch-feedbacks', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    console.log("AAAAAA: ", payload.status);
     const response = await axios.get('api/feedbacks', {
       params: {
         page: payload.page,

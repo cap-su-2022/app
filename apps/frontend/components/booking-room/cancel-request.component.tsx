@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Button, createStyles, Modal, Text, Textarea } from '@mantine/core';
 import { Archive, Check, X } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
@@ -10,6 +10,7 @@ import { showNotification } from '@mantine/notifications';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { fetchCountRequestBooking } from '../../redux/features/room-booking/thunk/fetch-count-request-booking';
+import { io } from 'socket.io-client';
 
 interface CancelRequestModalProps {
   isShown: boolean;
@@ -32,6 +33,9 @@ const CancelRequestModal: React.FC<CancelRequestModalProps> = (props) => {
   const selectedRequestId = useAppSelector(
     (state) => state.roomBooking.roomBooking.id
   );
+  const socket = useMemo(() => {
+    return io('ws://localhost:5000/booking');
+  }, []);
 
   const dispatch = useAppDispatch();
 
@@ -47,6 +51,26 @@ const CancelRequestModal: React.FC<CancelRequestModalProps> = (props) => {
 
   const handleCancelSelectedRequest = (values) => {
     dispatch(cancelBooking(values))
+      .unwrap()
+      .then((response) => {
+        socket.emit('cancelRequest', {cancelledBy: response.cancelledBy, bookedFor: response.bookedFor});
+        showNotification({
+          id: 'cancel-booking-room',
+          color: 'teal',
+          title: 'This booking room was cancelled',
+          message: 'This booking room was successfully cancelled',
+          icon: <Check />,
+          autoClose: 3000,
+        });
+      })
+      .then(() => {
+        props.toggleShown();
+        props.toggleInforModalShown();
+        dispatch(fetchRoomBookings(props.pagination));
+        dispatch(fetchCountRequestBooking())
+          .unwrap()
+          .then((val) => props.setCount(val));
+      })
       .catch((e) =>
         showNotification({
           id: 'cancel-booking-room',
@@ -56,23 +80,7 @@ const CancelRequestModal: React.FC<CancelRequestModalProps> = (props) => {
           icon: <X />,
           autoClose: 3000,
         })
-      )
-      .then(() =>
-        showNotification({
-          id: 'cancel-booking-room',
-          color: 'teal',
-          title: 'This booking room was cancelled',
-          message: 'This booking room was successfully cancelled',
-          icon: <Check />,
-          autoClose: 3000,
-        })
-      )
-      .then(() => {
-        props.toggleShown();
-        props.toggleInforModalShown();
-        dispatch(fetchRoomBookings(props.pagination));
-        dispatch(fetchCountRequestBooking()).unwrap().then(val => props.setCount(val));
-      });
+      );
   };
 
   const ModalHeaderTitle: React.FC = () => {

@@ -62,4 +62,64 @@ export class BookingRoomGateway
     // );
     return null;
   }
+
+  @SubscribeMessage('sendRequestForSelf')
+  async sendRequestForSelf(
+    @MessageBody() bookedFor: string,
+    @ConnectedSocket() client: Socket
+  ) {
+    client.broadcast.emit('sendRequestForSelf', bookedFor);
+    return {
+      data: bookedFor,
+      event: 'sendRequestForSelf',
+    };
+  }
+
+  @SubscribeMessage('sendRequestForOther')
+  async sendRequestForOther(
+    @MessageBody() bookedFor: string,
+    @ConnectedSocket() client: Socket
+  ) {
+    client.broadcast.emit('sendRequestForOther', bookedFor);
+    return {
+      data: bookedFor,
+      event: 'sendRequestForOther',
+    };
+  }
+
+  @SubscribeMessage('acceptRequest')
+  async acceptRequest(
+    @MessageBody() bookedFor: string,
+    @ConnectedSocket() client: Socket
+  ) {
+    client.broadcast.emit('acceptRequest', bookedFor);
+    return {
+      data: bookedFor,
+      event: 'acceptRequest',
+    };
+  }
+
+  @SubscribeMessage('cancelRequest')
+  async cancelRequest(
+    @MessageBody() payload: {cancelledBy: string, bookedFor: string},
+    @ConnectedSocket() client: Socket
+  ) {
+    client.broadcast.emit('cancelRequest', payload);
+    return {
+      data: payload,
+      event: 'cancelRequest',
+    };
+  }
+
+  @SubscribeMessage('rejectRequest')
+  async rejectRequest(
+    @MessageBody() bookedFor: string,
+    @ConnectedSocket() client: Socket
+  ) {
+    client.broadcast.emit('rejectRequest', bookedFor);
+    return {
+      data: bookedFor,
+      event: 'rejectRequest',
+    };
+  }
 }

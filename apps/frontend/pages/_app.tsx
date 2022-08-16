@@ -13,6 +13,7 @@ import {
   firebaseConfig,
 } from '../utils/webpush';
 import { initializeApp } from 'firebase/app';
+import PopupNotification from '../components/layout/popup-notification';
 initializeApp(firebaseConfig);
 
 function CustomApp({ Component, pageProps }: AppProps) {
@@ -20,7 +21,8 @@ function CustomApp({ Component, pageProps }: AppProps) {
     useState<boolean>(false);
   const router = useRouter();
 
-
+  PopupNotification()
+  
   return (
     <NotificationsProvider>
       <Head>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Button,
   createStyles,
@@ -15,15 +15,17 @@ import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { showNotification } from '@mantine/notifications';
 import { fetchFeedbacks } from '../../redux/features/feedback/thunk/fetch-feedback';
-import { fetchFeedbackTypeNames } from '../../redux/features/feedback-type/thunk/fetch-feedback-type-names.thunk';
 import { FeedbackPaginationParams } from '../../models/pagination-params/feedback-paging-params.model';
+import { io } from 'socket.io-client';
 import { sendFeedback } from '../../redux/features/feedback/thunk/send-feedback.thunk';
+import { fetchCountRequestFeedbacks } from '../../redux/features/feedback/thunk/fetch-count-feedbacks';
 
 interface AddFeedbackModalProps {
   isShown: boolean;
   toggleShown(): void;
   pagination: FeedbackPaginationParams;
   feedbackTypes: any[];
+  setCount(val): void;
 }
 
 const AddFeedbackValidation = Yup.object().shape({
@@ -38,6 +40,9 @@ const AddFeedbackModal: React.FC<AddFeedbackModalProps> = (props) => {
   const { classes } = useStyles();
   const [isAddDisabled, setAddDisabled] = useState<boolean>(false);
   const [feedbackType, setFeedbackType] = useState<string>('');
+  const socket = useMemo(() => {
+    return io('ws://localhost:5000/feedback');
+  }, []);
 
   const dispatch = useAppDispatch();
   const dimension = useWindowDimensions();
@@ -50,7 +55,8 @@ const AddFeedbackModal: React.FC<AddFeedbackModalProps> = (props) => {
       })
     )
       .unwrap()
-      .then(() =>
+      .then((response) => {
+        socket.emit('sendFeedback', response.createdBy);
         showNotification({
           id: 'load-data',
           color: 'teal',
@@ -59,10 +65,12 @@ const AddFeedbackModal: React.FC<AddFeedbackModalProps> = (props) => {
           icon: <Check />,
           autoClose: 3000,
         })
+      }
       )
       .then(() => {
         props.toggleShown();
-        dispatch(fetchFeedbacks(props.pagination)).finally(() =>
+        dispatch(fetchFeedbacks(props.pagination))
+        dispatch(fetchCountRequestFeedbacks()).unwrap().then(val => props.setCount(val)).finally(() =>
           formik.resetForm()
         );
       })

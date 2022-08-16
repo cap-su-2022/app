@@ -36,7 +36,6 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
   const isAdmin = userInfo?.role === 'System Admin';
   const isLibrarian = userInfo?.role === 'Librarian';
   const isStaff = userInfo?.role === 'Staff';
-  console.log(userInfo);
 
   const data = [
     {
@@ -112,8 +111,6 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
 
   const [active, setActive] = useState('Billing');
   const router = useRouter();
-
-  console.log(isStaff);
 
   const isMenuSelect = (item) => {
     return item.label === active || router.route === item.link;
