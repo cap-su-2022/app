@@ -211,6 +211,24 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     }>();
   }
 
+  getAllRequestPending(): Promise<
+  {
+    id: string;
+    requestedAt: string;
+  }[]
+> {
+  return (
+    this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('booking_request.requested_at', 'requestedAt')
+      .andWhere("(booking_request.status = 'PENDING')")
+      .getRawMany<{
+        id: string;
+        requestedAt: string;
+      }>()
+  );
+}
+
   getRequestBookedInDay(date: string): Promise<
     {
       id: string;
@@ -800,7 +818,43 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       role === 'Librarian' ||
       role === 'System Admin'
     ) {
+      console.log("CANCELED")
+
       return await queryRunner.manager.save(BookingRequest, {
+        ...oldData,
+        status: 'CANCELLED',
+        cancelReason: reason,
+        updatedBy: accountId,
+        updatedAt: new Date(),
+        cancelledBy: accountId,
+        cancelledAt: new Date(),
+      });
+    } else {
+      throw new BadRequestException(
+        "You are not allowed to cancel someone else's request"
+      );
+    }
+  }
+
+  async cancelRoomBookingByIdNoQueryRunner(
+    accountId: string,
+    id: string,
+    reason: string,
+    role: string,
+  ) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: id,
+      },
+    });
+    if (
+      oldData.requestedBy === accountId ||
+      role === 'Librarian' ||
+      role === 'System Admin'
+    ) {
+      console.log("CANCELED")
+
+      return await this.save({
         ...oldData,
         status: 'CANCELLED',
         cancelReason: reason,
