@@ -348,34 +348,6 @@ export class AuthenticationController {
     return this.service.getUserById(req.headers[AUTHORIZATION_LOWERCASE], id);
   }
 
-  @Post(KEYCLOAK_PATH.createNewUser)
-  @ApiOperation({
-    summary: 'Create a new user',
-    description: 'Add a new user into the system',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully added a new user',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while creating a new user',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  createUser(@Body() user: AccountAddRequestPayload, @Request() req: Request) {
-    return this.service.createKeycloakUser(
-      req.headers[AUTHORIZATION_LOWERCASE],
-      user
-    );
-  }
-
   @Put(KEYCLOAK_PATH.refreshUserPasswordById)
   @ApiOperation({
     summary: 'Refresh user password by ID',

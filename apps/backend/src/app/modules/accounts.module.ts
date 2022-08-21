@@ -8,14 +8,17 @@ import { HttpModule } from '@nestjs/axios';
 import { CloudinaryService } from '../services';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import { AccountHistService } from '../services/account-hist.service';
-import { AccountHistRepository } from '../repositories/account-hist.repository';
+import { AccountHistRepository } from '../repositories';
 import { BookingRoomModule } from './booking-room.module';
+import { RolesModule } from './roles.module';
 
 @Module({
   imports: [
     ConfigModule,
     HttpModule,
     forwardRef(() => BookingRoomModule),
+    forwardRef(() => RolesModule),
+
     TypeOrmExModule.forCustomRepository([
       AccountRepository,
       AccountHistRepository,

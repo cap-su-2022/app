@@ -1,4 +1,4 @@
-import { QueryRunner, Repository, UpdateResult } from 'typeorm';
+import { InsertResult, QueryRunner, Repository, UpdateResult } from 'typeorm';
 import { Accounts } from '../models';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
 import { RepositoryPaginationPayload } from '../models/search-pagination.payload';
@@ -11,6 +11,7 @@ import { Roles } from '../models/role.entity';
 import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
 import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
 import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
+import { CreateAccountRequestPayload } from '../controllers/create-account-request-payload.model';
 
 @CustomRepository(Accounts)
 export class AccountRepository extends Repository<Accounts> {
@@ -248,50 +249,27 @@ export class AccountRepository extends Repository<Accounts> {
   }
 
   createNewAccount(
-    payload: AccountAddRequestPayload,
-    userId: string,
-    queryRunner: QueryRunner
-  ): Promise<Accounts> {
-    if (payload.isDisabled) {
-      this.createQueryBuilder('a').where((qb) => {
-        qb.where("booking_request.status = 'PENDING'").orWhere(
-          "booking_request.status = 'BOOKED'"
-        );
-      });
-      return this.save(
-        {
-          username: payload.username,
-          fullname: payload.fullname,
-          email: payload.email,
-          phone: payload.phone,
-          roleId: payload.roleId,
-          description: payload.description,
-          createdBy: userId,
-          createdAt: new Date(),
-          disabledBy: userId,
-          disabledAt: new Date(),
-        },
-        {
-          transaction: true,
-        }
-      );
-    } else {
-      return this.save(
-        {
-          username: payload.username,
-          fullname: payload.fullname,
-          email: payload.email,
-          phone: payload.phone,
-          roleId: payload.roleId,
-          description: payload.description,
-          createdBy: userId,
-          createdAt: new Date(),
-        },
-        {
-          transaction: true,
-        }
-      );
-    }
+    accountId: string,
+    keycloakId: string,
+    payload: CreateAccountRequestPayload
+  ): Promise<InsertResult> {
+    return this.createQueryBuilder('a')
+      .insert()
+      .values({
+        username: payload.username,
+        email: payload.email,
+        createdBy: accountId,
+        createdAt: new Date(),
+        roleId: payload.roleId,
+        description: payload.description,
+        fullname: payload.firstName + payload.lastName,
+        keycloakId: keycloakId,
+        phone: payload.phone,
+        updatedAt: new Date(),
+        updatedBy: accountId,
+      })
+      .useTransaction(true)
+      .execute();
   }
 
   async updatePartially(

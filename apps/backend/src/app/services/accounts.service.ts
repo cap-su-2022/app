@@ -8,13 +8,10 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Accounts } from '../models';
-import { BaseService } from './base.service';
-import { UpdateDeviceRequest, UsersDTO } from '@app/models';
+import { UsersDTO } from '@app/models';
 import { AccountRepository } from '../repositories';
 import { KeycloakService } from './keycloak.service';
-import { UsersRequestPayload } from '../payload/request/users.payload';
 import { CloudinaryService } from './cloudinary.service';
-import { AccountsResponsePayload } from '../payload/response/accounts.payload';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
 import { randomUUID } from 'crypto';
@@ -25,6 +22,8 @@ import { AccountUpdateProfilePayload } from '../payload/request/account-update-p
 import { Role } from '../enum/roles.enum';
 import { DataSource } from 'typeorm';
 import { BookingRoomService } from './booking-room.service';
+import { CreateAccountRequestPayload } from '../controllers/create-account-request-payload.model';
+import { RoleService } from './role.service';
 
 @Injectable()
 export class AccountsService {
@@ -33,6 +32,9 @@ export class AccountsService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly cloudinaryService: CloudinaryService,
+
+    @Inject(forwardRef(() => RoleService))
+    private readonly roleService: RoleService,
 
     @Inject(forwardRef(() => KeycloakService))
     private readonly keycloakService: KeycloakService,
@@ -86,7 +88,7 @@ export class AccountsService {
   async getRoleOfAccount(id: string) {
     try {
       const role = await this.repository.getRoleOfAccount(id);
-      console.log("OI LA TROI: ", role);
+      console.log('OI LA TROI: ', role);
       return role;
     } catch (e) {
       this.logger.error(e);
@@ -133,35 +135,7 @@ export class AccountsService {
     payload: AccountAddRequestPayload,
     userId: string
   ): Promise<Accounts> {
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const isExisted = await this.repository.isExistedByUsername(
-        payload.username
-      );
-      if (isExisted) {
-        throw new BadRequestException('Username is duplicated!');
-      }
-      const accountAdded = await this.repository.createNewAccount(
-        payload,
-        userId,
-        queryRunner
-      );
-      await this.histService.createNew(accountAdded, queryRunner);
-      await queryRunner.commitTransaction();
-      return accountAdded;
-    } catch (e) {
-      this.logger.error(e.message);
-      await queryRunner.rollbackTransaction();
-      throw new BadRequestException(
-        e.message || 'Error while creating a new device'
-      );
-    } finally {
-      await queryRunner.release();
-    }
+    return;
   }
 
   addAll(models: UsersDTO[]): Promise<Accounts[]> {
@@ -531,7 +505,7 @@ export class AccountsService {
 
   async saveFCMToken(
     keycloakUser: KeycloakUserInstance,
-    body: {fcmToken: string}
+    body: { fcmToken: string }
   ): Promise<Accounts> {
     try {
       const user = await this.repository.findByKeycloakId(keycloakUser.sub);
@@ -551,9 +525,7 @@ export class AccountsService {
     }
   }
 
-  async removeFCMToken(
-    keycloakUser: KeycloakUserInstance,
-  ): Promise<Accounts> {
+  async removeFCMToken(keycloakUser: KeycloakUserInstance): Promise<Accounts> {
     try {
       const user = await this.repository.findByKeycloakId(keycloakUser.sub);
       if (!user) {
@@ -711,6 +683,43 @@ export class AccountsService {
       return await this.repository.findRoleNameById(id);
     } catch (e) {
       this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async createNewAccount(
+    accountId: string,
+    account: CreateAccountRequestPayload
+  ) {
+    let keycloakUserCreated = false;
+    try {
+      if (account.password !== account.confirmPassword) {
+        throw new BadRequestException(
+          'Password does not match. Please try again.'
+        );
+      }
+      const role = await this.roleService.getRoleById(account.roleId);
+      const roleGroup = role.name === 'System Admin' ? 'admin' : 'librarian';
+
+      await this.keycloakService.createKeycloakUser({
+        username: account.username,
+        password: account.password,
+        firstName: account.firstName,
+        lastName: account.lastName,
+        email: account.email,
+        roleGroup,
+      });
+      keycloakUserCreated = true;
+
+      const user = await this.keycloakService.getUserByUsername(
+        account.username
+      );
+      await this.repository.createNewAccount(accountId, user.id, account);
+    } catch (e) {
+      this.logger.error(e.message);
+      if (keycloakUserCreated) {
+        await this.keycloakService.removeKeycloakUserByKeycloakUsername();
+      }
       throw new BadRequestException(e.message);
     }
   }

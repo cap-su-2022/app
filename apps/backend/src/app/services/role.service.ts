@@ -1,10 +1,16 @@
-import {BadRequestException, Injectable, Logger} from '@nestjs/common';
-import {PaginationParams} from '../controllers/pagination.model';
-import {RolesRepository} from '../repositories/roles.repository';
-import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
-import {Roles} from '../models/role.entity';
-import {RoleHistService} from './role-hist.service';
-import {AccountsService} from './accounts.service';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import { PaginationParams } from '../controllers/pagination.model';
+import { RolesRepository } from '../repositories/roles.repository';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
+import { Roles } from '../models/role.entity';
+import { RoleHistService } from './role-hist.service';
+import { AccountsService } from './accounts.service';
 
 @Injectable()
 export class RoleService {
@@ -12,18 +18,21 @@ export class RoleService {
 
   constructor(
     private readonly repository: RolesRepository,
+    @Inject(forwardRef(() => AccountsService))
     private readonly accountService: AccountsService,
     private readonly histService: RoleHistService
-  ) {
-  }
+  ) {}
 
   async getRolesByPagination(payload: PaginationParams) {
     try {
       const result = await this.repository.findByPagination(payload);
-      if(result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages){
+      if (
+        result.meta.totalPages > 0 &&
+        result.meta.currentPage > result.meta.totalPages
+      ) {
         throw new BadRequestException('Current page is over');
-      } 
-      return result
+      }
+      return result;
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);
@@ -58,10 +67,7 @@ export class RoleService {
     }
   }
 
-  async addRole(
-    body: MasterDataAddRequestPayload,
-    accountId: string
-  ) {
+  async addRole(body: MasterDataAddRequestPayload, accountId: string) {
     const isExisted = await this.repository.isExistedByName(body.name);
     if (isExisted) {
       throw new BadRequestException('Role name is duplicated!');
@@ -154,7 +160,7 @@ export class RoleService {
       this.logger.error(e);
       throw new BadRequestException(
         e.message ??
-        'Error occurred while restore the delete status of this role'
+          'Error occurred while restore the delete status of this role'
       );
     }
   }

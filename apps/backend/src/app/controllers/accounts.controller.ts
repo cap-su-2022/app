@@ -33,6 +33,7 @@ import { ChangeProfilePasswordRequest } from '../payload/request/change-password
 import { AccountsPaginationParams } from './accounts-pagination.model';
 import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
 import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
+import { CreateAccountRequestPayload } from './create-account-request-payload.model';
 
 @Controller('v1/accounts')
 @ApiBearerAuth()
@@ -214,6 +215,16 @@ export class AccountsController {
     return this.service.getAvatarURLByAccountId(keycloakUser.account_id);
   }
 
+  @Post()
+  @Roles(Role.APP_ADMIN)
+  @HttpCode(HttpStatus.OK)
+  createNewAccount(
+    @User() keycloakUser: KeycloakUserInstance,
+    @Body() account: CreateAccountRequestPayload
+  ) {
+    return this.service.createNewAccount(keycloakUser.account_id, account);
+  }
+
   @Get('find-by-keycloak-id/:id')
   @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
@@ -375,7 +386,7 @@ export class AccountsController {
   })
   saveFCMToken(
     @User() user: KeycloakUserInstance,
-    @Body() body: {fcmToken: string}
+    @Body() body: { fcmToken: string }
   ) {
     return this.service.saveFCMToken(user, body);
   }

@@ -18,6 +18,7 @@ import { APPLICATION_X_WWW_FORM_URLENCODED, Environment } from '@app/constants';
 import { AccessTokenResponsePayload } from '../payload/response/refresh_token.response.payload';
 import { RefreshTokenPayload } from '../payload/response/refresh-token.request.payload';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { CreateAccountRequestPayload } from '../controllers/create-account-request-payload.model';
 
 @Injectable({
   scope: Scope.REQUEST,
@@ -182,21 +183,35 @@ export class KeycloakService {
   async getUserByUsername(
     username: string,
     accessToken?: string
-  ): Promise<KeycloakUserInstance> {
-    const token = accessToken ?? this.httpRequest.headers['authorization'];
+  ): Promise<{
+    id: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  }> {
+    const { access_token } = await this.signInToKeycloak(
+      this.masterUsername,
+      this.masterPassword
+    );
+
+    this.logger.error(access_token);
+
     const url = `http://${this.keycloakHost}:${this.keycloakPort}/auth/admin/realms/${this.keycloakRealm}/users?username=${username}`;
     try {
       const response = await lastValueFrom(
         this.httpService.get(url, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${access_token}`,
           },
         })
       );
       return response.data[0];
     } catch (e) {
       this.logger.error(e.message);
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(
+        e.message || e.data || 'Invalid credentials'
+      );
     }
   }
 
@@ -217,12 +232,54 @@ export class KeycloakService {
     }
   }
 
-  createKeycloakUser(header: any, user): Promise<any> {
+  async createKeycloakUser(account: {
+    username: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+    roleGroup: string;
+  }): Promise<any> {
     try {
-      return Promise.resolve();
+      const { access_token } = await this.signInToKeycloak(
+        this.masterUsername,
+        this.masterPassword
+      );
+
+      const url = `http://${this.keycloakHost}:${this.keycloakPort}/auth/admin/realms/${this.keycloakRealm}/users`;
+      const payload = {
+        username: account.username,
+        email: account.email,
+        emailVerified: true,
+        firstName: account.firstName,
+        lastName: account.lastName,
+        enabled: true,
+        groups: [account.roleGroup],
+        credentials: [
+          {
+            temporary: false,
+            type: 'password',
+            value: account.password,
+          },
+        ],
+      };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          'Content-Type': 'application/json',
+        },
+      };
+      const response = await lastValueFrom(
+        this.httpService.post(url, payload, config)
+      );
+      if (response.status >= 400) {
+        throw new BadRequestException(
+          response.data?.errorMessage || 'Error while creating account'
+        );
+      }
     } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
+      this.logger.error(JSON.stringify(e));
+      throw new BadRequestException(e.response?.data['error_description']);
     }
   }
 
@@ -237,7 +294,7 @@ export class KeycloakService {
 
   signOutKeycloakUser(header: any, id: string): Promise<void> {
     try {
-      console.log("REMOVE FCM TOKEN HERE")
+      console.log('REMOVE FCM TOKEN HERE');
       return Promise.resolve();
     } catch (e) {
       this.logger.error(e.message);
@@ -331,4 +388,6 @@ export class KeycloakService {
       throw new BadRequestException(e.message);
     }
   }
+
+  async removeKeycloakUserByKeycloakUsername() {}
 }
