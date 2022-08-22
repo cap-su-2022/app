@@ -274,15 +274,17 @@ export class AccountRepository extends Repository<Accounts> {
 
   async updatePartially(
     body: AccountAddRequestPayload,
-    account: Accounts,
+    accountBeUpdateId: string,
     accountId: string,
     queryRunner: QueryRunner
   ): Promise<Accounts> {
     const oldData = await this.findOneOrFail({
       where: {
-        id: account.id,
+        id: accountBeUpdateId,
       },
     });
+    console.log('NEW DATA: ', body);
+    console.log('OLD DATA: ', oldData);
     return queryRunner.manager.save(Accounts, {
       ...oldData,
       fullname: body.fullname,

@@ -290,41 +290,7 @@ export class AccountsController {
   getAccountsByRoleId(@Query('role') roleId = ''): Promise<Accounts[]> {
     return this.service.getAccountsByRoleId(roleId);
   }
-
-  @Post('add')
-  @HttpCode(HttpStatus.OK)
-  @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Create a new account',
-    description: 'Create a new account with the provided payload',
-  })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Successfully created a new device',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Request payload for user is not validated',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully created a new user',
-  })
-  createNewUser(
-    @User() user: KeycloakUserInstance,
-    @Body() account: AccountAddRequestPayload
-  ): Promise<Accounts> {
-    return this.service.add(account, user.account_id);
-  }
-
+  
   @Put('update/:id')
   @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
