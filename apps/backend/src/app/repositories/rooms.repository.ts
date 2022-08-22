@@ -295,6 +295,7 @@ export class RoomsRepository extends Repository<Rooms> {
       deletedBy: accountId,
       disabledAt: null,
       disabledBy: null,
+      type: null,
     });
   }
 

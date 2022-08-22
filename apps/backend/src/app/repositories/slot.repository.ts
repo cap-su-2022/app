@@ -92,6 +92,7 @@ export class SlotRepository extends Repository<Slot> {
       .innerJoin(Accounts, 'a', 'a.id = s.created_by')
       .leftJoin(Accounts, 'aa', 'aa.id = s.updated_by')
       .where('s.id = :id', {id: id})
+      .andWhere('s.deleted_at IS NULL')
       .getRawOne<Slot>();
   }
 

@@ -262,7 +262,7 @@ export class AccountRepository extends Repository<Accounts> {
         createdAt: new Date(),
         roleId: payload.roleId,
         description: payload.description,
-        fullname: payload.firstName + payload.lastName,
+        fullname: payload.firstName + ' ' + payload.lastName,
         keycloakId: keycloakId,
         phone: payload.phone,
         updatedAt: new Date(),
@@ -283,8 +283,6 @@ export class AccountRepository extends Repository<Accounts> {
         id: accountBeUpdateId,
       },
     });
-    console.log('NEW DATA: ', body);
-    console.log('OLD DATA: ', oldData);
     return queryRunner.manager.save(Accounts, {
       ...oldData,
       fullname: body.fullname,
