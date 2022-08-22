@@ -1,25 +1,34 @@
-import {paginateRaw, Pagination} from 'nestjs-typeorm-paginate';
-import {Repository} from 'typeorm';
-import {PaginationParams} from '../controllers/pagination.model';
-import {CustomRepository} from '../decorators/typeorm-ex.decorator';
-import {Accounts} from '../models';
-import {FeedbackType} from '../models/feedback-type.entity';
-import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
+import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
+import { Repository } from 'typeorm';
+import { PaginationParams } from '../controllers/pagination.model';
+import { CustomRepository } from '../decorators/typeorm-ex.decorator';
+import { Accounts } from '../models';
+import { FeedbackType } from '../models/feedback-type.entity';
+import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 
 @CustomRepository(FeedbackType)
 export class FeedbackTypeRepository extends Repository<FeedbackType> {
   existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('ft')
       .select('COUNT(1)', 'count')
-      .where('ft.id = :id', {id: id})
+      .where('ft.id = :id', { id: id })
       .getRawOne()
       .then((data) => data?.count > 0);
   }
 
-  async isExistedByName(name: string): Promise<boolean> {
+  async isExistedByNameAdd(name: string): Promise<boolean> {
     return this.createQueryBuilder('fbt')
       .select('COUNT(fbt.name)')
       .where('fbt.name = :name', { name })
+      .getRawOne()
+      .then((data) => data['count'] > 0);
+  }
+
+  async isExistedByNameUpdate(name: string, id: string): Promise<boolean> {
+    return this.createQueryBuilder('fbt')
+      .select('COUNT(fbt.name)')
+      .where('fbt.name = :name', { name })
+      .andWhere('fbt.id != :id', { id })
       .getRawOne()
       .then((data) => data['count'] > 0);
   }
@@ -61,7 +70,7 @@ export class FeedbackTypeRepository extends Repository<FeedbackType> {
       .addSelect('ft.updated_at', 'updatedAt')
       .innerJoin(Accounts, 'a', 'a.id = ft.created_by')
       .leftJoin(Accounts, 'aa', 'aa.id = ft.updated_by')
-      .where('ft.id = :id', {id: id})
+      .where('ft.id = :id', { id: id })
       .andWhere('ft.deleted_at IS NULL')
       .getRawOne<FeedbackType>();
   }
@@ -91,8 +100,8 @@ export class FeedbackTypeRepository extends Repository<FeedbackType> {
     const oldData = await this.findOneOrFail({
       where: {
         id: feedbackTypeId,
-      }
-    })
+      },
+    });
     return this.save(
       {
         ...oldData,
@@ -114,7 +123,7 @@ export class FeedbackTypeRepository extends Repository<FeedbackType> {
         deletedAt: new Date(),
         deletedBy: accountId,
       })
-      .where('feedback_type.id = :id', {id: id})
+      .where('feedback_type.id = :id', { id: id })
       .useTransaction(true)
       .execute();
     if (isDisabled.affected > 0) {
@@ -126,14 +135,14 @@ export class FeedbackTypeRepository extends Repository<FeedbackType> {
     }
   }
 
-  findDeletedByPagination(search: string): Promise<FeedbackType[]> {
+  findDisabledByPagination(search: string): Promise<FeedbackType[]> {
     return this.createQueryBuilder('ft')
       .select('ft.id', 'id')
       .addSelect('ft.name', 'name')
       .addSelect('ft.deleted_at', 'deletedAt')
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'a.id = ft.deleted_by')
-      .where('ft.name ILIKE :search', {search: `%${search.trim()}%`})
+      .where('ft.name ILIKE :search', { search: `%${search.trim()}%` })
       .andWhere('ft.deleted_at IS NOT NULL')
       .orderBy('ft.deleted_at', 'DESC')
       .getRawMany<FeedbackType>();
@@ -147,7 +156,7 @@ export class FeedbackTypeRepository extends Repository<FeedbackType> {
         deletedAt: null,
         deletedBy: null,
       })
-      .where('feedback_type.id = :id', {id: id})
+      .where('feedback_type.id = :id', { id: id })
       .useTransaction(true)
       .execute();
     if (isRestored.affected > 0) {
@@ -162,11 +171,10 @@ export class FeedbackTypeRepository extends Repository<FeedbackType> {
   async checkIfFeedbackTypeIsDisabledById(id: string): Promise<boolean> {
     return this.createQueryBuilder('feedback_type')
       .select('feedback_type.deleted_at')
-      .where('feedback_type.id = :id', {id: id})
+      .where('feedback_type.id = :id', { id: id })
       .getRawOne<boolean>()
       .then((data) => (data ? data['deleted_at'] : true));
   }
-
 
   // async permanentlyDeleteById(id: string) {
   //   return this.createQueryBuilder('ft')
@@ -175,5 +183,4 @@ export class FeedbackTypeRepository extends Repository<FeedbackType> {
   //     .useTransaction(true)
   //     .execute();
   // }
-
 }

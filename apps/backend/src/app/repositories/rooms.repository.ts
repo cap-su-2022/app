@@ -53,6 +53,16 @@ export class RoomsRepository extends Repository<Rooms> {
       .then((data) => data['count'] > 0);
   }
 
+  async isExistedByNameActiveUpdate(name: string, id: string): Promise<boolean> {
+    return this.createQueryBuilder('rooms')
+      .select('COUNT(rooms.name)')
+      .where('rooms.name = :name', { name })
+      .andWhere('rooms.deleted_at IS NULL')
+      .andWhere('rooms.id != :id', {id})
+      .getRawOne()
+      .then((data) => data['count'] > 0);
+  }
+
   async isExistedByNameDeleted(name: string): Promise<boolean> {
     return this.createQueryBuilder('rooms')
       .select('COUNT(rooms.name)')

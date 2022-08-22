@@ -186,11 +186,11 @@ export class FeedbackTypeController {
     return this.service.disableFeedbackTypeById(user.account_id, id);
   }
 
-  @Get('deleted')
+  @Get('disabled')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully deleted feedback types',
+    description: 'Successfully disabled feedback types',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -205,18 +205,18 @@ export class FeedbackTypeController {
     description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: 'Get deleted feedback types',
-    description: 'Get deleted feedback types',
+    summary: 'Get disabled feedback types',
+    description: 'Get disabled feedback types',
   })
   @ApiParam({
     name: 'search',
-    description: "Search deleted feedback types",
+    description: "Search disabled feedback types",
     type: String,
     required: false,
     example: 'Library Services',
   })
-  getDeletedFeedbackTypes(@Query('search') search: string) {
-    return this.service.getDeletedFeedbackTypes(search);
+  getDisabledFeedbackTypes(@Query('search') search: string) {
+    return this.service.getDisabledFeedbackTypes(search);
   }
 
 

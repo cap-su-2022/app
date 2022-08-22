@@ -4,6 +4,8 @@ import { BookingReasonHistService } from './booking-reason-hist.service';
 import { PaginationParams } from '../controllers/pagination.model';
 import { BookingReason } from '../models/booking-reason.entity';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
+import { DataSource } from 'typeorm';
+import { BookingRoomService } from './booking-room.service';
 
 @Injectable()
 export class BookingReasonService {
@@ -11,7 +13,9 @@ export class BookingReasonService {
 
   constructor(
     private readonly repository: BookingReasonRepository,
-    private readonly histService: BookingReasonHistService
+    private readonly bookingService: BookingRoomService,
+    private readonly histService: BookingReasonHistService,
+    private readonly dataSource: DataSource
   ) {}
 
   async getBookingReasonTypesWithPagination(pagination: PaginationParams) {
@@ -89,11 +93,13 @@ export class BookingReasonService {
     accountId: string,
     updatePayload: MasterDataAddRequestPayload,
     id: string
-  ){
+  ) {
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
-        throw new BadRequestException('Room Booking reason does not found with the provided id');
+        throw new BadRequestException(
+          'Room Booking reason does not found with the provided id'
+        );
       }
       const data = await this.repository.findById(id);
       if (data === undefined) {
@@ -107,7 +113,6 @@ export class BookingReasonService {
       await this.histService.createNew(bookingReason);
       return bookingReason;
     } catch (e) {
-
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
@@ -171,18 +176,26 @@ export class BookingReasonService {
   }
 
   async permanentlyDeleteReasonById(id: string) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
       const data = await this.repository.findById(id);
       if (data !== undefined) {
         throw new BadRequestException(
           'Please delete this reason after permanently delete'
         );
-      } else {
-        await this.histService.deleteAllHist(id);
-        return this.repository.permanentlyDeleteById(id);
       }
+      this.bookingService.setReasonNull(id, queryRunner);
+      await this.histService.deleteAllHist(id);
+      
+      await queryRunner.commitTransaction();
+      return this.repository.permanentlyDeleteById(id);
     } catch (e) {
       this.logger.error(e.message);
+      await queryRunner.release();
       throw new BadRequestException(e.message);
     }
   }

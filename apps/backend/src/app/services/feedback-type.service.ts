@@ -59,7 +59,7 @@ export class FeedbackTypeService {
     payload: MasterDataAddRequestPayload
   ) {
     try {
-      const isExistedByName = await this.repository.isExistedByName(payload.name);
+      const isExistedByName = await this.repository.isExistedByNameAdd(payload.name);
       if(isExistedByName) {
         throw new BadRequestException("There already exists a feedback type with the this name. Try with another name.")
       }
@@ -82,6 +82,12 @@ export class FeedbackTypeService {
           'Feedback type does not found with the provided id'
         );
       }
+
+      const isExistedByName = await this.repository.isExistedByNameUpdate(payload.name, id);
+      if(isExistedByName) {
+        throw new BadRequestException("There already exists a feedback type with the this name. Try with another name.")
+      }
+
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException('This feedback type is already deleted');
@@ -118,9 +124,9 @@ export class FeedbackTypeService {
     }
   }
 
-  getDeletedFeedbackTypes(search: string) {
+  getDisabledFeedbackTypes(search: string) {
     try {
-      return this.repository.findDeletedByPagination(search);
+      return this.repository.findDisabledByPagination(search);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

@@ -175,7 +175,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (props) => {
           sx={{ height: 500 }}
           onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
         >
-          {deletedBookingReasons.length > 0 ? (
+          {deletedBookingReasons?.length > 0 ? (
             <Table>
               <thead
                 className={cx(classes.header, { [classes.scrolled]: scrolled })}

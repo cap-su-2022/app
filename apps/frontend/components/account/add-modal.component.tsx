@@ -11,7 +11,13 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useWindowDimensions } from '../../hooks/use-window-dimensions';
-import { Check, ClipboardText, FileDescription, Plus, X } from 'tabler-icons-react';
+import {
+  Check,
+  ClipboardText,
+  FileDescription,
+  Plus,
+  X,
+} from 'tabler-icons-react';
 import { useAppDispatch } from '../../redux/hooks';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -152,11 +158,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
   ]);
 
   const ModalHeaderTitle: React.FC = () => {
-    return (
-      <Text className={classes.modalHeaderTitle}>
-        Add new room (Chưa add được đâu, khỏi test)
-      </Text>
-    );
+    return <Text className={classes.modalHeaderTitle}>Add new room</Text>;
   };
 
   const handleCancelAddModal = () => {
@@ -201,43 +203,46 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
                   className={classes.textInput}
                   radius="md"
                   value={formik.values.username}
+                  placeholder="Username"
                 />
               </InputWrapper>
 
-              <PasswordInput
-                id="password"
-                description="Input your new password"
-                onChange={formik.handleChange('password')}
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                    ? formik.errors.password
-                    : null
-                }
-                value={formik.values.password}
-                label={'New Password'}
-                required
-                name="password"
-                className={classes.textInput}
-                placeholder="New Password"
-              />
+              <div className={classes.displayGrid}>
+                <PasswordInput
+                  id="password"
+                  description="Input your new password"
+                  onChange={formik.handleChange('password')}
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                      ? formik.errors.password
+                      : null
+                  }
+                  value={formik.values.password}
+                  label={'New Password'}
+                  required
+                  name="password"
+                  className={classes.textInput}
+                  placeholder="New Password"
+                />
 
-              <PasswordInput
-                id="confirmPassword"
-                description="Confirm your new password"
-                onChange={formik.handleChange('confirmPassword')}
-                error={
-                  formik.touched.confirmPassword &&
-                  Boolean(formik.errors.confirmPassword)
-                    ? formik.errors.confirmPassword
-                    : null
-                }
-                value={formik.values.confirmPassword}
-                label={'Confirm Password'}
-                required
-                name="confirmPassword"
-                className={classes.textInput}
-                placeholder="Confirm Password"
-              />
+                <PasswordInput
+                  id="confirmPassword"
+                  description="Confirm your new password"
+                  onChange={formik.handleChange('confirmPassword')}
+                  error={
+                    formik.touched.confirmPassword &&
+                    Boolean(formik.errors.confirmPassword)
+                      ? formik.errors.confirmPassword
+                      : null
+                  }
+                  value={formik.values.confirmPassword}
+                  label={'Confirm Password'}
+                  required
+                  name="confirmPassword"
+                  className={classes.textInput}
+                  placeholder="Confirm Password"
+                />
+              </div>
 
               <InputWrapper required label="Email">
                 <TextInput
@@ -249,47 +254,65 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
                   className={classes.textInput}
                   radius="md"
                   value={formik.values.email}
+                  placeholder="Email"
                 />
               </InputWrapper>
+              <div className={classes.displayGrid}>
+                <InputWrapper required label="First name">
+                  <TextInput
+                    icon={<ClipboardText />}
+                    id="firstName"
+                    name="firstName"
+                    error={formik.errors.firstName}
+                    onChange={formik.handleChange}
+                    className={classes.textInput}
+                    radius="md"
+                    value={formik.values.firstName}
+                    placeholder="First name"
+                  />
+                </InputWrapper>
 
-              <InputWrapper required label="First name">
-                <TextInput
-                  icon={<ClipboardText />}
-                  id="firstName"
-                  name="firstName"
-                  error={formik.errors.firstName}
-                  onChange={formik.handleChange}
-                  className={classes.textInput}
-                  radius="md"
-                  value={formik.values.firstName}
-                />
-              </InputWrapper>
+                <InputWrapper required label="Last name">
+                  <TextInput
+                    icon={<ClipboardText />}
+                    id="lastName"
+                    name="lastName"
+                    error={formik.errors.lastName}
+                    onChange={formik.handleChange}
+                    className={classes.textInput}
+                    radius="md"
+                    value={formik.values.lastName}
+                    placeholder="Last name"
+                  />
+                </InputWrapper>
+              </div>
 
-              <InputWrapper required label="Last name">
-                <TextInput
-                  icon={<ClipboardText />}
-                  id="lastName"
-                  name="lastName"
-                  error={formik.errors.lastName}
-                  onChange={formik.handleChange}
-                  className={classes.textInput}
-                  radius="md"
-                  value={formik.values.lastName}
-                />
-              </InputWrapper>
+              <div className={classes.displayGrid}>
+                <InputWrapper label="Phone">
+                  <TextInput
+                    icon={<ClipboardText />}
+                    id="phone"
+                    name="phone"
+                    error={formik.errors.phone}
+                    onChange={formik.handleChange}
+                    className={classes.textInput}
+                    radius="md"
+                    value={formik.values.phone}
+                    placeholder="Phone"
+                  />
+                </InputWrapper>
 
-              <InputWrapper label="Phone">
-                <TextInput
-                  icon={<ClipboardText />}
-                  id="phone"
-                  name="phone"
-                  error={formik.errors.phone}
-                  onChange={formik.handleChange}
-                  className={classes.textInput}
-                  radius="md"
-                  value={formik.values.phone}
-                />
-              </InputWrapper>
+                <InputWrapper required label="Role">
+                  <Select
+                    name="role"
+                    id="role"
+                    onChange={(e) => setRole(e)}
+                    searchable
+                    value={role}
+                    data={props.listRole}
+                  />
+                </InputWrapper>
+              </div>
 
               <InputWrapper
                 label="Description"
@@ -304,17 +327,6 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
                   onChange={formik.handleChange}
                   radius="md"
                   value={formik.values.description}
-                />
-              </InputWrapper>
-              
-              <InputWrapper required label="Role">
-                <Select
-                  name="role"
-                  id="role"
-                  onChange={(e) => setRole(e)}
-                  searchable
-                  value={role}
-                  data={props.listRole}
                 />
               </InputWrapper>
             </div>
@@ -349,6 +361,11 @@ const useStyles = createStyles({
   modalHeaderTitle: {
     fontWeight: 600,
     fontSize: 22,
+  },
+  displayGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    columnGap: '5rem',
   },
   modalBody: {
     display: 'flex',
