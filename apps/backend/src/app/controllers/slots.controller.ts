@@ -106,7 +106,7 @@ export class SlotController {
   }
 
   @Post()
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Add a new slot',
@@ -136,7 +136,7 @@ export class SlotController {
   }
 
   @Delete(':id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully deleted slots',
@@ -195,7 +195,7 @@ export class SlotController {
   }
 
   @Put('restore-deleted/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully restored deleted slot by id',

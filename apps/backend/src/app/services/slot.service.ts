@@ -66,7 +66,11 @@ export class SlotService {
 
   async getById(id: string) {
     try {
-      return await this.repository.findById(id);
+      const data = await this.repository.findById(id);
+      if (data === undefined) {
+        throw new BadRequestException('This slot is already deleted');
+      }
+      return data;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -79,6 +83,25 @@ export class SlotService {
 
   async addNewSlot(accountId: string, payload: SlotsRequestPayload) {
     try {
+      const timeStartIsValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(payload.timeStart)
+      if(!timeStartIsValid){
+        throw new BadRequestException(
+          `Time start have wrong format.`
+        );
+      }
+      const timeEndIsValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(payload.timeEnd)
+      if(!timeEndIsValid){
+        throw new BadRequestException(
+          `Time end have wrong format.`
+        );
+      }
+
+      if(payload.timeStart > payload.timeEnd){
+        throw new BadRequestException(
+          `Time start can't be greater than Time end.`
+        );
+      }
+
       const isHaveSlotSameNameActive =
         await this.repository.isHaveSlotSameNameActive(payload.name);
       if (isHaveSlotSameNameActive) {

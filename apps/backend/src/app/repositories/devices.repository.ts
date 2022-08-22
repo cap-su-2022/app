@@ -281,6 +281,7 @@ export class DevicesRepository extends Repository<Devices> {
       deletedBy: accountId,
       disabledAt: null,
       disabledBy: null,
+      type: null,
     });
   }
 

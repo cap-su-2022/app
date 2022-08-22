@@ -46,6 +46,8 @@ const AddRoomValidation = Yup.object().shape({
 const AddSlotModal: React.FC<AddModalProps> = (props) => {
   const { classes } = useStyles();
   const [isAddDisabled, setAddDisabled] = useState<boolean>(false);
+  const [slotError, setSlotError] = useState<boolean>(false);
+  console.log(slotError)
 
   const dispatch = useAppDispatch();
 
@@ -122,14 +124,32 @@ const AddSlotModal: React.FC<AddModalProps> = (props) => {
 
   useEffect(() => {
     if (
-      formik.initialValues.name === formik.values.name &&
-      formik.initialValues.description === formik.values.description
+      formik.initialValues.name === formik.values.name ||
+      formik.initialValues.slotNum == formik.values.slotNum ||
+      formik.initialValues.timeStart === formik.values.timeStart ||
+      formik.initialValues.timeEnd === formik.values.timeEnd
     ) {
       setAddDisabled(true);
     } else {
       setAddDisabled(false);
     }
-  }, [formik.values.name, formik.values.description]);
+  }, [
+    formik.values.name,
+    formik.values.slotNum,
+    formik.values.timeStart,
+    formik.values.timeEnd,
+  ]);
+
+  useEffect(() => {
+    if (formik.values.timeStart && formik.values.timeEnd) {
+      if (formik.values.timeStart > formik.values.timeEnd) {
+        setSlotError(true);
+        setAddDisabled(true);
+      } else {
+        setSlotError(false);
+      }
+    }
+  }, [formik.values.timeStart, formik.values.timeEnd]);
 
   const ModalHeaderTitle: React.FC = () => {
     return <Text className={classes.modalHeaderTitle}>Add new slot</Text>;
@@ -216,6 +236,18 @@ const AddSlotModal: React.FC<AddModalProps> = (props) => {
                   />
                 </InputWrapper>
               </div>
+              {slotError && (
+                <div
+                  style={{
+                    position: 'relative',
+                    top: '-.6rem',
+                    fontSize: '.9rem',
+                    color: 'red',
+                  }}
+                >
+                  Time start can not be be greater than Time end
+                </div>
+              )}
               <InputWrapper
                 label="Slot description"
                 description="(Optional) Maximum length is 500 characters."
