@@ -170,7 +170,7 @@ export class AccountsService {
 
       const accountUpdated = await this.repository.updatePartially(
         body,
-        accountBeUpdated,
+        id,
         accountId,
         queryRunner
       );
