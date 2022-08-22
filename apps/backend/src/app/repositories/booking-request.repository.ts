@@ -38,6 +38,20 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .getRawMany();
   }
 
+  getAllRequestByReason(reasonId: string) {
+    return this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .where(
+        `booking_request.booking_reason_id = :reasonId`, {reasonId: reasonId}
+      )
+      .getRawMany();
+  }
+
+  
+  async setReasonNull(listRequestId: string[], queryRunner: QueryRunner) {
+    return queryRunner.manager.update(BookingRequest, listRequestId, {bookingReasonId: null})
+  }
+
   getRequest(id: string) {
     return this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')

@@ -25,6 +25,25 @@ export class RoomTypeRepository extends Repository<RoomType> {
       .then((data) => data?.count > 0);
   }
 
+  async isExistedByNameActive(name: string): Promise<boolean> {
+    return this.createQueryBuilder('rt')
+      .select('COUNT(rt.name)')
+      .where('rt.name = :name', { name })
+      .andWhere('rt.deleted_at IS NULL')
+      .getRawOne()
+      .then((data) => data['count'] > 0);
+  }
+
+  async isExistedByNameActiveUpdate(name: string, id: string): Promise<boolean> {
+    return this.createQueryBuilder('rt')
+      .select('COUNT(rt.name)')
+      .where('rt.name = :name', { name })
+      .andWhere('rt.deleted_at IS NULL')
+      .andWhere('rt.id != :id', {id})
+      .getRawOne()
+      .then((data) => data['count'] > 0);
+  }
+
   findRoomTypesByPagination(
     pagination: PaginationParams
   ): Promise<Pagination<RoomType>> {

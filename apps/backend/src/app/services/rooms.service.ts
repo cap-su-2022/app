@@ -126,7 +126,9 @@ export class RoomsService {
           room.name
         );
         if (isExisted) {
-          throw new BadRequestException('Room name is duplicated!');
+          throw new BadRequestException(
+            'There already exists a room with the this name. Try with another name.'
+          );
         }
         roomAdded = await this.repository.createNewRoom(
           room,
@@ -170,6 +172,15 @@ export class RoomsService {
     const data = await this.repository.findById(id);
     if (data === undefined) {
       throw new BadRequestException('This room is already deleted or disabled');
+    }
+    const isExistedByName = await this.repository.isExistedByNameActiveUpdate(
+      body.name,
+      id
+    );
+    if (isExistedByName) {
+      throw new BadRequestException(
+        'There already exists a room with the this name. Try with another name.'
+      );
     }
     try {
       const roomUpdated = await this.repository.updateById(

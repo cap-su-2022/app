@@ -154,6 +154,19 @@ export class BookingRoomService {
     }
   }
 
+  async setReasonNull(reasonId: string, queryRunner: QueryRunner) {
+    try {
+      const listRequest = await this.repository.getAllRequestByReason(reasonId)
+      const listConvered = listRequest.map(object => object.id)
+      return this.repository.setReasonNull(listConvered, queryRunner)
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(
+        e.message || 'Error while getting booking rooms'
+      );
+    }
+  }
+
   // async getBookingRooms(
   //   payload: BookingRoomsFilterRequestPayload
   // ): Promise<BookingRoomResponseDTO[]> {

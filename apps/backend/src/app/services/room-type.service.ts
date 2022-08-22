@@ -35,8 +35,11 @@ export class RoomTypeService {
       const result = await this.repository.findRoomTypesByPagination(
         pagination
       );
-      console.log(result.meta.currentPage, result.meta.totalPages)
-      if (result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages) {
+      console.log(result.meta.currentPage, result.meta.totalPages);
+      if (
+        result.meta.totalPages > 0 &&
+        result.meta.currentPage > result.meta.totalPages
+      ) {
         throw new BadRequestException('Current page is over');
       }
       return result;
@@ -79,6 +82,15 @@ export class RoomTypeService {
     addRoomType: MasterDataAddRequestPayload
   ): Promise<RoomType> {
     try {
+      const isExisted = await this.repository.isExistedByNameActive(
+        addRoomType.name
+      );
+      if (isExisted) {
+        throw new BadRequestException(
+          'There already exists a room type with the this name. Try with another name.'
+        );
+      }
+
       const roomType = await this.repository.addNew(accountId, addRoomType);
       await this.histService.createNew(roomType);
       return roomType;
@@ -100,6 +112,17 @@ export class RoomTypeService {
           'Room type does not found with the provided id'
         );
       }
+
+      const isExistedName = await this.repository.isExistedByNameActiveUpdate(
+        updatePayload.name,
+        id
+      );
+      if (isExistedName) {
+        throw new BadRequestException(
+          'There already exists a room type with the this name. Try with another name.'
+        );
+      }
+
       const data = await this.repository.findById(id);
       if (data === undefined) {
         throw new BadRequestException('This room is already deleted');

@@ -14,7 +14,7 @@ export const fetchDisabledFeedbackTypes = createAsyncThunk<FeedbackType[], strin
   thunkAPI.dispatch(toggleSpinnerOn());
 
   try {
-    const response = await axios.get(`/api/feedback-types/deleted?search=${payload}`);
+    const response = await axios.get(`/api/feedback-types/disabled?search=${payload}`);
     return await response.data;
   } catch ({response}) {
     if (response.status === 401 || response.status === 403) {
