@@ -56,7 +56,7 @@ const AcceptRoomFeedback: React.FC<any> = () => {
   };
 
   const renderFooter = () => {
-    if (authUser.role === 'Staff') {
+    if (authUser.role === 'Staff' || authUser.role === 'Librarian') {
       return <></>;
     }
     return roomBookingFeedback.status !== 'REJECTED' && roomBookingFeedback.status !== 'RESOLVED' ? (
@@ -438,11 +438,6 @@ const AcceptRoomFeedback: React.FC<any> = () => {
                   { marginBottom: 20 },
                 ]}
               >
-                <View style={styles.dataRowContainer}>
-                  <Text style={styles.titleText}>Feedback ID</Text>
-                  <Text style={styles.valueText}>{roomBookingFeedback.id}</Text>
-                </View>
-
                 <>
                   <Divider num={deviceWidth / 10} />
                   <View style={styles.dataRowContainer}>

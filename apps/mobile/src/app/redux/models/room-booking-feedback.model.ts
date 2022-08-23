@@ -1,4 +1,5 @@
 export interface RoomBookingFeedback {
+  feedbackMess: string;
   id: string;
   roomName: string;
   createdByName: string;
