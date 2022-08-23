@@ -1,4 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
+import {doUpdateProfile} from "./features/account/thunk/update.thunk";
+import {doChangePassword} from "./features/account/thunk/changePassword.thunk";
+import {doLogin} from "./features/auth/thunk/login.thunk";
 
 export interface UserProfileModel {
   fullname: string;
@@ -39,6 +42,11 @@ export const userSlice = createSlice({
     updateProfile: (state, action) => {
       state.user = action.payload;
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(doLogin.fulfilled, (state, { payload }) => {
+      state.role = payload.role;
+    });
   },
 });
 

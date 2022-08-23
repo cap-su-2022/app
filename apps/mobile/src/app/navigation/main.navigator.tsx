@@ -19,6 +19,9 @@ import HomeNavigator from './home';
 import UserNavigator from './user';
 import BookingQRScan from '../screens/track-booking-room/booking-qr-scan';
 import AcceptBookingNavigator from './home/track-booking-room/accept-booking';
+import { LOCAL_STORAGE } from '../utils/local-storage';
+import {useAppSelector} from "../hooks/use-app-selector.hook";
+
 
 const MainNavigator = () => {
   return (
@@ -39,6 +42,7 @@ const MainNavigator = () => {
 };
 
 const HomeTabs: React.FC = () => {
+  const user = useAppSelector(state => state.user)
   return (
     <TabNavigator
       initialRouteName={HomeRoute.Home}
@@ -57,14 +61,17 @@ const HomeTabs: React.FC = () => {
           tabBarLabel: () => null,
         }}
       />
-      <TabScreen
-        name={QRScanRoute.QRScan}
-        component={BookingQRScan}
-        options={{
-          tabBarLabel: () => null,
-          tabBarIcon: () => <QRScanButton />,
-        }}
-      />
+      {user.role !== 'Staff' ? (
+        <TabScreen
+          name={QRScanRoute.QRScan}
+          component={BookingQRScan}
+          options={{
+            tabBarLabel: () => null,
+            tabBarIcon: () => <QRScanButton />,
+          }}
+        />
+      ) : null}
+
       <TabScreen
         name={UserNavigatorRoute}
         component={UserNavigator}
