@@ -64,7 +64,7 @@ export class NotificationController {
     summary: 'Get notification by id',
     description: 'Get notification by id',
   })
-  getDetailNotificationId(@Param('id') id: string) {
-    return this.service.getDetailNotificationId(id);
+  getDetailNotificationId(@Param('id') id: string, @User() user: KeycloakUserInstance) {
+    return this.service.getDetailNotificationId(id, user.account_id);
   }
 }

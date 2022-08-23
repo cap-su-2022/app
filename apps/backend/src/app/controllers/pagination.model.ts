@@ -1,4 +1,5 @@
 import {
+  IsDateString,
   IsInt,
   IsOptional,
   IsString,
@@ -63,4 +64,12 @@ export class PaginationParams {
   })
   @ApiProperty({default: 'name', required: true})
   sort: string;
+
+  @IsOptional()
+  @IsDateString({}, { each: true })
+  fromDate: string;
+
+  @IsOptional()
+  @IsDateString({}, { each: true })
+  toDate: string;
 }

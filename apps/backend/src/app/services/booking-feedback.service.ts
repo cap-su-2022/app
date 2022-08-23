@@ -32,6 +32,11 @@ export class BookingFeedbackService {
   }
 
   async getAllFeedbacks(accountId: string, param: PaginationParams) {
+    if(param.fromDate > param.toDate){
+      throw new BadRequestException(`"From date" must be less than "To date"`);
+    }
+    console.log(param.fromDate)
+    console.log(param.toDate)
     try {
       let result;
       const roleName = await this.accountRepository.findRoleNameById(accountId);
@@ -40,18 +45,6 @@ export class BookingFeedbackService {
       } else {
         result = await this.repository.findByPagination(undefined, param);
       }
-
-      // if (!param.page) {
-      //   const roleName = await this.accountRepository.findRoleNameById(
-      //     accountId
-      //   );
-      //   if (roleName === 'Staff') {
-      //     return await this.repository.findByPagination(accountId, param);
-      //   }
-      //   return await this.repository.findByPagination(undefined, param);
-      // }
-
-      // const result = await this.repository.findByPagination(undefined, param);
       if (
         result.meta?.totalPages > 0 &&
         result.meta?.currentPage > result.meta?.totalPages
