@@ -317,7 +317,7 @@ export class NotificationService {
     }
   }
 
-  async getDetailNotificationId(id: string): Promise<Notification> {
+  async getDetailNotificationId(id: string, userId: string): Promise<Notification> {
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -325,7 +325,13 @@ export class NotificationService {
           'Notification does not found with the provided id'
         );
       }
-      return this.repository.findById(id);
+      const noti = await this.repository.findById(id);
+      if(noti.receiver !== userId){
+        throw new BadRequestException(
+          `You can't read other people's notifications`
+        );
+      }
+      return noti;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
