@@ -1,11 +1,11 @@
-import React, {useMemo} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {CalendarIcon} from 'react-native-heroicons/outline';
-import {BLACK, FPT_ORANGE_COLOR, GRAY, WHITE} from '@app/constants';
-import {useAppNavigation} from '../../../../hooks/use-app-navigation.hook';
-import {deviceWidth} from '../../../../utils/device';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { CalendarIcon } from 'react-native-heroicons/outline';
+import { BLACK, FPT_ORANGE_COLOR, GRAY, WHITE } from '@app/constants';
+import { useAppNavigation } from '../../../../hooks/use-app-navigation.hook';
+import { deviceWidth } from '../../../../utils/device';
 import DateSelectMultiDateCheckbox from './multi-date';
-import {useAppSelector} from '../../../../hooks/use-app-selector.hook';
+import { useAppSelector } from '../../../../hooks/use-app-selector.hook';
 import dayjs from 'dayjs';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -57,9 +57,10 @@ const RequestRoomBookingDateSelect: React.FC<
             }}
           >
             <Text style={styles.bookingNowButtonText}>
-              {dayjs(roomBooking.toDay).format('ddd DD/MM/YYYY') ||
-                dayjs(roomBooking.fromDay).format('ddd DD/MM/YYYY') ||
-                Today}
+              {roomBooking.toDay > roomBooking.fromDay
+                ? dayjs(roomBooking.toDay).format('ddd DD/MM/YYYY')
+                : dayjs(roomBooking.fromDay).format('ddd DD/MM/YYYY') ||
+                  dayjs(roomBooking.fromDay).format('ddd DD/MM/YYYY')}
             </Text>
             <CalendarIcon size={25} color={FPT_ORANGE_COLOR} />
           </TouchableOpacity>
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
   bookingNowButtonText: {
     fontSize: deviceWidth / 23,
     fontWeight: '600',
-    color: GRAY
+    color: GRAY,
   },
 });
 

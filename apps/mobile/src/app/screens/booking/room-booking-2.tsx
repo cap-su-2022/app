@@ -98,6 +98,7 @@ const RoomBooking2: React.FC = () => {
                 }}
                 delayTimeout={400}
                 minLength={0}
+                maxLength={50}
                 value={search}
                 onChangeText={(text) => setSearch(text.toString())}
                 placeholder="Search for devices by name..."
@@ -136,7 +137,7 @@ const RoomBooking2: React.FC = () => {
     };
 
     const handlePlusQuantity = () => {
-      if (quantity >= 0) {
+      if (quantity >= 0 && quantity < 30) {
         const copyArray = deviceSelectedDevice;
         const itemSelectedIndex = copyArray.findIndex(
           (device) => device.id === props.device.id
@@ -272,6 +273,7 @@ const RoomBooking2: React.FC = () => {
                   </Text>
                 </TouchableOpacity>
                 <TextInput
+                  editable={false}
                   value={String(props.device.quantity)}
                   keyboardType="numeric"
                   textAlignVertical="center"
