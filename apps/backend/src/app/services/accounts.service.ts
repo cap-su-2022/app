@@ -323,8 +323,12 @@ export class AccountsService {
       const userDelete = await this.repository.getRoleOfAccount(accountId);
       const userBeDeleted = await this.repository.getRoleOfAccount(id);
 
-      if (userBeDeleted.role_name === Role.APP_ADMIN) {
-        throw new BadRequestException("Can't delete admin");
+      if(userBeDeleted) {
+        if (userBeDeleted?.role_name === Role.APP_ADMIN) {
+          throw new BadRequestException("Can't delete admin");
+        }
+      } else {
+        throw new BadRequestException("This account was deleted");
       }
 
       if (userDelete?.role_name === userBeDeleted?.role_name) {
@@ -698,6 +702,27 @@ export class AccountsService {
           'Password does not match. Please try again.'
         );
       }
+      const isExitByUsername = await this.repository.existsByUsername(account.username)
+      if(isExitByUsername){
+        throw new BadRequestException(
+          'Username is already in use'
+        );
+      }
+
+      const isExitByMail = await this.repository.existsByEmail(account.email)
+      if(isExitByMail){
+        throw new BadRequestException(
+          'This email is already in use'
+        );
+      }
+
+      const isExitByPhone = await this.repository.existsByPhone(account.phone)
+      if(isExitByPhone){
+        throw new BadRequestException(
+          'This phone number is already in use'
+        );
+      }
+
       const role = await this.roleService.getRoleById(account.roleId);
       const roleGroup = role.name === 'System Admin' ? 'admin' : 'librarian';
 

@@ -1,16 +1,12 @@
-import { InsertResult, QueryRunner, Repository, UpdateResult } from 'typeorm';
+import { InsertResult, QueryRunner, Repository } from 'typeorm';
 import { Accounts } from '../models';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { RepositoryPaginationPayload } from '../models/search-pagination.payload';
 import {
-  IPaginationMeta,
   paginateRaw,
-  Pagination,
 } from 'nestjs-typeorm-paginate';
 import { Roles } from '../models/role.entity';
 import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
 import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
-import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
 import { CreateAccountRequestPayload } from '../controllers/create-account-request-payload.model';
 
 @CustomRepository(Accounts)
@@ -23,6 +19,30 @@ export class AccountRepository extends Repository<Accounts> {
       .then((data) => data['count'] > 0);
   }
 
+  existsByUsername(username: string): Promise<boolean> {
+    return this.createQueryBuilder('accounts')
+      .select('COUNT(1)', 'count')
+      .where('accounts.username = :username', { username: username })
+      .getRawOne()
+      .then((data) => data['count'] > 0);
+  }
+
+  existsByEmail(email: string): Promise<boolean> {
+    return this.createQueryBuilder('accounts')
+      .select('COUNT(1)', 'count')
+      .where('accounts.email = :email', { email: email })
+      .getRawOne()
+      .then((data) => data['count'] > 0);
+  }
+
+  existsByPhone(phone: string): Promise<boolean> {
+    return this.createQueryBuilder('accounts')
+      .select('COUNT(1)', 'count')
+      .where('accounts.phone = :phone', { phone: phone })
+      .getRawOne()
+      .then((data) => data['count'] > 0);
+  }
+
   async getRoleOfAccount(
     id: string
   ): Promise<{ role_name: string; username: string; fcmToken: string }> {
@@ -31,8 +51,7 @@ export class AccountRepository extends Repository<Accounts> {
       .addSelect('account.username', 'username')
       .addSelect('account.fcm_token', 'fcmToken')
       .innerJoin(Roles, 'role', 'role.id = account.role_id')
-      .where('account.disabled_at IS NULL')
-      .andWhere('account.deleted_at IS NULL')
+      .where('account.deleted_at IS NULL')
       .andWhere('account.id = :accountId', { accountId: id })
       .getRawOne();
   }
