@@ -153,8 +153,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = (props) => {
     formik.values.confirmPassword,
     formik.values.email,
     formik.values.firstName,
-    formik.values.firstName,
-    formik.values.description,
+    formik.values.lastName,
   ]);
 
   const ModalHeaderTitle: React.FC = () => {

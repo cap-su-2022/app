@@ -35,6 +35,10 @@ export const addAccount = createAsyncThunk<
       return thunkAPI.rejectWithValue({
         message: 'Access token is invalid',
       });
+    } else {
+      return thunkAPI.rejectWithValue({
+        message: response.data.message,
+      });
     }
   } finally {
     thunkAPI.dispatch(toggleSpinnerOff());
