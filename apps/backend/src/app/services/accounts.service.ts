@@ -32,18 +32,14 @@ export class AccountsService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly cloudinaryService: CloudinaryService,
+    private readonly repository: AccountRepository,
+    private readonly histService: AccountHistService,
 
     @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
 
     @Inject(forwardRef(() => KeycloakService))
     private readonly keycloakService: KeycloakService,
-
-    @Inject(forwardRef(() => AccountRepository))
-    private readonly repository: AccountRepository,
-
-    @Inject(forwardRef(() => AccountHistService))
-    private readonly histService: AccountHistService,
 
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService
@@ -88,7 +84,6 @@ export class AccountsService {
   async getRoleOfAccount(id: string) {
     try {
       const role = await this.repository.getRoleOfAccount(id);
-      console.log('OI LA TROI: ', role);
       return role;
     } catch (e) {
       this.logger.error(e);
@@ -122,6 +117,7 @@ export class AccountsService {
 
   async getAccountsByRoleId(roleId: string): Promise<Accounts[]> {
     try {
+      console.log("REEEEEEEEEE: ",this.repository)
       return await this.repository.getAccountsByRoleId(roleId);
     } catch (e) {
       this.logger.error(e);

@@ -108,13 +108,14 @@ export class RoleService {
   async deleteRoleById(accountId: string, id: string) {
     try {
       const data = await this.repository.findById(id);
-      const lisyAccountOfThisRole =
+      console.log("DATAAAAAAA: ", data)
+      const listAccountOfThisRole =
         await this.accountService.getAccountsByRoleId(id);
       if (data === undefined) {
         throw new BadRequestException('This role is already deleted');
       } else if (
-        lisyAccountOfThisRole !== undefined &&
-        lisyAccountOfThisRole.length > 0
+        listAccountOfThisRole !== undefined &&
+        listAccountOfThisRole.length > 0
       ) {
         throw new BadRequestException(
           'There are still account of this type, please change the type of those accounts before deleting role'
