@@ -16,6 +16,7 @@ import {
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { saveStartDay } from '../../../redux/features/room-booking/slice';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
+import dayjs from "dayjs";
 
 const StartDayCalendar: React.FC<any> = (props) => {
   const dispatch = useAppDispatch();
@@ -31,6 +32,7 @@ const StartDayCalendar: React.FC<any> = (props) => {
     setDayStart(day.dateString);
     dispatch(saveStartDay({ fromDay: day.dateString }));
   };
+  const lastDay2Week =   dayjs().startOf('week').add(14, 'day').format('YYYY-MM-DD')
 
   return (
     <SafeAreaView style={styles.container}>
@@ -38,7 +40,7 @@ const StartDayCalendar: React.FC<any> = (props) => {
         <Calendar
           initialDate={currentDate}
           minDate={currentDate}
-          maxDate={isMultiDate ? toDay : null}
+          maxDate={isMultiDate ? toDay || lastDay2Week : null}
           onDayPress={(day) => handleDayPress(day)}
           markedDates={{
             [dayStart]: {

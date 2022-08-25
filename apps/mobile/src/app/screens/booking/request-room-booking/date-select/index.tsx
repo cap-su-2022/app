@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CalendarIcon } from 'react-native-heroicons/outline';
 import { BLACK, FPT_ORANGE_COLOR, GRAY, WHITE } from '@app/constants';
@@ -28,7 +28,9 @@ const RequestRoomBookingDateSelect: React.FC<
     <View>
       <View style={styles.startDayContainer}>
         <View style={styles.inputStartDay}>
-          <Text style={styles.title}>From date</Text>
+          <Text style={styles.title}>
+            {props.isChecked ? 'From Date' : 'Date'}
+          </Text>
           <TouchableOpacity
             style={styles.bookingNowContainer}
             onPress={() => {
@@ -57,10 +59,9 @@ const RequestRoomBookingDateSelect: React.FC<
             }}
           >
             <Text style={styles.bookingNowButtonText}>
-              {roomBooking.toDay > roomBooking.fromDay
+              {roomBooking.toDay
                 ? dayjs(roomBooking.toDay).format('ddd DD/MM/YYYY')
-                : dayjs(roomBooking.fromDay).format('ddd DD/MM/YYYY') ||
-                  dayjs(roomBooking.fromDay).format('ddd DD/MM/YYYY')}
+                : dayjs(roomBooking.fromDay).format('ddd DD/MM/YYYY')}
             </Text>
             <CalendarIcon size={25} color={FPT_ORANGE_COLOR} />
           </TouchableOpacity>

@@ -16,6 +16,7 @@ import {
 import { saveEndDay } from '../../../redux/features/room-booking/slice';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
+import dayjs from "dayjs";
 
 const EndDayCalendar: React.FC<any> = (props) => {
   const Today = new Date().toJSON().slice(0, 10);
@@ -30,11 +31,14 @@ const EndDayCalendar: React.FC<any> = (props) => {
     dispatch(saveEndDay({ toDay: day.dateString }));
   };
 
+  const lastDay2Week =   dayjs().startOf('week').add(14, 'day').format('YYYY-MM-DD')
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
         <Calendar
           minDate={fromDay || Today}
+          maxDate={lastDay2Week}
           initialDate={fromDay || currentDate}
           onDayPress={(day) => handleDayPress(day)}
           markedDates={{
