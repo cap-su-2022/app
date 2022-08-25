@@ -183,6 +183,7 @@ export class AccountRepository extends Repository<Accounts> {
   }
 
   getAccountsByRoleId(roleId: string) {
+    console.log("CHAY VO DAY")
     return this.createQueryBuilder(`account`)
       .select('account.id', 'id')
       .addSelect('account.username', 'username')

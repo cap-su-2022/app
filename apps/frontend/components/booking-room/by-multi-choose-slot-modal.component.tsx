@@ -251,10 +251,11 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             inputFormat="DD/MM/YYYY"
             value={props.formik.values.checkinDate}
             minDate={dayjs(new Date()).toDate()}
-            maxDate={dayjs(new Date())
-              .startOf('weeks')
-              .add(21, 'days')
-              .toDate()}
+            maxDate={
+              userInfo.role === 'Staff'
+                ? dayjs(new Date()).startOf('weeks').add(21, 'days').toDate()
+                : null
+            }
             onChange={(date) => {
               props.formik.setFieldValue('checkinDate', date);
             }}
@@ -277,10 +278,11 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             inputFormat="DD/MM/YYYY"
             value={props.formik.values.checkoutDate}
             minDate={dayjs(new Date()).toDate()}
-            maxDate={dayjs(new Date())
-              .startOf('weeks')
-              .add(21, 'days')
-              .toDate()}
+            maxDate={
+              userInfo.role === 'Staff'
+                ? dayjs(new Date()).startOf('weeks').add(21, 'days').toDate()
+                : null
+            }
             onChange={(date) => {
               props.formik.setFieldValue('checkoutDate', date);
             }}

@@ -58,7 +58,7 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   }, [device]);
 
   const add = () => {
-    if (value === 0) {
+    if (value === 0 || !value) {
       showNotification({
         id: 'miss-data',
         color: 'red',
@@ -193,10 +193,11 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
 
                   <NumberInput
                     hideControls
+                    required
                     value={value}
                     onChange={(val) => setValue(val)}
                     handlersRef={handlers}
-                    max={10}
+                    max={30}
                     min={0}
                     step={1}
                     styles={{ input: { width: 54, textAlign: 'center' } }}
