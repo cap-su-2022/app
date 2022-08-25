@@ -229,14 +229,12 @@ const RoomBooking2: React.FC = () => {
             style={{
               flexDirection: 'column',
               display: 'flex',
-              justifyContent: 'space-between',
+              alignContent: 'center',
+              justifyContent: 'center',
               height: 70,
               paddingHorizontal: 10,
             }}
           >
-            <TouchableOpacity style={styles.viewDetailButton}>
-              <Text style={styles.viewDetailButtonText}>View detail</Text>
-            </TouchableOpacity>
             {deviceSelectedDevice.find(
               (device) => device.id === props.device.id
             ) ? (

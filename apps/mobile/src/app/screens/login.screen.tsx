@@ -140,6 +140,7 @@ const LoginScreen = () => {
                   placeholderTextColor={INPUT_GRAY_COLOR}
                   placeholder="Username"
                   style={[styles.inputField]}
+                  maxLength={100}
                 />
               </View>
               <View>
@@ -158,6 +159,7 @@ const LoginScreen = () => {
                   placeholder="Password"
                   placeholderTextColor={INPUT_GRAY_COLOR}
                   style={[styles.inputField]}
+                  maxLength={100}
                 />
               </View>
               <TouchableOpacity

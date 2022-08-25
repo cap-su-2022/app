@@ -33,6 +33,7 @@ import ChooseSlotItem from './choose-slot/item';
 import dayjs from 'dayjs';
 import AlertModal from '../../../components/modals/alert-modal.component';
 import { ExclamationCircleIcon } from 'react-native-heroicons/outline';
+import { getRoomNameBookedSameSlot } from '../../../redux/features/room-booking/thunk/get-room-name-booked-same-slot.thunk';
 
 const transformToData = (bookedRequest) => {
   const result = [];
@@ -140,6 +141,71 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
   const [slotAndRoom, setSlotAndRoom] = useState([]);
   const [slotAndRoomFilter, setSlotAndRoomFilter] = useState([]);
 
+  const [genericMessage, setGenericMessage] = useState<string>();
+  const [isGenericModalShown, setGenericModalShown] = useState<boolean>(false);
+
+  const userId = useAppSelector((state) => state.auth.authUser.id);
+
+  const GenericAlertModal = ({ message }) => {
+    return (
+      <AlertModal
+        isOpened={isGenericModalShown}
+        height={200}
+        width={deviceWidth / 1.1}
+        toggleShown={() => setGenericModalShown(!isGenericModalShown)}
+      >
+        <View
+          style={{
+            display: 'flex',
+            flex: 1,
+            flexGrow: 0.9,
+            justifyContent: 'space-between',
+            paddingHorizontal: 10,
+          }}
+        >
+          <ExclamationCircleIcon
+            style={{
+              alignSelf: 'center',
+            }}
+            size={deviceWidth / 8}
+            color={FPT_ORANGE_COLOR}
+          />
+          <Text
+            style={{
+              color: BLACK,
+              fontWeight: '500',
+              fontSize: deviceWidth / 23,
+              textAlign: 'center',
+            }}
+          >
+            {message}
+          </Text>
+          <TouchableOpacity
+            onPress={() => setGenericModalShown(!isGenericModalShown)}
+            style={{
+              backgroundColor: FPT_ORANGE_COLOR,
+              height: 40,
+              borderRadius: 8,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: '500',
+                fontSize: deviceWidth / 23,
+                color: WHITE,
+              }}
+            >
+              Close
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </AlertModal>
+    );
+  };
+
   const handleTransformBookingRoomData = (
     bookingRooms: BookedRequest[],
     rooms: RoomModel[],
@@ -209,18 +275,36 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
   };
 
   const handleBookRoom = (item) => {
-    handleAddRoomRecentlySearch(item);
     dispatch(
-      step1ScheduleRoomBooking({
-        fromSlot: item.slotId,
-        fromDay: selectedDay,
-        roomId: item.roomId,
-        roomName: item.roomName,
+      getRoomNameBookedSameSlot({
+        checkinSlot: item.slotId,
+        checkoutSlot: item.slotId,
+        checkinDate: selectedDay,
+        userId: userId,
       })
-    );
-    setTimeout(() => {
-      navigate.navigate('ROOM_BOOKING_2');
-    }, 0);
+    )
+      .unwrap()
+      .then((r) => {
+        if (r.length > 0) {
+          setGenericMessage(
+            'You have another request for this slot. Please choose another slot!'
+          );
+          setGenericModalShown(!isGenericModalShown);
+        } else {
+          handleAddRoomRecentlySearch(item);
+          dispatch(
+            step1ScheduleRoomBooking({
+              fromSlot: item.slotId,
+              fromDay: selectedDay,
+              roomId: item.roomId,
+              roomName: item.roomName,
+            })
+          );
+          setTimeout(() => {
+            navigate.navigate('ROOM_BOOKING_2');
+          }, 0);
+        }
+      });
   };
 
   useEffect(() => {
@@ -237,17 +321,17 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
         const filterArrayByRoom = slotAndRoom.filter(
           (room) => room.roomId === filteredRoomId
         );
-        let finalResult = []
-        if (addRoomBooking.isMultiSlot){
-           finalResult = filterArrayByRoom.filter(
+        let finalResult = [];
+        if (addRoomBooking.isMultiSlot) {
+          finalResult = filterArrayByRoom.filter(
             (item) =>
               item.slotNum >= addRoomBooking.fromSlotNum &&
               item.slotNum <= addRoomBooking.toSlotNum
           );
         } else {
           finalResult = filterArrayByRoom.filter(
-            (item) =>  item.slotNum >= addRoomBooking.fromSlotNum
-          )
+            (item) => item.slotNum >= addRoomBooking.fromSlotNum
+          );
         }
         setSlotAndRoomFilter(finalResult);
       });
@@ -403,6 +487,7 @@ const RoomBookingChooseSlotScreen: React.FC<any> = (props) => {
         </View>
       </View>
       <RoomWishlistErrorModal />
+      <GenericAlertModal message={genericMessage} />
     </SafeAreaView>
   );
 };
@@ -551,7 +636,7 @@ export const styles = StyleSheet.create({
   },
   roomCodeOuterText: {
     fontSize: 18,
-    maxWidth: 320
+    maxWidth: 320,
   },
   roomCodeInnerText: {
     marginLeft: 5,
