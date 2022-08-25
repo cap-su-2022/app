@@ -9,31 +9,34 @@ import { FPT_ORANGE_COLOR } from '@app/constants';
 import { deviceWidth } from '../../../utils/device';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import BookingQRScan from '../../../screens/track-booking-room/booking-qr-scan';
+import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 
 const TrackBookingRoomNavigator: React.FC<any> = () => {
   const navigate = useAppNavigation();
+  const user = useAppSelector((state) => state.user);
   return (
     <StackNavigator
       initialRouteName="TRACK_BOOKING"
       screenOptions={{
         title: 'Booking Requests',
-        headerRight: () => (
-          <TouchableOpacity
-            onPress={() => navigate.navigate('BOOKING_QR_SCAN')}
-            style={{
-              height: 35,
-              width: 35,
-              borderRadius: 8,
-              borderColor: FPT_ORANGE_COLOR,
-              borderWidth: 2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <QrcodeIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 14} />
-          </TouchableOpacity>
-        ),
+        headerRight: () =>
+          user.role !== 'Staff' ? (
+            <TouchableOpacity
+              onPress={() => navigate.navigate('BOOKING_QR_SCAN')}
+              style={{
+                height: 35,
+                width: 35,
+                borderRadius: 8,
+                borderColor: FPT_ORANGE_COLOR,
+                borderWidth: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <QrcodeIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 14} />
+            </TouchableOpacity>
+          ) : null,
       }}
     >
       <StackScreen name="TRACK_BOOKING" component={TrackBookingRoom} />

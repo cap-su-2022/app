@@ -24,6 +24,7 @@ import { fetchRoomFreeByMultiSlotAndDay } from './thunk/fetch-room-free-by-multi
 import { addNewLongTermRequestBooking } from './thunk/add-long-term-request-booking';
 import { checkOverSlot } from './thunk/check-over-slot.thunk';
 import { cancelBookingRoom } from './thunk/cancel-room-booking.thunk';
+import {getRoomNameBookedSameSlot} from "./thunk/get-room-name-booked-same-slot.thunk";
 
 interface RoomBookingState {
   roomBookingCheckout: RoomBookingCheckout;
@@ -291,6 +292,7 @@ const roomBookingSlice = createSlice({
     );
     builder.addCase(checkOverSlot.fulfilled, (state, { payload }) => {});
     builder.addCase(cancelBookingRoom.fulfilled, (state, { payload }) => {});
+    builder.addCase(getRoomNameBookedSameSlot.fulfilled,(state, { payload }) => {});
   },
 });
 
