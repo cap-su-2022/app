@@ -18,6 +18,7 @@ export class NotificationRepository extends Repository<Notification> {
       .addSelect('noti.title', 'title')
       .addSelect('noti.message', 'message')
       .addSelect('noti.created_at', 'createdAt')
+      .addSelect('noti.receiver', 'receiver')
       .where('noti.id = :id', { id: id })
       .getRawOne<Notification>();
   }

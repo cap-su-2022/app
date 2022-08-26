@@ -33,7 +33,6 @@ import { BookingFeedbackModule } from './booking-feedback.module';
 
     TypeOrmExModule.forCustomRepository([
       BookingRoomRepository,
-      AccountRepository,
       BookingRequestHistRepository,
       BookingRoomDevicesRepository,
     ]),
