@@ -218,6 +218,26 @@ export class AccountsController {
   @Post()
   @Roles(Role.APP_ADMIN)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Create new account by system admin role',
+    description: 'Create new account as librarian or system admin account',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Not enough privileges',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully created new account',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while creating new account',
+  })
   createNewAccount(
     @User() keycloakUser: KeycloakUserInstance,
     @Body() account: CreateAccountRequestPayload
@@ -290,7 +310,7 @@ export class AccountsController {
   getAccountsByRoleId(@Query('role') roleId = ''): Promise<Accounts[]> {
     return this.service.getAccountsByRoleId(roleId);
   }
-  
+
   @Put('update/:id')
   @Roles(Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
