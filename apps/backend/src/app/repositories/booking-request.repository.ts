@@ -41,15 +41,16 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   getAllRequestByReason(reasonId: string) {
     return this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
-      .where(
-        `booking_request.booking_reason_id = :reasonId`, {reasonId: reasonId}
-      )
+      .where(`booking_request.booking_reason_id = :reasonId`, {
+        reasonId: reasonId,
+      })
       .getRawMany();
   }
 
-  
   async setReasonNull(listRequestId: string[], queryRunner: QueryRunner) {
-    return queryRunner.manager.update(BookingRequest, listRequestId, {bookingReasonId: null})
+    return queryRunner.manager.update(BookingRequest, listRequestId, {
+      bookingReasonId: null,
+    });
   }
 
   getRequest(id: string) {
@@ -73,19 +74,22 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   }
 
   getCountRequestInWeekOfUser(id: string, date: string) {
-    const curr = new Date(date); // get current date
-    const firstDay = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-    const lastDay = firstDay + 6; // last day is the first day + 6
-    const sunday = new Date(curr.setDate(firstDay));
-    const satuday = new Date(curr.setDate(curr.getDate() + lastDay));
+    const curr = new Date(date);
+    const firstDay = curr.getDate() - curr.getDay() + 1;
+
+    const sunday = new Date(new Date(date).setDate(firstDay));
+    const saturday = new Date(
+      new Date(sunday).setDate(sunday.getDate() + 6)
+    );
+
     return this.createQueryBuilder('booking_request')
       .select('COUNT(1)', 'count')
       .where('booking_request.requested_by = :id', { id: id })
       .andWhere('booking_request.checkin_date >= :sunday', {
         sunday: sunday,
       })
-      .andWhere('booking_request.checkin_date <= :satuday', {
-        satuday: satuday,
+      .andWhere('booking_request.checkin_date <= :saturday', {
+        saturday: saturday,
       })
       .andWhere(`booking_request.status NOT LIKE 'CANCELLED'`)
       .getRawOne()
@@ -144,11 +148,13 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   }
 
   getBookingByRoomInWeek(payload: { roomId: string; date: string }) {
-    const curr = new Date(payload.date); // get current date
-    const firstDay = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-    const lastDay = firstDay + 6; // last day is the first day + 6
-    const sunday = new Date(curr.setDate(firstDay));
-    const satuday = new Date(curr.setDate(curr.getDate() + lastDay));
+    const curr = new Date(payload.date);
+    const firstDay = curr.getDate() - curr.getDay() + 1;
+
+    const sunday = new Date(new Date(payload.date).setDate(firstDay));
+    const saturday = new Date(
+      new Date(sunday).setDate(sunday.getDate() + 6)
+    );
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('booking_request.checkin_Date', 'checkinDate')
@@ -173,8 +179,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       query.andWhere('booking_request.checkin_date >= :sunday', {
         sunday: sunday,
       });
-      query.andWhere('booking_request.checkin_date <= :satuday', {
-        satuday: satuday,
+      query.andWhere('booking_request.checkin_date <= :saturday', {
+        saturday: saturday,
       });
     }
     return query.getRawMany<BookingRequest>();
@@ -185,7 +191,14 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     requestId: string,
     date: string
   ): Promise<
-    { id: string; slotIn: number; slotOut: number; status: string, bookedFor: string }[]
+    {
+      id: string;
+      slotIn: number;
+      slotOut: number;
+      status: string;
+      bookedFor: string;
+      bookedForId: string;
+    }[]
   > {
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
@@ -195,6 +208,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('slot_out.name', 'slotOutName')
       .addSelect('a.username', 'requestedBy')
       .addSelect('aa.username', 'bookedFor')
+      .addSelect('booking_request.booked_for', 'bookedForId')
       .addSelect('r.name', 'reason')
       .addSelect('booking_request.status', 'status')
       .innerJoin(Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
@@ -222,26 +236,79 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       slotOut: number;
       status: string;
       bookedFor: string;
+      bookedForId: string;
+    }>();
+  }
+
+  getRequestPendingOfUserInDay(
+    userId: string,
+    requestId: string,
+    date: string
+  ): Promise<
+    {
+      id: string;
+      slotIn: number;
+      slotOut: number;
+      status: string;
+      bookedFor: string;
+      bookedForId: string;
+    }[]
+  > {
+    const query = this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('slot_in.slot_num', 'slotIn')
+      .addSelect('slot_out.slot_num', 'slotOut')
+      .addSelect('slot_in.name', 'slotInName')
+      .addSelect('slot_out.name', 'slotOutName')
+      .addSelect('a.username', 'requestedBy')
+      .addSelect('aa.username', 'bookedFor')
+      .addSelect('booking_request.booked_for', 'bookedForId')
+      .addSelect('r.name', 'reason')
+      .addSelect('booking_request.status', 'status')
+      .innerJoin(Slot, 'slot_in', 'slot_in.id = booking_request.checkin_slot')
+      .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
+      .innerJoin(Accounts, 'aa', 'aa.id = booking_request.booked_for')
+      .innerJoin(BookingReason, 'r', 'r.id = booking_request.booking_reason_id')
+      .innerJoin(
+        Slot,
+        'slot_out',
+        'slot_out.id = booking_request.checkout_slot'
+      )
+      .where('booking_request.checkinDate = :checkinDate', {
+        checkinDate: date,
+      })
+      .andWhere('booking_request.booked_for = :userId', {
+        userId: userId,
+      })
+      .andWhere('booking_request.id != :id', {
+        id: requestId,
+      })
+      .andWhere("(booking_request.status = 'PENDING')");
+    return query.getRawMany<{
+      id: string;
+      slotIn: number;
+      slotOut: number;
+      status: string;
+      bookedFor: string;
+      bookedForId: string;
     }>();
   }
 
   getAllRequestPending(): Promise<
-  {
-    id: string;
-    requestedAt: string;
-  }[]
-> {
-  return (
-    this.createQueryBuilder('booking_request')
+    {
+      id: string;
+      requestedAt: string;
+    }[]
+  > {
+    return this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('booking_request.requested_at', 'requestedAt')
       .andWhere("(booking_request.status = 'PENDING')")
       .getRawMany<{
         id: string;
         requestedAt: string;
-      }>()
-  );
-}
+      }>();
+  }
 
   getRequestBookedInDay(date: string): Promise<
     {
@@ -659,7 +726,9 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
 
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
-      .where(`booking_request.status IN (:...status)`, { status: ['PENDING', 'BOOKED'] })
+      .where(`booking_request.status IN (:...status)`, {
+        status: ['PENDING', 'BOOKED'],
+      })
       .andWhere('booking_request.requested_by = :account_id', {
         account_id: accountId,
       })
@@ -804,7 +873,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       requestedBy: userId,
       requestedAt: new Date(),
       status: status,
-      bookingReasonId: payload.bookingReasonId === 'null' ? null : payload.bookingReasonId,
+      bookingReasonId:
+        payload.bookingReasonId === 'null' ? null : payload.bookingReasonId,
       description: payload.description,
       checkinSlot: payload.checkinSlot,
       checkoutSlot: payload.checkoutSlot,
@@ -832,7 +902,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       role === 'Librarian' ||
       role === 'System Admin'
     ) {
-      console.log("CANCELED")
+      console.log('CANCELED');
 
       return await queryRunner.manager.save(BookingRequest, {
         ...oldData,
@@ -854,7 +924,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     accountId: string,
     id: string,
     reason: string,
-    role: string,
+    role: string
   ) {
     const oldData = await this.findOneOrFail({
       where: {
@@ -866,7 +936,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       role === 'Librarian' ||
       role === 'System Admin'
     ) {
-      console.log("CANCELED")
+      console.log('CANCELED');
 
       return await this.save({
         ...oldData,
