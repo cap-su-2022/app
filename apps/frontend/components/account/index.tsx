@@ -1,30 +1,25 @@
-import {GetServerSideProps} from 'next';
+import { GetServerSideProps } from 'next';
 import AdminLayout from '../layout/admin.layout';
-import {Button} from '@mantine/core';
-import {
-  BuildingWarehouse,
-  Download,
-  Plus,
-  TrashOff,
-} from 'tabler-icons-react';
-import React, {useEffect, useState} from 'react';
-import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {useDebouncedValue} from '@mantine/hooks';
+import { Button } from '@mantine/core';
+import { BuildingWarehouse, Plus, TrashOff } from 'tabler-icons-react';
+import React, { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useDebouncedValue } from '@mantine/hooks';
 import NoDataFound from '../no-data-found';
 import TableHeader from '../actions/table-header.component';
-import {TableBody} from './table-body.component';
+import { TableBody } from './table-body.component';
 import TableFooter from '../actions/table-footer.component';
 import DisableModal from './disable-modal.component';
-import {PagingParams} from '../../models/pagination-params/paging-params.model';
-import {FormikValues, useFormik} from 'formik';
+import { PagingParams } from '../../models/pagination-params/paging-params.model';
+import { FormikValues, useFormik } from 'formik';
 import Header from '../common/header.component';
-import {fetchRoleNames} from '../../redux/features/role';
+import { fetchRoleNames } from '../../redux/features/role';
 import * as Yup from 'yup';
-import {fetchAccounts} from '../../redux/features/account/thunk/fetch-accounts.thunk';
+import { fetchAccounts } from '../../redux/features/account/thunk/fetch-accounts.thunk';
 import InfoModal from './info-modal.component';
-import {fetchAccountById} from '../../redux/features/account/thunk/fetch-by-id.thunk';
+import { fetchAccountById } from '../../redux/features/account/thunk/fetch-by-id.thunk';
 import AccountUpdateModal from './update-modal.component';
-import {updateAccountById} from '../../redux/features/account/thunk/update-account-by-id';
+import { updateAccountById } from '../../redux/features/account/thunk/update-account-by-id';
 import AddAccountModal from './add-modal.component';
 import RestoreDeletedModal from './restore-deleted.modal.component';
 import DeleteModal from './delete-modal.component';
@@ -74,7 +69,12 @@ function AccountsManagement() {
   useEffect(() => {
     dispatch(fetchRoleNames())
       .unwrap()
-      .then((roleName) => setRoleNames(roleName));
+      .then((listRoleName) => {
+        const formatListRole = listRoleName.filter(
+          (role) => role.label !== 'Staff'
+        );
+        setRoleNames(formatListRole)
+      });
   }, []);
 
   const toggleSortDirection = (field) => {
@@ -129,10 +129,10 @@ function AccountsManagement() {
     return (
       <>
         <Button
-          leftIcon={<Plus/>}
+          leftIcon={<Plus />}
           color="green"
           onClick={() => setAddShown(true)}
-          style={{marginRight: 10}}
+          style={{ marginRight: 10 }}
         >
           Add
         </Button>
@@ -140,9 +140,9 @@ function AccountsManagement() {
           variant="outline"
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
-          style={{marginRight: 10}}
+          style={{ marginRight: 10 }}
         >
-          <TrashOff/>
+          <TrashOff />
         </Button>
       </>
     );
@@ -207,12 +207,12 @@ function AccountsManagement() {
       <AdminLayout>
         <Header
           title="Accounts Management"
-          icon={<BuildingWarehouse size={50}/>}
+          icon={<BuildingWarehouse size={50} />}
         />
         <TableHeader
           actionsLeft={null}
           handleResetFilter={() => handleResetFilter()}
-          actions={<ActionsFilter/>}
+          actions={<ActionsFilter />}
           setSearch={(val) => handleSearchValue(val)}
           search={pagination.search}
         />
@@ -267,7 +267,7 @@ function AccountsManagement() {
             />
           </>
         ) : (
-          <NoDataFound/>
+          <NoDataFound />
         )}
 
         <AddAccountModal
