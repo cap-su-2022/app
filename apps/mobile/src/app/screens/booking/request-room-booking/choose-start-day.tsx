@@ -32,7 +32,7 @@ const StartDayCalendar: React.FC<any> = (props) => {
     setDayStart(day.dateString);
     dispatch(saveStartDay({ fromDay: day.dateString }));
   };
-  const lastDay2Week =   dayjs().startOf('week').add(14, 'day').format('YYYY-MM-DD')
+  const lastDay2Week =   dayjs().startOf('week').add(21, 'day').format('YYYY-MM-DD')
 
   return (
     <SafeAreaView style={styles.container}>
