@@ -31,7 +31,7 @@ const EndDayCalendar: React.FC<any> = (props) => {
     dispatch(saveEndDay({ toDay: day.dateString }));
   };
 
-  const lastDay2Week =   dayjs().startOf('week').add(14, 'day').format('YYYY-MM-DD')
+  const lastDay2Week =   dayjs().startOf('week').add(21, 'day').format('YYYY-MM-DD')
 
   return (
     <SafeAreaView style={styles.container}>
