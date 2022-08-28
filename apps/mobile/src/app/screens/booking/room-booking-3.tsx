@@ -19,7 +19,7 @@ import {
 } from '@app/constants';
 import { deviceHeight, deviceWidth } from '../../utils/device';
 import {
-  ChevronDoubleLeftIcon,
+  ChevronDoubleLeftIcon, ExclamationCircleIcon,
   ExclamationIcon,
   TicketIcon,
 } from 'react-native-heroicons/outline';
@@ -35,6 +35,7 @@ import Divider from '../../components/text/divider';
 import dayjs from 'dayjs';
 import { boxShadow } from '../../utils/box-shadow.util';
 import { addNewLongTermRequestBooking } from '../../redux/features/room-booking/thunk/add-long-term-request-booking';
+import AlertModal from "../../components/modals/alert-modal.component";
 
 export const RoomBooking3: React.FC = () => {
   const navigate = useAppNavigation();
@@ -44,6 +45,8 @@ export const RoomBooking3: React.FC = () => {
   );
   const [bookingReasonSelections, setBookingReasonSelections] = useState([]);
   const [bookingReason, setBookingReason] = useState<string>();
+  const [genericMessage, setGenericMessage] = useState<string>();
+  const [isGenericModalShown, setGenericModalShown] = useState<boolean>(false);
   const [description, setDescription] = useState<string>('');
 
   useEffect(() => {
@@ -93,8 +96,8 @@ export const RoomBooking3: React.FC = () => {
       .unwrap()
       .then(() => navigate.navigate('ROOM_BOOKING_SUCCESS'))
       .catch((e) => {
-        alert('This room has already been booked. Please book another room');
-        navigate.pop(2);
+        alert(e.message.message);
+        navigate.pop(3);
       });
   };
 
@@ -113,11 +116,12 @@ export const RoomBooking3: React.FC = () => {
     )
       .unwrap()
       .then(() => {
-        alert('Book thanh cong');
+        setGenericMessage('Success Booking')
+        setGenericModalShown(!isGenericModalShown)
       })
       .catch((e) => {
-        alert('This room has already been booked. Please book another room');
-        navigate.pop(2);
+        alert(e.message.message);
+        navigate.pop(3);
       });
   };
 
@@ -127,6 +131,67 @@ export const RoomBooking3: React.FC = () => {
       : handleNewRequestBooking();
   };
 
+
+
+  const GenericAlertModal = ({ message }) => {
+    return (
+      <AlertModal
+        isOpened={isGenericModalShown}
+        height={150}
+        width={deviceWidth / 1.1}
+        toggleShown={() => setGenericModalShown(!isGenericModalShown)}
+      >
+        <View
+          style={{
+            display: 'flex',
+            flex: 1,
+            flexGrow: 0.9,
+            justifyContent: 'space-evenly',
+            paddingHorizontal: 10,
+          }}
+        >
+          <ExclamationCircleIcon
+            style={{
+              alignSelf: 'center',
+            }}
+            size={deviceWidth / 8}
+            color={FPT_ORANGE_COLOR}
+          />
+          <Text
+            style={{
+              color: BLACK,
+              fontWeight: '500',
+              fontSize: deviceWidth / 23,
+              textAlign: 'center',
+            }}
+          >
+            {message}
+          </Text>
+          <TouchableOpacity
+            onPress={() => navigate.replace('MAIN')}
+            style={{
+              backgroundColor: FPT_ORANGE_COLOR,
+              height: 40,
+              borderRadius: 8,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: '500',
+                fontSize: deviceWidth / 23,
+                color: WHITE,
+              }}
+            >
+              Close
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </AlertModal>
+    );
+  };
   const InfoDetail = (title, detail) => {
     return (
       <>
@@ -278,6 +343,7 @@ export const RoomBooking3: React.FC = () => {
           </Text>
         </TouchableOpacity>
       </View>
+      <GenericAlertModal message={genericMessage}/>
     </SafeAreaView>
   );
 };
