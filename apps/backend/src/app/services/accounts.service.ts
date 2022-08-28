@@ -117,7 +117,7 @@ export class AccountsService {
 
   async getAccountsByRoleId(roleId: string): Promise<Accounts[]> {
     try {
-      console.log("REEEEEEEEEE: ",this.repository)
+      console.log('REEEEEEEEEE: ', this.repository);
       return await this.repository.getAccountsByRoleId(roleId);
     } catch (e) {
       this.logger.error(e);
@@ -308,12 +308,12 @@ export class AccountsService {
       const userDelete = await this.repository.getRoleOfAccount(accountId);
       const userBeDeleted = await this.repository.getRoleOfAccount(id);
 
-      if(userBeDeleted) {
+      if (userBeDeleted) {
         if (userBeDeleted?.role_name === Role.APP_ADMIN) {
           throw new BadRequestException("Can't delete admin");
         }
       } else {
-        throw new BadRequestException("This account was deleted");
+        throw new BadRequestException('This account was deleted');
       }
 
       if (userDelete?.role_name === userBeDeleted?.role_name) {
@@ -687,25 +687,21 @@ export class AccountsService {
           'Password does not match. Please try again.'
         );
       }
-      const isExitByUsername = await this.repository.existsByUsername(account.username)
-      if(isExitByUsername){
-        throw new BadRequestException(
-          'Username is already in use'
-        );
+      const isExitByUsername = await this.repository.existsByUsername(
+        account.username
+      );
+      if (isExitByUsername) {
+        throw new BadRequestException('Username is already in use');
       }
 
-      const isExitByMail = await this.repository.existsByEmail(account.email)
-      if(isExitByMail){
-        throw new BadRequestException(
-          'This email is already in use'
-        );
+      const isExitByMail = await this.repository.existsByEmail(account.email);
+      if (isExitByMail) {
+        throw new BadRequestException('This email is already in use');
       }
 
-      const isExitByPhone = await this.repository.existsByPhone(account.phone)
-      if(isExitByPhone){
-        throw new BadRequestException(
-          'This phone number is already in use'
-        );
+      const isExitByPhone = await this.repository.existsByPhone(account.phone);
+      if (isExitByPhone) {
+        throw new BadRequestException('This phone number is already in use');
       }
 
       const role = await this.roleService.getRoleById(account.roleId);
@@ -730,6 +726,42 @@ export class AccountsService {
       if (keycloakUserCreated) {
         await this.keycloakService.removeKeycloakUserByKeycloakUsername();
       }
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async findByEmail(email: string) {
+    try {
+      return await this.repository.findByEmail(email);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async createNewAccountWithoutKeycloak(param: {
+    password: string;
+    role: string;
+    fullname: string;
+    email: string;
+    username: string;
+  }) {
+    try {
+      const role = await this.roleService.findByName('Staff');
+      const accountId = randomUUID();
+      return await this.createNewAccount(accountId, {
+        email: param.email,
+        password: param.password,
+        confirmPassword: param.password,
+        username: param.username,
+        phone: '',
+        description: '',
+        firstName: param.fullname,
+        lastName: param.fullname,
+        roleId: role.id,
+      });
+    } catch (e) {
+      this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }

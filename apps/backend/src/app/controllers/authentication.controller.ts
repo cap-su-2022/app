@@ -181,6 +181,7 @@ export class AuthenticationController {
     const resp = await this.authenticationService.handleGoogleSignin(
       request.token
     );
+
     httpResponse.header('Authorization', resp.accessToken);
     httpResponse.header('AuthorizationRefreshToken', resp.refreshToken);
     httpResponse.header('Set-Cookie', [

@@ -1,9 +1,7 @@
 import { InsertResult, QueryRunner, Repository } from 'typeorm';
 import { Accounts } from '../models';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import {
-  paginateRaw,
-} from 'nestjs-typeorm-paginate';
+import { paginateRaw } from 'nestjs-typeorm-paginate';
 import { Roles } from '../models/role.entity';
 import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
 import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
@@ -183,7 +181,7 @@ export class AccountRepository extends Repository<Accounts> {
   }
 
   getAccountsByRoleId(roleId: string) {
-    console.log("CHAY VO DAY")
+    console.log('CHAY VO DAY');
     return this.createQueryBuilder(`account`)
       .select('account.id', 'id')
       .addSelect('account.username', 'username')
@@ -510,5 +508,24 @@ export class AccountRepository extends Repository<Accounts> {
       .where('accounts.id = :id', { id: id })
       .getRawOne()
       .then((data) => data['name']);
+  }
+
+  async findByEmail(email: string): Promise<any> {
+    return this.createQueryBuilder('accounts')
+      .select('accounts.id', 'id')
+      .addSelect('accounts.keycloak_id', 'keycloakId')
+      .addSelect('accounts.google_id', 'googleId')
+      .addSelect('accounts.username', 'username')
+      .addSelect('accounts.email', 'email')
+      .addSelect('accounts.fullname', 'fullname')
+      .addSelect('accounts.avatar', 'avatar')
+      .addSelect('r.name', 'roleName')
+      .innerJoin(Roles, 'r', 'r.id = accounts.role_id')
+      .where('accounts.email = :email', { email: email })
+      .andWhere('accounts.disabled_at IS NULL')
+      .andWhere('accounts.disabled_by IS NULL')
+      .andWhere('accounts.deleted_at IS NULL')
+      .andWhere('accounts.deleted_by IS NULL')
+      .getRawOne();
   }
 }
