@@ -162,25 +162,30 @@ const AcceptBooking: React.FC<any> = () => {
   };
 
   const handleRejectCheckin = () => {
-    dispatch(
-      rejectCheckinBookingRequest({
-        id: bookingRoom.id,
-        reason: rejectBookingRequestModal.current
-          ? rejectBookingRequestModal.current.message
-          : undefined,
-      })
-    )
-      .unwrap()
-      .then(() => {
-        setCancelModalShown(!isRejectModalShow);
-        alert('Reject Successfully');
-      })
-      .then(() => {
-        setTimeout(() => {
-          navigate.replace('TRACK_BOOKING_ROOM');
-        }, 2000);
-      })
-      .catch((e) => alert(JSON.stringify(e)));
+    if (typeof rejectBookingRequestModal.current.message !== 'undefined'){
+      dispatch(
+        rejectCheckinBookingRequest({
+          id: bookingRoom.id,
+          reason: rejectBookingRequestModal.current
+            ? rejectBookingRequestModal.current.message
+            : undefined,
+        })
+      )
+        .unwrap()
+        .then(() => {
+          setCancelModalShown(!isRejectModalShow);
+          alert('Reject Successfully');
+        })
+        .then(() => {
+          setTimeout(() => {
+            navigate.replace('TRACK_BOOKING_ROOM');
+          }, 2000);
+        })
+        .catch((e) => alert(JSON.stringify(e)));
+    }else {
+      alert('Please input message!')
+    }
+
   };
 
   const handleAcceptAction = () => {

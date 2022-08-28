@@ -74,33 +74,41 @@ const AcceptFeedback: React.FC<any> = () => {
 
   const handleAttemptResolveFeedback = () => {
     // @ts-ignore
-    dispatch(
-      resolveFeedback({
-        id: feedback.id,
-        replyMessage: resolveFeedbackModal.current
-          ? resolveFeedbackModal.current.message
-          : undefined,
-      })
-    )
-      .unwrap()
-      .then(() => setResolveModalShown(!isResolveModalShown))
-      .then(() => navigate.replace('TRACK_FEEDBACK_ROUTE'))
-      .catch((e) => alert(JSON.stringify(e)));
+    if (typeof resolveFeedbackModal.current.message !== 'undefined') {
+      dispatch(
+        resolveFeedback({
+          id: feedback.id,
+          replyMessage: resolveFeedbackModal.current
+            ? resolveFeedbackModal.current.message
+            : undefined,
+        })
+      )
+        .unwrap()
+        .then(() => setResolveModalShown(!isResolveModalShown))
+        .then(() => navigate.replace('TRACK_FEEDBACK_ROUTE'))
+        .catch((e) => alert(JSON.stringify(e)));
+    } else {
+      alert('Please input message!');
+    }
   };
 
   const handleAttemptCancelFeedback = () => {
-    dispatch(
-      cancelFeedback({
-        id: feedback.id,
-        replyMessage: rejectFeedbackModal.current
-          ? rejectFeedbackModal.current.message
-          : undefined,
-      })
-    )
-      .unwrap()
-      .then(() => setCancelModalShown(!isCancelModalShown))
-      .then(() => navigate.replace('TRACK_FEEDBACK_ROUTE'))
-      .catch((e) => alert(JSON.stringify(e)));
+    if (typeof rejectFeedbackModal.current.message !== 'undefined') {
+      dispatch(
+        cancelFeedback({
+          id: feedback.id,
+          replyMessage: rejectFeedbackModal.current
+            ? rejectFeedbackModal.current.message
+            : undefined,
+        })
+      )
+        .unwrap()
+        .then(() => setCancelModalShown(!isCancelModalShown))
+        .then(() => navigate.replace('TRACK_FEEDBACK_ROUTE'))
+        .catch((e) => alert(JSON.stringify(e)));
+    } else {
+      alert('Please input message!');
+    }
   };
 
   const CancelAlertModal: React.ForwardRefRenderFunction<
@@ -439,7 +447,6 @@ const AcceptFeedback: React.FC<any> = () => {
                 ]}
               >
                 <>
-                  <Divider num={deviceWidth / 10} />
                   <View style={styles.dataRowContainer}>
                     <Text style={styles.titleText}>Message</Text>
                     <Text style={styles.valueText}>

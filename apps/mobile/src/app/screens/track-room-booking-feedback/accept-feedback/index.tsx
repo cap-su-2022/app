@@ -41,7 +41,9 @@ import { cancelFeedback } from '../../../redux/features/feedback/thunk/cancel-fe
 const AcceptRoomFeedback: React.FC<any> = () => {
   const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
-  const { roomBookingFeedback } = useAppSelector((state) => state.roomBookingFeedback);
+  const { roomBookingFeedback } = useAppSelector(
+    (state) => state.roomBookingFeedback
+  );
   const authUser = useAppSelector((state) => state.auth.authUser);
 
   const handleResolveAction = () => {
@@ -59,7 +61,8 @@ const AcceptRoomFeedback: React.FC<any> = () => {
     if (authUser.role === 'Staff' || authUser.role === 'Librarian') {
       return <></>;
     }
-    return roomBookingFeedback.status !== 'REJECTED' && roomBookingFeedback.status !== 'RESOLVED' ? (
+    return roomBookingFeedback.status !== 'REJECTED' &&
+      roomBookingFeedback.status !== 'RESOLVED' ? (
       <ResolveFeedbackFooter
         handleReject={() => handleCancelAction()}
         handleAccept={() => handleResolveAction()}
@@ -73,19 +76,22 @@ const AcceptRoomFeedback: React.FC<any> = () => {
     useRef<React.ElementRef<typeof CancelAlertModalRef>>();
 
   const handleAttemptResolveFeedback = () => {
-    // @ts-ignore
-    dispatch(
-      resolveFeedback({
-        id: roomBookingFeedback.id,
-        replyMessage: resolveFeedbackModal.current
-          ? resolveFeedbackModal.current.message
-          : undefined,
-      })
-    )
-      .unwrap()
-      .then(() => setResolveModalShown(!isResolveModalShown))
-      .then(() => navigate.replace('TRACK_FEEDBACK_ROUTE'))
-      .catch((e) => alert(JSON.stringify(e)));
+    if (typeof resolveFeedbackModal.current.message !== 'undefined') {
+      dispatch(
+        resolveFeedback({
+          id: roomBookingFeedback.id,
+          replyMessage: resolveFeedbackModal.current
+            ? resolveFeedbackModal.current.message
+            : undefined,
+        })
+      )
+        .unwrap()
+        .then(() => setResolveModalShown(!isResolveModalShown))
+        .then(() => navigate.replace('TRACK_FEEDBACK_ROUTE'))
+        .catch((e) => alert(JSON.stringify(e)));
+    } else {
+      alert('Please input message!');
+    }
   };
 
   const handleAttemptCancelFeedback = () => {
@@ -336,7 +342,8 @@ const AcceptRoomFeedback: React.FC<any> = () => {
             />
           </TouchableOpacity>
           <Text style={styles.headerTitleText}>
-            {roomBookingFeedback.status !== 'RESOLVED' && roomBookingFeedback.status !== 'REJECTED'
+            {roomBookingFeedback.status !== 'RESOLVED' &&
+            roomBookingFeedback.status !== 'REJECTED'
               ? 'Incoming feedback'
               : 'Review feedback'}
           </Text>
@@ -379,7 +386,9 @@ const AcceptRoomFeedback: React.FC<any> = () => {
             <View style={styles.bookingInformationContainer}>
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Created By</Text>
-                <Text style={styles.valueText}>{roomBookingFeedback.createdBy}</Text>
+                <Text style={styles.valueText}>
+                  {roomBookingFeedback.createdBy}
+                </Text>
               </View>
               <Divider num={deviceWidth / 10} />
 
@@ -396,7 +405,9 @@ const AcceptRoomFeedback: React.FC<any> = () => {
 
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Feedback type</Text>
-                <Text style={styles.valueText}>{roomBookingFeedback.feedbackType}</Text>
+                <Text style={styles.valueText}>
+                  {roomBookingFeedback.feedbackType}
+                </Text>
               </View>
             </View>
 
@@ -414,14 +425,18 @@ const AcceptRoomFeedback: React.FC<any> = () => {
                 >
                   <View style={styles.dataRowContainer}>
                     <Text style={styles.titleText}>Status</Text>
-                    <Text style={styles.valueText}>{roomBookingFeedback.status}</Text>
+                    <Text style={styles.valueText}>
+                      {roomBookingFeedback.status}
+                    </Text>
                   </View>
 
                   <>
                     <Divider num={deviceWidth / 10} />
                     <View style={styles.dataRowContainer}>
                       <Text style={styles.titleText}>Reply Message</Text>
-                      <Text style={styles.valueText}>{roomBookingFeedback.replyMess}</Text>
+                      <Text style={styles.valueText}>
+                        {roomBookingFeedback.replyMess}
+                      </Text>
                     </View>
                   </>
                 </View>
