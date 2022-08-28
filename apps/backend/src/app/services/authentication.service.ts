@@ -47,6 +47,34 @@ export class AuthenticationService {
         audience: this.oAuthAudience,
       });
 
+      const email = decodedToken.getPayload().email;
+
+      const account = await this.accountService.findByEmail(email);
+      let newUsername;
+
+      if (!account.keycloakId) {
+        newUsername = decodedToken.getPayload().email.split('@')[0];
+        await this.keycloakService.createKeycloakUser({
+          email: email,
+          firstName: decodedToken.getPayload().family_name,
+          lastName: decodedToken.getPayload().given_name,
+          username: newUsername,
+          password: decodedToken.getPayload().email,
+          roleGroup: 'staff',
+        });
+
+        await this.accountService.createNewAccountWithoutKeycloak({
+          email: email,
+          fullname:
+            decodedToken.getPayload().family_name +
+            ' ' +
+            decodedToken.getPayload().given_name,
+          username: newUsername,
+          password: decodedToken.getPayload().email,
+          role: 'Staff',
+        });
+      }
+
       const userGoogleId = decodedToken.getUserId();
 
       let keycloakToken = await this.accountService.getKeycloakIdByGoogleId(
@@ -55,7 +83,7 @@ export class AuthenticationService {
       if (keycloakToken === undefined) {
         await this.accountService.updateGoogleIdByAccountEmail(
           userGoogleId,
-          decodedToken.getPayload().email
+          email
         );
         keycloakToken = await this.accountService.getKeycloakIdByGoogleId(
           userGoogleId

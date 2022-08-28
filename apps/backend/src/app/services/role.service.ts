@@ -108,8 +108,8 @@ export class RoleService {
   async deleteRoleById(accountId: string, id: string) {
     try {
       const data = await this.repository.findById(id);
-      console.log("ACC: ", this.accountService)
-      
+      console.log('ACC: ', this.accountService);
+
       const listAccountOfThisRole =
         await this.accountService.getAccountsByRoleId(id);
       if (data === undefined) {
@@ -178,6 +178,15 @@ export class RoleService {
         await this.histService.deleteAllHist(id);
         return this.repository.permanentlyDeleteById(id);
       }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async findByName(name: string) {
+    try {
+      return this.repository.findByName(name);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
