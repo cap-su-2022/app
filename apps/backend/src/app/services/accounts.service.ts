@@ -127,17 +127,6 @@ export class AccountsService {
     }
   }
 
-  async add(
-    payload: AccountAddRequestPayload,
-    userId: string
-  ): Promise<Accounts> {
-    return;
-  }
-
-  addAll(models: UsersDTO[]): Promise<Accounts[]> {
-    return Promise.resolve([]);
-  }
-
   async updateById(
     accountId: string,
     id: string,

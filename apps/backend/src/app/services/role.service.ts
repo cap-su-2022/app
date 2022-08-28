@@ -17,9 +17,9 @@ export class RoleService {
   private readonly logger = new Logger(RoleService.name);
 
   constructor(
-    private readonly repository: RolesRepository,
     @Inject(forwardRef(() => AccountsService))
     private readonly accountService: AccountsService,
+    private readonly repository: RolesRepository,
     private readonly histService: RoleHistService
   ) {}
 
@@ -108,7 +108,8 @@ export class RoleService {
   async deleteRoleById(accountId: string, id: string) {
     try {
       const data = await this.repository.findById(id);
-      console.log("DATAAAAAAA: ", data)
+      console.log("ACC: ", this.accountService)
+      
       const listAccountOfThisRole =
         await this.accountService.getAccountsByRoleId(id);
       if (data === undefined) {

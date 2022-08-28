@@ -156,9 +156,9 @@ export class BookingRoomService {
 
   async setReasonNull(reasonId: string, queryRunner: QueryRunner) {
     try {
-      const listRequest = await this.repository.getAllRequestByReason(reasonId)
-      const listConvered = listRequest.map(object => object.id)
-      return this.repository.setReasonNull(listConvered, queryRunner)
+      const listRequest = await this.repository.getAllRequestByReason(reasonId);
+      const listConvered = listRequest.map((object) => object.id);
+      return this.repository.setReasonNull(listConvered, queryRunner);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(
@@ -405,7 +405,8 @@ export class BookingRoomService {
 
   async getBookingByRoomInWeek(payload: { roomId: string; date: string }) {
     try {
-      return await this.repository.getBookingByRoomInWeek(payload);
+      const result = await this.repository.getBookingByRoomInWeek(payload);
+      return result;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -429,6 +430,23 @@ export class BookingRoomService {
     }
   }
 
+  async getRequestPendingOfUserInDay(
+    userId: string,
+    requestId: string,
+    date: string
+  ) {
+    try {
+      return this.repository.getRequestPendingOfUserInDay(
+        userId,
+        requestId,
+        date
+      );
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async getRequestOfRoomWithSameSlot(payload: {
     roomId: string;
     date: string;
@@ -443,6 +461,40 @@ export class BookingRoomService {
       );
       const listRequestPending = await this.getRequestPendingOfRoomInDay(
         payload.roomId,
+        payload.requestId,
+        payload.date
+      );
+      if (listRequestPending.length > 0) {
+        const listResult = listRequestPending.filter((request) => {
+          for (let j = request.slotIn; j <= request.slotOut; j++) {
+            if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+              return request;
+            }
+          }
+        });
+        return listResult;
+      }
+      return null;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getRequestOfUserWithSameSlot(payload: {
+    userId: string;
+    date: string;
+    requestId: string;
+    checkinSlotId: string;
+    checkoutSlotId: string;
+  }) {
+    try {
+      const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlotId);
+      const slotOut = await this.slotService.getNumOfSlot(
+        payload.checkoutSlotId
+      );
+      const listRequestPending = await this.getRequestPendingOfUserInDay(
+        payload.userId,
         payload.requestId,
         payload.date
       );
@@ -847,19 +899,19 @@ export class BookingRoomService {
       if (role.role_name === 'Librarian' || role.role_name === 'System Admin') {
         status = 'BOOKED';
       }
-      // if (role.role_name === 'Staff') {
-      //   const countRequestInWeek = Number(
-      //     await this.repository.getCountRequestInWeekOfUser(
-      //       userId,
-      //       payload.checkinDate
-      //     )
-      //   );
-      //   if (countRequestInWeek >= 3) {
-      //     throw new BadRequestException(
-      //       'You have run out of bookings for this week'
-      //     );
-      //   }
-      // }
+      if (role.role_name === 'Staff') {
+        const countRequestInWeek = Number(
+          await this.repository.getCountRequestInWeekOfUser(
+            userId,
+            payload.checkinDate
+          )
+        );
+        if (countRequestInWeek >= 3) {
+          throw new BadRequestException(
+            'You have run out of bookings for this week'
+          );
+        }
+      }
       if (listRequestPeningAndBookedInDay.length > 0) {
         listRequestPeningAndBookedInDay.map(async (request) => {
           for (let j = request.slotIn; j <= request.slotOut; j++) {
@@ -1175,7 +1227,7 @@ export class BookingRoomService {
           );
 
           const _receiver = await this.accountService.getRoleOfAccount(
-            requestSameSlot.bookedFor
+            requestSameSlot.bookedForId
           );
           if (_receiver.fcmToken) {
             const message = {
@@ -1200,6 +1252,55 @@ export class BookingRoomService {
           }
         });
       }
+
+      const listRequestOfUserSameSlot = await this.getRequestOfUserWithSameSlot(
+        {
+          userId: request.bookedFor,
+          date: dayjs(request.checkinDate).format('YYYY-MM-DD'),
+          requestId: request.id,
+          checkinSlotId: request.checkinSlotId,
+          checkoutSlotId: request.checkoutSlotId,
+        }
+      );
+      console.log("CMM: ", listRequestOfUserSameSlot)
+      if (listRequestOfUserSameSlot) {
+        const reason =
+          'You have been accept to request a reservation in another room at the same slot. Therefore, this request will be cancelled.';
+        listRequestOfUserSameSlot.forEach(async (requestSameSlot) => {
+          this.repository.rejectById(
+            accountId,
+            requestSameSlot.id,
+            reason,
+            queryRunner
+          );
+
+          const _receiver = await this.accountService.getRoleOfAccount(
+            requestSameSlot.bookedForId
+          );
+          if (_receiver.fcmToken) {
+            const message = {
+              data: {
+                score: '850',
+                time: '2:45',
+              },
+              notification: {
+                title: 'FLBRMS',
+                body: 'Your request booking was rejected',
+              },
+            };
+            await admin
+              .messaging()
+              .sendToDevice(_receiver.fcmToken, message)
+              .then((response) => {
+                console.log('Successfully sent message:', response);
+              })
+              .catch((error) => {
+                console.log('Error sending message:', error);
+              });
+          }
+        });
+      }
+
       const requestAccepted = await this.repository.acceptById(
         accountId,
         id,
@@ -1284,7 +1385,12 @@ export class BookingRoomService {
       if (isCancelled) {
         throw new BadRequestException('Request already cancelled!');
       }
-      const requestRejected = await this.reject(accountId, id, reason, queryRunner);
+      const requestRejected = await this.reject(
+        accountId,
+        id,
+        reason,
+        queryRunner
+      );
 
       await queryRunner.commitTransaction();
       return requestRejected;

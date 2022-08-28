@@ -79,7 +79,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         </Button>
       );
     } else {
-      return <div></div>;
+      return null;
     }
   };
 
