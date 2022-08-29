@@ -36,6 +36,7 @@ import { fetchAllDevices } from '../../redux/features/devices/thunk/fetch-all';
 import RequestRoomBookingHeader from './request-room-booking/header';
 import { boxShadow } from '../../utils/box-shadow.util';
 import NotFound from '../../components/empty.svg';
+import { fetchMaxBorrowDevicesQuantity } from '../../redux/features/system/thunk/fetch-max-borrow-devices-quantity.thunk';
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
@@ -47,6 +48,14 @@ const RoomBooking2: React.FC = () => {
   const [search, setSearch] = useState<string>('');
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
+
+  const [maxQuantity, setMaxQuantity] = useState<number>(100);
+
+  useEffect(() => {
+    dispatch(fetchMaxBorrowDevicesQuantity())
+      .unwrap()
+      .then((val) => setMaxQuantity(val));
+  }, []);
 
   useEffect(() => {
     dispatch(
@@ -137,7 +146,7 @@ const RoomBooking2: React.FC = () => {
     };
 
     const handlePlusQuantity = () => {
-      if (quantity >= 0 && quantity < 30) {
+      if (quantity >= 0 && quantity < maxQuantity) {
         const copyArray = deviceSelectedDevice;
         const itemSelectedIndex = copyArray.findIndex(
           (device) => device.id === props.device.id
@@ -276,13 +285,19 @@ const RoomBooking2: React.FC = () => {
                   keyboardType="numeric"
                   textAlignVertical="center"
                   onChangeText={(e) => {
-                    setQuantity(parseInt(e));
-                    const copyArray = deviceSelectedDevice;
-                    const itemSelectedIndex = copyArray.findIndex(
-                      (device) => device.id === props.device.id
-                    );
-                    copyArray[itemSelectedIndex].quantity = parseInt(e);
-                    setDeviceSelectedDevice(copyArray);
+                    if (parseInt(e) <= maxQuantity) {
+                      setQuantity(parseInt(e));
+                      const copyArray = deviceSelectedDevice;
+                      const itemSelectedIndex = copyArray.findIndex(
+                        (device) => device.id === props.device.id
+                      );
+                      copyArray[itemSelectedIndex].quantity = parseInt(e);
+                      setDeviceSelectedDevice(copyArray);
+                    } else {
+                      alert(
+                        'You already reached the maximum limit of this quantity. Please contact the librarians to get support.'
+                      );
+                    }
                   }}
                   style={{
                     textAlign: 'center',

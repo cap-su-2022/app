@@ -155,17 +155,6 @@ const SettingsScreen = () => {
         <View style={styles.logoutContainer}>
           <TouchableOpacity
             style={styles.logoutButton}
-            onPress={() => navigate.navigate('History')}
-          >
-            <View style={styles.logoutIconContainer}>
-              <DocumentSearchIcon color={BLACK} />
-            </View>
-            <Text style={styles.logoutText}>History</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.logoutContainer}>
-          <TouchableOpacity
-            style={styles.logoutButton}
             onPress={() => navigate.navigate(FEEDBACK_SCREEN)}
           >
             <View style={styles.logoutIconContainer}>

@@ -13,6 +13,7 @@ import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import HomeScreenSectionRoomCheckin from './room-checkin';
 import TrackRoomBookingFeedbackNavigator from '../../../navigation/home/track-room-booking-feedback';
 import HomeScreenSectionTrackRoomBookingFeedback from './track-room-booking-feedbacks';
+import HomeScreenSectionRoomWishlist from './room-wishlist';
 
 const HomeScreenSection: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -39,11 +40,6 @@ const HomeScreenSection: React.FC<any> = () => {
             <ViewGridIcon color={BLACK} size={deviceWidth / 14} />
             <Text style={styles.quickAccessText}>Quick Access</Text>
           </View>
-          <TouchableOpacity
-            onPress={() => navigate.navigate('QUICK_ACCESS_CONTROL')}
-          >
-            <PencilIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 16} />
-          </TouchableOpacity>
         </View>
 
         <View style={styles.quickAccessButtons}>
@@ -53,6 +49,7 @@ const HomeScreenSection: React.FC<any> = () => {
           <HomeScreenSectionResolveFeedback />
           <HomeScreenSectionTrackRoomBookingFeedback />
           <HomeScreenSectionRoomCheckin />
+          <HomeScreenSectionRoomWishlist />
         </View>
       </View>
     </View>

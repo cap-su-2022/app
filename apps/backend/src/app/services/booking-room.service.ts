@@ -151,7 +151,7 @@ export class BookingRoomService {
       result.usedBookingTime = Number(
         await this.repository.getCountRequestInWeekOfUser(id, date)
       );
-      if (result.usedBookingTime > SETTING_BOOKING_TIME) {
+      if (result.usedBookingTime >= SETTING_BOOKING_TIME) {
         result.isAvailable = false;
       }
       return result;

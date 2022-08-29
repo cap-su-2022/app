@@ -112,7 +112,7 @@ const UserInfoPreference: React.FC = () => {
 
     const initialFormValues = {
       maxBookingRequest: backendConfig.maxBookingRequestPerWeek,
-      maxDeviceBorrowQuantity: backendConfig.maxBookingDateRange,
+      maxDeviceBorrowQuantity: backendConfig.maxDeviceBorrowQuantity,
       maxBookingDateRange: backendConfig.maxBookingDateRange,
     };
 
