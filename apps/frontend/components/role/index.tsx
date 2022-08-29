@@ -403,7 +403,7 @@ const ManageRole: React.FC<any> = () => {
   });
   return (
     <AdminLayout>
-      <Header title="Role Management" icon={<BuildingWarehouse size={50}/>}/>
+      <Header title="Roles Management" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
         actionsLeft={null}
         handleResetFilter={() => handleResetFilter()}
