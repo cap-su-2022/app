@@ -40,7 +40,7 @@ const StartDayCalendar: React.FC<any> = (props) => {
         <Calendar
           initialDate={currentDate}
           minDate={currentDate}
-          maxDate={isMultiDate ? toDay || lastDay2Week : null}
+          maxDate={isMultiDate ? toDay || lastDay2Week : lastDay2Week}
           onDayPress={(day) => handleDayPress(day)}
           markedDates={{
             [dayStart]: {

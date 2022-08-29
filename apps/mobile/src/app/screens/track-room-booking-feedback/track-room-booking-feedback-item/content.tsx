@@ -7,10 +7,10 @@ import { BLACK, GRAY } from '@app/constants';
 interface TrackBookingRequestItemContentProps {
   item: FeedbackFilterResponse;
 }
-
 const TrackFeedbackItemContent: React.FC<
   TrackBookingRequestItemContentProps
 > = (props) => {
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.rowRender}>
@@ -30,7 +30,7 @@ const TrackFeedbackItemContent: React.FC<
       <View style={[{ marginTop: 10 }, styles.rowRender]}>
         <Text style={styles.textTitle}>Feedback type:</Text>
         <Text style={styles.textValue}>
-          {props.item.feedbackTypeName ?? 'Other'}
+          {props.item.feedbackType ?? 'Other'}
         </Text>
       </View>
     </View>

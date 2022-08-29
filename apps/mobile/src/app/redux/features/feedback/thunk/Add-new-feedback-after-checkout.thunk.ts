@@ -8,7 +8,7 @@ interface RequestPayload {
   message: string;
   rateNum: number;
   bookingRoomId: string;
-  feedbackTypeId: string;
+  feedbacktype: string;
 }
 
 interface FeedbackResponse {
@@ -37,7 +37,7 @@ export const addNewFeedbackAfterCheckout = createAsyncThunk<
       `${API_URL}/booking-room-feedbacks/send-feedback`,
       {
         message: payload.message,
-        feedbackTypeId: payload.feedbackTypeId,
+        feedbacktype: payload.feedbacktype,
         rateNum: payload.rateNum,
         bookingRoomId: payload.bookingRoomId
       },

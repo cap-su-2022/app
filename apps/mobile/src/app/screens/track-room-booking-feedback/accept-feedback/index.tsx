@@ -454,7 +454,6 @@ const AcceptRoomFeedback: React.FC<any> = () => {
                 ]}
               >
                 <>
-                  <Divider num={deviceWidth / 10} />
                   <View style={styles.dataRowContainer}>
                     <Text style={styles.titleText}>Message</Text>
                     <Text style={styles.valueText}>
