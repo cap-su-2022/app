@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Avatar,
   Button,
@@ -33,15 +33,29 @@ import { fetchBackendConfig } from '../../redux/features/system/thunk/fetch-back
 import { updateBackendConfig } from '../../redux/features/system/thunk/update-backend-config.thunk';
 // interface UserInfoPreferneceProps {}
 
-const data = [
-  { link: '', label: 'Profile', icon: User },
-  { link: '', label: 'Authentication', icon: Key },
-  { link: '', label: 'General', icon: Settings },
-];
-
 const UserInfoPreference: React.FC = () => {
   const { classes, cx } = useStyles();
   const [active, setActive] = useState('Profile');
+
+  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
+  useEffect(() => {
+    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
+  }, []);
+
+  const data = useMemo(() => {
+    if (userInfo.role === 'Staff') {
+      return [
+        { link: '', label: 'Profile', icon: User },
+        { link: '', label: 'Authentication', icon: Key },
+      ];
+    } else {
+      return [
+        { link: '', label: 'Profile', icon: User },
+        { link: '', label: 'Authentication', icon: Key },
+        { link: '', label: 'General', icon: Settings },
+      ];
+    }
+  }, [userInfo]);
 
   const links = data.map((item) => (
     <a
@@ -59,14 +73,9 @@ const UserInfoPreference: React.FC = () => {
       <span className={classes.displayLabelNav}>{item.label}</span>
     </a>
   ));
-  const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
 
   // const [image, setImage] = useState<File>(null);
   const avatarInputRef = useRef<HTMLInputElement>();
-
-  useEffect(() => {
-    setUserInfo(JSON.parse(window.localStorage.getItem('user')));
-  }, []);
 
   const dispatch = useAppDispatch();
 
@@ -158,12 +167,16 @@ const UserInfoPreference: React.FC = () => {
             className={classes.inputText}
           />
           <TextInput
+            type="number"
+            min="1"
             id="maxDeviceBorrowQuantity"
             description="Maximum quantity of devices can be borrowed each room booking request"
             onChange={formik.handleChange('maxDeviceBorrowQuantity')}
             error={
               formik.touched.maxDeviceBorrowQuantity &&
               Boolean(formik.errors.maxDeviceBorrowQuantity)
+                ? formik.errors.maxDeviceBorrowQuantity
+                : null
             }
             value={formik.values.maxDeviceBorrowQuantity}
             label={'Maximum quantity of devices can be borrowed'}
@@ -172,6 +185,8 @@ const UserInfoPreference: React.FC = () => {
             className={classes.inputText}
           />
           <TextInput
+            type="number"
+            min="1"
             id="maxBookingDateRange"
             description="Maximum date range can be booked by staff accounts"
             onChange={formik.handleChange}

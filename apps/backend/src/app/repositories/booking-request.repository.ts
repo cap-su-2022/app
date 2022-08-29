@@ -78,9 +78,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     const firstDay = curr.getDate() - curr.getDay() + 1;
 
     const sunday = new Date(new Date(date).setDate(firstDay));
-    const saturday = new Date(
-      new Date(sunday).setDate(sunday.getDate() + 6)
-    );
+    const saturday = new Date(new Date(sunday).setDate(sunday.getDate() + 6));
 
     return this.createQueryBuilder('booking_request')
       .select('COUNT(1)', 'count')
@@ -152,9 +150,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     const firstDay = curr.getDate() - curr.getDay() + 1;
 
     const sunday = new Date(new Date(payload.date).setDate(firstDay));
-    const saturday = new Date(
-      new Date(sunday).setDate(sunday.getDate() + 6)
-    );
+    const saturday = new Date(new Date(sunday).setDate(sunday.getDate() + 6));
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('booking_request.checkin_Date', 'checkinDate')
@@ -806,7 +802,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       UNION ALL
       SELECT COUNT(1)
       FROM booking_request br
-      WHERE br.status = 'CANCELLED' `);
+      WHERE br.status = 'CANCELLED' 
+        AND br.booked_for = '${id}'`);
   }
 
   async getInforToFeedback(
@@ -1043,9 +1040,12 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
       .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
       .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
-      .where('booking_request.requested_by = :accountId OR booking_request.booked_for = :accountId', {
-        accountId: accountId,
-      })
+      .where(
+        'booking_request.requested_by = :accountId OR booking_request.booked_for = :accountId',
+        {
+          accountId: accountId,
+        }
+      )
       .andWhere('booking_request.status = :status', { status: 'CHECKED_IN' })
       .andWhere('booking_request.checkedout_at IS NULL')
       .andWhere('booking_request.checkedin_at IS NOT NULL')
@@ -1130,9 +1130,12 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         'br',
         'br.id = booking_request.booking_reason_id'
       )
-      .where('booking_request.requested_by = :requestedBy OR booking_request.booked_for = :requestedBy' , {
-        requestedBy: accountId,
-      })
+      .where(
+        'booking_request.requested_by = :requestedBy OR booking_request.booked_for = :requestedBy',
+        {
+          requestedBy: accountId,
+        }
+      )
       .andWhere('booking_request.status = :status', { status: 'BOOKED' })
       .andWhere('booking_request.cancelled_by IS NULL')
       .andWhere('booking_request.cancelled_at IS NULL')
