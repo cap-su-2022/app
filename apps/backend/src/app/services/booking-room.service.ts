@@ -1262,7 +1262,6 @@ export class BookingRoomService {
           checkoutSlotId: request.checkoutSlotId,
         }
       );
-      console.log("CMM: ", listRequestOfUserSameSlot)
       if (listRequestOfUserSameSlot) {
         const reason =
           'You have been accept to request a reservation in another room at the same slot. Therefore, this request will be cancelled.';
