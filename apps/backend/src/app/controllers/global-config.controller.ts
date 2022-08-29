@@ -33,7 +33,6 @@ export const getConfigFileLoaded = () => {
   }
 };
 @Controller('/v1/config')
-@Roles(Role.APP_ADMIN)
 @ApiTags('System Config')
 export class GlobalConfigController {
   @Get('room-booking-date-limit')
@@ -49,19 +48,16 @@ export class GlobalConfigController {
   }
 
   @Get('max-borrow-devices-quantity')
-  @Roles(Role.APP_ADMIN)
   getMaxBorrowDevicesQuantity(): Promise<any> {
     return Promise.resolve(getConfigFileLoaded().maxDeviceBorrowQuantity);
   }
 
   @Get('max-booking-request-per-week')
-  @Roles(Role.APP_ADMIN)
   getMaxBookingRequestPerWeek(): Promise<any> {
     return Promise.resolve(getConfigFileLoaded().maxBookingRequestPerWeek);
   }
 
   @Get()
-  @Roles(Role.APP_ADMIN)
   getAllConfig() {
     return Promise.resolve(getConfigFileLoaded());
   }
