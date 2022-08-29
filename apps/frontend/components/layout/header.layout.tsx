@@ -50,7 +50,7 @@ const LayoutHeader: React.FC<HeaderSearchProps> = (props) => {
   const router = useRouter();
   const {classes} = useStyles();
 
-  const [isNotificationShown, setNotificationShown] = useState<boolean>(false);
+  // const [isNotificationShown, setNotificationShown] = useState<boolean>(false);
   const [isPreferencesShown, setPreferencesShown] = useState<boolean>(false);
   const [isLogoutModalShown, setLogoutModalShown] = useState<boolean>(false);
 
@@ -64,11 +64,11 @@ const LayoutHeader: React.FC<HeaderSearchProps> = (props) => {
     setLogoutModalShown(!isLogoutModalShown);
   };
 
-  const toggleNotificationShown = () => {
-    setNotificationShown(!isNotificationShown);
-  };
+  // const toggleNotificationShown = () => {
+  //   setNotificationShown(!isNotificationShown);
+  // };
 
-  const innerRef = useOuterClick((ev) => toggleNotificationShown());
+  // const innerRef = useOuterClick((ev) => toggleNotificationShown());
 
   return (
     <Header height={56} className={classes.header} mb={20}>
@@ -96,7 +96,7 @@ const LayoutHeader: React.FC<HeaderSearchProps> = (props) => {
                 {userInfo?.username}
               </Text>
             </Button>
-            <Button
+            {/* <Button
               className={classes.button}
               onClick={() => toggleNotificationShown()}
             >
@@ -742,7 +742,7 @@ const LayoutHeader: React.FC<HeaderSearchProps> = (props) => {
                   </div>
                 </div>
               ) : null}
-            </Button>
+            </Button> */}
             <Button className={classes.button}>
               <ChevronDown className={classes.innerButton}/>
             </Button>
