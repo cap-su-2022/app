@@ -1043,7 +1043,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
       .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
       .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
-      .where('booking_request.requested_by = :accountId', {
+      .where('booking_request.requested_by = :accountId OR booking_request.booked_for = :accountId', {
         accountId: accountId,
       })
       .andWhere('booking_request.status = :status', { status: 'CHECKED_IN' })
@@ -1130,7 +1130,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         'br',
         'br.id = booking_request.booking_reason_id'
       )
-      .where('booking_request.requested_by = :requestedBy', {
+      .where('booking_request.requested_by = :requestedBy OR booking_request.booked_for = :requestedBy' , {
         requestedBy: accountId,
       })
       .andWhere('booking_request.status = :status', { status: 'BOOKED' })

@@ -92,7 +92,7 @@ export class BookingFeedbackRepository extends Repository<BookingRoomFeedback> {
 
     if (pagination.room) {
       query.andWhere('f.booking_room_id = :bookingRoomId', {
-        feedbackTypeName: pagination.room,
+        bookingRoomId: pagination.room,
       });
     }
 

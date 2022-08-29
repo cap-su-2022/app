@@ -19,7 +19,7 @@ export const fetchRoomBookingFeedbacks = createAsyncThunk<
       message: string;
     };
   }
->('room-booking-feedback/fetch-by-id', async (payload, thunkAPI) => {
+>('room-booking-feedback/fetch-all-booking-room-feedbacks', async (payload, thunkAPI) => {
   return await axiosGetAPICall(
     `${API_URL}/booking-room-feedbacks`,
     {

@@ -112,7 +112,7 @@ const CheckoutSuccessfully: React.FC<any> = () => {
       addNewFeedbackAfterCheckout({
         message: values.description,
         rateNum: values.rateNum,
-        feedbackTypeId: values.feedbackType,
+        feedbacktype: values.feedbackType,
         bookingRoomId: roomBookingCheckout.id,
       })
     )
@@ -215,7 +215,7 @@ const CheckoutSuccessfully: React.FC<any> = () => {
     initialValues: {
       rateNum: 5,
       description: undefined,
-      feedbackType: undefined,
+      feedbackType: selectedFeedbackType,
     },
     onSubmit: (values) => handleSubmit(values),
   });
@@ -259,6 +259,7 @@ const CheckoutSuccessfully: React.FC<any> = () => {
           <View style={styles.itemContainer}>
             <Text style={styles.title}>FEEDBACK TYPE</Text>
             <RNPickerSelect
+              placeholder={{}}
               value={formik.values.feedbackType}
               style={pickerStyle}
               onValueChange={(e) => formik.setFieldValue('feedbackType', e)}

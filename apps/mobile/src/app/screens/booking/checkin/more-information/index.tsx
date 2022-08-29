@@ -15,20 +15,6 @@ const ReadyToCheckinMoreInformation: React.FC<any> = () => {
     <>
       <Text style={styles.informationHeaderTitle}>MORE INFORMATION</Text>
       <View style={[styles.bookingInformationContainer, { marginBottom: 20 }]}>
-        <View style={styles.dataRowContainer}>
-          <Text style={styles.titleText}>Booking ID</Text>
-          <Text style={styles.valueText}>{currentCheckinInformation.id}</Text>
-        </View>
-        <Divider num={deviceWidth / 10} />
-
-        <View style={styles.dataRowContainer}>
-          <Text style={styles.titleText}>Room ID</Text>
-          <Text style={styles.valueText}>
-            {currentCheckinInformation.roomId}
-          </Text>
-        </View>
-        <Divider num={deviceWidth / 10} />
-
         <View
           style={{
             flex: 1,
