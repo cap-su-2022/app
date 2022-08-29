@@ -137,14 +137,19 @@ export class BookingRoomService {
   }
 
   async getCountRequestInWeekOfUser(id: string, date: string) {
+    const SETTING_BOOKING_TIME = 3;
     try {
       const result = {
         usedBookingTime: 0,
-        totalBookingTime: 3,
+        isAvailable: true,
+        totalBookingTime: SETTING_BOOKING_TIME,
       };
       result.usedBookingTime = Number(
         await this.repository.getCountRequestInWeekOfUser(id, date)
       );
+      if(result.usedBookingTime > SETTING_BOOKING_TIME){
+        result.isAvailable = false
+      }
       return result;
     } catch (e) {
       this.logger.error(e.message);
