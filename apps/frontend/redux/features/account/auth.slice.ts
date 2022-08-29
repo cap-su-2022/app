@@ -48,7 +48,8 @@ export const authSlice = createSlice({
     });
     builder.addCase(doLoginWithGoogle.rejected, (state, { payload }) => {
       state.isLoginFailed = true;
-      state.error = payload.message;
+      state.error =
+        'Only FPT Education e-mail is allowed! Please contact to the librarians to get support!';
     });
   },
 });
