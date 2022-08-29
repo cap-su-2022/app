@@ -25,6 +25,10 @@ import { NotificationService } from './notification.service';
 import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
 import { BookingFeedbackService } from './booking-feedback.service';
 import * as admin from 'firebase-admin';
+import * as yaml from 'js-yaml';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { getConfigFileLoaded } from '../controllers/global-config.controller';
 
 @Injectable()
 export class BookingRoomService {
@@ -137,7 +141,7 @@ export class BookingRoomService {
   }
 
   async getCountRequestInWeekOfUser(id: string, date: string) {
-    const SETTING_BOOKING_TIME = 3;
+    const SETTING_BOOKING_TIME = getConfigFileLoaded().maxBookingRequestPerWeek;
     try {
       const result = {
         usedBookingTime: 0,
@@ -147,8 +151,8 @@ export class BookingRoomService {
       result.usedBookingTime = Number(
         await this.repository.getCountRequestInWeekOfUser(id, date)
       );
-      if(result.usedBookingTime > SETTING_BOOKING_TIME){
-        result.isAvailable = false
+      if (result.usedBookingTime > SETTING_BOOKING_TIME) {
+        result.isAvailable = false;
       }
       return result;
     } catch (e) {

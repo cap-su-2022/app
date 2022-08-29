@@ -10,22 +10,33 @@ import {
   TextInput,
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { At, Key, Lock, PhoneCall, User, Check, X } from 'tabler-icons-react';
+import {
+  At,
+  Key,
+  Lock,
+  PhoneCall,
+  User,
+  Check,
+  X,
+  Settings,
+} from 'tabler-icons-react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { updateProfile } from '../../redux/features/account/thunk/update-profile.thunk';
 import { uploadAvatar } from '../../redux/features/account/thunk/upload-avatar.thunk';
 import { fetchProfile } from '../../redux/features/account/thunk/fetch-profile.thunk';
 import ChangePassword from './change-password.component';
 import { useTransition, animated } from 'react-spring';
 import { UserInfoModel } from '../../models/user/user-info.model';
+import { fetchBackendConfig } from '../../redux/features/system/thunk/fetch-backend-config.thunk';
+import { updateBackendConfig } from '../../redux/features/system/thunk/update-backend-config.thunk';
 // interface UserInfoPreferneceProps {}
-
 
 const data = [
   { link: '', label: 'Profile', icon: User },
   { link: '', label: 'Authentication', icon: Key },
+  { link: '', label: 'General', icon: Settings },
 ];
 
 const UserInfoPreference: React.FC = () => {
@@ -53,13 +64,146 @@ const UserInfoPreference: React.FC = () => {
   // const [image, setImage] = useState<File>(null);
   const avatarInputRef = useRef<HTMLInputElement>();
 
-
-
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
   const dispatch = useAppDispatch();
+
+  const General: React.FC = () => {
+    const backendConfig = useAppSelector((state) => state.system.backendConfig);
+
+    useEffect(() => {
+      dispatch(fetchBackendConfig());
+    }, []);
+    const handleUpdateSubmit = async (values) => {
+      dispatch(
+        updateBackendConfig({
+          maxBookingDateRange: values.maxBookingDateRange,
+          maxDeviceBorrowQuantity: values.maxDeviceBorrowQuantity,
+          maxBookingRequestPerWeek: values.maxBookingRequest,
+        })
+      )
+        .unwrap()
+        .then(() => {
+          dispatch(fetchBackendConfig());
+        })
+        .then(() =>
+          showNotification({
+            id: 'load-data',
+            color: 'teal',
+            title: 'Data was updated',
+            message: 'Global preferences were updated successfully',
+            icon: <Check />,
+            autoClose: 3000,
+          })
+        )
+        .catch((e) => {
+          showNotification({
+            id: 'load-data',
+            color: 'red',
+            title: 'Have error',
+            message: `${e.message}`,
+            icon: <X />,
+            autoClose: 3000,
+          });
+        });
+    };
+
+    const initialFormValues = {
+      maxBookingRequest: backendConfig.maxBookingRequestPerWeek,
+      maxDeviceBorrowQuantity: backendConfig.maxBookingDateRange,
+      maxBookingDateRange: backendConfig.maxBookingDateRange,
+    };
+
+    const UpdateSchema = Yup.object().shape({
+      maxBookingRequest: Yup.number()
+        .min(1, 'Must be positive number!')
+        .required('Required'),
+      maxDeviceBorrowQuantity: Yup.number()
+        .min(1, 'Must be positive number!')
+        .required('Required'),
+      maxBookingDateRange: Yup.number()
+        .min(1, 'Must be positive number!')
+        .required('Required'),
+    });
+
+    const formik = useFormik({
+      initialValues: initialFormValues,
+      enableReinitialize: true,
+      validationSchema: UpdateSchema,
+      onSubmit: (values) => handleUpdateSubmit(values),
+    });
+
+    return (
+      <form onSubmit={formik.handleSubmit}>
+        <Text size="lg" weight="bolder" mb="md">
+          General Preferences
+        </Text>
+        <div className={classes.displayGrid}>
+          <TextInput
+            type="number"
+            min="1"
+            id="maxBookingRequest"
+            description="Maximum room booking request per week for staff accounts"
+            onChange={formik.handleChange('maxBookingRequest')}
+            error={
+              formik.touched.maxBookingRequest &&
+              Boolean(formik.errors.maxBookingRequest)
+            }
+            value={formik.values.maxBookingRequest}
+            label={'Maximum booking request per week'}
+            required
+            name="maxBookingRequest"
+            className={classes.inputText}
+          />
+          <TextInput
+            id="maxDeviceBorrowQuantity"
+            description="Maximum quantity of devices can be borrowed each room booking request"
+            onChange={formik.handleChange('maxDeviceBorrowQuantity')}
+            error={
+              formik.touched.maxDeviceBorrowQuantity &&
+              Boolean(formik.errors.maxDeviceBorrowQuantity)
+            }
+            value={formik.values.maxDeviceBorrowQuantity}
+            label={'Maximum quantity of devices can be borrowed'}
+            required
+            name="maxDeviceBorrowQuantity"
+            className={classes.inputText}
+          />
+          <TextInput
+            id="maxBookingDateRange"
+            description="Maximum date range can be booked by staff accounts"
+            onChange={formik.handleChange}
+            error={
+              formik.touched.maxBookingDateRange &&
+              Boolean(formik.errors.maxBookingDateRange)
+                ? formik.errors.maxBookingDateRange
+                : null
+            }
+            value={formik.values.maxBookingDateRange}
+            label={'Maximum date range can be booked (day)'}
+            required
+            name="maxBookingDateRange"
+            className={classes.inputText}
+          />
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginTop: '230px',
+            width: '100%',
+          }}
+        >
+          <Button color="green" type="submit" name="update">
+            Save Changes
+          </Button>
+        </div>
+      </form>
+    );
+  };
 
   const UserProfile: React.FC = () => {
     const handleUpdateSubmit = async (values) => {
@@ -332,11 +476,11 @@ const UserInfoPreference: React.FC = () => {
           >
             Reset password
           </Button>
-          <Button className={classes.marginTop10}>
+          {/*<Button className={classes.marginTop10}>
             Authenticate with username password
           </Button>
           <Button className={classes.marginTop10}>Link to Google</Button>
-          {/* {isShowChangePass? <ChangePassword username={userInfo.username} /> : ""} */}
+          */}
           {transition((style, item) =>
             item ? (
               <animated.div style={style}>
@@ -357,6 +501,8 @@ const UserInfoPreference: React.FC = () => {
         return <UserProfile />;
       case 'Authentication':
         return <Authentication />;
+      case 'General':
+        return <General />;
     }
   };
 
