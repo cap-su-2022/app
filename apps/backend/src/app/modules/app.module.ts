@@ -23,6 +23,7 @@ import { FeedbackTypeModule } from './feedback-type.module';
 import { NotificationModule } from './notification.module';
 import { NotificationTypeModule } from './notification-type.module';
 import { BookingFeedbackModule } from './booking-feedback.module';
+import {AppConfigModule} from "./app-config.module";
 
 @Global()
 export class AppModule {
@@ -36,6 +37,7 @@ export class AppModule {
         CloudinaryModule,
         HealthCheckModule,
         KeycloakModule,
+        AppConfigModule,
         RoomsModule,
         AccountsModule,
         FeedbackModule,
