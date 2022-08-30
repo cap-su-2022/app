@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
   StackNavigator,
@@ -21,23 +21,30 @@ import BookingQRScan from '../screens/track-booking-room/booking-qr-scan';
 import AcceptBookingNavigator from './home/track-booking-room/accept-booking';
 import { LOCAL_STORAGE } from '../utils/local-storage';
 import {useAppSelector} from "../hooks/use-app-selector.hook";
+import {NotificationModal} from "../components/notification-modal.component";
 
 
 const MainNavigator = () => {
+  const [isNotificationShown, setNotificationShown] = useState(true);
+
   return (
-    <StackNavigator
-      screenOptions={{
-        headerShown: false,
-      }}
-      initialRouteName={'INITIAL'}
-    >
-      <StackScreen name={'INITIAL'} component={HomeTabs} />
-      <StackScreen
-        name="QR_ACCEPT_BOOKING"
-        component={AcceptBookingNavigator}
-      />
-      <StackScreen name={QRScanRoute.QRScan} component={QRScan} />
-    </StackNavigator>
+    <>
+
+      <StackNavigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        initialRouteName={'INITIAL'}
+      >
+        <StackScreen name={'INITIAL'} component={HomeTabs} />
+        <StackScreen
+          name="QR_ACCEPT_BOOKING"
+          component={AcceptBookingNavigator}
+        />
+        <StackScreen name={QRScanRoute.QRScan} component={QRScan} />
+      </StackNavigator>
+    </>
+
   );
 };
 

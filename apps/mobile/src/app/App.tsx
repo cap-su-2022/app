@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StatusBar} from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { StackNavigator, StackScreen } from '@app/utils';
@@ -15,6 +15,7 @@ import {
   handleSetupDeviceNotificationPermission, updateUserFCMToken,
 } from "./utils/notification.util";
 import {checkIfServerIsAlive, fetchGlobalQuickAccessData, fetchNotificationBellStatus} from "./utils/app.util";
+import {NotificationModal} from "./components/notification-modal.component";
 
 export const App = () => {
   const isSpinnerLoading = useSelector(
@@ -22,7 +23,6 @@ export const App = () => {
   );
   const dispatch = useAppDispatch();
   const [isPingTimedOut, setPingTimedOut] = useState<boolean>(false);
-
   const authUser = useAppSelector((state) => state.auth.authUser);
 
   useEffect(() => {
@@ -33,6 +33,8 @@ export const App = () => {
     updateUserFCMToken(dispatch, authUser);
   }, []);
 
+  const navigationRef = React.useRef();
+
   return isPingTimedOut ? (
     <CannotConnectToServer
       isShown={isPingTimedOut}
@@ -41,7 +43,8 @@ export const App = () => {
   ) : (
     <>
       <StatusBar barStyle="dark-content" />
-      <NavigationContainer>
+      <NotificationModal navigation={navigationRef?.current}/>
+      <NavigationContainer ref={navigationRef}>
         <StackNavigator
           initialRouteName={'LOGIN_SCREEN'}
           screenOptions={{
@@ -51,7 +54,6 @@ export const App = () => {
           <StackScreen name={'LOGIN_SCREEN'} component={LoginScreen} />
           <StackScreen name={'MAIN'} component={MainNavigator} />
         </StackNavigator>
-
         {isSpinnerLoading ? <Spinner /> : null}
       </NavigationContainer>
     </>
