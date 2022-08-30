@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Avatar,
   Button,
@@ -32,6 +32,12 @@ import { UserInfoModel } from '../../models/user/user-info.model';
 import { fetchBackendConfig } from '../../redux/features/system/thunk/fetch-backend-config.thunk';
 import { updateBackendConfig } from '../../redux/features/system/thunk/update-backend-config.thunk';
 // interface UserInfoPreferneceProps {}
+
+
+const data = [
+  { link: '', label: 'Profile', icon: User },
+  { link: '', label: 'Authentication', icon: Key },
+];
 
 const UserInfoPreference: React.FC = () => {
   const { classes, cx } = useStyles();
