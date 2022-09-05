@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   Avatar,
   Button,
@@ -97,6 +97,7 @@ const UserInfoPreference: React.FC = () => {
           maxBookingDateRange: values.maxBookingDateRange,
           maxDeviceBorrowQuantity: values.maxDeviceBorrowQuantity,
           maxBookingRequestPerWeek: values.maxBookingRequest,
+          maxRoomCapacity: values.maxRoomCapacity
         })
       )
         .unwrap()
@@ -129,6 +130,7 @@ const UserInfoPreference: React.FC = () => {
       maxBookingRequest: backendConfig.maxBookingRequestPerWeek,
       maxDeviceBorrowQuantity: backendConfig.maxDeviceBorrowQuantity,
       maxBookingDateRange: backendConfig.maxBookingDateRange,
+      maxRoomCapacity: backendConfig.maxRoomCapacity
     };
 
     const UpdateSchema = Yup.object().shape({
@@ -139,6 +141,9 @@ const UserInfoPreference: React.FC = () => {
         .min(1, 'Must be positive number!')
         .required('Required'),
       maxBookingDateRange: Yup.number()
+        .min(1, 'Must be positive number!')
+        .required('Required'),
+      maxRoomCapacity: Yup.number()
         .min(1, 'Must be positive number!')
         .required('Required'),
     });
@@ -206,6 +211,24 @@ const UserInfoPreference: React.FC = () => {
             label={'Maximum date range can be booked (day)'}
             required
             name="maxBookingDateRange"
+            className={classes.inputText}
+          />
+          <TextInput
+            type="number"
+            min="1"
+            id="maxRoomCapacity"
+            description="Maximum room capacity of each rooms"
+            onChange={formik.handleChange}
+            error={
+              formik.touched.maxRoomCapacity &&
+              Boolean(formik.errors.maxRoomCapacity)
+                ? formik.errors.maxRoomCapacity
+                : null
+            }
+            value={formik.values.maxRoomCapacity}
+            label={'Maximum room capacity of each rooms'}
+            required
+            name="maxRoomCapacity"
             className={classes.inputText}
           />
         </div>
