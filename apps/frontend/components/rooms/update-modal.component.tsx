@@ -44,6 +44,9 @@ const UpdateRoomValidation = Yup.object().shape({
     500,
     'Room description can only maximum at 500 characters'
   ),
+  capacity: Yup.number().max(1000, 'Room capacity limits 1000 participants')
+    .min(1, 'Room capacity must have at least 1 participants')
+    .required('Room capacity is required!')
 });
 
 const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {

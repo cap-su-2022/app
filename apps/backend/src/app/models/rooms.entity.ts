@@ -36,7 +36,7 @@ export class Rooms extends BaseEntityWithDisabled {
   @Column({
     name: 'capacity',
     nullable: true,
-    type: 'smallint'
+    type: 'int'
   })
   capacity?: number;
 }

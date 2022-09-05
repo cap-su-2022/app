@@ -132,8 +132,8 @@ export class RoomsService {
             'There already exists a room with the this name. Try with another name.'
           );
         }
-        if (room.capacity < 0 || room.capacity > MAX_ROOM_CAPACITY) {
-          throw new BadRequestException('Only accept room capacity which is greater than 0 and less than 1000')
+        if (room.capacity < 1 || room.capacity > MAX_ROOM_CAPACITY) {
+          throw new BadRequestException('Only accept room capacity which is greater than 0 and less than or equal to 1000')
         }
         roomAdded = await this.repository.createNewRoom(
           room,
@@ -189,8 +189,8 @@ export class RoomsService {
         'There already exists a room with the this name. Try with another name.'
       );
     }
-    if (body.capacity < 0 || body.capacity > MAX_ROOM_CAPACITY) {
-      throw new BadRequestException('Only accept room capacity which is greater than 0 and less than 1000')
+    if (body.capacity < 1 || body.capacity > MAX_ROOM_CAPACITY) {
+      throw new BadRequestException('Only accept room capacity which is greater than 0 and less than or equal to 1000')
     }
     try {
       const roomUpdated = await this.repository.updateById(
