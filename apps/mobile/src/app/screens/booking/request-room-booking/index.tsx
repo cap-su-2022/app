@@ -36,6 +36,7 @@ import SlotSelect from './slot-select';
 import { fetchRoomFreeByMultiSlotAndDay } from '../../../redux/features/room-booking/thunk/fetch-room-free-by-multi-day-and-slot.thunk';
 import { checkOverSlot } from '../../../redux/features/room-booking/thunk/check-over-slot.thunk';
 import AlertModal from '../../../components/modals/alert-modal.component';
+import { fetchCountRequestInWeekOfUser } from '../../../redux/features/room-booking/thunk/fetch-count-request-in-week-of-user.thunk';
 
 const ScheduleRoomBookingLater: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -48,6 +49,8 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
 
   const [isMultiDateChecked, setMultiDateChecked] = useState<boolean>(false);
   const [isMultiSlotChecked, setMultiSlotChecked] = useState<boolean>(false);
+
+  const [canBook, setCanBook] = useState<boolean>(true);
 
   const fromDay = useAppSelector(
     (state) => state.roomBooking.addRoomBooking.fromDay
@@ -85,7 +88,18 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     handleSetSlotEnd(slotSelections[0].value);
   };
 
+  useEffect(() => {
+    dispatch(fetchCountRequestInWeekOfUser())
+      .unwrap()
+      .then((val) => setCanBook(val.isAvailable));
+  }, []);
+
   const handleNextStep = () => {
+    if (!canBook) {
+      return alert(
+        'Cannot book for a room because you exceed the limit of the requests. Please contact the librarians to get support'
+      );
+    }
     const slotStartName = slotSelections.find(
         (slot) => slot.value === slotStart
       ),

@@ -72,6 +72,9 @@ const HomeNavigator: React.FC = () => {
       <StackScreen
         name="BOOKING_ROOM_WISHLIST"
         component={RoomBookingWishlistNavigator}
+        options={{
+          headerShown: false,
+        }}
       />
       <StackScreen
         options={{

@@ -25,6 +25,10 @@ import { NotificationService } from './notification.service';
 import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
 import { BookingFeedbackService } from './booking-feedback.service';
 import * as admin from 'firebase-admin';
+import * as yaml from 'js-yaml';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { getConfigFileLoaded } from '../controllers/global-config.controller';
 
 @Injectable()
 export class BookingRoomService {
@@ -137,14 +141,19 @@ export class BookingRoomService {
   }
 
   async getCountRequestInWeekOfUser(id: string, date: string) {
+    const SETTING_BOOKING_TIME = getConfigFileLoaded().maxBookingRequestPerWeek;
     try {
       const result = {
         usedBookingTime: 0,
-        totalBookingTime: 3,
+        isAvailable: true,
+        totalBookingTime: SETTING_BOOKING_TIME,
       };
       result.usedBookingTime = Number(
         await this.repository.getCountRequestInWeekOfUser(id, date)
       );
+      if (result.usedBookingTime >= SETTING_BOOKING_TIME) {
+        result.isAvailable = false;
+      }
       return result;
     } catch (e) {
       this.logger.error(e.message);
@@ -1262,7 +1271,6 @@ export class BookingRoomService {
           checkoutSlotId: request.checkoutSlotId,
         }
       );
-      console.log("CMM: ", listRequestOfUserSameSlot)
       if (listRequestOfUserSameSlot) {
         const reason =
           'You have been accept to request a reservation in another room at the same slot. Therefore, this request will be cancelled.';

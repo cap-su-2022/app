@@ -30,7 +30,11 @@ const RequestRoomBookingHeader: React.FC<any> = () => {
         <Text style={[styles.titleText, boxShadow(styles)]}>
           Request for room booking
         </Text>
-        <TouchableOpacity onPress={() => null}></TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigate.navigate('ROOM_BOOKING_WISHLIST')}
+        >
+          <HeartIcon size={deviceWidth / 14} color={FPT_ORANGE_COLOR} />
+        </TouchableOpacity>
       </View>
     </>
   );

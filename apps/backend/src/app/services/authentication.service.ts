@@ -16,6 +16,7 @@ import Exception from '../constants/exception.constant';
 import { ConfigService } from '@nestjs/config';
 import { Accounts } from '../models';
 import { RoleService } from './role.service';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AuthenticationService {
@@ -50,9 +51,15 @@ export class AuthenticationService {
       const email = decodedToken.getPayload().email;
 
       const account = await this.accountService.findByEmail(email);
+      if (!email.endsWith('@fe.edu.vn') && !account) {
+        throw new BadRequestException(
+          'Only FPT Education Organization email can be used!'
+        );
+      }
       let newUsername;
 
       if (!account.keycloakId) {
+        const keycloakId = randomUUID();
         newUsername = decodedToken.getPayload().email.split('@')[0];
         await this.keycloakService.createKeycloakUser({
           email: email,
@@ -149,10 +156,7 @@ export class AuthenticationService {
         HttpStatus.BAD_REQUEST
       );
     } else {
-      throw new HttpException(
-        Exception.googleAccessTokenException.invalidToken,
-        HttpStatus.BAD_REQUEST
-      );
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 

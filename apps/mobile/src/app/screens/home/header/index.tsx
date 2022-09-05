@@ -15,13 +15,6 @@ const HomeScreenHeader: React.FC<any> = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.textLg}>Hello {user.fullname}</Text>
-      {isNotificationBellShown ? (
-        <TouchableOpacity
-          style={[boxShadow(styles), styles.notificationContainer]}
-        >
-          <BellIcon color={WHITE} />
-        </TouchableOpacity>
-      ) : null}
     </View>
   );
 };
