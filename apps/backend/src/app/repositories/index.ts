@@ -2,7 +2,6 @@ export * from './account.repository';
 export * from './booking-request.repository';
 export * from './devices.repository';
 export * from './device-hist.repository';
-export * from './room-wishlist.repository';
 export * from './rooms.repository';
 export * from './notification-type.repository';
 export * from './account-hist.repository';

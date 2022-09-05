@@ -59,12 +59,23 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
   }, [room.roomTypeId]);
 
   const handleUpdateSubmit = async (values) => {
+    if (!Number(values.capacity)) {
+      showNotification({
+        id: 'Update-capacity',
+        color: 'red',
+        title: 'Error while updating room',
+        message: `Capacity must be a number`,
+        icon: <X/>,
+        autoClose: 3000,
+      });
+    }
     dispatch(
       updateRoomById({
         id: values.id,
         payload: {
           ...values,
           type: roomType,
+          capacity: values.capacity
         },
       })
     )
@@ -102,6 +113,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
       name: room.name,
       description: room.description,
       type: room.roomTypeId,
+      capacity: room.capacity
     },
     enableReinitialize: true,
     onSubmit: (values) => handleUpdateSubmit(values),
@@ -111,13 +123,14 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
   useEffect(() => {
     if (
       formik.initialValues.name === formik.values.name &&
-      formik.initialValues.description === formik.values.description
+      formik.initialValues.description === formik.values.description &&
+      formik.initialValues.capacity === formik.values.capacity
     ) {
       setUpdateDisabled(true);
     } else {
       setUpdateDisabled(false);
     }
-  }, [formik.values.name, formik.values.description, formik.initialValues.name, formik.initialValues.description]);
+  }, [formik.values.name, formik.values.description, formik.initialValues.name, formik.initialValues.description, formik.initialValues.capacity, formik.values.capacity]);
 
   const ModalHeaderTitle: React.FC = () => {
     return (
@@ -191,6 +204,7 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
               </InputWrapper>
               <InputWrapper
                 label="Room Description"
+                style={{marginBottom: 20}}
               >
                 <Textarea
                   id="room-description"
@@ -203,6 +217,23 @@ const RoomUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   minRows={4}
                   maxRows={7}
                   value={formik.values.description}
+                />
+              </InputWrapper>
+
+              <InputWrapper
+                required
+                label="Room Capacity"
+                style={{marginBottom: 20}}
+              >
+                <TextInput
+                  icon={<ClipboardText/>}
+                  id="room-capacity"
+                  name="capacity"
+                  error={formik.errors.capacity}
+                  onChange={formik.handleChange}
+                  className={classes.textInput}
+                  radius="md"
+                  value={formik.values.capacity}
                 />
               </InputWrapper>
             </div>

@@ -1,12 +1,12 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {Body, Controller, Get, Post} from '@nestjs/common';
 import dayjs = require('dayjs');
 import * as yaml from 'js-yaml';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { ApiTags } from '@nestjs/swagger';
+import {readFileSync} from 'fs';
+import {join} from 'path';
+import {ApiTags} from '@nestjs/swagger';
 import * as fs from 'fs';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
+import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum/roles.enum';
 
 class RoomBookingLimitDate {
   startDate: string;
@@ -25,6 +25,7 @@ export const getConfigFileLoaded = () => {
         maxBookingDateRange: 14,
         maxDeviceBorrowQuantity: 100,
         maxBookingRequestPerWeek: 3,
+        maxRoomCapacity: 1000
       })
     );
     return yaml.load(
@@ -32,6 +33,7 @@ export const getConfigFileLoaded = () => {
     ) as Record<any, number>;
   }
 };
+
 @Controller('/v1/config')
 @ApiTags('System Config')
 export class GlobalConfigController {
@@ -57,6 +59,11 @@ export class GlobalConfigController {
     return Promise.resolve(getConfigFileLoaded().maxBookingRequestPerWeek);
   }
 
+  @Get('max-room-capacity')
+  getMaxRoomCapacity(): Promise<any> {
+    return Promise.resolve(getConfigFileLoaded().maxRoomCapacity);
+  }
+
   @Get()
   getAllConfig() {
     return Promise.resolve(getConfigFileLoaded());
@@ -66,10 +73,11 @@ export class GlobalConfigController {
   @Roles(Role.APP_ADMIN)
   updateConfig(
     @Body()
-    val: {
+      val: {
       maxBookingDateRange: string;
       maxDeviceBorrowQuantity: string;
       maxBookingRequestPerWeek: string;
+      maxRoomCapacity: string;
     }
   ) {
     fs.writeFileSync(
@@ -84,6 +92,9 @@ export class GlobalConfigController {
         maxBookingRequestPerWeek: val.maxBookingRequestPerWeek
           ? parseInt(val.maxBookingRequestPerWeek, 10)
           : 3,
+        maxRoomCapacity: val.maxRoomCapacity
+          ? parseInt(val.maxRoomCapacity, 10)
+          : 1000
       })
     );
   }
@@ -120,6 +131,18 @@ export class GlobalConfigController {
       yaml.dump({
         ...getConfigFileLoaded(),
         maxBookingDateRange: val.number,
+      })
+    );
+  }
+
+  @Post('max-room-capacity')
+  @Roles(Role.APP_ADMIN)
+  setMaxRoomCapacity(@Body() val: { number: number }) {
+    fs.writeFileSync(
+      './backend-config.yaml',
+      yaml.dump({
+        ...getConfigFileLoaded(),
+        maxRoomCapacity: val.number,
       })
     );
   }

@@ -7,11 +7,7 @@ import {
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { BookingRoomRepository } from '../repositories';
-import { WishlistBookingRoomResponseDTO } from '../dto/wishlist-booking-room.response.dto';
-import { RoomWishlistService } from './room-wishlist.service';
-import { WishlistBookingRoomRequestDTO } from '../dto/wishlist-booking-room.request.dto';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { RemoveWishlistRequest } from '../payload/request/remove-from-booking-room-wishlist.request.payload';
 import { AccountsService } from './accounts.service';
 import { BookingRequest } from '../models';
 import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
@@ -40,8 +36,6 @@ export class BookingRoomService {
     private readonly repository: BookingRoomRepository,
     @Inject(forwardRef(() => NotificationService))
     private readonly notificationService: NotificationService,
-    @Inject(forwardRef(() => RoomWishlistService))
-    private readonly roomWishlistService: RoomWishlistService,
     @Inject(forwardRef(() => AccountsService))
     private readonly accountService: AccountsService,
     @Inject(forwardRef(() => SlotService))
@@ -271,55 +265,8 @@ export class BookingRoomService {
     }
   }
 
-  async getWishlistBookingRooms(
-    roomName: string,
-    slotFrom: number,
-    slotTo: number,
-    accountId: string
-  ): Promise<WishlistBookingRoomResponseDTO[]> {
-    try {
-      return await this.roomWishlistService.findAllWishlistBookingRooms(
-        roomName,
-        slotFrom,
-        slotTo,
-        accountId
-      );
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException('An error occurred while adding this room');
-    }
-  }
 
-  async addToBookingRoomWishlist(
-    accountId: string,
-    wishlist: WishlistBookingRoomRequestDTO
-  ) {
-    try {
-      return await this.roomWishlistService.addToWishlist(accountId, wishlist);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(
-        e.message ?? 'Error while adding to booking room wish list'
-      );
-    }
-  }
 
-  async removeFromBookingRoomWishlist(
-    user: KeycloakUserInstance,
-    payload: RemoveWishlistRequest
-  ) {
-    try {
-      return await this.roomWishlistService.removeFromWishlist(
-        user.account_id,
-        payload
-      );
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(
-        e.message ?? 'Error while removing from booking room wishlist'
-      );
-    }
-  }
 
   // getBookingRoomDevices(name: string, type: string, sort: string) {
   //   return this.deviceService.getBookingRoomDeviceList(name, type, sort);

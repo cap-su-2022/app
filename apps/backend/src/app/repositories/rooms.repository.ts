@@ -6,6 +6,7 @@ import { paginateRaw } from 'nestjs-typeorm-paginate';
 import { RoomsPaginationParams } from '../controllers/rooms-pagination.model';
 import { RoomType } from '../models/room-type.entity';
 import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
+import { RoomAddRequestPayload } from '../payload/request/room-add.request.payload';
 
 @CustomRepository(Rooms)
 export class RoomsRepository extends Repository<Rooms> {
@@ -88,6 +89,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('r.name', 'name')
       .addSelect('r.description', 'description')
       .addSelect('rt.name', 'type')
+      .addSelect('r.capacity','capacity')
       .addSelect('r.createdAt', 'createdAt')
       .addSelect('r.updatedAt', 'updatedAt')
       .addSelect('a.username', 'createdBy')
@@ -139,6 +141,7 @@ export class RoomsRepository extends Repository<Rooms> {
         .addSelect('rooms.updated_at', 'updatedAt')
         .addSelect('aa.username', 'updatedBy')
         .addSelect('rooms.description', 'description')
+        .addSelect('rooms.capacity', 'capacity')
         .leftJoin(Accounts, 'a', 'rooms.created_by = a.id')
         .leftJoin(Accounts, 'aa', 'rooms.updated_by = aa.id')
         .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
@@ -150,7 +153,7 @@ export class RoomsRepository extends Repository<Rooms> {
   }
 
   createNewRoom(
-    payload: DataAddRequestPayload,
+    payload: RoomAddRequestPayload,
     userId: string,
     queryRunner: QueryRunner
   ): Promise<Rooms> {
@@ -159,10 +162,12 @@ export class RoomsRepository extends Repository<Rooms> {
         name: payload.name.trim(),
         description: payload.description,
         type: payload.type,
+        capacity: payload.capacity,
         createdBy: userId,
         createdAt: new Date(),
         disabledBy: userId,
         disabledAt: new Date(),
+
       });
     } else {
       return this.save(
@@ -170,6 +175,7 @@ export class RoomsRepository extends Repository<Rooms> {
           name: payload.name.trim(),
           description: payload.description,
           type: payload.type,
+          capacity: payload.capacity,
           createdBy: userId,
           createdAt: new Date(),
         },
@@ -205,7 +211,7 @@ export class RoomsRepository extends Repository<Rooms> {
   async updateById(
     accountId: string,
     roomId: string,
-    payload: DataAddRequestPayload,
+    payload: RoomAddRequestPayload,
     queryRunner: QueryRunner
   ) {
     const oldData = await this.findOneOrFail({
@@ -221,6 +227,7 @@ export class RoomsRepository extends Repository<Rooms> {
         name: payload.name.trim(),
         description: payload.description,
         type: payload.type,
+        capacity: payload.capacity,
         updatedBy: accountId,
         updatedAt: new Date(),
       },
@@ -348,6 +355,7 @@ export class RoomsRepository extends Repository<Rooms> {
       name: room.name,
       description: room.description,
       type: room.type,
+      capacity: room.capacity,
       deletedBy: null,
       deletedAt: null,
       createdBy: accountId,

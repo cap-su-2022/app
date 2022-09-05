@@ -29,6 +29,7 @@ import {User} from '../decorators/keycloak-user.decorator';
 import {KeycloakUserInstance} from '../dto/keycloak.user';
 import {RoomsPaginationParams} from './rooms-pagination.model';
 import {DataAddRequestPayload} from '../payload/request/data-add.request.payload';
+import { RoomAddRequestPayload } from '../payload/request/room-add.request.payload';
 
 
 @Controller('/v1/rooms')
@@ -178,7 +179,7 @@ export class RoomsController {
   })
   addRoom(
     @User() user: KeycloakUserInstance,
-    @Body() room: DataAddRequestPayload
+    @Body() room: RoomAddRequestPayload
   ): Promise<Rooms> {
     return this.service.add(user, room);
   }
@@ -215,7 +216,7 @@ export class RoomsController {
   updateRoomById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string },
-    @Body() body: DataAddRequestPayload
+    @Body() body: RoomAddRequestPayload
   ) {
     return this.service.updateById(user.account_id, payload.id, body);
   }

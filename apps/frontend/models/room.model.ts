@@ -16,4 +16,5 @@ export interface Room {
   deletedAt: string;
   disabledBy: string;
   deletedBy: string;
+  capacity: number;
 }
