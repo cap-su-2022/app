@@ -802,7 +802,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       UNION ALL
       SELECT COUNT(1)
       FROM booking_request br
-      WHERE br.status = 'CANCELLED' 
+      WHERE br.status = 'CANCELLED'
         AND br.booked_for = '${id}'`);
   }
 
@@ -1041,7 +1041,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
       .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
       .where(
-        'booking_request.requested_by = :accountId OR booking_request.booked_for = :accountId',
+        'booking_request.requested_by = :accountId',
         {
           accountId: accountId,
         }
@@ -1131,7 +1131,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         'br.id = booking_request.booking_reason_id'
       )
       .where(
-        'booking_request.requested_by = :requestedBy OR booking_request.booked_for = :requestedBy',
+        'booking_request.requested_by = :requestedBy',
         {
           requestedBy: accountId,
         }
