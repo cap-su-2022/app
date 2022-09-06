@@ -759,10 +759,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   }
 
   async getCountRequestBooking() {
-    return await this.query(`SELECT COUNT(1) as count
-                             FROM booking_request br
-                             WHERE br.status = 'PENDING'
-                             UNION ALL
+    return await this.query(`
     SELECT COUNT(1)
     FROM booking_request br
     WHERE br.status = 'BOOKED'
@@ -781,10 +778,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   }
 
   async getCountRequestBookingForAccountId(id: string) {
-    return await this.query(`SELECT COUNT(1) as count
-              FROM booking_request br
-              WHERE br.status = 'PENDING' AND br.booked_for = '${id}'
-              UNION ALL
+    return await this.query(`
       SELECT COUNT(1)
       FROM booking_request br
       WHERE br.status = 'BOOKED'
@@ -802,7 +796,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       UNION ALL
       SELECT COUNT(1)
       FROM booking_request br
-      WHERE br.status = 'CANCELLED' 
+      WHERE br.status = 'CANCELLED'
         AND br.booked_for = '${id}'`);
   }
 
