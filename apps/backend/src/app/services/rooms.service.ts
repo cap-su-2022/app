@@ -5,15 +5,17 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { Rooms } from '../models';
-import { RoomsRepository } from '../repositories';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { ChooseBookingRoomFilterPayload } from '../payload/request/choose-booking-room-filter.payload';
-import { RoomsPaginationParams } from '../controllers/rooms-pagination.model';
-import { RoomHistService } from './room-hist.service';
-import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
-import { DataSource } from 'typeorm';
-import { BookingRoomService } from './booking-room.service';
+import {Rooms} from '../models';
+import {RoomsRepository} from '../repositories';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {ChooseBookingRoomFilterPayload} from '../payload/request/choose-booking-room-filter.payload';
+import {RoomsPaginationParams} from '../controllers/rooms-pagination.model';
+import {RoomHistService} from './room-hist.service';
+import {DataAddRequestPayload} from '../payload/request/data-add.request.payload';
+import {DataSource} from 'typeorm';
+import {BookingRoomService} from './booking-room.service';
+import {RoomAddRequestPayload} from '../payload/request/room-add.request.payload';
+import {getConfigFileLoaded} from '../controllers/global-config.controller';
 
 @Injectable()
 export class RoomsService {
@@ -25,7 +27,8 @@ export class RoomsService {
     private readonly histService: RoomHistService,
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService
-  ) {}
+  ) {
+  }
 
   async getAll(request: RoomsPaginationParams) {
     try {
@@ -61,7 +64,7 @@ export class RoomsService {
       this.logger.error(e);
       throw new BadRequestException(
         e.message ??
-          'An error occurred while getting rooms by type ' + roomTypeId
+        'An error occurred while getting rooms by type ' + roomTypeId
       );
     }
   }
@@ -100,13 +103,12 @@ export class RoomsService {
 
   async add(
     user: KeycloakUserInstance,
-    room: DataAddRequestPayload
+    room: RoomAddRequestPayload
   ): Promise<Rooms> {
     const queryRunner = this.dataSource.createQueryRunner();
-
     await queryRunner.connect();
     await queryRunner.startTransaction();
-
+    const MAX_ROOM_CAPACITY = getConfigFileLoaded().maxRoomCapacity;
     try {
       const roomDeletedSameName = await this.repository.getRoomDeletedByName(
         room.name
@@ -129,6 +131,9 @@ export class RoomsService {
           throw new BadRequestException(
             'There already exists a room with the this name. Try with another name.'
           );
+        }
+        if (room.capacity < 1 || room.capacity > MAX_ROOM_CAPACITY) {
+          throw new BadRequestException('Only accept room capacity which is greater than 0 and less than or equal to 1000')
         }
         roomAdded = await this.repository.createNewRoom(
           room,
@@ -159,13 +164,15 @@ export class RoomsService {
     }
   }
 
-  async updateById(accountId: string, id: string, body: DataAddRequestPayload) {
+  async updateById(accountId: string, id: string, body: RoomAddRequestPayload) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     const isExisted = await this.repository.existsById(id);
+
+    const MAX_ROOM_CAPACITY = getConfigFileLoaded().maxRoomCapacity;
     if (!isExisted) {
       throw new BadRequestException('Room does not found with the provided id');
     }
@@ -181,6 +188,9 @@ export class RoomsService {
       throw new BadRequestException(
         'There already exists a room with the this name. Try with another name.'
       );
+    }
+    if (body.capacity < 1 || body.capacity > MAX_ROOM_CAPACITY) {
+      throw new BadRequestException('Only accept room capacity which is greater than 0 and less than or equal to 1000')
     }
     try {
       const roomUpdated = await this.repository.updateById(
@@ -365,7 +375,7 @@ export class RoomsService {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(
         e.message ??
-          'Error occurred while restore the disabled status of this room'
+        'Error occurred while restore the disabled status of this room'
       );
     } finally {
       await queryRunner.release();

@@ -7,6 +7,7 @@ type SystemState = {
     maxBookingDateRange: number;
     maxDeviceBorrowQuantity: number;
     maxBookingRequestPerWeek: number;
+    maxRoomCapacity: number
   };
 };
 
@@ -16,6 +17,7 @@ const initialState: SystemState = {
     maxBookingDateRange: 14,
     maxDeviceBorrowQuantity: 100,
     maxBookingRequestPerWeek: 3,
+    maxRoomCapacity: 1000
   },
 };
 export const systemSlice = createSlice({

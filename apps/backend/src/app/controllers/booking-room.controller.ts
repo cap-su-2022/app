@@ -13,9 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { BookingRoomService } from '../services';
-import { WishlistBookingRoomResponseDTO } from '../dto/wishlist-booking-room.response.dto';
 import { User } from '../decorators/keycloak-user.decorator';
-import { WishlistBookingRoomRequestDTO } from '../dto/wishlist-booking-room.request.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -994,114 +992,11 @@ export class BookingRoomController {
   // ) {
   //   return this.service.getBookingRoomDevices(name, type, sort);
   // }
-  @Get('wishlist')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  @ApiOperation({
-    summary: 'Retrieving a list of booking rooms in wishlist',
-    description: 'Retrieving a list of booking rooms in wishlist',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully retrieved a list of booking rooms',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while retrieving a list of booking rooms',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @ApiParam({
-    name: 'roomName',
-    description: 'The name of the library room',
-    example: 'LB01',
-    type: String,
-    required: true,
-  })
-  getWishlistBookingRooms(
-    @User() user: KeycloakUserInstance,
-    @Query('roomName') roomName: string,
-    @Query('from') slotFrom: number,
-    @Query('to') slotTo: number
-  ): Promise<WishlistBookingRoomResponseDTO[]> {
-    return this.service.getWishlistBookingRooms(
-      roomName,
 
-      slotFrom,
-      slotTo,
-      user.account_id
-    );
-  }
 
-  @Post('add-to-wishlist')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  @ApiOperation({
-    summary: 'Add a requested booking room to wishlist',
-    description: 'Add requested booking room to wishlist',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully added the booking room to the wishlist',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while adding the booking room to the wishlist',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  addToBookingRoomWishlist(
-    @User() user: KeycloakUserInstance,
-    @Body() bookingRoomWishlist: WishlistBookingRoomRequestDTO
-  ): Promise<any> {
-    return this.service.addToBookingRoomWishlist(
-      user.account_id,
-      bookingRoomWishlist
-    );
-  }
 
-  @Delete('remove-from-wishlist')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  @ApiOperation({
-    summary: 'Remove a room from wishlist',
-    description: 'Remove a room from provided wishlist',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully removed a room from provided wishlist',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while removing a room from the wishlist',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  removeFromBookingRoomWishlist(
-    @User() user: KeycloakUserInstance,
-    @Query('roomId') roomId: string,
-    @Query('slot') slot: number
-  ) {
-    return this.service.removeFromBookingRoomWishlist(user, {
-      roomId: roomId,
-      slot: slot,
-    });
-  }
+
+
 
   @Get('filter')
   @ApiOperation({

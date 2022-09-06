@@ -4,7 +4,6 @@ import { BookingRoomService } from '../services';
 import { AccountRepository, BookingRoomRepository } from '../repositories';
 import { RoomsModule } from './rooms.module';
 import { KeycloakModule } from './keycloak.module';
-import { RoomWishlistModule } from './room-wishlist.module';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import { DevicesModule } from './devices.module';
 import { TasksService } from '../services/task.service';
@@ -23,7 +22,6 @@ import { BookingFeedbackModule } from './booking-feedback.module';
   imports: [
     forwardRef(() => NotificationModule),
     forwardRef(() => KeycloakModule),
-    forwardRef(() => RoomWishlistModule),
     forwardRef(() => AccountsModule),
     forwardRef(() => RoomTypeModule),
     forwardRef(() => DevicesModule),

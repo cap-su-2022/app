@@ -7,6 +7,7 @@ interface AddRoomPayload {
   description: string;
   isDisabled: boolean;
   type: string;
+  capacity: number;
 }
 
 interface AddRoomRejectValue {
@@ -23,7 +24,8 @@ export const addRoom = createAsyncThunk<void, AddRoomPayload, {
       name: payload.name,
       description: payload.description,
       isDisabled: payload.isDisabled,
-      type: payload.type
+      type: payload.type,
+      capacity: payload.capacity
     });
     return await response.data;
   } catch (e) {
