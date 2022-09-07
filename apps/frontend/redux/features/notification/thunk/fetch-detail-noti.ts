@@ -15,7 +15,6 @@ export const fetchDetailNotification = createAsyncThunk<
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
     const response = await axios.get(`api/notifications/${payload}`);
-    console.log("DATA:   ", response.data)
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

@@ -29,7 +29,6 @@ import { Feedback } from '../../models';
 import { FeedbackType } from '../../models';
 import { FeedbackHist } from '../../models';
 import { Notification } from '../../models';
-import { NotificationType } from '../../models';
 
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
@@ -58,7 +57,6 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       FeedbackType,
       FeedbackHist,
       Notification,
-      NotificationType,
       Rooms,
       RoomHist,
       RoomType,

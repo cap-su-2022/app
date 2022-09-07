@@ -274,15 +274,15 @@ export class BookingRoomController {
   })
   getRoomFreeAtTime(
     @Query('search', new DefaultValuePipe('')) search: string,
-    @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
-    @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
+    @Query('checkinTime', new DefaultValuePipe('')) checkinTime: string,
+    @Query('checkoutTime', new DefaultValuePipe('')) checkoutTime: string,
     @Query('date', new DefaultValuePipe('')) date: string
   ) {
     return this.service.getRoomFreeAtTime({
       search: search,
       date: date,
-      checkinSlotId: checkinSlotId,
-      checkoutSlotId: checkoutSlotId,
+      checkinTime: checkinTime,
+      checkoutTime: checkoutTime,
     });
   }
 
@@ -362,39 +362,39 @@ export class BookingRoomController {
     });
   }
 
-  @Get('get-booked-requests')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  @ApiOperation({
-    summary: 'Get booked requests',
-    description: 'Get booked requests',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'One or more payload parameters are invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully got booked requests',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getListRequestBookedInDayAndSlot(
-    @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
-    @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
-    @Query('date', new DefaultValuePipe('')) date: string
-  ) {
-    return this.service.getListRequestBookedInDayAndSlot({
-      date: date,
-      checkinSlotId: checkinSlotId,
-      checkoutSlotId: checkoutSlotId,
-    });
-  }
+  // @Get('get-booked-requests')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // @ApiOperation({
+  //   summary: 'Get booked requests',
+  //   description: 'Get booked requests',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalidated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'One or more payload parameters are invalid',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully got booked requests',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // getListRequestBookedInDayAndSlot(
+  //   @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
+  //   @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
+  //   @Query('date', new DefaultValuePipe('')) date: string
+  // ) {
+  //   return this.service.getListRequestBookedSameTime({
+  //     date: date,
+  //     checkinSlotId: checkinSlotId,
+  //     checkoutSlotId: checkoutSlotId,
+  //   });
+  // }
 
   @Get('by-account-id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -606,7 +606,7 @@ export class BookingRoomController {
   //   });
   // }
 
-  @Get('get-room-name-booked-same-slot')
+  @Get('get-room-name-booked-same-time')
   @HttpCode(HttpStatus.OK)
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
@@ -632,55 +632,55 @@ export class BookingRoomController {
   getRoomNameBookedSameSlot(
     @Query('checkinDate') checkinDate: string,
     @Query('userId') userId: string,
-    @Query('checkinSlot') checkinSlot: string,
-    @Query('checkoutSlot') checkoutSlot: string
+    @Query('checkinTime') checkinTime: string,
+    @Query('checkoutTime') checkoutTime: string
   ) {
     return this.service.checkAlreadyHaveBookingSameSlotV2({
       checkinDate: checkinDate,
       userId: userId,
-      checkinSlot: checkinSlot,
-      checkoutSlot: checkoutSlot,
+      checkinTime: checkinTime,
+      checkoutTime: checkoutTime,
     });
   }
 
-  @Get('get-room-name-booked-same-slot-multi')
-  @HttpCode(HttpStatus.OK)
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  @ApiOperation({
-    summary: 'Get room name have booked in same slot',
-    description: 'Get room name have booked in same slot',
-  })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Successfully get room name have booked in same slot',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Request payload for request is not validated',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  checkAlreadyHaveBookingSameSlotMultiDay(
-    @Query('checkinDate') checkinDate: string,
-    @Query('checkoutDate') checkoutDate: string,
-    @Query('userId') userId: string,
-    @Query('checkinSlot') checkinSlot: string,
-    @Query('checkoutSlot') checkoutSlot: string
-  ) {
-    return this.service.checkAlreadyHaveBookingSameSlotMultiDay({
-      checkinDate: checkinDate,
-      checkoutDate: checkoutDate,
-      userId: userId,
-      checkinSlot: checkinSlot,
-      checkoutSlot: checkoutSlot,
-    });
-  }
+  // @Get('get-room-name-booked-same-slot-multi')
+  // @HttpCode(HttpStatus.OK)
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // @ApiOperation({
+  //   summary: 'Get room name have booked in same slot',
+  //   description: 'Get room name have booked in same slot',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.CREATED,
+  //   description: 'Successfully get room name have booked in same slot',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Request payload for request is not validated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalidated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // checkAlreadyHaveBookingSameSlotMultiDay(
+  //   @Query('checkinDate') checkinDate: string,
+  //   @Query('checkoutDate') checkoutDate: string,
+  //   @Query('userId') userId: string,
+  //   @Query('checkinSlot') checkinSlot: string,
+  //   @Query('checkoutSlot') checkoutSlot: string
+  // ) {
+  //   return this.service.checkAlreadyHaveBookingSameSlotMultiDay({
+  //     checkinDate: checkinDate,
+  //     checkoutDate: checkoutDate,
+  //     userId: userId,
+  //     checkinSlot: checkinSlot,
+  //     checkoutSlot: checkoutSlot,
+  //   });
+  // }
 
   @Post('new-request')
   @HttpCode(HttpStatus.OK)
@@ -712,64 +712,64 @@ export class BookingRoomController {
     return this.service.addNewRequest(request, user.account_id);
   }
 
-  @Post('multi-booking')
-  @HttpCode(HttpStatus.OK)
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  @ApiOperation({
-    summary: 'Create a multi request',
-    description: 'Create multi request with the provided payload',
-  })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Successfully created a multi request',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Request payload for request is not validated',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  addMultiRequest(
-    @User() user: KeycloakUserInstance,
-    @Body() request: BookingRequestAddRequestPayload
-  ) {
-    return this.service.addMultiRequest(request, user.account_id);
-  }
+  // @Post('multi-booking')
+  // @HttpCode(HttpStatus.OK)
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // @ApiOperation({
+  //   summary: 'Create a multi request',
+  //   description: 'Create multi request with the provided payload',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.CREATED,
+  //   description: 'Successfully created a multi request',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Request payload for request is not validated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalidated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // addMultiRequest(
+  //   @User() user: KeycloakUserInstance,
+  //   @Body() request: BookingRequestAddRequestPayload
+  // ) {
+  //   return this.service.addMultiRequest(request, user.account_id);
+  // }
 
-  @Put('accept/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Accept request by id',
-    description: 'Accept request by provided id',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully accept the request',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while accept the request',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  acceptRequestById(
-    @User() user: KeycloakUserInstance,
-    @Param() payload: { id: string }
-  ) {
-    return this.service.acceptById(user.account_id, payload.id);
-  }
+  // @Put('accept/:id')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  // @ApiOperation({
+  //   summary: 'Accept request by id',
+  //   description: 'Accept request by provided id',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully accept the request',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while accept the request',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Invalid access token',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // acceptRequestById(
+  //   @User() user: KeycloakUserInstance,
+  //   @Param() payload: { id: string }
+  // ) {
+  //   return this.service.acceptById(user.account_id, payload.id);
+  // }
 
   @Put('accept-checkin/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -889,35 +889,35 @@ export class BookingRoomController {
   //   return this.service.rejectCheckoutById(user.account_id, id, payload.reason);
   // }
 
-  @Put('reject/:id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiOperation({
-    summary: 'Reject request by ID',
-    description: 'Reject request by provided ID',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully rejected the request',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while rejecting the request',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  rejectRequestById(
-    @Param('id') id: string,
-    @Body() payload: CancelRequestPayload,
-    @User() user: KeycloakUserInstance
-  ) {
-    return this.service.rejectById(user.account_id, id, payload.reason);
-  }
+  // @Put('reject/:id')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  // @ApiOperation({
+  //   summary: 'Reject request by ID',
+  //   description: 'Reject request by provided ID',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully rejected the request',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while rejecting the request',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Invalid access token',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // rejectRequestById(
+  //   @Param('id') id: string,
+  //   @Body() payload: CancelRequestPayload,
+  //   @User() user: KeycloakUserInstance
+  // ) {
+  //   return this.service.rejectById(user.account_id, id, payload.reason);
+  // }
 
   @Put('cancel/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -992,12 +992,6 @@ export class BookingRoomController {
   // ) {
   //   return this.service.getBookingRoomDevices(name, type, sort);
   // }
-
-
-
-
-
-
   @Get('filter')
   @ApiOperation({
     summary: 'Get all booking requests by filter',

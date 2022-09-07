@@ -21,7 +21,6 @@ import { SlotModule } from './slot.module';
 import { FeedbackModule } from './feedback.module';
 import { FeedbackTypeModule } from './feedback-type.module';
 import { NotificationModule } from './notification.module';
-import { NotificationTypeModule } from './notification-type.module';
 import { BookingFeedbackModule } from './booking-feedback.module';
 import {AppConfigModule} from "./app-config.module";
 
@@ -44,7 +43,6 @@ export class AppModule {
         BookingFeedbackModule,
         FeedbackTypeModule,
         NotificationModule,
-        NotificationTypeModule,
         DevicesModule,
         BookingRoomModule,
         RoomTypeModule,
