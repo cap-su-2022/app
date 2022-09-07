@@ -235,23 +235,6 @@ const BookingRoom = () => {
     return (
       <>
         <div style={{ display: 'flex' }}>
-          <Button
-            variant="outline"
-            color="blue"
-            onClick={() => handleChangeStatus('PENDING')}
-            size="xs"
-          >
-            Pending
-            {count && count[0]?.count > 0 ? (
-              <div
-                className={classes.badge}
-                style={{ backgroundColor: '#228be6' }}
-              >
-                {count[0].count}
-              </div>
-            ) : null}
-          </Button>
-
           <Space w="xl" />
 
           <Button
@@ -261,12 +244,12 @@ const BookingRoom = () => {
             size="xs"
           >
             Booked
-            {count && count[1]?.count > 0 ? (
+            {count && count[0]?.count > 0 ? (
               <div
                 className={classes.badge}
                 style={{ backgroundColor: '#40c057' }}
               >
-                {count[1].count}
+                {count[0].count}
               </div>
             ) : null}
           </Button>
@@ -280,12 +263,12 @@ const BookingRoom = () => {
             size="xs"
           >
             Checked in
-            {count && count[2]?.count > 0 ? (
+            {count && count[1]?.count > 0 ? (
               <div
                 className={classes.badge}
                 style={{ backgroundColor: '#fd7e14' }}
               >
-                {count[2].count}
+                {count[1].count}
               </div>
             ) : null}
           </Button>
@@ -298,12 +281,12 @@ const BookingRoom = () => {
             size="xs"
           >
             Checked out
-            {count && count[3]?.count > 0 ? (
+            {count && count[2]?.count > 0 ? (
               <div
                 className={classes.badge}
                 style={{ backgroundColor: '#7950f2' }}
               >
-                {count[3].count}
+                {count[2].count}
               </div>
             ) : null}
           </Button>
@@ -317,12 +300,12 @@ const BookingRoom = () => {
             size="xs"
           >
             Cancelled
-            {count && count[4]?.count > 0 ? (
+            {count && count[3]?.count > 0 ? (
               <div
                 className={classes.badge}
                 style={{ backgroundColor: '#fa5252' }}
               >
-                {count[4].count}
+                {count[3].count}
               </div>
             ) : null}
           </Button>

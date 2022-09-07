@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { BookingRoomRepository } from '../repositories';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { AccountsService } from './accounts.service';
 import { BookingRequest } from '../models';
 import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
