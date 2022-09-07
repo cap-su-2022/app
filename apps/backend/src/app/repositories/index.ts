@@ -3,7 +3,6 @@ export * from './booking-request.repository';
 export * from './devices.repository';
 export * from './device-hist.repository';
 export * from './rooms.repository';
-export * from './notification-type.repository';
 export * from './account-hist.repository';
 export * from './feedback-type.repository';
 export * from './feedback-hist.repository';

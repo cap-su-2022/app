@@ -32,33 +32,15 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
       case 'PENDING':
         return <div className={classes.pendingDisplay}>Pending</div>;
       case 'BOOKED':
-        return (
-          <div style={{ display: 'flex' }}>
-            <div className={classes.bookedDisplay}>Booked</div>
-            <span className={classes.acceptedByDiv}>
-              Accepted by{' '}
-              <b>
-                {requestBooking.acceptedBy !== requestBooking.requestedBy
-                  ? requestBooking.acceptedBy
-                  : 'system'}
-              </b>
-            </span>
-          </div>
-        );
+        return <div className={classes.bookedDisplay}>Booked</div>;
       case 'CHECKED_IN':
         return <div className={classes.checkedInDisplay}>Checked in</div>;
       case 'CHECKED_OUT':
-        return (
-          <div className={classes.checkedOutDisplay}>
-            Checked out
-          </div>
-        );
+        return <div className={classes.checkedOutDisplay}>Checked out</div>;
       case 'CANCELLED':
         return (
           <div style={{ display: 'flex' }}>
-            <div className={classes.canceledDisplay}>
-              Cancelled
-            </div>
+            <div className={classes.canceledDisplay}>Cancelled</div>
             <span className={classes.cancelledByDiv}>
               by <b>{requestBooking.cancelledBy}</b>
             </span>

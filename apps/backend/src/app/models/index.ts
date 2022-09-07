@@ -13,7 +13,6 @@ export * from './device-type-hist.entity';
 export * from './account-hist.entity';
 export * from './booking-request-hist.entity';
 export * from './booking-request-devices.entity';
-export * from './notification-type.entity';
 export * from './notification.entity';
 export * from './account-notification.entity';
 export * from './feedback.entity';

@@ -56,8 +56,8 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
         fetchRoomFreeAtTime({
           search: search,
           date: props.formik.values.checkinDate,
-          checkinSlotId: props.formik.values.checkinSlot,
-          checkoutSlotId: props.formik.values.checkoutSlot,
+          timeStart: props.formik.values.timeStart,
+          timeEnd: props.formik.values.timeEnd,
         })
       )
         .unwrap()
@@ -112,14 +112,13 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
         >
           All room free at{' '}
           {dayjs(props.formik.values.checkinDate).format('DD-MM-YYYY')}
-          {props.formik.values.checkoutDate
-            ? ' -> ' +
-              dayjs(props.formik.values.checkoutDate).format('DD-MM-YYYY')
+          {props.formik.values.timeStart
+            ? ', ' + dayjs(props.formik.values.timeStart).format('HH:mm')
             : null}
-          {', '}
-          {props.slotInName === props.slotOutName
-            ? props.slotInName
-            : props.slotInName + ' -> ' + props.slotOutName}
+          {' -> '}
+          {props.formik.values.timeEnd
+            ? dayjs(props.formik.values.timeEnd).format('HH:mm')
+            : null}
         </div>
         <ScrollArea style={{ height: 300 }}>
           {listRoom.length > 0 ? (
@@ -150,6 +149,7 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
                     >
                       <b>Name: {room.name}</b>
                       <p>Type: {room.type}</p>
+                      <p>Capacity: {room.capacity}</p>
                     </div>
                     {/* <div style={{ padding: '0 5px' }}>
                   </div> */}

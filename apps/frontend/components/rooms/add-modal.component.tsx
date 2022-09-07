@@ -112,7 +112,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
   const formik = useFormik({
     initialValues: {
       name: '',
-      capacity: 0,
+      capacity: 1,
       description: '',
       isDisabled: false,
       type: 'Library Room',

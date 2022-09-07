@@ -343,14 +343,12 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               />
             </InputWrapper>
 
-            <InputWrapper label="Slot in" className={classes.inputWrapper}>
+            <InputWrapper label="Time start" className={classes.inputWrapper}>
               <TextInput
                 icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={
-                  requestBooking.checkinSlot +
-                  '   ' +
                   requestBooking.checkinTime.slice(0, 5)
                 }
                 style={{width: 150}}
@@ -359,14 +357,12 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
             <div style={{position: 'relative', top: '45px'}}>
               <ChevronsRight size={28} strokeWidth={2} color={'black'}/>
             </div>
-            <InputWrapper label="Slot out" className={classes.inputWrapper}>
+            <InputWrapper label="Time end" className={classes.inputWrapper}>
               <TextInput
                 icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={
-                  requestBooking.checkoutSlot +
-                  '   ' +
                   requestBooking.checkoutTime.slice(0, 5)
                 }
                 style={{width: 150}}

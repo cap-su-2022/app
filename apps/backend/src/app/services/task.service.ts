@@ -29,23 +29,23 @@ export class TasksService {
     const currDate = dayjs(new Date()).format('YYYY-MM-DD');
     const currTime = dayjs(new Date()).format('HH:mm:ss');
     try {
-      const result = await this.repositoryBooking.getRequestBookedInDay(
-        currDate
-      );
-      if (result.length > 0) {
-        result.forEach(async (request) => {
-          const reason =
-            'Check-in time has been exceeded. Your request was automatically canceled';
-          if (request.timeEnd < currTime) {
-            await this.repositoryBooking.cancelRoomBookingByIdNoQueryRunner(
-              null,
-              request.id,
-              reason,
-              'System Admin'
-            );
-          }
-        });
-      }
+      // const result = await this.repositoryBooking.getRequestBookedInDay(
+      //   currDate
+      // );
+      // if (result.length > 0) {
+      //   result.forEach(async (request) => {
+      //     const reason =
+      //       'Check-in time has been exceeded. Your request was automatically canceled';
+      //     if (request.timeEnd < currTime) {
+      //       await this.repositoryBooking.cancelRoomBookingByIdNoQueryRunner(
+      //         null,
+      //         request.id,
+      //         reason,
+      //         'System Admin'
+      //       );
+      //     }
+      //   });
+      // }
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(

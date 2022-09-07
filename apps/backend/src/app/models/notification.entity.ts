@@ -50,9 +50,4 @@ export class Notification {
   })
   deletedAt?: Date;
 
-  @Column({
-    name: 'receiver',
-    type: 'uuid',
-  })
-  receiver?: string;
 }

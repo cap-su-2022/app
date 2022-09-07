@@ -78,9 +78,7 @@ export class DevicesService {
       }
       const result = await this.repository.findById(id);
       if (!result) {
-        throw new BadRequestException(
-          'This device is already deleted'
-        );
+        throw new BadRequestException('This device is already deleted');
       }
       return result;
     } catch (e) {
@@ -132,7 +130,7 @@ export class DevicesService {
       throw new BadRequestException(
         e.message || 'Error while creating a new device'
       );
-    } finally{
+    } finally {
       await queryRunner.release();
     }
   }
@@ -179,7 +177,11 @@ export class DevicesService {
     }
   }
 
-  async updateTypeThenRestore(accountId: string, id: string, body: {type: string}) {
+  async updateTypeThenRestore(
+    accountId: string,
+    id: string,
+    body: { type: string }
+  ) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -187,7 +189,9 @@ export class DevicesService {
 
     const isExisted = await this.repository.existsById(id);
     if (!isExisted) {
-      throw new BadRequestException('Device does not found with the provided id');
+      throw new BadRequestException(
+        'Device does not found with the provided id'
+      );
     }
     const data = await this.repository.findById(id);
     if (data === undefined) {
@@ -313,19 +317,9 @@ export class DevicesService {
         await this.bookingRoomService.getRequestByDeviceId(id);
 
       for (let i = 0; i < listRequestUseDevice.length; i++) {
-        if (listRequestUseDevice[i].status === 'BOOKED') {
-          throw new BadRequestException(
-            'There are already request in BOOKED state using this device. You cannot delete it.'
-          );
-        } else {
-          const reason = `your request using device ${device.name} but it has been erased. So your request was auto rejected`;
-          this.bookingRoomService.reject(
-            accountId,
-            listRequestUseDevice[i].id,
-            reason,
-            queryRunner
-          );
-        }
+        throw new BadRequestException(
+          'There are already request in BOOKED state using this device. You cannot delete it.'
+        );
       }
 
       const isDeleted = await this.repository.checkIfDeviceIsDeletedById(id);

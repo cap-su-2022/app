@@ -3,7 +3,6 @@ import { Button, createStyles, ScrollArea } from '@mantine/core';
 import { ChevronsRight } from 'tabler-icons-react';
 import { FormikProps } from 'formik';
 import { useAppSelector } from '../../redux/hooks';
-import { Slot } from '../../models/slot.model';
 import dayjs from 'dayjs';
 
 interface ConfirmModalProps {
@@ -14,14 +13,11 @@ interface ConfirmModalProps {
 const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
   const { classes } = useStyles();
   const room = useAppSelector((state) => state.room.room);
-  const slotInfors = useAppSelector((state) => state.slot.slotInfor);
   const userNames = useAppSelector((state) => state.account.userNames);
   const reasonNames = useAppSelector(
     (state) => state.bookingReason.reasonNames
   );
 
-  const [slotIn, setSlotIn] = useState<Slot>();
-  const [slotOut, setSlotOut] = useState<Slot>();
   const [roomUser, setRoomUser] = useState<string>();
   const [reason, setReason] = useState<{ value: string; label: string }>();
 
@@ -32,20 +28,6 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
       );
       setRoomUser(result[0]?.label);
     }
-  }, []);
-
-  useEffect(() => {
-    const result = slotInfors?.filter(
-      (slot) => slot.id === props.formik.values.checkinSlot
-    );
-    setSlotIn(result[0]);
-  }, []);
-
-  useEffect(() => {
-    const result = slotInfors?.filter(
-      (slot) => slot.id === props.formik.values.checkoutSlot
-    );
-    setSlotOut(result[0]);
   }, []);
 
   useEffect(() => {
@@ -67,7 +49,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
             <div
               style={{
                 backgroundColor: 'white',
-                padding: 5,
+                padding: "5px 10px",
                 borderRadius: 5,
                 flexBasis: '70%',
                 color: 'black',
@@ -81,7 +63,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
             <div
               style={{
                 backgroundColor: 'white',
-                padding: 5,
+                padding: "5px 10px",
                 borderRadius: 5,
                 flexBasis: '70%',
                 color: 'black',
@@ -98,7 +80,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
               <div
                 style={{
                   backgroundColor: 'white',
-                  padding: 5,
+                  padding: "5px 10px",
                   borderRadius: 5,
                   flexBasis: '70%',
                   color: 'black',
@@ -123,15 +105,9 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
             }}
           >
             <div className={classes.slotArea}>
-              <b style={{ marginRight: 10 }}>From slot:</b>
+              <b style={{ marginRight: 10 }}>From:</b>
               <div className={classes.slotDiv}>
-                <p>{slotIn?.name}</p>
-                <p>
-                  {slotIn?.timeStart.slice(
-                    0,
-                    slotIn.timeStart.lastIndexOf(':')
-                  )}
-                </p>
+                <p>{dayjs(props.formik.values.timeStart).format("HH:mm")}</p>
               </div>
             </div>
             <ChevronsRight
@@ -141,12 +117,9 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
               style={{}}
             />
             <div className={classes.slotArea}>
-              <b style={{ marginRight: 10 }}>To slot:</b>
+              <b style={{ marginRight: 10 }}>To:</b>
               <div className={classes.slotDiv}>
-                <p>{slotOut?.name}</p>
-                <p>
-                  {slotOut?.timeEnd.slice(0, slotOut.timeEnd.lastIndexOf(':'))}
-                </p>
+                <p>{dayjs(props.formik.values.timeEnd).format("HH:mm")}</p>
               </div>
             </div>
           </div>
@@ -156,7 +129,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
             <div
               style={{
                 backgroundColor: 'white',
-                padding: 5,
+                padding: "5px 10px",
                 borderRadius: 5,
                 flexBasis: '70%',
                 color: 'black',
@@ -252,8 +225,9 @@ const useStyles = createStyles({
     width: 100,
     backgroundColor: 'white',
     borderRadius: '0.5em',
-    fontSize: '0.875em',
+    fontSize: '1rem',
     color: 'black',
+    padding: "10px 0"
   },
   item: {
     display: 'flex',

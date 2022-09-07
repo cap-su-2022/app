@@ -8,7 +8,6 @@ export * from './devices-hist.service';
 export * from './devices.service';
 export * from './keycloak.service';
 export * from './rooms.service';
-export * from './notification-type.service';
 export * from './notification.service';
 export * from './feedback.service';
 export * from './feedback-hist.service';

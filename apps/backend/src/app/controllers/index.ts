@@ -7,5 +7,4 @@ export * from './health-check.controller';
 export * from './rooms.controller';
 export * from './feedback-type.controller';
 export * from './feedback.controller';
-export * from './notification.controller';
-export * from './notification-type.controller';
+export * from './account-notification.controller';
