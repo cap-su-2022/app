@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, InputWrapper, Select, TextInput } from '@mantine/core';
 import { ChevronsRight, ClipboardText, X } from 'tabler-icons-react';
-import { useAppSelector, useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch } from '../../redux/hooks';
 import { FormikProps } from 'formik';
 import { showNotification } from '@mantine/notifications';
 import { DatePicker, TimeInput } from '@mantine/dates';
@@ -36,136 +36,98 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const [showChooseRoom, setShowChooseRoom] = useState(false);
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(true);
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
-  const [timeStart, setTimeStart] = useState('');
-  const [timeEnd, setTimeEnd] = useState('');
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
-  const [slotNames, setSlotNames] = useState<any[]>();
-  const [slotInName, setSlotInName] = useState('');
-  const [slotOutName, setSlotOutName] = useState('');
-  const slotInfors = useAppSelector((state) => state.slot.slotInfor);
 
   const dispatch = useAppDispatch();
 
-  // useEffect(() => {
-  //   const currenTime = new Date();
-  //   const currenTimeTimestamp = new Date().setHours(0, 0, 0, 0);
-  //   const checkinDate = props.formik.values.checkinDate.setHours(0, 0, 0, 0);
-  //   console.log(checkinDate === currenTimeTimestamp);
-  //   const timeStart = props.formik.values.timeStart;
-  //   const timeEnd = props.formik.values.timeEnd;
-  //   if (
-  //     checkinDate === currenTimeTimestamp &&
-  //     (timeStart < currenTime || timeEnd < currenTime)
-  //   ) {
-  //     showNotification({
-  //       id: 'time-invalid',
-  //       color: 'red',
-  //       title: 'The time you selected is over',
-  //       message: 'Please select other time',
-  //       icon: <X />,
-  //       autoClose: 3000,
-  //     });
-  //   }
-  //   console.log('Ahii');
-  // }, [props.formik.values]);
+  useEffect(() => {
+    const currenTime = new Date();
+    const currenTimeTimestamp = new Date().setHours(0, 0, 0, 0);
+    const checkinDate = props.formik.values.checkinDate?.setHours(0, 0, 0, 0);
+    console.log(checkinDate === currenTimeTimestamp);
+    const timeStart = props.formik.values.timeStart;
+    const timeEnd = props.formik.values.timeEnd;
+    if (
+      checkinDate === currenTimeTimestamp &&
+      (timeStart < currenTime || timeEnd < currenTime)
+    ) {
+      showNotification({
+        id: 'time-invalid',
+        color: 'red',
+        title: 'The time you selected is over',
+        message: 'Please select other time',
+        icon: <X />,
+        autoClose: 3000,
+      });
+    }
+  }, [props.formik.values]);
 
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
-  useEffect(() => {
-    const result = slotInfors?.map((slot) => {
-      return { value: slot.id, label: slot.name };
-    });
-    setSlotNames(result);
-  }, []);
+  // useEffect(() => {
+  //   if (props.formik.values.checkinSlot) {
+  //     const slotIn = slotInfors.find(
+  //       (slot) => slot.id === props.formik.values.checkinSlot
+  //     );
 
-  useEffect(() => {
-    if (props.formik.values.checkinSlot && props.formik.values.checkoutSlot) {
-      const slotIn = slotInfors.find(
-        (slot) => slot.id === props.formik.values.checkinSlot
-      );
-      const slotOut = slotInfors.find(
-        (slot) => slot.id === props.formik.values.checkoutSlot
-      );
-      if (slotIn.slotNum > slotOut.slotNum) {
-        setSlotInName(slotOut.name);
-        setSlotOutName(slotIn.name);
-        const tmp = props.formik.values.checkinSlot;
-        props.formik.setFieldValue(
-          'checkinSlot',
-          props.formik.values.checkoutSlot
-        );
-        props.formik.setFieldValue('checkoutSlot', tmp);
-      } else {
-        setSlotOutName(slotOut.name);
-        setSlotInName(slotIn.name);
-      }
-    }
-  }, [props.formik.values.checkinSlot, props.formik.values.checkoutSlot]);
+  //     setTimeStart(slotIn.timeStart);
+  //   } else {
+  //     setTimeStart('');
+  //   }
+  // }, [props.formik.values.checkinSlot]);
 
-  useEffect(() => {
-    if (props.formik.values.checkinSlot) {
-      const slotIn = slotInfors.find(
-        (slot) => slot.id === props.formik.values.checkinSlot
-      );
+  // useEffect(() => {
+  //   if (props.formik.values.checkoutSlot) {
+  //     const slotOut = slotInfors.find(
+  //       (slot) => slot.id === props.formik.values.checkoutSlot
+  //     );
 
-      setTimeStart(slotIn.timeStart);
-    } else {
-      setTimeStart('');
-    }
-  }, [props.formik.values.checkinSlot]);
+  //     setTimeEnd(slotOut.timeEnd);
+  //   } else {
+  //     setTimeEnd('');
+  //   }
+  // }, [props.formik.values.checkoutSlot]);
 
-  useEffect(() => {
-    if (props.formik.values.checkoutSlot) {
-      const slotOut = slotInfors.find(
-        (slot) => slot.id === props.formik.values.checkoutSlot
-      );
+  // useEffect(() => {
+  //   props.formik.values.checkinSlot = null;
+  //   props.formik.values.checkoutSlot = null;
+  //   if (props.formik.values.checkinDate) {
+  //     const curr = new Date();
+  //     const currTime = dayjs(curr).format('HH:mm:ss');
+  //     const choosedDay = new Date(props.formik.values.checkinDate).getDate();
 
-      setTimeEnd(slotOut.timeEnd);
-    } else {
-      setTimeEnd('');
-    }
-  }, [props.formik.values.checkoutSlot]);
+  //     const result = slotInfors?.map((slot) => {
+  //       let isFree = true;
 
-  useEffect(() => {
-    props.formik.values.checkinSlot = null;
-    props.formik.values.checkoutSlot = null;
-    if (props.formik.values.checkinDate) {
-      const curr = new Date();
-      const currTime = dayjs(curr).format('HH:mm:ss');
-      const choosedDay = new Date(props.formik.values.checkinDate).getDate();
+  //       if (choosedDay === curr.getDate() && currTime > slot.timeStart) {
+  //         isFree = false;
+  //       }
 
-      const result = slotInfors?.map((slot) => {
-        let isFree = true;
-
-        if (choosedDay === curr.getDate() && currTime > slot.timeStart) {
-          isFree = false;
-        }
-
-        if (isFree) {
-          return {
-            value: slot.id,
-            label: slot.name,
-            disabled: false,
-          };
-        } else {
-          return {
-            value: slot.id,
-            label: slot.name,
-            disabled: true,
-          };
-        }
-      });
-      setSlotNames(result);
-    } else {
-      const result = slotInfors?.map((slot) => {
-        return { value: slot.id, label: slot.name, disabled: true };
-      });
-      setSlotNames(result);
-    }
-  }, [props.formik.values.checkinDate]);
+  //       if (isFree) {
+  //         return {
+  //           value: slot.id,
+  //           label: slot.name,
+  //           disabled: false,
+  //         };
+  //       } else {
+  //         return {
+  //           value: slot.id,
+  //           label: slot.name,
+  //           disabled: true,
+  //         };
+  //       }
+  //     });
+  //     setSlotNames(result);
+  //   } else {
+  //     const result = slotInfors?.map((slot) => {
+  //       return { value: slot.id, label: slot.name, disabled: true };
+  //     });
+  //     setSlotNames(result);
+  //   }
+  // }, [props.formik.values.checkinDate]);
 
   const handleNextChooseRoom = () => {
     if (
@@ -306,7 +268,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
             onChange={(e) => props.formik.setFieldValue('timeStart', e)}
             style={{ width: '8rem' }}
             // radius="md"
-            // value={formik.values.timeEnd}
+            value={props.formik.values.timeStart}
           />
         </InputWrapper>
         <ChevronsRight
@@ -324,7 +286,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
             onChange={(e) => props.formik.setFieldValue('timeEnd', e)}
             style={{ width: '8rem' }}
             // radius="md"
-            // value={formik.values.timeEnd}
+            value={props.formik.values.timeEnd}
           />
         </InputWrapper>
       </div>
@@ -377,8 +339,6 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           handleSubmit={props.handleSubmit}
           handleBackChooseSlot={handleBackChooseSlot}
           handleNextChooseDevice={handleNextChooseDevice}
-          slotInName={slotInName}
-          slotOutName={slotOutName}
         />
       )}
       {showChooseDevice && (

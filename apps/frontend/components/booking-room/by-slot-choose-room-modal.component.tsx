@@ -21,8 +21,6 @@ interface ChooseSlotModalProps {
   handleSubmit(): void;
   handleBackChooseSlot(): void;
   handleNextChooseDevice(): void;
-  slotInName: string;
-  slotOutName: string;
 }
 const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
   const { classes } = useStyles();
@@ -34,10 +32,6 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
     setSearch(value);
   };
 
-  console.log(search);
-
-  console.log(listRoom);
-
   useEffect(() => {
     if (props.formik.values.checkoutDate) {
       dispatch(
@@ -45,8 +39,8 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
           search: search,
           checkinDate: props.formik.values.checkinDate,
           checkoutDate: props.formik.values.checkoutDate,
-          checkinSlotId: props.formik.values.checkinSlot,
-          checkoutSlotId: props.formik.values.checkoutSlot,
+          checkinTime: props.formik.values.timeStart,
+          checkoutTime: props.formik.values.timeEnd,
         })
       )
         .unwrap()

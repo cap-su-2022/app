@@ -326,7 +326,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         checkinDate: date,
       })
       .andWhere(
-        '((booking_request.checkin_time <= :timeStart AND booking_request.checkout_time > :timeStart) OR (booking_request.checkin_time < :timeEnd AND booking_request.checkout_time > :timeEnd))',
+        '((booking_request.checkin_time <= :timeStart AND booking_request.checkout_time > :timeStart) OR (booking_request.checkin_time < :timeEnd AND booking_request.checkout_time >= :timeEnd) OR (booking_request.checkin_time > :timeStart AND booking_request.checkin_time < :timeEnd))',
         { timeStart: timeStart, timeEnd: timeEnd }
       )
       .andWhere("booking_request.status = 'BOOKED'");
@@ -353,7 +353,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       status: string;
     }[]
   > {
-    console.log(userId)
+    console.log(userId);
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('booking_request.checkin_time', 'timeStart')
@@ -369,7 +369,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         userId: userId,
       })
       .andWhere(
-        '((booking_request.checkin_time <= :timeStart AND booking_request.checkout_time > :timeStart) OR (booking_request.checkin_time < :timeEnd AND booking_request.checkout_time > :timeEnd))',
+        '((booking_request.checkin_time <= :timeStart AND booking_request.checkout_time > :timeStart) OR (booking_request.checkin_time < :timeEnd AND booking_request.checkout_time >= :timeEnd) OR (booking_request.checkin_time > :timeStart AND booking_request.checkin_time < :timeEnd))',
         { timeStart: timeStart, timeEnd: timeEnd }
       )
       .andWhere("booking_request.status = 'BOOKED'");
@@ -407,7 +407,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
         checkinDate: date,
       })
       .andWhere(
-        '(booking_request.checkin_time <= :timeStart AND booking_request.checkout_time > :timeStart) OR (booking_request.checkin_time < :timeEnd AND booking_request.checkout_time > :timeEnd)',
+        '((booking_request.checkin_time <= :timeStart AND booking_request.checkout_time > :timeStart) OR (booking_request.checkin_time < :timeEnd AND booking_request.checkout_time >= :timeEnd) OR (booking_request.checkin_time > :timeStart AND booking_request.checkin_time < :timeEnd))',
         { timeStart: timeStart, timeEnd: timeEnd }
       )
       .andWhere("booking_request.status = 'BOOKED'")
@@ -421,50 +421,136 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     }>();
   }
 
-  getRequestBookedInMultiDay(
+  getRequestBookedSameTimeMultiDate(
     dateStart: string,
-    dateEnd: string
+    dateEnd: string,
+    timeStart: string,
+    timeEnd: string
   ): Promise<
     {
       id: string;
       roomId: string;
-      roomName: string;
-      slotStart: number;
-      slotEnd: number;
+      timeStart: string;
+      timeEnd: string;
+      status: string;
     }[]
   > {
-    return this.createQueryBuilder('booking_request')
+    const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
-      .addSelect('booking_request.room_id', 'roomId')
-      .addSelect('r.name', 'roomName')
-      .addSelect('slot_start.slot_num', 'slotStart')
-      .addSelect('slot_end.slot_num', 'slotEnd')
+      .addSelect('booking_request.checkin_time', 'timeStart')
+      .addSelect('booking_request.checkout_time', 'timeEnd')
+      .addSelect('r.id', 'roomId')
+      .addSelect('booking_request.status', 'status')
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
-      .innerJoin(
-        Slot,
-        'slot_start',
-        'slot_start.id = booking_request.checkin_slot'
+      .where(
+        '(booking_request.checkinDate >= :dateStart AND booking_request.checkinDate <= :dateEnd)',
+        {
+          dateStart: dateStart,
+          dateEnd: dateEnd,
+        }
       )
-      .innerJoin(
-        Slot,
-        'slot_end',
-        'slot_end.id = booking_request.checkout_slot'
+      .andWhere(
+        '((booking_request.checkin_time <= :timeStart AND booking_request.checkout_time > :timeStart) OR (booking_request.checkin_time < :timeEnd AND booking_request.checkout_time >= :timeEnd) OR (booking_request.checkin_time > :timeStart AND booking_request.checkin_time < :timeEnd))',
+        { timeStart: timeStart, timeEnd: timeEnd }
       )
-      .where('booking_request.checkinDate >= :dateStart', {
-        dateStart: dateStart,
-      })
-      .where('booking_request.checkinDate <= :dateEnd', {
-        dateEnd: dateEnd,
-      })
-      .andWhere("(booking_request.status = 'BOOKED')")
-      .getRawMany<{
-        id: string;
-        roomId: string;
-        roomName: string;
-        slotStart: number;
-        slotEnd: number;
-      }>();
+      .andWhere("booking_request.status = 'BOOKED'");
+    return query.getRawMany<{
+      id: string;
+      roomId: string;
+      timeStart: string;
+      timeEnd: string;
+      status: string;
+    }>();
   }
+
+  getRequestBookedSameTimeMultiDateOfRoom(
+    dateStart: string,
+    dateEnd: string,
+    timeStart: string,
+    timeEnd: string,
+    roomId
+  ): Promise<
+    {
+      id: string;
+      roomId: string;
+      timeStart: string;
+      timeEnd: string;
+      status: string;
+    }[]
+  > {
+    const query = this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('booking_request.checkin_time', 'timeStart')
+      .addSelect('booking_request.checkout_time', 'timeEnd')
+      .addSelect('r.id', 'roomId')
+      .addSelect('booking_request.status', 'status')
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .where(
+        '(booking_request.checkinDate >= :dateStart AND booking_request.checkinDate <= :dateEnd)',
+        {
+          dateStart: dateStart,
+          dateEnd: dateEnd,
+        }
+      )
+      .andWhere(
+        '((booking_request.checkin_time <= :timeStart AND booking_request.checkout_time > :timeStart) OR (booking_request.checkin_time < :timeEnd AND booking_request.checkout_time >= :timeEnd) OR (booking_request.checkin_time > :timeStart AND booking_request.checkin_time < :timeEnd))',
+        { timeStart: timeStart, timeEnd: timeEnd }
+      )
+      .andWhere("booking_request.status = 'BOOKED'")
+      .andWhere('booking_request.room_id = :roomId', { roomId: roomId })
+    return query.getRawMany<{
+      id: string;
+      roomId: string;
+      timeStart: string;
+      timeEnd: string;
+      status: string;
+    }>();
+  }
+
+  // getRequestBookedInMultiDay(
+  //   dateStart: string,
+  //   dateEnd: string
+  // ): Promise<
+  //   {
+  //     id: string;
+  //     roomId: string;
+  //     roomName: string;
+  //     slotStart: number;
+  //     slotEnd: number;
+  //   }[]
+  // > {
+  //   return this.createQueryBuilder('booking_request')
+  //     .select('booking_request.id', 'id')
+  //     .addSelect('booking_request.room_id', 'roomId')
+  //     .addSelect('r.name', 'roomName')
+  //     .addSelect('slot_start.slot_num', 'slotStart')
+  //     .addSelect('slot_end.slot_num', 'slotEnd')
+  //     .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+  //     .innerJoin(
+  //       Slot,
+  //       'slot_start',
+  //       'slot_start.id = booking_request.checkin_slot'
+  //     )
+  //     .innerJoin(
+  //       Slot,
+  //       'slot_end',
+  //       'slot_end.id = booking_request.checkout_slot'
+  //     )
+  //     .where('booking_request.checkinDate >= :dateStart', {
+  //       dateStart: dateStart,
+  //     })
+  //     .where('booking_request.checkinDate <= :dateEnd', {
+  //       dateEnd: dateEnd,
+  //     })
+  //     .andWhere("(booking_request.status = 'BOOKED')")
+  //     .getRawMany<{
+  //       id: string;
+  //       roomId: string;
+  //       roomName: string;
+  //       slotStart: number;
+  //       slotEnd: number;
+  //     }>();
+  // }
 
   getBookingPendingAndBookedInDay(
     date: string,
