@@ -389,6 +389,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('rooms.name', 'name')
       // .addSelect('rooms.type', 'type')
       .addSelect('rooms.description', 'description')
+      .addSelect('rooms.capacity', 'capacity')
       .addSelect('rt.name', 'type')
       .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
       .where('rooms.disabled_at IS NULL')

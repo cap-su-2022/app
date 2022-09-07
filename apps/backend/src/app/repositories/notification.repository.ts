@@ -18,34 +18,21 @@ export class NotificationRepository extends Repository<Notification> {
       .addSelect('noti.title', 'title')
       .addSelect('noti.message', 'message')
       .addSelect('noti.created_at', 'createdAt')
-      .addSelect('noti.receiver', 'receiver')
+      // .addSelect('noti.receiver', 'receiver')
       .where('noti.id = :id', { id: id })
       .getRawOne<Notification>();
   }
 
-  async sendNotification(
+  async createNotification(
     payload: { title: string; message: string },
-    receiver,
     queryRunner: QueryRunner
   ): Promise<Notification> {
     return queryRunner.manager.save(Notification, {
       title: payload.title,
       message: payload.message,
-      // createdBy: accountId,
       createdAt: new Date(),
-      receiver: receiver,
     });
   }
 
-  getYourOwnNotifications(userId): Promise<Notification[]> {
-    return this.createQueryBuilder('noti')
-      .select('noti.id', 'id')
-      .addSelect('noti.title', 'title')
-      .addSelect('noti.message', 'message')
-      .addSelect('noti.created_at', 'createdAt')
-      .addSelect('noti.receiver', 'receiver')
-      .where('noti.receiver = :id', { id: userId })
-      .orderBy('noti.created_at', 'DESC')
-      .getRawMany<Notification>();
-  }
+
 }

@@ -82,47 +82,8 @@ export class SlotService {
   }
 
   async addNewSlot(accountId: string, payload: SlotsRequestPayload) {
-    try {
-      const timeStartIsValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(payload.timeStart)
-      if(!timeStartIsValid){
-        throw new BadRequestException(
-          `Time start have wrong format.`
-        );
-      }
-      const timeEndIsValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(payload.timeEnd)
-      if(!timeEndIsValid){
-        throw new BadRequestException(
-          `Time end have wrong format.`
-        );
-      }
-
-      if(payload.timeStart > payload.timeEnd){
-        throw new BadRequestException(
-          `Time start can't be greater than Time end.`
-        );
-      }
-
-      const isHaveSlotSameNameActive =
-        await this.repository.isHaveSlotSameNameActive(payload.name);
-      if (isHaveSlotSameNameActive) {
-        throw new BadRequestException(
-          `Already have slot with name '${payload.name}' active. Try other name or delete slot have name '${payload.name}' before add new`
-        );
-      }
-      const isHaveSlotSameNumActive =
-        await this.repository.isHaveSlotSameNumActive(payload.slotNum);
-      if (isHaveSlotSameNumActive) {
-        throw new BadRequestException(
-          `There already exists a slot with the same sequence number active.`
-        );
-      }
-      const slot = await this.repository.addNew(accountId, payload);
-      // await this.histService.createNew(slot);
-      return slot;
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(e.message);
-    }
+    // 
+    console.log(payload.timeStart)
   }
 
   async deleteSlotById(accountId: string, id: string) {

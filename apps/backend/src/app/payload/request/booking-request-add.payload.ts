@@ -57,28 +57,26 @@ export class BookingRequestAddRequestPayload {
   })
   @IsString()
   @ApiProperty({
-    name: 'checkinSlot',
-    description: 'CheckinSlot to be added',
+    name: 'checkinTime',
+    description: 'checkinTime to be added',
     maxLength: 500,
     minLength: 0,
     type: String,
-    example: 'New entity',
   })
-  checkinSlot?: string;
+  checkinTime?: string;
 
   @IsNotEmpty({
     message: 'Slot check out can not be empty',
   })
   @IsString()
   @ApiProperty({
-    name: 'checkoutSlot',
-    description: 'CheckoutSlot to be added',
+    name: 'checkoutTime',
+    description: 'checkoutTime to be added',
     maxLength: 500,
     minLength: 0,
     type: String,
-    example: 'New entity',
   })
-  checkoutSlot?: string;
+  checkoutTime?: string;
 
   @MaxLength(500)
   @IsOptional()

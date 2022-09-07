@@ -1,23 +1,24 @@
 import { KeycloakUserInstance } from './../dto/keycloak.user';
 import { Controller, Get, HttpStatus, Param, Query } from '@nestjs/common';
-import { NotificationService } from '../services';
 import { Roles } from '../decorators/role.decorator';
 import { Role } from '../enum/roles.enum';
 import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import { User } from '../decorators/keycloak-user.decorator';
 import { Notification } from '../models';
+import { AccountNotificationService } from '../services/account-notification.service';
 
-@Controller('/v1/notifications')
+@Controller('/v1/account-notifications')
 @ApiBearerAuth()
-@ApiTags('Notification')
-export class NotificationController {
+@ApiTags('AccountNotification')
+export class AccountNotificationController {
 
-  constructor(private readonly service: NotificationService) {}
-  @Get(':id')
+  constructor(private readonly service: AccountNotificationService) {}
+
+  @Get('own-notifications')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully fetched notification by id',
+    description: 'Successfully got get your own notifications',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -32,10 +33,12 @@ export class NotificationController {
     description: 'Insufficient privileges',
   })
   @ApiOperation({
-    summary: 'Get notification by id',
-    description: 'Get notification by id',
+    summary: 'Get your own notifications',
+    description: 'Get your own notifications',
   })
-  getDetailNotificationId(@Param('id') id: string, @User() user: KeycloakUserInstance) {
-    return this.service.getDetailNotificationId(id, user.account_id);
+  getYourOwnNotifications(
+    @User() user: KeycloakUserInstance
+  ): Promise<Notification[]> {
+    return this.service.getYourOwnNotifications(user.account_id);
   }
 }
