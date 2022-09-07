@@ -8,3 +8,4 @@ export * from './rooms.controller';
 export * from './feedback-type.controller';
 export * from './feedback.controller';
 export * from './account-notification.controller';
+export * from './holidays.controller';

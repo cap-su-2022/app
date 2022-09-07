@@ -36,7 +36,7 @@ export class SlotService {
         result = await this.repository.findByPagination(params);
         if(result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages){
           throw new BadRequestException('Current page is over');
-        } 
+        }
       }
       return result;
     } catch (e) {
@@ -82,7 +82,7 @@ export class SlotService {
   }
 
   async addNewSlot(accountId: string, payload: SlotsRequestPayload) {
-    // 
+    //
     console.log(payload.timeStart)
   }
 

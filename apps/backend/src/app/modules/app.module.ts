@@ -23,6 +23,7 @@ import { FeedbackTypeModule } from './feedback-type.module';
 import { NotificationModule } from './notification.module';
 import { BookingFeedbackModule } from './booking-feedback.module';
 import {AppConfigModule} from "./app-config.module";
+import {HolidaysModule} from "./holidays.module";
 
 @Global()
 export class AppModule {
@@ -50,6 +51,7 @@ export class AppModule {
         BookingReasonModule,
         RolesModule,
         SlotModule,
+        HolidaysModule,
         ScheduleModule.forRoot(),
       ],
       controllers: [],
