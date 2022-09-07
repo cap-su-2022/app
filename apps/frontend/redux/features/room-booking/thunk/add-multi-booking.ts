@@ -8,8 +8,8 @@ interface AddRequestPayload {
   roomId: string;
   checkinDate: string;
   checkoutDate: string;
-  checkinTime: string;
-  checkoutTime: string;
+  timeStart: string;
+  timeEnd: string;
   description: string;
   bookingReasonId: string;
   bookedFor: string;
@@ -34,8 +34,8 @@ export const addMultiRequest = createAsyncThunk<
       roomId: payload.roomId,
       checkinDate: dayjs(payload.checkinDate).format('YYYY-MM-DD'),
       checkoutDate: dayjs(payload.checkoutDate).format('YYYY-MM-DD'),
-      checkinTime: payload.checkinTime,
-      checkoutTime: payload.checkoutTime,
+      checkinTime: dayjs(payload.timeStart).format('HH:mm:ss'),
+      checkoutTime: dayjs(payload.timeEnd).format('HH:mm:ss'),
       description: payload.description,
       bookingReasonId: payload.bookingReasonId,
       bookedFor: payload.bookedFor,

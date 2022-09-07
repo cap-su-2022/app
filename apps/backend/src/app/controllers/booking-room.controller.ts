@@ -286,43 +286,43 @@ export class BookingRoomController {
     });
   }
 
-  @Get('list-room-free-at-multi-date')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  @ApiOperation({
-    summary: 'Get a list room free a multi date',
-    description: 'Get a list room free a multi date',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'One or more payload parameters are invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully fetched a list room free at time',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getRoomFreeAtMultiDate(
-    @Query('search', new DefaultValuePipe('')) search: string,
-    @Query('checkinSlot', new DefaultValuePipe('')) checkinSlot: number,
-    @Query('checkoutSlot', new DefaultValuePipe('')) checkoutSlot: number,
-    @Query('dateStart', new DefaultValuePipe('')) dateStart: string,
-    @Query('dateEnd', new DefaultValuePipe('')) dateEnd: string
-  ) {
-    return this.service.getRoomFreeAtMultiDate({
-      search: search,
-      dateStart: dateStart,
-      dateEnd: dateEnd,
-      checkinSlot: checkinSlot,
-      checkoutSlot: checkoutSlot,
-    });
-  }
+  // @Get('list-room-free-at-multi-date')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // @ApiOperation({
+  //   summary: 'Get a list room free a multi date',
+  //   description: 'Get a list room free a multi date',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalidated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'One or more payload parameters are invalid',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully fetched a list room free at time',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // getRoomFreeAtMultiDate(
+  //   @Query('search', new DefaultValuePipe('')) search: string,
+  //   @Query('checkinSlot', new DefaultValuePipe('')) checkinSlot: number,
+  //   @Query('checkoutSlot', new DefaultValuePipe('')) checkoutSlot: number,
+  //   @Query('dateStart', new DefaultValuePipe('')) dateStart: string,
+  //   @Query('dateEnd', new DefaultValuePipe('')) dateEnd: string
+  // ) {
+  //   return this.service.getRoomFreeAtMultiDate({
+  //     search: search,
+  //     dateStart: dateStart,
+  //     dateEnd: dateEnd,
+  //     checkinSlot: checkinSlot,
+  //     checkoutSlot: checkoutSlot,
+  //   });
+  // }
 
   @Get('list-room-free-at-multi-date-v2')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -348,8 +348,8 @@ export class BookingRoomController {
   })
   getRoomFreeAtMultiDateV2(
     @Query('search', new DefaultValuePipe('')) search: string,
-    @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
-    @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
+    @Query('checkinTime', new DefaultValuePipe('')) checkinTime: string,
+    @Query('checkoutTime', new DefaultValuePipe('')) checkoutTime: string,
     @Query('dateStart', new DefaultValuePipe('')) dateStart: string,
     @Query('dateEnd', new DefaultValuePipe('')) dateEnd: string
   ) {
@@ -357,8 +357,8 @@ export class BookingRoomController {
       search: search,
       dateStart: dateStart,
       dateEnd: dateEnd,
-      checkinSlotId: checkinSlotId,
-      checkoutSlotId: checkoutSlotId,
+      checkinTime: checkinTime,
+      checkoutTime: checkoutTime,
     });
   }
 
@@ -643,44 +643,44 @@ export class BookingRoomController {
     });
   }
 
-  // @Get('get-room-name-booked-same-slot-multi')
-  // @HttpCode(HttpStatus.OK)
-  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  // @ApiOperation({
-  //   summary: 'Get room name have booked in same slot',
-  //   description: 'Get room name have booked in same slot',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.CREATED,
-  //   description: 'Successfully get room name have booked in same slot',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.BAD_REQUEST,
-  //   description: 'Request payload for request is not validated',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.UNAUTHORIZED,
-  //   description: 'Access token is invalidated',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.FORBIDDEN,
-  //   description: 'Insufficient privileges',
-  // })
-  // checkAlreadyHaveBookingSameSlotMultiDay(
-  //   @Query('checkinDate') checkinDate: string,
-  //   @Query('checkoutDate') checkoutDate: string,
-  //   @Query('userId') userId: string,
-  //   @Query('checkinSlot') checkinSlot: string,
-  //   @Query('checkoutSlot') checkoutSlot: string
-  // ) {
-  //   return this.service.checkAlreadyHaveBookingSameSlotMultiDay({
-  //     checkinDate: checkinDate,
-  //     checkoutDate: checkoutDate,
-  //     userId: userId,
-  //     checkinSlot: checkinSlot,
-  //     checkoutSlot: checkoutSlot,
-  //   });
-  // }
+  @Get('get-room-name-booked-same-slot-multi')
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Get room name have booked in same slot',
+    description: 'Get room name have booked in same slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully get room name have booked in same slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request payload for request is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  checkAlreadyHaveBookingSameSlotMultiDay(
+    @Query('checkinDate') checkinDate: string,
+    @Query('checkoutDate') checkoutDate: string,
+    @Query('userId') userId: string,
+    @Query('checkinTime') checkinTime: string,
+    @Query('checkoutTime') checkoutTime: string
+  ) {
+    return this.service.checkAlreadyHaveBookingSameSlotMultiDay({
+      checkinDate: checkinDate,
+      checkoutDate: checkoutDate,
+      userId: userId,
+      checkinTime: checkinTime,
+      checkoutTime: checkoutTime,
+    });
+  }
 
   @Post('new-request')
   @HttpCode(HttpStatus.OK)
@@ -712,35 +712,35 @@ export class BookingRoomController {
     return this.service.addNewRequest(request, user.account_id);
   }
 
-  // @Post('multi-booking')
-  // @HttpCode(HttpStatus.OK)
-  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  // @ApiOperation({
-  //   summary: 'Create a multi request',
-  //   description: 'Create multi request with the provided payload',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.CREATED,
-  //   description: 'Successfully created a multi request',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.BAD_REQUEST,
-  //   description: 'Request payload for request is not validated',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.UNAUTHORIZED,
-  //   description: 'Access token is invalidated',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.FORBIDDEN,
-  //   description: 'Insufficient privileges',
-  // })
-  // addMultiRequest(
-  //   @User() user: KeycloakUserInstance,
-  //   @Body() request: BookingRequestAddRequestPayload
-  // ) {
-  //   return this.service.addMultiRequest(request, user.account_id);
-  // }
+  @Post('multi-booking')
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  @ApiOperation({
+    summary: 'Create a multi request',
+    description: 'Create multi request with the provided payload',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully created a multi request',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request payload for request is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  addMultiRequest(
+    @User() user: KeycloakUserInstance,
+    @Body() request: BookingRequestAddRequestPayload
+  ) {
+    return this.service.addMultiRequest(request, user.account_id);
+  }
 
   // @Put('accept/:id')
   // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)

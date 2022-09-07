@@ -9,8 +9,8 @@ export const IsUserHaveBookedSameSlotMulti = createAsyncThunk<
     checkinDate: string, 
     checkoutDate: string, 
     userId: string
-    checkinSlot: string,
-    checkoutSlot: string,
+    checkinTime: string,
+    checkoutTime: string,
   },
   {
     rejectValue: {
@@ -20,13 +20,14 @@ export const IsUserHaveBookedSameSlotMulti = createAsyncThunk<
 >('booking-room/get-room-name-booked-same-slot-multi', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
+    console.log(payload)
     const response = await axios.get('api/booking-room/get-room-name-booked-same-slot-multi', {
       params: {
         checkinDate: dayjs(payload.checkinDate).format('YYYY-MM-DD'),
         checkoutDate: dayjs(payload.checkoutDate).format('YYYY-MM-DD'),
         userId: payload.userId,
-        checkinSlot: payload.checkinSlot,
-        checkoutSlot: payload.checkoutSlot,
+        checkinTime: dayjs(payload.checkinTime).format('HH:mm:ss'),
+        checkoutTime: dayjs(payload.checkoutTime).format('HH:mm:ss'),
       },
     });
     console.log("LA SAO TA: ",response.data);
