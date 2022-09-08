@@ -146,7 +146,7 @@ export class HolidaysRepository extends Repository<Holidays> {
       },
     });
     return queryRunner.manager.save(
-      Rooms,
+      Holidays,
       {
         ...oldData,
         id: holidayId,
