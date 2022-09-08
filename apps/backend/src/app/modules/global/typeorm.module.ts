@@ -26,7 +26,6 @@ import {AccountNotification} from '../../models';
 import {BookingRoomFeedback} from '../../models';
 import {Feedback} from '../../models';
 import {FeedbackType} from '../../models';
-import {FeedbackHist} from '../../models';
 import {Notification} from '../../models';
 
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
@@ -54,7 +53,6 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       DeviceTypeHist,
       Feedback,
       FeedbackType,
-      FeedbackHist,
       Notification,
       Rooms,
       RoomHist,

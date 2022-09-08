@@ -1,12 +1,11 @@
 import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import {
-  FeedbackHistService,
   FeedbackService,
   KeycloakService,
 } from '../services';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
-import { FeedbackHistRepository, FeedbackRepository } from '../repositories';
+import { FeedbackRepository } from '../repositories';
 import { FeedbackController } from '../controllers';
 import ConfigModule from './global/config.module';
 import { AccountsModule } from './accounts.module';
@@ -21,16 +20,14 @@ import { FeedbackGateway } from '../gateway/feedback.gateway';
     forwardRef(() => NotificationModule),
     TypeOrmExModule.forCustomRepository([
       FeedbackRepository,
-      FeedbackHistRepository,
     ]),
   ],
   controllers: [FeedbackController],
   providers: [
     FeedbackService,
     KeycloakService,
-    FeedbackHistService,
     FeedbackGateway,
   ],
-  exports: [FeedbackHistService, FeedbackService],
+  exports: [FeedbackService],
 })
 export class FeedbackModule {}
