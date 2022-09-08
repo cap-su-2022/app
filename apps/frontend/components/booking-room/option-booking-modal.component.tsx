@@ -179,7 +179,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
     return (
       <div>
         <div className={classes.listButton}>
-          <div>
+          {/* <div>
             {!showChooseSlot && !showChooseMultiDay && (
               <Button
                 style={{ marginRight: 10 }}
@@ -189,7 +189,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
                 Book by room
               </Button>
             )}
-          </div>
+          </div> */}
           <div>
             {!showChooseRoom && !showChooseMultiDay && (
               <Button
@@ -197,7 +197,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
                 onClick={revealSlot}
                 leftIcon={<BuildingWarehouse />}
               >
-                Book by time
+                Single Day Booking
               </Button>
             )}
           </div>

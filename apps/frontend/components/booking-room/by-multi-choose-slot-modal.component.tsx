@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, InputWrapper, Select } from '@mantine/core';
+import { Button, InputWrapper, Select, TextInput } from '@mantine/core';
 import { ChevronsRight, ClipboardText, X } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { FormikProps } from 'formik';
@@ -78,7 +78,6 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
       }
     }
   }, [props.formik.values.checkinDate, props.formik.values.checkoutDate]);
-
 
   const handleNextChooseRoom = () => {
     if (
@@ -245,19 +244,38 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
           </InputWrapper>
         </div>
       </div>
-      {userInfo.role !== 'Staff' ? (
-        <Select
-          id="bookedFor"
-          name="bookedFor"
-          label="Who use room"
-          placeholder="If not choose, the room's user auto is you"
-          data={props.listUsernames}
-          value={props.formik.values.bookedFor || undefined}
-          error={props.formik.errors.bookedFor}
-          onChange={props.formik.handleChange('bookedFor')}
-          searchable={true}
-        />
-      ) : null}
+      <div style={{ display: 'flex', gap: 20 }}>
+        <InputWrapper
+          required
+          label="Number of participants"
+          style={{ width: '200px' }}
+        >
+          <TextInput
+            icon={<ClipboardText />}
+            id="capacity"
+            name="capacity"
+            error={props.formik.errors.capacity}
+            onChange={props.formik.handleChange}
+            // className={classes.textInput}
+            radius="md"
+            value={props.formik.values.capacity}
+          />
+        </InputWrapper>
+        {userInfo.role !== 'Staff' ? (
+          <Select
+            id="bookedFor"
+            name="bookedFor"
+            label="Who use room"
+            placeholder="If not choose, the room's user auto is you"
+            data={props.listUsernames}
+            value={props.formik.values.bookedFor || undefined}
+            error={props.formik.errors.bookedFor}
+            onChange={props.formik.handleChange('bookedFor')}
+            searchable={true}
+            style={{ flex: 1 }}
+          />
+        ) : null}
+      </div>
       <div style={{ display: 'flex', justifyContent: 'flex-end', margin: 10 }}>
         <Button onClick={() => handleNextChooseRoom()} color="green">
           Next

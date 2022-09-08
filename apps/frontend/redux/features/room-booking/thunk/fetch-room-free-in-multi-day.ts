@@ -11,6 +11,7 @@ export const fetchRoomFreeAtMultiDay = createAsyncThunk<
     checkoutDate: string;
     checkinTime: string;
     checkoutTime: string;
+    capacity: number
   },
   {
     rejectValue: {
@@ -29,6 +30,7 @@ export const fetchRoomFreeAtMultiDay = createAsyncThunk<
           dateEnd: dayjs(payload.checkoutDate).format('YYYY-MM-DD'),
           checkinTime: dayjs(payload.checkinTime).format('HH:mm:ss'),
           checkoutTime: dayjs(payload.checkoutTime).format('HH:mm:ss'),
+          capacity: payload.capacity
         },
       }
     );
