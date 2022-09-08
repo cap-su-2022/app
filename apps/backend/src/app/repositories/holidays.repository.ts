@@ -5,6 +5,7 @@ import {HolidayAddRequestPayload} from "../payload/request/holidays-add.request.
 import {RoomsPaginationParams} from "../controllers/rooms-pagination.model";
 import {paginateRaw} from "nestjs-typeorm-paginate";
 import {PaginationParams} from "../controllers/pagination.model";
+import {RoomAddRequestPayload} from "../payload/request/room-add.request.payload";
 
 @CustomRepository(Holidays)
 export class HolidaysRepository extends Repository<Holidays> {
@@ -121,6 +122,45 @@ export class HolidaysRepository extends Repository<Holidays> {
       updatedAt: new Date(),
       updatedBy: accountId,
     })
+  }
+
+  async isExistedByNameActiveUpdate(name: string, id: string): Promise<boolean> {
+    return this.createQueryBuilder('holidays')
+      .select('COUNT(holidays.name)')
+      .where('holidays.name = :name', {name})
+      .andWhere('holidays.deleted_at IS NULL')
+      .andWhere('holidays.id != :id', {id})
+      .getRawOne()
+      .then((data) => data['count'] > 0);
+  }
+
+  async updateById(
+    accountId: string,
+    holidayId: string,
+    payload: HolidayAddRequestPayload,
+    queryRunner: QueryRunner
+  ) {
+    const oldData = await this.findOneOrFail({
+      where: {
+        id: holidayId,
+      },
+    });
+    return queryRunner.manager.save(
+      Rooms,
+      {
+        ...oldData,
+        id: holidayId,
+        name: payload.name.trim(),
+        description: payload.description,
+        dateStart: payload.dateStart,
+        dateEnd: payload.dateEnd,
+        updatedBy: accountId,
+        updatedAt: new Date(),
+      },
+      {
+        transaction: true,
+      }
+    );
   }
 
   searchHoliday(payload: PaginationParams) {
