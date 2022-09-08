@@ -276,13 +276,15 @@ export class BookingRoomController {
     @Query('search', new DefaultValuePipe('')) search: string,
     @Query('checkinTime', new DefaultValuePipe('')) checkinTime: string,
     @Query('checkoutTime', new DefaultValuePipe('')) checkoutTime: string,
-    @Query('date', new DefaultValuePipe('')) date: string
+    @Query('date', new DefaultValuePipe('')) date: string,
+    @Query('capacity', new DefaultValuePipe(1)) capacity: number
   ) {
     return this.service.getRoomFreeAtTime({
       search: search,
       date: date,
       checkinTime: checkinTime,
       checkoutTime: checkoutTime,
+      capacity: capacity
     });
   }
 
@@ -351,12 +353,14 @@ export class BookingRoomController {
     @Query('checkinTime', new DefaultValuePipe('')) checkinTime: string,
     @Query('checkoutTime', new DefaultValuePipe('')) checkoutTime: string,
     @Query('dateStart', new DefaultValuePipe('')) dateStart: string,
+    @Query('capacity', new DefaultValuePipe(1)) capacity: number,
     @Query('dateEnd', new DefaultValuePipe('')) dateEnd: string
   ) {
     return this.service.getRoomFreeAtMultiDateV2({
       search: search,
       dateStart: dateStart,
       dateEnd: dateEnd,
+      capacity: capacity,
       checkinTime: checkinTime,
       checkoutTime: checkoutTime,
     });

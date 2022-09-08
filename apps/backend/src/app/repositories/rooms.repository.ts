@@ -383,7 +383,7 @@ export class RoomsRepository extends Repository<Rooms> {
   //   return query.getRawMany<Rooms>();
   // }
 
-  filterRoomFreeByRoomBooked(search: string, listIdRoomBooked: string[]) {
+  filterRoomFreeByRoomBooked(search: string, capacity: number, listIdRoomBooked: string[]) {
     const query = this.createQueryBuilder('rooms')
       .select('rooms.id', 'id')
       .addSelect('rooms.name', 'name')
@@ -394,6 +394,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
       .where('rooms.disabled_at IS NULL')
       .andWhere('rooms.deleted_at IS NULL')
+      .andWhere('rooms.capacity >= :capacity', {capacity: capacity})
       .andWhere('rooms.name ILIKE :search', {
         search: `%${search?.trim() || ''}%`,
       });

@@ -524,6 +524,7 @@ export class BookingRoomService {
     date: string;
     checkinTime: string;
     checkoutTime: string;
+    capacity: number;
   }) {
     try {
       const listRequestBookedSameTime =
@@ -540,6 +541,7 @@ export class BookingRoomService {
       }
       const result = await this.roomService.filterRoomFreeByRoomBooked(
         payload.search,
+        payload.capacity,
         listRoomBookedSameTime
       );
       return result;
@@ -580,6 +582,7 @@ export class BookingRoomService {
     search: string;
     dateStart: string;
     dateEnd: string;
+    capacity: number;
     checkinTime: string;
     checkoutTime: string;
   }) {
@@ -595,6 +598,7 @@ export class BookingRoomService {
       }
       const result = await this.roomService.filterRoomFreeByRoomBooked(
         payload.search,
+        payload.capacity,
         listRoomBookedInMultiDaySameSlot
       );
       return result;

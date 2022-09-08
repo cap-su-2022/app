@@ -41,6 +41,7 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
           checkoutDate: props.formik.values.checkoutDate,
           checkinTime: props.formik.values.timeStart,
           checkoutTime: props.formik.values.timeEnd,
+          capacity: props.formik.values.capacity,
         })
       )
         .unwrap()
@@ -52,6 +53,7 @@ const BySlotChooseRoomModal: React.FC<ChooseSlotModalProps> = (props) => {
           date: props.formik.values.checkinDate,
           timeStart: props.formik.values.timeStart,
           timeEnd: props.formik.values.timeEnd,
+          capacity: props.formik.values.capacity
         })
       )
         .unwrap()
