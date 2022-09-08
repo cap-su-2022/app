@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ec20e2f1-a787-4e29-b233-1a206865702b",
+		"_postman_id": "33a5233b-0ebc-4b41-8816-896ce34abbd9",
 		"name": "FPTU Library Rooms Booking Management System",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "11227664"
@@ -1537,7 +1537,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtZkJPWlYxTnZZRG40TUxoUFQzYTRudkNhU1IxTmNqNjFrYWpkYXJVSG1BIn0.eyJleHAiOjE2NjEzNjE0MjQsImlhdCI6MTY2MTM1MDYyNCwianRpIjoiMjUzZDExZTEtNmY2OC00NzU2LTg5NDMtN2QzNjgxOTAwMzliIiwiaXNzIjoiaHR0cDovLzM0LjE0Mi4xOTMuMTAwOjkwOTAvYXV0aC9yZWFsbXMvYXV0aGVudGljYXRpb24iLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiNzllNmY0MzYtZjE1MC00NDQ3LWIzNTAtY2RiYWU4OGUyZDRiIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXV0aGVudGljYXRpb24tYXBpIiwic2Vzc2lvbl9zdGF0ZSI6Ijg2ZTRmYjY0LTYwOWMtNDRlNS05OTVjLTBjMDczODE4N2JhZSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1hdXRoZW50aWNhdGlvbiIsIkFQUC1TVEFGRiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6Ijg2ZTRmYjY0LTYwOWMtNDRlNS05OTVjLTBjMDczODE4N2JhZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiU3RhZmYgQmFuZyBOZ28iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdGFmZiIsImdpdmVuX25hbWUiOiJTdGFmZiIsImZhbWlseV9uYW1lIjoiQmFuZyBOZ28iLCJlbWFpbCI6ImJhbmdtYXBsZXByb2plY3QwQGdtYWlsLmNvbSJ9.nR-zc_jsxGHwdFVMRLV9hwFDbgd8GomVd1m9eS8KP8Bc0Ls_Cy1K0s7-7Rq5R4FrMUK8V28mpz1eYvOZsw8JOqa1YqqzjKV97oVcRToXx6XQ0dsoXi6NnwXiK9Qe2Q_r2LJJY6TXff9oSln05Q9ujMUWLFux6tEtR73m43fwVKuBPAFjKMxywCmdTfx7dHr0loBhT6QEidxIP68J43416hY0JqHB0SHxUJIsTcUIE68ejLZYZbr_BW8ZDFdaeyQDT2xqfE57CFPJYCYyerufzTZ9PdgM48fk4GCYMOoUkBoJgCt2Au5GcDqA76BPWsE4b4r0cUNTJKs1z5uJ9SSEuA",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtZkJPWlYxTnZZRG40TUxoUFQzYTRudkNhU1IxTmNqNjFrYWpkYXJVSG1BIn0.eyJleHAiOjE2NjI2NTUwMjMsImlhdCI6MTY2MjY0NDIyMywianRpIjoiZjllY2IyNDUtZWRkNy00MTVlLWI0MDAtNzY0NjNiOTE4N2M5IiwiaXNzIjoiaHR0cDovLzM0LjE0Mi4xOTMuMTAwOjkwOTAvYXV0aC9yZWFsbXMvYXV0aGVudGljYXRpb24iLCJhdWQiOlsicmVhbG0tbWFuYWdlbWVudCIsImFjY291bnQiXSwic3ViIjoiODQ2N2RjNGQtOGFlMy00MzQzLTlmMTUtNTljZGEyZTA3ZDYzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXV0aGVudGljYXRpb24tYXBpIiwic2Vzc2lvbl9zdGF0ZSI6IjkwZWIwMTE5LWI5YjYtNGFmZC04MGVlLWNjMWFkN2EwMTAxOSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1hdXRoZW50aWNhdGlvbiIsIkFQUC1TVEFGRiIsIkFQUC1BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hbmFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1yZWFsbSIsInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXVlcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnRzIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWdyb3VwcyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctYXBwbGljYXRpb25zIiwidmlldy1jb25zZW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJkZWxldGUtYWNjb3VudCIsIm1hbmFnZS1jb25zZW50Iiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiOTBlYjAxMTktYjliNi00YWZkLTgwZWUtY2MxYWQ3YTAxMDE5IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJMYW4gTGUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJsYW5sbmgiLCJnaXZlbl9uYW1lIjoiTGFuIiwiZmFtaWx5X25hbWUiOiJMZSIsImVtYWlsIjoibGFubG5oc2UxNDA5NjFAZnB0LmVkdS52biJ9.PvQkh0uxJkjWg3FgkdW-QoeBzCepXs7VVfRkmTOKwBvsHWff0PNoC7KH-cym-pweWh8ppD9-rIX5oI1ZGUUDYPGQkCeSXsIRDBZtLZvJKJ_z3vhNekgvB-7F8j_7sjJVRMP9PodsXJGa7JI6X1ea_Uj6cYm-DJfuNzF_8dLfH-PJhFghe-4YZEmQqsQZh81o1f162HoL8KPm3T_3pobtUCyYJvzixUBCf3tNLst2Hn_v1a5Fhi7u7sy8ZOrL8SzlVqmSwSae6DmwNV_w5KzoBofc53EHKGwkOp9ZjQFVO7tjOMONA5fcodlovhQ5dUgCmXlIC8RukOse33Z6597VJA",
 											"type": "string"
 										}
 									]
@@ -1546,7 +1546,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"username\": \"staff\",\n    \"password\": \"1234\"\n}",
+									"raw": "{\n    \"username\": \"lanlnh\",\n    \"password\": \"123123\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -9961,7 +9961,10 @@
 							"name": "New Request",
 							"request": {
 								"method": "GET",
-								"header": []
+								"header": [],
+								"url": {
+									"raw": ""
+								}
 							},
 							"response": []
 						}
@@ -11164,7 +11167,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtZkJPWlYxTnZZRG40TUxoUFQzYTRudkNhU1IxTmNqNjFrYWpkYXJVSG1BIn0.eyJleHAiOjE2NjI1ODIwOTgsImlhdCI6MTY2MjU3MTI5OCwianRpIjoiMmY4MjAyYjAtMThmMS00ZGM4LWEwMmUtMjExZTU5N2QwOTZhIiwiaXNzIjoiaHR0cDovLzM0LjE0Mi4xOTMuMTAwOjkwOTAvYXV0aC9yZWFsbXMvYXV0aGVudGljYXRpb24iLCJhdWQiOlsicmVhbG0tbWFuYWdlbWVudCIsImFjY291bnQiXSwic3ViIjoiODQ2N2RjNGQtOGFlMy00MzQzLTlmMTUtNTljZGEyZTA3ZDYzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXV0aGVudGljYXRpb24tYXBpIiwic2Vzc2lvbl9zdGF0ZSI6ImQyMDY5MmMzLTAyNDEtNDc0MC05NDI5LWRlYTYzNjg5OTczYyIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1hdXRoZW50aWNhdGlvbiIsIkFQUC1TVEFGRiIsIkFQUC1BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hbmFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1yZWFsbSIsInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXVlcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnRzIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWdyb3VwcyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctYXBwbGljYXRpb25zIiwidmlldy1jb25zZW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJkZWxldGUtYWNjb3VudCIsIm1hbmFnZS1jb25zZW50Iiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiZDIwNjkyYzMtMDI0MS00NzQwLTk0MjktZGVhNjM2ODk5NzNjIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJMYW4gTGUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJsYW5sbmgiLCJnaXZlbl9uYW1lIjoiTGFuIiwiZmFtaWx5X25hbWUiOiJMZSIsImVtYWlsIjoibGFubG5oc2UxNDA5NjFAZnB0LmVkdS52biJ9.ojW8g1jmi4A1ADZdAAPoAzjBFnMVD8KjbR7HfXK2DnD47QeIx4JyGiQbSN_-DX_penqsgom4shdAWDAUIulGaK54s2hE_Hw2hsQKH2bugX5viKmddKQlg1TbXibLJzieXOIc4urJVY71tnfSxwMF0Sxb8gHuzULuZNfLD-DZUhPsQbxHk_x9Cb3hwoA6kKnznqxUKaUYKRUPhal4jRRMfZlqY_D-OqEe6MQ57ttZUpQk3eB9XjsVh5bqhvCYuGBdnWBO4ofAR7DXQ4v9abFsLlP_eybVyXIENZQkuslO6718izswanCJDwLYzfqaHmLx7vmKVz8WFrI6s-aHIBGicw",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtZkJPWlYxTnZZRG40TUxoUFQzYTRudkNhU1IxTmNqNjFrYWpkYXJVSG1BIn0.eyJleHAiOjE2NjI2NTEyOTIsImlhdCI6MTY2MjY0MDQ5MiwianRpIjoiOGMzZTliMjQtNTdlNy00MjdiLWJhZmEtNjU0ZjU1MDQ0YWJjIiwiaXNzIjoiaHR0cDovLzM0LjE0Mi4xOTMuMTAwOjkwOTAvYXV0aC9yZWFsbXMvYXV0aGVudGljYXRpb24iLCJhdWQiOlsicmVhbG0tbWFuYWdlbWVudCIsImFjY291bnQiXSwic3ViIjoiODQ2N2RjNGQtOGFlMy00MzQzLTlmMTUtNTljZGEyZTA3ZDYzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXV0aGVudGljYXRpb24tYXBpIiwic2Vzc2lvbl9zdGF0ZSI6IjZhMjY4NDlmLWVlNmYtNDVkYy1hOWY2LWMxNGVlNzhiMmQxOSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1hdXRoZW50aWNhdGlvbiIsIkFQUC1TVEFGRiIsIkFQUC1BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hbmFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1yZWFsbSIsInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXVlcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnRzIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWdyb3VwcyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctYXBwbGljYXRpb25zIiwidmlldy1jb25zZW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJkZWxldGUtYWNjb3VudCIsIm1hbmFnZS1jb25zZW50Iiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiNmEyNjg0OWYtZWU2Zi00NWRjLWE5ZjYtYzE0ZWU3OGIyZDE5IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJMYW4gTGUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJsYW5sbmgiLCJnaXZlbl9uYW1lIjoiTGFuIiwiZmFtaWx5X25hbWUiOiJMZSIsImVtYWlsIjoibGFubG5oc2UxNDA5NjFAZnB0LmVkdS52biJ9.cGM_PHRiD8ZAGpJYPKfQ-xVC4s_i7BGO5geEKD-UHIz_Zuf0mvRjYE7uwETkg1AOJACve0tjAYTJclysSPF8Rn-PERhQ0maYhmxpwxMTvOg9frQRQyt81SayjSdG_4hfNpe2wRUR1XetsryuSXhlha-2YGmOyX6YY92dDHfwJngBNz7QP9cfQN162zHYw7EHO_7oiwTgyQmrEgKbDbWtkikq-VVSKfrfhqBbTOUCmr7PNCoM639G2aA-O8NZHc8cadASEh5-KOPKUBF-DRpVaAaz7ahjXkt8Z75dEaVurjwyJXB-xaDBCCEmwPDbEB6T00dA24UbGuKpioDZuFyPaQ",
 											"type": "string"
 										}
 									]
@@ -11173,7 +11176,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\":\"Test holiday cái nào\",\n    \"description\": \"Test test\",\n    \"dateStart\": \"2022-10-01\",\n    \"dateEnd\": \"2022-10-10\"\n}",
+									"raw": "{\n    \"name\":\"Southern Liberation Day & Southern Liberation Day\",\n    \"description\": \"Ngày giải phóng đất nước và ngày quốc tế lao động\",\n    \"dateStart\": \"2022-04-30\",\n    \"dateEnd\": \"2022-05-01\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -11198,6 +11201,16 @@
 						{
 							"name": "Get all holidays",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtZkJPWlYxTnZZRG40TUxoUFQzYTRudkNhU1IxTmNqNjFrYWpkYXJVSG1BIn0.eyJleHAiOjE2NjI2NTEyOTIsImlhdCI6MTY2MjY0MDQ5MiwianRpIjoiOGMzZTliMjQtNTdlNy00MjdiLWJhZmEtNjU0ZjU1MDQ0YWJjIiwiaXNzIjoiaHR0cDovLzM0LjE0Mi4xOTMuMTAwOjkwOTAvYXV0aC9yZWFsbXMvYXV0aGVudGljYXRpb24iLCJhdWQiOlsicmVhbG0tbWFuYWdlbWVudCIsImFjY291bnQiXSwic3ViIjoiODQ2N2RjNGQtOGFlMy00MzQzLTlmMTUtNTljZGEyZTA3ZDYzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXV0aGVudGljYXRpb24tYXBpIiwic2Vzc2lvbl9zdGF0ZSI6IjZhMjY4NDlmLWVlNmYtNDVkYy1hOWY2LWMxNGVlNzhiMmQxOSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1hdXRoZW50aWNhdGlvbiIsIkFQUC1TVEFGRiIsIkFQUC1BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hbmFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1yZWFsbSIsInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXVlcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnRzIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWdyb3VwcyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctYXBwbGljYXRpb25zIiwidmlldy1jb25zZW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJkZWxldGUtYWNjb3VudCIsIm1hbmFnZS1jb25zZW50Iiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiNmEyNjg0OWYtZWU2Zi00NWRjLWE5ZjYtYzE0ZWU3OGIyZDE5IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJMYW4gTGUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJsYW5sbmgiLCJnaXZlbl9uYW1lIjoiTGFuIiwiZmFtaWx5X25hbWUiOiJMZSIsImVtYWlsIjoibGFubG5oc2UxNDA5NjFAZnB0LmVkdS52biJ9.cGM_PHRiD8ZAGpJYPKfQ-xVC4s_i7BGO5geEKD-UHIz_Zuf0mvRjYE7uwETkg1AOJACve0tjAYTJclysSPF8Rn-PERhQ0maYhmxpwxMTvOg9frQRQyt81SayjSdG_4hfNpe2wRUR1XetsryuSXhlha-2YGmOyX6YY92dDHfwJngBNz7QP9cfQN162zHYw7EHO_7oiwTgyQmrEgKbDbWtkikq-VVSKfrfhqBbTOUCmr7PNCoM639G2aA-O8NZHc8cadASEh5-KOPKUBF-DRpVaAaz7ahjXkt8Z75dEaVurjwyJXB-xaDBCCEmwPDbEB6T00dA24UbGuKpioDZuFyPaQ",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -11348,7 +11361,50 @@
 							"name": "Get holiday names",
 							"request": {
 								"method": "GET",
-								"header": []
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update holiday by id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtZkJPWlYxTnZZRG40TUxoUFQzYTRudkNhU1IxTmNqNjFrYWpkYXJVSG1BIn0.eyJleHAiOjE2NjI2NTUwMjMsImlhdCI6MTY2MjY0NDIyMywianRpIjoiZjllY2IyNDUtZWRkNy00MTVlLWI0MDAtNzY0NjNiOTE4N2M5IiwiaXNzIjoiaHR0cDovLzM0LjE0Mi4xOTMuMTAwOjkwOTAvYXV0aC9yZWFsbXMvYXV0aGVudGljYXRpb24iLCJhdWQiOlsicmVhbG0tbWFuYWdlbWVudCIsImFjY291bnQiXSwic3ViIjoiODQ2N2RjNGQtOGFlMy00MzQzLTlmMTUtNTljZGEyZTA3ZDYzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXV0aGVudGljYXRpb24tYXBpIiwic2Vzc2lvbl9zdGF0ZSI6IjkwZWIwMTE5LWI5YjYtNGFmZC04MGVlLWNjMWFkN2EwMTAxOSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1hdXRoZW50aWNhdGlvbiIsIkFQUC1TVEFGRiIsIkFQUC1BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hbmFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1yZWFsbSIsInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXVlcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnRzIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWdyb3VwcyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctYXBwbGljYXRpb25zIiwidmlldy1jb25zZW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJkZWxldGUtYWNjb3VudCIsIm1hbmFnZS1jb25zZW50Iiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiOTBlYjAxMTktYjliNi00YWZkLTgwZWUtY2MxYWQ3YTAxMDE5IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJMYW4gTGUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJsYW5sbmgiLCJnaXZlbl9uYW1lIjoiTGFuIiwiZmFtaWx5X25hbWUiOiJMZSIsImVtYWlsIjoibGFubG5oc2UxNDA5NjFAZnB0LmVkdS52biJ9.PvQkh0uxJkjWg3FgkdW-QoeBzCepXs7VVfRkmTOKwBvsHWff0PNoC7KH-cym-pweWh8ppD9-rIX5oI1ZGUUDYPGQkCeSXsIRDBZtLZvJKJ_z3vhNekgvB-7F8j_7sjJVRMP9PodsXJGa7JI6X1ea_Uj6cYm-DJfuNzF_8dLfH-PJhFghe-4YZEmQqsQZh81o1f162HoL8KPm3T_3pobtUCyYJvzixUBCf3tNLst2Hn_v1a5Fhi7u7sy8ZOrL8SzlVqmSwSae6DmwNV_w5KzoBofc53EHKGwkOp9ZjQFVO7tjOMONA5fcodlovhQ5dUgCmXlIC8RukOse33Z6597VJA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\":\"Birthday Cy\",\n    \"description\": \"Sanh thần\",\n    \"dateStart\": \"2022-12-30\",\n    \"dateEnd\": \"2022-12-30\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{LOCAL_API}}/api/v1/holidays/update/7680c9ee-9d13-4f60-8587-e78422e8a111",
+									"host": [
+										"{{LOCAL_API}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"holidays",
+										"update",
+										"7680c9ee-9d13-4f60-8587-e78422e8a111"
+									]
+								}
 							},
 							"response": []
 						}
@@ -11358,7 +11414,10 @@
 					"name": "CONFIG",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				}

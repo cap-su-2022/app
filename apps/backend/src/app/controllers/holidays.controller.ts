@@ -21,6 +21,7 @@ import {Holidays, Rooms} from "../models";
 import {HolidayAddRequestPayload} from "../payload/request/holidays-add.request.payload";
 import {PathLoggerInterceptor} from "../interceptors/path-logger.interceptor";
 import {PaginationParams} from "./pagination.model";
+import {RoomAddRequestPayload} from "../payload/request/room-add.request.payload";
 
 @Controller('/v1/holidays')
 @ApiBearerAuth()
@@ -151,6 +152,43 @@ export class HolidaysController {
     return this.service.add(user, holidays);
   }
 
+  @Put('update/:id')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Update holiday by id',
+    description: 'Update holiday by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully updated the holiday',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while updating the holiday',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of active holiday",
+    type: String,
+    required: true,
+    example: 'ABCD1234',
+  })
+  updateRoomById(
+    @User() user: KeycloakUserInstance,
+    @Param() payload: { id: string },
+    @Body() body: HolidayAddRequestPayload
+  ) {
+    return this.service.updateById(user.account_id, payload.id, body);
+  }
+
   @Delete(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   @ApiOperation({
@@ -258,7 +296,6 @@ export class HolidaysController {
       payload.id
     );
   }
-
 
 
 }
