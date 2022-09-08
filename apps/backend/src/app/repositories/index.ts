@@ -5,7 +5,6 @@ export * from './device-hist.repository';
 export * from './rooms.repository';
 export * from './account-hist.repository';
 export * from './feedback-type.repository';
-export * from './feedback-hist.repository';
 export * from './feedback.repository';
 export * from './booking-reason.repository';
 export * from './booking-reason-hist.repository';

@@ -15,7 +15,6 @@ export * from './booking-request-devices.entity';
 export * from './notification.entity';
 export * from './account-notification.entity';
 export * from './feedback.entity';
-export * from './feedback-hist.entity';
 export * from './feedback-type.entity';
 export * from './booking-room-feedback.entity';
 export * from './holidays.entity'
