@@ -1,6 +1,5 @@
 export * from './account.entity';
 export * from './booking-request.entity';
-export * from './room-wishlist.entity';
 export * from './booking-reason-hist.entity';
 export * from './rooms.entity';
 export * from './room-type.entity';
@@ -19,4 +18,4 @@ export * from './feedback.entity';
 export * from './feedback-hist.entity';
 export * from './feedback-type.entity';
 export * from './booking-room-feedback.entity';
-export * from './room-wishlist-hist.entity';
+export * from './holidays.entity'

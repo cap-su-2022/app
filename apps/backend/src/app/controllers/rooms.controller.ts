@@ -29,7 +29,7 @@ import {User} from '../decorators/keycloak-user.decorator';
 import {KeycloakUserInstance} from '../dto/keycloak.user';
 import {RoomsPaginationParams} from './rooms-pagination.model';
 import {DataAddRequestPayload} from '../payload/request/data-add.request.payload';
-import { RoomAddRequestPayload } from '../payload/request/room-add.request.payload';
+import {RoomAddRequestPayload} from '../payload/request/room-add.request.payload';
 
 
 @Controller('/v1/rooms')
@@ -113,6 +113,10 @@ export class RoomsController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Error while retrieving the library room names',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
@@ -253,7 +257,7 @@ export class RoomsController {
   updateTypeThenRestore(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string },
-    @Body() body: {type: string}
+    @Body() body: { type: string }
   ) {
     return this.service.updateTypeThenRestore(user.account_id, payload.id, body);
   }

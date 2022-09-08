@@ -8,5 +8,8 @@
     "target": "es2015"
   },
   "exclude": ["**/*.spec.ts", "**/*.test.ts"],
-  "include": ["**/*.ts"]
+  "include": [
+    "**/*.ts",
+    "../../node_modules/@nrwl/js/src/executors/node/node-with-require-overrides.d.ts"
+  ]
 }

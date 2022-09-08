@@ -12,3 +12,4 @@ export * from './notification.service';
 export * from './feedback.service';
 export * from './feedback-hist.service';
 export * from './feedback-type.service';
+export * from './holidays.service';

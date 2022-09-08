@@ -1,6 +1,6 @@
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Environment } from '@app/constants';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {ConfigModule, ConfigService} from '@nestjs/config';
+import {Environment} from '@app/constants';
 import {
   Accounts,
   AccountHist,
@@ -9,26 +9,25 @@ import {
   Devices,
   DeviceHist,
   Rooms,
-  RoomWishlist,
   BookingReasonHist,
   RoomHist,
   RoomTypeHist,
   DeviceTypeHist,
   BookingRequestDevices,
-  RoomWishlistHist,
+  Holidays,
 } from '../../models';
-import { Roles } from '../../models/role.entity';
-import { RoomType } from '../../models';
-import { DeviceType } from '../../models';
-import { BookingReason } from '../../models/booking-reason.entity';
-import { Slot } from '../../models/slot.entity';
-import { RoleHist } from '../../models/role-hist.entity';
-import { AccountNotification } from '../../models';
-import { BookingRoomFeedback } from '../../models';
-import { Feedback } from '../../models';
-import { FeedbackType } from '../../models';
-import { FeedbackHist } from '../../models';
-import { Notification } from '../../models';
+import {Roles} from '../../models/role.entity';
+import {RoomType} from '../../models';
+import {DeviceType} from '../../models';
+import {BookingReason} from '../../models/booking-reason.entity';
+import {Slot} from '../../models/slot.entity';
+import {RoleHist} from '../../models/role-hist.entity';
+import {AccountNotification} from '../../models';
+import {BookingRoomFeedback} from '../../models';
+import {Feedback} from '../../models';
+import {FeedbackType} from '../../models';
+import {FeedbackHist} from '../../models';
+import {Notification} from '../../models';
 
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
@@ -61,11 +60,10 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       RoomHist,
       RoomType,
       RoomTypeHist,
-      RoomWishlistHist,
-      RoomWishlist,
       Roles,
       RoleHist,
       Slot,
+      Holidays
     ],
     synchronize: configService.get<boolean>(
       Environment.db.postgres.synchronize
