@@ -100,63 +100,63 @@ export class BookingRoomController {
     });
   }
 
-  @Get('list-booking-by-room-in-week')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  @ApiOperation({
-    summary: 'Get a list booking by room in week',
-    description: 'Get a list booking by room in week',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully got slot over time',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while getting slot over time is invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Not enough privileges',
-  })
-  getBookingByRoomInWeek(
-    @Query('roomId', new DefaultValuePipe('')) roomId: string,
-    @Query('date', new DefaultValuePipe('')) date: string
-  ) {
-    return this.service.getBookingByRoomInWeek({
-      roomId: roomId,
-      date: date,
-    });
-  }
+  // @Get('list-booking-by-room-in-week')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // @ApiOperation({
+  //   summary: 'Get a list booking by room in week',
+  //   description: 'Get a list booking by room in week',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully got slot over time',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while getting slot over time is invalid',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalid',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Not enough privileges',
+  // })
+  // getBookingByRoomInWeek(
+  //   @Query('roomId', new DefaultValuePipe('')) roomId: string,
+  //   @Query('date', new DefaultValuePipe('')) date: string
+  // ) {
+  //   return this.service.getBookingByRoomInWeek({
+  //     roomId: roomId,
+  //     date: date,
+  //   });
+  // }
 
-  @Get('list-booking-by-slot')
-  @ApiOperation({
-    summary: 'Get a list booking by slotID',
-    description: 'Get a list booking by slotID',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully got a list booking by slot',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while getting a list booking is invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Not enough privileges',
-  })
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  getBookingBySlot(@Query('slotId', new DefaultValuePipe('')) slotId: string) {
-    return this.service.getRequestBySlotId(slotId);
-  }
+  // @Get('list-booking-by-slot')
+  // @ApiOperation({
+  //   summary: 'Get a list booking by slotID',
+  //   description: 'Get a list booking by slotID',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully got a list booking by slot',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while getting a list booking is invalid',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalid',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Not enough privileges',
+  // })
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // getBookingBySlot(@Query('slotId', new DefaultValuePipe('')) slotId: string) {
+  //   return this.service.getRequestBySlotId(slotId);
+  // }
 
   @Get('list-booking-by-room')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
@@ -212,43 +212,43 @@ export class BookingRoomController {
     return this.service.getRequestByDeviceId(deviceId);
   }
 
-  @Get('list-booking-with-same-slot')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  @ApiOperation({
-    summary: 'Get a list booking with same slot',
-    description: 'Get a list booking with same slot',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'One or more payload parameters are invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully fetched a list booking room with same slot',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getRequestWithSameSlot(
-    @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
-    @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
-    @Query('roomId', new DefaultValuePipe('')) roomId: string,
-    @Query('requestId', new DefaultValuePipe('')) requestId: string,
-    @Query('date', new DefaultValuePipe('')) date: string
-  ) {
-    return this.service.getRequestOfRoomWithSameSlot({
-      roomId: roomId,
-      requestId: requestId,
-      date: date,
-      checkinSlotId: checkinSlotId,
-      checkoutSlotId: checkoutSlotId,
-    });
-  }
+  // @Get('list-booking-with-same-slot')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // @ApiOperation({
+  //   summary: 'Get a list booking with same slot',
+  //   description: 'Get a list booking with same slot',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalidated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'One or more payload parameters are invalid',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully fetched a list booking room with same slot',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // getRequestWithSameSlot(
+  //   @Query('checkinSlotId', new DefaultValuePipe('')) checkinSlotId: string,
+  //   @Query('checkoutSlotId', new DefaultValuePipe('')) checkoutSlotId: string,
+  //   @Query('roomId', new DefaultValuePipe('')) roomId: string,
+  //   @Query('requestId', new DefaultValuePipe('')) requestId: string,
+  //   @Query('date', new DefaultValuePipe('')) date: string
+  // ) {
+  //   return this.service.getRequestOfRoomWithSameSlot({
+  //     roomId: roomId,
+  //     requestId: requestId,
+  //     date: date,
+  //     checkinSlotId: checkinSlotId,
+  //     checkoutSlotId: checkoutSlotId,
+  //   });
+  // }
 
   @Get('list-room-free-at-time')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -1116,8 +1116,8 @@ export class BookingRoomController {
     type: String,
     required: true,
   })
-  getCountRequestBooking(@User() user: KeycloakUserInstance) {
-    return this.service.getCountRequestBooking(user.account_id);
+  countRequestBooking(@User() user: KeycloakUserInstance) {
+    return this.service.countRequestBooking(user.account_id);
   }
 
   @Get('check-out')
