@@ -42,7 +42,7 @@ const RequestInfoModal: React.FC<RequestInfoModalProps> = (props) => {
           <div style={{ display: 'flex' }}>
             <div className={classes.canceledDisplay}>Cancelled</div>
             <span className={classes.cancelledByDiv}>
-              by <b>{requestBooking.cancelledBy}</b>
+              by <b>{requestBooking.cancelledBy || "System"}</b>
             </span>
           </div>
         );
