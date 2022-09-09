@@ -24,7 +24,7 @@ export class TasksService {
     );
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_HOUR)
   async handleAutoCancelBookedRequest() {
     const currDate = dayjs(new Date()).format('YYYY-MM-DD');
     const currTime = dayjs(new Date()).format('HH:mm:ss');
