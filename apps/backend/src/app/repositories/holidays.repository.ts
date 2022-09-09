@@ -145,6 +145,7 @@ export class HolidaysRepository extends Repository<Holidays> {
         id: holidayId,
       },
     });
+    console.log("Repooooooooooo: "+ payload.dateStart)
     return queryRunner.manager.save(
       Holidays,
       {
