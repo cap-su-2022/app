@@ -19,10 +19,6 @@ import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-
 import { NotificationService } from './notification.service';
 import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
 import { BookingFeedbackService } from './booking-feedback.service';
-import * as admin from 'firebase-admin';
-import * as yaml from 'js-yaml';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { getConfigFileLoaded } from '../controllers/global-config.controller';
 
 @Injectable()
@@ -216,17 +212,17 @@ export class BookingRoomService {
     }
   }
 
-  async getRequestBySlotId(slotId: string) {
-    try {
-      if (slotId === '') {
-        throw new BadRequestException('Please type a slot ID');
-      }
-      return await this.repository.getRequestBySlotId(slotId);
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async getRequestBySlotId(slotId: string) {
+  //   try {
+  //     if (slotId === '') {
+  //       throw new BadRequestException('Please type a slot ID');
+  //     }
+  //     return await this.repository.getRequestBySlotId(slotId);
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
   async getRequestByDeviceId(deviceId: string) {
     try {
@@ -355,117 +351,117 @@ export class BookingRoomService {
     }
   }
 
-  async getBookingByRoomInWeek(payload: { roomId: string; date: string }) {
-    try {
-      const result = await this.repository.getBookingByRoomInWeek(payload);
-      return result;
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async getBookingByRoomInWeek(payload: { roomId: string; date: string }) {
+  //   try {
+  //     const result = await this.repository.getBookingByRoomInWeek(payload);
+  //     return result;
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
-  async getRequestPendingOfRoomInDay(
-    roomId: string,
-    requestId: string,
-    date: string
-  ) {
-    try {
-      return this.repository.getRequestPendingOfRoomInDay(
-        roomId,
-        requestId,
-        date
-      );
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async getRequestPendingOfRoomInDay(
+  //   roomId: string,
+  //   requestId: string,
+  //   date: string
+  // ) {
+  //   try {
+  //     return this.repository.getRequestPendingOfRoomInDay(
+  //       roomId,
+  //       requestId,
+  //       date
+  //     );
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
-  async getRequestPendingOfUserInDay(
-    userId: string,
-    requestId: string,
-    date: string
-  ) {
-    try {
-      return this.repository.getRequestPendingOfUserInDay(
-        userId,
-        requestId,
-        date
-      );
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async getRequestPendingOfUserInDay(
+  //   userId: string,
+  //   requestId: string,
+  //   date: string
+  // ) {
+  //   try {
+  //     return this.repository.getRequestPendingOfUserInDay(
+  //       userId,
+  //       requestId,
+  //       date
+  //     );
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
-  async getRequestOfRoomWithSameSlot(payload: {
-    roomId: string;
-    date: string;
-    requestId: string;
-    checkinSlotId: string;
-    checkoutSlotId: string;
-  }) {
-    try {
-      const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlotId);
-      const slotOut = await this.slotService.getNumOfSlot(
-        payload.checkoutSlotId
-      );
-      const listRequestPending = await this.getRequestPendingOfRoomInDay(
-        payload.roomId,
-        payload.requestId,
-        payload.date
-      );
-      if (listRequestPending.length > 0) {
-        const listResult = listRequestPending.filter((request) => {
-          for (let j = request.slotIn; j <= request.slotOut; j++) {
-            if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
-              return request;
-            }
-          }
-        });
-        return listResult;
-      }
-      return null;
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async getRequestOfRoomWithSameSlot(payload: {
+  //   roomId: string;
+  //   date: string;
+  //   requestId: string;
+  //   checkinSlotId: string;
+  //   checkoutSlotId: string;
+  // }) {
+  //   try {
+  //     const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlotId);
+  //     const slotOut = await this.slotService.getNumOfSlot(
+  //       payload.checkoutSlotId
+  //     );
+  //     const listRequestPending = await this.getRequestPendingOfRoomInDay(
+  //       payload.roomId,
+  //       payload.requestId,
+  //       payload.date
+  //     );
+  //     if (listRequestPending.length > 0) {
+  //       const listResult = listRequestPending.filter((request) => {
+  //         for (let j = request.slotIn; j <= request.slotOut; j++) {
+  //           if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+  //             return request;
+  //           }
+  //         }
+  //       });
+  //       return listResult;
+  //     }
+  //     return null;
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
-  async getRequestOfUserWithSameSlot(payload: {
-    userId: string;
-    date: string;
-    requestId: string;
-    checkinSlotId: string;
-    checkoutSlotId: string;
-  }) {
-    try {
-      const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlotId);
-      const slotOut = await this.slotService.getNumOfSlot(
-        payload.checkoutSlotId
-      );
-      const listRequestPending = await this.getRequestPendingOfUserInDay(
-        payload.userId,
-        payload.requestId,
-        payload.date
-      );
-      if (listRequestPending.length > 0) {
-        const listResult = listRequestPending.filter((request) => {
-          for (let j = request.slotIn; j <= request.slotOut; j++) {
-            if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
-              return request;
-            }
-          }
-        });
-        return listResult;
-      }
-      return null;
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async getRequestOfUserWithSameSlot(payload: {
+  //   userId: string;
+  //   date: string;
+  //   requestId: string;
+  //   checkinSlotId: string;
+  //   checkoutSlotId: string;
+  // }) {
+  //   try {
+  //     const slotIn = await this.slotService.getNumOfSlot(payload.checkinSlotId);
+  //     const slotOut = await this.slotService.getNumOfSlot(
+  //       payload.checkoutSlotId
+  //     );
+  //     const listRequestPending = await this.getRequestPendingOfUserInDay(
+  //       payload.userId,
+  //       payload.requestId,
+  //       payload.date
+  //     );
+  //     if (listRequestPending.length > 0) {
+  //       const listResult = listRequestPending.filter((request) => {
+  //         for (let j = request.slotIn; j <= request.slotOut; j++) {
+  //           if (j >= slotIn.slotNum && j <= slotOut.slotNum) {
+  //             return request;
+  //           }
+  //         }
+  //       });
+  //       return listResult;
+  //     }
+  //     return null;
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
   // async getListRequestBookedInMultiDay(payload: {
   //   dateStart: string;
@@ -657,14 +653,23 @@ export class BookingRoomService {
     }
   }
 
-  async getCountRequestBooking(id: string) {
+  async countRequestBooking(id: string) {
     try {
       const roleName = await this.accountService.getAccountRoleById(id);
       if (roleName === 'Librarian' || roleName === 'System Admin') {
-        return await this.repository.getCountRequestBooking();
+        return await this.repository.countRequestBooking();
       } else if (roleName === 'Staff') {
-        return await this.repository.getCountRequestBookingForAccountId(id);
+        return await this.repository.countRequestBookingForAccountId(id);
       }
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getRequestBookedInPast(date: string, time: string) {
+    try {
+        return await this.repository.getRequestBookedInPast(date, time);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -887,7 +892,6 @@ export class BookingRoomService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const role = await this.accountService.getRoleOfAccount(userId);
 
       const dateChoosed = new Date(payload.checkinDate).setHours(0, 0, 0, 0);
       const today = new Date().setHours(0, 0, 0, 0);

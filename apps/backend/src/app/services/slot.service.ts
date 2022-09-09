@@ -103,19 +103,19 @@ export class SlotService {
         throw new BadRequestException('This slot is already deleted');
       }
 
-      const listRequestBySlot =
-        await this.bookingRoomService.getRequestBySlotId(id);
-      if (listRequestBySlot?.length > 0) {
-        const reason = `${data.name} was deleted. Request in this slot was auto cancelled`;
-        for (let i = 0; i < listRequestBySlot.length; i++) {
-          this.bookingRoomService.cancelRequest(
-            accountId,
-            listRequestBySlot[i].id,
-            reason,
-            queryRunner
-          );
-        }
-      }
+      // const listRequestBySlot =
+      //   await this.bookingRoomService.getRequestBySlotId(id);
+      // if (listRequestBySlot?.length > 0) {
+      //   const reason = `${data.name} was deleted. Request in this slot was auto cancelled`;
+      //   for (let i = 0; i < listRequestBySlot.length; i++) {
+      //     this.bookingRoomService.cancelRequest(
+      //       accountId,
+      //       listRequestBySlot[i].id,
+      //       reason,
+      //       queryRunner
+      //     );
+      //   }
+      // }
 
       const slot = await this.repository.deleteById(accountId, id, queryRunner);
       // await this.histService.createNew(slot);
