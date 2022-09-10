@@ -37,12 +37,13 @@ export class HolidaysRepository extends Repository<Holidays> {
     );
   }
 
-  async getHolidayNames(): Promise<Holidays[]> {
+  async getHolidayMini(today: string): Promise<Holidays[]> {
     return this.createQueryBuilder('holidays')
-      .select('holidays.name', 'name')
-      .addSelect('holidays.id', 'id')
+      .select('holidays.date_start', 'startDate')
+      .addSelect('holidays.date_end', 'endDate')
       .where('holidays.deleted_at IS NULL')
-      .orderBy('holidays.name', 'ASC')
+      .andWhere('holidays.date_end > :today', {today})
+      .orderBy('holidays.date_start', 'ASC')
       .getRawMany<Holidays>();
   }
 

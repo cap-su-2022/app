@@ -44,6 +44,19 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
+  const holidays = useAppSelector((state) => state.holiday.holidaysMini);
+  const isHoliday = (date) => {
+    const dateFormat = dayjs(date).format('YYYY-MM-DD');
+    for (let i = 0; i < holidays.length; i++) {
+      if (
+        holidays[i].dateStart <= dateFormat &&
+        holidays[i].dateEnd >= dateFormat
+      ) {
+        return true;
+      }
+    }
+  };
+
   useEffect(() => {
     const currenTime = new Date();
     const currenTimeTimestamp = new Date().setHours(0, 0, 0, 0);
@@ -182,6 +195,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             onChange={(date) => {
               props.formik.setFieldValue('checkinDate', date);
             }}
+            excludeDate={(date) => isHoliday(date)}
           />
 
           <ChevronsRight
@@ -209,6 +223,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             onChange={(date) => {
               props.formik.setFieldValue('checkoutDate', date);
             }}
+            excludeDate={(date) => isHoliday(date)}
           />
         </div>
         <div style={{ display: 'flex', justifyContent: 'center' }}>

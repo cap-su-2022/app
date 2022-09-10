@@ -7,6 +7,7 @@ import {HolidaysRepository} from "../repositories/holidays.repository";
 import {PaginationParams} from "../controllers/pagination.model";
 import {RoomAddRequestPayload} from "../payload/request/room-add.request.payload";
 import {getConfigFileLoaded} from "../controllers/global-config.controller";
+import dayjs = require("dayjs");
 
 @Injectable()
 export class HolidaysService {
@@ -37,9 +38,10 @@ export class HolidaysService {
     }
   }
 
-  async getHolidayNames() {
+  async getHolidayMini() {
     try {
-      return await this.repository.getHolidayNames();
+      const today = dayjs(new Date()).format("YYYY-MM-DD")
+      return await this.repository.getHolidayMini(today);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

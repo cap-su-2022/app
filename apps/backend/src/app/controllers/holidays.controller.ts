@@ -21,7 +21,6 @@ import {Holidays, Rooms} from "../models";
 import {HolidayAddRequestPayload} from "../payload/request/holidays-add.request.payload";
 import {PathLoggerInterceptor} from "../interceptors/path-logger.interceptor";
 import {PaginationParams} from "./pagination.model";
-import {RoomAddRequestPayload} from "../payload/request/room-add.request.payload";
 
 @Controller('/v1/holidays')
 @ApiBearerAuth()
@@ -62,8 +61,9 @@ export class HolidaysController {
     @Query() payload: PaginationParams) {
     return this.service.getAll(payload);
   }
+  
 
-  @Get('name')
+  @Get('mini')
   @ApiOperation({
     summary: 'Get the list of active holidays',
     description:
@@ -85,8 +85,8 @@ export class HolidaysController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
-  getRoomNames() {
-    return this.service.getHolidayNames();
+  getHolidayMini() {
+    return this.service.getHolidayMini();
   }
 
   @Get('find/:id')

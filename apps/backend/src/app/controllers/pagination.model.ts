@@ -62,7 +62,7 @@ export class PaginationParams {
   @IsString({
     message: 'Sorting field must be a string',
   })
-  @ApiProperty({default: 'name', required: true})
+  @ApiProperty({default: 'date_start', required: true})
   sort: string;
 
   @IsOptional()

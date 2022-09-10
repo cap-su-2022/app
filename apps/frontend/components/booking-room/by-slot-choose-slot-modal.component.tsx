@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, InputWrapper, Select, TextInput } from '@mantine/core';
 import { ChevronsRight, ClipboardText, X } from 'tabler-icons-react';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { FormikProps } from 'formik';
 import { showNotification } from '@mantine/notifications';
 import { DatePicker, TimeInput } from '@mantine/dates';
@@ -38,13 +38,25 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
+  const holidays = useAppSelector((state) => state.holiday.holidaysMini);
   const dispatch = useAppDispatch();
+
+  const isHoliday = (date) => {
+    const dateFormat = dayjs(date).format('YYYY-MM-DD');
+    for (let i = 0; i < holidays.length; i++) {
+      if (
+        holidays[i].dateStart <= dateFormat &&
+        holidays[i].dateEnd >= dateFormat
+      ) {
+        return true;
+      }
+    }
+  };
 
   useEffect(() => {
     const currenTime = new Date();
     const currenTimeTimestamp = new Date().setHours(0, 0, 0, 0);
     const checkinDate = props.formik.values.checkinDate?.setHours(0, 0, 0, 0);
-    console.log(checkinDate === currenTimeTimestamp);
     const timeStart = props.formik.values.timeStart;
     const timeEnd = props.formik.values.timeEnd;
     if (
@@ -162,7 +174,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           icon: <X />,
           autoClose: 3000,
         });
-      } else if (timeEnd.getTime()  < timeStart.getTime() + _15minute) {
+      } else if (timeEnd.getTime() < timeStart.getTime() + _15minute) {
         showNotification({
           id: 'time-invalid',
           color: 'red',
@@ -258,6 +270,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           onChange={(date) => {
             props.formik.setFieldValue('checkinDate', date);
           }}
+          excludeDate={(date) => isHoliday(date)}
         />
         <InputWrapper required label="Time start">
           <TimeInput
