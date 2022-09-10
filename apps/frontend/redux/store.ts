@@ -18,11 +18,11 @@ import {roomTypeReducer} from './features/room-type';
 import {deviceTypeReducer} from './features/device-type';
 import {roleReducer} from './features/role';
 import {bookingReasonReducer} from './features/booking-reason';
-import {slotReducer} from './features/slot/slot.slice';
 import {notificationReducer} from './features/notification/notification.slice';
 import {feedbackReducer} from './features/feedback/feedback.slice';
 import {feedbackTypeReducer} from './features/feedback-type/feedback-type.slice'
 import {bookingRoomFeedbackReducer} from './features/booking-room-feedback/booking-room-feedback.slice'
+import {holidayReducer} from "./features/holidays/holiday.slice";
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -40,9 +40,9 @@ const combinedReducer = combineReducers({
   deviceType: deviceTypeReducer,
   role: roleReducer,
   bookingReason: bookingReasonReducer,
-  slot: slotReducer,
   feedbackType: feedbackTypeReducer,
-  bookingRoomFeedback: bookingRoomFeedbackReducer
+  bookingRoomFeedback: bookingRoomFeedbackReducer,
+  holiday: holidayReducer
 });
 
 const reducer = (

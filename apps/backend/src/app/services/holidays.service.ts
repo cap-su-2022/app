@@ -28,7 +28,6 @@ export class HolidaysService {
       ) {
         throw new BadRequestException('Current page is over');
       }
-      console.log(result.meta)
       return result;
     } catch (e) {
       this.logger.error(e);
@@ -78,15 +77,6 @@ export class HolidaysService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const dateStartIsValid = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/.test(holiday.dateStart);
-      const dateEndIsValid = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/.test(holiday.dateEnd);
-
-      if (!dateStartIsValid) {
-        throw new BadRequestException('Date Start must be corrected format yyyy-mm-dd');
-      }
-      if (!dateEndIsValid) {
-        throw new BadRequestException('Date End must be corrected format yyyy-mm-dd');
-      }
 
       if (holiday.dateStart > holiday.dateEnd) {
         throw new BadRequestException('Date Start must be less than or equal to Date End');
@@ -142,16 +132,6 @@ export class HolidaysService {
       if (data === undefined) {
         throw new BadRequestException('This holiday is already deleted');
       }
-      const dateStartIsValid = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/.test(body.dateStart);
-      const dateEndIsValid = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/.test(body.dateEnd);
-
-      if (!dateStartIsValid) {
-        throw new BadRequestException('Date Start must be corrected format yyyy-mm-dd');
-      }
-      if (!dateEndIsValid) {
-        throw new BadRequestException('Date End must be corrected format yyyy-mm-dd');
-      }
-
       if (body.dateStart > body.dateEnd) {
         throw new BadRequestException('Date Start must be less than or equal to Date End');
       }
@@ -164,7 +144,8 @@ export class HolidaysService {
           'There is already existed holiday with the this name. Try with another name.'
         );
       }
-
+      console.log(body.dateStart+ " BE: dateStart")
+      console.log(body.dateEnd+ " BE: dateEnd")
       const holidayUpdated = await this.repository.updateById(
         accountId,
         id,
