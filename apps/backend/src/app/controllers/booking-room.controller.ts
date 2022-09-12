@@ -12,7 +12,7 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { BookingRoomService } from '../services';
+import { BookingRoomService, HolidaysService } from '../services';
 import { User } from '../decorators/keycloak-user.decorator';
 import {
   ApiBearerAuth,
@@ -36,7 +36,8 @@ import { BookingRoomPaginationParams } from './booking-room-pagination.model';
 @UseInterceptors(new PathLoggerInterceptor(BookingRoomController.name))
 @ApiBearerAuth()
 export class BookingRoomController {
-  constructor(private readonly service: BookingRoomService) {}
+  constructor(private readonly service: BookingRoomService
+  ) {}
 
   @Get('search')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -862,6 +863,36 @@ export class BookingRoomController {
   ) {
     return this.service.acceptCheckoutById(user.account_id, payload.id);
   }
+
+  @Get('is-holiday')
+  @ApiOperation({
+    summary: 'Check if it is holiday',
+    description: 'Check if it is holiday by provided id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'This date is holidays',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while checking if it is holiday',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  isHoliday(
+    @Query('dateStart', new DefaultValuePipe('')) dateStart: string,
+    @Query('dateEnd', new DefaultValuePipe('')) dateEnd: string
+  ){
+    return this.service.isHoliday(dateStart, dateEnd);
+  }
+
+
 
   // @Put('reject-checkout/:id')
   // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
