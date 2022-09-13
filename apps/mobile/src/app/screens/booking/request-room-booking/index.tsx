@@ -8,9 +8,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
+import {BLACK, FPT_ORANGE_COLOR, INPUT_GRAY_COLOR, WHITE} from '@app/constants';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
 import {
+  DocumentAddIcon,
   ExclamationCircleIcon,
   SearchIcon,
   TicketIcon,
@@ -37,6 +38,7 @@ import { fetchRoomFreeByMultiSlotAndDay } from '../../../redux/features/room-boo
 import { checkOverSlot } from '../../../redux/features/room-booking/thunk/check-over-slot.thunk';
 import AlertModal from '../../../components/modals/alert-modal.component';
 import { fetchCountRequestInWeekOfUser } from '../../../redux/features/room-booking/thunk/fetch-count-request-in-week-of-user.thunk';
+import {boxShadow} from "../../../utils/box-shadow.util";
 
 const ScheduleRoomBookingLater: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -271,6 +273,37 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     );
   };
 
+  const [bookingRequests, setBookingRequests] = useState<{
+    date: string;
+    capacity: number;
+    timeStart: string;
+    timeEnd: string;
+  }[]>([{
+    timeStart: '7:00',
+    timeEnd: '8:00',
+    capacity: 100,
+    date: '1/10/2022'
+  },{
+    timeStart: '7:00',
+    timeEnd: '8:00',
+    capacity: 100,
+    date: '1/10/2022'
+  },{
+    timeStart: '7:00',
+    timeEnd: '8:00',
+    capacity: 100,
+    date: '1/10/2022'
+  },{
+    timeStart: '7:00',
+    timeEnd: '8:00',
+    capacity: 100,
+    date: '1/10/2022'
+  }]);
+
+  const handleAddBookingRequest = () => {
+
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
       <RequestRoomBookingHeader />
@@ -312,16 +345,63 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
                 </Text>
               </TouchableOpacity>
             ) : null}
-            <TouchableOpacity
-              onPress={() => handleNextStep()}
-              style={styles.searchButton}
-            >
-              <SearchIcon color={WHITE} size={deviceWidth / 14} />
-              <Text style={styles.searchButtonText}>
-                Search for booking room
-              </Text>
-            </TouchableOpacity>
+
+            <View style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              width: deviceWidth / 1.15,
+            }}>
+              <TouchableOpacity
+                onPress={() => handleAddBookingRequest()}
+                style={styles.searchButton}
+              >
+                <DocumentAddIcon color={WHITE} size={deviceWidth / 14} />
+                <Text style={styles.searchButtonText}>
+                  Add
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleNextStep()}
+                style={styles.searchButton}
+              >
+                <TicketIcon color={WHITE} size={deviceWidth / 14} />
+                <Text style={styles.searchButtonText}>
+                  Book now
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
+        </View>
+        <View style={{
+          alignSelf: 'center',
+          height: bookingRequests.length * 110,
+        }}>
+          {bookingRequests.map((request) => {
+            return (
+              <View style={{
+                height: 90,
+                width: deviceWidth / 1.1,
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 3,
+                },
+                shadowOpacity: 0.29,
+                shadowRadius: 4.65,
+                marginTop: 10,
+                elevation: 7,
+                backgroundColor: WHITE,
+                borderRadius: 8,
+              }}>
+                <Text style={{
+                  color: BLACK,
+                  fontSize: deviceWidth / 23
+                }}>{request.date}</Text>
+              </View>
+            )
+          })}
         </View>
       </ScrollView>
       <RequestRoomBookingRecentlySearch />
@@ -361,7 +441,7 @@ const styles = StyleSheet.create({
     backgroundColor: FPT_ORANGE_COLOR,
     borderRadius: 8,
     height: 50,
-    width: deviceWidth / 1.2,
+    width: deviceWidth / 2.5,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-evenly',

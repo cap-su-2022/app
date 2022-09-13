@@ -34,7 +34,9 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
   props
 ) => {
   const {classes, cx} = useStyles();
-  const deletedSlots = useAppSelector((state) => state.slot.deletedSlots);
+  //BUGG
+  //const deletedSlots = useAppSelector((state) => state.slot.deletedSlots);
+  const deletedSlots = [];
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
   const [search, setSearch] = useState<string>('');

@@ -1,6 +1,6 @@
-import {TypeOrmModule} from '@nestjs/typeorm';
-import {ConfigModule, ConfigService} from '@nestjs/config';
-import {Environment} from '@app/constants';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Environment } from '@app/constants';
 import {
   Accounts,
   AccountHist,

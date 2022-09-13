@@ -1,11 +1,12 @@
 FROM node:14
+CMD npm run build-backend
 
-WORKDIR /usr/src/app
+WORKDIR /backend
 
-COPY ./dist/apps/backend .
+COPY ./dist/ ./
 
 RUN npm i --production
 
 EXPOSE 5000
 
-CMD ["node", "main.js"]
+ENTRYPOINT ["node", "main.js"]

@@ -1,7 +1,8 @@
 version: '3'
 
 services:
-  postgres:
+
+  database:
     container_name: database
     image: postgres
     environment:
@@ -9,11 +10,41 @@ services:
       POSTGRES_PASSWORD: 12345678x@X
       PGDATA: /data/postgres
     volumes:
-      - $PWD/pg:/data/postgres
+      - ./init.sql:/docker-entrypoint-initdb.d/1-init.sql
+      - $PWD/docker/pg:/data/postgres
     ports:
       - "5432:5432"
     restart: unless-stopped
-  mysql-keycloak:
+    networks:
+      - app
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./apps/frontend
+      dockerfile: ./Dockerfile
+    ports:
+      - "80:3000"
+    volumes:
+      - ./docker/frontend:/frontend
+    networks:
+      - app
+
+  backend:
+    container_name: backend
+    build:
+      context: ./apps/backend
+      dockerfile: ./Dockerfile
+    ports:
+      - "6666:5000"
+    volumes:
+      - ./docker/backend:/backend
+    networks:
+      - app
+    depends_on:
+      - keycloak
+
+  keycloak-database:
     container_name: keycloak-database
     image: mysql:5.7
     volumes:
@@ -47,10 +78,16 @@ services:
     ports:
       - "9090:8080"
     depends_on:
-      - mysql-keycloak
+      - keycloak-database
 
 volumes:
+  backend:
+    driver: local
   mysql_data:
     driver: local
   mysql_keycloak_data:
     driver: local
+
+networks:
+  app:
+    driver: bridge

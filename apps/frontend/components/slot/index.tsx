@@ -35,8 +35,12 @@ import NoDataFound from '../no-data-found';
 // });
 
 const ManageSlot: React.FC<any> = () => {
-  const slot = useAppSelector((state) => state.slot.slot);
-  const slots = useAppSelector((state) => state.slot.slots);
+  //BUGG
+  //const slot = useAppSelector((state) => state.slot.slot);
+  //const slots = useAppSelector((state) => state.slot.slots);
+
+  const slot = {} as any;
+  const slots =[] as any;
 
   const [pagination, setPagination] = useState<PaginationParams>(
     defaultPaginationParams
@@ -246,7 +250,7 @@ const ManageSlot: React.FC<any> = () => {
             fields={infoFields}
             toggleShown={() => setInfoShown(!isInfoShown)}
             isShown={isInfoShown}
- 
+
             isShowListItems={null}
             itemsOfData={null}
             title={null}
