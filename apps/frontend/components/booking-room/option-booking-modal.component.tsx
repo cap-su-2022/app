@@ -6,7 +6,6 @@ import ChooseRoomModal from './by-room-choose-room-modal.component';
 import autoAnimate from '@formkit/auto-animate';
 import { useFormik } from 'formik';
 import { fetchRoomNames } from '../../redux/features/room/thunk/fetch-room-names.thunk';
-import { fetchSlotNames } from '../../redux/features/slot/thunk/fetch-slot-names.thunk';
 import { fetchDeviceNames } from '../../redux/features/devices/thunk/fetch-device-names.thunk';
 import { fetchReasonNames } from '../../redux/features/booking-reason/thunk/fetch-booking-reason-names.thunk';
 import { addNewRequest } from '../../redux/features/room-booking/thunk/add-new-booking';
@@ -19,6 +18,7 @@ import ByMultiChooseSlotModal from './by-multi-choose-slot-modal.component';
 import { addMultiRequest } from '../../redux/features/room-booking/thunk/add-multi-booking';
 import { io } from 'socket.io-client';
 import { UserInfoModel } from '../../models/user/user-info.model';
+import * as Yup from 'yup';
 
 interface SendBookingModalProps {
   isShown: boolean;
@@ -27,6 +27,12 @@ interface SendBookingModalProps {
 
   pagination: BookingRequestParams;
 }
+
+const validation = Yup.object().shape({
+  capacity: Yup.number().max(1000, 'Room capacity limits 1000 participants')
+    .min(1, 'Room capacity must have at least 1 participant')
+    .required('Room capacity is required!')
+});
 
 const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
   const { classes } = useStyles();
@@ -52,10 +58,6 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
     dispatch(fetchListusernames())
       .unwrap()
       .then((listUsername) => setListUsernames(listUsername));
-  }, []);
-
-  useEffect(() => {
-    dispatch(fetchSlotNames()).unwrap();
   }, []);
 
   useEffect(() => {
@@ -115,6 +117,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
     };
 
     const handleSubmit = (value) => {
+      console.log(formik.values.checkoutDate)
       dispatch(
         formik.values.checkoutDate
           ? addMultiRequest(value)
@@ -155,17 +158,18 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
     };
 
     const formik = useFormik({
-      // validationSchema: Validation,
+      validationSchema: validation,
       initialValues: {
         roomId: '',
         checkinDate: null,
         checkoutDate: null,
-        checkinSlot: '',
-        checkoutSlot: '',
+        timeStart: null,
+        timeEnd: null,
         bookingReasonId: '',
         listDevice: [],
         description: '',
         bookedFor: null,
+        capacity: 1,
       },
 
       enableReinitialize: true,
@@ -175,7 +179,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
     return (
       <div>
         <div className={classes.listButton}>
-          <div>
+          {/* <div>
             {!showChooseSlot && !showChooseMultiDay && (
               <Button
                 style={{ marginRight: 10 }}
@@ -185,7 +189,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
                 Book by room
               </Button>
             )}
-          </div>
+          </div> */}
           <div>
             {!showChooseRoom && !showChooseMultiDay && (
               <Button
@@ -193,7 +197,7 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
                 onClick={revealSlot}
                 leftIcon={<BuildingWarehouse />}
               >
-                Book by slot
+                Single Day Booking
               </Button>
             )}
           </div>

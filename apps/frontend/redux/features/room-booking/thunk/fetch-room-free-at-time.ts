@@ -6,10 +6,11 @@ import dayjs from 'dayjs';
 export const fetchRoomFreeAtTime = createAsyncThunk<
   any[],
   {
-    search: string,
-    date: string,
-    checkinSlotId: string,
-    checkoutSlotId: string,
+    search: string;
+    date: string;
+    timeStart: string;
+    timeEnd: string;
+    capacity: number;
   },
   {
     rejectValue: {
@@ -19,15 +20,19 @@ export const fetchRoomFreeAtTime = createAsyncThunk<
 >('booking-room/list-room-free-at-time', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.get('api/booking-room/list-room-free-at-time', {
-      params: {
-        search: payload.search,
-        date: dayjs(payload.date).format("YYYY-MM-DD"),
-        checkinSlotId: payload.checkinSlotId,
-        checkoutSlotId: payload.checkoutSlotId,
-      },
-    });
-    console.log("DATA NÈ: ", response.data)
+    const response = await axios.get(
+      'api/booking-room/list-room-free-at-time',
+      {
+        params: {
+          search: payload.search,
+          date: dayjs(payload.date).format('YYYY-MM-DD'),
+          checkinTime: dayjs(payload.timeStart).format("HH:mm:ss"),
+          checkoutTime: dayjs(payload.timeEnd).format("HH:mm:ss"),
+          capacity: payload.capacity
+        },
+      }
+    );
+    console.log('DATA NÈ: ', response.data);
     return response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

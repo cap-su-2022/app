@@ -85,16 +85,16 @@ export class BookingRequest{
   acceptedAt?: Date;
 
   @Column({
-    name: "checkin_slot",
+    name: "checkin_time",
     nullable: false,
   })
-  checkinSlot?: string;
+  checkinTime?: string;
 
   @Column({
-    name: "checkout_slot",
+    name: "checkout_time",
     nullable: false,
   })
-  checkoutSlot?: string;
+  checkoutTime?: string;
 
   @Column({
     name: "checkin_date",

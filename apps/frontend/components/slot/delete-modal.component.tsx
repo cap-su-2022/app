@@ -27,7 +27,9 @@ interface DeleteModalProps {
 
 const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const { classes } = useStyles();
-  const selectedSlotId = useAppSelector((state) => state.slot.slot.id);
+  //BUGG
+  //const selectedSlotId = useAppSelector((state) => state.slot.slot.id);
+  const selectedSlotId = "";
   const [isShownListRequest, setShownListRequest] = useState(false);
 
   const [listRequest, setListRequest] = useState([]);

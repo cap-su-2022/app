@@ -1,9 +1,17 @@
-import { BadRequestException, forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { NotificationRepository } from '../repositories/notification.repository';
 import { Notification } from '../models/notification.entity';
 import * as admin from 'firebase-admin';
 import { AccountsService } from './accounts.service';
+import { AccountNotificationService } from './account-notification.service';
+import dayjs = require('dayjs');
 
 @Injectable()
 export class NotificationService {
@@ -12,88 +20,26 @@ export class NotificationService {
   constructor(
     private readonly repository: NotificationRepository,
     @Inject(forwardRef(() => AccountsService))
-    private readonly accountService: AccountsService
+    private readonly accountService: AccountsService,
+    private readonly accountNotificationService: AccountNotificationService
   ) {}
-
-  async sendAcceptRequestNotification(
-    checkinDate: string,
-    checkinSlotName: string,
-    checkoutSlotName: string,
-    roomName: string,
-    receiver: string,
-    queryRunner: QueryRunner
-  ) {
-    try {
-      const slotText =
-        checkinSlotName === checkoutSlotName
-          ? `at ${checkinSlotName}`
-          : `from ${checkinSlotName} to ${checkoutSlotName}`;
-      const notification = {
-        title: 'Your booking request was accepted',
-        message: `Your reservation request on ${checkinDate}, ${slotText} for room ${roomName} has been accepted. Please present the QR code at the reception to perform the check-in step`,
-      };
-
-      const _receiver = await this.accountService.getRoleOfAccount(
-        receiver
-      );
-      if (_receiver.fcmToken) {
-        const message = {
-          data: {
-            score: '850',
-            time: '2:45',
-          },
-          notification: {
-            title: 'FLBRMS',
-            body: 'Your booking request was accepted',
-          },
-        };
-        await admin
-          .messaging()
-          .sendToDevice(_receiver.fcmToken, message)
-          .then((response) => {
-            console.log('Successfully sent message:', response);
-          })
-          .catch((error) => {
-            console.log('Error sending message:', error);
-          });
-      }
-
-      return this.repository.sendNotification(
-        notification,
-        receiver,
-        queryRunner
-      );
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(
-        e.message ?? 'Error occurred while send notification'
-      );
-    }
-  }
 
   async sendBookedForNotification(
     checkinDate: string,
-    checkinSlotName: string,
-    checkoutSlotName: string,
+    checkinTime: string,
+    checkoutTime: string,
     roomName: string,
     sender: string,
     receiver: string,
     queryRunner: QueryRunner
   ) {
     try {
-      const slotText =
-        checkinSlotName === checkoutSlotName
-          ? `at ${checkinSlotName}`
-          : `from ${checkinSlotName} to ${checkoutSlotName}`;
-
       const notification = {
         title: 'You have been booked by librarian',
-        message: `You have been helped by ${sender} to book room ${roomName} on ${checkinDate}, ${slotText}.`,
+        message: `You have been helped by ${sender} to book room ${roomName} on ${checkinDate}, from ${checkinTime} to ${checkoutTime}.`,
       };
 
-      const _receiver = await this.accountService.getRoleOfAccount(
-        receiver
-      );
+      const _receiver = await this.accountService.getRoleOfAccount(receiver);
       if (_receiver.fcmToken) {
         const message = {
           data: {
@@ -116,66 +62,13 @@ export class NotificationService {
           });
       }
 
-      return this.repository.sendNotification(
+      const notificationCreated = await this.repository.createNotification(
         notification,
-        receiver,
         queryRunner
       );
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(
-        e.message ?? 'Error occurred while send notification'
-      );
-    }
-  }
 
-  async sendRejectRequestNotification(
-    checkinDate: string,
-    checkinSlotName: string,
-    checkoutSlotName: string,
-    roomName: string,
-    reason: string,
-    receiver: string,
-    queryRunner: QueryRunner
-  ) {
-    try {
-      const slotText =
-        checkinSlotName === checkoutSlotName
-          ? `at ${checkinSlotName}`
-          : `from ${checkinSlotName} to ${checkoutSlotName}`;
-
-      const notification = {
-        title: 'Your request booking was rejected',
-        message: `Your reservation request on ${checkinDate}, ${slotText} for room ${roomName} has been rejected. Reason is ${reason}`,
-      };
-
-      const _receiver = await this.accountService.getRoleOfAccount(
-        receiver
-      );
-      if (_receiver.fcmToken) {
-        const message = {
-          data: {
-            score: '850',
-            time: '2:45',
-          },
-          notification: {
-            title: 'FLBRMS',
-            body: 'Your request booking was rejected',
-          },
-        };
-        await admin
-          .messaging()
-          .sendToDevice(_receiver.fcmToken, message)
-          .then((response) => {
-            console.log('Successfully sent message:', response);
-          })
-          .catch((error) => {
-            console.log('Error sending message:', error);
-          });
-      }
-
-      return await this.repository.sendNotification(
-        notification,
+      return await this.accountNotificationService.sendNotification(
+        notificationCreated.id,
         receiver,
         queryRunner
       );
@@ -188,27 +81,19 @@ export class NotificationService {
   }
 
   async sendCancelRequestNotification(
-    checkinDate: string,
-    checkinSlotName: string,
-    checkoutSlotName: string,
-    roomName: string,
-    reason: string,
-    receiver: string,
+    request,
+    reason,
     queryRunner: QueryRunner
   ) {
     try {
-      const slotText =
-        checkinSlotName === checkoutSlotName
-          ? `at ${checkinSlotName}`
-          : `from ${checkinSlotName} to ${checkoutSlotName}`;
-
+      const checkinDate = dayjs(request.checkinDate).format("DD/MM/YYYY")
       const notification = {
         title: 'Your request booking was cancelled',
-        message: `Your reservation request on ${checkinDate}, ${slotText} for room ${roomName} has been cancelled. Reason is ${reason}`,
+        message: `Your reservation request on ${checkinDate}, from ${request.checkinTime} to ${request.checkoutTime} for room ${request.roomName} has been cancelled. Reason is "${reason}"`,
       };
 
       const _receiver = await this.accountService.getRoleOfAccount(
-        receiver
+        request.bookedFor
       );
       if (_receiver.fcmToken) {
         const message = {
@@ -232,9 +117,14 @@ export class NotificationService {
           });
       }
 
-      return await this.repository.sendNotification(
+      const notificationCreated = await this.repository.createNotification(
         notification,
-        receiver,
+        queryRunner
+      );
+
+      return await this.accountNotificationService.sendNotification(
+        notificationCreated.id,
+        request.bookedFor,
         queryRunner
       );
     } catch (e) {
@@ -293,9 +183,8 @@ export class NotificationService {
           });
       }
 
-      return this.repository.sendNotification(
+      const notificationCreated = await this.repository.createNotification(
         notification,
-        payload.receiver,
         queryRunner
       );
     } catch (e) {
@@ -306,18 +195,10 @@ export class NotificationService {
     }
   }
 
-  getYourOwnNotifications(userId: string) {
-    try {
-      return this.repository.getYourOwnNotifications(userId);
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(
-        e.message ?? 'Error occurred while get notifications'
-      );
-    }
-  }
-
-  async getDetailNotificationId(id: string, userId: string): Promise<Notification> {
+  async getDetailNotificationId(
+    id: string,
+    userId: string
+  ): Promise<Notification> {
     try {
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
@@ -326,11 +207,11 @@ export class NotificationService {
         );
       }
       const noti = await this.repository.findById(id);
-      if(noti.receiver !== userId){
-        throw new BadRequestException(
-          `You can't read other people's notifications`
-        );
-      }
+      // if (noti.receiver !== userId) {
+      //   throw new BadRequestException(
+      //     `You can't read other people's notifications`
+      //   );
+      // }
       return noti;
     } catch (e) {
       this.logger.error(e.message);

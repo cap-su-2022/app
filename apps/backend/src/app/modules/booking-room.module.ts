@@ -4,7 +4,6 @@ import { BookingRoomService } from '../services';
 import { AccountRepository, BookingRoomRepository } from '../repositories';
 import { RoomsModule } from './rooms.module';
 import { KeycloakModule } from './keycloak.module';
-import { RoomWishlistModule } from './room-wishlist.module';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import { DevicesModule } from './devices.module';
 import { TasksService } from '../services/task.service';
@@ -18,18 +17,19 @@ import { BookingRoomDevicesRepository } from '../repositories';
 import { NotificationModule } from './notification.module';
 import { BookingRoomGateway } from '../gateway/booking-room.gateway';
 import { BookingFeedbackModule } from './booking-feedback.module';
+import {HolidaysModule} from "./holidays.module";
 
 @Module({
   imports: [
     forwardRef(() => NotificationModule),
     forwardRef(() => KeycloakModule),
-    forwardRef(() => RoomWishlistModule),
     forwardRef(() => AccountsModule),
     forwardRef(() => RoomTypeModule),
     forwardRef(() => DevicesModule),
     forwardRef(() => RoomsModule),
     forwardRef(() => SlotModule),
     forwardRef(() => BookingFeedbackModule),
+    forwardRef(() => HolidaysModule),
 
     TypeOrmExModule.forCustomRepository([
       BookingRoomRepository,

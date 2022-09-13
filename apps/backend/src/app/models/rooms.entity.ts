@@ -32,4 +32,11 @@ export class Rooms extends BaseEntityWithDisabled {
     default: RoomType.LIBRARY_ROOM,
   })
   type?: string;
+
+  @Column({
+    name: 'capacity',
+    nullable: true,
+    type: 'int'
+  })
+  capacity?: number;
 }

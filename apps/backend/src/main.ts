@@ -16,6 +16,8 @@ import {
 } from '@nestjs/platform-fastify';
 import compression from 'fastify-compress';
 import { contentParser } from 'fastify-multer';
+// workaround to have "pg" added in package.json from dist
+export * from 'pg';
 
 async function bootstrap() {
   const port = process.env.BACKEND_PORT || 5000;

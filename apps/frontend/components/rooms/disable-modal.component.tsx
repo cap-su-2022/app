@@ -87,8 +87,8 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
               <td>{row.roomName}</td>
               <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
               <td>{row.requestedBy}</td>
-              <td>{row.checkinSlot}</td>
-              <td>{row.checkoutSlot}</td>
+              <td>{row.checkinTime?.slice(0, 5)}</td>
+              <td>{row.checkoutTime?.slice(0, 5)}</td>
               <td>
                 {row.status === 'PENDING' ? (
                   <div className={classes.pendingDisplay}>{row.status}</div>
@@ -119,10 +119,10 @@ const DisableRoomModal: React.FC<DisableRoomModalProps> = (props) => {
                 Requested by
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
-                Slot start
+                Time start
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
-                Slot End
+                Time End
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
                 Status

@@ -19,7 +19,7 @@ import {
 } from 'tabler-icons-react';
 import {useAppSelector} from '../../redux/hooks';
 import dayjs from 'dayjs';
-import { UserInfoModel } from '../../models/user/user-info.model';
+import {UserInfoModel} from '../../models/user/user-info.model';
 
 interface RoomInfoModalProps {
   isShown: boolean;
@@ -30,7 +30,7 @@ interface RoomInfoModalProps {
 }
 
 const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const room = useAppSelector((state) => state.room.room);
   const ModalHeaderTitle: React.FC = () => {
     return <Text className={classes.modalHeaderTitle}>Room Information</Text>;
@@ -78,6 +78,18 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
               />
             </InputWrapper>
           </div>
+          <InputWrapper
+            label="Room Capacity"
+            style={{marginBottom: 20}}
+          >
+            <TextInput
+              icon={<ClipboardText/>}
+              id="room-capacity"
+              name="capacity"
+              radius="md"
+              value={room.capacity}
+            />
+          </InputWrapper>
           <InputWrapper label="Room description" style={{marginBottom: 20}}>
             <Textarea
               icon={<FileDescription/>}
@@ -109,7 +121,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
                 icon={<User/>}
                 radius="md"
                 readOnly
-                id="room-createdby"
+                id="room-created-by"
                 value={room.createdBy}
               />
             </InputWrapper>
@@ -123,7 +135,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
           >
             <InputWrapper label="Updated at">
               <TextInput
-                id="room-updatedat"
+                id="room-updated-at"
                 icon={<CalendarStats/>}
                 radius="md"
                 readOnly
@@ -132,7 +144,7 @@ const RoomInfoModal: React.FC<RoomInfoModalProps> = (props) => {
             </InputWrapper>
             <InputWrapper label="Updated by">
               <TextInput
-                id="room-updatedby"
+                id="room-updated-by"
                 icon={<User/>}
                 radius="md"
                 readOnly

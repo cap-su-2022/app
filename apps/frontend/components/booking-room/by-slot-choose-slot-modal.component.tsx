@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Select } from '@mantine/core';
-import { ChevronsRight, X } from 'tabler-icons-react';
-import { useAppSelector, useAppDispatch } from '../../redux/hooks';
+import { Button, InputWrapper, Select, TextInput } from '@mantine/core';
+import { ChevronsRight, ClipboardText, X } from 'tabler-icons-react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { FormikProps } from 'formik';
 import { showNotification } from '@mantine/notifications';
-import { DatePicker } from '@mantine/dates';
+import { DatePicker, TimeInput } from '@mantine/dates';
 import dayjs from 'dayjs';
 import BySlotChooseRoomModal from './by-slot-choose-room-modal.component';
 import ChooseDeviceModal from './choose-device-modal.component';
@@ -36,154 +36,183 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const [showChooseRoom, setShowChooseRoom] = useState(false);
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(true);
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
-  const [timeStart, setTimeStart] = useState('');
-  const [timeEnd, setTimeEnd] = useState('');
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
-  const [slotNames, setSlotNames] = useState<any[]>();
-  const [slotInName, setSlotInName] = useState('');
-  const [slotOutName, setSlotOutName] = useState('');
-  const slotInfors = useAppSelector((state) => state.slot.slotInfor);
 
+  const holidays = useAppSelector((state) => state.holiday.holidaysMini);
   const dispatch = useAppDispatch();
+
+  const isHoliday = (date) => {
+    const dateFormat = dayjs(date).format('YYYY-MM-DD');
+    for (let i = 0; i < holidays.length; i++) {
+      if (
+        holidays[i].dateStart <= dateFormat &&
+        holidays[i].dateEnd >= dateFormat
+      ) {
+        return true;
+      }
+    }
+  };
+
+  useEffect(() => {
+    const currenTime = new Date();
+    const currenTimeTimestamp = new Date().setHours(0, 0, 0, 0);
+    const checkinDate = props.formik.values.checkinDate?.setHours(0, 0, 0, 0);
+    const timeStart = props.formik.values.timeStart;
+    const timeEnd = props.formik.values.timeEnd;
+    if (
+      checkinDate === currenTimeTimestamp &&
+      (timeStart < currenTime || timeEnd < currenTime)
+    ) {
+      showNotification({
+        id: 'time-invalid',
+        color: 'red',
+        title: 'The time you selected is over',
+        message: 'Please select other time',
+        icon: <X />,
+        autoClose: 3000,
+      });
+    }
+  }, [props.formik.values]);
 
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
-  useEffect(() => {
-    const result = slotInfors?.map((slot) => {
-      return { value: slot.id, label: slot.name };
-    });
-    setSlotNames(result);
-    console.log('RESULT: ', result);
-  }, []);
+  // useEffect(() => {
+  //   if (props.formik.values.checkinSlot) {
+  //     const slotIn = slotInfors.find(
+  //       (slot) => slot.id === props.formik.values.checkinSlot
+  //     );
 
-  useEffect(() => {
-    if (props.formik.values.checkinSlot && props.formik.values.checkoutSlot) {
-      const slotIn = slotInfors.find(
-        (slot) => slot.id === props.formik.values.checkinSlot
-      );
-      const slotOut = slotInfors.find(
-        (slot) => slot.id === props.formik.values.checkoutSlot
-      );
-      if (slotIn.slotNum > slotOut.slotNum) {
-        setSlotInName(slotOut.name);
-        setSlotOutName(slotIn.name);
-        const tmp = props.formik.values.checkinSlot;
-        props.formik.setFieldValue(
-          'checkinSlot',
-          props.formik.values.checkoutSlot
-        );
-        props.formik.setFieldValue('checkoutSlot', tmp);
-      } else {
-        setSlotOutName(slotOut.name);
-        setSlotInName(slotIn.name);
-      }
-    }
-  }, [props.formik.values.checkinSlot, props.formik.values.checkoutSlot]);
+  //     setTimeStart(slotIn.timeStart);
+  //   } else {
+  //     setTimeStart('');
+  //   }
+  // }, [props.formik.values.checkinSlot]);
 
-  useEffect(() => {
-    if (props.formik.values.checkinSlot) {
-      const slotIn = slotInfors.find(
-        (slot) => slot.id === props.formik.values.checkinSlot
-      );
+  // useEffect(() => {
+  //   if (props.formik.values.checkoutSlot) {
+  //     const slotOut = slotInfors.find(
+  //       (slot) => slot.id === props.formik.values.checkoutSlot
+  //     );
 
-      setTimeStart(slotIn.timeStart);
-    } else {
-      setTimeStart('');
-    }
-  }, [props.formik.values.checkinSlot]);
+  //     setTimeEnd(slotOut.timeEnd);
+  //   } else {
+  //     setTimeEnd('');
+  //   }
+  // }, [props.formik.values.checkoutSlot]);
 
-  useEffect(() => {
-    if (props.formik.values.checkoutSlot) {
-      const slotOut = slotInfors.find(
-        (slot) => slot.id === props.formik.values.checkoutSlot
-      );
+  // useEffect(() => {
+  //   props.formik.values.checkinSlot = null;
+  //   props.formik.values.checkoutSlot = null;
+  //   if (props.formik.values.checkinDate) {
+  //     const curr = new Date();
+  //     const currTime = dayjs(curr).format('HH:mm:ss');
+  //     const choosedDay = new Date(props.formik.values.checkinDate).getDate();
 
-      setTimeEnd(slotOut.timeEnd);
-    } else {
-      setTimeEnd('');
-    }
-  }, [props.formik.values.checkoutSlot]);
+  //     const result = slotInfors?.map((slot) => {
+  //       let isFree = true;
 
-  useEffect(() => {
-    props.formik.values.checkinSlot = null;
-    props.formik.values.checkoutSlot = null;
-    if (props.formik.values.checkinDate) {
-      const curr = new Date();
-      const currTime = dayjs(curr).format('HH:mm:ss');
-      const choosedDay = new Date(props.formik.values.checkinDate).getDate();
+  //       if (choosedDay === curr.getDate() && currTime > slot.timeStart) {
+  //         isFree = false;
+  //       }
 
-      const result = slotInfors?.map((slot) => {
-        let isFree = true;
-
-        if (choosedDay === curr.getDate() && currTime > slot.timeStart) {
-          isFree = false;
-        }
-
-        if (isFree) {
-          return {
-            value: slot.id,
-            label: slot.name,
-            disabled: false,
-          };
-        } else {
-          return {
-            value: slot.id,
-            label: slot.name,
-            disabled: true,
-          };
-        }
-      });
-      setSlotNames(result);
-    } else {
-      const result = slotInfors?.map((slot) => {
-        return { value: slot.id, label: slot.name, disabled: true };
-      });
-      setSlotNames(result);
-    }
-  }, [props.formik.values.checkinDate]);
+  //       if (isFree) {
+  //         return {
+  //           value: slot.id,
+  //           label: slot.name,
+  //           disabled: false,
+  //         };
+  //       } else {
+  //         return {
+  //           value: slot.id,
+  //           label: slot.name,
+  //           disabled: true,
+  //         };
+  //       }
+  //     });
+  //     setSlotNames(result);
+  //   } else {
+  //     const result = slotInfors?.map((slot) => {
+  //       return { value: slot.id, label: slot.name, disabled: true };
+  //     });
+  //     setSlotNames(result);
+  //   }
+  // }, [props.formik.values.checkinDate]);
 
   const handleNextChooseRoom = () => {
     if (
       props.formik.values.checkinDate === null ||
-      props.formik.values.checkinSlot === null ||
-      props.formik.values.checkoutSlot === null
+      props.formik.values.timeStart === null ||
+      props.formik.values.timeEnd === null
     ) {
       showNotification({
         id: 'miss-data',
         color: 'red',
         title: 'Miss some filed',
-        message: 'Please choose day, slot start, slot end before to next step',
+        message: 'Please choose day, time start, time end before to next step',
         icon: <X />,
         autoClose: 3000,
       });
     } else {
-      dispatch(
-        IsUserHaveBookedSameSlot({
-          checkinDate: props.formik.values.checkinDate,
-          userId: props.formik.values.bookedFor || userInfo.id,
-          checkinSlot: props.formik.values.checkinSlot,
-          checkoutSlot: props.formik.values.checkoutSlot,
-        })
-      )
-      .unwrap()
-      .then((response) => {
-        if (!response) {
-          setShowChooseRoom(true);
-          setShowChooseSlot(false);
-        } else {
-          showNotification({
-            id: 'miss-data',
-            color: 'red',
-            title: `${props.formik.values.bookedFor? 'User' : 'You'} have orther requets at same time`,
-            message: `${props.formik.values.bookedFor? 'User' : 'You'} already have request booked for ${response} at same slot. Please choose another time`,
-            icon: <X />,
-            autoClose: 3000,
+      const currenTime = new Date();
+      const currenTimeTimestamp = new Date().setHours(0, 0, 0, 0);
+      const checkinDate = props.formik.values.checkinDate.setHours(0, 0, 0, 0);
+      const timeStart = props.formik.values.timeStart;
+      const timeEnd = props.formik.values.timeEnd;
+      const _15minute = 15 * 60 * 1000;
+      if (
+        checkinDate === currenTimeTimestamp &&
+        (timeStart < currenTime || timeEnd < currenTime)
+      ) {
+        showNotification({
+          id: 'time-invalid',
+          color: 'red',
+          title: 'The time you selected is over',
+          message: `Please choose a time interval greater than ${currenTime.getHours()}:${currenTime.getMinutes()}`,
+          icon: <X />,
+          autoClose: 3000,
+        });
+      } else if (timeEnd.getTime() < timeStart.getTime() + _15minute) {
+        showNotification({
+          id: 'time-invalid',
+          color: 'red',
+          title: 'The time interval you selected is too short',
+          message: `For each request booking, a booking period of more than 15 minutes is required`,
+          icon: <X />,
+          autoClose: 3000,
+        });
+      } else {
+        dispatch(
+          IsUserHaveBookedSameSlot({
+            checkinDate: props.formik.values.checkinDate,
+            userId: props.formik.values.bookedFor || userInfo.id,
+            timeStart: props.formik.values.timeStart,
+            timeEnd: props.formik.values.timeEnd,
+          })
+        )
+          .unwrap()
+          .then((response) => {
+            if (!response) {
+              setShowChooseRoom(true);
+              setShowChooseSlot(false);
+            } else {
+              showNotification({
+                id: 'miss-data',
+                color: 'red',
+                title: `${
+                  props.formik.values.bookedFor ? 'User' : 'You'
+                } have orther requets at same time`,
+                message: `${
+                  props.formik.values.bookedFor ? 'User' : 'You'
+                } already have request booked for ${response} at same time. Please choose another time`,
+                icon: <X />,
+                autoClose: 3000,
+              });
+            }
           });
-        }
-      });
+      }
     }
   };
 
@@ -217,7 +246,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       <div
         style={{
           display: 'flex',
-          alignItems: 'flex-start',
+          alignItems: 'flex-end',
           justifyContent: 'center',
           margin: '20px 0',
         }}
@@ -232,71 +261,80 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           inputFormat="DD/MM/YYYY"
           value={props.formik.values.checkinDate}
           minDate={dayjs(new Date()).toDate()}
-          maxDate={userInfo.role === 'Staff' ? dayjs(new Date()).startOf('weeks').add(21, 'days').toDate() : null}
+          maxDate={
+            userInfo.role === 'Staff'
+              ? dayjs(new Date()).startOf('weeks').add(21, 'days').toDate()
+              : null
+          }
           // onChange={(date) => setbookDate(date)}
           onChange={(date) => {
             props.formik.setFieldValue('checkinDate', date);
           }}
+          excludeDate={(date) => isHoliday(date)}
         />
-        <div style={{ height: 90 }}>
-          <Select
-            id="checkinSlot"
-            style={{ width: '140px' }}
-            label="From slot"
-            required
-            transition="pop-top-left"
-            transitionDuration={80}
-            transitionTimingFunction="ease"
-            dropdownPosition="top"
-            radius="md"
-            data={slotNames || []}
-            onChange={props.formik.handleChange('checkinSlot')}
-            value={props.formik.values.checkinSlot}
+        <InputWrapper required label="Time start">
+          <TimeInput
+            icon={<ClipboardText />}
+            id="timeStart"
+            name="timeStart"
+            // error={formik.errors.timeEnd}
+            onChange={(e) => props.formik.setFieldValue('timeStart', e)}
+            style={{ width: '8rem' }}
+            // radius="md"
+            value={props.formik.values.timeStart}
           />
-          <div style={{ paddingLeft: 10, fontSize: 15 }}>
-            {timeStart.slice(0, 5)}
-          </div>
-        </div>
+        </InputWrapper>
         <ChevronsRight
           size={28}
           strokeWidth={2}
           color={'black'}
-          style={{ margin: 'auto' }}
+          style={{ margin: '0 auto' }}
         />
-
-        <div style={{ height: 90 }}>
-          <Select
-            id="checkoutSlot"
-            style={{ width: '140px' }}
-            label="To slot"
-            required
-            transition="pop-top-left"
-            transitionDuration={80}
-            transitionTimingFunction="ease"
-            dropdownPosition="top"
-            radius="md"
-            data={slotNames || []}
-            onChange={props.formik.handleChange('checkoutSlot')}
-            value={props.formik.values.checkoutSlot}
+        <InputWrapper required label="Time end">
+          <TimeInput
+            icon={<ClipboardText />}
+            id="timeEnd"
+            name="timeEnd"
+            // error={formik.errors.timeEnd}
+            onChange={(e) => props.formik.setFieldValue('timeEnd', e)}
+            style={{ width: '8rem' }}
+            // radius="md"
+            value={props.formik.values.timeEnd}
           />
-          <div style={{ paddingLeft: 10, fontSize: 15 }}>
-            {timeEnd.slice(0, 5)}
-          </div>
-        </div>
+        </InputWrapper>
       </div>
-      {userInfo.role !== 'Staff' ? (
-        <Select
-          id="bookedFor"
-          name="bookedFor"
-          label="Who use room"
-          placeholder="If not choose, the room's user auto is you"
-          data={props.listUsernames}
-          value={props.formik.values.bookedFor || undefined}
-          error={props.formik.errors.bookedFor}
-          onChange={props.formik.handleChange('bookedFor')}
-          searchable={true}
-        />
-      ) : null}
+      <div style={{ display: 'flex', gap: 20 }}>
+        <InputWrapper
+          required
+          label="Number of participants"
+          style={{ width: '200px' }}
+        >
+          <TextInput
+            icon={<ClipboardText />}
+            id="capacity"
+            name="capacity"
+            error={props.formik.errors.capacity}
+            onChange={props.formik.handleChange}
+            // className={classes.textInput}
+            radius="md"
+            value={props.formik.values.capacity}
+          />
+        </InputWrapper>
+        {userInfo.role !== 'Staff' ? (
+          <Select
+            id="bookedFor"
+            name="bookedFor"
+            label="Who use room"
+            placeholder="If not choose, the room's user auto is you"
+            data={props.listUsernames}
+            value={props.formik.values.bookedFor || undefined}
+            error={props.formik.errors.bookedFor}
+            onChange={props.formik.handleChange('bookedFor')}
+            searchable={true}
+            style={{ flex: 1 }}
+          />
+        ) : null}
+      </div>
       <div style={{ display: 'flex', justifyContent: 'flex-end', margin: 10 }}>
         <Button onClick={() => handleNextChooseRoom()} color="green">
           Next
@@ -314,8 +352,6 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           handleSubmit={props.handleSubmit}
           handleBackChooseSlot={handleBackChooseSlot}
           handleNextChooseDevice={handleNextChooseDevice}
-          slotInName={slotInName}
-          slotOutName={slotOutName}
         />
       )}
       {showChooseDevice && (

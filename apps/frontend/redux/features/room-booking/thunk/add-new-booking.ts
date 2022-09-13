@@ -7,8 +7,8 @@ import { RoomBooking } from '../../../../models/room-booking.model';
 interface AddRequestPayload {
   roomId: string;
   checkinDate: string;
-  checkinSlot: string;
-  checkoutSlot: string;
+  timeStart: string;
+  timeEnd: string;
   description: string;
   bookingReasonId: string;
   bookedFor: string;
@@ -32,8 +32,8 @@ export const addNewRequest = createAsyncThunk<
     const response = await axios.post(`/api/booking-room/new-request`, {
       roomId: payload.roomId,
       checkinDate: dayjs(payload.checkinDate).format('YYYY-MM-DD'),
-      checkinSlot: payload.checkinSlot,
-      checkoutSlot: payload.checkoutSlot,
+      checkinTime: dayjs(payload.timeStart).format('HH:mm:ss'),
+      checkoutTime: dayjs(payload.timeEnd).format('HH:mm:ss'),
       description: payload.description,
       bookingReasonId: payload.bookingReasonId,
       bookedFor: payload.bookedFor,

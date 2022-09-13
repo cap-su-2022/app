@@ -1,11 +1,11 @@
 import * as admin from "firebase-admin";
 import {FirebaseSettingsModel} from "@app/models";
-
-const firebaseServiceAccountFile = './fptu-library-booking-firebase-adminsdk-gbxgk-75d2eb543f.json';
+import path = require("path");
+const firebaseServiceAccountFile = 'assets/fptu-library-booking-firebase-adminsdk-gbxgk-75d2eb543f.json';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs');
-const firebaseSettings = JSON.parse(fs.readFileSync(firebaseServiceAccountFile, 'utf-8')) as FirebaseSettingsModel;
+const firebaseSettings = JSON.parse(fs.readFileSync(path.join(__dirname, firebaseServiceAccountFile), 'utf-8')) as FirebaseSettingsModel;
 
 export const initializeFirebaseApp = () => {
   admin.initializeApp({

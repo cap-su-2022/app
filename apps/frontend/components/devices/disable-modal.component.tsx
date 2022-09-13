@@ -102,8 +102,8 @@ const DisableDeviceModal: React.FC<DisableDeviceModalProps> = (props) => {
               <td>{row.roomName}</td>
               <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
               <td>{row.requestedBy}</td>
-              <td>{row.checkinSlot}</td>
-              <td>{row.checkoutSlot}</td>
+              <td>{row.checkinTime}</td>
+              <td>{row.checkoutTime}</td>
               <td>
                 <RenderStatus status={row.status} />
               </td>
@@ -130,10 +130,10 @@ const DisableDeviceModal: React.FC<DisableDeviceModalProps> = (props) => {
                 Requested by
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
-                Slot start
+                Time start
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
-                Slot End
+                Time end
               </Th>
               <Th sorted={null} reversed={null} onSort={null}>
                 Status

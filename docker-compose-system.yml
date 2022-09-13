@@ -1,8 +1,6 @@
 version: '3'
 
 services:
-  frontend:
-
   mysql:
     container_name: database
     image: mysql:5.7

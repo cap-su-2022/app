@@ -8,6 +8,15 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
+        "maxWorkers": 4,
+        "memoryLimits": 3072,
+        "optimization": true,
+        "progress": true,
+        "sourceMap": false,
+        "statsJson": true,
+        "verbose": true,
+        "externalDependencies": "all",
+        "generatePackageJson": true,
         "root": "apps/frontend",
         "outputPath": "apps/frontend/build"
       },

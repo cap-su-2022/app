@@ -43,7 +43,7 @@ export const App = () => {
   ) : (
     <>
       <StatusBar barStyle="dark-content" />
-      <NotificationModal navigation={navigationRef?.current}/>
+      {/* <NotificationModal navigation={navigationRef?.current}/>*/}
       <NavigationContainer ref={navigationRef}>
         <StackNavigator
           initialRouteName={'LOGIN_SCREEN'}

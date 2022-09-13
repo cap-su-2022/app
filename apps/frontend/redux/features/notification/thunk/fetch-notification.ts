@@ -13,7 +13,7 @@ void,
 >('notifications/own-notifications', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.get('api/notifications/own-notifications');
+    const response = await axios.get('api/account-notifications/own-notifications');
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

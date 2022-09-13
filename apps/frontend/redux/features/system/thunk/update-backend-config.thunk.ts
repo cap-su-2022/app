@@ -8,6 +8,7 @@ export const updateBackendConfig = createAsyncThunk<
     maxBookingDateRange: number;
     maxDeviceBorrowQuantity: number;
     maxBookingRequestPerWeek: number;
+    maxRoomCapacity: number;
   },
   any
 >('system/update-backend-config', async (payload, thunkAPI) => {
@@ -17,6 +18,7 @@ export const updateBackendConfig = createAsyncThunk<
       maxBookingDateRange: payload.maxBookingDateRange,
       maxDeviceBorrowQuantity: payload.maxDeviceBorrowQuantity,
       maxBookingRequestPerWeek: payload.maxBookingRequestPerWeek,
+      maxRoomCapacity: payload.maxRoomCapacity
     });
     return await response.data;
   } catch (e) {

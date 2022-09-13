@@ -28,7 +28,8 @@ interface ChooseSlotModalProps {
 const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const { classes } = useStyles();
   const [slotNames, setSlotName] = useState<any[]>();
-  const slotInfors = useAppSelector((state) => state.slot.slotInfor);
+  //BUGG
+  const slotInfors = [];
   const dispatch = useAppDispatch();
   const [dayShowShecule, setDayShowShecule] = useState(
     new Date(dayjs(new Date()).format('YYYY-MM-DD'))
@@ -61,8 +62,8 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
         IsUserHaveBookedSameSlot({
           checkinDate: props.formik.values.checkinDate,
           userId: props.formik.values.bookedFor || userInfo.id,
-          checkinSlot: props.formik.values.checkinSlot,
-          checkoutSlot: props.formik.values.checkoutSlot,
+          timeStart: props.formik.values.checkinSlot,
+          timeEnd: props.formik.values.checkoutSlot,
         })
       )
         .unwrap()
@@ -74,7 +75,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
               id: 'miss-data',
               color: 'red',
               title: 'You have orther requets at same time',
-              message: `You already have request booked for ${response} at same slot. Please choose another time`,
+              message: `You already have request booked for ${response} at same time. Please choose another time`,
               icon: <X />,
               autoClose: 3000,
             });
