@@ -489,7 +489,7 @@ export class BookingRoomController {
     );
   }
 
-  @Get(':id')
+  @Get('find/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Retrieving booking room detail',
