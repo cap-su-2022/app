@@ -1,13 +1,13 @@
-import {BadRequestException, Injectable, Logger} from "@nestjs/common";
-import {DataSource, Repository} from "typeorm";
-import {KeycloakUserInstance} from "../dto/keycloak.user";
-import {Holidays, Rooms} from "../models";
-import {HolidayAddRequestPayload} from "../payload/request/holidays-add.request.payload";
-import {HolidaysRepository} from "../repositories/holidays.repository";
-import {PaginationParams} from "../controllers/pagination.model";
-import {RoomAddRequestPayload} from "../payload/request/room-add.request.payload";
-import {getConfigFileLoaded} from "../controllers/global-config.controller";
-import dayjs = require("dayjs");
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { Holidays, Rooms } from '../models';
+import { HolidayAddRequestPayload } from '../payload/request/holidays-add.request.payload';
+import { HolidaysRepository } from '../repositories/holidays.repository';
+import { PaginationParams } from '../controllers/pagination.model';
+import { RoomAddRequestPayload } from '../payload/request/room-add.request.payload';
+import { getConfigFileLoaded } from '../controllers/global-config.controller';
+import dayjs = require('dayjs');
 
 @Injectable()
 export class HolidaysService {
@@ -15,10 +15,8 @@ export class HolidaysService {
 
   constructor(
     private readonly dataSource: DataSource,
-    private readonly repository: HolidaysRepository,
-  ) {
-
-  }
+    private readonly repository: HolidaysRepository
+  ) {}
 
   async getAll(request: PaginationParams) {
     try {
@@ -34,13 +32,13 @@ export class HolidaysService {
       this.logger.error(e);
       throw new BadRequestException(
         e.message || 'One or more parameters is invalid'
-      )
+      );
     }
   }
 
   async getHolidayMini() {
     try {
-      const today = dayjs(new Date()).format("YYYY-MM-DD")
+      const today = dayjs(new Date()).format('YYYY-MM-DD');
       return await this.repository.getHolidayMini(today);
     } catch (e) {
       this.logger.error(e.message);
@@ -69,32 +67,35 @@ export class HolidaysService {
     }
   }
 
-
   async add(
     user: KeycloakUserInstance,
     holiday: HolidayAddRequestPayload
   ): Promise<Holidays> {
-
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-
       if (holiday.dateStart > holiday.dateEnd) {
-        throw new BadRequestException('Date Start must be less than or equal to Date End');
+        throw new BadRequestException(
+          'Date Start must be less than or equal to Date End'
+        );
       }
 
-      const holidayDeletedSameName = await this.repository.getHolidayDeletedByName(holiday.name);
+      const holidayDeletedSameName =
+        await this.repository.getHolidayDeletedByName(holiday.name);
       let holidayAdded;
       if (holidayDeletedSameName) {
-        holidayAdded = await this.repository.restoreDeletedHolidayIsDuplicateName(
-          holiday,
-          user.account_id,
-          holidayDeletedSameName.id,
-          queryRunner
-        )
+        holidayAdded =
+          await this.repository.restoreDeletedHolidayIsDuplicateName(
+            holiday,
+            user.account_id,
+            holidayDeletedSameName.id,
+            queryRunner
+          );
       } else {
-        const isExisted = await this.repository.isExistedByNameActive(holiday.name);
+        const isExisted = await this.repository.isExistedByNameActive(
+          holiday.name
+        );
         if (isExisted) {
           throw new BadRequestException(
             'There is already existed holiday with this name. Try with another name.'
@@ -103,6 +104,7 @@ export class HolidaysService {
         holidayAdded = await this.repository.createNewHoliday(
           user.account_id,
           holiday,
+          queryRunner
         );
       }
       await queryRunner.commitTransaction();
@@ -118,7 +120,43 @@ export class HolidaysService {
     }
   }
 
-  async updateById(accountId: string, id: string, body: HolidayAddRequestPayload) {
+  async import(user: KeycloakUserInstance, holiday: any[]) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      console.log("UA LA SAO", holiday)
+      console.log("UA LA SAO", holiday.length)
+      for (let i = 1; i < holiday.length; i++) {
+        await this.repository.createNewHoliday(
+          user.account_id,
+          {
+            name: holiday[i][0],
+            dateStart: dayjs(holiday[i][1]).format('YYYY-MM-DD'),
+            dateEnd: dayjs(holiday[i][2]).format('YYYY-MM-DD'),
+            description: holiday[i][3],
+          },
+          queryRunner
+        );
+      }
+      await queryRunner.commitTransaction();
+      return null;
+    } catch (e) {
+      this.logger.error(e.message);
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while adding this holiday'
+      );
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async updateById(
+    accountId: string,
+    id: string,
+    body: HolidayAddRequestPayload
+  ) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -135,7 +173,9 @@ export class HolidaysService {
         throw new BadRequestException('This holiday is already deleted');
       }
       if (body.dateStart > body.dateEnd) {
-        throw new BadRequestException('Date Start must be less than or equal to Date End');
+        throw new BadRequestException(
+          'Date Start must be less than or equal to Date End'
+        );
       }
       const isExistedByName = await this.repository.isExistedByNameActiveUpdate(
         body.name,
@@ -146,8 +186,8 @@ export class HolidaysService {
           'There is already existed holiday with the this name. Try with another name.'
         );
       }
-      console.log(body.dateStart+ " BE: dateStart")
-      console.log(body.dateEnd+ " BE: dateEnd")
+      console.log(body.dateStart + ' BE: dateStart');
+      console.log(body.dateEnd + ' BE: dateEnd');
       const holidayUpdated = await this.repository.updateById(
         accountId,
         id,
@@ -184,7 +224,11 @@ export class HolidaysService {
       if (isDeleted) {
         throw new BadRequestException('This holiday is already deleted');
       }
-      const holiday = await this.repository.deleteById(accountId, id, queryRunner);
+      const holiday = await this.repository.deleteById(
+        accountId,
+        id,
+        queryRunner
+      );
       await queryRunner.commitTransaction();
 
       return holiday;
@@ -241,16 +285,14 @@ export class HolidaysService {
       throw new BadRequestException(e.message);
     }
   }
-  async checkIfItIsHoliday(dateStartString: string, dateEndString: string){
+  async isHoliday(dateStartString: string, dateEndString: string) {
     try {
       const dateStart = dayjs(dateStartString).format('YYYY-MM-DD');
       const dateEnd = dayjs(dateEndString).format('YYYY-MM-DD');
-      return this.repository.isHoliday(dateStart, dateEnd);
+      return await this.repository.isHoliday(dateStart, dateEnd);
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);
     }
   }
-
-
 }

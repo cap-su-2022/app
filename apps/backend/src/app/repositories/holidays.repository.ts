@@ -1,28 +1,30 @@
-import {QueryRunner, Repository} from "typeorm";
-import {Accounts, Holidays, Rooms, RoomType} from '../models'
-import {CustomRepository} from "../decorators/typeorm-ex.decorator";
-import {HolidayAddRequestPayload} from "../payload/request/holidays-add.request.payload";
-import {RoomsPaginationParams} from "../controllers/rooms-pagination.model";
-import {paginateRaw} from "nestjs-typeorm-paginate";
-import {PaginationParams} from "../controllers/pagination.model";
-import {RoomAddRequestPayload} from "../payload/request/room-add.request.payload";
+import { QueryRunner, Repository } from 'typeorm';
+import { Accounts, Holidays, Rooms, RoomType } from '../models';
+import { CustomRepository } from '../decorators/typeorm-ex.decorator';
+import { HolidayAddRequestPayload } from '../payload/request/holidays-add.request.payload';
+import { RoomsPaginationParams } from '../controllers/rooms-pagination.model';
+import { paginateRaw } from 'nestjs-typeorm-paginate';
+import { PaginationParams } from '../controllers/pagination.model';
+import { RoomAddRequestPayload } from '../payload/request/room-add.request.payload';
 
 @CustomRepository(Holidays)
 export class HolidaysRepository extends Repository<Holidays> {
-
   getHolidayDeletedByName(name: string) {
     return this.createQueryBuilder('holidays')
       .select('holidays.id', 'id')
       .where('holidays.deleted_at IS NOT NULL')
-      .andWhere('holidays.name = :name', {name})
+      .andWhere('holidays.name = :name', { name })
       .getRawOne();
   }
 
   async createNewHoliday(
     accountId: string,
     payload: HolidayAddRequestPayload,
+    queryRunner: QueryRunner
   ): Promise<Holidays> {
-    return this.save<Holidays>(
+    console.log(payload)
+    return queryRunner.manager.save(
+      Holidays,
       {
         name: payload.name.trim(),
         description: payload.description,
@@ -42,7 +44,7 @@ export class HolidaysRepository extends Repository<Holidays> {
       .select('holidays.date_start', 'startDate')
       .addSelect('holidays.date_end', 'endDate')
       .where('holidays.deleted_at IS NULL')
-      .andWhere('holidays.date_end > :today', {today})
+      .andWhere('holidays.date_end > :today', { today })
       .orderBy('holidays.date_start', 'ASC')
       .getRawMany<Holidays>();
   }
@@ -50,7 +52,7 @@ export class HolidaysRepository extends Repository<Holidays> {
   async isExistedByNameActive(name: string): Promise<boolean> {
     return this.createQueryBuilder('holidays')
       .select('COUNT(holidays.name)')
-      .where('holidays.name = :name', {name})
+      .where('holidays.name = :name', { name })
       .andWhere('holidays.deleted_at IS NULL')
       .getRawOne()
       .then((data) => data['count'] > 0);
@@ -59,7 +61,7 @@ export class HolidaysRepository extends Repository<Holidays> {
   async existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('holidays')
       .select('COUNT(holidays.name)')
-      .where('holidays.id = :id', {id})
+      .where('holidays.id = :id', { id })
       .getRawOne()
       .then((data) => data['count'] > 0);
   }
@@ -67,7 +69,7 @@ export class HolidaysRepository extends Repository<Holidays> {
   async checkIfHolidayIsDeletedById(id: string): Promise<boolean> {
     return this.createQueryBuilder('holidays')
       .select('holidays.deleted_at')
-      .where('holidays.id = :id', {id: id})
+      .where('holidays.id = :id', { id: id })
       .getRawOne<boolean>()
       .then((data) => (data ? data['deleted_at'] : true));
   }
@@ -109,7 +111,7 @@ export class HolidaysRepository extends Repository<Holidays> {
   async restoreDeletedHolidayById(
     id: string,
     accountId: string,
-    queryRunner: QueryRunner,
+    queryRunner: QueryRunner
   ) {
     const oldData = await this.findOneOrFail({
       where: {
@@ -122,15 +124,18 @@ export class HolidaysRepository extends Repository<Holidays> {
       deletedBy: null,
       updatedAt: new Date(),
       updatedBy: accountId,
-    })
+    });
   }
 
-  async isExistedByNameActiveUpdate(name: string, id: string): Promise<boolean> {
+  async isExistedByNameActiveUpdate(
+    name: string,
+    id: string
+  ): Promise<boolean> {
     return this.createQueryBuilder('holidays')
       .select('COUNT(holidays.name)')
-      .where('holidays.name = :name', {name})
+      .where('holidays.name = :name', { name })
       .andWhere('holidays.deleted_at IS NULL')
-      .andWhere('holidays.id != :id', {id})
+      .andWhere('holidays.id != :id', { id })
       .getRawOne()
       .then((data) => data['count'] > 0);
   }
@@ -146,7 +151,7 @@ export class HolidaysRepository extends Repository<Holidays> {
         id: holidayId,
       },
     });
-    console.log("Repooooooooooo: "+ payload.dateStart)
+    console.log('Repooooooooooo: ' + payload.dateStart);
     return queryRunner.manager.save(
       Holidays,
       {
@@ -168,12 +173,15 @@ export class HolidaysRepository extends Repository<Holidays> {
   isHoliday(dateStart: string, dateEnd: string): Promise<boolean> {
     return this.createQueryBuilder('holidays')
       .select('COUNT(1)', 'count')
-      .where('holidays.date_start >= :dateStart ' +
-        'OR holidays.date_end <= :dateEnd', {dateStart: dateStart, dateEnd: dateEnd})
+      .where(
+        '((holidays.date_start <= :dateStart AND holidays.date_end >= :dateStart) ' +
+          'OR (holidays.date_start <= :dateEnd AND holidays.date_end >= :dateEnd) ' +
+          'OR (holidays.date_start > :dateStart AND holidays.date_start < :dateEnd))',
+        { dateStart, dateEnd }
+      )
       .getRawOne<{ count: number }>()
       .then((data) => data?.count > 0);
   }
-
 
   searchHoliday(payload: PaginationParams) {
     const query = this.createQueryBuilder('holidays')
@@ -215,7 +223,7 @@ export class HolidaysRepository extends Repository<Holidays> {
         .leftJoin(Accounts, 'aa', 'holidays.updated_by = aa.id')
         // .where('rooms.disabled_at IS NULL')
         .andWhere('holidays.deleted_at IS NULL')
-        .andWhere('holidays.id = :holidayId', {holidayId: id})
+        .andWhere('holidays.id = :holidayId', { holidayId: id })
         .getRawOne<Holidays>()
     );
   }
@@ -228,9 +236,8 @@ export class HolidaysRepository extends Repository<Holidays> {
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'holidays.deleted_by = a.id')
       .where(`holidays.deleted_at IS NOT NULL`)
-      .andWhere('holidays.name ILIKE :name', {name: `%${search.trim()}%`})
+      .andWhere('holidays.name ILIKE :name', { name: `%${search.trim()}%` })
       .orderBy('holidays.deleted_at', 'DESC')
       .getRawMany<Holidays>();
   }
-
 }
