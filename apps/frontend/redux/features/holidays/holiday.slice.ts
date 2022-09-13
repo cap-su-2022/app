@@ -4,11 +4,13 @@ import {Holiday} from "../../../models/holiday.model";
 import {fetchHolidays} from "./thunk/fetch-holidays.thunk";
 import {fetchHolidayById} from "./thunk/fetch-holiday-by-id.thunk";
 import {fetchDeletedHolidays} from "./thunk/fetch-deleted-holidays.thunk";
+import { fetchHolidaysMini } from "./thunk/fetch-holidays-mini.thunk";
 
 interface InitialState {
   holidays: PaginationResponse<Holiday>;
   holiday: Holiday;
   deletedHolidays: Holiday[];
+  holidaysMini: Holiday[];
 
 }
 
@@ -16,6 +18,7 @@ const initialState: InitialState = {
   holidays: {} as PaginationResponse<Holiday>,
   holiday: {} as Holiday,
   deletedHolidays: [],
+  holidaysMini: [],
 
 };
 
@@ -32,6 +35,9 @@ export const holidaySlice = createSlice({
     });
     builder.addCase(fetchDeletedHolidays.fulfilled, (state, {payload}) => {
       state.deletedHolidays = payload;
+    });
+    builder.addCase(fetchHolidaysMini.fulfilled, (state, {payload}) => {
+      state.holidaysMini = payload;
     });
   }
 

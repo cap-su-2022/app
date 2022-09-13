@@ -34,7 +34,7 @@ const defaultPagination = {
   name: '',
   search: '',
   type: '',
-  sort: 'name',
+  sort: 'date_start',
   dir: 'ASC',
 };
 

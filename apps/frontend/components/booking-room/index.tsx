@@ -24,6 +24,7 @@ import { io } from 'socket.io-client';
 import { fetchCountRequestBooking } from '../../redux/features/room-booking/thunk/fetch-count-request-booking';
 import AddBookingFeedbackModal from '../booking-room-feedback/add-modal.component';
 import { fetchFeedbackTypeNames } from '../../redux/features/feedback-type/thunk/fetch-feedback-type-names.thunk';
+import { fetchHolidaysMini } from 'apps/frontend/redux/features/holidays/thunk/fetch-holidays-mini.thunk';
 
 const defaultPagination = {
   limit: 5,
@@ -128,6 +129,10 @@ const BookingRoom = () => {
 
   useEffect(() => {
     dispatch(fetchCountRequestBooking()).unwrap().then(setCount);
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetchHolidaysMini()).unwrap();
   }, []);
 
   useEffect(() => {
