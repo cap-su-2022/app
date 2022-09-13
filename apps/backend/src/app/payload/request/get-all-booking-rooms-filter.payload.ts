@@ -2,7 +2,7 @@ export interface GetAllBookingRequestsFilter {
   status: string;
   dateStart: string;
   dateEnd: string;
-  slotStart: string;
-  slotEnd: string;
+  checkinTime: string;
+  checkoutTime: string;
   roomName: string;
 }
