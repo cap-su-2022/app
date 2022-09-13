@@ -457,6 +457,38 @@ export class BookingRoomController {
     return this.service.getDevicesUseInRequest(requestId);
   }
 
+  @Get('filter')
+  @ApiOperation({
+    summary: 'Get all booking requests by filter',
+    description: 'Get all booking requests by filter',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got all booking request by filter',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting all booking request by filter',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getAllBookingRoomRequestsByFilter(
+    @Query() filters: GetAllBookingRequestsFilter,
+    @User() user: KeycloakUserInstance
+  ) {
+    console.log("RUN HERE")
+    return this.service.getAllBookingRoomsRequestsByFilter(
+      user.account_id,
+      filters
+    );
+  }
+
   @Get(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
@@ -480,6 +512,7 @@ export class BookingRoomController {
     description: 'Insufficient privileges',
   })
   getBookingRoomById(@Param('id') id: string) {
+    console.log("CMMM")
     return this.service.getBookingRoomById(id);
   }
 
@@ -1027,36 +1060,7 @@ export class BookingRoomController {
   // ) {
   //   return this.service.getBookingRoomDevices(name, type, sort);
   // }
-  @Get('filter')
-  @ApiOperation({
-    summary: 'Get all booking requests by filter',
-    description: 'Get all booking requests by filter',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully got all booking request by filter',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while getting all booking request by filter',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  getAllBookingRoomRequestsByFilter(
-    @Query() filters: GetAllBookingRequestsFilter,
-    @User() user: KeycloakUserInstance
-  ) {
-    return this.service.getAllBookingRoomsRequestsByFilter(
-      user.account_id,
-      filters
-    );
-  }
+  
 
   @Get('check-in')
   @ApiOperation({
