@@ -482,7 +482,7 @@ export class BookingRoomController {
     @Query() filters: GetAllBookingRequestsFilter,
     @User() user: KeycloakUserInstance
   ) {
-    console.log("RUN HERE")
+    console.log("RUN HERE", filters)
     return this.service.getAllBookingRoomsRequestsByFilter(
       user.account_id,
       filters
