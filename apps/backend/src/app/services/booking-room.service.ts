@@ -8,7 +8,7 @@ import {
 import { RoomsService } from './rooms.service';
 import { BookingRoomRepository } from '../repositories';
 import { AccountsService } from './accounts.service';
-import {HolidaysService} from './holidays.service';
+import { HolidaysService } from './holidays.service';
 import { BookingRequest } from '../models';
 import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
 import { BookingRequestHistService } from './booking-room-hist.service';
@@ -200,15 +200,14 @@ export class BookingRoomService {
   //   }
   // }
 
-  async isHoliday(dateStart: string, dateEnd: string){
+  async isHoliday(dateStart: string, dateEnd: string) {
     try {
-      return this.holidaysService.checkIfItIsHoliday(dateStart, dateEnd);
+      return await this.holidaysService.isHoliday(dateStart, dateEnd);
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);
     }
   }
-
 
   async getRequestByRoomId(roomId: string) {
     try {
@@ -519,7 +518,7 @@ export class BookingRoomService {
           payload.checkinTime,
           payload.checkoutTime
         );
-        console.log("AAAACCCC: ", listRequestBookedInMultiDay)
+      console.log('AAAACCCC: ', listRequestBookedInMultiDay);
       return listRequestBookedInMultiDay;
     } catch (e) {
       this.logger.error(e.message);
@@ -597,7 +596,7 @@ export class BookingRoomService {
     try {
       const listRequestBookedInMultiDay =
         await this.getListRequestBookedInMultiDayV2(payload);
-        console.log("AAAAAAAHHH: ", listRequestBookedInMultiDay)
+      console.log('AAAAAAAHHH: ', listRequestBookedInMultiDay);
       const listRoomBookedInMultiDaySameSlot = [];
       if (listRequestBookedInMultiDay?.length > 0) {
         listRequestBookedInMultiDay.map((request) => {
@@ -682,7 +681,7 @@ export class BookingRoomService {
 
   async getRequestBookedInPast(date: string, time: string) {
     try {
-        return await this.repository.getRequestBookedInPast(date, time);
+      return await this.repository.getRequestBookedInPast(date, time);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -755,7 +754,6 @@ export class BookingRoomService {
     userId: string
   ): Promise<BookingRequest> {
     const queryRunner = this.dataSource.createQueryRunner();
-    console.log(payload);
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
@@ -777,6 +775,11 @@ export class BookingRoomService {
         if (timeCheckin < timeNow) {
           throw new BadRequestException('The slot you chose is now over!');
         }
+      }
+      if (await this.isHoliday(payload.checkinDate, payload.checkinDate)) {
+        throw new BadRequestException(
+          'The date you have selected is a holiday, the library will not be active. Try again another day'
+        );
       }
       if (payload.checkinTime > payload.checkoutTime) {
         throw new BadRequestException(
@@ -905,7 +908,6 @@ export class BookingRoomService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-
       const dateChoosed = new Date(payload.checkinDate).setHours(0, 0, 0, 0);
       const today = new Date().setHours(0, 0, 0, 0);
 
@@ -919,6 +921,11 @@ export class BookingRoomService {
         if (payload.checkinTime < timeNow) {
           throw new BadRequestException('The slot you chose is now over!');
         }
+      }
+      if (await this.isHoliday(payload.checkinDate, payload.checkoutDate)) {
+        throw new BadRequestException(
+          'One of dates you have selected is a holiday, the library will not be active. Try again another day'
+        );
       }
       if (payload.checkinTime > payload.checkoutTime) {
         throw new BadRequestException(

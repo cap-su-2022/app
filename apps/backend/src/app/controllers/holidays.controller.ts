@@ -152,6 +152,35 @@ export class HolidaysController {
     return this.service.add(user, holidays);
   }
 
+  @Post('import')
+  @Roles(Role.APP_ADMIN, Role.APP_LIBRARIAN)
+  @ApiOperation({
+    summary: 'Create a new holiday',
+    description: 'Create a new holiday with the provided payload',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully created a new holiday',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request payload for holiday is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  importHoliday(
+    @User() user: KeycloakUserInstance,
+    @Body() payload: {file: any[]}
+  ): Promise<Holidays> {
+    return this.service.import(user, payload.file);
+  }
+
   @Put('update/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_ADMIN)
   @ApiOperation({

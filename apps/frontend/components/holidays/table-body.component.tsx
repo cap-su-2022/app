@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {createStyles, Table, Button, Highlight} from '@mantine/core';
-import {Archive, InfoCircle, Pencil, Trash} from 'tabler-icons-react';
+import React, { useEffect, useState } from 'react';
+import { createStyles, Table, Button, Highlight } from '@mantine/core';
+import { Archive, InfoCircle, Pencil, Trash } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
-import {UserInfoModel} from '../../models/user/user-info.model';
-import dayjs from "dayjs";
+import { UserInfoModel } from '../../models/user/user-info.model';
+import dayjs from 'dayjs';
 
 interface RowData {
   'holiday.name': string;
@@ -32,7 +32,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
@@ -58,7 +58,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           variant="outline"
           onClick={() => props.actionButtonCb.info(row.id)}
         >
-          <InfoCircle/>
+          <InfoCircle />
         </Button>
 
         <Button
@@ -66,16 +66,15 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           color="green"
           onClick={() => props.actionButtonCb.update(row.id)}
         >
-          <Pencil/>
+          <Pencil />
         </Button>
         <Button
           variant="outline"
           color="red"
           onClick={() => props.actionButtonCb.delete(row.id)}
         >
-          <Trash/>
+          <Trash />
         </Button>
-
       </td>
     </tr>
   ));
@@ -84,57 +83,57 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{tableLayout: 'fixed'}}
+      sx={{ tableLayout: 'fixed' }}
     >
       <thead>
-      <tr>
-        <Th
-          style={{
-            width: '50px',
-          }}
-          sorted={null}
-          reversed={reverseSortDirection}
-          onSort={null}
-        >
-          STT
-        </Th>
+        <tr>
+          <Th
+            style={{
+              width: '50px',
+            }}
+            sorted={null}
+            reversed={reverseSortDirection}
+            onSort={null}
+          >
+            STT
+          </Th>
 
-        <Th
-          sorted={sortBy === 'holiday.name'}
-          reversed={reverseSortDirection}
-          onSort={() => setSorting('holiday.name')}
-        >
-          Name
-        </Th>
+          <Th
+            sorted={sortBy === 'holiday.name'}
+            reversed={reverseSortDirection}
+            onSort={() => setSorting('holiday.name')}
+          >
+            Name
+          </Th>
 
-        <Th
-          sorted={sortBy === 'holiday.dateStart'}
-          reversed={reverseSortDirection}
-          onSort={() => setSorting('holiday.dateStart')}
-        >
-          Date Starts
-        </Th>
-        <Th
-          sorted={sortBy === 'holiday.dateEnd'}
-          reversed={reverseSortDirection}
-          onSort={() => setSorting('holiday.dateEnd')}
-        >
-          Date Ends
-        </Th>
-        <Th
-          sorted={null}
-          reversed={reverseSortDirection}
-          onSort={null}
-          style={{width: 220}}
-        >
-          Actions
-        </Th>
-      </tr>
+          <Th
+            sorted={sortBy === 'holiday.dateStart'}
+            reversed={reverseSortDirection}
+            onSort={() => setSorting('holiday.dateStart')}
+          >
+            Date Starts
+          </Th>
+          <Th
+            sorted={sortBy === 'holiday.dateEnd'}
+            reversed={reverseSortDirection}
+            onSort={() => setSorting('holiday.dateEnd')}
+          >
+            Date Ends
+          </Th>
+          <Th
+            sorted={null}
+            reversed={reverseSortDirection}
+            onSort={null}
+            style={{ width: 220 }}
+          >
+            Actions
+          </Th>
+        </tr>
       </thead>
       <tbody>{rows}</tbody>
     </Table>
   ) : (
-    <NoDataFound/>
+    <NoDataFound />
   );
 };
 
