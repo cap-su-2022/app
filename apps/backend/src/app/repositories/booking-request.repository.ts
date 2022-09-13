@@ -1147,8 +1147,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.status', 'status')
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
       .innerJoin(RoomType, 'rt', 'r.type = rt.id')
-      .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
-      .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
       .where('booking_request.requested_by = :accountId', {
         accountId: accountId,
       })
@@ -1159,11 +1157,11 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .andWhere('booking_request.checkin_date <= :dateEnd', {
         dateEnd: filters.dateEnd,
       })
-      .andWhere('st.slot_num >= :slotStart', {
-        slotStart: filters.slotStart,
+      .andWhere('(booking_request.checkinTime <= :checkinTime OR booking_request.checkoutTime >= :checkinTime)', {
+        checkinTime: filters.checkinTime,
       })
-      .andWhere('se.slot_num <= :slotEnd', {
-        slotEnd: filters.slotEnd,
+      .andWhere('(booking_request.checkinTime <= :checkoutTime OR booking_request.checkoutTime >= :checkoutTime)', {
+        checkoutTime: filters.checkoutTime,
       });
     if (filters.status) {
       query.andWhere('booking_request.status IN (:...status)', {
@@ -1313,8 +1311,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('r.name', 'roomName')
       .addSelect('rt.name', 'roomType')
       .addSelect('booking_request.checkin_date', 'checkinDate')
-      .addSelect('st.slot_num', 'slotStart')
-      .addSelect('se.slot_num', 'slotEnd')
       .addSelect('booking_request.status', 'status')
       .addSelect('a.username', 'requestedBy')
       .addSelect('aa.username', 'bookedFor')
@@ -1322,8 +1318,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .innerJoin(Accounts, 'aa', 'aa.id = booking_request.booked_for')
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
       .innerJoin(RoomType, 'rt', 'rt.id = r.type')
-      .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
-      .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
 
       .where('r.name LIKE :name', {name: `%${filters.roomName}%`})
       .andWhere('booking_request.checkin_date >= :dateStart', {
@@ -1332,11 +1326,11 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .andWhere('booking_request.checkin_date <= :dateEnd', {
         dateEnd: filters.dateEnd,
       })
-      .andWhere('st.slot_num >= :slotStart', {
-        slotStart: filters.slotStart,
+      .andWhere('(booking_request.checkinTime <= :checkinTime OR booking_request.checkoutTime >= :checkinTime)', {
+        checkinTime: filters.checkinTime,
       })
-      .andWhere('se.slot_num <= :slotEnd', {
-        slotEnd: filters.slotEnd,
+      .andWhere('(booking_request.checkinTime <= :checkoutTime OR booking_request.checkoutTime >= :checkoutTime)', {
+        checkoutTime: filters.checkoutTime,
       });
     if (accountId) {
       query.andWhere('aa.id = :accountId', {accountId: accountId});
