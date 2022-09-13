@@ -17,6 +17,7 @@ import { BookingRoomDevicesRepository } from '../repositories';
 import { NotificationModule } from './notification.module';
 import { BookingRoomGateway } from '../gateway/booking-room.gateway';
 import { BookingFeedbackModule } from './booking-feedback.module';
+import {HolidaysModule} from "./holidays.module";
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { BookingFeedbackModule } from './booking-feedback.module';
     forwardRef(() => RoomsModule),
     forwardRef(() => SlotModule),
     forwardRef(() => BookingFeedbackModule),
+    forwardRef(() => HolidaysModule),
 
     TypeOrmExModule.forCustomRepository([
       BookingRoomRepository,

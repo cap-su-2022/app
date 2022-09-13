@@ -1,5 +1,5 @@
 import {BadRequestException, Injectable, Logger} from "@nestjs/common";
-import {DataSource} from "typeorm";
+import {DataSource, Repository} from "typeorm";
 import {KeycloakUserInstance} from "../dto/keycloak.user";
 import {Holidays, Rooms} from "../models";
 import {HolidayAddRequestPayload} from "../payload/request/holidays-add.request.payload";
@@ -238,6 +238,16 @@ export class HolidaysService {
     } catch (e) {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
+      throw new BadRequestException(e.message);
+    }
+  }
+  async checkIfItIsHoliday(dateStartString: string, dateEndString: string){
+    try {
+      const dateStart = dayjs(dateStartString).format('YYYY-MM-DD');
+      const dateEnd = dayjs(dateEndString).format('YYYY-MM-DD');
+      return this.repository.isHoliday(dateStart, dateEnd);
+    } catch (e) {
+      this.logger.error(e);
       throw new BadRequestException(e.message);
     }
   }

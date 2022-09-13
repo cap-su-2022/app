@@ -8,6 +8,7 @@ import {
 import { RoomsService } from './rooms.service';
 import { BookingRoomRepository } from '../repositories';
 import { AccountsService } from './accounts.service';
+import {HolidaysService} from './holidays.service';
 import { BookingRequest } from '../models';
 import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
 import { BookingRequestHistService } from './booking-room-hist.service';
@@ -41,7 +42,9 @@ export class BookingRoomService {
     private readonly bookingRoomDeviceService: BookingRoomDevicesService,
     @Inject(forwardRef(() => BookingFeedbackService))
     private readonly bookingFeedbackService: BookingFeedbackService,
-    private readonly histService: BookingRequestHistService
+    private readonly histService: BookingRequestHistService,
+    @Inject(forwardRef(() => HolidaysService))
+    private readonly holidaysService: HolidaysService
   ) {}
 
   private getExampleStatistics() {
@@ -196,6 +199,16 @@ export class BookingRoomService {
   //     throw new BadRequestException('Error while getting booking rooms');
   //   }
   // }
+
+  async isHoliday(dateStart: string, dateEnd: string){
+    try {
+      return this.holidaysService.checkIfItIsHoliday(dateStart, dateEnd);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
+  }
+
 
   async getRequestByRoomId(roomId: string) {
     try {

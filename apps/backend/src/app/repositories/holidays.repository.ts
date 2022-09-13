@@ -165,6 +165,16 @@ export class HolidaysRepository extends Repository<Holidays> {
     );
   }
 
+  isHoliday(dateStart: string, dateEnd: string): Promise<boolean> {
+    return this.createQueryBuilder('holidays')
+      .select('COUNT(1)', 'count')
+      .where('holidays.date_start >= :dateStart ' +
+        'OR holidays.date_end <= :dateEnd', {dateStart: dateStart, dateEnd: dateEnd})
+      .getRawOne<{ count: number }>()
+      .then((data) => data?.count > 0);
+  }
+
+
   searchHoliday(payload: PaginationParams) {
     const query = this.createQueryBuilder('holidays')
       .leftJoin(Accounts, 'a', 'holidays.created_by = a.id')
