@@ -5,10 +5,14 @@
 /tmp
 /out-tsc
 /apps/mobile/src/app/constants/constant.ts
-/apps/backend/dist/main.js
-/apps/backend/dist/main.js.map
 /apps/mobile/project.json
-
+app.apks
+docker
+/apps/backend/dist
+/apps/frontend/build
+/apps/mobile/android/build
+/apps/mobile/android/app/build
+/apps/mobile/android/.gradle
 # dependencies
 /node_modules
 

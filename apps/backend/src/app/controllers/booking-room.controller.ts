@@ -482,14 +482,14 @@ export class BookingRoomController {
     @Query() filters: GetAllBookingRequestsFilter,
     @User() user: KeycloakUserInstance
   ) {
-    console.log("RUN HERE")
+    console.log("RUN HERE", filters)
     return this.service.getAllBookingRoomsRequestsByFilter(
       user.account_id,
       filters
     );
   }
 
-  @Get(':id')
+  @Get('find/:id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Retrieving booking room detail',
