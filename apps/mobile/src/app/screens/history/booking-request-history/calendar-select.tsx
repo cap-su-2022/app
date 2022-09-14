@@ -7,18 +7,17 @@ import {
   View,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import { deviceWidth } from '../../utils/device';
 import { FPT_ORANGE_COLOR, INPUT_GRAY_COLOR, WHITE } from '@app/constants';
 import { CalendarIcon, ChevronLeftIcon } from 'react-native-heroicons/outline';
-import {
-  setGlobalDateEnd,
-  setGlobalDateStart,
-} from '../../redux/features/room-booking/slice';
-import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
-import { useAppSelector } from '../../hooks/use-app-selector.hook';
-import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
+
+
 import { useNavigationState } from '@react-navigation/native';
 import dayjs from 'dayjs';
+import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
+import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
+import { useAppSelector } from '../../../hooks/use-app-selector.hook';
+import { deviceWidth } from '../../../utils/device';
+import {setGlobalDateEnd, setGlobalDateStart } from '../../../redux/features/room-booking/slice';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface CalendarDateSelectProps {}

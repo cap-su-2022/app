@@ -49,7 +49,6 @@ const HomeScreenSection: React.FC<any> = () => {
           <HomeScreenSectionResolveFeedback />
           <HomeScreenSectionTrackRoomBookingFeedback />
           <HomeScreenSectionRoomCheckin />
-          <HomeScreenSectionRoomWishlist />
         </View>
       </View>
     </View>
