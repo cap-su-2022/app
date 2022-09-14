@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
 import { Holidays, Rooms } from '../models';
 import { HolidayAddRequestPayload } from '../payload/request/holidays-add.request.payload';
@@ -67,13 +67,11 @@ export class HolidaysService {
     }
   }
 
-  async add(
+  async validateAdd(
     user: KeycloakUserInstance,
-    holiday: HolidayAddRequestPayload
-  ): Promise<Holidays> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    holiday: HolidayAddRequestPayload,
+    queryRunner: QueryRunner
+  ) {
     try {
       if (holiday.dateStart > holiday.dateEnd) {
         throw new BadRequestException(
@@ -107,6 +105,24 @@ export class HolidaysService {
           queryRunner
         );
       }
+
+      return holidayAdded;
+    } catch (e) {
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while adding this holiday'
+      );
+    }
+  }
+
+  async add(
+    user: KeycloakUserInstance,
+    holiday: HolidayAddRequestPayload
+  ): Promise<Holidays> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const holidayAdded = await this.validateAdd(user, holiday, queryRunner);
       await queryRunner.commitTransaction();
       return holidayAdded;
     } catch (e) {
@@ -125,11 +141,9 @@ export class HolidaysService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      console.log("UA LA SAO", holiday)
-      console.log("UA LA SAO", holiday.length)
       for (let i = 1; i < holiday.length; i++) {
-        await this.repository.createNewHoliday(
-          user.account_id,
+        await this.validateAdd(
+          user,
           {
             name: holiday[i][0],
             dateStart: dayjs(holiday[i][1]).format('YYYY-MM-DD'),
