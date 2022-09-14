@@ -1021,27 +1021,27 @@ export class BookingRoomController {
     );
   }
 
-  @Get('accounts-name')
-  @ApiOperation({
-    summary: 'Get account names',
-    description: 'Get a list of account names',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully got account names',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while getting a list of accounts name',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid access token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
+  // @Get('accounts-name')
+  // @ApiOperation({
+  //   summary: 'Get account names',
+  //   description: 'Get a list of account names',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully got account names',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while getting a list of accounts name',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Invalid access token',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
   // getUsernameList() {
   //   return this.service.getUsernameList();
   // }
