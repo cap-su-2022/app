@@ -1099,8 +1099,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.id', 'description')
       .addSelect('booking_request.checkedin_at', 'checkedInAt')
       .addSelect('booking_request.status', 'status')
-      .addSelect('st.slot_num', 'checkinSlot')
-      .addSelect('se.slot_num', 'checkoutSlot')
+      .addSelect('booking_request.checkin_time', 'checkinTime')
+      .addSelect('booking_request.checkout_time', 'checkoutTime')
       .addSelect('booking_request.checkin_date', 'checkinDate')
       .addSelect('r.name', 'roomName')
       .addSelect('rt.name', 'roomType')
@@ -1115,8 +1115,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
       .innerJoin(RoomType, 'rt', 'rt.id = r.type')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
-      .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
-      .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
       .where(
         'booking_request.requested_by = :accountId OR booking_request.booked_for = :accountId',
         {
@@ -1199,11 +1197,9 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('br.name', 'bookingReason')
       .addSelect('r.name', 'roomName')
       .addSelect('booking_request.checkin_date', 'checkinDate')
-      .addSelect('st.slot_num', 'checkinSlot')
-      .addSelect('se.slot_num', 'checkoutSlot')
+      .addSelect('booking_request.checkin_time', 'checkinTime')
+      .addSelect('booking_request.checkout_time', 'checkoutTime')
       .addSelect('booking_request.accepted_at', 'acceptedAt')
-      .innerJoin(Slot, 'st', 'st.id = booking_request.checkin_slot')
-      .innerJoin(Slot, 'se', 'se.id = booking_request.checkout_slot')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
       .innerJoin(Rooms, 'r', 'booking_request.room_id = r.id')
       .innerJoin(
