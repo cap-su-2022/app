@@ -16,7 +16,7 @@ export const fetchRoomBookingById = createAsyncThunk<
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
     return await axiosGetAPICall(
-      `${API_URL}/booking-room/${payload}`,
+      `${API_URL}/booking-room/find/${payload}`,
       undefined,
       thunkAPI
     );
