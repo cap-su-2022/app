@@ -27,10 +27,11 @@ import {
   resetGlobalDateStart,
 } from '../../../redux/features/room-booking/slice';
 import TrackBookingRoomFilterStatusSelection from './status-selection';
+import DatePicker from 'react-native-date-picker';
 
 interface TrackBookingRoomFilterHandler {
-  slotStart: number;
-  slotEnd: number;
+  checkinTime: string;
+  checkoutTime: string;
   dateStart: string;
   dateEnd: string;
   roomName: string;
@@ -50,17 +51,22 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
 
   const { slots } = useAppSelector((state) => state.slot);
 
-  useEffect(() => {
-    dispatch(fetchAllSlots())
-      .unwrap()
-      .catch((e) => alert(JSON.stringify(e)));
-  }, []);
+  // useEffect(() => {
+  //   dispatch(fetchAllSlots())
+  //     .unwrap()
+  //     .catch((e) => alert(JSON.stringify(e)));
+  // }, []);
   const { globalDateStart, globalDateEnd } = useAppSelector(
     (state) => state.roomBooking
   );
 
-  const [slotStart, setSlotStart] = useState(1);
-  const [slotEnd, setSlotEnd] = useState(100);
+
+
+  const [checkinTime, setCheckinTime] = useState('01:00');
+  const [isCheckinTimeModalOpen, setCheckinTimeModalOpen] = useState(false);
+
+  const [checkoutTime, setCheckoutTime] = useState('23:00');
+  const [isCheckoutTimeModalOpen, setCheckoutTimeModalOpem] = useState(false);
 
   const [search, setSearch] = useState<string>('');
   const [status, setStatus] = useState<string[]>([]);
@@ -71,18 +77,13 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
 
   useEffect(() => {
     handleSearch();
-  }, [search, globalDateStart, globalDateEnd, status]);
+  }, [search, globalDateStart, globalDateEnd, status, checkoutTime, checkinTime]);
 
-  useEffect(() => {
-    if (slots.length > 0) {
-      setSlotStart(slots[0].slotNum);
-      setSlotEnd(slots[slots.length - 1].slotNum);
-    }
-  }, [slots]);
+
 
   useImperativeHandle(ref, () => ({
-    slotEnd,
-    slotStart,
+    checkinTime,
+    checkoutTime,
     dateStart: globalDateStart,
     dateEnd: globalDateEnd,
     roomName: search,
@@ -93,8 +94,6 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
 
   const handleClearFilter = useCallback(() => {
     setSearch('');
-    setSlotStart(slots[0]?.slotNum);
-    setSlotEnd(slots[slots.length - 1]?.slotNum);
     setStatus([]);
     dispatch(resetGlobalDateStart());
     dispatch(resetGlobalDateEnd());
@@ -200,8 +199,8 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
 
           <TouchableOpacity
             onPress={() => {
-              setSlotStart(slotEnd);
-              setSlotEnd(slotStart);
+              setCheckinTime(checkoutTime);
+              setCheckoutTime(checkinTime);
             }}
             style={styles.switchIconContainer}
           >
@@ -255,19 +254,18 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
             <View style={styles.leftIconSlotFilter}>
               <ClockIcon color={GRAY} size={deviceWidth / 16} />
             </View>
-            <RNPickerSelect
-              value={slotStart}
-              style={slotFilterContainer}
-              onValueChange={(e) => setSlotStart(e)}
-              onDonePress={() => handleSearch()}
-              items={renderSlotData()}
-            />
+            <TouchableOpacity
+              onPress={() => setCheckinTimeModalOpen(true)}
+              style={styles.timeContainer}
+            >
+              <Text>{checkinTime}</Text>
+            </TouchableOpacity>
           </View>
 
           <TouchableOpacity
             onPress={() => {
-              setSlotStart(slotEnd);
-              setSlotEnd(slotStart);
+              setCheckinTime(checkoutTime);
+              setCheckoutTime(checkinTime);
             }}
             style={styles.switchIconContainer}
           >
@@ -278,13 +276,12 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
             <View style={styles.leftIconSlotFilter}>
               <ClockIcon color={GRAY} size={deviceWidth / 16} />
             </View>
-            <RNPickerSelect
-              value={slotEnd}
-              style={slotFilterContainer}
-              onValueChange={(e) => setSlotEnd(e)}
-              onDonePress={() => handleSearch()}
-              items={renderSlotData()}
-            />
+            <TouchableOpacity
+              onPress={() => setCheckoutTimeModalOpem(true)}
+              style={styles.timeContainer}
+            >
+              <Text>{checkoutTime}</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -292,6 +289,32 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
           status={status}
           setStatus={setStatus}
           handleSearch={handleSearch}
+        />
+        <DatePicker
+          date={new Date()}
+          mode="time"
+          modal
+          open={isCheckinTimeModalOpen}
+          onConfirm={(date) => {
+            setCheckinTimeModalOpen(false);
+            setCheckinTime(`${date.getHours()}:${date.getMinutes()}`);
+          }}
+          onCancel={() => {
+            setCheckinTimeModalOpen(false);
+          }}
+        />
+        <DatePicker
+          date={new Date()}
+          mode="time"
+          modal
+          open={isCheckoutTimeModalOpen}
+          onConfirm={(date) => {
+            setCheckoutTimeModalOpem(false);
+            setCheckoutTime(`${date.getHours()}:${date.getMinutes()}`);
+          }}
+          onCancel={() => {
+            setCheckinTimeModalOpen(false);
+          }}
         />
       </View>
     </View>
@@ -305,6 +328,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     margin: 10,
+  },
+  timeContainer: {
+    borderWidth: 2,
+    borderColor: GRAY,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
+    height: 35,
+    width: deviceWidth / 3.4,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   clearFilterButton: {
     height: 20,
@@ -363,7 +397,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-
   },
   switchIconContainer: {
     height: 35,

@@ -19,13 +19,6 @@ const statusData = [
     slotContainerLeftStyle: { left: 5 },
   },
   {
-    id: 1,
-    label: 'Pending',
-    value: 'PENDING',
-    style: { width: deviceWidth / 5.5 },
-    slotContainerLeftStyle: { left: 55 },
-  },
-  {
     id: 2,
     label: 'Booked',
     value: 'BOOKED',
