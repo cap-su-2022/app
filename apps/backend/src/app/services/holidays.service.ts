@@ -1,12 +1,12 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { DataSource, Repository, QueryRunner } from 'typeorm';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { Holidays, Rooms } from '../models';
-import { HolidayAddRequestPayload } from '../payload/request/holidays-add.request.payload';
-import { HolidaysRepository } from '../repositories/holidays.repository';
-import { PaginationParams } from '../controllers/pagination.model';
-import { RoomAddRequestPayload } from '../payload/request/room-add.request.payload';
-import { getConfigFileLoaded } from '../controllers/global-config.controller';
+import {BadRequestException, Injectable, Logger} from '@nestjs/common';
+import {DataSource, Repository, QueryRunner} from 'typeorm';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {Holidays, Rooms} from '../models';
+import {HolidayAddRequestPayload} from '../payload/request/holidays-add.request.payload';
+import {HolidaysRepository} from '../repositories/holidays.repository';
+import {PaginationParams} from '../controllers/pagination.model';
+import {RoomAddRequestPayload} from '../payload/request/room-add.request.payload';
+import {getConfigFileLoaded} from '../controllers/global-config.controller';
 import dayjs = require('dayjs');
 
 @Injectable()
@@ -16,7 +16,8 @@ export class HolidaysService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly repository: HolidaysRepository
-  ) {}
+  ) {
+  }
 
   async getAll(request: PaginationParams) {
     try {
@@ -103,6 +104,12 @@ export class HolidaysService {
           user.account_id,
           holiday,
           queryRunner
+        );
+      }
+      const isHoliday = this.isHoliday(holiday.dateStart, holiday.dateEnd);
+      if (isHoliday) {
+        throw new BadRequestException(
+          'There is already existed holiday which is started and ended in this date range. Choose another date starts and date ends'
         );
       }
 
@@ -200,8 +207,12 @@ export class HolidaysService {
           'There is already existed holiday with the this name. Try with another name.'
         );
       }
-      console.log(body.dateStart + ' BE: dateStart');
-      console.log(body.dateEnd + ' BE: dateEnd');
+      const isHoliday = this.isHoliday(body.dateStart, body.dateEnd);
+      if (isHoliday) {
+        throw new BadRequestException(
+          'There is already existed holiday which is started and ended in this date range. Choose another date starts and date ends'
+        );
+      }
       const holidayUpdated = await this.repository.updateById(
         accountId,
         id,
@@ -299,6 +310,7 @@ export class HolidaysService {
       throw new BadRequestException(e.message);
     }
   }
+
   async isHoliday(dateStartString: string, dateEndString: string) {
     try {
       const dateStart = dayjs(dateStartString).format('YYYY-MM-DD');
