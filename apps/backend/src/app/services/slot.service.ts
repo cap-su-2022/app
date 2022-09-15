@@ -127,13 +127,17 @@ export class SlotService {
         throw new BadRequestException('Time end is not valid');
       }
 
+      if (slot.end < slot.start) {
+        throw new BadRequestException('Time end must be greater than time start');
+      }
+
       await Promise.resolve(getConfigFileLoaded())
         .then((data) => {
           const slots = new Object(data.slots);
           const newSlotName = slot.name.toLowerCase().replace(/\s/g, '');
 
           const slotsArray = Object.values(slots);
-          const isDuplicate = slotsArray.some((s) => {
+          const isDuplicateTime = slotsArray.some((s) => {
             const resutl =
               (s.start <= slot.start && s.end > slot.start) ||
               (s.start < slot.end && s.end >= slot.end) ||
@@ -141,8 +145,16 @@ export class SlotService {
             return resutl;
           });
 
-          if (isDuplicate) {
+          if (isDuplicateTime) {
             throw 'This time is duplicate';
+          }
+
+          const isDuplicateName = slotsArray.some((s) => {
+            return s.name === slot.name;
+          });
+
+          if (isDuplicateName) {
+            throw 'This name is duplicate';
           }
 
           fs.writeFileSync(
@@ -157,8 +169,8 @@ export class SlotService {
           );
         })
         .catch((e) => {
-          throw new BadRequestException(e)
-        })
+          throw new BadRequestException(e);
+        });
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);
