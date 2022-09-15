@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { Button, createStyles } from '@mantine/core';
+import React, {useEffect, useState} from 'react';
+import {Button, createStyles} from '@mantine/core';
 import AdminLayout from '../../components/layout/admin.layout';
 import Header from '../../components/common/header.component';
-import { BuildingWarehouse, Plus, TrashOff, X } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {BuildingWarehouse, Plus, TrashOff, X} from 'tabler-icons-react';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {
   defaultPaginationParams,
   PaginationParams,
 } from '../../models/pagination-params.model';
-import { useDebouncedValue } from '@mantine/hooks';
+import {useDebouncedValue} from '@mantine/hooks';
 import TableHeader from '../../components/actions/table-header.component';
-import { TableBody } from './table-body.component';
+import {TableBody} from './table-body.component';
 import TableFooter from '../../components/actions/table-footer.component';
 import AddModal from './add-modal.component';
-import { InputTypes } from '../../components/actions/models/input-type.constant';
+import {InputTypes} from '../../components/actions/models/input-type.constant';
 import InfoModal from '../../components/actions/modal/info-modal.component';
 import RestoreDeletedModal from './restore-deleted.modal.component';
 import dayjs from 'dayjs';
-import { fetchAllSlots } from '../../redux/features/slot';
-import { fetchSlotById } from '../../redux/features/slot/thunk/fetch-by-id.thunk';
+import {fetchAllSlots} from '../../redux/features/slot';
+import {fetchSlotById} from '../../redux/features/slot/thunk/fetch-by-id.thunk';
 import DeleteModal from './delete-modal.component';
 import NoDataFound from '../no-data-found';
 
@@ -34,13 +34,13 @@ import NoDataFound from '../no-data-found';
 //   // ),
 // });
 
+
+
 const ManageSlot: React.FC<any> = () => {
   //BUGG
   //const slot = useAppSelector((state) => state.slot.slot);
-  //const slots = useAppSelector((state) => state.slot.slots);
-
-  const slot = {} as any;
-  const slots =[] as any;
+  const slots = useAppSelector((state) => state.slot.slots);
+  const slot = useAppSelector((state) => state.slot.slot);
 
   const [pagination, setPagination] = useState<PaginationParams>(
     defaultPaginationParams
@@ -112,10 +112,10 @@ const ManageSlot: React.FC<any> = () => {
     return (
       <div>
         <Button
-          leftIcon={<Plus />}
+          leftIcon={<Plus/>}
           color="green"
           onClick={() => setAddShown(!isAddShown)}
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
         >
           Add
         </Button>
@@ -125,7 +125,7 @@ const ManageSlot: React.FC<any> = () => {
           color="red"
           onClick={() => setRestoreDeletedShown(true)}
         >
-          <TrashOff />
+          <TrashOff/>
         </Button>
       </div>
     );
@@ -147,14 +147,6 @@ const ManageSlot: React.FC<any> = () => {
   };
 
   const infoFields = [
-    {
-      label: 'Id',
-      id: 'id',
-      name: 'id',
-      value: slot.id,
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
     {
       label: 'Name',
       id: 'name',
@@ -220,10 +212,10 @@ const ManageSlot: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Slots Management" icon={<BuildingWarehouse size={50} />} />
+      <Header title="Slots" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
-        actions={<ActionsFilter />}
+        actions={<ActionsFilter/>}
         actionsLeft={null}
         setSearch={(val) => handleSearchValue(val)}
         search={pagination.search}
@@ -265,7 +257,7 @@ const ManageSlot: React.FC<any> = () => {
           />
         </>
       ) : (
-        <NoDataFound />
+        <NoDataFound/>
       )}
       <AddModal
         // header="Add new slot"

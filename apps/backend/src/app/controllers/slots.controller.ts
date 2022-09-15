@@ -19,6 +19,9 @@ import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags} from '@nest
 import {User} from '../decorators/keycloak-user.decorator';
 import {KeycloakUserInstance} from '../dto/keycloak.user';
 import {SlotsRequestPayload} from '../payload/request/slot-add.request.payload';
+import {getConfigFileLoaded} from "./global-config.controller";
+import {SlotsConfigRequestPayload} from "../payload/request/slot-config-request-add.payload";
+
 
 @Controller('/v1/slots')
 @ApiBearerAuth()
@@ -27,8 +30,9 @@ export class SlotController {
   constructor(private readonly service: SlotService) {
   }
 
+
   @Get()
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Get all slots',
     description: 'Get the list of slots',
@@ -49,38 +53,65 @@ export class SlotController {
     status: HttpStatus.FORBIDDEN,
     description: 'Not enough privileges',
   })
-  getAllSlotsByPagination(@Optional() @Query() params?: PaginationParams) {
-    return this.service.getAllByPagination(params);
+  getSlots(): Promise<any> {
+    return this.service.getAll();
   }
 
-  @Get('name')
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully get slot names',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Request params is not validated',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @ApiOperation({
-    summary: 'Get slot names',
-    description: 'Get slot names',
-  })
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  getSlotNames() {
-    return this.service.getSlotNames();
-  }
+
+  // @Get()
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  // @ApiOperation({
+  //   summary: 'Get all slots',
+  //   description: 'Get the list of slots',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully fetched slots',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while retrieving slots',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalid',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Not enough privileges',
+  // })
+  // getAllSlotsByPagination(@Optional() @Query() params?: PaginationParams) {
+  //   return this.service.getAllByPagination(params);
+  // }
+
+  // @Get('name')
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully get slot names',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalidated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Request params is not validated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // @ApiOperation({
+  //   summary: 'Get slot names',
+  //   description: 'Get slot names',
+  // })
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // getSlotNames() {
+  //   return this.service.getSlotNames();
+  // }
 
   @Get(':id')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @Roles(Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully get a slot by ID',
@@ -101,9 +132,41 @@ export class SlotController {
     summary: 'Get a slot by ID',
     description: 'Get a slot by ID',
   })
-  getSlotById(@Param('id') id: string) {
-    return this.service.getById(id);
+  getSlotById(@Param() payload: { id: string },
+  ) {
+    return this.service.getById(payload.id);
   }
+
+
+  // @Post()
+  // @Roles(Role.APP_ADMIN)
+  // @HttpCode(HttpStatus.OK)
+  // @ApiOperation({
+  //   summary: 'Add a new slot',
+  //   description: 'Add a new slot',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully added a new slot',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while adding a new slot',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalidated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // addNewSlot(
+  //   @User() user: KeycloakUserInstance,
+  //   @Body() payload: SlotsRequestPayload
+  // ) {
+  //   return this.service.addNewSlot(user.account_id, payload);
+  // }
 
   @Post()
   @Roles(Role.APP_ADMIN)
@@ -129,10 +192,39 @@ export class SlotController {
     description: 'Insufficient privileges',
   })
   addNewSlot(
-    @User() user: KeycloakUserInstance,
-    @Body() payload: SlotsRequestPayload
+    @Body() slotConfig: SlotsConfigRequestPayload
   ) {
-    return this.service.addNewSlot(user.account_id, payload);
+    return this.service.addNewSlot(slotConfig);
+  }
+
+  @Put('update:/id')
+  @Roles(Role.APP_ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Update slot',
+    description: 'Update slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully updated a slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while updating a new slot',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+ updateSlot(
+    @Param('id') id: string,
+    @Body() slotConfig: SlotsConfigRequestPayload
+  ) {
+    return this.service.updateById(id, slotConfig);
   }
 
   @Delete(':id')

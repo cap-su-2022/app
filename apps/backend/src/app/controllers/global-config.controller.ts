@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post} from '@nestjs/common';
 import dayjs = require('dayjs');
 import * as yaml from 'js-yaml';
 import {readFileSync} from 'fs';
@@ -7,10 +7,16 @@ import {ApiTags} from '@nestjs/swagger';
 import * as fs from 'fs';
 import {Roles} from '../decorators/role.decorator';
 import {Role} from '../enum/roles.enum';
+import {Slot} from "../models/slot.entity";
 
 class RoomBookingLimitDate {
   startDate: string;
   endDate: string;
+}
+
+class SlotInfo {
+  start: string;
+  end: string;
 }
 
 export const getConfigFileLoaded = () => {

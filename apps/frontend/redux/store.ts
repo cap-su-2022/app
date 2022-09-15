@@ -23,6 +23,7 @@ import {feedbackReducer} from './features/feedback/feedback.slice';
 import {feedbackTypeReducer} from './features/feedback-type/feedback-type.slice'
 import {bookingRoomFeedbackReducer} from './features/booking-room-feedback/booking-room-feedback.slice'
 import {holidayReducer} from "./features/holidays/holiday.slice";
+import { slotReducer } from './features/slot';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -42,6 +43,7 @@ const combinedReducer = combineReducers({
   bookingReason: bookingReasonReducer,
   feedbackType: feedbackTypeReducer,
   bookingRoomFeedback: bookingRoomFeedbackReducer,
+  slot: slotReducer,
   holiday: holidayReducer
 });
 
