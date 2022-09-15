@@ -5,14 +5,18 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { SlotRepository } from '../repositories/slot.repository';
-import { PaginationParams } from '../controllers/pagination.model';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { Slot } from '../models/slot.entity';
-import { BookingRoomService } from './booking-room.service';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import { SlotsRequestPayload } from '../payload/request/slot-add.request.payload';
+import {SlotRepository} from '../repositories/slot.repository';
+import {PaginationParams} from '../controllers/pagination.model';
+import {Pagination} from 'nestjs-typeorm-paginate';
+import {Slot} from '../models/slot.entity';
+import {BookingRoomService} from './booking-room.service';
+import {InjectDataSource} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
+import {SlotsRequestPayload} from '../payload/request/slot-add.request.payload';
+import {getConfigFileLoaded} from "../controllers/global-config.controller";
+import {SlotsConfigRequestPayload} from "../payload/request/slot-config-request-add.payload";
+import * as fs from "fs";
+import * as yaml from "js-yaml";
 
 @Injectable()
 export class SlotService {
@@ -23,21 +27,13 @@ export class SlotService {
     private readonly repository: SlotRepository,
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService
-  ) {}
+  ) {
+  }
 
-  async getAllByPagination(
-    params: PaginationParams
-  ): Promise<Pagination<Slot> | Slot[]> {
+
+  async getAll() {
     try {
-      let result;
-      if (!params || !params.page) {
-        result = await this.repository.findAll();
-      } else {
-        result = await this.repository.findByPagination(params);
-        if(result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages){
-          throw new BadRequestException('Current page is over');
-        }
-      }
+      let result = Promise.resolve(getConfigFileLoaded().slots);
       return result;
     } catch (e) {
       this.logger.error(e.message);
@@ -45,45 +41,99 @@ export class SlotService {
     }
   }
 
-  async getSlotNames() {
-    try {
-      return await this.repository.findSlotNames();
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async getAllByPagination(
+  //   params: PaginationParams
+  // ): Promise<Pagination<Slot> | Slot[]> {
+  //   try {
+  //     let result;
+  //     if (!params || !params.page) {
+  //       result = await this.repository.findAll();
+  //     } else {
+  //       result = await this.repository.findByPagination(params);
+  //       if(result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages){
+  //         throw new BadRequestException('Current page is over');
+  //       }
+  //     }
+  //     return result;
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
-  async getNumOfSlot(id: string) {
-    try {
-      const slot = await this.repository.getNumOfSlot(id);
-      return slot;
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException('One or more parameters is invalid');
-    }
-  }
+  // async getSlotNames() {
+  //   try {
+  //     return await this.repository.findSlotNames();
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
+
+  // async getNumOfSlot(id: string) {
+  //   try {
+  //     const slot = await this.repository.getNumOfSlot(id);
+  //     return slot;
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new BadRequestException('One or more parameters is invalid');
+  //   }
+  // }
+
 
   async getById(id: string) {
     try {
-      const data = await this.repository.findById(id);
-      if (data === undefined) {
-        throw new BadRequestException('This slot is already deleted');
-      }
-      return data;
+      const slot = `slot${id}`;
+      const slotInfor = Promise.resolve(getConfigFileLoaded().slots).then((slots) => {
+        return {
+          ...slots[slot],
+        };
+      })
+      return slotInfor;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
     }
   }
 
-  getAll(): Promise<Slot[]> {
-    return this.repository.findAll();
+  // async getById(id: string) {
+  //   try {
+  //     const data = await this.repository.findById(id);
+  //     if (data === undefined) {
+  //       throw new BadRequestException('This slot is already deleted');
+  //     }
+  //     return data;
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
+
+  // getAll(): Promise<Slot[]> {
+  //   return this.repository.findAll();
+  // }
+
+  async addNewSlot(slot: SlotsConfigRequestPayload) {
+    Promise.resolve(getConfigFileLoaded())
+      .then((data) => {
+        const slots = data.slots;
+        console.log(slots)
+        fs.writeFileSync(
+          './backend-config.yaml',
+          yaml.dump({
+            ...data,
+            slots: {
+              // slots.slot,
+              slot
+            }
+          })
+        );
+      })
+
   }
 
-  async addNewSlot(accountId: string, payload: SlotsRequestPayload) {
-    //
-    console.log(payload.timeStart)
+  async updateById(id: string, slot: SlotsConfigRequestPayload) {
+    // const slotInfor =  getById(id);
   }
 
   async deleteSlotById(accountId: string, id: string) {

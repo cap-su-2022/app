@@ -13,7 +13,7 @@ import {
   BrandHipchat,
   DeviceMobileMessage,
   MessageCode,
-  Clock2, Calendar,
+  Clock2, Calendar, Bookmark,
 } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { BLACK, WHITE } from '@app/constants';
@@ -104,6 +104,12 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       link: '/holidays',
       label: 'Holidays',
       icon: Calendar,
+      isRender: isAdmin || isLibrarian,
+    },
+    {
+      link: '/slots',
+      label: 'Slots',
+      icon: Bookmark,
       isRender: isAdmin || isLibrarian,
     },
     {

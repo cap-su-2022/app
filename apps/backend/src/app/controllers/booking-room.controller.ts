@@ -69,37 +69,37 @@ export class BookingRoomController {
     return this.service.getAllBookingRoomsPagination(payload, user.account_id);
   }
 
-  @Get('check-slot-over-time')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  @ApiOperation({
-    summary: 'Check slot over time',
-    description: 'Check slot over time',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully checked slot over time',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Error while checking slot over time is invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalid',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Not enough privileges',
-  })
-  checkSlotOverTime(
-    @Query('slotin', new DefaultValuePipe('')) slotin: string,
-    @Query('date', new DefaultValuePipe('')) date: string
-  ) {
-    return this.service.checkSlotOverTime({
-      slotin: slotin,
-      date: date,
-    });
-  }
+  // @Get('check-slot-over-time')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // @ApiOperation({
+  //   summary: 'Check slot over time',
+  //   description: 'Check slot over time',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully checked slot over time',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while checking slot over time is invalid',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalid',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Not enough privileges',
+  // })
+  // checkSlotOverTime(
+  //   @Query('slotin', new DefaultValuePipe('')) slotin: string,
+  //   @Query('date', new DefaultValuePipe('')) date: string
+  // ) {
+  //   return this.service.checkSlotOverTime({
+  //     slotin: slotin,
+  //     date: date,
+  //   });
+  // }
 
   // @Get('list-booking-by-room-in-week')
   // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -1060,7 +1060,7 @@ export class BookingRoomController {
   // ) {
   //   return this.service.getBookingRoomDevices(name, type, sort);
   // }
-  
+
 
   @Get('check-in')
   @ApiOperation({
