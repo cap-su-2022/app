@@ -5,18 +5,18 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import {SlotRepository} from '../repositories/slot.repository';
-import {PaginationParams} from '../controllers/pagination.model';
-import {Pagination} from 'nestjs-typeorm-paginate';
-import {Slot} from '../models/slot.entity';
-import {BookingRoomService} from './booking-room.service';
-import {InjectDataSource} from '@nestjs/typeorm';
-import {DataSource} from 'typeorm';
-import {SlotsRequestPayload} from '../payload/request/slot-add.request.payload';
-import {getConfigFileLoaded} from "../controllers/global-config.controller";
-import {SlotsConfigRequestPayload} from "../payload/request/slot-config-request-add.payload";
-import * as fs from "fs";
-import * as yaml from "js-yaml";
+import { SlotRepository } from '../repositories/slot.repository';
+import { PaginationParams } from '../controllers/pagination.model';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { Slot } from '../models/slot.entity';
+import { BookingRoomService } from './booking-room.service';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { SlotsRequestPayload } from '../payload/request/slot-add.request.payload';
+import { getConfigFileLoaded } from '../controllers/global-config.controller';
+import { SlotsConfigRequestPayload } from '../payload/request/slot-config-request-add.payload';
+import * as fs from 'fs';
+import * as yaml from 'js-yaml';
 
 @Injectable()
 export class SlotService {
@@ -27,14 +27,11 @@ export class SlotService {
     private readonly repository: SlotRepository,
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService
-  ) {
-  }
-
+  ) {}
 
   async getAll() {
     try {
-      let result = Promise.resolve(getConfigFileLoaded().slots);
-      return result;
+      return Promise.resolve(getConfigFileLoaded().slots);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -80,15 +77,16 @@ export class SlotService {
   //   }
   // }
 
-
   async getById(id: string) {
     try {
       const slot = `slot${id}`;
-      const slotInfor = Promise.resolve(getConfigFileLoaded().slots).then((slots) => {
-        return {
-          ...slots[slot],
-        };
-      })
+      const slotInfor = Promise.resolve(getConfigFileLoaded().slots).then(
+        (slots) => {
+          return {
+            ...slots[slot],
+          };
+        }
+      );
       return slotInfor;
     } catch (e) {
       this.logger.error(e.message);
@@ -114,22 +112,57 @@ export class SlotService {
   // }
 
   async addNewSlot(slot: SlotsConfigRequestPayload) {
-    Promise.resolve(getConfigFileLoaded())
-      .then((data) => {
-        const slots = data.slots;
-        console.log(slots)
-        fs.writeFileSync(
-          './backend-config.yaml',
-          yaml.dump({
-            ...data,
-            slots: {
-              // slots.slot,
-              slot
-            }
-          })
-        );
-      })
+    try {
+      const isValidTimeStart =
+        /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(slot.start);
 
+      if (!isValidTimeStart) {
+        throw new BadRequestException('Time start is not valid');
+      }
+
+      const isValidTimeEnd =
+        /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(slot.end);
+
+      if (!isValidTimeEnd) {
+        throw new BadRequestException('Time end is not valid');
+      }
+
+      await Promise.resolve(getConfigFileLoaded())
+        .then((data) => {
+          const slots = new Object(data.slots);
+          const newSlotName = slot.name.toLowerCase().replace(/\s/g, '');
+
+          const slotsArray = Object.values(slots);
+          const isDuplicate = slotsArray.some((s) => {
+            const resutl =
+              (s.start <= slot.start && s.end > slot.start) ||
+              (s.start < slot.end && s.end >= slot.end) ||
+              (s.start > slot.start && s.end < slot.end);
+            return resutl;
+          });
+
+          if (isDuplicate) {
+            throw 'This time is duplicate';
+          }
+
+          fs.writeFileSync(
+            './backend-config.yaml',
+            yaml.dump({
+              ...data,
+              slots: {
+                ...slots,
+                [newSlotName]: slot,
+              },
+            })
+          );
+        })
+        .catch((e) => {
+          throw new BadRequestException(e)
+        })
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
   }
 
   async updateById(id: string, slot: SlotsConfigRequestPayload) {
