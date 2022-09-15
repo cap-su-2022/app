@@ -19,3 +19,7 @@ slots:
     name: Slot 4
     start: '15:15:00'
     end: '17:30:00'
+  slot5:
+    name: Slot 5
+    start: '17:30:00'
+    end: '19:30:00'
