@@ -7,9 +7,9 @@ import { UserInfoModel } from '../../models/user/user-info.model';
 import dayjs from 'dayjs';
 
 interface RowData {
-  'holiday.name': string;
-  'holiday.dateStart': string;
-  'holiday.dateEnd': string;
+  'holidays.name': string;
+  'holidays.dateStart': string;
+  'holidays.dateEnd': string;
 }
 
 interface TableBodyProps {
@@ -99,24 +99,24 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           </Th>
 
           <Th
-            sorted={sortBy === 'holiday.name'}
+            sorted={sortBy === 'holidays.name'}
             reversed={reverseSortDirection}
-            onSort={() => setSorting('holiday.name')}
+            onSort={() => setSorting('holidays.name')}
           >
             Name
           </Th>
 
           <Th
-            sorted={sortBy === 'holiday.dateStart'}
+            sorted={sortBy === 'holidays.dateStart'}
             reversed={reverseSortDirection}
-            onSort={() => setSorting('holiday.dateStart')}
+            onSort={() => setSorting('holidays.dateStart')}
           >
             Date Starts
           </Th>
           <Th
-            sorted={sortBy === 'holiday.dateEnd'}
+            sorted={sortBy === 'holidays.dateEnd'}
             reversed={reverseSortDirection}
-            onSort={() => setSorting('holiday.dateEnd')}
+            onSort={() => setSorting('holidays.dateEnd')}
           >
             Date Ends
           </Th>
