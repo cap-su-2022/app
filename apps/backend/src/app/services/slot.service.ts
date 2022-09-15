@@ -111,25 +111,29 @@ export class SlotService {
   //   return this.repository.findAll();
   // }
 
+  validateSlot(slot: SlotsConfigRequestPayload) {
+    const isValidTimeStart =
+      /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(slot.start);
+
+    if (!isValidTimeStart) {
+      throw new BadRequestException('Time start is not valid');
+    }
+
+    const isValidTimeEnd =
+      /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(slot.end);
+
+    if (!isValidTimeEnd) {
+      throw new BadRequestException('Time end is not valid');
+    }
+
+    if (slot.end < slot.start) {
+      throw new BadRequestException('Time end must be greater than time start');
+    }
+  }
+
   async addNewSlot(slot: SlotsConfigRequestPayload) {
     try {
-      const isValidTimeStart =
-        /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(slot.start);
-
-      if (!isValidTimeStart) {
-        throw new BadRequestException('Time start is not valid');
-      }
-
-      const isValidTimeEnd =
-        /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(slot.end);
-
-      if (!isValidTimeEnd) {
-        throw new BadRequestException('Time end is not valid');
-      }
-
-      if (slot.end < slot.start) {
-        throw new BadRequestException('Time end must be greater than time start');
-      }
+      this.validateSlot(slot);
 
       await Promise.resolve(getConfigFileLoaded())
         .then((data) => {
@@ -177,51 +181,94 @@ export class SlotService {
     }
   }
 
-  async updateById(id: string, slot: SlotsConfigRequestPayload) {
-    // const slotInfor =  getById(id);
-  }
-
-  async deleteSlotById(accountId: string, id: string) {
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+  async updateSlot(key: string, slot: SlotsConfigRequestPayload) {
     try {
-      const isExisted = await this.repository.existsById(id);
-      if (!isExisted) {
-        throw new BadRequestException(
-          'Slot does not found with the provided id'
-        );
-      }
-      const data = await this.repository.findById(id);
-      if (data === undefined) {
-        throw new BadRequestException('This slot is already deleted');
-      }
+      this.validateSlot(slot);
+      const newSlotName = slot.name.toLowerCase().replace(/\s/g, '');
 
-      // const listRequestBySlot =
-      //   await this.bookingRoomService.getRequestBySlotId(id);
-      // if (listRequestBySlot?.length > 0) {
-      //   const reason = `${data.name} was deleted. Request in this slot was auto cancelled`;
-      //   for (let i = 0; i < listRequestBySlot.length; i++) {
-      //     this.bookingRoomService.cancelRequest(
-      //       accountId,
-      //       listRequestBySlot[i].id,
-      //       reason,
-      //       queryRunner
-      //     );
-      //   }
-      // }
+      await Promise.resolve(getConfigFileLoaded())
+        .then((data) => {
+          const slots = new Object(data.slots);
 
-      const slot = await this.repository.deleteById(accountId, id, queryRunner);
-      // await this.histService.createNew(slot);
-      await queryRunner.commitTransaction();
-      return slot;
+          const slotNameArray = Object.keys(slots);
+          console.log(slotNameArray);
+          if (!slotNameArray.includes(key)) {
+            throw `Don't have slot with key ${key}`;
+          }
+          const slotsArray = Object.entries(slots);
+          const isDuplicateTime = slotsArray.some((s) => {
+            const resutl =
+              ((s[1].start <= slot.start && s[1].end > slot.start) ||
+                (s[1].start < slot.end && s[1].end >= slot.end) ||
+                (s[1].start > slot.start && s[1].end < slot.end)) &&
+              s[0] !== key;
+            return resutl;
+          });
+
+          if (isDuplicateTime) {
+            throw 'This time is duplicate';
+          }
+
+          const isDuplicateName = slotsArray.some((s) => {
+            return s[1].name === slot.name && s[0] !== key;
+          });
+
+          if (isDuplicateName) {
+            throw 'This name is duplicate';
+          }
+
+          delete slots[key];
+
+          fs.writeFileSync(
+            './backend-config.yaml',
+            yaml.dump({
+              ...data,
+              slots: {
+                ...slots,
+                [newSlotName]: slot,
+              },
+            })
+          );
+        })
+        .catch((e) => {
+          throw new BadRequestException(e);
+        });
     } catch (e) {
       this.logger.error(e);
-      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
-    } finally {
-      await queryRunner.release();
+    }
+  }
+
+  async deleteSlot(key: string) {
+    try {
+      await Promise.resolve(getConfigFileLoaded())
+        .then((data) => {
+          const slots = new Object(data.slots);
+
+          const slotNameArray = Object.keys(slots);
+          console.log(slotNameArray);
+          if (!slotNameArray.includes(key)) {
+            throw `Don't have slot with key ${key}`;
+          }
+
+          delete slots[key];
+
+          fs.writeFileSync(
+            './backend-config.yaml',
+            yaml.dump({
+              ...data,
+              slots: {
+                ...slots,
+              },
+            })
+          );
+        })
+        .catch((e) => {
+          throw new BadRequestException(e);
+        });
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(e.message);
     }
   }
 

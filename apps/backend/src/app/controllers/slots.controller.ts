@@ -197,7 +197,7 @@ export class SlotController {
     return this.service.addNewSlot(slotConfig);
   }
 
-  @Put('update:/id')
+  @Put('update/:key')
   @Roles(Role.APP_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -221,13 +221,13 @@ export class SlotController {
     description: 'Insufficient privileges',
   })
  updateSlot(
-    @Param('id') id: string,
+    @Param('key') key: string,
     @Body() slotConfig: SlotsConfigRequestPayload
   ) {
-    return this.service.updateById(id, slotConfig);
+    return this.service.updateSlot(key, slotConfig);
   }
 
-  @Delete(':id')
+  @Delete(':key')
   @Roles(Role.APP_ADMIN)
   @ApiResponse({
     status: HttpStatus.OK,
@@ -249,70 +249,70 @@ export class SlotController {
     summary: 'Delete a slot',
     description: 'Delete a slot',
   })
-  deleteSlotById(@Param('id') id: string, @User() user: KeycloakUserInstance) {
-    return this.service.deleteSlotById(user.account_id, id);
+  deleteSlot(@Param('key') key: string) {
+    return this.service.deleteSlot(key);
   }
 
-  @Get('deleted')
-  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully deleted slot',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for slots is not validated',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @ApiOperation({
-    summary: 'Get deleted slot',
-    description: 'Get deleted slot',
-  })
-  @ApiParam({
-    name: 'search',
-    description: "Search deleted slots",
-    type: String,
-    required: false,
-    example: 'Slot 5',
-  })
-  getDeletedSlots(@Query('search') search: string) {
-    return this.service.getDeletedSlots(search);
-  }
+  // @Get('deleted')
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully deleted slot',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Request params for slots is not validated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalidated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // @ApiOperation({
+  //   summary: 'Get deleted slot',
+  //   description: 'Get deleted slot',
+  // })
+  // @ApiParam({
+  //   name: 'search',
+  //   description: "Search deleted slots",
+  //   type: String,
+  //   required: false,
+  //   example: 'Slot 5',
+  // })
+  // getDeletedSlots(@Query('search') search: string) {
+  //   return this.service.getDeletedSlots(search);
+  // }
 
-  @Put('restore-deleted/:id')
-  @Roles(Role.APP_ADMIN)
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Successfully restored deleted slot by id',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Request params for deleted slot is not validated',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is invalidated',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient privileges',
-  })
-  @ApiOperation({
-    summary: 'Successfully restored deleted slot by id',
-    description: 'Successfully restored deleted slot by id',
-  })
-  restoreDeletedSlotById(
-    @Param('id') id: string,
-    @User() keycloakUser: KeycloakUserInstance
-  ) {
-    return this.service.restoreDeletedSlotById(keycloakUser.account_id, id);
-  }
+  // @Put('restore-deleted/:id')
+  // @Roles(Role.APP_ADMIN)
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully restored deleted slot by id',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Request params for deleted slot is not validated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalidated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // @ApiOperation({
+  //   summary: 'Successfully restored deleted slot by id',
+  //   description: 'Successfully restored deleted slot by id',
+  // })
+  // restoreDeletedSlotById(
+  //   @Param('id') id: string,
+  //   @User() keycloakUser: KeycloakUserInstance
+  // ) {
+  //   return this.service.restoreDeletedSlotById(keycloakUser.account_id, id);
+  // }
 
 }
