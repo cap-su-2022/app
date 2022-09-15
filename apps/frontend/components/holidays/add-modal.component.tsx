@@ -24,10 +24,10 @@ import * as Yup from 'yup';
 import {showNotification} from '@mantine/notifications';
 import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import {fetchHolidays} from "../../redux/features/holidays/thunk/fetch-holidays.thunk";
-import {updateHolidayById} from "../../redux/features/holidays/thunk/update-holiday-by-id.thunk";
 import dayjs from "dayjs";
 import {DatePicker} from "@mantine/dates";
 import {addHoliday} from "../../redux/features/holidays/thunk/add-holiday";
+import {fetchHolidaysMini} from "../../redux/features/holidays/thunk/fetch-holidays-mini.thunk";
 
 interface AddModalProps {
   isShown: boolean;
@@ -53,6 +53,22 @@ const AddHolidayModal: React.FC<AddModalProps> = (props) => {
   const {classes} = useStyles();
   const [isUpdateDisabled, setUpdateDisabled] = useState<boolean>(false);
   const dispatch = useAppDispatch();
+  const holidays = useAppSelector((state) => state.holiday.holidaysMini);
+  const isHoliday = (date) => {
+    const dateFormat = dayjs(date).format('YYYY-MM-DD');
+    for (let i = 0; i < holidays.length; i++) {
+      if (
+        holidays[i].dateStart <= dateFormat &&
+        holidays[i].dateEnd >= dateFormat
+      ) {
+        return true;
+      }
+    }
+  };
+
+  useEffect(() => {
+    dispatch(fetchHolidaysMini()).unwrap();
+  }, []);
 
 
   const handleAddSubmit = async (values) => {
@@ -101,8 +117,6 @@ const AddHolidayModal: React.FC<AddModalProps> = (props) => {
     onSubmit: (values) => handleAddSubmit(values),
     validationSchema: AddHolidayValidation,
   });
-
-
 
 
   const ModalHeaderTitle: React.FC = () => {
@@ -181,9 +195,9 @@ const AddHolidayModal: React.FC<AddModalProps> = (props) => {
                   required
                   inputFormat="DD-MM-YYYY"
                   // value={new Date(formik.values.dateStart)}
+                  excludeDate={(date) => isHoliday(date)}
                   minDate={dayjs(new Date()).toDate()}
                   onChange={(date) => {
-                    console.log(date + " dateStart")
                     formik.setFieldValue('dateStart', date);
                   }}
                 />
@@ -201,10 +215,10 @@ const AddHolidayModal: React.FC<AddModalProps> = (props) => {
                   radius="md"
                   required
                   inputFormat="DD-MM-YYYY"
+                  excludeDate={(date) => isHoliday(date)}
                   // value={new Date(formik.values.dateEnd)}
                   minDate={dayjs(new Date()).toDate()}
                   onChange={(date) => {
-                    console.log(date + " dateEnd")
                     formik.setFieldValue('dateEnd', date);
                   }}
                 />

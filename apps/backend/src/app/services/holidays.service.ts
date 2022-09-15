@@ -106,8 +106,7 @@ export class HolidaysService {
           queryRunner
         );
       }
-      const isHoliday = this.isHoliday(holiday.dateStart, holiday.dateEnd);
-      if (isHoliday) {
+      if (await this.isHoliday(holiday.dateStart, holiday.dateEnd)) {
         throw new BadRequestException(
           'There is already existed holiday which is started and ended in this date range. Choose another date starts and date ends'
         );
@@ -207,8 +206,7 @@ export class HolidaysService {
           'There is already existed holiday with the this name. Try with another name.'
         );
       }
-      const isHoliday = this.isHoliday(body.dateStart, body.dateEnd);
-      if (isHoliday) {
+      if (await this.isHoliday(body.dateStart, body.dateEnd)) {
         throw new BadRequestException(
           'There is already existed holiday which is started and ended in this date range. Choose another date starts and date ends'
         );
