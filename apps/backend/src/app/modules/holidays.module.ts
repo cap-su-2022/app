@@ -5,11 +5,9 @@ import {HolidaysService, KeycloakService} from "../services";
 import {HolidaysController} from "../controllers";
 import {forwardRef, Module} from "@nestjs/common";
 import {HttpModule} from "@nestjs/axios";
-import {ConfigModule} from "@nestjs/config";
 
 @Module(  {
   imports:[
-    ConfigModule,
     HttpModule,
     forwardRef(() => AccountsModule),
     TypeOrmExModule.forCustomRepository([HolidaysRepository]),

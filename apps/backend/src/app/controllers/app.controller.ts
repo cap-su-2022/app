@@ -1,6 +1,5 @@
 import { Controller, Get, HttpStatus, UseInterceptors } from "@nestjs/common";
 import { AppService } from "../services";
-import { ConfigService } from "@nestjs/config";
 import { ApiCreatedResponse, ApiTags } from "@nestjs/swagger";
 import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 
@@ -10,7 +9,6 @@ import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly configService: ConfigService
   ) {
   }
 

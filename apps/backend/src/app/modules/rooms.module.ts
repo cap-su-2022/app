@@ -1,9 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { RoomsController } from '../controllers';
 import { RoomsService } from '../services';
-import { AccountRepository, RoomsRepository } from '../repositories';
+import { RoomsRepository } from '../repositories';
 import { HttpModule } from '@nestjs/axios';
-import ConfigModule from './global/config.module';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import { KeycloakModule } from './keycloak.module';
 import { AccountsModule } from './accounts.module';
@@ -13,7 +12,6 @@ import { BookingRoomModule } from './booking-room.module';
 
 @Module({
   imports: [
-    ConfigModule,
     HttpModule,
     forwardRef(() => AccountsModule),
     forwardRef(() => KeycloakModule),

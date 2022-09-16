@@ -1,21 +1,16 @@
 import * as admin from "firebase-admin";
-import {FirebaseSettingsModel} from "@app/models";
-import path = require("path");
-const firebaseServiceAccountFile = 'assets/fptu-library-booking-firebase-adminsdk-gbxgk-75d2eb543f.json';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const fs = require('fs');
-const firebaseSettings = JSON.parse(fs.readFileSync(path.join(__dirname, firebaseServiceAccountFile), 'utf-8')) as FirebaseSettingsModel;
+import {environment} from "../../environments/environment";
+const firebaseServiceAccount = environment.firebase.service_account;
 
 export const initializeFirebaseApp = () => {
   admin.initializeApp({
     credential: admin.credential.cert({
-      projectId: firebaseSettings.project_id,
-      clientEmail: firebaseSettings.client_email,
-      privateKey: firebaseSettings.private_key.replace(/\\n/g, '\n'),
+      projectId: firebaseServiceAccount.project_id,
+      clientEmail: firebaseServiceAccount.client_email,
+      privateKey: firebaseServiceAccount.private_key.replace(/\\n/g, '\n'),
     } as Partial<admin.ServiceAccount>)
   });
-  return firebaseSettings.project_id;
+  return firebaseServiceAccount.project_id;
 };
 
 export default admin;

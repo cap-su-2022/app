@@ -13,10 +13,9 @@ import {
 } from '@app/models';
 import { OAuth2Client } from 'google-auth-library';
 import Exception from '../constants/exception.constant';
-import { ConfigService } from '@nestjs/config';
 import { Accounts } from '../models';
-import { RoleService } from './role.service';
 import { randomUUID } from 'crypto';
+import {environment} from "../../environments/environment";
 
 @Injectable()
 export class AuthenticationService {
@@ -27,15 +26,10 @@ export class AuthenticationService {
 
   constructor(
     private readonly accountService: AccountsService,
-    private readonly configService: ConfigService,
     private readonly keycloakService: KeycloakService
   ) {
-    this.oAuthClientId = this.configService.get<string>(
-      'firebase.oauth.clientId'
-    );
-    this.oAuthAudience = this.configService.get<string[]>(
-      'firebase.oauth.audience'
-    );
+    this.oAuthClientId = environment.firebase.oauth.clientId;
+    this.oAuthAudience = environment.firebase.oauth.audience;
   }
 
   async handleGoogleSignin(

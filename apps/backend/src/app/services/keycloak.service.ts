@@ -12,13 +12,12 @@ import {
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map, Observable } from 'rxjs';
 import { KeycloakSigninSuccessResponse } from '../dto/keycloak-signin-success.response.dto';
-import { ConfigService } from '@nestjs/config';
 import { REQUEST } from '@nestjs/core';
-import { APPLICATION_X_WWW_FORM_URLENCODED, Environment } from '@app/constants';
+import { APPLICATION_X_WWW_FORM_URLENCODED } from '@app/constants';
 import { AccessTokenResponsePayload } from '../payload/response/refresh_token.response.payload';
 import { RefreshTokenPayload } from '../payload/response/refresh-token.request.payload';
 import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { CreateAccountRequestPayload } from '../controllers/create-account-request-payload.model';
+import {environment} from "../../environments/environment";
 
 @Injectable({
   scope: Scope.REQUEST,
@@ -38,40 +37,19 @@ export class KeycloakService {
   private readonly clientSecret: string;
 
   constructor(
-    private readonly configService: ConfigService,
     private readonly httpService: HttpService,
     @Inject(REQUEST) private readonly httpRequest: Request
   ) {
-    this.keycloakHost = this.configService.get<string>(
-      Environment.keycloak.host
-    );
-    this.keycloakPort = this.configService.get<number>(
-      Environment.keycloak.port
-    );
-    this.keycloakRealm = this.configService.get<string>(
-      Environment.keycloak.client.realm
-    );
-    this.grantTypePassword = this.configService.get<string>(
-      Environment.keycloak.grant_type.password
-    );
-    this.clientId = this.configService.get<string>(
-      Environment.keycloak.client.id
-    );
-    this.masterUsername = this.configService.get<string>(
-      Environment.keycloak.master_username
-    );
-    this.masterPassword = this.configService.get<string>(
-      Environment.keycloak.master_password
-    );
-    this.grantTypeRefreshToken = this.configService.get<string>(
-      Environment.keycloak.grant_type.refresh_token
-    );
-    this.grantTypeTokenExchange = this.configService.get<string>(
-      Environment.keycloak.grant_type.token_exchange
-    );
-    this.clientSecret = this.configService.get<string>(
-      Environment.keycloak.client.secret
-    );
+    this.keycloakHost = environment.keycloak.host;
+    this.keycloakPort = environment.keycloak.port;
+    this.keycloakRealm = environment.keycloak.client.realm;
+    this.grantTypePassword = environment.keycloak.grant_type.password;
+    this.clientId = environment.keycloak.client.id;
+    this.masterUsername = environment.keycloak.master_username;
+    this.masterPassword = environment.keycloak.master_password;
+    this.grantTypeRefreshToken = environment.keycloak.grant_type.refresh_token;
+    this.grantTypeTokenExchange = environment.keycloak.grant_type.token_exchange;
+    this.clientSecret = environment.keycloak.client.secret;
   }
 
   async getAuthenticationTokenByMasterAccount(
@@ -152,13 +130,9 @@ export class KeycloakService {
   ): Promise<KeycloakSigninSuccessResponse> {
     const url = `http://${this.keycloakHost}:${this.keycloakPort}/auth/realms/${this.keycloakRealm}/protocol/openid-connect/token`;
     const signInPayload = new URLSearchParams({
-      client_id: this.configService.get<string>(Environment.keycloak.client.id),
-      client_secret: this.configService.get<string>(
-        Environment.keycloak.client.secret
-      ),
-      grant_type: this.configService.get<string>(
-        Environment.keycloak.grant_type.password
-      ),
+      client_id: environment.keycloak.client.id,
+      client_secret: environment.keycloak.client.secret,
+      grant_type: environment.keycloak.grant_type.password,
       username: username,
       password: password,
     });
@@ -308,13 +282,9 @@ export class KeycloakService {
     const URL = `http://${this.keycloakHost}:${this.keycloakPort}/auth/realms/${this.keycloakRealm}/protocol/openid-connect/token`;
     console.log(payload.refreshToken);
     const refreshTokenPayload = new URLSearchParams({
-      client_id: this.configService.get<string>(Environment.keycloak.client.id),
-      client_secret: this.configService.get<string>(
-        Environment.keycloak.client.secret
-      ),
-      grant_type: this.configService.get<string>(
-        Environment.keycloak.grant_type.native_refresh_token
-      ),
+      client_id: environment.keycloak.client.id,
+      client_secret: environment.keycloak.client.secret,
+      grant_type: environment.keycloak.grant_type.native_refresh_token,
       refresh_token: payload.refreshToken,
     });
 

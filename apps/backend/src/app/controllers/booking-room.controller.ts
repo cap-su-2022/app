@@ -30,6 +30,50 @@ import { BookingRequestAddRequestPayload } from '../payload/request/booking-requ
 import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
 import { CancelRequestPayload } from '../payload/request/booking-request-cancel.payload';
 import { BookingRoomPaginationParams } from './booking-room-pagination.model';
+import {IsDateString, IsNotEmpty, IsNumber, IsPositive, IsUUID} from "class-validator";
+
+class AutoRoomBookingDevice {
+  @IsUUID()
+  @IsNotEmpty()
+  id: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
+}
+
+class AutoRoomBookingCapacity {
+  @IsNotEmpty()
+  min: number;
+
+  @IsNotEmpty()
+  @IsPositive()
+  max: number;
+}
+
+class AutoRoomBookingDate {
+  @IsNotEmpty()
+  min: number;
+
+  @IsNotEmpty()
+  @IsPositive()
+  max: number;
+}
+
+class AutoRoomBookingRequest {
+
+  @IsNotEmpty()
+  @IsDateString()
+  date: string;
+
+  timeStart: string;
+  timeEnd: string;
+  devices: AutoRoomBookingDevice;
+
+  @IsNotEmpty()
+  capacity: AutoRoomBookingCapacity;
+}
 
 @Controller('/v1/booking-room')
 @ApiTags('Booking Room')
@@ -211,6 +255,11 @@ export class BookingRoomController {
     @Query('deviceId') deviceId = ''
   ): Promise<BookingRequest[]> {
     return this.service.getRequestByDeviceId(deviceId);
+  }
+
+  @Post('auto-booking')
+  requestRoomBookingAutomatically(@Body() payload: AutoRoomBookingRequest[]) {
+    return payload;
   }
 
   // @Get('list-booking-with-same-slot')
@@ -1021,27 +1070,27 @@ export class BookingRoomController {
     );
   }
 
-  // @Get('accounts-name')
-  // @ApiOperation({
-  //   summary: 'Get account names',
-  //   description: 'Get a list of account names',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.OK,
-  //   description: 'Successfully got account names',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.BAD_REQUEST,
-  //   description: 'Error while getting a list of accounts name',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.UNAUTHORIZED,
-  //   description: 'Invalid access token',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.FORBIDDEN,
-  //   description: 'Insufficient privileges',
-  // })
+  @Get('accounts-name')
+  @ApiOperation({
+    summary: 'Get account names',
+    description: 'Get a list of account names',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully got account names',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error while getting a list of accounts name',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid access token',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
   // getUsernameList() {
   //   return this.service.getUsernameList();
   // }

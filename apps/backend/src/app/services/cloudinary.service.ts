@@ -1,8 +1,7 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import * as Cloudinary from "cloudinary";
-import { ConfigService } from "@nestjs/config";
-import { Environment } from "@app/constants";
 import * as streamifier from "streamifier";
+import {environment} from "../../environments/environment";
 
 const cloudinary = Cloudinary.v2;
 const cloudinaryUploader = cloudinary.uploader;
@@ -10,16 +9,12 @@ const cloudinaryUploader = cloudinary.uploader;
 @Injectable()
 export class CloudinaryService implements OnModuleInit {
 
-  constructor(private readonly configService: ConfigService) {
-
-  }
-
   onModuleInit() {
     cloudinary.config({
-      api_key: this.configService.get<string>(Environment.cloudinary.apiKey),
-      api_secret: this.configService.get<string>(Environment.cloudinary.apiSecret),
-      cloud_name: this.configService.get<string>(Environment.cloudinary.name),
-      secure: this.configService.get<boolean>(Environment.cloudinary.secure)
+      api_key: environment.cloudinary.apiKey,
+      api_secret: environment.cloudinary.apiSecret,
+      cloud_name: environment.cloudinary.name,
+      secure: environment.cloudinary.secure
     });
   }
 

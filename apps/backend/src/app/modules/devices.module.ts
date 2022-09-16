@@ -5,7 +5,6 @@ import { DeviceHistService } from '../services';
 import { DevicesRepository } from '../repositories';
 import { DeviceHistRepository } from '../repositories';
 import { KeycloakService } from '../services';
-import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
 import { AccountsModule } from './accounts.module';
@@ -13,7 +12,6 @@ import { BookingRoomModule } from './booking-room.module';
 
 @Module({
   imports: [
-    ConfigModule,
     HttpModule,
     forwardRef(() => AccountsModule),
     forwardRef(() => BookingRoomModule),

@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { BookingRoomController } from '../controllers';
 import { BookingRoomService } from '../services';
-import { AccountRepository, BookingRoomRepository } from '../repositories';
+import { BookingRoomRepository } from '../repositories';
 import { RoomsModule } from './rooms.module';
 import { KeycloakModule } from './keycloak.module';
 import { TypeOrmExModule } from './global/typeorm-ex.module';

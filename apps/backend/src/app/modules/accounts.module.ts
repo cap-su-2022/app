@@ -3,7 +3,6 @@ import { AccountsController } from '../controllers';
 import { AccountsService } from '../services';
 import { AccountRepository } from '../repositories';
 import { KeycloakService } from '../services';
-import ConfigModule from './global/config.module';
 import { HttpModule } from '@nestjs/axios';
 import { CloudinaryService } from '../services';
 import { TypeOrmExModule } from './global/typeorm-ex.module';
@@ -14,7 +13,6 @@ import { RolesModule } from './roles.module';
 
 @Module({
   imports: [
-    ConfigModule,
     HttpModule,
     forwardRef(() => BookingRoomModule),
     forwardRef(() => RolesModule),

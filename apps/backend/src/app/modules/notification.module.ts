@@ -11,11 +11,9 @@ import { AccountNotificationModule } from './account-notification.module';
 
 @Module({
   imports: [
-    ConfigModule,
     HttpModule,
     AccountNotificationModule,
     forwardRef(() => AccountsModule),
-
     TypeOrmExModule.forCustomRepository([NotificationRepository]),
   ],
   controllers: [NotificationController],

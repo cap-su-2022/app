@@ -1,5 +1,5 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { Environment } from '@app/constants';
 import {
   Accounts,
@@ -27,16 +27,17 @@ import {BookingRoomFeedback} from '../../models';
 import {Feedback} from '../../models';
 import {FeedbackType} from '../../models';
 import {Notification} from '../../models';
+import {environment} from "../../../environments/environment";
 
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
-  useFactory: (configService: ConfigService) => ({
+  useFactory: () => ({
     type: 'postgres',
-    host: configService.get<string>(Environment.db.postgres.url),
-    port: configService.get<number>(Environment.db.postgres.port),
-    username: configService.get<string>(Environment.db.postgres.username),
-    password: configService.get<string>(Environment.db.postgres.password),
-    database: configService.get<string>(Environment.db.postgres.database),
+    host: environment.database.host,
+    port: environment.database.port,
+    username: environment.database.username,
+    password: environment.database.password,
+    database: environment.database.name,
     entities: [
       Accounts,
       AccountHist,
@@ -63,9 +64,7 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       Slot,
       Holidays
     ],
-    synchronize: configService.get<boolean>(
-      Environment.db.postgres.synchronize
-    ),
+    synchronize: environment.database.synchronize,
     logging: ['query'],
     cache: false,
     timezone: '+7',
@@ -77,7 +76,7 @@ const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({
       connectionTimeoutMillis: 1000,
     },
   }),
-  inject: [ConfigService],
+  inject: [],
 });
 
 export default GlobalTypeOrmModule;
