@@ -18,9 +18,9 @@ export const environment = {
     master_username: 'admin',
     master_password: '12345678x@X',
     client: {
-      realm: 'authentication',
+      realm: 'master',
       id: 'authentication-api',
-      secret: 'eAaFWFGhQbwR02U4g7M9xsd9BryRaeJ7',
+      secret: '6icNETyijRyra3OyUv92Kxm5fNMwDG9D',
     },
     grant_type: {
       token_exchange: 'urn:ietf:params:oauth:grant-type:token-exchange',

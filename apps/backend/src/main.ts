@@ -16,6 +16,7 @@ import {
 } from '@nestjs/platform-fastify';
 import compression from 'fastify-compress';
 import { contentParser } from 'fastify-multer';
+import {environment} from "./environments/environment";
 // workaround to have "pg" added in package.json from dist
 export * from 'pg';
 
@@ -71,6 +72,7 @@ async function bootstrap() {
       `[Firebase] Initialized with project id: ${firebaseProjectId}`
     );
 
+    Logger.debug(`[Production Mode]: ${environment.production}`);
     Logger.debug(
       `[API] Running on: http://${client.localAddress}:${port}${contextPath}`
     );

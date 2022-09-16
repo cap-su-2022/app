@@ -7,7 +7,7 @@
     "frontend": "nx serve frontend",
     "backend": "nx serve backend",
     "build-frontend": "nx build frontend",
-    "build-backend": "nx build backend",
+    "build-backend": "nx build backend --production",
     "build-android": "nx build-android mobile",
     "pod-install": "cd apps/mobile/ios && pod install --repo-update",
     "ios": "nx run-ios mobile",
