@@ -1,5 +1,5 @@
-import { QueryRunner, Repository } from 'typeorm';
-import { Rooms } from '../models';
+import {Brackets, QueryRunner, Repository} from 'typeorm';
+import {BookingRequest, Rooms} from '../models';
 import { CustomRepository } from '../decorators/typeorm-ex.decorator';
 import { Accounts } from '../models';
 import { paginateRaw } from 'nestjs-typeorm-paginate';
@@ -404,5 +404,24 @@ export class RoomsRepository extends Repository<Rooms> {
       });
     }
     return query.getRawMany<Rooms>();
+  }
+
+  async findRoomIdAndCapacity(): Promise<{id: string, roomName: string, roomType: string, capacity: number}[]> {
+    return this.createQueryBuilder('rooms')
+      .select('rooms.id', 'id')
+      .addSelect('rooms.capacity', 'capacity')
+      .addSelect('rooms.name', 'roomName')
+      .addSelect('rt.name', 'roomType')
+      .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
+      .leftJoin(BookingRequest, 'br', 'br.room_id = rooms.id')
+      .andWhere('rooms.deleted_at IS NULL')
+      .andWhere('rooms.deleted_by IS NULL')
+      .andWhere('rooms.disabled_at IS NULL')
+      .andWhere('rooms.disabled_by IS NULL')
+      .andWhere(new Brackets((qb) =>
+        qb.where('br.status NOT IN (:...status)', {status: ['CHECKED_IN', 'BOOKED']})
+          .orWhere('br.status IS NULL')))
+      .orderBy('rooms.capacity', 'ASC')
+      .getRawMany<{id: string, roomName: string, roomType: string, capacity: number}>();
   }
 }

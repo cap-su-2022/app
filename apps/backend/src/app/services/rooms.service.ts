@@ -8,15 +8,12 @@ import {
 import {Rooms} from '../models';
 import {RoomsRepository} from '../repositories';
 import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {ChooseBookingRoomFilterPayload} from '../payload/request/choose-booking-room-filter.payload';
 import {RoomsPaginationParams} from '../controllers/rooms-pagination.model';
 import {RoomHistService} from './room-hist.service';
-import {DataAddRequestPayload} from '../payload/request/data-add.request.payload';
 import {DataSource} from 'typeorm';
 import {BookingRoomService} from './booking-room.service';
 import {RoomAddRequestPayload} from '../payload/request/room-add.request.payload';
 import {getConfigFileLoaded} from '../controllers/global-config.controller';
-import {AutoRoomBookingCapacity} from "../payload/request/auto-booking-request.payload";
 
 @Injectable()
 export class RoomsService {
@@ -502,7 +499,8 @@ export class RoomsService {
     return this.repository.filterRoomFreeByRoomBooked(search, capacity, listIdRoomBooked);
   }
 
-  findRoomIdAndCapacityByBetweenCapacity(capacity: AutoRoomBookingCapacity): Promise<{id: string, capacity: number}[]> {
-    return;
+  async findRoomIdAndCapacityByBetweenCapacity(capacity: number): Promise<{id: string, roomName: string, roomType: string, capacity: number}> {
+    const rooms = await this.repository.findRoomIdAndCapacity();
+    return rooms.find((r) => capacity <= r.capacity);
   }
 }

@@ -21,16 +21,6 @@ class AutoRoomBookingDevice {
   quantity: number;
 }
 
-class AutoRoomBookingCapacity {
-  @IsNotEmpty()
-  @IsPositive()
-  min: number;
-
-  @IsNotEmpty()
-  @IsPositive()
-  max: number;
-}
-
 class AutoRoomBookingRequest {
 
   @IsNotEmpty()
@@ -45,11 +35,9 @@ class AutoRoomBookingRequest {
   devices: AutoRoomBookingDevice[];
 
   @IsNotEmpty()
-  @ValidateNested({ each: true })
-  @Type(() => AutoRoomBookingCapacity)
-  capacity: AutoRoomBookingCapacity;
+  @IsPositive()
+  capacity: number;
 
-  @IsNotEmpty()
   @IsString()
   @MaxLength(500)
   description: string;
@@ -67,4 +55,14 @@ class AutoRoomBookingRequestPayload {
   request: AutoRoomBookingRequest[];
 }
 
-export {AutoRoomBookingRequestPayload, AutoRoomBookingRequest, AutoRoomBookingDevice, AutoRoomBookingCapacity};
+class AutoRoomBookingResponsePayload {
+  capacity: number;
+  roomName: string;
+  roomType: string;
+  description: string;
+  date: string;
+  checkinAt: string;
+  checkoutAt: string;
+}
+
+export {AutoRoomBookingRequestPayload, AutoRoomBookingRequest, AutoRoomBookingDevice, AutoRoomBookingResponsePayload};

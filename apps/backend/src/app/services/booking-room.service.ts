@@ -22,10 +22,8 @@ import { BookingRoomPaginationParams } from '../controllers/booking-room-paginat
 import { BookingFeedbackService } from './booking-feedback.service';
 import { getConfigFileLoaded } from '../controllers/global-config.controller';
 import {
-  AutoRoomBookingCapacity,
   AutoRoomBookingDevice,
-  AutoRoomBookingRequest,
-  AutoRoomBookingRequestPayload
+  AutoRoomBookingRequest, AutoRoomBookingResponsePayload,
 } from "../payload/request/auto-booking-request.payload";
 import {DevicesService} from "./devices.service";
 import {BookingReasonService} from "./booking-reason.service";
@@ -37,37 +35,28 @@ export class BookingRoomService {
 
   constructor(
     private readonly dataSource: DataSource,
-
     @Inject(forwardRef(() => BookingRoomRepository))
     private readonly repository: BookingRoomRepository,
-
     @Inject(forwardRef(() => NotificationService))
     private readonly notificationService: NotificationService,
-
     @Inject(forwardRef(() => AccountsService))
     private readonly accountService: AccountsService,
-
     @Inject(forwardRef(() => SlotService))
     private readonly slotService: SlotService,
-
     @Inject(forwardRef(() => RoomsService))
     private readonly roomService: RoomsService,
-
     @Inject(forwardRef(() => BookingRoomDevicesService))
     private readonly bookingRoomDeviceService: BookingRoomDevicesService,
-
     @Inject(forwardRef(() => BookingFeedbackService))
     private readonly bookingFeedbackService: BookingFeedbackService,
-
     private readonly histService: BookingRequestHistService,
     @Inject(forwardRef(() => HolidaysService))
     private readonly holidaysService: HolidaysService,
-
     private readonly devicesService: DevicesService,
-
     @Inject(forwardRef(() => BookingReasonService))
     private readonly bookingReasonService: BookingReasonService,
-  ) {}
+  ) {
+  }
 
   private getExampleStatistics() {
     return {
@@ -241,7 +230,7 @@ export class BookingRoomService {
       this.logger.error(e.message);
       throw new BadRequestException(
         e.message ||
-          'An error occurred while getting request by room id ' + roomId
+        'An error occurred while getting request by room id ' + roomId
       );
     }
   }
@@ -1475,24 +1464,79 @@ export class BookingRoomService {
   //     throw new BadRequestException(e.message);
   //   }
   // }
-  async bookingRoomAutomatically(requests: AutoRoomBookingRequest[]): Promise<any> {
+
+  async bookingRoomAutomatically(requests: AutoRoomBookingRequest[], userId: string): Promise<AutoRoomBookingResponsePayload[]> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
     try {
+      const result: AutoRoomBookingResponsePayload[] = [];
+      //start
+      await queryRunner.startTransaction();
+
       for (const request of requests) {
+        //validation
         await this.validateAutoBookingRequest(request);
+        const room = await this.findRoomExistedWithProvidedCapacity(request.capacity);
 
-        const rooms = await this.roomService.findRoomIdAndCapacityByBetweenCapacity(request.capacity);
+        const requestRes = await this.repository.createNewRequest(
+          {
+            roomId: room.id,
+            bookingReasonId: request.bookingReasonId,
+            checkinTime: request.timeStart,
+            checkinDate: request.date,
+            checkoutTime: request.timeEnd,
+            checkoutDate: undefined,
+            description: request.description,
+            listDevice: undefined,
+            bookedFor: undefined,
+          },
+          userId,
+          queryRunner
+        );
 
+        await this.bookingRoomDeviceService.addDeviceToRequest(
+          requestRes.id,
+          request.devices.map((d) => {return {value: d.id, quantity: d.quantity}}),
+          queryRunner
+        );
+
+        result.push({
+          capacity: request.capacity,
+          roomName: room.roomName,
+          roomType: room.roomType,
+          description: request.description,
+          date: request.date,
+          checkinAt: request.timeStart,
+          checkoutAt: request.timeEnd
+        });
       }
-      return requests;
 
+      //end
+      await queryRunner.commitTransaction();
+
+      return result;
     } catch (e) {
       this.logger.error(e.message);
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
       throw new BadRequestException(e.message);
+    } finally {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.release();
+      }
     }
   }
 
+  private async findRoomExistedWithProvidedCapacity(capacity: number): Promise<{id: string, roomName: string, roomType: string, capacity: number}> {
+    const room = await this.roomService.findRoomIdAndCapacityByBetweenCapacity(capacity);
+    if (!room) {
+      throw new BadRequestException('No suitable room found within the provided capacity. Please try again.');
+    }
+    return room;
+  }
+
   private async validateAutoBookingRequest(request: AutoRoomBookingRequest) {
-    this.validateCapacity(request.capacity);
     await this.validateDevices(request.devices);
     await this.validateBookingReason(request.bookingReasonId);
     await this.validateBookingDateTime(request.date, {start: request.timeStart, end: request.timeEnd});
@@ -1500,20 +1544,11 @@ export class BookingRoomService {
   }
 
   private async validateConflictBookingTime(date: string, time: {start: string, end: string }) {
+    //fix bug
     const isConflicted = await this.repository.isConflictWithStartEndDateTime(date, time.start, time.end);
     console.log(isConflicted)
     if (isConflicted) {
       throw new BadRequestException(`The booking request with time from ${time.start} to ${time.end} is conflict. Please choose another time.`);
-    }
-  }
-
-  private validateCapacity(capacity: AutoRoomBookingCapacity) {
-    if (capacity.max < capacity.min) {
-      throw new BadRequestException("Max capacity must not be smaller than min capacity.");
-    }
-
-    if (capacity.min > capacity.max) {
-      throw new BadRequestException("Min capacity must not be larger than max capacity.");
     }
   }
 
