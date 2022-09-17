@@ -81,11 +81,10 @@ export class SlotService {
 
   async getById(id: string) {
     try {
-      const slot = `slot${id}`;
       const slotInfor = Promise.resolve(getConfigFileLoaded().slots).then(
         (slots) => {
           return {
-            ...slots[slot],
+            ...slots[id],
           };
         }
       );

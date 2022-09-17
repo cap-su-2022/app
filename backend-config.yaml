@@ -31,3 +31,7 @@ slots:
     name: Slot 10
     start: '22:00:00'
     end: '23:00:00'
+  slotvôcực:
+    name: Slot vô cực
+    start: '23:13:00'
+    end: '23:15:00'
