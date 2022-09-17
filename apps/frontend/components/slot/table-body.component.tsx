@@ -40,7 +40,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
       <td className={classes.actionButtonContainer}>
         <Button
           variant="outline"
-          onClick={() => props.actionButtonCb.info(index + 1)}
+          onClick={() => props.actionButtonCb.info(row[0])}
         >
           <InfoCircle/>
         </Button>

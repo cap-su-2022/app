@@ -20,7 +20,7 @@ export const updateSlot = createAsyncThunk<any, UpdateSlotPayload, {
 }>('holiday/update-holiday-by-id', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.put(`/api/slot/update/${payload.id}`,
+    const response = await axios.put(`/api/slots/update/${payload.id}`,
       {
         name: payload.name,
         start: dayjs(payload.start).format('HH:mm:ss'),

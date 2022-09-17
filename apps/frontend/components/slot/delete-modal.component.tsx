@@ -26,7 +26,7 @@ interface DeleteModalProps {
 
 const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const { classes } = useStyles();
-  // const slotConfig = useAppSelector((state) => state.slot.slotConfig);
+
 
 
 
