@@ -7,26 +7,26 @@ export const environment = {
   database: {
     host: 'database',
     port: 5432,
-    database: 'postgres',
+    name: 'postgres',
     username: 'admin',
     password: '12345678x@X',
     synchronize: false
   },
   keycloak: {
     host: 'keycloak',
-    port: 9090,
+    port: 8080,
     master_username: 'admin',
     master_password: '12345678x@X',
     client: {
       realm: 'master',
       id: 'authentication-api',
       secret: '6icNETyijRyra3OyUv92Kxm5fNMwDG9D',
-      grant_type: {
-        token_exchange: 'urn:ietf:params:oauth:grant-type:token-exchange',
-        refresh_token: 'urn:ietf:params:oauth:token-type:refresh_token',
-        native_refresh_token: 'refresh_token',
-        password: 'password'
-      }
+    },
+    grant_type: {
+      token_exchange: 'urn:ietf:params:oauth:grant-type:token-exchange',
+      refresh_token: 'urn:ietf:params:oauth:token-type:refresh_token',
+      native_refresh_token: 'refresh_token',
+      password: 'password'
     }
   },
   cloudinary: {

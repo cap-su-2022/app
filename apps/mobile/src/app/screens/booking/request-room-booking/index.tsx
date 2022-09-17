@@ -8,11 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {BLACK, FPT_ORANGE_COLOR, INPUT_GRAY_COLOR, WHITE} from '@app/constants';
+import {BLACK, FPT_ORANGE_COLOR, GRAY, INPUT_GRAY_COLOR, WHITE} from '@app/constants';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
 import {
+  DeviceTabletIcon,
   DocumentAddIcon,
-  ExclamationCircleIcon,
+  ExclamationCircleIcon, LibraryIcon, MinusIcon, PlusIcon,
   SearchIcon,
   TicketIcon,
 } from 'react-native-heroicons/outline';
@@ -39,6 +40,7 @@ import { checkOverSlot } from '../../../redux/features/room-booking/thunk/check-
 import AlertModal from '../../../components/modals/alert-modal.component';
 import { fetchCountRequestInWeekOfUser } from '../../../redux/features/room-booking/thunk/fetch-count-request-in-week-of-user.thunk';
 import {boxShadow} from "../../../utils/box-shadow.util";
+import dayjs from "dayjs";
 
 const ScheduleRoomBookingLater: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -301,7 +303,12 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
   }]);
 
   const handleAddBookingRequest = () => {
-
+    setBookingRequests([...bookingRequests, {
+      timeStart: '7:00',
+      timeEnd: '8:00',
+      capacity: 100,
+      date: dayjs().format('DD/MM/YYYY')
+    }])
   }
 
   return (
@@ -395,10 +402,135 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
                 backgroundColor: WHITE,
                 borderRadius: 8,
               }}>
-                <Text style={{
-                  color: BLACK,
-                  fontSize: deviceWidth / 23
-                }}>{request.date}</Text>
+                <TouchableOpacity style={{
+                  position: 'absolute',
+                  right: -10,
+                  top: -10,
+                  height: 25,
+                  width: 25,
+                  borderRadius: 50,
+                  backgroundColor: FPT_ORANGE_COLOR,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}>
+                  <MinusIcon color={WHITE} size={deviceWidth / 23}/>
+                </TouchableOpacity>
+                <View>
+                  <TouchableOpacity style={{
+                    position: 'absolute',
+                    right: 10,
+                    top: 40,
+                    height: 40,
+                    width: 40,
+                    borderRadius: 6,
+                    borderColor: FPT_ORANGE_COLOR,
+                    borderWidth: 2,
+                    backgroundColor: WHITE,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
+                    <DeviceTabletIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 16}/>
+                  </TouchableOpacity>
+                  <View style={{
+                    position: 'absolute',
+                    right: 3,
+                    top: 31,
+                    height: 20,
+                    width: 20,
+                    borderRadius: 50,
+                    backgroundColor: FPT_ORANGE_COLOR,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
+                    <PlusIcon color={WHITE} size={deviceWidth / 26}/>
+                  </View>
+                </View>
+                <View style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingLeft: 10,
+
+                }}>
+                  <View style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+
+                  }}>
+                    <View style={{
+                      borderRadius: 50,
+                      borderWidth: 2,
+                      borderColor: FPT_ORANGE_COLOR,
+                      width: 50,
+                      height: 50,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}>
+                      <LibraryIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 16}/>
+                    </View>
+                    <View style={{
+                      display: 'flex',
+                      justifyContent: 'space-around',
+                      height: 90,
+                      paddingLeft: 10,
+                    }}>
+                      <View style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                      }}>
+                        <Text style={{
+                          color: GRAY,
+                          fontSize: deviceWidth / 23,
+                          fontWeight: '500'
+                        }}>Date: </Text>
+                        <Text style={{
+                          color: BLACK,
+                          fontSize: deviceWidth / 23,
+                          fontWeight: '500'
+                        }}>{request.date}</Text>
+                      </View>
+                      <View style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                      }}>
+                        <Text style={{
+                          color: GRAY,
+                          fontSize: deviceWidth / 23,
+                          fontWeight: '500'
+                        }}>Check-in: </Text>
+                        <Text style={{
+                          color: BLACK,
+                          fontSize: deviceWidth / 23,
+                          fontWeight: '500'
+                        }}>{request.timeStart}</Text>
+                      </View>
+                      <View style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                      }}>
+                        <Text style={{
+                          color: GRAY,
+                          fontSize: deviceWidth / 23,
+                          fontWeight: '500'
+                        }}>Check-out: </Text>
+                        <Text style={{
+                          color: BLACK,
+                          fontSize: deviceWidth / 23,
+                          fontWeight: '500'
+                        }}>{request.timeEnd}</Text>
+                      </View>
+                    </View>
+                  </View>
+                  <View>
+
+                  </View>
+                </View>
               </View>
             )
           })}
