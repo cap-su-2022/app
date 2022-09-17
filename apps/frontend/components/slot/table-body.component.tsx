@@ -1,13 +1,6 @@
-import React, {useState} from 'react';
-import {
-  createStyles,
-  Table,
-  Button, Highlight,
-} from '@mantine/core';
-import {
-  InfoCircle, Pencil,
-  Trash,
-} from 'tabler-icons-react';
+import React, { useState } from 'react';
+import { createStyles, Table, Button, Highlight } from '@mantine/core';
+import { InfoCircle, Pencil, Trash } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
 import Th from '../../components/table/th.table.component';
 
@@ -16,25 +9,18 @@ interface RowData {
 }
 
 interface TableBodyProps {
-  data: {};
+  data: any;
   actionButtonCb: any;
-
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
-
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   const slots = new Object(props.data);
   const slotsArray = Object.entries(slots);
   const rows = slotsArray.map((row, index) => (
-
-    <tr key={index}>
-      <td>
-        {index + 1}
-      </td>
-      <td>
-        {row[1].name}
-      </td>
+    <tr key={row[0]}>
+      <td>{index + 1}</td>
+      <td>{row[1].name}</td>
       <td>{row[1].start}</td>
       <td>{row[1].end}</td>
       <td className={classes.actionButtonContainer}>
@@ -42,21 +28,21 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           variant="outline"
           onClick={() => props.actionButtonCb.info(row[0])}
         >
-          <InfoCircle/>
+          <InfoCircle />
         </Button>
         <Button
           variant="outline"
           color="green"
           onClick={() => props.actionButtonCb.update(row[0])}
         >
-          <Pencil/>
+          <Pencil />
         </Button>
         <Button
           variant="outline"
           color="red"
           onClick={() => props.actionButtonCb.delete(row[0])}
         >
-          <Trash/>
+          <Trash />
         </Button>
       </td>
     </tr>
@@ -66,40 +52,52 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
-      sx={{tableLayout: 'fixed'}}
+      sx={{ tableLayout: 'fixed' }}
     >
       <thead>
-      <tr>
-        <Th sorted={null} reversed={null} onSort={null}
+        <tr>
+          <Th
+            sorted={null}
+            reversed={null}
+            onSort={null}
             style={{
-              width: '50px',
+              width: 50,
             }}
-        >
-          STT
-        </Th>
+          >
+            STT
+          </Th>
 
-        <Th sorted={null} reversed={null} onSort={null}
-        >
-          Name
-        </Th>
-        <Th sorted={null} reversed={null} onSort={null}
-        >
-          Time starts
-        </Th>
-        <Th sorted={null} reversed={null} onSort={null}
-        >
-          Time Ends
-        </Th>
+          <Th
+            sorted={null}
+            reversed={null}
+            onSort={null}
+            style={{
+              width: 150,
+            }}
+          >
+            Name
+          </Th>
+          <Th sorted={null} reversed={null} onSort={null}>
+            Time starts
+          </Th>
+          <Th sorted={null} reversed={null} onSort={null}>
+            Time Ends
+          </Th>
 
-        <Th sorted={null} reversed={null} onSort={null} style={{width: 170}}>
-          Actions
-        </Th>
-      </tr>
+          <Th
+            sorted={null}
+            reversed={null}
+            onSort={null}
+            style={{ width: 250 }}
+          >
+            Actions
+          </Th>
+        </tr>
       </thead>
       <tbody>{rows}</tbody>
     </Table>
   ) : (
-    <NoDataFound/>
+    <NoDataFound />
   );
 };
 

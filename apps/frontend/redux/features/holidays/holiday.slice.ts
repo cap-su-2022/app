@@ -11,6 +11,7 @@ interface InitialState {
   holiday: Holiday;
   deletedHolidays: Holiday[];
   holidaysMini: Holiday[];
+  addInfor: Holiday;
 
 }
 
@@ -19,6 +20,7 @@ const initialState: InitialState = {
   holiday: {} as Holiday,
   deletedHolidays: [],
   holidaysMini: [],
+  addInfor: {} as Holiday,
 
 };
 

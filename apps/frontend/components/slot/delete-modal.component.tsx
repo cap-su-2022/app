@@ -21,19 +21,19 @@ import { deleteSlotById } from '../../redux/features/slot/thunk/delete-slot-by-i
 interface DeleteModalProps {
   isShown: boolean;
   toggleShown(): void;
-  key: string
+  keySlot: string
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const { classes } = useStyles();
 
 
-
+console.log(props.keySlot)
 
   const dispatch = useAppDispatch();
 
   const handleDeleteSlot = () => {
-    dispatch(deleteSlotById(props.key))
+    dispatch(deleteSlotById(props.keySlot))
       .unwrap()
       .then(() =>
         showNotification({
