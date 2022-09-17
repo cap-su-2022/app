@@ -21,23 +21,19 @@ import { deleteSlotById } from '../../redux/features/slot/thunk/delete-slot-by-i
 interface DeleteModalProps {
   isShown: boolean;
   toggleShown(): void;
-  pagination: PaginationParams;
-  // slots: any[];
+  key: string
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const { classes } = useStyles();
-  //BUGG
-  //const selectedSlotId = useAppSelector((state) => state.slot.slot.id);
-  const selectedSlotId = "";
-  const [isShownListRequest, setShownListRequest] = useState(false);
+  // const slotConfig = useAppSelector((state) => state.slot.slotConfig);
 
-  const [listRequest, setListRequest] = useState([]);
+
 
   const dispatch = useAppDispatch();
 
   const handleDeleteSlot = () => {
-    dispatch(deleteSlotById(selectedSlotId))
+    dispatch(deleteSlotById(props.key))
       .unwrap()
       .then(() =>
         showNotification({
@@ -51,14 +47,13 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       )
       .then(() => {
         props.toggleShown();
-        dispatch(fetchAllSlots(props.pagination));
-        dispatch(fetchDeletedSlots(''));
+        dispatch(fetchAllSlots());
       })
       .catch((e) =>
         showNotification({
           id: 'delete-data',
           color: 'red',
-          title: 'Error while delete slot',
+          title: 'Error while deleting slot',
           message: e.message ?? 'Failed to delete slot',
           icon: <X />,
           autoClose: 3000,
@@ -66,19 +61,9 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       );
   };
 
-  useEffect(() => {
-    if (selectedSlotId) {
-      dispatch(fetchRequestsBySlot(selectedSlotId))
-        .unwrap()
-        .then((response) => setListRequest(response));
-    }
-  }, [dispatch, selectedSlotId]);
 
-  useEffect(() => {
-    if (!props.isShown) {
-      setShownListRequest(false);
-    }
-  }, [props.isShown]);
+
+
 
   // useEffect(() => {
   //   if (!isShownListRequest) {
@@ -125,71 +110,7 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   //     );
   // };
 
-  const ListRequestBySlot = () => {
-    const rows =
-      listRequest && listRequest.length > 0
-        ? listRequest.map((row, index) => (
-            <tr key={row.id}>
-              <td>{index + 1}</td>
-              <td>{row.roomName}</td>
-              <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
-              <td>{row.requestedBy}</td>
-              <td>{row.checkinSlot}</td>
-              <td>{row.checkoutSlot}</td>
-            </tr>
-          ))
-        : null;
-    return listRequest && listRequest.length > 0 ? (
-      <Table
-        horizontalSpacing="md"
-        verticalSpacing="xs"
-        sx={{ tableLayout: 'fixed' }}
-      >
-        <thead>
-          <tr>
-            <Th
-              style={{
-                width: '60px',
-              }}
-              sorted={null}
-              reversed={null}
-              onSort={null}
-            >
-              STT
-            </Th>
 
-            <Th sorted={null} reversed={null} onSort={null}>
-              Name
-            </Th>
-
-            <Th sorted={null} reversed={null} onSort={null}>
-              Check in date
-            </Th>
-            <Th sorted={null} reversed={null} onSort={null}>
-              Requested by
-            </Th>
-            <Th sorted={null} reversed={null} onSort={null}>
-              Slot start
-            </Th>
-            <Th sorted={null} reversed={null} onSort={null}>
-              Slot End
-            </Th>
-          </tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </Table>
-    ) : (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          padding: '20px 0px',
-        }}
-      >
-        <h1>Dont have any room with this type</h1>
-      </div>
-    );
-  };
 
   const ModalHeaderTitle: React.FC = () => {
     return <Text className={classes.modalTitle}>Are you sure?</Text>;
@@ -203,25 +124,14 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
       title={<ModalHeaderTitle />}
       opened={props.isShown}
       onClose={() => props.toggleShown()}
-      size={isShownListRequest && listRequest.length > 0 ? '50%' : null}
+
     >
       <div className={classes.modalContainer}>
         <Text className={classes.modalBody}>
-          Deleting this slot will{' '}
-          <b>also make booking room status be cancelled</b>. Users who are in pending or booked status receive a notification about this and that associated booking
-          will also be cancelled!
+         Are you sure to
+          <b> delete this slot? </b> This action cannot be redo
         </Text>
         <div className={classes.modalFooter}>
-          {listRequest?.length > 0 ? (
-            <Button
-              leftIcon={<ScanEye />}
-              style={{ backgroundColor: 'blue', width: '60%', margin: 10 }}
-              onClick={() => setShownListRequest(!isShownListRequest)}
-            >
-              List request use slot
-            </Button>
-          ) : null}
-
           <Button
             color="red"
             leftIcon={<Trash />}
@@ -246,9 +156,6 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
           </Button>
         </div>
       </div>
-      {isShownListRequest && listRequest.length > 0 ? (
-        <ListRequestBySlot />
-      ) : null}
     </Modal>
   );
 };

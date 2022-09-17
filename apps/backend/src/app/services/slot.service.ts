@@ -5,16 +5,16 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { SlotRepository } from '../repositories/slot.repository';
-import { PaginationParams } from '../controllers/pagination.model';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { Slot } from '../models/slot.entity';
-import { BookingRoomService } from './booking-room.service';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import { SlotsRequestPayload } from '../payload/request/slot-add.request.payload';
-import { getConfigFileLoaded } from '../controllers/global-config.controller';
-import { SlotsConfigRequestPayload } from '../payload/request/slot-config-request-add.payload';
+import {SlotRepository} from '../repositories/slot.repository';
+import {PaginationParams} from '../controllers/pagination.model';
+import {Pagination} from 'nestjs-typeorm-paginate';
+import {Slot} from '../models/slot.entity';
+import {BookingRoomService} from './booking-room.service';
+import {InjectDataSource} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
+import {SlotsRequestPayload} from '../payload/request/slot-add.request.payload';
+import {getConfigFileLoaded} from '../controllers/global-config.controller';
+import {SlotsConfigRequestPayload} from '../payload/request/slot-config-request-add.payload';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 
@@ -27,10 +27,12 @@ export class SlotService {
     private readonly repository: SlotRepository,
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService
-  ) {}
+  ) {
+  }
 
   async getAll() {
     try {
+      // return Promise.resolve(Object.entries(getConfigFileLoaded().slots));
       return Promise.resolve(getConfigFileLoaded().slots);
     } catch (e) {
       this.logger.error(e.message);
@@ -142,11 +144,11 @@ export class SlotService {
 
           const slotsArray = Object.values(slots);
           const isDuplicateTime = slotsArray.some((s) => {
-            const resutl =
+            const result =
               (s.start <= slot.start && s.end > slot.start) ||
               (s.start < slot.end && s.end >= slot.end) ||
               (s.start > slot.start && s.end < slot.end);
-            return resutl;
+            return result;
           });
 
           if (isDuplicateTime) {
@@ -197,12 +199,12 @@ export class SlotService {
           }
           const slotsArray = Object.entries(slots);
           const isDuplicateTime = slotsArray.some((s) => {
-            const resutl =
+            const result =
               ((s[1].start <= slot.start && s[1].end > slot.start) ||
                 (s[1].start < slot.end && s[1].end >= slot.end) ||
                 (s[1].start > slot.start && s[1].end < slot.end)) &&
               s[0] !== key;
-            return resutl;
+            return result;
           });
 
           if (isDuplicateTime) {
@@ -272,54 +274,54 @@ export class SlotService {
     }
   }
 
-  async getDeletedSlots(search: string) {
-    try {
-      const slot = await this.repository.findDeletedByPagination(search);
-      return slot;
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
-
-  async restoreDeletedSlotById(accountId: string, id: string) {
-    try {
-      const isExisted = await this.repository.existsById(id);
-      if (!isExisted) {
-        throw new BadRequestException(
-          'Slot does not found with the provided id'
-        );
-      }
-      const data = await this.repository.findById(id);
-      if (!data.deletedAt) {
-        throw new BadRequestException(
-          'This slot ID is now active. Cannot restore it'
-        );
-      } else {
-        const isHaveSlotSameNameActive =
-          await this.repository.isHaveSlotSameNameActive(data.name);
-        if (isHaveSlotSameNameActive) {
-          throw new BadRequestException(
-            `Already have slot with name '${data.name}' active.
-            Try other name or delete slot have name '${data.name}' before restore`
-          );
-        }
-
-        const isHaveSlotSameNumActive =
-          await this.repository.isHaveSlotSameNumActive(data.slotNum);
-        if (isHaveSlotSameNumActive) {
-          throw new BadRequestException(
-            `There already exists a slot with the same sequence number active.`
-          );
-        }
-      }
-
-      const roomType = await this.repository.restoreDeletedById(accountId, id);
-      // await this.histService.createNew(roomType);
-      return roomType;
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
+  // async getDeletedSlots(search: string) {
+  //   try {
+  //     const slot = await this.repository.findDeletedByPagination(search);
+  //     return slot;
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
+  //
+  // async restoreDeletedSlotById(accountId: string, id: string) {
+  //   try {
+  //     const isExisted = await this.repository.existsById(id);
+  //     if (!isExisted) {
+  //       throw new BadRequestException(
+  //         'Slot does not found with the provided id'
+  //       );
+  //     }
+  //     const data = await this.repository.findById(id);
+  //     if (!data.deletedAt) {
+  //       throw new BadRequestException(
+  //         'This slot ID is now active. Cannot restore it'
+  //       );
+  //     } else {
+  //       const isHaveSlotSameNameActive =
+  //         await this.repository.isHaveSlotSameNameActive(data.name);
+  //       if (isHaveSlotSameNameActive) {
+  //         throw new BadRequestException(
+  //           `Already have slot with name '${data.name}' active.
+  //           Try other name or delete slot have name '${data.name}' before restore`
+  //         );
+  //       }
+  //
+  //       const isHaveSlotSameNumActive =
+  //         await this.repository.isHaveSlotSameNumActive(data.slotNum);
+  //       if (isHaveSlotSameNumActive) {
+  //         throw new BadRequestException(
+  //           `There already exists a slot with the same sequence number active.`
+  //         );
+  //       }
+  //     }
+  //
+  //     const roomType = await this.repository.restoreDeletedById(accountId, id);
+  //     // await this.histService.createNew(roomType);
+  //     return roomType;
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 }

@@ -24,14 +24,15 @@ import {PagingParams} from '../../models/pagination-params/paging-params.model';
 import {addSlot} from '../../redux/features/slot/thunk/add.thunk';
 import {fetchAllSlots} from '../../redux/features/slot';
 import {TimeInput} from '@mantine/dates';
+import {updateSlot} from "../../redux/features/slot/thunk/update-slot.thunk";
 
-interface AddModalProps {
+interface UpdateModalProps {
   isShown: boolean;
-
+  key: string;
   toggleShown(): void;
 }
 
-const AddSlotValidation = Yup.object().shape({
+const UpdateSlotValidation = Yup.object().shape({
   name: Yup.string()
     .trim()
     .min(1, 'Name must have at least 1 character.')
@@ -40,7 +41,7 @@ const AddSlotValidation = Yup.object().shape({
 
 });
 
-const AddSlotModal: React.FC<AddModalProps> = (props) => {
+const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
   const {classes} = useStyles();
   const [isAddDisabled, setAddDisabled] = useState<boolean>(false);
   const [slotError, setSlotError] = useState<boolean>(false);
@@ -50,16 +51,17 @@ const AddSlotModal: React.FC<AddModalProps> = (props) => {
   const handleAddSubmit = (values: FormikValues) => {
     if (!values.start || !values.end) {
       showNotification({
-        id: 'Add-slot',
+        id: 'Update-slot',
         color: 'red',
-        title: 'Error while adding slot',
+        title: 'Error while updating slot',
         message: `Time start and Time end can be null`,
         icon: <X/>,
         autoClose: 3000,
       });
     } else {
       dispatch(
-        addSlot({
+        updateSlot({
+          id: props.key,
           name: values.name,
           start: values.start,
           end: values.end,
@@ -102,7 +104,7 @@ const AddSlotModal: React.FC<AddModalProps> = (props) => {
       end: null,
     },
     onSubmit: (values) => handleAddSubmit(values),
-    validationSchema: AddSlotValidation,
+    validationSchema: UpdateSlotValidation,
   });
 
   useEffect(() => {
@@ -232,7 +234,7 @@ const AddSlotModal: React.FC<AddModalProps> = (props) => {
                 onClick={() => formik.submitForm()}
                 leftIcon={<Plus/>}
               >
-                Add
+                Update
               </Button>
             </div>
           </Form>
@@ -267,4 +269,4 @@ const useStyles = createStyles({
   },
 });
 
-export default AddSlotModal;
+export default SlotUpdateModal;

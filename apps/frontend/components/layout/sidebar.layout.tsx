@@ -107,7 +107,7 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       isRender: isAdmin || isLibrarian,
     },
     {
-      link: '/slots',
+      link: '/slot',
       label: 'Slots',
       icon: Bookmark,
       isRender: isAdmin || isLibrarian,

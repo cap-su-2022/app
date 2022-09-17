@@ -5,7 +5,7 @@ import {
   Button, Highlight,
 } from '@mantine/core';
 import {
-  InfoCircle,
+  InfoCircle, Pencil,
   Trash,
 } from 'tabler-icons-react';
 import NoDataFound from '../../components/no-data-found';
@@ -16,54 +16,45 @@ interface RowData {
 }
 
 interface TableBodyProps {
-  data: any[];
-
-  toggleSortDirection(): void;
-
+  data: {};
   actionButtonCb: any;
-  page: number;
-  itemsPerPage: number;
-  search: string | string[]
+
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
-  const [sortBy, setSortBy] = useState<keyof RowData>(null);
-  const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
   const {classes} = useStyles();
+  const slots = new Object(props.data);
+  const slotsArray = Object.entries(slots);
+  const rows = slotsArray.map((row, index) => (
 
-  const setSorting = (field: keyof RowData) => {
-    const reversed = field === sortBy ? !reverseSortDirection : false;
-    setReverseSortDirection(reversed);
-    props.toggleSortDirection();
-  };
-
-  const rows = props.data.map((row, index) => (
-    <tr key={row.id}>
+    <tr key={index}>
       <td>
-        {props.page === 1
-          ? index + 1
-          : (props.page - 1) * props.itemsPerPage + (index + 1)}
+        {index + 1}
       </td>
       <td>
-        <Highlight highlight={props.search}>
-          {row.name}
-        </Highlight>
-
+        {row[1].name}
       </td>
-      <td>{row.timeStart}</td>
-      <td>{row.timeEnd}</td>
+      <td>{row[1].start}</td>
+      <td>{row[1].end}</td>
       <td className={classes.actionButtonContainer}>
         <Button
           variant="outline"
-          onClick={() => props.actionButtonCb.info(row.id)}
+          onClick={() => props.actionButtonCb.info(index + 1)}
         >
           <InfoCircle/>
         </Button>
         <Button
           variant="outline"
+          color="green"
+          onClick={() => props.actionButtonCb.update(row[0])}
+        >
+          <Pencil/>
+        </Button>
+        <Button
+          variant="outline"
           color="red"
-          onClick={() => props.actionButtonCb.delete(row.id)}
+          onClick={() => props.actionButtonCb.delete(row[0])}
         >
           <Trash/>
         </Button>
@@ -71,7 +62,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     </tr>
   ));
 
-  return props.data.length > 0 ? (
+  return props.data ? (
     <Table
       horizontalSpacing="md"
       verticalSpacing="xs"
@@ -79,40 +70,28 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
     >
       <thead>
       <tr>
-        <Th
-          style={{
-            width: '50px',
-          }}
-          sorted={null}
-          reversed={reverseSortDirection}
-          onSort={null}
+        <Th sorted={null} reversed={null} onSort={null}
+            style={{
+              width: '50px',
+            }}
         >
           STT
         </Th>
 
-        <Th
-          sorted={sortBy === 'name'}
-          reversed={reverseSortDirection}
-          onSort={() => setSorting('name')}
+        <Th sorted={null} reversed={null} onSort={null}
         >
           Name
         </Th>
-        <Th
-          sorted={null}
-          reversed={null}
-          onSort={null}
+        <Th sorted={null} reversed={null} onSort={null}
         >
           Time starts
         </Th>
-        <Th
-          sorted={null}
-          reversed={null}
-          onSort={null}
+        <Th sorted={null} reversed={null} onSort={null}
         >
           Time Ends
         </Th>
 
-        <Th sorted={null} reversed={reverseSortDirection} onSort={null} style={{width: 170}}>
+        <Th sorted={null} reversed={null} onSort={null} style={{width: 170}}>
           Actions
         </Th>
       </tr>

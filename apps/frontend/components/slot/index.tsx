@@ -21,6 +21,9 @@ import {fetchAllSlots} from '../../redux/features/slot';
 import {fetchSlotById} from '../../redux/features/slot/thunk/fetch-by-id.thunk';
 import DeleteModal from './delete-modal.component';
 import NoDataFound from '../no-data-found';
+import HolidayInfoModal from "../holidays/info-modal.component";
+import SlotInfoModal from "./info-modal.component";
+import SlotUpdateModal from "./update-modal.component";
 
 // const AddSlotValidation = Yup.object().shape({
 //   name: Yup.string()
@@ -35,78 +38,62 @@ import NoDataFound from '../no-data-found';
 // });
 
 
+const ManageSlots: React.FC<any> = () => {
 
-const ManageSlot: React.FC<any> = () => {
-  //BUGG
-  //const slot = useAppSelector((state) => state.slot.slot);
-  const slots = useAppSelector((state) => state.slot.slots);
   const slot = useAppSelector((state) => state.slot.slot);
 
-  const [pagination, setPagination] = useState<PaginationParams>(
-    defaultPaginationParams
-  );
-
-  const [debounceSearchValue] = useDebouncedValue(pagination.search, 400);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchAllSlots(pagination));
-  }, [
-    pagination.page,
-    pagination.limit,
-    pagination.dir,
-    pagination.sort,
-    debounceSearchValue,
-    pagination,
-    dispatch,
-  ]);
+    dispatch(fetchAllSlots()).unwrap();
+  }, []);
 
-  const toggleSortDirection = () => {
-    setPagination({
-      ...pagination,
-      dir: pagination.dir === 'ASC' ? 'DESC' : 'ASC',
-    });
-  };
+  // const toggleSortDirection = () => {
+  //   setPagination({
+  //     ...pagination,
+  //     dir: pagination.dir === 'ASC' ? 'DESC' : 'ASC',
+  //   });
+  // };
+  //
+  // const handleSearchValue = (val: string) => {
+  //   setPagination({
+  //     ...defaultPaginationParams,
+  //     search: val,
+  //   });
+  // };
+  //
+  // const handleLimitChange = (val: number) => {
+  //   setPagination({
+  //     ...pagination,
+  //     limit: val,
+  //   });
+  // };
 
-  const handleSearchValue = (val: string) => {
-    setPagination({
-      ...defaultPaginationParams,
-      search: val,
-    });
-  };
-
-  const handleLimitChange = (val: number) => {
-    setPagination({
-      ...pagination,
-      limit: val,
-    });
-  };
-
-  const handlePageChange = (val: number) => {
-    setPagination({
-      ...pagination,
-      page: val,
-    });
-  };
-
-  const handleResetFilter = () => {
-    setPagination(defaultPaginationParams);
-  };
+  // const handlePageChange = (val: number) => {
+  //   setPagination({
+  //     ...pagination,
+  //     page: val,
+  //   });
+  // };
+  //
+  // const handleResetFilter = () => {
+  //   setPagination(defaultPaginationParams);
+  // };
 
   const handleFetchById = (idVal) => {
     return dispatch(fetchSlotById(idVal));
   };
 
-  const [id, setId] = useState<string>('');
+  const [key, setKey] = useState<string>('');
   const [isInfoShown, setInfoShown] = useState<boolean>(false);
   const [isAddShown, setAddShown] = useState<boolean>(false);
+  const [isUpdateShown, setUpdateShown] = useState<boolean>(false);
   const [isDeleteShown, setDeleteShown] = useState<boolean>(false);
-  const [isRestoreDeletedShown, setRestoreDeletedShown] =
-    useState<boolean>(false);
-  const [isShowListItems, setShowListItems] = useState<boolean>(false);
+
   const [title, setTitle] = useState<string>('');
   const [itemsOfData, setItemsOfData] = useState<any>([]);
+
 
   const ActionsFilter: React.FC = () => {
     return (
@@ -119,92 +106,32 @@ const ManageSlot: React.FC<any> = () => {
         >
           Add
         </Button>
-
-        <Button
-          variant="outline"
-          color="red"
-          onClick={() => setRestoreDeletedShown(true)}
-        >
-          <TrashOff/>
-        </Button>
       </div>
     );
   };
 
   const handleActionsCb = {
     info: (id) => {
-      setId(id);
+      setKey(id);
       handleFetchById(id)
         .unwrap()
         .then(() => setInfoShown(!isInfoShown));
     },
+    update: (id) => {
+      setKey(id);
+      handleFetchById(id)
+        .unwrap()
+        .then(() => setUpdateShown(!isUpdateShown));
+    },
     delete: (id) => {
-      setId(id);
+      setKey(id);
       handleFetchById(id)
         .unwrap()
         .then(() => setDeleteShown(!isDeleteShown));
     },
+
   };
 
-  const infoFields = [
-    {
-      label: 'Name',
-      id: 'name',
-      name: 'name',
-      value: slot.name,
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
-    {
-      label: 'Description',
-      id: 'description',
-      name: 'description',
-      value: slot.description,
-      readOnly: true,
-      inputtype: InputTypes.TextArea,
-    },
-    {
-      label: 'Slot num',
-      id: 'slotNum',
-      name: 'slotNum',
-      value: slot.slotNum + '',
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
-    {
-      label: 'Time starts',
-      id: 'timeStart',
-      name: 'timeStart',
-      value: slot.timeStart,
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
-
-    {
-      label: 'Created at',
-      id: 'createAt',
-      name: 'createAt',
-      value: dayjs(slot.createdAt).format('HH:mm DD/MM/YYYY'),
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
-    {
-      label: 'Time ends',
-      id: 'timeEnd',
-      name: 'timeEnd',
-      value: slot.timeEnd,
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
-    {
-      label: 'Created By',
-      id: 'createBy',
-      name: 'createBy',
-      value: slot.createdBy,
-      readOnly: true,
-      inputtype: InputTypes.TextInput,
-    },
-  ];
 
   const handleAddModalClose = () => {
     setAddShown(!isAddShown);
@@ -212,69 +139,47 @@ const ManageSlot: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Slots" icon={<BuildingWarehouse size={50}/>}/>
+      <Header title="Slots Configuration" icon={<BuildingWarehouse size={50}/>}/>
       <TableHeader
-        handleResetFilter={() => handleResetFilter()}
-        actions={<ActionsFilter/>}
         actionsLeft={null}
-        setSearch={(val) => handleSearchValue(val)}
-        search={pagination.search}
+        handleResetFilter={null}
+        actions={<ActionsFilter/>}
+        setSearch={null}
+        search={null}
       />
-
-      <RestoreDeletedModal
-        isShown={isRestoreDeletedShown}
-        toggleShown={() => setRestoreDeletedShown(!isRestoreDeletedShown)}
-        pagination={pagination}
-        search={pagination.search}
-      />
-      {slots.items ? (
+      {slot ? (
         <>
           <TableBody
             actionButtonCb={handleActionsCb}
-            toggleSortDirection={() => toggleSortDirection()}
-            data={slots.items}
-            page={pagination.page}
-            itemsPerPage={pagination.limit}
-            search={pagination.search}
+            data={slot}
           />
-          <InfoModal
-            header="Slot Information"
-            fields={infoFields}
+          <SlotInfoModal
             toggleShown={() => setInfoShown(!isInfoShown)}
             isShown={isInfoShown}
-
-            isShowListItems={null}
-            itemsOfData={null}
-            title={null}
-            itemsOfDataButton={null}
+          />
+          <SlotUpdateModal
+            key={key}
+            toggleShown={() => setUpdateShown(!isUpdateShown)}
+            isShown={isUpdateShown}
           />
 
           <DeleteModal
+            key={key}
             isShown={isDeleteShown}
             toggleShown={() => setDeleteShown(!isDeleteShown)}
-            pagination={pagination}
-            // slots={slots}
           />
         </>
       ) : (
         <NoDataFound/>
       )}
       <AddModal
-        // header="Add new slot"
         isShown={isAddShown}
         toggleShown={() => handleAddModalClose()}
-        pagination={pagination}
       />
-      {slots.meta ? (
-        <TableFooter
-          handlePageChange={(val) => handlePageChange(val)}
-          handleLimitChange={(val) => handleLimitChange(val)}
-          metadata={slots.meta}
-        />
-      ) : null}
+
     </AdminLayout>
   );
 };
 
 
-export default ManageSlot;
+export default ManageSlots;

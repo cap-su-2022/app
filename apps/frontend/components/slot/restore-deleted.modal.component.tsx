@@ -73,7 +73,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
       .then(() => {
         props.toggleShown();
         dispatch(fetchDeletedSlots(''));
-        dispatch(fetchAllSlots(props.pagination));
+        dispatch(fetchAllSlots());
       })
   };
   console.log(deletedSlots)

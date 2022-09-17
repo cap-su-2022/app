@@ -5,10 +5,8 @@ import dayjs from 'dayjs';
 
 interface AddPayload {
   name: string;
-  slotNum: number;
-  timeStart: Date;
-  timeEnd: Date;
-  description: string;
+  start: Date;
+  end: Date;
 }
 
 interface RejectValue {
@@ -25,11 +23,10 @@ export const addSlot = createAsyncThunk<
   thunkAPI.dispatch(toggleSpinnerOn());
 
   try {
-    payload.slotNum = Number(payload.slotNum);
     const response = await axios.post(`/api/slots`, {
       ...payload,
-      timeStart: dayjs(payload.timeStart).format('HH:mm:ss'),
-      timeEnd: dayjs(payload.timeEnd).format('HH:mm:ss'),
+      start: dayjs(payload.start).format('HH:mm:ss'),
+      end: dayjs(payload.end).format('HH:mm:ss'),
     });
     return await response.data;
   } catch (e) {

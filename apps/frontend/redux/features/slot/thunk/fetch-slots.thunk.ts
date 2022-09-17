@@ -1,19 +1,17 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { toggleSpinnerOff, toggleSpinnerOn } from '../../spinner';
+import {createAsyncThunk} from '@reduxjs/toolkit';
+import {toggleSpinnerOff, toggleSpinnerOn} from '../../spinner';
 import axios from 'axios';
-import { Slot } from '../../../../models/slot.model';
-import { PaginationParams } from '../../../../models/pagination-params.model';
-import { PaginationResponse } from '../../../../models/pagination-response.payload';
+import {Slot} from '../../../../models/slot.model';
+import {PaginationParams} from '../../../../models/pagination-params.model';
+import {PaginationResponse} from '../../../../models/pagination-response.payload';
 
-export const fetchAllSlots = createAsyncThunk<
-  PaginationResponse<Slot>,
-  PaginationParams,
+export const fetchAllSlots = createAsyncThunk<Slot,
+  void,
   {
     rejectValue: {
       message: string;
     };
-  }
->('slot/fetch-all-slots', async (payload, thunkAPI) => {
+  }>('slot/fetch-all-slots', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
     const response = await axios.get('/api/slots', {
