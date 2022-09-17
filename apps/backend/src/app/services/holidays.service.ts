@@ -1,13 +1,20 @@
-import {BadRequestException, Injectable, Logger} from '@nestjs/common';
-import {DataSource, Repository, QueryRunner} from 'typeorm';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {Holidays, Rooms} from '../models';
-import {HolidayAddRequestPayload} from '../payload/request/holidays-add.request.payload';
-import {HolidaysRepository} from '../repositories/holidays.repository';
-import {PaginationParams} from '../controllers/pagination.model';
-import {RoomAddRequestPayload} from '../payload/request/room-add.request.payload';
-import {getConfigFileLoaded} from '../controllers/global-config.controller';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import { DataSource, Repository, QueryRunner } from 'typeorm';
+import { KeycloakUserInstance } from '../dto/keycloak.user';
+import { Holidays, Rooms } from '../models';
+import { HolidayAddRequestPayload } from '../payload/request/holidays-add.request.payload';
+import { HolidaysRepository } from '../repositories/holidays.repository';
+import { PaginationParams } from '../controllers/pagination.model';
+import { RoomAddRequestPayload } from '../payload/request/room-add.request.payload';
+import { getConfigFileLoaded } from '../controllers/global-config.controller';
 import dayjs = require('dayjs');
+import { BookingRoomService } from './booking-room.service';
 
 @Injectable()
 export class HolidaysService {
@@ -15,9 +22,10 @@ export class HolidaysService {
 
   constructor(
     private readonly dataSource: DataSource,
-    private readonly repository: HolidaysRepository
-  ) {
-  }
+    private readonly repository: HolidaysRepository,
+    @Inject(forwardRef(() => BookingRoomService))
+    private readonly bookingRoomService: BookingRoomService
+  ) {}
 
   async getAll(request: PaginationParams) {
     try {
@@ -129,6 +137,24 @@ export class HolidaysService {
     await queryRunner.startTransaction();
     try {
       const holidayAdded = await this.validateAdd(user, holiday, queryRunner);
+
+      const listRequestBooked =
+        await this.bookingRoomService.getListRequestInDayRange({
+          dateStart: holiday.dateStart,
+          dateEnd: holiday.dateEnd,
+        });
+      if (listRequestBooked.length > 0) {
+        const reason = `Admin added a new holiday. Your request was canceled because check in date coincides holiday. Please rebook for another day.`;
+        for (let i = 0; i < listRequestBooked.length; i++) {
+          await this.bookingRoomService.cancelRequest(
+            user.account_id,
+            listRequestBooked[i].id,
+            reason,
+            queryRunner
+          );
+        }
+      }
+
       await queryRunner.commitTransaction();
       return holidayAdded;
     } catch (e) {
@@ -158,7 +184,25 @@ export class HolidaysService {
           },
           queryRunner
         );
+
+        const listRequestBooked =
+          await this.bookingRoomService.getListRequestInDayRange({
+            dateStart: dayjs(holiday[i][1]).format('YYYY-MM-DD'),
+            dateEnd: dayjs(holiday[i][2]).format('YYYY-MM-DD'),
+          });
+        if (listRequestBooked.length > 0) {
+          const reason = `Admin added a new holiday. Your request was canceled because check in date coincides holiday. Please rebook for another day.`;
+          for (let i = 0; i < listRequestBooked.length; i++) {
+            await this.bookingRoomService.cancelRequest(
+              user.account_id,
+              listRequestBooked[i].id,
+              reason,
+              queryRunner
+            );
+          }
+        }
       }
+
       await queryRunner.commitTransaction();
       return null;
     } catch (e) {

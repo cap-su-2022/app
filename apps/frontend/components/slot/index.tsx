@@ -1,29 +1,26 @@
-import React, {useEffect, useState} from 'react';
-import {Button, createStyles} from '@mantine/core';
+import React, { useEffect, useState } from 'react';
+import { Button, createStyles } from '@mantine/core';
 import AdminLayout from '../../components/layout/admin.layout';
 import Header from '../../components/common/header.component';
-import {BuildingWarehouse, Plus, TrashOff, X} from 'tabler-icons-react';
-import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import { BuildingWarehouse, Plus, TrashOff, X } from 'tabler-icons-react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   defaultPaginationParams,
   PaginationParams,
 } from '../../models/pagination-params.model';
-import {useDebouncedValue} from '@mantine/hooks';
-import TableHeader from '../../components/actions/table-header.component';
-import {TableBody} from './table-body.component';
+import { TableBody } from './table-body.component';
 import TableFooter from '../../components/actions/table-footer.component';
 import AddModal from './add-modal.component';
-import {InputTypes} from '../../components/actions/models/input-type.constant';
+import { InputTypes } from '../../components/actions/models/input-type.constant';
 import InfoModal from '../../components/actions/modal/info-modal.component';
 import RestoreDeletedModal from './restore-deleted.modal.component';
 import dayjs from 'dayjs';
-import {fetchAllSlots} from '../../redux/features/slot';
-import {fetchSlotById} from '../../redux/features/slot/thunk/fetch-by-id.thunk';
+import { fetchAllSlots } from '../../redux/features/slot';
+import { fetchSlotById } from '../../redux/features/slot/thunk/fetch-by-id.thunk';
 import DeleteModal from './delete-modal.component';
 import NoDataFound from '../no-data-found';
-import HolidayInfoModal from "../holidays/info-modal.component";
-import SlotInfoModal from "./info-modal.component";
-import SlotUpdateModal from "./update-modal.component";
+import SlotInfoModal from './info-modal.component';
+import SlotUpdateModal from './update-modal.component';
 
 // const AddSlotValidation = Yup.object().shape({
 //   name: Yup.string()
@@ -37,11 +34,8 @@ import SlotUpdateModal from "./update-modal.component";
 //   // ),
 // });
 
-
 const ManageSlots: React.FC<any> = () => {
-
   const slot = useAppSelector((state) => state.slot.slot);
-
 
   const dispatch = useAppDispatch();
 
@@ -94,15 +88,14 @@ const ManageSlots: React.FC<any> = () => {
   const [title, setTitle] = useState<string>('');
   const [itemsOfData, setItemsOfData] = useState<any>([]);
 
-
   const ActionsFilter: React.FC = () => {
     return (
       <div>
         <Button
-          leftIcon={<Plus/>}
+          leftIcon={<Plus />}
           color="green"
           onClick={() => setAddShown(!isAddShown)}
-          style={{marginRight: 10}}
+          style={{ marginRight: 10 }}
         >
           Add
         </Button>
@@ -129,9 +122,7 @@ const ManageSlots: React.FC<any> = () => {
         .unwrap()
         .then(() => setDeleteShown(!isDeleteShown));
     },
-
   };
-
 
   const handleAddModalClose = () => {
     setAddShown(!isAddShown);
@@ -139,47 +130,41 @@ const ManageSlots: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Slots Configuration" icon={<BuildingWarehouse size={50}/>}/>
-      <TableHeader
-        actionsLeft={null}
-        handleResetFilter={null}
-        actions={<ActionsFilter/>}
-        setSearch={null}
-        search={null}
+      <Header
+        title="Slots Configuration"
+        icon={<BuildingWarehouse size={50} />}
       />
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <ActionsFilter />
+      </div>
       {slot ? (
         <>
-          <TableBody
-            actionButtonCb={handleActionsCb}
-            data={slot}
-          />
+          <TableBody actionButtonCb={handleActionsCb} data={slot} />
           <SlotInfoModal
             toggleShown={() => setInfoShown(!isInfoShown)}
             isShown={isInfoShown}
           />
           <SlotUpdateModal
-            key={key}
+            keySlot={key}
             toggleShown={() => setUpdateShown(!isUpdateShown)}
             isShown={isUpdateShown}
           />
 
           <DeleteModal
-            key={key}
+            keySlot={key}
             isShown={isDeleteShown}
             toggleShown={() => setDeleteShown(!isDeleteShown)}
           />
         </>
       ) : (
-        <NoDataFound/>
+        <NoDataFound />
       )}
       <AddModal
         isShown={isAddShown}
         toggleShown={() => handleAddModalClose()}
       />
-
     </AdminLayout>
   );
 };
-
 
 export default ManageSlots;

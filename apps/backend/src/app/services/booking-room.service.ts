@@ -749,6 +749,27 @@ export class BookingRoomService {
     }
   }
 
+  async getListRequestInDayRange(payload: {
+    dateStart: string;
+    dateEnd: string;
+  }) {
+    try {
+      const listRequestInDayRange =
+        await this.repository.getListRequestInDayRange(
+          payload.dateStart,
+          payload.dateEnd,
+        );
+
+
+      return listRequestInDayRange;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(
+        e.message || 'Have some errors when check isAlreadyBookedSameSlot'
+      );
+    }
+  }
+
   async addNewRequest(
     payload: BookingRequestAddRequestPayload,
     userId: string
@@ -1235,6 +1256,7 @@ export class BookingRoomService {
     queryRunner: QueryRunner
   ) {
     try {
+      console.log("UA KH CANCEL AF")
       const isExisted = await this.repository.existsById(id);
       if (!isExisted) {
         throw new BadRequestException(

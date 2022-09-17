@@ -61,7 +61,7 @@ export class HolidaysController {
     @Query() payload: PaginationParams) {
     return this.service.getAll(payload);
   }
-  
+
 
   @Get('mini')
   @ApiOperation({

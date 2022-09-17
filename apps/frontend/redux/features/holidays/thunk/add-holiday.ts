@@ -24,7 +24,7 @@ export const addHoliday = createAsyncThunk<void, AddHolidayPayload, {
       name: payload.name,
       description: payload.description,
       dateStart: dayjs(payload.dateStart).format('YYYY-MM-DD'),
-      dateEnd:  dayjs(payload.dateStart).format('YYYY-MM-DD')
+      dateEnd:  dayjs(payload.dateEnd).format('YYYY-MM-DD')
     });
     return await response.data;
   } catch (e) {

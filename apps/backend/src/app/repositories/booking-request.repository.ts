@@ -348,6 +348,41 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     }>();
   }
 
+  getListRequestInDayRange(
+    dateStart: string,
+    dateEnd: string,
+  ): Promise<
+    {
+      id: string;
+      roomName: string;
+      timeStart: string;
+      timeEnd: string;
+      status: string;
+    }[]
+  > {
+    const query = this.createQueryBuilder('booking_request')
+      .select('booking_request.id', 'id')
+      .addSelect('booking_request.checkin_time', 'timeStart')
+      .addSelect('booking_request.checkout_time', 'timeEnd')
+      .addSelect('a.username', 'bookedFor')
+      .addSelect('r.name', 'roomName')
+      .addSelect('booking_request.status', 'status')
+      .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
+      .innerJoin(Accounts, 'a', 'a.id = booking_request.booked_for')
+      .where('booking_request.checkinDate >= :dateStart AND booking_request.checkinDate <= :dateEnd', {
+        dateStart,
+        dateEnd
+      })
+      .andWhere("booking_request.status = 'BOOKED'");
+    return query.getRawMany<{
+      id: string;
+      roomName: string;
+      timeStart: string;
+      timeEnd: string;
+      status: string;
+    }>();
+  }
+
   getRequestBookedSameTimeOfUser(
     date: string,
     userId: string,

@@ -730,6 +730,43 @@ export class BookingRoomController {
     });
   }
 
+  @Get('list-request-in-day-range')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Get the list request in day range',
+    description:
+      'Get the list request in day range',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'One or more payload parameters are invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully fetched request',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Not enough privileges to access this endpoint',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  getListRequestInDayRange(
+    @Query('dateStart') dateStart: string,
+    @Query('dateEnd') dateEnd: string,
+  ) {
+    return this.service.getListRequestInDayRange({
+      dateStart: dateStart,
+      dateEnd: dateEnd,
+    });
+  }
+
   @Get('get-room-name-booked-same-slot-multi')
   @HttpCode(HttpStatus.OK)
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)

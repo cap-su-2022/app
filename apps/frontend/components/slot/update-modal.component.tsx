@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   createStyles,
@@ -12,23 +12,24 @@ import {
   Check,
   ChevronsRight,
   ClipboardText,
-  FileDescription, Pencil,
+  FileDescription,
+  Pencil,
   Plus,
   X,
 } from 'tabler-icons-react';
-import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {Form, FormikProvider, FormikValues, useFormik} from 'formik';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { Form, FormikProvider, FormikValues, useFormik } from 'formik';
 import * as Yup from 'yup';
-import {showNotification} from '@mantine/notifications';
-import {PagingParams} from '../../models/pagination-params/paging-params.model';
-import {addSlot} from '../../redux/features/slot/thunk/add.thunk';
-import {fetchAllSlots} from '../../redux/features/slot';
-import {TimeInput} from '@mantine/dates';
-import {updateSlot} from "../../redux/features/slot/thunk/update-slot.thunk";
+import { showNotification } from '@mantine/notifications';
+import { PagingParams } from '../../models/pagination-params/paging-params.model';
+import { addSlot } from '../../redux/features/slot/thunk/add.thunk';
+import { fetchAllSlots } from '../../redux/features/slot';
+import { TimeInput } from '@mantine/dates';
+import { updateSlot } from '../../redux/features/slot/thunk/update-slot.thunk';
 
 interface UpdateModalProps {
   isShown: boolean;
-  key: string;
+  keySlot: string;
   toggleShown(): void;
 }
 
@@ -38,16 +39,42 @@ const UpdateSlotValidation = Yup.object().shape({
     .min(1, 'Name must have at least 1 character.')
     .max(100, 'Name can only have at most 100 characters.')
     .required('Name is required!'),
-
 });
 
 const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   const [isUpdateDisabled, setUpdateDisabled] = useState<boolean>(false);
   const [slotError, setSlotError] = useState<boolean>(false);
   const slotConfig = useAppSelector((state) => state.slot.slotConfig);
   const timeStartArray = slotConfig?.start?.split(':');
   const timeEndArray = slotConfig?.end?.split(':');
+  const [timeStart, setTimeStart] = useState(null);
+  const [timeEnd, setTimeEnd] = useState(null);
+
+  useEffect(() => {
+    if (timeStartArray) {
+      setTimeStart(
+        new Date(
+          new Date().setHours(
+            Number(timeStartArray[0]),
+            Number(timeStartArray[1]),
+            Number(timeStartArray[2])
+          )
+        )
+      );
+    }
+    if (timeEndArray) {
+      setTimeEnd(
+        new Date(
+          new Date().setHours(
+            Number(timeEndArray[0]),
+            Number(timeEndArray[1]),
+            Number(timeEndArray[2])
+          )
+        )
+      );
+    }
+  }, [slotConfig]);
 
   const dispatch = useAppDispatch();
 
@@ -58,31 +85,27 @@ const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
         color: 'red',
         title: 'Error while updating slot',
         message: `Time start and Time end can be null`,
-        icon: <X/>,
+        icon: <X />,
         autoClose: 3000,
       });
     } else {
       dispatch(
         updateSlot({
-          id: props.key,
+          id: props.keySlot,
           name: values.name,
           start: values.start,
           end: values.end,
         })
       )
         .unwrap()
-        .then(() =>
-          dispatch(fetchAllSlots()).finally(() =>
-            formik.resetForm()
-          )
-        )
+        .then(() => dispatch(fetchAllSlots()).finally(() => formik.resetForm()))
         .then(() =>
           showNotification({
             id: 'Update-slot',
             color: 'teal',
             title: 'Slot was updated',
             message: 'Slot was successfully updated',
-            icon: <Check/>,
+            icon: <Check />,
             autoClose: 3000,
           })
         )
@@ -93,7 +116,7 @@ const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
             color: 'red',
             title: 'Error while updating slot',
             message: `${e.message}`,
-            icon: <X/>,
+            icon: <X />,
             autoClose: 3000,
           });
         });
@@ -103,10 +126,10 @@ const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
   const formik = useFormik({
     initialValues: {
       name: slotConfig.name,
-      start: timeStartArray && new Date(new Date().setHours(Number(timeStartArray[0]),Number(timeStartArray[1]),Number(timeStartArray[2]))),
-      end: timeEndArray && new Date(new Date().setHours(Number(timeEndArray[0]),Number(timeEndArray[1]),Number(timeEndArray[2]))),
+      start: timeStart,
+      end: timeEnd,
     },
-    enableReinitialize: false,
+    enableReinitialize: true,
     onSubmit: (values) => handleUpdateSubmit(values),
     validationSchema: UpdateSlotValidation,
   });
@@ -121,11 +144,7 @@ const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
     } else {
       setUpdateDisabled(false);
     }
-  }, [
-    formik.values.name,
-    formik.values.start,
-    formik.values.end,
-  ]);
+  }, [formik.values.name, formik.values.start, formik.values.end]);
 
   useEffect(() => {
     if (formik.values.start && formik.values.end) {
@@ -150,7 +169,7 @@ const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
   return (
     <>
       <Modal
-        title={<ModalHeaderTitle/>}
+        title={<ModalHeaderTitle />}
         size={'30%'}
         centered
         opened={props.isShown}
@@ -159,12 +178,9 @@ const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
         <FormikProvider value={formik}>
           <Form onSubmit={formik.handleSubmit}>
             <div className={classes.modalBody}>
-              <InputWrapper
-                required
-                label="Slot name"
-              >
+              <InputWrapper required label="Slot name">
                 <TextInput
-                  icon={<ClipboardText/>}
+                  icon={<ClipboardText />}
                   id="slot-name"
                   name="name"
                   error={formik.errors.name}
@@ -175,11 +191,11 @@ const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 />
               </InputWrapper>
 
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <InputWrapper required label="Time starts">
                   <TimeInput
-                    icon={<ClipboardText/>}
-                    id="time-start"
+                    icon={<ClipboardText />}
+                    id="timeStart"
                     name="timeStart"
                     error={formik.errors.start}
                     onChange={(time) => formik.setFieldValue('start', time)}
@@ -192,18 +208,15 @@ const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
                   size={28}
                   strokeWidth={2}
                   color={'black'}
-                  style={{marginRight: 20, position: 'relative', top: 30}}
+                  style={{ marginRight: 20, position: 'relative', top: 30 }}
                 />
                 <InputWrapper required label="Time ends">
                   <TimeInput
-                    icon={<ClipboardText/>}
+                    icon={<ClipboardText />}
                     id="timeEnd"
                     name="timeEnd"
                     error={formik.errors.end}
-                    onChange={(time) => {
-                      formik.setFieldValue('end', time)
-                      console.log(time + " pặc pặc")
-                    }}
+                    onChange={(time) => formik.setFieldValue('end', time)}
                     className={classes.textInput}
                     radius="md"
                     value={formik.values.end}
@@ -229,7 +242,7 @@ const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 onClick={() => handleCancelAddModal()}
                 variant="outline"
                 color={'red'}
-                leftIcon={<X/>}
+                leftIcon={<X />}
               >
                 Cancel
               </Button>
@@ -238,7 +251,7 @@ const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
                 color="cyan"
                 disabled={isUpdateDisabled}
                 onClick={() => formik.submitForm()}
-                leftIcon={<Pencil/>}
+                leftIcon={<Pencil />}
               >
                 Update
               </Button>
