@@ -10,10 +10,10 @@ export const deleteSlotById = createAsyncThunk<
       message: string;
     };
   }
->('slot/delete-by-id', async (payload, thunkAPI) => {
+>('slot/delete-by-id', async (id, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    const response = await axios.delete(`api/slots/${payload}`);
+    const response = await axios.delete(`api/slots/${id}`);
     return await response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

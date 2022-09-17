@@ -10,7 +10,6 @@ interface InfoModalProps {
   isShown: boolean;
 
 
-
   isShowListItems: boolean;
   itemsOfData: any[];
   itemsOfDataButton: React.ReactNode;

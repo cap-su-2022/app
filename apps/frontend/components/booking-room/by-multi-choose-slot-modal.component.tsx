@@ -1,19 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { Button, InputWrapper, Select, TextInput } from '@mantine/core';
-import { ChevronsRight, ClipboardText, X } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { FormikProps } from 'formik';
-import { showNotification } from '@mantine/notifications';
-import { DatePicker, TimeInput } from '@mantine/dates';
+import React, {useEffect, useState} from 'react';
+import {Button, InputWrapper, Select, TextInput} from '@mantine/core';
+import {ChevronsRight, ClipboardText, X} from 'tabler-icons-react';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {FormikProps} from 'formik';
+import {showNotification} from '@mantine/notifications';
+import {DatePicker, TimeInput} from '@mantine/dates';
 import dayjs from 'dayjs';
 import BySlotChooseRoomModal from './by-slot-choose-room-modal.component';
 import ChooseDeviceModal from './choose-device-modal.component';
 import ConfirmModal from './confirm-modal.component';
-import { IsUserHaveBookedSameSlotMulti } from 'apps/frontend/redux/features/room-booking/thunk/fetch-room-booked-same-slot-multi-of-user.thunk';
+import {
+  IsUserHaveBookedSameSlotMulti
+} from 'apps/frontend/redux/features/room-booking/thunk/fetch-room-booked-same-slot-multi-of-user.thunk';
 
 interface ChooseMultiDayModalProps {
   formik: FormikProps<any>;
+
   handleSubmit(): void;
+
   listUsernames: any[];
 }
 
@@ -73,7 +77,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
         color: 'red',
         title: 'The time you selected is over',
         message: 'Please select other time',
-        icon: <X />,
+        icon: <X/>,
         autoClose: 3000,
       });
     }
@@ -104,7 +108,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
         color: 'red',
         title: 'Miss some filed',
         message: 'Please choose day, slot start, slot end before to next step',
-        icon: <X />,
+        icon: <X/>,
         autoClose: 3000,
       });
     } else {
@@ -129,7 +133,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
               message: `${
                 props.formik.values.bookedFor ? 'User' : 'You'
               } already have request booked for ${response} at same time. Please choose another time`,
-              icon: <X />,
+              icon: <X/>,
               autoClose: 3000,
             });
           } else {
@@ -176,10 +180,10 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
           margin: '20px 0',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{display: 'flex', justifyContent: 'space-between'}}>
           <DatePicker
             id="checkinDate"
-            style={{ width: '250px' }}
+            style={{width: '250px'}}
             label="Date start"
             placeholder="Select date"
             radius="md"
@@ -202,12 +206,12 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             size={28}
             strokeWidth={2}
             color={'black'}
-            style={{ margin: 'auto 40px', position: 'relative', top: 15 }}
+            style={{margin: 'auto 40px', position: 'relative', top: 15}}
           />
 
           <DatePicker
             id="checkoutDate"
-            style={{ width: '250px' }}
+            style={{width: '250px'}}
             label="Date end"
             placeholder="Select date"
             radius="md"
@@ -226,15 +230,15 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             excludeDate={(date) => isHoliday(date)}
           />
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{display: 'flex', justifyContent: 'center'}}>
           <InputWrapper required label="Time start">
             <TimeInput
-              icon={<ClipboardText />}
+              icon={<ClipboardText/>}
               id="timeStart"
               name="timeStart"
               // error={formik.errors.timeEnd}
               onChange={(e) => props.formik.setFieldValue('timeStart', e)}
-              style={{ width: '8rem' }}
+              style={{width: '8rem'}}
               // radius="md"
               value={props.formik.values.timeStart}
             />
@@ -243,30 +247,30 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             size={28}
             strokeWidth={2}
             color={'black'}
-            style={{ margin: 'auto 40px' }}
+            style={{margin: 'auto 40px'}}
           />
           <InputWrapper required label="Time end">
             <TimeInput
-              icon={<ClipboardText />}
+              icon={<ClipboardText/>}
               id="timeEnd"
               name="timeEnd"
               // error={formik.errors.timeEnd}
               onChange={(e) => props.formik.setFieldValue('timeEnd', e)}
-              style={{ width: '8rem' }}
+              style={{width: '8rem'}}
               // radius="md"
               value={props.formik.values.timeEnd}
             />
           </InputWrapper>
         </div>
       </div>
-      <div style={{ display: 'flex', gap: 20 }}>
+      <div style={{display: 'flex', gap: 20}}>
         <InputWrapper
           required
           label="Number of participants"
-          style={{ width: '200px' }}
+          style={{width: '200px'}}
         >
           <TextInput
-            icon={<ClipboardText />}
+            icon={<ClipboardText/>}
             id="capacity"
             name="capacity"
             error={props.formik.errors.capacity}
@@ -287,11 +291,11 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             error={props.formik.errors.bookedFor}
             onChange={props.formik.handleChange('bookedFor')}
             searchable={true}
-            style={{ flex: 1 }}
+            style={{flex: 1}}
           />
         ) : null}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', margin: 10 }}>
+      <div style={{display: 'flex', justifyContent: 'flex-end', margin: 10}}>
         <Button onClick={() => handleNextChooseRoom()} color="green">
           Next
         </Button>

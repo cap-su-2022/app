@@ -57,59 +57,6 @@ export class SlotController {
     return this.service.getAll();
   }
 
-
-  // @Get()
-  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
-  // @ApiOperation({
-  //   summary: 'Get all slots',
-  //   description: 'Get the list of slots',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.OK,
-  //   description: 'Successfully fetched slots',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.BAD_REQUEST,
-  //   description: 'Error while retrieving slots',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.UNAUTHORIZED,
-  //   description: 'Access token is invalid',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.FORBIDDEN,
-  //   description: 'Not enough privileges',
-  // })
-  // getAllSlotsByPagination(@Optional() @Query() params?: PaginationParams) {
-  //   return this.service.getAllByPagination(params);
-  // }
-
-  // @Get('name')
-  // @ApiResponse({
-  //   status: HttpStatus.OK,
-  //   description: 'Successfully get slot names',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.UNAUTHORIZED,
-  //   description: 'Access token is invalidated',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.BAD_REQUEST,
-  //   description: 'Request params is not validated',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.FORBIDDEN,
-  //   description: 'Insufficient privileges',
-  // })
-  // @ApiOperation({
-  //   summary: 'Get slot names',
-  //   description: 'Get slot names',
-  // })
-  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
-  // getSlotNames() {
-  //   return this.service.getSlotNames();
-  // }
-
   @Get(':id')
   @Roles(Role.APP_ADMIN)
   @ApiResponse({
@@ -136,37 +83,6 @@ export class SlotController {
   ) {
     return this.service.getById(payload.id);
   }
-
-
-  // @Post()
-  // @Roles(Role.APP_ADMIN)
-  // @HttpCode(HttpStatus.OK)
-  // @ApiOperation({
-  //   summary: 'Add a new slot',
-  //   description: 'Add a new slot',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.OK,
-  //   description: 'Successfully added a new slot',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.BAD_REQUEST,
-  //   description: 'Error while adding a new slot',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.UNAUTHORIZED,
-  //   description: 'Access token is invalidated',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.FORBIDDEN,
-  //   description: 'Insufficient privileges',
-  // })
-  // addNewSlot(
-  //   @User() user: KeycloakUserInstance,
-  //   @Body() payload: SlotsRequestPayload
-  // ) {
-  //   return this.service.addNewSlot(user.account_id, payload);
-  // }
 
   @Post()
   @Roles(Role.APP_ADMIN)
@@ -220,7 +136,7 @@ export class SlotController {
     status: HttpStatus.FORBIDDEN,
     description: 'Insufficient privileges',
   })
- updateSlot(
+  updateSlot(
     @Param('key') key: string,
     @Body() slotConfig: SlotsConfigRequestPayload
   ) {
@@ -252,6 +168,93 @@ export class SlotController {
   deleteSlot(@Param('key') key: string) {
     return this.service.deleteSlot(key);
   }
+
+
+  // @Get()
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  // @ApiOperation({
+  //   summary: 'Get all slots',
+  //   description: 'Get the list of slots',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully fetched slots',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while retrieving slots',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalid',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Not enough privileges',
+  // })
+  // getAllSlotsByPagination(@Optional() @Query() params?: PaginationParams) {
+  //   return this.service.getAllByPagination(params);
+  // }
+
+  // @Get('name')
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully get slot names',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalidated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Request params is not validated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // @ApiOperation({
+  //   summary: 'Get slot names',
+  //   description: 'Get slot names',
+  // })
+  // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
+  // getSlotNames() {
+  //   return this.service.getSlotNames();
+  // }
+
+
+
+  // @Post()
+  // @Roles(Role.APP_ADMIN)
+  // @HttpCode(HttpStatus.OK)
+  // @ApiOperation({
+  //   summary: 'Add a new slot',
+  //   description: 'Add a new slot',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Successfully added a new slot',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Error while adding a new slot',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.UNAUTHORIZED,
+  //   description: 'Access token is invalidated',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.FORBIDDEN,
+  //   description: 'Insufficient privileges',
+  // })
+  // addNewSlot(
+  //   @User() user: KeycloakUserInstance,
+  //   @Body() payload: SlotsRequestPayload
+  // ) {
+  //   return this.service.addNewSlot(user.account_id, payload);
+  // }
+
+
 
   // @Get('deleted')
   // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)

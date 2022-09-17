@@ -5,19 +5,24 @@ import { PaginationResponse } from '../../../models/pagination-response.payload'
 import { fetchSlotNames } from './thunk/fetch-slot-names.thunk';
 import { fetchSlotById } from './thunk/fetch-by-id.thunk';
 import { fetchDeletedSlots } from './thunk/fetch-deleted-device-types';
+import {SlotConfig} from "../../../models/slot-config.model";
 
 interface InitialState {
-  slots: PaginationResponse<Slot>;
+  // slots: Slots{};
+  // slot: Slot;
+  // slotInfor: Slot[];
+  // deletedSlots: Slot[];
   slot: Slot;
-  slotInfor: Slot[];
-  deletedSlots: Slot[];
+  slotConfig: SlotConfig
 }
 
 const initialState: InitialState = {
-  slots: {} as PaginationResponse<Slot>,
+  // slots: {} as Slots{},
+  // slot: {} as Slot,
+  // slotInfor: [] as Slot[],
+  // deletedSlots: [],
   slot: {} as Slot,
-  slotInfor: [] as Slot[],
-  deletedSlots: [],
+  slotConfig: {} as SlotConfig
 };
 
 export const slotSlice = createSlice({
@@ -26,20 +31,20 @@ export const slotSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchSlotById.fulfilled, (state, { payload }) => {
-      state.slot = payload;
+      state.slotConfig = payload;
     });
 
     builder.addCase(fetchAllSlots.fulfilled, (state, { payload }) => {
-      state.slots = payload;
+      state.slot = payload;
     });
 
-    builder.addCase(fetchSlotNames.fulfilled, (state, { payload }) => {
-      state.slotInfor = payload;
-    });
-
-    builder.addCase(fetchDeletedSlots.fulfilled, (state, { payload }) => {
-      state.deletedSlots = payload;
-    });
+    // builder.addCase(fetchSlotNames.fulfilled, (state, { payload }) => {
+    //   state.slotInfor = payload;
+    // });
+    //
+    // builder.addCase(fetchDeletedSlots.fulfilled, (state, { payload }) => {
+    //   state.deletedSlots = payload;
+    // });
   },
 });
 
