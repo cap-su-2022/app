@@ -37,8 +37,6 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
 
   const RenderStatus: React.FC<{ status: string }> = (_props) => {
     switch (_props.status) {
-      case 'PENDING':
-        return <div className={classes.pendingDisplay}>Pending</div>;
       case 'BOOKED':
         return <div className={classes.bookedDisplay}>Booked</div>;
       case 'CHECKED_OUT':

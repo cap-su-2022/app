@@ -395,7 +395,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           <DatePicker
             id="checkinDate"
             style={{ width: '200px', paddingBottom: 20 }}
-            label="Book date"
+            label="Check-in date"
             placeholder="Select date"
             radius="md"
             required
