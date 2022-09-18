@@ -19,7 +19,7 @@ import {
   ClipboardText,
   FileDescription,
   Id,
-  Pencil,
+  Pencil, Plus,
   X,
 } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -76,6 +76,10 @@ const AddHolidayModal: React.FC<AddModalProps> = (props) => {
 
   useEffect(() => {
     dispatch(fetchHolidaysMini()).unwrap();
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetchHolidays(props.pagination)).unwrap();
   }, []);
 
   const add = async (values) => {
@@ -183,7 +187,7 @@ const AddHolidayModal: React.FC<AddModalProps> = (props) => {
           <p>
             There has been a booking request for this date. If holidays are
             added, these requests will be cancelled. Are you sure you want to
-            add holidays?
+            add these holidays?
           </p>
         </div>
         <ScrollArea sx={{ height: '100%' }}>
@@ -220,7 +224,7 @@ const AddHolidayModal: React.FC<AddModalProps> = (props) => {
             color="green"
             disabled={isUpdateDisabled}
             onClick={() => add(formik.values)}
-            leftIcon={<Pencil />}
+            leftIcon={<Plus />}
           >
             Add
           </Button>
@@ -234,7 +238,7 @@ const AddHolidayModal: React.FC<AddModalProps> = (props) => {
           padding: '20px 0px',
         }}
       >
-        <h1>Dont have any room with this type</h1>
+        <h1>Don't have any check-in days coincide with these holidays </h1>
       </div>
     );
   };

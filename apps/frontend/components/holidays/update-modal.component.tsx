@@ -3,13 +3,14 @@ import {
   Button,
   createStyles,
   InputWrapper,
-  Modal,
-  Select,
+  Modal, ScrollArea,
+  Select, Table,
   Text,
   Textarea,
   TextInput,
 } from '@mantine/core';
 import {
+  ArrowBack,
   Calendar,
   Check, ChevronsRight,
   ClipboardText,
@@ -28,6 +29,7 @@ import {updateHolidayById} from "../../redux/features/holidays/thunk/update-holi
 import dayjs from "dayjs";
 import {DatePicker} from "@mantine/dates";
 import {fetchHolidaysMini} from "../../redux/features/holidays/thunk/fetch-holidays-mini.thunk";
+import {fetchRequestsInDateRange} from "../../redux/features/room-booking/thunk/fetch-request-in-date-range";
 
 interface UpdateModalProps {
   isShown: boolean;
@@ -54,6 +56,8 @@ const HolidayUpdateModal: React.FC<UpdateModalProps> = (props) => {
   const holiday = useAppSelector((state) => state.holiday.holiday);
   const [isUpdateDisabled, setUpdateDisabled] = useState<boolean>(false);
   const dispatch = useAppDispatch();
+  const [isShowListRequest, setShowListRequest] = useState<boolean>(false);
+  const [listRequest, setListRequest] = useState([]);
   const holidays = useAppSelector((state) => state.holiday.holidaysMini);
   const isHoliday = (date) => {
     const dateFormat = dayjs(date).format('YYYY-MM-DD');
@@ -70,8 +74,119 @@ const HolidayUpdateModal: React.FC<UpdateModalProps> = (props) => {
   useEffect(() => {
     dispatch(fetchHolidaysMini()).unwrap();
   }, []);
+  useEffect(() => {
+    dispatch(fetchHolidays(props.pagination)).unwrap();
+  }, []);
+
+  const ListRequest = () => {
+    const rows =
+      listRequest && listRequest.length > 0
+        ? listRequest.map((row) => (
+          <tr key={row.id}>
+            <td>{row.roomName}</td>
+            <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
+            <td>{row.bookedFor}</td>
+          </tr>
+        ))
+        : null;
+    return listRequest && listRequest.length > 0 ? (
+      <div style={{display: 'flex', flexDirection: 'column', width: 350}}>
+        <div style={{marginBottom: 20, textAlign: "justify"}}>
+          <p>
+            There has been a booking request for this date. If holidays are
+            added, these requests will be cancelled. Are you sure you want to
+            update these holidays?
+          </p>
+        </div>
+        <ScrollArea sx={{height: '100%'}}>
+          <Table
+            horizontalSpacing="xs"
+            verticalSpacing="xs"
+            sx={{tableLayout: 'fixed'}}
+            style={{width: 350}}
+          >
+            <thead>
+            <tr>
+              <th style={{width: 100}}>Room</th>
+              <th style={{width: 150}}>Check in date</th>
+              <th style={{width: 100}}>User</th>
+            </tr>
+            </thead>
+            <tbody>{rows}</tbody>
+          </Table>
+        </ScrollArea>
+
+        <div className={classes.modalFooter}>
+          <Button
+            color="red"
+            disabled={isUpdateDisabled}
+            onClick={() => {
+              formik.setFieldValue('dateEnd', null);
+              formik.setFieldValue('dateStart', null);
+            }}
+            leftIcon={<ArrowBack/>}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="green"
+            disabled={isUpdateDisabled}
+            onClick={() => update(formik.values)}
+            leftIcon={<Pencil/>}
+          >
+            Update
+          </Button>
+        </div>
+      </div>
+    ) : (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '20px 0px',
+        }}
+      >
+        <h1>Don't have any check-in days coincide with these holidays </h1>
+      </div>
+    );
+  };
 
   const handleUpdateSubmit = async (values) => {
+    dispatch(
+      fetchRequestsInDateRange({
+        dateStart: values.dateStart,
+        dateEnd: values.dateEnd,
+      })
+    )
+      .unwrap()
+      .then((respone) => {
+        if (respone?.length > 0) {
+          setListRequest(respone);
+          setShowListRequest(true);
+        } else {
+          update(values);
+        }
+      })
+      .catch((e) =>
+        showNotification({
+          id: 'load-data',
+          color: 'red',
+          title: 'Error while updating holiday',
+          message: e.message ?? 'Failed to update holiday',
+          icon: <X/>,
+          autoClose: 3000,
+        })
+      );
+
+    // .then(() => props.toggleShown())
+    // .then(() => dispatch(fetchHolidays(props.pagination)))
+    // .finally(() => {
+    //   formik.resetForm();
+    // });
+  };
+
+
+  const update = async (values) => {
     dispatch(
       updateHolidayById({
         id: values.id,
@@ -109,18 +224,23 @@ const HolidayUpdateModal: React.FC<UpdateModalProps> = (props) => {
       });
   };
 
+
   const formik = useFormik({
     initialValues: {
       id: holiday.id,
       name: holiday.name,
       description: holiday.description,
-      dateStart: holiday.dateStart,
-      dateEnd: holiday.dateEnd
+      dateStart: new Date(holiday.dateStart),
+      dateEnd: new Date(holiday.dateEnd)
     },
     enableReinitialize: true,
     onSubmit: (values) => handleUpdateSubmit(values),
     validationSchema: UpdateHolidayValidation,
   });
+
+  useEffect(() => {
+    setShowListRequest(false);
+  }, [formik.values.dateStart, formik.values.dateEnd]);
 
   useEffect(() => {
     if (
@@ -152,7 +272,7 @@ const HolidayUpdateModal: React.FC<UpdateModalProps> = (props) => {
     <>
       <Modal
         title={<ModalHeaderTitle/>}
-        size='lg'
+        size='auto'
         centered
         opened={props.isShown}
         onClose={() => {
@@ -160,106 +280,109 @@ const HolidayUpdateModal: React.FC<UpdateModalProps> = (props) => {
           props.toggleShown();
         }}
       >
-        <FormikProvider value={formik}>
-          <Form onSubmit={formik.handleSubmit}>
-            <div className={classes.modalBody}>
+        <div style={{display: 'flex'}}>
+          <FormikProvider value={formik}>
+            <Form onSubmit={formik.handleSubmit} style={{maxWidth: '500px'}}>
+              <div className={classes.modalBody}>
 
-              <InputWrapper
-                required
-                label="Holiday name"
-                style={{marginBottom: 20}}
-              >
-                <TextInput
-                  icon={<ClipboardText/>}
-                  id="holiday-name"
-                  name="name"
-                  error={formik.errors.name}
-                  onChange={formik.handleChange}
-                  className={classes.textInput}
-                  radius="md"
-                  value={formik.values.name}
-                />
-              </InputWrapper>
-
-              <InputWrapper
-                label="Holiday Description"
-                style={{marginBottom: 20}}
-              >
-                <Textarea
-                  id="holiday-description"
-                  name="description"
-                  icon={<FileDescription/>}
-                  error={formik.errors.description}
-                  onChange={formik.handleChange}
-                  radius="md"
-                  autosize
-                  minRows={4}
-                  maxRows={7}
-                  value={formik.values.description}
-                />
-              </InputWrapper>
-
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginBottom: 20
-                }}
-              >
-                <DatePicker
-                  id="dateStart"
-                  style={{width: '250px'}}
-                  label="Date starts"
-                  placeholder="Select date"
-                  radius="md"
+                <InputWrapper
                   required
-                  inputFormat="DD-MM-YYYY"
-                  value={new Date(formik.values.dateStart)}
-                  minDate={dayjs(new Date()).toDate()}
-                  excludeDate={(date) => isHoliday(date)}
-                  onChange={(date) => {
-                    formik.setFieldValue('dateStart', date);
+                  label="Holiday name"
+                  style={{marginBottom: 20}}
+                >
+                  <TextInput
+                    icon={<ClipboardText/>}
+                    id="holiday-name"
+                    name="name"
+                    error={formik.errors.name}
+                    onChange={formik.handleChange}
+                    className={classes.textInput}
+                    radius="md"
+                    value={formik.values.name}
+                  />
+                </InputWrapper>
+
+                <InputWrapper
+                  label="Holiday Description"
+                  style={{marginBottom: 20}}
+                >
+                  <Textarea
+                    id="holiday-description"
+                    name="description"
+                    icon={<FileDescription/>}
+                    error={formik.errors.description}
+                    onChange={formik.handleChange}
+                    radius="md"
+                    autosize
+                    minRows={4}
+                    maxRows={7}
+                    value={formik.values.description}
+                  />
+                </InputWrapper>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginBottom: 20
                   }}
-                />
-                <ChevronsRight
-                  size={28}
-                  strokeWidth={2}
-                  color={'black'}
-                  style={{margin: 'auto 40px', position: 'relative', top: 15}}
-                />
-                <DatePicker
-                  id="dateEnd"
-                  style={{width: '250px'}}
-                  label="Date ends"
-                  placeholder="Select date"
-                  radius="md"
-                  required
-                  excludeDate={(date) => isHoliday(date)}
-                  inputFormat="DD-MM-YYYY"
-                  value={new Date(formik.values.dateEnd)}
-                  minDate={dayjs(new Date()).toDate()}
-                  onChange={(date) => {
-                    formik.setFieldValue('dateEnd', date);
-                  }}
-                />
+                >
+                  <DatePicker
+                    id="dateStart"
+                    style={{width: '250px'}}
+                    label="Date starts"
+                    placeholder="Select date"
+                    radius="md"
+                    required
+                    inputFormat="DD-MM-YYYY"
+                    minDate={dayjs(new Date()).toDate()}
+                    excludeDate={(date) => isHoliday(date)}
+                    onChange={(date) => {
+                      formik.setFieldValue('dateStart', date);
+                    }}
+                    value={formik.values.dateStart}
+                  />
+                  <ChevronsRight
+                    size={28}
+                    strokeWidth={2}
+                    color={'black'}
+                    style={{margin: 'auto 40px', position: 'relative', top: 15}}
+                  />
+                  <DatePicker
+                    id="dateEnd"
+                    style={{width: '250px'}}
+                    label="Date ends"
+                    placeholder="Select date"
+                    radius="md"
+                    required
+                    excludeDate={(date) => isHoliday(date)}
+                    inputFormat="DD-MM-YYYY"
+                    value={formik.values.dateEnd}
+                    minDate={dayjs(new Date()).toDate()}
+                    onChange={(date) => {
+                      formik.setFieldValue('dateEnd', date);
+                    }}
+                  />
+                </div>
+
+
               </div>
 
-
-            </div>
-
-            <div className={classes.modalFooter}>
-              <Button
-                color="cyan"
-                disabled={isUpdateDisabled}
-                onClick={() => formik.submitForm()}
-                leftIcon={<Pencil/>}
-              >
-                Update
-              </Button>
-            </div>
-          </Form>
-        </FormikProvider>
+              <div className={classes.modalFooter}>
+                <Button
+                  color="cyan"
+                  disabled={isUpdateDisabled}
+                  onClick={() => formik.submitForm()}
+                  leftIcon={<Pencil/>}
+                >
+                  Update
+                </Button>
+              </div>
+            </Form>
+          </FormikProvider>
+          {isShowListRequest && <ListRequest/>}
+        </div>
       </Modal>
     </>
   );
