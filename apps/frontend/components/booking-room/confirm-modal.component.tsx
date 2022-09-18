@@ -59,7 +59,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
             </div>
           </div>
           <div className={classes.nameAndDateDiv}>
-            <b style={{ marginRight: 10, flexBasis: '30%' }}>Date check in:</b>
+            <b style={{ marginRight: 10, flexBasis: '30%' }}>Checked in date:</b>
             <div
               style={{
                 backgroundColor: 'white',

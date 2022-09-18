@@ -3,7 +3,7 @@ import {Button} from '@mantine/core';
 import Header from '../common/header.component';
 import {
   BuildingWarehouse,
-  Check,
+  Check, Message,
   Plus,
   TrashOff,
   X,
@@ -375,7 +375,7 @@ const ManageBookingReason: React.FC<any> = () => {
   });
   return (
     <AdminLayout>
-      <Header title="Booking Reasons Management" icon={<BuildingWarehouse size={50}/>}/>
+      <Header title="Booking Reasons Management" icon={<Message size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter/>}

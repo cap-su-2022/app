@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, createStyles } from '@mantine/core';
 import AdminLayout from '../../components/layout/admin.layout';
 import Header from '../../components/common/header.component';
-import { BuildingWarehouse, Plus, TrashOff, X } from 'tabler-icons-react';
+import {Bookmark, BuildingWarehouse, Plus, TrashOff, X} from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   defaultPaginationParams,
@@ -132,7 +132,7 @@ const ManageSlots: React.FC<any> = () => {
     <AdminLayout>
       <Header
         title="Slots Configuration"
-        icon={<BuildingWarehouse size={50} />}
+        icon={<Bookmark size={50} />}
       />
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <ActionsFilter />

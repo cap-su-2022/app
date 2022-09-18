@@ -72,15 +72,19 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           reversed={null}
           onSort={null}
           style={{
-            width: 150,
+            width: 100,
           }}
         >
           Name
         </Th>
-        <Th sorted={null} reversed={null} onSort={null}>
+        <Th sorted={null} reversed={null} onSort={null} style={{
+          width: 100,
+        }}>
           Time starts
         </Th>
-        <Th sorted={null} reversed={null} onSort={null}>
+        <Th sorted={null} reversed={null} onSort={null} style={{
+          width: 100,
+        }}>
           Time Ends
         </Th>
 
@@ -88,7 +92,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
           sorted={null}
           reversed={null}
           onSort={null}
-          style={{width: 250}}
+          style={{width: 59}}
         >
           Actions
         </Th>

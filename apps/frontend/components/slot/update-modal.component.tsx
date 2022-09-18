@@ -136,8 +136,8 @@ const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
 
   useEffect(() => {
     if (
-      formik.initialValues.name === formik.values.name ||
-      formik.initialValues.start === formik.values.start ||
+      formik.initialValues.name === formik.values.name &&
+      formik.initialValues.start === formik.values.start &&
       formik.initialValues.end === formik.values.end
     ) {
       setUpdateDisabled(true);

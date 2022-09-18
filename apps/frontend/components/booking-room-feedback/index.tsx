@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { PaginationParams } from '../../models/pagination-params.model';
 import { useDebouncedValue } from '@mantine/hooks';
-import { BuildingWarehouse, Download } from 'tabler-icons-react';
+import {BuildingWarehouse, Download, MessageShare} from 'tabler-icons-react';
 import AdminLayout from '../layout/admin.layout';
 import Header from '../common/header.component';
 import TableHeader from '../actions/table-header.component';
@@ -97,7 +97,7 @@ const ManageBookingRoomFeedback: React.FC<any> = () => {
     <AdminLayout>
       <Header
         title="Room Booking Feedbacks"
-        icon={<BuildingWarehouse size={50} />}
+        icon={<MessageShare size={50} />}
       />
       <TableHeader
         handleResetFilter={() => handleResetFilter()}

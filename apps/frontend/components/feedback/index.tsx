@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Button, createStyles } from '@mantine/core';
 import Header from '../common/header.component';
-import { BrandHipchat, Check, Download, Plus, X } from 'tabler-icons-react';
+import {BrandHipchat, Check, Download, MessageShare, Plus, X} from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useDebouncedValue } from '@mantine/hooks';
 import TableHeader from '../actions/table-header.component';
@@ -316,7 +316,7 @@ const ManageFeedback: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Feedbacks Management" icon={<BrandHipchat size={50} />} />
+      <Header title="Feedbacks Management" icon={<MessageShare size={50} />} />
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actionsLeft={<ActionsFilterLeft />}

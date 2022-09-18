@@ -3,7 +3,7 @@ import AdminLayout from '../../components/layout/admin.layout';
 import {Button} from '@mantine/core';
 import {
   ArchiveOff,
-  BuildingWarehouse,
+  BuildingWarehouse, Devices,
   Download,
   Plus,
   TrashOff,
@@ -215,7 +215,7 @@ function DevicesManagement() {
       <AdminLayout>
         <Header
           title="Devices Management"
-          icon={<BuildingWarehouse size={50}/>}
+          icon={<Devices size={50}/>}
         />
         <TableHeader
           actionsLeft={null}

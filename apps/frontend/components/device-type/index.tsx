@@ -5,6 +5,7 @@ import Header from '../../components/common/header.component';
 import {
   BuildingWarehouse,
   Check,
+  DeviceTablet,
   Plus,
   TrashOff,
   X,
@@ -410,7 +411,7 @@ const ManageDeviceType: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Device Types Management" icon={<BuildingWarehouse size={50}/>}/>
+      <Header title="Device Types Management" icon={<DeviceTablet size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter/>}

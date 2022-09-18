@@ -24,7 +24,7 @@ export const updateSlot = createAsyncThunk<any, UpdateSlotPayload, {
       {
         name: payload.name,
         start: dayjs(payload.start).format('HH:mm:ss'),
-        end: dayjs(payload.start).format('HH:mm:ss'),
+        end: dayjs(payload.end).format('HH:mm:ss'),
       });
     return await response.data;
 

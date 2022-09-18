@@ -21,17 +21,5 @@ slots:
     end: '17:30:00'
   slot5:
     name: Slot 5
-    start: '17:30:00'
-    end: '19:30:00'
-  slot8:
-    name: Slot 8
-    start: '20:00:00'
-    end: '21:00:00'
-  slot10:
-    name: Slot 10
-    start: '22:00:00'
-    end: '23:00:00'
-  slotvôcực:
-    name: Slot vô cực
-    start: '23:13:00'
-    end: '23:15:00'
+    start: '18:00:00'
+    end: '20:15:00'
