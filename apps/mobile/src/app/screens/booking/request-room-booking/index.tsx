@@ -15,7 +15,7 @@ import {
   DocumentAddIcon,
   ExclamationCircleIcon, LibraryIcon, MinusIcon, PlusIcon,
   SearchIcon,
-  TicketIcon,
+  TicketIcon, TrashIcon,
 } from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import { fetchAllSlots } from '../../../redux/features/slot';
@@ -314,7 +314,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
       <RequestRoomBookingHeader />
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.containerView}>
           <View
             style={[styles.container, getContainerHeightBasedOnMultiChecks()]}
@@ -476,7 +476,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
                     </View>
                     <View style={{
                       display: 'flex',
-                      justifyContent: 'space-around',
+                      justifyContent: 'space-evenly',
                       height: 90,
                       paddingLeft: 10,
                     }}>
@@ -534,6 +534,49 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
               </View>
             )
           })}
+        </View>
+        <View style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          alignItems: 'center',
+          paddingBottom: 16
+
+        }}>
+          <TouchableOpacity style={{
+            height: 50,
+            width: deviceWidth / 2.3,
+            backgroundColor: FPT_ORANGE_COLOR,
+            borderRadius: 8,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+            <Text style={{
+              color: WHITE,
+              fontWeight: '600',
+              fontSize: deviceWidth / 21
+            }}>Device</Text>
+          </TouchableOpacity>
+          <TouchableOpacity  style={{
+            height: 50,
+            width: deviceWidth / 2.3,
+            backgroundColor: FPT_ORANGE_COLOR,
+            borderRadius: 8,
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+            opacity: bookingRequests.length > 1 ? 0.5 : null,
+
+          }}>
+            <TrashIcon color={WHITE} size={deviceWidth / 16}/>
+            <Text style={{
+              color: WHITE,
+              fontWeight: '600',
+              fontSize: deviceWidth / 21
+            }}>Remove all</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
       <RequestRoomBookingRecentlySearch />
