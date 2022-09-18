@@ -6,11 +6,11 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param,
+  Param, ParseArrayPipe,
   Post,
   Put,
   Query,
-  UseInterceptors,
+  UseInterceptors, ValidationPipe,
 } from '@nestjs/common';
 import { BookingRoomService, HolidaysService } from '../services';
 import { User } from '../decorators/keycloak-user.decorator';
@@ -30,50 +30,8 @@ import { BookingRequestAddRequestPayload } from '../payload/request/booking-requ
 import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
 import { CancelRequestPayload } from '../payload/request/booking-request-cancel.payload';
 import { BookingRoomPaginationParams } from './booking-room-pagination.model';
-import {IsDateString, IsNotEmpty, IsNumber, IsPositive, IsUUID} from "class-validator";
-
-class AutoRoomBookingDevice {
-  @IsUUID()
-  @IsNotEmpty()
-  id: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @IsPositive()
-  quantity: number;
-}
-
-class AutoRoomBookingCapacity {
-  @IsNotEmpty()
-  min: number;
-
-  @IsNotEmpty()
-  @IsPositive()
-  max: number;
-}
-
-class AutoRoomBookingDate {
-  @IsNotEmpty()
-  min: number;
-
-  @IsNotEmpty()
-  @IsPositive()
-  max: number;
-}
-
-class AutoRoomBookingRequest {
-
-  @IsNotEmpty()
-  @IsDateString()
-  date: string;
-
-  timeStart: string;
-  timeEnd: string;
-  devices: AutoRoomBookingDevice;
-
-  @IsNotEmpty()
-  capacity: AutoRoomBookingCapacity;
-}
+import {AutoRoomBookingRequestPayload} from "../payload/request/auto-booking-request.payload";
+import {Type} from "class-transformer";
 
 @Controller('/v1/booking-room')
 @ApiTags('Booking Room')
@@ -258,8 +216,8 @@ export class BookingRoomController {
   }
 
   @Post('auto-booking')
-  requestRoomBookingAutomatically(@Body() payload: AutoRoomBookingRequest[]) {
-    return payload;
+  requestRoomBookingAutomatically(@Body() payload: AutoRoomBookingRequestPayload) {
+    return this.service.bookingRoomAutomatically(payload.request);
   }
 
   // @Get('list-booking-with-same-slot')

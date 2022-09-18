@@ -1,22 +1,24 @@
 {
-  "name": "app",
-  "version": "0.0.0",
+  "name": "flrbms",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx run-many --target=serve --all --parallel=10",
     "frontend": "nx serve frontend",
     "backend": "nx serve backend",
+    "ios": "nx run-ios mobile",
+    "android": "nx run-android mobile",
+
     "build-frontend": "nx run frontend:build:production",
     "build-backend": "nx run backend:build:production",
     "build-android": "nx build-android mobile",
-    "pod-install": "cd apps/mobile/ios && pod install --repo-update",
-    "ios": "nx run-ios mobile",
-    "android": "nx run-android mobile",
-    "build": "nx run-many --target=build --all --parallel=10",
+
+
     "test": "nx run-many --target=test --all --parallel=10",
     "test-frontend": "nx test frontend",
     "test-backend": "nx test backend -- --coverage",
     "test-mobile": "nx test mobile",
+
+    "pod-install": "cd apps/mobile/ios && pod install --repo-update",
     "convert-apk": "java -jar bundletool.jar build-apks --bundle=apps/mobile/android/app/build/outputs/bundle/release/app-release.aab --output=app.apks --mode=universal"
   },
   "private": true,

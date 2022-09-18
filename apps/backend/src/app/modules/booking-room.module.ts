@@ -18,12 +18,14 @@ import { NotificationModule } from './notification.module';
 import { BookingRoomGateway } from '../gateway/booking-room.gateway';
 import { BookingFeedbackModule } from './booking-feedback.module';
 import {HolidaysModule} from "./holidays.module";
+import {BookingReasonModule} from "./booking-reason.module";
 
 @Module({
   imports: [
     forwardRef(() => NotificationModule),
     forwardRef(() => KeycloakModule),
     forwardRef(() => AccountsModule),
+    forwardRef(() => BookingReasonModule),
     forwardRef(() => RoomTypeModule),
     forwardRef(() => DevicesModule),
     forwardRef(() => RoomsModule),

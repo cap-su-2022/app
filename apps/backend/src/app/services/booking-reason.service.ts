@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Injectable, Logger } from '@nestjs/common';
+import {BadRequestException, Body, forwardRef, Inject, Injectable, Logger} from '@nestjs/common';
 import { BookingReasonRepository } from '../repositories/booking-reason.repository';
 import { BookingReasonHistService } from './booking-reason-hist.service';
 import { PaginationParams } from '../controllers/pagination.model';
@@ -6,6 +6,7 @@ import { BookingReason } from '../models/booking-reason.entity';
 import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
 import { DataSource } from 'typeorm';
 import { BookingRoomService } from './booking-room.service';
+import {BookingFeedbackService} from "./booking-feedback.service";
 
 @Injectable()
 export class BookingReasonService {
@@ -13,7 +14,10 @@ export class BookingReasonService {
 
   constructor(
     private readonly repository: BookingReasonRepository,
+
+    @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingService: BookingRoomService,
+
     private readonly histService: BookingReasonHistService,
     private readonly dataSource: DataSource
   ) {}
@@ -190,7 +194,7 @@ export class BookingReasonService {
       }
       this.bookingService.setReasonNull(id, queryRunner);
       await this.histService.deleteAllHist(id);
-      
+
       await queryRunner.commitTransaction();
       return this.repository.permanentlyDeleteById(id);
     } catch (e) {
@@ -198,5 +202,9 @@ export class BookingReasonService {
       await queryRunner.release();
       throw new BadRequestException(e.message);
     }
+  }
+
+  async existsById(id: string): Promise<boolean> {
+    return await this.repository.existsById(id);
   }
 }

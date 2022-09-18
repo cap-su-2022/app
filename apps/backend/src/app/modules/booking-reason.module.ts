@@ -9,11 +9,13 @@ import { BookingReasonHistService } from '../services/booking-reason-hist.servic
 import { BookingReasonRepository } from '../repositories';
 import { BookingReasonHistRepository } from '../repositories';
 import { KeycloakService } from '../services';
+import {KeycloakModule} from "./keycloak.module";
 
 @Module({
   imports: [
     HttpModule,
-    BookingRoomModule,
+    forwardRef(() => KeycloakModule),
+    forwardRef(() => BookingRoomModule),
     forwardRef(() => AccountsModule),
     TypeOrmExModule.forCustomRepository([
       BookingReasonRepository,
@@ -21,7 +23,7 @@ import { KeycloakService } from '../services';
     ]),
   ],
   controllers: [BookingReasonController],
-  providers: [BookingReasonService, BookingReasonHistService, KeycloakService],
+  providers: [BookingReasonService, BookingReasonHistService],
   exports: [BookingReasonService, BookingReasonHistService],
 })
 export class BookingReasonModule {}

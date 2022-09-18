@@ -21,30 +21,52 @@ import { NotificationService } from './notification.service';
 import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
 import { BookingFeedbackService } from './booking-feedback.service';
 import { getConfigFileLoaded } from '../controllers/global-config.controller';
+import {
+  AutoRoomBookingCapacity,
+  AutoRoomBookingDevice,
+  AutoRoomBookingRequest,
+  AutoRoomBookingRequestPayload
+} from "../payload/request/auto-booking-request.payload";
+import {DevicesService} from "./devices.service";
+import {BookingReasonService} from "./booking-reason.service";
 
 @Injectable()
 export class BookingRoomService {
+  private static REGEX_24_HOUR = /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/;
   private readonly logger = new Logger(BookingRoomService.name);
 
   constructor(
     private readonly dataSource: DataSource,
+
     @Inject(forwardRef(() => BookingRoomRepository))
     private readonly repository: BookingRoomRepository,
+
     @Inject(forwardRef(() => NotificationService))
     private readonly notificationService: NotificationService,
+
     @Inject(forwardRef(() => AccountsService))
     private readonly accountService: AccountsService,
+
     @Inject(forwardRef(() => SlotService))
     private readonly slotService: SlotService,
+
     @Inject(forwardRef(() => RoomsService))
     private readonly roomService: RoomsService,
+
     @Inject(forwardRef(() => BookingRoomDevicesService))
     private readonly bookingRoomDeviceService: BookingRoomDevicesService,
+
     @Inject(forwardRef(() => BookingFeedbackService))
     private readonly bookingFeedbackService: BookingFeedbackService,
+
     private readonly histService: BookingRequestHistService,
     @Inject(forwardRef(() => HolidaysService))
-    private readonly holidaysService: HolidaysService
+    private readonly holidaysService: HolidaysService,
+
+    private readonly devicesService: DevicesService,
+
+    @Inject(forwardRef(() => BookingReasonService))
+    private readonly bookingReasonService: BookingReasonService,
   ) {}
 
   private getExampleStatistics() {
@@ -1453,4 +1475,95 @@ export class BookingRoomService {
   //     throw new BadRequestException(e.message);
   //   }
   // }
+  async bookingRoomAutomatically(requests: AutoRoomBookingRequest[]): Promise<any> {
+    try {
+      for (const request of requests) {
+        await this.validateAutoBookingRequest(request);
+
+        const rooms = await this.roomService.findRoomIdAndCapacityByBetweenCapacity(request.capacity);
+
+      }
+      return requests;
+
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  private async validateAutoBookingRequest(request: AutoRoomBookingRequest) {
+    this.validateCapacity(request.capacity);
+    await this.validateDevices(request.devices);
+    await this.validateBookingReason(request.bookingReasonId);
+    await this.validateBookingDateTime(request.date, {start: request.timeStart, end: request.timeEnd});
+    await this.validateConflictBookingTime(request.date, {start: request.timeStart, end: request.timeEnd})
+  }
+
+  private async validateConflictBookingTime(date: string, time: {start: string, end: string }) {
+    const isConflicted = await this.repository.isConflictWithStartEndDateTime(date, time.start, time.end);
+    console.log(isConflicted)
+    if (isConflicted) {
+      throw new BadRequestException(`The booking request with time from ${time.start} to ${time.end} is conflict. Please choose another time.`);
+    }
+  }
+
+  private validateCapacity(capacity: AutoRoomBookingCapacity) {
+    if (capacity.max < capacity.min) {
+      throw new BadRequestException("Max capacity must not be smaller than min capacity.");
+    }
+
+    if (capacity.min > capacity.max) {
+      throw new BadRequestException("Min capacity must not be larger than max capacity.");
+    }
+  }
+
+  private async validateBookingDateTime(date: string, time: {start: string, end: string }): Promise<void> {
+    if (!time.start.match(BookingRoomService.REGEX_24_HOUR) || !time.end.match(BookingRoomService.REGEX_24_HOUR)) {
+      throw new BadRequestException("Time start or time end does not comply with 24-hour format. Please try again.");
+    }
+
+    const currentDateTime = dayjs(dayjs().format("YYYY-MM-DD HH:mm"), {
+      format: "YYYY-MM-DD HH:mm",
+    });
+
+    const bookingDateWithTimeStart = dayjs(`${date} ${time.start}`, {
+      format: "YYYY-MM-DD HH:mm",
+    });
+    const bookingDateWithTimeEnd = dayjs(`${date} ${time.end}`, {
+      format: "YYYY-MM-DD HH:mm",
+    })
+
+    if (bookingDateWithTimeStart.isSame(bookingDateWithTimeEnd) || bookingDateWithTimeStart.isAfter(bookingDateWithTimeEnd)) {
+      throw new BadRequestException("Booking start time must not be the same or after the end time.");
+    }
+
+    if (bookingDateWithTimeStart.isSame(currentDateTime) || bookingDateWithTimeStart.isBefore(currentDateTime)) {
+      throw new BadRequestException("Booking date time must not be the same or before with the current time.")
+    }
+  }
+
+  private async validateBookingReason(bookingReasonId: string): Promise<void> {
+    const isExisted = await this.bookingReasonService.existsById(bookingReasonId);
+    if (!isExisted) {
+      throw new BadRequestException(`Booking reason does not exist with id: ${bookingReasonId}`);
+    }
+  }
+
+  private async validateDevices(devices: AutoRoomBookingDevice[]): Promise<void> {
+    if (!devices || devices.length < 1) {
+      return;
+    }
+    const deviceIds = devices.map((d) => d.id);
+    if (new Set(deviceIds).size !== deviceIds.length) {
+      throw new BadRequestException("Ids of devices are not unique. Please try again.");
+    }
+
+    const validatedDeviceIds = await this.devicesService.findIdsByGivenIds(deviceIds);
+
+    if (validatedDeviceIds.length !== deviceIds.length) {
+      const notFoundIds = deviceIds.filter(id => !validatedDeviceIds.includes(id));
+      throw new BadRequestException(`The following devices does not exist with ids: [${notFoundIds}]`);
+    }
+  }
+
 }

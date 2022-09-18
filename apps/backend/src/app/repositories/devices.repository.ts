@@ -329,4 +329,11 @@ export class DevicesRepository extends Repository<Devices> {
   //     .orderBy('devices.name', sort as 'ASC' | 'DESC')
   //     .getMany();
   // }
+  async findIdsByGivenIds(deviceIds: string[]): Promise<string[]> {
+    const response = await this.createQueryBuilder('devices')
+      .select('devices.id', 'id')
+      .where('id IN (:...ids)', {ids: deviceIds})
+      .getRawMany<{id: string}>();
+    return response.map((d) => d.id);
+  }
 }

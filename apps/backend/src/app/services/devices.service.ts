@@ -395,4 +395,7 @@ export class DevicesService {
 
   //   return this.repository.findDeviceListByBookingRoomRequest(name, type, sort);
   // }
+  async findIdsByGivenIds(deviceIds: string[]): Promise<string[]> {
+    return await this.repository.findIdsByGivenIds(deviceIds);
+  }
 }

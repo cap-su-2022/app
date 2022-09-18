@@ -16,6 +16,7 @@ import {DataSource} from 'typeorm';
 import {BookingRoomService} from './booking-room.service';
 import {RoomAddRequestPayload} from '../payload/request/room-add.request.payload';
 import {getConfigFileLoaded} from '../controllers/global-config.controller';
+import {AutoRoomBookingCapacity} from "../payload/request/auto-booking-request.payload";
 
 @Injectable()
 export class RoomsService {
@@ -499,5 +500,9 @@ export class RoomsService {
 
   filterRoomFreeByRoomBooked(search: string, capacity: number, listIdRoomBooked: string[]) {
     return this.repository.filterRoomFreeByRoomBooked(search, capacity, listIdRoomBooked);
+  }
+
+  findRoomIdAndCapacityByBetweenCapacity(capacity: AutoRoomBookingCapacity): Promise<{id: string, capacity: number}[]> {
+    return;
   }
 }
