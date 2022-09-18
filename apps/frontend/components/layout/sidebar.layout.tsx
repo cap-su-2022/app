@@ -11,9 +11,9 @@ import {
   DeviceTablet,
   BarrierBlock,
   BrandHipchat,
-  DeviceMobileMessage,
+  MessageShare,
   MessageCode,
-  Clock2, Calendar, Bookmark,
+  Clock2, Calendar, Bookmark, Message, UserCircle,
 } from 'tabler-icons-react';
 import { FPT_ORANGE_COLOR } from '@app/constants';
 import { BLACK, WHITE } from '@app/constants';
@@ -69,11 +69,11 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
       isRender: isAdmin || isLibrarian,
     },
     { link: '/accounts', label: 'Accounts', icon: Users, isRender: isAdmin },
-    { link: '/role', label: 'Roles', icon: BarrierBlock, isRender: isAdmin },
+    { link: '/role', label: 'Roles', icon: UserCircle, isRender: isAdmin },
     {
       link: '/feedbacks',
       label: 'Feedbacks',
-      icon: BrandHipchat,
+      icon: MessageShare,
       isRender: isAdmin || isLibrarian || isStaff,
     },
     {
@@ -85,7 +85,7 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
     {
       link: '/booking-room-feedbacks',
       label: 'Room Booking Feedbacks',
-      icon: BrandHipchat,
+      icon: MessageShare,
       isRender: isAdmin || isLibrarian || isStaff,
     },
     {
@@ -97,7 +97,7 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
     {
       link: '/booking-reason',
       label: 'Room Booking Reason',
-      icon: DeviceMobileMessage,
+      icon: Message,
       isRender: isAdmin || isLibrarian,
     },
     {
@@ -108,7 +108,7 @@ const LayoutSidebar: React.FC<SideBarProps> = (props) => {
     },
     {
       link: '/slot',
-      label: 'Slots',
+      label: 'Slots Configuration',
       icon: Bookmark,
       isRender: isAdmin || isLibrarian,
     },

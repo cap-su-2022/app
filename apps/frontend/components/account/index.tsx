@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import AdminLayout from '../layout/admin.layout';
 import { Button } from '@mantine/core';
-import { BuildingWarehouse, Plus, TrashOff } from 'tabler-icons-react';
+import {BuildingWarehouse, Plus, TrashOff, Users} from 'tabler-icons-react';
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -207,7 +207,7 @@ function AccountsManagement() {
       <AdminLayout>
         <Header
           title="Accounts Management"
-          icon={<BuildingWarehouse size={50} />}
+          icon={<Users size={50} />}
         />
         <TableHeader
           actionsLeft={null}

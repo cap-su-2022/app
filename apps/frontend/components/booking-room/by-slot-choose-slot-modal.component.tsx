@@ -37,7 +37,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(true);
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
-
+  const [showHintSlot, setShowHintSlot] = useState<boolean>(false);
   const holidays = useAppSelector((state) => state.holiday.holidaysMini);
   const dispatch = useAppDispatch();
 
@@ -278,7 +278,11 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
             id="timeStart"
             name="timeStart"
             // error={formik.errors.timeEnd}
-            onChange={(e) => props.formik.setFieldValue('timeStart', e)}
+            onChange={(e) => {
+              props.formik.setFieldValue('timeStart', e)
+              setShowHintSlot(true)
+
+            }}
             style={{ width: '8rem' }}
             // radius="md"
             value={props.formik.values.timeStart}

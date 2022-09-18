@@ -5,7 +5,7 @@ import Header from '../../components/common/header.component';
 import {
   Archive, ArchiveOff,
   BuildingWarehouse,
-  Check,
+  Check, MessageCode,
   Plus,
   TrashOff,
   X,
@@ -388,7 +388,7 @@ const ManageFeedbackType: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Feedback Types Management" icon={<BuildingWarehouse size={50}/>}/>
+      <Header title="Feedback Types Management" icon={<MessageCode size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actions={<ActionsFilter/>}

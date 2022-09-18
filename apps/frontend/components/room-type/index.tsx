@@ -3,7 +3,7 @@ import {Button, createStyles} from '@mantine/core';
 import Header from '../common/header.component';
 import {
   BuildingWarehouse,
-  Check,
+  Check, Door,
   Plus,
   TrashOff,
   X,
@@ -409,7 +409,7 @@ const ManageRoomType: React.FC<any> = () => {
 
   return (
     <AdminLayout>
-      <Header title="Room Types Management" icon={<BuildingWarehouse size={50}/>}/>
+      <Header title="Room Types Management" icon={<Door size={50}/>}/>
       <TableHeader
         handleResetFilter={() => handleResetFilter()}
         actionsLeft={null}

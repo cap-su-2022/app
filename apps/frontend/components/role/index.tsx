@@ -5,7 +5,7 @@ import {
   BuildingWarehouse,
   Check,
   Plus,
-  TrashOff,
+  TrashOff, UserCircle,
   X,
 } from 'tabler-icons-react';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
@@ -403,7 +403,7 @@ const ManageRole: React.FC<any> = () => {
   });
   return (
     <AdminLayout>
-      <Header title="Roles Management" icon={<BuildingWarehouse size={50}/>}/>
+      <Header title="Roles Management" icon={<UserCircle size={50}/>}/>
       <TableHeader
         actionsLeft={null}
         handleResetFilter={() => handleResetFilter()}
