@@ -5,16 +5,16 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { DataSource, Repository, QueryRunner } from 'typeorm';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { Holidays, Rooms } from '../models';
-import { HolidayAddRequestPayload } from '../payload/request/holidays-add.request.payload';
-import { HolidaysRepository } from '../repositories/holidays.repository';
-import { PaginationParams } from '../controllers/pagination.model';
-import { RoomAddRequestPayload } from '../payload/request/room-add.request.payload';
-import { getConfigFileLoaded } from '../controllers/global-config.controller';
+import {DataSource, Repository, QueryRunner} from 'typeorm';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {Holidays, Rooms} from '../models';
+import {HolidayAddRequestPayload} from '../payload/request/holidays-add.request.payload';
+import {HolidaysRepository} from '../repositories/holidays.repository';
+import {PaginationParams} from '../controllers/pagination.model';
+import {RoomAddRequestPayload} from '../payload/request/room-add.request.payload';
+import {getConfigFileLoaded} from '../controllers/global-config.controller';
 import dayjs = require('dayjs');
-import { BookingRoomService } from './booking-room.service';
+import {BookingRoomService} from './booking-room.service';
 
 @Injectable()
 export class HolidaysService {
@@ -25,7 +25,8 @@ export class HolidaysService {
     private readonly repository: HolidaysRepository,
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService
-  ) {}
+  ) {
+  }
 
   async getAll(request: PaginationParams) {
     try {
@@ -191,7 +192,7 @@ export class HolidaysService {
             dateEnd: dayjs(holiday[i][2]).format('YYYY-MM-DD'),
           });
         if (listRequestBooked.length > 0) {
-          const reason = `Admin added a new holiday. Your request was canceled because check in date coincides holiday. Please rebook for another day.`;
+          const reason = `Admin added a new holiday. Your request was cancelled because check in date coincides holiday. Please rebook for another day.`;
           for (let i = 0; i < listRequestBooked.length; i++) {
             await this.bookingRoomService.cancelRequest(
               user.account_id,
@@ -254,6 +255,22 @@ export class HolidaysService {
         throw new BadRequestException(
           'There is already existed holiday which is started and ended in this date range. Choose another date starts and date ends'
         );
+      }
+      const listRequestBooked =
+        await this.bookingRoomService.getListRequestInDayRange({
+          dateStart: body.dateStart,
+          dateEnd: body.dateEnd,
+        });
+      if (listRequestBooked.length > 0) {
+        const reason = `Admin updated a holiday. Your request was cancelled because check in date coincides new updated holiday. Please rebook for another day.`;
+        for (let i = 0; i < listRequestBooked.length; i++) {
+          await this.bookingRoomService.cancelRequest(
+            accountId,
+            listRequestBooked[i].id,
+            reason,
+            queryRunner
+          );
+        }
       }
       const holidayUpdated = await this.repository.updateById(
         accountId,
