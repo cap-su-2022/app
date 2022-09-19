@@ -84,7 +84,7 @@ const HolidayUpdateModal: React.FC<UpdateModalProps> = (props) => {
         ? listRequest.map((row) => (
           <tr key={row.id}>
             <td>{row.roomName}</td>
-            <td>{dayjs(row.checkinDate).format('DD-MM-YYYY')}</td>
+            <td>{dayjs(row.timeStart).format('DD-MM-YYYY')}</td>
             <td>{row.bookedFor}</td>
           </tr>
         ))

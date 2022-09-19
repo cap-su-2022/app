@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, InputWrapper, Select, TextInput} from '@mantine/core';
+import {Button, InputWrapper, Select, Space, TextInput} from '@mantine/core';
 import {ChevronsRight, ClipboardText, X} from 'tabler-icons-react';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {FormikProps} from 'formik';
@@ -12,6 +12,7 @@ import ConfirmModal from './confirm-modal.component';
 import {
   IsUserHaveBookedSameSlotMulti
 } from 'apps/frontend/redux/features/room-booking/thunk/fetch-room-booked-same-slot-multi-of-user.thunk';
+import {fetchAllSlots} from "../../redux/features/slot";
 
 interface ChooseMultiDayModalProps {
   formik: FormikProps<any>;
@@ -41,6 +42,14 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(true);
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
+
+  const [showHintSlot, setShowHintSlot] = useState<boolean>(false);
+  const [slotNameStart, setSlotNameStart] = useState<string>('');
+  const [slotNameEnd, setSlotNameEnd] = useState<string>('');
+  const slot = useAppSelector(state => state.slot.slot);
+  const slotObject = new Object(slot);
+  const slotsArray = Object.entries(slotObject);
+
   const dispatch = useAppDispatch();
 
   const [userInfo, setUserInfo] = useState<UserInfoModel>({} as UserInfoModel);
@@ -48,6 +57,18 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
+  useEffect(() => {
+    dispatch(fetchAllSlots()).unwrap();
+  }, []);
+
+  const getSlot = (time: string): any => {
+    const name = slotsArray.map((slot) => {
+      if (time >= slot[1].start && time <= slot[1].end) {
+        return slot[1].name
+      }
+    })
+    return name;
+  }
   const holidays = useAppSelector((state) => state.holiday.holidaysMini);
   const isHoliday = (date) => {
     const dateFormat = dayjs(date).format('YYYY-MM-DD');
@@ -230,6 +251,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             excludeDate={(date) => isHoliday(date)}
           />
         </div>
+        <Space h="sm"/>
         <div style={{display: 'flex', justifyContent: 'center'}}>
           <InputWrapper required label="Time start">
             <TimeInput
@@ -237,7 +259,13 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
               id="timeStart"
               name="timeStart"
               // error={formik.errors.timeEnd}
-              onChange={(e) => props.formik.setFieldValue('timeStart', e)}
+              description={showHintSlot ? slotNameStart : ''}
+              onChange={(e) => {
+                props.formik.setFieldValue('timeStart', e)
+                const time = dayjs(new Date(e.getTime())).format('HH:mm:ss');
+                setSlotNameStart(getSlot(time));
+                setShowHintSlot(true)
+              }}
               style={{width: '8rem'}}
               // radius="md"
               value={props.formik.values.timeStart}
@@ -255,7 +283,13 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
               id="timeEnd"
               name="timeEnd"
               // error={formik.errors.timeEnd}
-              onChange={(e) => props.formik.setFieldValue('timeEnd', e)}
+              description={showHintSlot ? slotNameEnd : ''}
+              onChange={(e) => {
+                props.formik.setFieldValue('timeEnd', e)
+                const time = dayjs(new Date(e.getTime())).format('HH:mm:ss');
+                setSlotNameEnd(getSlot(time));
+                setShowHintSlot(true)
+              }}
               style={{width: '8rem'}}
               // radius="md"
               value={props.formik.values.timeEnd}
@@ -263,6 +297,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
           </InputWrapper>
         </div>
       </div>
+
       <div style={{display: 'flex', gap: 20}}>
         <InputWrapper
           required

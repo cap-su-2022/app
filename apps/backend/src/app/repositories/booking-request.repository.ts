@@ -358,14 +358,14 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
   }[]> {
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
-      .addSelect('booking_request.checkin_time', 'timeStart')
+      .addSelect('booking_request.checkin_date', 'timeStart')
       .addSelect('booking_request.checkout_time', 'timeEnd')
       .addSelect('a.username', 'bookedFor')
       .addSelect('r.name', 'roomName')
       .addSelect('booking_request.status', 'status')
       .innerJoin(Rooms, 'r', 'r.id = booking_request.room_id')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.booked_for')
-      .where('booking_request.checkinDate >= :dateStart AND booking_request.checkinDate <= :dateEnd', {
+      .where('booking_request.checkin_date >= :dateStart AND booking_request.checkin_date <= :dateEnd', {
         dateStart,
         dateEnd
       })
