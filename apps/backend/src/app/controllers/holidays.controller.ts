@@ -210,7 +210,7 @@ export class HolidaysController {
     required: true,
     example: 'ABCD1234',
   })
-  updateRoomById(
+  updateHolidayById(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string },
     @Body() body: HolidayAddRequestPayload
@@ -316,7 +316,7 @@ export class HolidaysController {
     required: true,
     example: 'ABCD1234',
   })
-  restoreDeletedRoomById(
+  restoreDeletedHolidayById(
     @Param() payload: { id: string },
     @User() user: KeycloakUserInstance
   ) {
