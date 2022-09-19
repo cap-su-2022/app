@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger, Scope } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { BookingRequestDevices } from '../models';
-import { BookingRoomDevicesRepository } from '../repositories/booking-request-devices.repository';
+import { BookingRoomDevicesRepository } from '../repositories';
 
 @Injectable()
 export class BookingRoomDevicesService {

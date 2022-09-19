@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BookingReason } from '../models/booking-reason.entity';
-import { BookingReasonHistRepository } from '../repositories/booking-reason-hist.repository';
-import { BookingReasonHist } from '../models/booking-reason-hist.entity';
+import { BookingReasonHistRepository } from '../repositories';
+import { BookingReasonHist } from '../models';
 
 @Injectable()
 export class BookingReasonHistService {

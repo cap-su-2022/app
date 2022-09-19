@@ -220,7 +220,7 @@ export class BookingRoomController {
   requestRoomBookingAutomatically(
     @User() keycloakUser: KeycloakUserInstance,
     @Body() payload: AutoRoomBookingRequestPayload) {
-    return this.service.bookingRoomAutomatically(payload.request, keycloakUser.account_id);
+    return this.service.bookingRoomAutomatically(payload, keycloakUser.account_id);
   }
 
   // @Get('list-booking-with-same-slot')

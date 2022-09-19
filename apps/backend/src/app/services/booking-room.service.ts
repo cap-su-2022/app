@@ -23,7 +23,7 @@ import { BookingFeedbackService } from './booking-feedback.service';
 import { getConfigFileLoaded } from '../controllers/global-config.controller';
 import {
   AutoRoomBookingDevice,
-  AutoRoomBookingRequest, AutoRoomBookingResponsePayload,
+  AutoRoomBookingRequest, AutoRoomBookingRequestPayload, AutoRoomBookingResponsePayload,
 } from "../payload/request/auto-booking-request.payload";
 import {DevicesService} from "./devices.service";
 import {BookingReasonService} from "./booking-reason.service";
@@ -1465,28 +1465,29 @@ export class BookingRoomService {
   //   }
   // }
 
-  async bookingRoomAutomatically(requests: AutoRoomBookingRequest[], userId: string): Promise<AutoRoomBookingResponsePayload[]> {
+  async bookingRoomAutomatically(payload: AutoRoomBookingRequestPayload, userId: string): Promise<AutoRoomBookingResponsePayload[]> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     try {
       const result: AutoRoomBookingResponsePayload[] = [];
       //start
       await queryRunner.startTransaction();
+      await this.validateBookingReason(payload.bookingReasonId);
 
-      for (const request of requests) {
+      for (const request of payload.bookingRequests) {
         //validation
         await this.validateAutoBookingRequest(request);
         const room = await this.findRoomExistedWithProvidedCapacity(request.capacity);
 
-        const requestRes = await this.repository.createNewRequest(
+        const bookingRequestResponse = await this.repository.createNewRequest(
           {
             roomId: room.id,
-            bookingReasonId: request.bookingReasonId,
+            bookingReasonId: payload.bookingReasonId,
             checkinTime: request.timeStart,
             checkinDate: request.date,
             checkoutTime: request.timeEnd,
             checkoutDate: undefined,
-            description: request.description,
+            description: payload.description,
             listDevice: undefined,
             bookedFor: undefined,
           },
@@ -1495,19 +1496,23 @@ export class BookingRoomService {
         );
 
         await this.bookingRoomDeviceService.addDeviceToRequest(
-          requestRes.id,
+          bookingRequestResponse.id,
           request.devices.map((d) => {return {value: d.id, quantity: d.quantity}}),
           queryRunner
         );
 
+        const bookingReasonName = await this.bookingReasonService.getNameById(payload.bookingReasonId);
+
         result.push({
+          id: bookingRequestResponse.id,
           capacity: request.capacity,
           roomName: room.roomName,
           roomType: room.roomType,
-          description: request.description,
+          description: payload.description,
           date: request.date,
           checkinAt: request.timeStart,
-          checkoutAt: request.timeEnd
+          checkoutAt: request.timeEnd,
+          bookingReason: bookingReasonName,
         });
       }
 
@@ -1538,7 +1543,6 @@ export class BookingRoomService {
 
   private async validateAutoBookingRequest(request: AutoRoomBookingRequest) {
     await this.validateDevices(request.devices);
-    await this.validateBookingReason(request.bookingReasonId);
     await this.validateBookingDateTime(request.date, {start: request.timeStart, end: request.timeEnd});
     await this.validateConflictBookingTime(request.date, {start: request.timeStart, end: request.timeEnd})
   }

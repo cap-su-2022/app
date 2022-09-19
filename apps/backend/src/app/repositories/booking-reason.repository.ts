@@ -192,4 +192,11 @@ export class BookingReasonRepository extends Repository<BookingReason> {
       .andWhere('booking_reason.deleted_by IS NULL')
       .getRawMany();
   }
+
+  async findNameById(id: string): Promise<string> {
+    return await this.createQueryBuilder('booking_reason')
+      .select('booking_reason.name', 'name')
+      .where('booking_reason.id = :id', {id: id})
+      .getRawOne<{name: string}>().then((br) => br?.name);
+  }
 }

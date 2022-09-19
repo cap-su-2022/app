@@ -207,4 +207,8 @@ export class BookingReasonService {
   async existsById(id: string): Promise<boolean> {
     return await this.repository.existsById(id);
   }
+
+  async getNameById(id: string): Promise<string> {
+    return await this.repository.findNameById(id);
+  }
 }

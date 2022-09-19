@@ -37,6 +37,9 @@ class AutoRoomBookingRequest {
   @IsNotEmpty()
   @IsPositive()
   capacity: number;
+}
+
+class AutoRoomBookingRequestPayload {
 
   @IsString()
   @MaxLength(500)
@@ -45,20 +48,20 @@ class AutoRoomBookingRequest {
   @IsNotEmpty()
   @IsUUID()
   bookingReasonId: string;
-}
 
-class AutoRoomBookingRequestPayload {
   @IsArray()
   @ValidateNested({ each: true })
   @ArrayMinSize(1)
   @Type(() => AutoRoomBookingRequest)
-  request: AutoRoomBookingRequest[];
+  bookingRequests: AutoRoomBookingRequest[];
 }
 
 class AutoRoomBookingResponsePayload {
+  id: string;
   capacity: number;
   roomName: string;
   roomType: string;
+  bookingReason: string;
   description: string;
   date: string;
   checkinAt: string;
