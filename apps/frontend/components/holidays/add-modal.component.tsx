@@ -19,7 +19,8 @@ import {
   ClipboardText,
   FileDescription,
   Id,
-  Pencil, Plus,
+  Pencil,
+  Plus,
   X,
 } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -117,31 +118,51 @@ const AddHolidayModal: React.FC<AddModalProps> = (props) => {
   };
 
   const handleAddSubmit = async (values) => {
-    dispatch(
-      fetchRequestsInDateRange({
-        dateStart: values.dateStart,
-        dateEnd: values.dateEnd,
-      })
-    )
-      .unwrap()
-      .then((respone) => {
-        if (respone?.length > 0) {
-          setListRequest(respone);
-          setShowListRequest(true);
-        } else {
-          add(values);
-        }
-      })
-      .catch((e) =>
-        showNotification({
-          id: 'load-data',
-          color: 'red',
-          title: 'Error while adding holiday',
-          message: e.message ?? 'Failed to add holiday',
-          icon: <X />,
-          autoClose: 3000,
+    if (!values.dateStart || !values.dateEnd) {
+      showNotification({
+        id: 'load-data',
+        color: 'red',
+        title: 'Miss some field',
+        message: "Start date and End date can't be empty",
+        icon: <X />,
+        autoClose: 3000,
+      });
+    } else if (values.dateStart > values.dateEnd) {
+      showNotification({
+        id: 'load-data',
+        color: 'red',
+        title: 'Error while adding holiday',
+        message: 'Date Start must be less than or equal to Date End',
+        icon: <X />,
+        autoClose: 3000,
+      });
+    } else {
+      dispatch(
+        fetchRequestsInDateRange({
+          dateStart: values.dateStart,
+          dateEnd: values.dateEnd,
         })
-      );
+      )
+        .unwrap()
+        .then((respone) => {
+          if (respone?.length > 0) {
+            setListRequest(respone);
+            setShowListRequest(true);
+          } else {
+            add(values);
+          }
+        })
+        .catch((e) =>
+          showNotification({
+            id: 'load-data',
+            color: 'red',
+            title: 'Error while adding holiday',
+            message: e.message ?? 'Failed to add holiday',
+            icon: <X />,
+            autoClose: 3000,
+          })
+        );
+    }
 
     // .then(() => props.toggleShown())
     // .then(() => dispatch(fetchHolidays(props.pagination)))
@@ -183,7 +204,7 @@ const AddHolidayModal: React.FC<AddModalProps> = (props) => {
         : null;
     return listRequest && listRequest.length > 0 ? (
       <div style={{ display: 'flex', flexDirection: 'column', width: 350 }}>
-        <div style={{ marginBottom: 20, textAlign: "justify" }}>
+        <div style={{ marginBottom: 20, textAlign: 'justify' }}>
           <p>
             There has been a booking request for this date. If holidays are
             added, these requests will be cancelled. Are you sure you want to
@@ -238,7 +259,7 @@ const AddHolidayModal: React.FC<AddModalProps> = (props) => {
           padding: '20px 0px',
         }}
       >
-        <h1>Don't have any check-in days coincide with these holidays </h1>
+        <h1>Don&apos;t have any check-in days coincide with these holidays </h1>
       </div>
     );
   };
@@ -384,7 +405,7 @@ const useStyles = createStyles({
     display: 'flex',
     justifyContent: 'flex-end',
     margin: 10,
-    gap: 10
+    gap: 10,
   },
   modalInputDate: {
     display: 'flex',

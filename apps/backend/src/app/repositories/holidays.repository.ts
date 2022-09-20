@@ -22,7 +22,7 @@ export class HolidaysRepository extends Repository<Holidays> {
     payload: HolidayAddRequestPayload,
     queryRunner: QueryRunner
   ): Promise<Holidays> {
-    console.log(payload)
+    console.log(payload);
     return queryRunner.manager.save(
       Holidays,
       {
@@ -169,17 +169,23 @@ export class HolidaysRepository extends Repository<Holidays> {
     );
   }
 
-  isHoliday(dateStart: string, dateEnd: string): Promise<boolean> {
-    return this.createQueryBuilder('holidays')
+  isHoliday(
+    dateStart: string,
+    dateEnd: string,
+    holidayId: string
+  ): Promise<boolean> {
+    const query = this.createQueryBuilder('holidays')
       .select('COUNT(1)', 'count')
       .where(
         '((holidays.date_start <= :dateStart AND holidays.date_end >= :dateStart) ' +
           'OR (holidays.date_start <= :dateEnd AND holidays.date_end >= :dateEnd) ' +
           'OR (holidays.date_start > :dateStart AND holidays.date_start < :dateEnd))',
         { dateStart, dateEnd }
-      )
-      .getRawOne<{ count: number }>()
-      .then((data) => data?.count > 0);
+      );
+    if (holidayId) {
+      query.andWhere('holidays.id != :holidayId', { holidayId });
+    }
+    return query.getRawOne<{ count: number }>().then((data) => data?.count > 0);
   }
 
   searchHoliday(payload: PaginationParams) {

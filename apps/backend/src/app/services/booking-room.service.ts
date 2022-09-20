@@ -213,7 +213,7 @@ export class BookingRoomService {
 
   async isHoliday(dateStart: string, dateEnd: string) {
     try {
-      return await this.holidaysService.isHoliday(dateStart, dateEnd);
+      return await this.holidaysService.isHoliday(dateStart, dateEnd, null);
     } catch (e) {
       this.logger.error(e);
       throw new BadRequestException(e.message);
