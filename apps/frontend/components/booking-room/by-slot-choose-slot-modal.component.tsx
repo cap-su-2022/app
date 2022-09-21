@@ -53,12 +53,11 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
 
 
   const getSlot = (time: string): any => {
-    const name = slotsArray.map((slot) => {
+    return slotsArray.map((slot) => {
       if (time >= slot[1].start && time <= slot[1].end) {
         return slot[1].name
       }
     })
-    return name;
   }
 
 
@@ -364,7 +363,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           <Select
             id="bookedFor"
             name="bookedFor"
-            label="Who use room"
+            label="Who uses room"
             placeholder="If not choose, the room's user auto is you"
             data={props.listUsernames}
             value={props.formik.values.bookedFor || undefined}

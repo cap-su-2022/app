@@ -33,7 +33,7 @@ const CheckinRequestModal: React.FC<CheckinRequestModalProps> = (props) => {
         showNotification({
           id: 'checkin-booking-room',
           color: 'red',
-          title: 'Error while checkin booking room',
+          title: 'Error while checking in  booking room',
           message: e.message ?? 'Failed to checkin booking room',
           icon: <X />,
           autoClose: 3000,
