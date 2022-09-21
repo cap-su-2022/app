@@ -176,7 +176,7 @@ export class HolidaysController {
   })
   importHoliday(
     @User() user: KeycloakUserInstance,
-    @Body() payload: {file: any[]}
+    @Body() payload: { file: any[] }
   ): Promise<Holidays> {
     return this.service.import(user, payload.file);
   }
@@ -214,7 +214,7 @@ export class HolidaysController {
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string },
     @Body() body: HolidayAddRequestPayload
-  ) {
+  ): Promise<Holidays> {
     return this.service.updateById(user.account_id, payload.id, body);
   }
 

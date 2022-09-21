@@ -2,36 +2,28 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
-  Delete,
   Get,
   HttpCode,
   HttpStatus,
-  Param, ParseArrayPipe,
+  Param,
   Post,
   Put,
   Query,
-  UseInterceptors, ValidationPipe,
+  UseInterceptors,
 } from '@nestjs/common';
-import { BookingRoomService, HolidaysService } from '../services';
-import { User } from '../decorators/keycloak-user.decorator';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { BookingRequest } from '../models';
-import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
-import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
-import { CancelRequestPayload } from '../payload/request/booking-request-cancel.payload';
-import { BookingRoomPaginationParams } from './booking-room-pagination.model';
+import {BookingRoomService} from '../services';
+import {User} from '../decorators/keycloak-user.decorator';
+import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags,} from '@nestjs/swagger';
+import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
+import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum/roles.enum';
+import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {BookingRequest} from '../models';
+import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.payload';
+import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
+import {CancelRequestPayload} from '../payload/request/booking-request-cancel.payload';
+import {BookingRoomPaginationParams} from './booking-room-pagination.model';
 import {AutoRoomBookingRequestPayload} from "../payload/request/auto-booking-request.payload";
-import {Type} from "class-transformer";
 
 @Controller('/v1/booking-room')
 @ApiTags('Booking Room')
@@ -945,6 +937,7 @@ export class BookingRoomController {
   }
 
   @Get('is-holiday')
+  @Roles(Role.APP_LIBRARIAN, Role.APP_STAFF, Role.APP_ADMIN)
   @ApiOperation({
     summary: 'Check if it is holiday',
     description: 'Check if it is holiday by provided id',

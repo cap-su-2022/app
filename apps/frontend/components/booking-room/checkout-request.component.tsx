@@ -31,7 +31,7 @@ const CheckoutRequestModal: React.FC<CheckoutRequestModalProps> = (props) => {
         showNotification({
           id: 'checkout-booking-room',
           color: 'red',
-          title: 'Error while checkout booking room',
+          title: 'Error while checking out booking room',
           message: e.message ?? 'Failed to checkout booking room',
           icon: <X />,
           autoClose: 3000,
@@ -41,8 +41,8 @@ const CheckoutRequestModal: React.FC<CheckoutRequestModalProps> = (props) => {
         showNotification({
           id: 'checkout-booking-room',
           color: 'teal',
-          title: 'This booking room was checkoutled',
-          message: 'This booking room was successfully checkoutled',
+          title: 'This booking room was check-out successfully!',
+          message: 'This booking room was check-out successfully!',
           icon: <Check />,
           autoClose: 3000,
         })

@@ -74,7 +74,7 @@ const ChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
             showNotification({
               id: 'miss-data',
               color: 'red',
-              title: 'You have orther requets at same time',
+              title: 'You have another requests at same time',
               message: `You already have request booked for ${response} at same time. Please choose another time`,
               icon: <X />,
               autoClose: 3000,
