@@ -7,17 +7,13 @@
     "backend": "nx serve backend",
     "ios": "nx run-ios mobile",
     "android": "nx run-android mobile",
-
     "build-frontend": "nx run frontend:build:production",
     "build-backend": "nx run backend:build:production",
     "build-android": "nx build-android mobile",
-
-
     "test": "nx run-many --target=test --all --parallel=10",
     "test-frontend": "nx test frontend",
     "test-backend": "nx test backend -- --coverage",
     "test-mobile": "nx test mobile",
-
     "pod-install": "cd apps/mobile/ios && pod install --repo-update",
     "convert-apk": "java -jar bundletool.jar build-apks --bundle=apps/mobile/android/app/build/outputs/bundle/release/app-release.aab --output=app.apks --mode=universal"
   },
@@ -101,6 +97,7 @@
     "react-native-screens": "^3.17.0",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-webview": "^11.23.1",
+    "react-native-wheel-time-picker": "^0.4.3",
     "react-redux": "^7.2.8",
     "react-spring": "^9.5.3",
     "react-stars": "^2.2.5",

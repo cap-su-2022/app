@@ -36,20 +36,24 @@ import dayjs from 'dayjs';
 import { boxShadow } from '../../utils/box-shadow.util';
 import { addNewLongTermRequestBooking } from '../../redux/features/room-booking/thunk/add-long-term-request-booking';
 import AlertModal from "../../components/modals/alert-modal.component";
+import {updateAutoBookingRequest} from "../../redux/features/room-booking-v2/slice";
+import {performAutoBooking} from "../../redux/features/room-booking-v2/thunk/perform-auto-booking.thunk";
 
 export const RoomBooking3: React.FC = () => {
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
-  const roomBooking = useAppSelector(
-    (state) => state.roomBooking.addRoomBooking
-  );
+ // const roomBooking = useAppSelector(
+   // (state) => state.roomBooking.addRoomBooking
+  //);
   const [bookingReasonSelections, setBookingReasonSelections] = useState([]);
   const [bookingReason, setBookingReason] = useState<string>();
   const [genericMessage, setGenericMessage] = useState<string>();
   const [isGenericModalShown, setGenericModalShown] = useState<boolean>(false);
   const [description, setDescription] = useState<string>('');
+  const requests = useAppSelector((state) => state.bookedRequest.request.requests);
 
   useEffect(() => {
+    console.warn(requests);
     dispatch(fetchAllBookingReason())
       .unwrap()
       .then((value) => {
@@ -82,7 +86,19 @@ export const RoomBooking3: React.FC = () => {
   };
 
   const handleNewRequestBooking = () => {
-    dispatch(
+
+    dispatch(performAutoBooking({
+      description: description,
+      bookingReasonId: bookingReason,
+      requests: requests
+    })) .unwrap()
+      .then(() => navigate.navigate('ROOM_BOOKING_SUCCESS'))
+      .catch((e) => {
+        alert(e.message);
+        navigate.pop(3);
+      });
+
+  /*  dispatch(
       addNewRequestBooking({
         bookingReasonId: bookingReason,
         checkinDate: roomBooking.fromDay,
@@ -98,9 +114,9 @@ export const RoomBooking3: React.FC = () => {
       .catch((e) => {
         alert(e.message.message);
         navigate.pop(3);
-      });
+      });*/
   };
-
+/*
   const handleNewLongTermRequestBooking = () => {
     dispatch(
       addNewLongTermRequestBooking({
@@ -123,12 +139,10 @@ export const RoomBooking3: React.FC = () => {
         alert(e.message.message);
         navigate.pop(3);
       });
-  };
+  };*/
 
   const handleNextStep = () => {
-    roomBooking.isMultiLongTerm
-      ? handleNewLongTermRequestBooking()
-      : handleNewRequestBooking();
+    handleNewRequestBooking();
   };
 
 
@@ -221,6 +235,7 @@ export const RoomBooking3: React.FC = () => {
     );
   };
 
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
       <Text
@@ -251,37 +266,39 @@ export const RoomBooking3: React.FC = () => {
               the next step!
             </Text>
           </View>
-          <Text style={styles.informationHeaderTitle}>BOOKING INFORMATION</Text>
-          <View style={{ padding: 10 }}>
-            <View
-              style={[styles.bookingInformationContainer, boxShadow(styles)]}
-            >
-              {InfoDetail(
-                'Start Day',
-                dayjs(roomBooking.fromDay).format('ddd DD/MM/YYYY')
-              )}
-              {roomBooking.isMultiLongTerm
-                ? InfoDetail(
-                    'End Day',
-                    dayjs(roomBooking.toDay).format('ddd DD/MM/YYYY')
-                  )
-                : null}
-              {InfoDetail(
-                roomBooking.isMultiLongTerm ? 'From Slot' : 'Slot',
-                `Slot ${roomBooking.fromSlotNum}`
-              )}
-              {roomBooking.isMultiLongTerm
-                ? InfoDetail('To Slot', `Slot ${roomBooking.toSlotNum}`)
-                : null}
-              {InfoDetail('Room Name', roomBooking.roomName)}
-              <Text style={[styles.titleText, { margin: 10 }]}>
-                List Device
-              </Text>
-              {roomBooking.devices.map((device) => (
-                <Device device={device} />
-              ))}
-            </View>
-          </View>
+          {requests?.map((roomBooking) =>
+             (
+               <>
+
+                 <Text style={styles.informationHeaderTitle}>BOOKING INFORMATION</Text>
+                 <View style={{ padding: 10 }}>
+                   <View
+                     style={[styles.bookingInformationContainer, boxShadow(styles)]}
+                   >
+                     {InfoDetail(
+                       'Start Day',
+                       dayjs(roomBooking.date).format('ddd DD/MM/YYYY')
+                     )}
+                     {InfoDetail(
+                       'Check-in at', roomBooking.timeStart
+                     )}
+                     {InfoDetail(
+                       'Check-out at', roomBooking.timeEnd
+                     )}
+                     {InfoDetail(
+                       'Capacity', roomBooking.capacity
+                     )}
+                     {/* <Text style={[styles.titleText, { margin: 10 }]}>
+                       List Device
+                     </Text>
+                     {roomBooking.devices?.map((device) => (
+                       <Device device={device} />
+                     ))}*/}
+                   </View>
+                 </View>
+               </>
+
+             ))}
           <Text style={styles.informationHeaderTitle}>
             ADDITIONAL BOOKING INFORMATION
           </Text>

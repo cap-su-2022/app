@@ -54,6 +54,7 @@
     "firebase": "*",
     "next-redux-wrapper": "*",
     "redux-logger": "*",
-    "@formkit/auto-animate": "*"
+    "@formkit/auto-animate": "*",
+    "react-native-wheel-time-picker": "*"
   }
 }

@@ -37,6 +37,7 @@ import RequestRoomBookingHeader from './request-room-booking/header';
 import { boxShadow } from '../../utils/box-shadow.util';
 import NotFound from '../../components/empty.svg';
 import { fetchMaxBorrowDevicesQuantity } from '../../redux/features/system/thunk/fetch-max-borrow-devices-quantity.thunk';
+import {updateAutoBookingRequest} from "../../redux/features/room-booking-v2/slice";
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
@@ -50,6 +51,7 @@ const RoomBooking2: React.FC = () => {
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
 
   const [maxQuantity, setMaxQuantity] = useState<number>(100);
+  const bookingRequestId = useAppSelector((state) => state.bookedRequest.bookingRequestId);
 
   useEffect(() => {
     dispatch(fetchMaxBorrowDevicesQuantity())
@@ -74,7 +76,13 @@ const RoomBooking2: React.FC = () => {
       });
   }, [search, sort, dispatch]);
 
+  const payload = useAppSelector((state) => state.bookedRequest.request);
+
   const handleNextStep = () => {
+    updateAutoBookingRequest({
+      ...payload,
+
+    })
     const devices = [];
     for (let i = 0; i < deviceSelectedDevice.length; i++) {
       devices.push({

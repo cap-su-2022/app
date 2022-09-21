@@ -2,14 +2,41 @@ import { createSlice } from '@reduxjs/toolkit';
 import { fetchBookedRequestByDayAndSlot } from './thunk/fetch-booked-request.thunk';
 import { BookedRequest } from '../../models/booked-request.model';
 
+export interface AutoBookingRequestDevice {
+  id: string;
+  quantity: number;
+}
+
+export interface AutoBookingRequest {
+  timeStart: string,
+  timeEnd: string,
+  date: string,
+  capacity: number,
+  devices: AutoBookingRequestDevice[]
+}
+
+export interface AutoBookingRequestPayload {
+  description: string,
+  bookingReasonId: string,
+  requests: AutoBookingRequest[],
+}
+
 interface BookedRequestInitialState {
   bookedRequests: BookedRequest[];
   bookedRequest: BookedRequest;
+  request: AutoBookingRequestPayload;
+  bookingRequestId: number;
 }
 
 const initialState: BookedRequestInitialState = {
+  request: {
+    bookingReasonId: '',
+    description: '',
+    requests: []
+  },
   bookedRequests: [],
   bookedRequest: {} as BookedRequest,
+  bookingRequestId: 0,
 };
 
 const bookedRequestSlice = createSlice({
@@ -20,8 +47,20 @@ const bookedRequestSlice = createSlice({
       state.bookedRequests = payload
     })
   }),
-  reducers: {},
+  reducers: {
+    updateBookingRequestId(state, {payload}) {
+      state.bookingRequestId = payload;
+    },
+    updateAutoBookingRequest(state, {payload}) {
+      state.request = {
+        ...state.request,
+        ...payload
+      }
+    }
+  },
 });
 
 export const bookedRequestReducer = bookedRequestSlice.reducer;
+
+export const {updateAutoBookingRequest, updateBookingRequestId} = bookedRequestSlice.actions;
 

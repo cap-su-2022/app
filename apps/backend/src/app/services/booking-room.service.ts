@@ -1495,11 +1495,14 @@ export class BookingRoomService {
           queryRunner
         );
 
-        await this.bookingRoomDeviceService.addDeviceToRequest(
-          bookingRequestResponse.id,
-          request.devices.map((d) => {return {value: d.id, quantity: d.quantity}}),
-          queryRunner
-        );
+        if (request.devices && request.devices.length > 0) {
+          await this.bookingRoomDeviceService.addDeviceToRequest(
+            bookingRequestResponse.id,
+            request.devices.map((d) => {return {value: d.id, quantity: d.quantity}}),
+            queryRunner
+          );
+        }
+
 
         const bookingReasonName = await this.bookingReasonService.getNameById(payload.bookingReasonId);
 
