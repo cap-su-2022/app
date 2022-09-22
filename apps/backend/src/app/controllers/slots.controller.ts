@@ -1,25 +1,8 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Optional,
-  Param,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put,} from '@nestjs/common';
 import {SlotService} from '../services/slot.service';
-import {PaginationParams} from './pagination.model';
 import {Roles} from '../decorators/role.decorator';
 import {Role} from '../enum/roles.enum';
-import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {User} from '../decorators/keycloak-user.decorator';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {SlotsRequestPayload} from '../payload/request/slot-add.request.payload';
-import {getConfigFileLoaded} from "./global-config.controller";
+import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {SlotsConfigRequestPayload} from "../payload/request/slot-config-request-add.payload";
 
 
@@ -32,7 +15,7 @@ export class SlotController {
 
 
   @Get()
-  @Roles(Role.APP_ADMIN)
+  @Roles(Role.APP_ADMIN, Role.APP_STAFF, Role.APP_LIBRARIAN)
   @ApiOperation({
     summary: 'Get all slots',
     description: 'Get the list of slots',
@@ -58,7 +41,7 @@ export class SlotController {
   }
 
   @Get(':id')
-  @Roles(Role.APP_ADMIN)
+  @Roles(Role.APP_ADMIN, Role.APP_STAFF, Role.APP_LIBRARIAN)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully get a slot by ID',
