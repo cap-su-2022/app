@@ -33,15 +33,21 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
   const reasonNames = useAppSelector(
     (state) => state.bookingReason.reasonNames
   );
-  const [choosedDevice, setChoosedDevice] = useState<any[]>([]);
+  const [choosedDevice, setChoosedDevice] = useState<any[]>(
+    props.formik.values.listDevice || []
+  );
   const [parent] = useAutoAnimate();
   const handlers = useRef<NumberInputHandlers>();
+
+  console.log(choosedDevice);
 
   const [show, setShow] = useState(false);
   const dropdown = useRef(null);
 
   useEffect(() => {
-    props.formik.setFieldValue('bookingReasonId', reasonNames[0]?.value);
+    if (!props.formik.values.bookingReasonId) {
+      props.formik.setFieldValue('bookingReasonId', reasonNames[0]?.value);
+    }
   }, []);
 
   useEffect(() => {
@@ -56,6 +62,15 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
       setValue(0);
     }
   }, [device]);
+
+  useEffect(() => {
+    if (choosedDevice.length) {
+      const deviceNamesUpdated = deviceNames.filter((deviceName) =>
+        choosedDevice.every((choosed) => choosed.value != deviceName.value)
+      );
+      setDeviceNames(deviceNamesUpdated);
+    }
+  }, []);
 
   const add = () => {
     if (value === 0 || !value) {
@@ -120,6 +135,11 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
     const chooesdDeviceUpdated = choosedDevice.filter((d) => d.value !== item);
     setChoosedDevice(chooesdDeviceUpdated);
   };
+
+  const handleBackStep = () => {
+    props.formik.setFieldValue('listDevice', choosedDevice);
+    props.handleBack()
+  }
 
   const handleNextStep = () => {
     props.formik.setFieldValue('listDevice', choosedDevice);
@@ -279,7 +299,7 @@ const ChooseDeviceModal: React.FC<ChooseDeviceModalProps> = (props) => {
 
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button
-            onClick={() => props.handleBack()}
+            onClick={() => handleBackStep()}
             // leftIcon={<Pencil />}
             color="green"
           >
