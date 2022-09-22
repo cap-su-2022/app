@@ -13,6 +13,7 @@ import {
   IsUserHaveBookedSameSlot
 } from '../../redux/features/room-booking/thunk/fetch-room-booked-same-slot-of-user.thunk';
 import {fetchAllSlots} from "../../redux/features/slot";
+import {fetchHolidaysMini} from "../../redux/features/holidays/thunk/fetch-holidays-mini.thunk";
 
 interface ChooseSlotModalProps {
   formik: FormikProps<any>;
