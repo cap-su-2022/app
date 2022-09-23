@@ -29,11 +29,11 @@ export class FeedbackGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`Client connected: ${client.id}`);
+    //this.logger.log(`Client connected: ${client.id}`);
   }
 
   handleDisconnect(client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
+   // this.logger.log(`Client disconnected: ${client.id}`);
   }
 
   @SubscribeMessage('sendFeedback')

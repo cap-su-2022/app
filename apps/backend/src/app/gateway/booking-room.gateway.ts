@@ -29,11 +29,11 @@ export class BookingRoomGateway
   }
 
   handleConnection(client: Socket, ...args: any[]): any {
-    this.logger.log(`Client connected: ${client.id}`);
+    //this.logger.log(`Client connected: ${client.id}`);
   }
 
   handleDisconnect(client: Socket): any {
-    this.logger.log(`Client disconnected: ${client.id}`);
+  //  this.logger.log(`Client disconnected: ${client.id}`);
   }
 
   @SubscribeMessage('msgToServer')
