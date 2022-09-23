@@ -1,6 +1,4 @@
-import {PaginationParams} from '../../controllers/pagination.model';
-import {isEnum, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength} from 'class-validator';
-import {Transform, TransformFnParams} from 'class-transformer';
+import {IsNotEmpty} from 'class-validator';
 import {ApiProperty} from "@nestjs/swagger";
 
 export class FeedbackSendRequestPayload {

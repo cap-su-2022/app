@@ -1,18 +1,19 @@
-import { KeycloakUserInstance } from './../dto/keycloak.user';
-import { Controller, Get, HttpStatus, Param, Query } from '@nestjs/common';
-import { NotificationService } from '../services';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
+import {Controller, Get, HttpStatus, Param} from '@nestjs/common';
+import {NotificationService} from '../services';
+import {Roles, User} from '../decorators';
+import {Role} from '../enum';
 import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import { User } from '../decorators/keycloak-user.decorator';
-import { Notification } from '../models';
+import {Notification} from '../models';
 
 @Controller('/v1/notifications')
 @ApiBearerAuth()
 @ApiTags('Notification')
 export class NotificationController {
 
-  constructor(private readonly service: NotificationService) {}
+  constructor(private readonly service: NotificationService) {
+  }
+
   @Get(':id')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiResponse({

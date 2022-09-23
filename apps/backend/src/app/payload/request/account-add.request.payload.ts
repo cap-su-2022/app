@@ -1,14 +1,5 @@
-import {
-  IsBoolean,
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Matches,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import {IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength,} from 'class-validator';
+import {ApiProperty} from '@nestjs/swagger';
 
 export class AccountAddRequestPayload {
   @MinLength(5)

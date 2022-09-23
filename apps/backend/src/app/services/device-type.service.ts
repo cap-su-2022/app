@@ -1,13 +1,9 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { DeviceTypeRepository } from '../repositories/device-type.repository';
-import { PaginationParams } from '../controllers/pagination.model';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
-import { DeviceTypeHistService } from './device-type-hist.service';
-import { DevicesService } from './devices.service';
+import {BadRequestException, Injectable, Logger,} from '@nestjs/common';
+import {DeviceTypeRepository} from '../repositories/device-type.repository';
+import {PaginationParams} from '../dto/pagination.dto';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
+import {DeviceTypeHistService} from './device-type-hist.service';
+import {DevicesService} from './devices.service';
 
 @Injectable()
 export class DeviceTypeService {
@@ -17,14 +13,15 @@ export class DeviceTypeService {
     private readonly repository: DeviceTypeRepository,
     private readonly deviceService: DevicesService,
     private readonly histService: DeviceTypeHistService
-  ) {}
+  ) {
+  }
 
   async getAllDeviceTypes(param: PaginationParams) {
     try {
       const result = await this.repository.findByPagination(param);
-      if(result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages){
+      if (result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages) {
         throw new BadRequestException('Current page is over');
-      } 
+      }
       return result
     } catch (e) {
       this.logger.error(e);

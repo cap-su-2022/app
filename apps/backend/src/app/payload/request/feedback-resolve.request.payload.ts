@@ -1,10 +1,9 @@
-import { PaginationParams } from '../../controllers/pagination.model';
-import { IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
-import { Transform, TransformFnParams } from 'class-transformer';
+import {IsNotEmpty} from 'class-validator';
+import {Transform, TransformFnParams} from 'class-transformer';
 import {ApiProperty} from "@nestjs/swagger";
 
-export class FeedbackReplyRequestPayload  {
-  @Transform(({ value }: TransformFnParams) => value?.trim())
+export class FeedbackReplyRequestPayload {
+  @Transform(({value}: TransformFnParams) => value?.trim())
   @IsNotEmpty({
     message: `Reply message can't be empty`,
   })

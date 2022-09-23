@@ -1,15 +1,17 @@
-import { BadRequestException, Injectable, Logger, Scope } from '@nestjs/common';
-import { DataSource, QueryRunner } from 'typeorm';
-import { BookingRequestDevices } from '../models';
-import { BookingRoomDevicesRepository } from '../repositories';
+import {BadRequestException, Injectable, Logger} from '@nestjs/common';
+import {DataSource, QueryRunner} from 'typeorm';
+import {BookingRequestDevices} from '../models';
+import {BookingRoomDevicesRepository} from '../repositories';
 
 @Injectable()
 export class BookingRoomDevicesService {
   private readonly logger = new Logger(BookingRoomDevicesService.name);
+
   constructor(
     private readonly dataSource: DataSource,
     private readonly repository: BookingRoomDevicesRepository
-  ) {}
+  ) {
+  }
 
   async findByRequestId(id: string) {
     try {
@@ -31,7 +33,7 @@ export class BookingRoomDevicesService {
     try {
       if (payload) {
         const bookingRequestDevices: BookingRequestDevices[] = [];
-        for (let i=0; i< payload.length; i++) {
+        for (let i = 0; i < payload.length; i++) {
           const result = await this.repository.addDeviceToRequest(
             bookingRequestId,
             payload[i].value,

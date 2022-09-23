@@ -1,18 +1,8 @@
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import {BadRequestException, forwardRef, Inject, Injectable, Logger,} from '@nestjs/common';
 import {SlotRepository} from '../repositories/slot.repository';
-import {PaginationParams} from '../controllers/pagination.model';
-import {Pagination} from 'nestjs-typeorm-paginate';
-import {Slot} from '../models/slot.entity';
 import {BookingRoomService} from './booking-room.service';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
-import {SlotsRequestPayload} from '../payload/request/slot-add.request.payload';
 import {getConfigFileLoaded} from '../controllers/global-config.controller';
 import {SlotsConfigRequestPayload} from '../payload/request/slot-config-request-add.payload';
 import * as fs from 'fs';
@@ -192,7 +182,6 @@ export class SlotService {
           const slots = new Object(data.slots);
 
           const slotNameArray = Object.keys(slots);
-          console.log(slotNameArray);
           if (!slotNameArray.includes(key)) {
             throw `Don't have slot with key ${key}`;
           }
@@ -247,7 +236,6 @@ export class SlotService {
           const slots = new Object(data.slots);
 
           const slotNameArray = Object.keys(slots);
-          console.log(slotNameArray);
           if (!slotNameArray.includes(key)) {
             throw `Don't have slot with key ${key}`;
           }

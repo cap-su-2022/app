@@ -1,18 +1,17 @@
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Roles } from '../models/role.entity';
-import { Repository, UpdateResult } from 'typeorm';
-import { Accounts } from '../models';
-import { IPaginationMeta, paginateRaw } from 'nestjs-typeorm-paginate';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { PaginationParams } from '../controllers/pagination.model';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {Roles} from '../models/role.entity';
+import {Repository} from 'typeorm';
+import {Accounts} from '../models';
+import {IPaginationMeta, paginateRaw, Pagination} from 'nestjs-typeorm-paginate';
+import {PaginationParams} from '../dto/pagination.dto';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
 
 @CustomRepository(Roles)
 export class RolesRepository extends Repository<Roles> {
   async existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('r')
       .select('COUNT(1)', 'count')
-      .where('r.id = :id', { id: id })
+      .where('r.id = :id', {id: id})
       .getRawOne()
       .then((data) => data?.count > 0);
   }
@@ -20,7 +19,7 @@ export class RolesRepository extends Repository<Roles> {
   async isExistedByName(name: string): Promise<boolean> {
     return this.createQueryBuilder('rooms')
       .select('COUNT(rooms.name)')
-      .where('rooms.name = :name', { name })
+      .where('rooms.name = :name', {name})
       .getRawOne()
       .then((data) => data['count'] > 0);
   }
@@ -62,7 +61,7 @@ export class RolesRepository extends Repository<Roles> {
       .addSelect('aa.username', 'updatedBy')
       .innerJoin(Accounts, 'a', 'a.id = r.created_by')
       .leftJoin(Accounts, 'aa', 'aa.id = r.updated_by')
-      .where('r.id = :id', { id: id })
+      .where('r.id = :id', {id: id})
       .andWhere('r.deleted_at IS NULL')
       .getRawOne<Roles>();
   }
@@ -128,7 +127,7 @@ export class RolesRepository extends Repository<Roles> {
         updatedAt: new Date(),
         updatedBy: accountId,
       })
-      .where('role.id = :id', { id: id })
+      .where('role.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isDeleted.affected > 0) {
@@ -147,7 +146,7 @@ export class RolesRepository extends Repository<Roles> {
       .addSelect('role.deleted_at', 'deletedAt')
       .addSelect('a.username', 'deletedBy')
       .innerJoin(Accounts, 'a', 'a.id = role.deleted_by')
-      .where('role.name ILIKE :search', { search: `%${search.trim()}%` })
+      .where('role.name ILIKE :search', {search: `%${search.trim()}%`})
       .andWhere('role.deleted_at IS NOT NULL')
       .orderBy('role.deleted_at', 'DESC')
       .getRawMany<Roles>();
@@ -161,7 +160,7 @@ export class RolesRepository extends Repository<Roles> {
         deletedAt: null,
         deletedBy: null,
       })
-      .where('role.id = :id', { id: id })
+      .where('role.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isRestored.affected > 0) {
@@ -176,7 +175,7 @@ export class RolesRepository extends Repository<Roles> {
   permanentlyDeleteById(id: string) {
     return this.createQueryBuilder('role')
       .delete()
-      .where('role.id = :id', { id: id })
+      .where('role.id = :id', {id: id})
       .useTransaction(true)
       .execute();
   }
@@ -186,9 +185,17 @@ export class RolesRepository extends Repository<Roles> {
       .select('role.id', 'id')
       .addSelect('role.name', 'name')
       .addSelect('role.description', 'description')
-      .where('role.name = :name', { name: name })
+      .where('role.name = :name', {name: name})
       .andWhere('role.deleted_at IS NULL')
       .andWhere('role.deleted_by IS NULL')
       .getRawOne();
+  }
+
+  findNameByAccountId(accountId: string): Promise<string> {
+    return this.createQueryBuilder('role')
+      .select('role.name', 'name')
+      .innerJoin(Accounts, 'a', 'a.role_id = role.id')
+      .where('a.id = :accountId', {accountId: accountId})
+      .getRawOne().then((res) => res?.name);
   }
 }

@@ -1,9 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { BaseEntity } from "./base/base.entity";
+import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
 
 @Entity("booking_request")
-export class BookingRequest{
+export class BookingRequest {
   @PrimaryGeneratedColumn("uuid", {
     name: "id",
     comment: "ID of the Booking Request"

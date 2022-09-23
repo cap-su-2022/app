@@ -1,13 +1,4 @@
-import {PaginationParams} from '../../controllers/pagination.model';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
-import {Transform, TransformFnParams} from 'class-transformer';
+import {IsBoolean, IsNotEmpty, IsOptional, IsString, MaxLength,} from 'class-validator';
 import {ApiProperty} from '@nestjs/swagger';
 
 export class DataAddRequestPayload {

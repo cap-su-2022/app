@@ -1,13 +1,12 @@
-import {Body, Controller, Get, Param, Post} from '@nestjs/common';
-import dayjs = require('dayjs');
+import {Body, Controller, Get, Post} from '@nestjs/common';
 import * as yaml from 'js-yaml';
+import * as fs from 'fs';
 import {readFileSync} from 'fs';
 import {join} from 'path';
 import {ApiTags} from '@nestjs/swagger';
-import * as fs from 'fs';
-import {Roles} from '../decorators/role.decorator';
-import {Role} from '../enum/roles.enum';
-import {Slot} from "../models/slot.entity";
+import {Roles} from '../decorators';
+import {Role} from '../enum';
+import dayjs = require('dayjs');
 
 class RoomBookingLimitDate {
   startDate: string;

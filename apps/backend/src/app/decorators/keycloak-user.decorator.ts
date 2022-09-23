@@ -1,6 +1,6 @@
-import { createParamDecorator, ExecutionContext, UnauthorizedException } from "@nestjs/common";
-import { ParseTokenPipe } from "../pipes/parse-token.pipe";
-import { getAccessTokenViaCookie } from "../validators/utils/access-token-extractor.util";
+import {createParamDecorator, ExecutionContext, UnauthorizedException} from "@nestjs/common";
+import {ParseTokenPipe} from "../pipes";
+import {getAccessTokenViaCookie} from "../validators/utils/access-token-extractor.util";
 
 export const KeycloakUser = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {

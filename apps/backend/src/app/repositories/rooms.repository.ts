@@ -1,12 +1,10 @@
 import {Brackets, QueryRunner, Repository} from 'typeorm';
-import {BookingRequest, Rooms} from '../models';
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Accounts } from '../models';
-import { paginateRaw } from 'nestjs-typeorm-paginate';
-import { RoomsPaginationParams } from '../controllers/rooms-pagination.model';
-import { RoomType } from '../models/room-type.entity';
-import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
-import { RoomAddRequestPayload } from '../payload/request/room-add.request.payload';
+import {Accounts, BookingRequest, Rooms} from '../models';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {paginateRaw} from 'nestjs-typeorm-paginate';
+import {RoomsPaginationParams} from '../dto/rooms-pagination.dto';
+import {RoomType} from '../models/room-type.entity';
+import {RoomAddRequestPayload} from '../payload/request/room-add.request.payload';
 
 @CustomRepository(Rooms)
 export class RoomsRepository extends Repository<Rooms> {
@@ -24,7 +22,7 @@ export class RoomsRepository extends Repository<Rooms> {
   async existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('rooms')
       .select('COUNT(rooms.name)')
-      .where('rooms.id = :id', { id })
+      .where('rooms.id = :id', {id})
       .getRawOne()
       .then((data) => data['count'] > 0);
   }
@@ -32,7 +30,7 @@ export class RoomsRepository extends Repository<Rooms> {
   async checkIfRoomIsDeletedById(id: string): Promise<boolean> {
     return this.createQueryBuilder('rooms')
       .select('rooms.deleted_at')
-      .where('rooms.id = :id', { id: id })
+      .where('rooms.id = :id', {id: id})
       .getRawOne<boolean>()
       .then((data) => (data ? data['deleted_at'] : true));
   }
@@ -40,7 +38,7 @@ export class RoomsRepository extends Repository<Rooms> {
   async checkIfRoomIsDisabledById(id: string): Promise<boolean> {
     return this.createQueryBuilder('rooms')
       .select('rooms.disabled_at')
-      .where('rooms.id = :id', { id: id })
+      .where('rooms.id = :id', {id: id})
       .getRawOne<boolean>()
       .then((data) => (data ? data['disabled_at'] : true));
   }
@@ -48,7 +46,7 @@ export class RoomsRepository extends Repository<Rooms> {
   async isExistedByNameActive(name: string): Promise<boolean> {
     return this.createQueryBuilder('rooms')
       .select('COUNT(rooms.name)')
-      .where('rooms.name = :name', { name })
+      .where('rooms.name = :name', {name})
       .andWhere('rooms.deleted_at IS NULL')
       .getRawOne()
       .then((data) => data['count'] > 0);
@@ -57,7 +55,7 @@ export class RoomsRepository extends Repository<Rooms> {
   async isExistedByNameActiveUpdate(name: string, id: string): Promise<boolean> {
     return this.createQueryBuilder('rooms')
       .select('COUNT(rooms.name)')
-      .where('rooms.name = :name', { name })
+      .where('rooms.name = :name', {name})
       .andWhere('rooms.deleted_at IS NULL')
       .andWhere('rooms.id != :id', {id})
       .getRawOne()
@@ -67,7 +65,7 @@ export class RoomsRepository extends Repository<Rooms> {
   async isExistedByNameDeleted(name: string): Promise<boolean> {
     return this.createQueryBuilder('rooms')
       .select('COUNT(rooms.name)')
-      .where('rooms.name = :name', { name })
+      .where('rooms.name = :name', {name})
       .andWhere('rooms.deleted_at IS NULL')
       .getRawOne()
       .then((data) => data['count'] > 0);
@@ -77,7 +75,7 @@ export class RoomsRepository extends Repository<Rooms> {
     return this.createQueryBuilder('room')
       .select('room.id', 'id')
       .where('room.deleted_at IS NOT NULL')
-      .andWhere('room.name = :name', { name })
+      .andWhere('room.name = :name', {name})
       .getRawOne();
   }
 
@@ -89,7 +87,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('r.name', 'name')
       .addSelect('r.description', 'description')
       .addSelect('rt.name', 'type')
-      .addSelect('r.capacity','capacity')
+      .addSelect('r.capacity', 'capacity')
       .addSelect('r.createdAt', 'createdAt')
       .addSelect('r.updatedAt', 'updatedAt')
       .addSelect('a.username', 'createdBy')
@@ -125,7 +123,7 @@ export class RoomsRepository extends Repository<Rooms> {
   async getRoomName(id: string): Promise<{ name: string }> {
     return this.createQueryBuilder('rooms')
       .select('rooms.name', 'name')
-      .andWhere('rooms.id = :roomId', { roomId: id })
+      .andWhere('rooms.id = :roomId', {roomId: id})
       .getRawOne();
   }
 
@@ -147,7 +145,7 @@ export class RoomsRepository extends Repository<Rooms> {
         .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
         // .where('rooms.disabled_at IS NULL')
         .andWhere('rooms.deleted_at IS NULL')
-        .andWhere('rooms.id = :roomId', { roomId: id })
+        .andWhere('rooms.id = :roomId', {roomId: id})
         .getRawOne<Rooms>()
     );
   }
@@ -249,7 +247,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .leftJoin(RoomType, 'rt', 'rooms.type = rt.id')
       .where(`rooms.deleted_at IS NULL`)
       .andWhere(`rooms.disabled_at IS NOT NULL`)
-      .andWhere('rooms.name ILIKE :search', { search: `%${search.trim()}%` })
+      .andWhere('rooms.name ILIKE :search', {search: `%${search.trim()}%`})
       .orderBy('rooms.disabled_at', 'DESC')
       .getRawMany<Rooms>();
   }
@@ -261,7 +259,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .addSelect('rooms.type', 'type')
       .addSelect('rt.name', 'roomTypeName')
       .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
-      .where('rooms.type = :type', { type: roomTypeId })
+      .where('rooms.type = :type', {type: roomTypeId})
       .andWhere(`rooms.disabled_at IS NULL`)
       .andWhere(`rooms.deleted_at IS NULL`)
 
@@ -327,7 +325,7 @@ export class RoomsRepository extends Repository<Rooms> {
       .innerJoin(RoomType, 'rt', 'rt.id = rooms.type')
       .where(`rooms.deleted_at IS NOT NULL`)
       .andWhere(`rooms.disabled_at IS NULL`)
-      .andWhere('rooms.name ILIKE :name', { name: `%${search.trim()}%` })
+      .andWhere('rooms.name ILIKE :name', {name: `%${search.trim()}%`})
       .orderBy('rooms.deleted_at', 'DESC')
       .getRawMany<Rooms>();
   }
@@ -406,7 +404,7 @@ export class RoomsRepository extends Repository<Rooms> {
     return query.getRawMany<Rooms>();
   }
 
-  async findRoomIdAndCapacity(): Promise<{id: string, roomName: string, roomType: string, capacity: number}[]> {
+  async findRoomIdAndCapacity(): Promise<{ id: string, roomName: string, roomType: string, capacity: number }[]> {
     return this.createQueryBuilder('rooms')
       .select('rooms.id', 'id')
       .addSelect('rooms.capacity', 'capacity')
@@ -422,6 +420,6 @@ export class RoomsRepository extends Repository<Rooms> {
         qb.where('br.status NOT IN (:...status)', {status: ['CHECKED_IN', 'BOOKED']})
           .orWhere('br.status IS NULL')))
       .orderBy('rooms.capacity', 'ASC')
-      .getRawMany<{id: string, roomName: string, roomType: string, capacity: number}>();
+      .getRawMany<{ id: string, roomName: string, roomType: string, capacity: number }>();
   }
 }

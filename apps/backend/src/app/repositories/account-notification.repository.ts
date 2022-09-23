@@ -1,7 +1,7 @@
-import { AccountNotification } from './../models/account-notification.entity';
-import { QueryRunner, Repository } from 'typeorm';
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Notification } from '../models';
+import {AccountNotification} from './../models/account-notification.entity';
+import {QueryRunner, Repository} from 'typeorm';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {Notification} from '../models';
 
 @CustomRepository(AccountNotification)
 export class AccountNotificationRepository extends Repository<Notification> {
@@ -24,7 +24,7 @@ export class AccountNotificationRepository extends Repository<Notification> {
       .addSelect('noti.message', 'message')
       .addSelect('noti.created_at', 'createdAt')
       .addSelect('a_noti.account_id', 'receiver')
-      .where('a_noti.account_id = :id', { id: userId })
+      .where('a_noti.account_id = :id', {id: userId})
       .innerJoin(Notification, 'noti', 'noti.id = a_noti.notification_id')
       .orderBy('noti.created_at', 'DESC')
       .getRawMany<Notification>();

@@ -1,11 +1,13 @@
 import {
-  ArrayMaxSize,
-  ArrayMinSize, IsArray,
-  IsDateString, IsEmpty,
+  ArrayMinSize,
+  IsArray,
+  IsDateString,
   IsNotEmpty,
   IsNumber,
-  IsPositive, IsString,
-  IsUUID, MaxLength,
+  IsPositive,
+  IsString,
+  IsUUID,
+  MaxLength,
   ValidateNested
 } from "class-validator";
 import {Type} from "class-transformer";
@@ -30,7 +32,7 @@ class AutoRoomBookingRequest {
   timeStart: string;
   timeEnd: string;
 
-  @ValidateNested({ each: true })
+  @ValidateNested({each: true})
   @Type(() => AutoRoomBookingDevice)
   devices: AutoRoomBookingDevice[];
 
@@ -50,7 +52,7 @@ class AutoRoomBookingRequestPayload {
   bookingReasonId: string;
 
   @IsArray()
-  @ValidateNested({ each: true })
+  @ValidateNested({each: true})
   @ArrayMinSize(1)
   @Type(() => AutoRoomBookingRequest)
   bookingRequests: AutoRoomBookingRequest[];

@@ -1,29 +1,20 @@
-import {
-  BadRequestException,
-  forwardRef,
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { Accounts } from '../models';
-import { UsersDTO } from '@app/models';
-import { AccountRepository } from '../repositories';
-import { KeycloakService } from './keycloak.service';
-import { CloudinaryService } from './cloudinary.service';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
-import { randomUUID } from 'crypto';
-import { AccountsPaginationParams } from '../controllers/accounts-pagination.model';
-import { AccountHistService } from './account-hist.service';
-import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
-import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
-import { Role } from '../enum/roles.enum';
-import { DataSource } from 'typeorm';
-import { BookingRoomService } from './booking-room.service';
-import { CreateAccountRequestPayload } from '../controllers/create-account-request-payload.model';
-import { RoleService } from './role.service';
+import {BadRequestException, forwardRef, HttpException, HttpStatus, Inject, Injectable, Logger,} from '@nestjs/common';
+import {Accounts} from '../models';
+import {AccountRepository} from '../repositories';
+import {KeycloakService} from './keycloak.service';
+import {CloudinaryService} from './cloudinary.service';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
+import {ChangeProfilePasswordRequest} from '../payload/request/change-password.request.payload';
+import {randomUUID} from 'crypto';
+import {AccountsPaginationParams} from '../dto/accounts-pagination.dto';
+import {AccountHistService} from './account-hist.service';
+import {AccountAddRequestPayload} from '../payload/request/account-add.request.payload';
+import {AccountUpdateProfilePayload} from '../payload/request/account-update-profile.request.payload';
+import {Role} from '../enum/roles.enum';
+import {DataSource} from 'typeorm';
+import {BookingRoomService} from './booking-room.service';
+import {CreateAccountRequestPayload} from '../payload/request/create-account-request-payload.dto';
+import {RoleService} from './role.service';
 
 @Injectable()
 export class AccountsService {
@@ -38,12 +29,12 @@ export class AccountsService {
     @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
 
-    @Inject(forwardRef(() => KeycloakService))
     private readonly keycloakService: KeycloakService,
 
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService
-  ) {}
+  ) {
+  }
 
   async isDeletedByUsername(id: string): Promise<boolean> {
     return await this.repository.isDeletedByUsername(id);
@@ -117,7 +108,6 @@ export class AccountsService {
 
   async getAccountsByRoleId(roleId: string): Promise<Accounts[]> {
     try {
-      console.log('REEEEEEEEEE: ', this.repository);
       return await this.repository.getAccountsByRoleId(roleId);
     } catch (e) {
       this.logger.error(e);
@@ -281,7 +271,7 @@ export class AccountsService {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(
         e.message ??
-          'Error occurred while restore the disabled status of this account'
+        'Error occurred while restore the disabled status of this account'
       );
     } finally {
       await queryRunner.release();
@@ -414,7 +404,6 @@ export class AccountsService {
     id: string
   ): Promise<void> {
     try {
-      console.log(image);
       const isDisabled = await this.repository.checkIfAccountIsDisabledById(id);
       const isDeleted = await this.repository.checkIfAccountIsDeletedById(id);
       if (isDisabled || isDeleted) {

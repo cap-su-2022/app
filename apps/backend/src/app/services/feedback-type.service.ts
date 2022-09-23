@@ -1,5 +1,5 @@
 import {BadRequestException, Injectable, Logger} from '@nestjs/common';
-import {PaginationParams} from '../controllers/pagination.model';
+import {PaginationParams} from '../dto/pagination.dto';
 import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
 import {FeedbackTypeRepository} from '../repositories';
 
@@ -16,9 +16,9 @@ export class FeedbackTypeService {
   async getAllFeedbackTypes(param: PaginationParams) {
     try {
       const result = await this.repository.findByPagination(param);
-      if(result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages){
+      if (result.meta.totalPages > 0 && result.meta.currentPage > result.meta.totalPages) {
         throw new BadRequestException('Current page is over');
-      } 
+      }
       return result
     } catch (e) {
       this.logger.error(e);
@@ -60,7 +60,7 @@ export class FeedbackTypeService {
   ) {
     try {
       const isExistedByName = await this.repository.isExistedByNameAdd(payload.name);
-      if(isExistedByName) {
+      if (isExistedByName) {
         throw new BadRequestException("There already exists a feedback type with the this name. Try with another name.")
       }
       return this.repository.addNew(accountId, payload);
@@ -84,7 +84,7 @@ export class FeedbackTypeService {
       }
 
       const isExistedByName = await this.repository.isExistedByNameUpdate(payload.name, id);
-      if(isExistedByName) {
+      if (isExistedByName) {
         throw new BadRequestException("There already exists a feedback type with the this name. Try with another name.")
       }
 

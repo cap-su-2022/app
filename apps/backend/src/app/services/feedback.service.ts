@@ -1,12 +1,12 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { Feedback } from '../models';
-import { FeedbackPaginationPayload } from '../payload/request/feedback-pagination.payload';
-import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
-import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
-import { FeedbackRepository } from '../repositories';
-import { AccountsService } from './accounts.service';
-import { NotificationService } from './notification.service';
+import {BadRequestException, Injectable, Logger} from '@nestjs/common';
+import {DataSource} from 'typeorm';
+import {Feedback} from '../models';
+import {FeedbackPaginationPayload} from '../payload/request/feedback-pagination.payload';
+import {FeedbackReplyRequestPayload} from '../payload/request/feedback-resolve.request.payload';
+import {FeedbackSendRequestPayload} from '../payload/request/feedback-send.request.payload';
+import {FeedbackRepository} from '../repositories';
+import {AccountsService} from './accounts.service';
+import {NotificationService} from './notification.service';
 
 @Injectable()
 export class FeedbackService {
@@ -17,7 +17,8 @@ export class FeedbackService {
     private readonly repository: FeedbackRepository,
     private readonly notificationService: NotificationService,
     private readonly accountService: AccountsService
-  ) {}
+  ) {
+  }
 
   async getAllFeedbacks(accountId: string, param: FeedbackPaginationPayload) {
     try {

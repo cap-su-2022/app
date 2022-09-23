@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression, Interval } from '@nestjs/schedule';
-import { BookingRoomRepository } from '../repositories';
-import { BookingRoomStatus } from '../enum/booking-room-status.enum';
+import {BadRequestException, Injectable, Logger} from '@nestjs/common';
+import {Cron, CronExpression} from '@nestjs/schedule';
+import {BookingRoomRepository} from '../repositories';
+import {BookingRoomStatus} from '../enum/booking-room-status.enum';
 import * as dayjs from 'dayjs';
-import { DataSource } from 'typeorm';
+import {DataSource} from 'typeorm';
 
 @Injectable()
 export class TasksService {
@@ -12,7 +12,8 @@ export class TasksService {
   constructor(
     private readonly repositoryBooking: BookingRoomRepository,
     private readonly dataSource: DataSource
-  ) {}
+  ) {
+  }
 
   //@Cron(CronExpression.EVERY_10_SECONDS)
   async handleCheckRoomBookingStillInProgress() {

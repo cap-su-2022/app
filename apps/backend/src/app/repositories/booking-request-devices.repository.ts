@@ -1,8 +1,6 @@
-import { Entity } from 'typeorm';
-import { QueryRunner, Repository } from 'typeorm';
-import { BookingRequestDevices, Devices } from '../models';
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { BadRequestException } from '@nestjs/common';
+import {QueryRunner, Repository} from 'typeorm';
+import {BookingRequestDevices, Devices} from '../models';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
 
 @CustomRepository(BookingRequestDevices)
 export class BookingRoomDevicesRepository extends Repository<BookingRequestDevices> {
@@ -14,7 +12,7 @@ export class BookingRoomDevicesRepository extends Repository<BookingRequestDevic
       .addSelect('brd.device_quantity', 'deviceQuantity')
       .addSelect('d.name', 'deviceName')
       .innerJoin(Devices, 'd', 'd.id = brd.device_id')
-      .where('brd.booking_request_id = :id', { id: id })
+      .where('brd.booking_request_id = :id', {id: id})
       .getRawMany<BookingRequestDevices>();
   }
 
@@ -24,10 +22,10 @@ export class BookingRoomDevicesRepository extends Repository<BookingRequestDevic
     quantity: number,
     queryRunner: QueryRunner
   ) {
-     return await queryRunner.manager.save(BookingRequestDevices, {
-       bookingRequestId: bookingRequestId,
-       deviceId: deviceId,
-       deviceQuantity: quantity,
-     });
+    return await queryRunner.manager.save(BookingRequestDevices, {
+      bookingRequestId: bookingRequestId,
+      deviceId: deviceId,
+      deviceQuantity: quantity,
+    });
   }
 }

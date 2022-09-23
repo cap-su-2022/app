@@ -1,4 +1,4 @@
-import { PaginationParams } from '../../controllers/pagination.model';
+import {PaginationParams} from '../../dto/pagination.dto';
 
 export class FeedbackPaginationPayload extends PaginationParams {
   status: string;

@@ -1,8 +1,8 @@
-import { CanActivate, ExecutionContext, Inject } from "@nestjs/common";
-import { KeycloakService } from "../services";
-import { getAccessTokenViaCookie } from "../validators/utils/access-token-extractor.util";
+import {CanActivate, ExecutionContext, Inject} from "@nestjs/common";
+import {KeycloakService} from "../services";
+import {getAccessTokenViaCookie} from "../validators/utils/access-token-extractor.util";
 
-export default class AuthGuard implements CanActivate {
+class AuthGuard implements CanActivate {
 
   constructor(@Inject(KeycloakService) private readonly keycloakService: KeycloakService) {
   }

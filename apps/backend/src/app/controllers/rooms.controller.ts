@@ -1,34 +1,24 @@
 import {
   Body,
-  Controller, DefaultValuePipe,
+  Controller,
   Delete,
   Get,
   HttpCode,
   HttpStatus,
-  Param, ParseIntPipe,
+  Param,
   Post,
   Put,
   Query,
   UseInterceptors,
-  UsePipes,
 } from '@nestjs/common';
 import {RoomsService} from '../services';
-import {RoomsValidation} from '../pipes/validation/rooms.validation';
 import {Rooms} from '../models';
-import {
-  ApiBearerAuth, ApiBody,
-  ApiOperation, ApiParam, ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
-import {Roles} from '../decorators/role.decorator';
-import {Role} from '../enum/roles.enum';
-import {AddRoomValidation} from '../pipes/validation/add-room.validation';
-import {User} from '../decorators/keycloak-user.decorator';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {RoomsPaginationParams} from './rooms-pagination.model';
-import {DataAddRequestPayload} from '../payload/request/data-add.request.payload';
+import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags,} from '@nestjs/swagger';
+import {PathLoggerInterceptor} from '../interceptors';
+import {Roles, User} from '../decorators';
+import {Role} from '../enum';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
+import {RoomsPaginationParams} from '../dto/rooms-pagination.dto';
 import {RoomAddRequestPayload} from '../payload/request/room-add.request.payload';
 
 

@@ -9,14 +9,14 @@ import {
   Scope,
   UnauthorizedException,
 } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { lastValueFrom, map, Observable } from 'rxjs';
-import { KeycloakSigninSuccessResponse } from '../dto/keycloak-signin-success.response.dto';
-import { REQUEST } from '@nestjs/core';
-import { APPLICATION_X_WWW_FORM_URLENCODED } from '@app/constants';
-import { AccessTokenResponsePayload } from '../payload/response/refresh_token.response.payload';
-import { RefreshTokenPayload } from '../payload/response/refresh-token.request.payload';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
+import {HttpService} from '@nestjs/axios';
+import {lastValueFrom, map, Observable} from 'rxjs';
+import {KeycloakSigninSuccessResponse} from '../payload/response/keycloak-signin-success.response.dto';
+import {REQUEST} from '@nestjs/core';
+import {APPLICATION_X_WWW_FORM_URLENCODED} from '@app/constants';
+import {AccessTokenResponsePayload} from '../payload/response/refresh_token.response.payload';
+import {RefreshTokenPayload} from '../payload/response/refresh-token.request.payload';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
 import {environment} from "../../environments/environment";
 
 @Injectable({
@@ -55,7 +55,7 @@ export class KeycloakService {
   async getAuthenticationTokenByMasterAccount(
     keycloakId: string
   ): Promise<KeycloakSigninSuccessResponse> {
-    const { access_token } = await this.signInToKeycloak(
+    const {access_token} = await this.signInToKeycloak(
       this.masterUsername,
       this.masterPassword
     );
@@ -164,7 +164,7 @@ export class KeycloakService {
     lastName: string;
     email: string;
   }> {
-    const { access_token } = await this.signInToKeycloak(
+    const {access_token} = await this.signInToKeycloak(
       this.masterUsername,
       this.masterPassword
     );
@@ -215,7 +215,7 @@ export class KeycloakService {
     roleGroup: string;
   }): Promise<any> {
     try {
-      const { access_token } = await this.signInToKeycloak(
+      const {access_token} = await this.signInToKeycloak(
         this.masterUsername,
         this.masterPassword
       );
@@ -268,7 +268,6 @@ export class KeycloakService {
 
   signOutKeycloakUser(header: any, id: string): Promise<void> {
     try {
-      console.log('REMOVE FCM TOKEN HERE');
       return Promise.resolve();
     } catch (e) {
       this.logger.error(e.message);
@@ -280,7 +279,6 @@ export class KeycloakService {
     payload: RefreshTokenPayload
   ): Promise<AccessTokenResponsePayload> {
     const URL = `http://${this.keycloakHost}:${this.keycloakPort}/auth/realms/${this.keycloakRealm}/protocol/openid-connect/token`;
-    console.log(payload.refreshToken);
     const refreshTokenPayload = new URLSearchParams({
       client_id: environment.keycloak.client.id,
       client_secret: environment.keycloak.client.secret,
@@ -333,7 +331,7 @@ export class KeycloakService {
     password: string
   ): Promise<void> {
     try {
-      const { access_token } = await this.signInToKeycloak(
+      const {access_token} = await this.signInToKeycloak(
         this.masterUsername,
         this.masterPassword
       );
@@ -359,5 +357,6 @@ export class KeycloakService {
     }
   }
 
-  async removeKeycloakUserByKeycloakUsername() {}
+  async removeKeycloakUserByKeycloakUsername() {
+  }
 }

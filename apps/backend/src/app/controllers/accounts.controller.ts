@@ -12,35 +12,26 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { AccountsService } from '../services';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { User } from '../decorators/keycloak-user.decorator';
-import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import { Accounts } from '../models';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { FastifyFileInterceptor } from '../interceptors/fastify-file.interceptor';
-import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
-import { AccountsPaginationParams } from './accounts-pagination.model';
-import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
-import { AccountUpdateProfilePayload } from '../payload/request/account-update-profile.request.payload';
-import { CreateAccountRequestPayload } from './create-account-request-payload.model';
+import {AccountsService} from '../services';
+import {ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags,} from '@nestjs/swagger';
+import {Roles, User} from '../decorators';
+import {FastifyFileInterceptor, PathLoggerInterceptor} from '../interceptors';
+import {Role} from '../enum';
+import {Accounts} from '../models';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
+import {ChangeProfilePasswordRequest} from '../payload/request/change-password.request.payload';
+import {AccountsPaginationParams} from '../dto/accounts-pagination.dto';
+import {AccountAddRequestPayload} from '../payload/request/account-add.request.payload';
+import {AccountUpdateProfilePayload} from '../payload/request/account-update-profile.request.payload';
+import {CreateAccountRequestPayload} from '../payload/request/create-account-request-payload.dto';
 
 @Controller('v1/accounts')
 @ApiBearerAuth()
 @ApiTags('Accounts')
 @UseInterceptors(new PathLoggerInterceptor(AccountsController.name))
 export class AccountsController {
-  constructor(private readonly service: AccountsService) {}
+  constructor(private readonly service: AccountsService) {
+  }
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -649,8 +640,8 @@ export class AccountsController {
     schema: {
       type: 'object',
       properties: {
-        comment: { type: 'string' },
-        outletId: { type: 'integer' },
+        comment: {type: 'string'},
+        outletId: {type: 'integer'},
         file: {
           type: 'string',
           format: 'binary',
@@ -694,8 +685,8 @@ export class AccountsController {
     schema: {
       type: 'object',
       properties: {
-        comment: { type: 'string' },
-        outletId: { type: 'integer' },
+        comment: {type: 'string'},
+        outletId: {type: 'integer'},
         file: {
           type: 'string',
           format: 'binary',

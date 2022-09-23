@@ -1,13 +1,12 @@
-import {Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query} from '@nestjs/common';
+import {Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Query} from '@nestjs/common';
 import {FeedbackTypeService} from '../services';
-import {Role} from '../enum/roles.enum';
-import {Roles} from '../decorators/role.decorator';
+import {Role} from '../enum';
+import {Roles, User} from '../decorators';
 import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {PaginationParams} from './pagination.model';
+import {PaginationParams} from '../dto/pagination.dto';
 import {Pagination} from 'nestjs-typeorm-paginate';
 import {FeedbackType} from '../models';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {User} from '../decorators/keycloak-user.decorator';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
 import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
 
 

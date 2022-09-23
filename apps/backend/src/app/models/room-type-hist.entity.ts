@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { BaseEntity } from './base/base.entity';
+import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
+import {BaseEntity} from './base/base.entity';
 
 @Entity('room_type_hist')
 export class RoomTypeHist extends BaseEntity {

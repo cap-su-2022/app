@@ -1,16 +1,11 @@
-import { AppService } from '../app.service';
-import { Test } from '@nestjs/testing';
-import { BookingReasonService } from '../booking-reason.service';
-import { PaginationParams } from '../../controllers/pagination.model';
-import { BookingReasonRepository } from '../../repositories/booking-reason.repository';
-import { BookingReasonHistService } from '../booking-reason-hist.service';
-import { BookingReasonHistRepository } from '../../repositories/booking-reason-hist.repository';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import mock = jest.mock;
-import { Repository } from 'typeorm';
-import { BookingReason } from '../../models/booking-reason.entity';
-import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
-import { BookingReasonHist } from '../../models/booking-reason-hist.entity';
+import {Test} from '@nestjs/testing';
+import {BookingReasonService} from '../booking-reason.service';
+import {PaginationParams} from '../../dto/pagination.dto';
+import {BookingReasonRepository} from '../../repositories/booking-reason.repository';
+import {BookingReasonHistService} from '../booking-reason-hist.service';
+import {BookingReasonHistRepository} from '../../repositories/booking-reason-hist.repository';
+import {BookingReason} from '../../models/booking-reason.entity';
+import {Pagination} from 'nestjs-typeorm-paginate';
 import {MasterDataAddRequestPayload} from "../../payload/request/master-data-add.request.payload";
 
 export type MockType<T> = {

@@ -12,28 +12,18 @@ import {
   Res,
   UseInterceptors,
 } from '@nestjs/common';
-import { KeycloakService } from '../services';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiProperty,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { KEYCLOAK_PATH } from '../constants/controllers/keycloak/path.constant';
-import { AUTHORIZATION_LOWERCASE } from '../constants/network/headers.constant';
-import { AuthenticationService } from '../services';
-import { UsernamePasswordLoginResponse } from '@app/models';
-import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
-import { AccessTokenResponsePayload } from '../payload/response/refresh_token.response.payload';
-import { RefreshTokenPayload } from '../payload/response/refresh-token.request.payload';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import { FastifyRequest, FastifyReply } from 'fastify';
-import { AccountAddRequestPayload } from '../payload/request/account-add.request.payload';
-import { ChangeProfilePasswordRequest } from '../payload/request/change-password.request.payload';
+import {AuthenticationService, KeycloakService} from '../services';
+import {ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiTags,} from '@nestjs/swagger';
+import {KEYCLOAK_PATH} from '../constants/controllers/keycloak/path.constant';
+import {AUTHORIZATION_LOWERCASE} from '../constants/network/headers.constant';
+import {UsernamePasswordLoginResponse} from '@app/models';
+import {PathLoggerInterceptor} from '../interceptors';
+import {AccessTokenResponsePayload} from '../payload/response/refresh_token.response.payload';
+import {RefreshTokenPayload} from '../payload/response/refresh-token.request.payload';
+import {Roles} from '../decorators';
+import {Role} from '../enum';
+import {FastifyReply} from 'fastify';
+import {ChangeProfilePasswordRequest} from '../payload/request/change-password.request.payload';
 
 export class AuthenticationRequest {
   @ApiProperty({
@@ -63,7 +53,8 @@ export class AuthenticationController {
   constructor(
     private readonly service: KeycloakService,
     private readonly authenticationService: AuthenticationService
-  ) {}
+  ) {
+  }
 
   @Post('info')
   @ApiOperation({
@@ -123,7 +114,7 @@ export class AuthenticationController {
   })
   @HttpCode(HttpStatus.OK)
   async signIn(
-    @Res({ passthrough: true }) httpResponse: FastifyReply,
+    @Res({passthrough: true}) httpResponse: FastifyReply,
     @Body() account: { username: string; password: string }
   ): Promise<Partial<UsernamePasswordLoginResponse>> {
     const resp = await this.authenticationService.handleUsernamePasswordLogin(
@@ -175,7 +166,7 @@ export class AuthenticationController {
   })
   @HttpCode(HttpStatus.OK)
   async signInWithGoogle(
-    @Res({ passthrough: true }) httpResponse: FastifyReply,
+    @Res({passthrough: true}) httpResponse: FastifyReply,
     @Body() request: GoogleIDTokenRequest
   ) {
     const resp = await this.authenticationService.handleGoogleSignin(
@@ -225,7 +216,7 @@ export class AuthenticationController {
   })
   @HttpCode(HttpStatus.OK)
   async refreshAccessToken(
-    @Res({ passthrough: true }) httpResponse: FastifyReply,
+    @Res({passthrough: true}) httpResponse: FastifyReply,
     @Body() payload: RefreshTokenPayload
   ): Promise<AccessTokenResponsePayload> {
     const resp = await this.service.refreshAccessToken(payload);

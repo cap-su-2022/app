@@ -1,17 +1,13 @@
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { PaginationParams } from '../controllers/pagination.model';
-import { BookingRoomFeedback } from '../models';
-import { BookingFeedbackSendRequestPayload } from '../payload/request/booking-feedback-send.request.payload';
-import { BookingFeedbackRepository } from '../repositories/booking-feedback.repository';
-import { BookingRoomService } from './booking-room.service';
-import { AccountRepository } from '../repositories';
+import {BadRequestException, forwardRef, Inject, Injectable, Logger,} from '@nestjs/common';
+import {DataSource} from 'typeorm';
+import {PaginationParams} from '../dto/pagination.dto';
+import {BookingRoomFeedback} from '../models';
+import {BookingFeedbackSendRequestPayload} from '../payload/request/booking-feedback-send.request.payload';
+import {BookingFeedbackRepository} from '../repositories/booking-feedback.repository';
+import {BookingRoomService} from './booking-room.service';
+import {AccountRepository} from '../repositories';
+import {AccountsService} from "./accounts.service";
+import {RoleService} from "./role.service";
 
 @Injectable()
 export class BookingFeedbackService {
@@ -23,23 +19,22 @@ export class BookingFeedbackService {
     private readonly repository: BookingFeedbackRepository,
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService,
-    @Inject(forwardRef(() => AccountRepository))
-    private readonly accountRepository: AccountRepository
-  ) {}
+
+    private readonly roleService: RoleService
+  ) {
+  }
 
   async isAlreadyFeedback(id: string) {
     return await this.repository.isAlreadyFeedback(id);
   }
 
   async getAllFeedbacks(accountId: string, param: PaginationParams) {
-    if(param.fromDate > param.toDate){
+    if (param.fromDate > param.toDate) {
       throw new BadRequestException(`"From date" must be less than "To date"`);
     }
-    console.log(param.fromDate)
-    console.log(param.toDate)
     try {
       let result;
-      const roleName = await this.accountRepository.findRoleNameById(accountId);
+      const roleName = await this.roleService.findNameByAccountId(accountId);
       if (roleName === 'Staff') {
         result = await this.repository.findByPagination(accountId, param);
       } else {

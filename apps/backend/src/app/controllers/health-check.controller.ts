@@ -1,8 +1,8 @@
-import { Controller, Get, Req, UseGuards, UseInterceptors } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
-import { PathLoggerInterceptor } from "../interceptors/path-logger.interceptor";
-import AuthGuard from "../guards/auth.guard";
-import { FastifyRequest } from "fastify";
+import {Controller, Get, Req, UseInterceptors} from "@nestjs/common";
+import {ApiOperation, ApiTags} from "@nestjs/swagger";
+import {PathLoggerInterceptor} from "../interceptors";
+import {FastifyRequest} from "fastify";
+import {Roles} from "../decorators";
 
 @Controller("/v1/health")
 @ApiTags("Health Check")
@@ -25,9 +25,8 @@ export class HealthCheckController {
     description: "Health check endpoint without authentication"
   })
   @Get("auth")
-  @UseGuards(AuthGuard)
+  @Roles()
   doHealthCheckWithAuth(@Req() request: FastifyRequest): Promise<string> {
-    console.log(request.headers["Authorization"]);
     return new Promise((resolve, reject) => {
       resolve("pong!");
       reject("dead");

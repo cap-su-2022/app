@@ -1,14 +1,8 @@
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import {BadRequestException, forwardRef, Inject, Injectable, Logger,} from '@nestjs/common';
 import {Rooms} from '../models';
 import {RoomsRepository} from '../repositories';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {RoomsPaginationParams} from '../controllers/rooms-pagination.model';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
+import {RoomsPaginationParams} from '../dto/rooms-pagination.dto';
 import {RoomHistService} from './room-hist.service';
 import {DataSource} from 'typeorm';
 import {BookingRoomService} from './booking-room.service';
@@ -499,7 +493,7 @@ export class RoomsService {
     return this.repository.filterRoomFreeByRoomBooked(search, capacity, listIdRoomBooked);
   }
 
-  async findRoomIdAndCapacityByBetweenCapacity(capacity: number): Promise<{id: string, roomName: string, roomType: string, capacity: number}> {
+  async findRoomIdAndCapacityByBetweenCapacity(capacity: number): Promise<{ id: string, roomName: string, roomType: string, capacity: number }> {
     const rooms = await this.repository.findRoomIdAndCapacity();
     return rooms.find((r) => capacity <= r.capacity);
   }

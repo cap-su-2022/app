@@ -1,28 +1,22 @@
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { PaginationParams } from '../controllers/pagination.model';
-import { RoomTypeRepository } from '../repositories/room-type.repository';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
-import { RoomType } from '../models/room-type.entity';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { RoomTypeHistService } from './room-type-hist.service';
-import { RoomsService } from './rooms.service';
+import {BadRequestException, forwardRef, Inject, Injectable, Logger,} from '@nestjs/common';
+import {PaginationParams} from '../dto/pagination.dto';
+import {RoomTypeRepository} from '../repositories/room-type.repository';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
+import {RoomType} from '../models/room-type.entity';
+import {Pagination} from 'nestjs-typeorm-paginate';
+import {RoomTypeHistService} from './room-type-hist.service';
+import {RoomsService} from './rooms.service';
 
 @Injectable()
 export class RoomTypeService {
   private readonly logger = new Logger(RoomTypeService.name);
 
   constructor(
-    @Inject(forwardRef(() => RoomsService))
     private readonly roomService: RoomsService,
     private readonly repository: RoomTypeRepository,
     private readonly histService: RoomTypeHistService
-  ) {}
+  ) {
+  }
 
   async existsById(id: string): Promise<boolean> {
     return await this.repository.existsById(id);
@@ -35,7 +29,6 @@ export class RoomTypeService {
       const result = await this.repository.findRoomTypesByPagination(
         pagination
       );
-      console.log(result.meta.currentPage, result.meta.totalPages);
       if (
         result.meta.totalPages > 0 &&
         result.meta.currentPage > result.meta.totalPages

@@ -1,16 +1,14 @@
 import {Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Query} from '@nestjs/common';
 import {FeedbackService} from '../services';
-import {Roles} from '../decorators/role.decorator';
-import {Role} from '../enum/roles.enum';
+import {Roles, User} from '../decorators';
+import {BookingRoomStatus, Role} from '../enum';
 import {ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {Pagination} from 'nestjs-typeorm-paginate';
 import {Feedback} from '../models';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {User} from '../decorators/keycloak-user.decorator';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
 import {FeedbackSendRequestPayload} from '../payload/request/feedback-send.request.payload';
 import {FeedbackReplyRequestPayload} from '../payload/request/feedback-resolve.request.payload';
 import {FeedbackPaginationPayload} from '../payload/request/feedback-pagination.payload';
-import {BookingRoomStatus} from '../enum/booking-room-status.enum';
 
 @Controller('/v1/feedbacks')
 @ApiBearerAuth()

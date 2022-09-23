@@ -1,6 +1,5 @@
 import {PaginationPayload} from "./pagination.payload";
 import {IsNotEmpty, IsNumber, IsString, Max, Min} from 'class-validator';
-import {ContainsMany} from "../../validators/contains-many.validator";
 import {validationConfig} from "../../pipes/validation/global.validator";
 
 export class DevicesRequestPayload implements PaginationPayload<string> {
@@ -25,8 +24,8 @@ export class DevicesRequestPayload implements PaginationPayload<string> {
     message: 'Size must not be empty'
   })
   @Max(2147483647, {
-  message: 'Size number is invalid'
-})
+    message: 'Size number is invalid'
+  })
   @Min(1, {
     message: 'Size number must be positive integer'
   })

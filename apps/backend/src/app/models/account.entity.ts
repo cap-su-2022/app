@@ -1,5 +1,5 @@
-import { Column, Entity, Generated, PrimaryColumn } from 'typeorm';
-import { BaseEntityWithDisabled } from './base/base.entity';
+import {Column, Entity, Generated, PrimaryColumn} from 'typeorm';
+import {BaseEntityWithDisabled} from './base/base.entity';
 
 @Entity('accounts')
 export class Accounts extends BaseEntityWithDisabled {

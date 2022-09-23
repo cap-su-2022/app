@@ -1,7 +1,7 @@
 import {Repository} from 'typeorm';
 import {CustomRepository} from '../decorators/typeorm-ex.decorator';
 import {DeviceType} from '../models/device-type.entity';
-import {PaginationParams} from '../controllers/pagination.model';
+import {PaginationParams} from '../dto/pagination.dto';
 import {paginateRaw, Pagination} from 'nestjs-typeorm-paginate';
 import {Accounts} from '../models';
 import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';

@@ -1,13 +1,13 @@
-import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from "@nestjs/common";
-import { validate } from "class-validator";
-import { plainToClass } from "class-transformer";
-import { AddRoomRequest } from "@app/models";
+import {ArgumentMetadata, BadRequestException, Injectable, PipeTransform} from "@nestjs/common";
+import {validate} from "class-validator";
+import {plainToClass} from "class-transformer";
+import {AddRoomRequest} from "@app/models";
 
 @Injectable()
 export class AddRoomValidation implements PipeTransform<any> {
 
 
-  async transform(value: AddRoomRequest, { metatype }: ArgumentMetadata): Promise<AddRoomRequest> {
+  async transform(value: AddRoomRequest, {metatype}: ArgumentMetadata): Promise<AddRoomRequest> {
     if (!metatype || !this.validateMetaType(metatype)) {
       return value;
     }

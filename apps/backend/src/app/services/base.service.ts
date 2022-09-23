@@ -1,4 +1,3 @@
-
 export abstract class BaseService<M, E, ID> {
   abstract getAll(): Promise<E[]>;
 

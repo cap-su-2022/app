@@ -1,16 +1,10 @@
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { QueryRunner } from 'typeorm';
-import { NotificationRepository } from '../repositories/notification.repository';
-import { Notification } from '../models/notification.entity';
+import {BadRequestException, forwardRef, Inject, Injectable, Logger,} from '@nestjs/common';
+import {QueryRunner} from 'typeorm';
+import {NotificationRepository} from '../repositories/notification.repository';
+import {Notification} from '../models/notification.entity';
 import * as admin from 'firebase-admin';
-import { AccountsService } from './accounts.service';
-import { AccountNotificationService } from './account-notification.service';
+import {AccountsService} from './accounts.service';
+import {AccountNotificationService} from './account-notification.service';
 import dayjs = require('dayjs');
 
 @Injectable()
@@ -19,10 +13,13 @@ export class NotificationService {
 
   constructor(
     private readonly repository: NotificationRepository,
+
     @Inject(forwardRef(() => AccountsService))
     private readonly accountService: AccountsService,
+
     private readonly accountNotificationService: AccountNotificationService
-  ) {}
+  ) {
+  }
 
   async sendBookedForNotification(
     checkinDate: string,
@@ -55,10 +52,10 @@ export class NotificationService {
           .messaging()
           .sendToDevice(_receiver.fcmToken, message)
           .then((response) => {
-            console.log('Successfully sent message:', response);
+           // console.log('Successfully sent message:', response);
           })
           .catch((error) => {
-            console.log('Error sending message:', error);
+           // console.log('Error sending message:', error);
           });
       }
 
@@ -110,10 +107,10 @@ export class NotificationService {
           .messaging()
           .sendToDevice(_receiver.fcmToken, message)
           .then((response) => {
-            console.log('Successfully sent message:', response);
+            //console.log('Successfully sent message:', response);
           })
           .catch((error) => {
-            console.log('Error sending message:', error);
+            //console.log('Error sending message:', error);
           });
       }
 
@@ -145,7 +142,7 @@ export class NotificationService {
     queryRunner: QueryRunner
   ) {
     try {
-      let notification = { title: '', message: '' };
+      let notification = {title: '', message: ''};
       if (payload.status === 'RESOLVE') {
         notification = {
           title: 'Your feedback has been resolved',
@@ -176,10 +173,10 @@ export class NotificationService {
           .messaging()
           .sendToDevice(_receiver.fcmToken, message)
           .then((response) => {
-            console.log('Successfully sent message:', response);
+            //console.log('Successfully sent message:', response);
           })
           .catch((error) => {
-            console.log('Error sending message:', error);
+            //console.log('Error sending message:', error);
           });
       }
 

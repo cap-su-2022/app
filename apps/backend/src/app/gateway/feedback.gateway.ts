@@ -1,16 +1,16 @@
-import { FeedbackService } from '../services';
+import {FeedbackService} from '../services';
 import {
-  WebSocketGateway,
-  SubscribeMessage,
-  MessageBody,
-  WebSocketServer,
   ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
-import { FeedbackPaginationPayload } from '../payload/request/feedback-pagination.payload';
+import {Server, Socket} from 'socket.io';
+import {FeedbackSendRequestPayload} from '../payload/request/feedback-send.request.payload';
+import {Logger} from "@nestjs/common";
 
 @WebSocketGateway({
   cors: {
@@ -18,18 +18,22 @@ import { FeedbackPaginationPayload } from '../payload/request/feedback-paginatio
   },
   namespace: '/feedback',
 })
-export class FeedbackGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+export class FeedbackGateway implements OnGatewayConnection, OnGatewayDisconnect {
+
+  private readonly logger = new Logger(FeedbackGateway.name);
+
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly feedbackService: FeedbackService) {}
-  handleConnection(client: Socket, ...args: any[]) {
-    console.log(`Client connected: ${client.id}`);
+  constructor(private readonly feedbackService: FeedbackService) {
   }
+
+  handleConnection(client: Socket, ...args: any[]) {
+    this.logger.log(`Client connected: ${client.id}`);
+  }
+
   handleDisconnect(client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
+    this.logger.log(`Client disconnected: ${client.id}`);
   }
 
   @SubscribeMessage('sendFeedback')
@@ -37,7 +41,6 @@ export class FeedbackGateway
     @MessageBody() feedback: FeedbackSendRequestPayload,
     @ConnectedSocket() client: Socket
   ) {
-    console.log('RUN HEREEEEEEEEEEEEEEEEEEEEEE');
     const feedbackSent = await this.feedbackService.addNewFeedback(
       client.id,
       feedback

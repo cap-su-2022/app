@@ -25,8 +25,8 @@ export class UsersRequestPayload implements PaginationPayload<string> {
     message: 'Size must not be empty'
   })
   @Max(2147483647, {
-  message: 'Size number is invalid'
-})
+    message: 'Size number is invalid'
+  })
   @Min(1, {
     message: 'Size number must be positive integer'
   })

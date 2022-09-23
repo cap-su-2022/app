@@ -1,20 +1,12 @@
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import {DataSource, Repository, QueryRunner} from 'typeorm';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {Holidays, Rooms} from '../models';
+import {BadRequestException, forwardRef, Inject, Injectable, Logger,} from '@nestjs/common';
+import {DataSource, QueryRunner} from 'typeorm';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
+import {Holidays} from '../models';
 import {HolidayAddRequestPayload} from '../payload/request/holidays-add.request.payload';
 import {HolidaysRepository} from '../repositories/holidays.repository';
-import {PaginationParams} from '../controllers/pagination.model';
-import {RoomAddRequestPayload} from '../payload/request/room-add.request.payload';
-import {getConfigFileLoaded} from '../controllers/global-config.controller';
-import dayjs = require('dayjs');
+import {PaginationParams} from '../dto/pagination.dto';
 import {BookingRoomService} from './booking-room.service';
+import dayjs = require('dayjs');
 
 @Injectable()
 export class HolidaysService {
@@ -23,6 +15,7 @@ export class HolidaysService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly repository: HolidaysRepository,
+
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService
   ) {

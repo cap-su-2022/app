@@ -1,17 +1,17 @@
-import { BookingRoomService } from '../services';
+import {BookingRoomService} from '../services';
 import {
-  WebSocketGateway,
-  SubscribeMessage,
-  MessageBody,
-  WebSocketServer,
   ConnectedSocket,
-  WsResponse,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+  WsResponse,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
-import { Logger } from '@nestjs/common';
+import {Server, Socket} from 'socket.io';
+import {BookingRoomPaginationParams} from '../dto/booking-room-pagination.dto';
+import {Logger} from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
@@ -20,21 +20,20 @@ import { Logger } from '@nestjs/common';
   namespace: '/booking',
 })
 export class BookingRoomGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
-  private readonly logger: Logger = new Logger(BookingRoomGateway.name);
-
+  implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
+  private readonly logger: Logger = new Logger(BookingRoomGateway.name);
 
-  constructor(private readonly bookingRoomService: BookingRoomService) {}
+  constructor(private readonly bookingRoomService: BookingRoomService) {
+  }
 
   handleConnection(client: Socket, ...args: any[]): any {
-    console.log(`Client connected: ${client.id}`);
+    this.logger.log(`Client connected: ${client.id}`);
   }
 
   handleDisconnect(client: Socket): any {
-    console.log(`Client disconnected: ${client.id}`);
+    this.logger.log(`Client disconnected: ${client.id}`);
   }
 
   @SubscribeMessage('msgToServer')
@@ -42,7 +41,6 @@ export class BookingRoomGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() message: string
   ): WsResponse<string> {
-    console.log('concac');
     client.broadcast.emit('msgToServer', message);
     return {
       data: message,
@@ -55,7 +53,6 @@ export class BookingRoomGateway
     @MessageBody() pagination: BookingRoomPaginationParams,
     @ConnectedSocket() client: Socket
   ) {
-    console.log('B SERVICE: ', this.bookingRoomService);
     // const requestSent = await this.bookingRoomService.getAllBookingRoomsPagination(
     //   pagination,
     //   client.id
@@ -101,7 +98,7 @@ export class BookingRoomGateway
 
   @SubscribeMessage('cancelRequest')
   async cancelRequest(
-    @MessageBody() payload: {cancelledBy: string, bookedFor: string},
+    @MessageBody() payload: { cancelledBy: string, bookedFor: string },
     @ConnectedSocket() client: Socket
   ) {
     client.broadcast.emit('cancelRequest', payload);

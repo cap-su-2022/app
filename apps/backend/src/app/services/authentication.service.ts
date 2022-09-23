@@ -1,20 +1,11 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { AccountsService } from './accounts.service';
-import { KeycloakService } from './keycloak.service';
-import {
-  UsernamePasswordCredentials,
-  UsernamePasswordLoginResponse,
-} from '@app/models';
-import { OAuth2Client } from 'google-auth-library';
+import {BadRequestException, forwardRef, HttpException, HttpStatus, Inject, Injectable, Logger,} from '@nestjs/common';
+import {AccountsService} from './accounts.service';
+import {KeycloakService} from './keycloak.service';
+import {UsernamePasswordCredentials, UsernamePasswordLoginResponse,} from '@app/models';
+import {OAuth2Client} from 'google-auth-library';
 import Exception from '../constants/exception.constant';
-import { Accounts } from '../models';
-import { randomUUID } from 'crypto';
+import {Accounts} from '../models';
+import {randomUUID} from 'crypto';
 import {environment} from "../../environments/environment";
 
 @Injectable()

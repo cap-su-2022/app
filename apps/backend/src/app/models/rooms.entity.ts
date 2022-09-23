@@ -1,6 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { RoomType } from '../enum/room-type.enum';
-import { BaseEntityWithDisabled } from './base/base.entity';
+import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
+import {RoomType} from '../enum/room-type.enum';
+import {BaseEntityWithDisabled} from './base/base.entity';
 
 @Entity('rooms')
 export class Rooms extends BaseEntityWithDisabled {

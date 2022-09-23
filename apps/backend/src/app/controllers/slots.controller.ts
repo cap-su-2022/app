@@ -1,7 +1,7 @@
 import {Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put,} from '@nestjs/common';
 import {SlotService} from '../services/slot.service';
-import {Roles} from '../decorators/role.decorator';
-import {Role} from '../enum/roles.enum';
+import {Roles} from '../decorators';
+import {Role} from '../enum';
 import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {SlotsConfigRequestPayload} from "../payload/request/slot-config-request-add.payload";
 
@@ -206,7 +206,6 @@ export class SlotController {
   // }
 
 
-
   // @Post()
   // @Roles(Role.APP_ADMIN)
   // @HttpCode(HttpStatus.OK)
@@ -236,7 +235,6 @@ export class SlotController {
   // ) {
   //   return this.service.addNewSlot(user.account_id, payload);
   // }
-
 
 
   // @Get('deleted')

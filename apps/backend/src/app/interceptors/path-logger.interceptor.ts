@@ -1,5 +1,5 @@
-import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from "@nestjs/common";
-import { Observable } from "rxjs";
+import {CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor} from "@nestjs/common";
+import {Observable} from "rxjs";
 
 @Injectable()
 export class PathLoggerInterceptor implements NestInterceptor {

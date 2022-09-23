@@ -1,11 +1,4 @@
-import {PaginationParams} from '../../controllers/pagination.model';
-import {
-  IsArray,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MaxLength,
-} from 'class-validator';
+import {IsArray, IsNotEmpty, IsOptional, IsString, MaxLength,} from 'class-validator';
 import {Transform, TransformFnParams} from 'class-transformer';
 import {ApiProperty} from "@nestjs/swagger";
 

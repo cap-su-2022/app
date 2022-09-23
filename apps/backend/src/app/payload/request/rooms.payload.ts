@@ -1,8 +1,7 @@
-import { PaginationPayload } from './pagination.payload';
-import { IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator';
-import { ContainsMany } from '../../validators/contains-many.validator';
-import { validationConfig } from '../../pipes/validation/global.validator';
-import { ApiProperty } from '@nestjs/swagger';
+import {PaginationPayload} from './pagination.payload';
+import {IsNotEmpty, IsNumber, IsString, Max, Min} from 'class-validator';
+import {validationConfig} from '../../pipes/validation/global.validator';
+import {ApiProperty} from '@nestjs/swagger';
 
 export class RoomsRequestPayload implements PaginationPayload<string> {
   @ApiProperty({

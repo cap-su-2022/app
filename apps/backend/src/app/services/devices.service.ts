@@ -1,22 +1,12 @@
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { DevicesRepository } from '../repositories/devices.repository';
-import { DevicesResponsePayload } from '../payload/response/devices.payload';
-import { AddDeviceRequest, UpdateDeviceRequest } from '@app/models';
-import { DevicesRequestPayload } from '../payload/request/devices.payload';
-import { Devices } from '../models';
-import { Direction } from '../models/search-pagination.payload';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
-import { DeviceHistService } from './devices-hist.service';
-import { DevicesPaginationParams } from '../controllers/devices-pagination.model';
-import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
-import { BookingRoomService } from './booking-room.service';
-import { DataSource } from 'typeorm';
+import {BadRequestException, forwardRef, Inject, Injectable, Logger,} from '@nestjs/common';
+import {DevicesRepository} from '../repositories/devices.repository';
+import {AddDeviceRequest} from '@app/models';
+import {Devices} from '../models';
+import {DeviceHistService} from './devices-hist.service';
+import {DevicesPaginationParams} from '../dto/devices-pagination.dto';
+import {DataAddRequestPayload} from '../payload/request/data-add.request.payload';
+import {BookingRoomService} from './booking-room.service';
+import {DataSource} from 'typeorm';
 
 @Injectable()
 export class DevicesService {
@@ -28,7 +18,8 @@ export class DevicesService {
     private readonly histService: DeviceHistService,
     @Inject(forwardRef(() => BookingRoomService))
     private readonly bookingRoomService: BookingRoomService
-  ) {}
+  ) {
+  }
 
   async getAll(request: DevicesPaginationParams) {
     try {

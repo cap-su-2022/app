@@ -1,5 +1,5 @@
-import { Request } from "express";
-import { extname } from "path";
+import {Request} from "express";
+import {extname} from "path";
 
 export const editFileName = (
   req: Request,

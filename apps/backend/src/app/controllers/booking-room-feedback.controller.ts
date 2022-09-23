@@ -1,28 +1,19 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-  Query,
-} from '@nestjs/common';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PaginationParams } from './pagination.model';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { BookingRoomFeedback } from '../models';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { User } from '../decorators/keycloak-user.decorator';
-import { BookingFeedbackSendRequestPayload } from '../payload/request/booking-feedback-send.request.payload';
-import { BookingFeedbackService } from '../services/booking-feedback.service';
+import {Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query,} from '@nestjs/common';
+import {Roles, User} from '../decorators';
+import {Role} from '../enum';
+import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {PaginationParams} from '../dto/pagination.dto';
+import {Pagination} from 'nestjs-typeorm-paginate';
+import {BookingRoomFeedback} from '../models';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
+import {BookingFeedbackSendRequestPayload} from '../payload/request/booking-feedback-send.request.payload';
+import {BookingFeedbackService} from '../services/booking-feedback.service';
 
 @Controller('/v1/booking-room-feedbacks')
 @ApiTags('Booking Room Feedbacks')
 export class BookingFeedbackController {
-  constructor(private readonly service: BookingFeedbackService) {}
+  constructor(private readonly service: BookingFeedbackService) {
+  }
 
   @Get()
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -48,7 +39,7 @@ export class BookingFeedbackController {
   })
   getAllFeedbacks(
     @Query()
-    payload: PaginationParams,
+      payload: PaginationParams,
     @User() user: KeycloakUserInstance
   ): Promise<Pagination<BookingRoomFeedback> | BookingRoomFeedback[]> {
     return this.service.getAllFeedbacks(user.account_id, payload);

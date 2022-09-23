@@ -1,11 +1,10 @@
-import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate';
-import { QueryRunner, Repository } from 'typeorm';
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Accounts, FeedbackType } from '../models';
-import { Feedback } from '../models';
-import { FeedbackPaginationPayload } from '../payload/request/feedback-pagination.payload';
-import { FeedbackReplyRequestPayload } from '../payload/request/feedback-resolve.request.payload';
-import { FeedbackSendRequestPayload } from '../payload/request/feedback-send.request.payload';
+import {paginateRaw, Pagination} from 'nestjs-typeorm-paginate';
+import {QueryRunner, Repository} from 'typeorm';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {Accounts, Feedback, FeedbackType} from '../models';
+import {FeedbackPaginationPayload} from '../payload/request/feedback-pagination.payload';
+import {FeedbackReplyRequestPayload} from '../payload/request/feedback-resolve.request.payload';
+import {FeedbackSendRequestPayload} from '../payload/request/feedback-send.request.payload';
 import dayjs = require('dayjs');
 
 @CustomRepository(Feedback)
@@ -13,7 +12,7 @@ export class FeedbackRepository extends Repository<Feedback> {
   existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('f')
       .select('COUNT(1)', 'count')
-      .where('f.id = :id', { id: id })
+      .where('f.id = :id', {id: id})
       .getRawOne()
       .then((data) => data?.count > 0);
   }
@@ -59,7 +58,7 @@ export class FeedbackRepository extends Repository<Feedback> {
     }
 
     if (accountId) {
-      query.andWhere('f.created_by = :createdBy', { createdBy: accountId });
+      query.andWhere('f.created_by = :createdBy', {createdBy: accountId});
     }
 
     if (pagination.status) {
@@ -101,7 +100,7 @@ export class FeedbackRepository extends Repository<Feedback> {
       .leftJoin(Accounts, 'a', 'a.id = fb.resolved_by')
       .innerJoin(Accounts, 'aa', 'aa.id = fb.created_by')
       .leftJoin(Accounts, 'aaa', 'aaa.id = fb.rejected_by')
-      .where('fb.id = :id', { id: id })
+      .where('fb.id = :id', {id: id})
       .andWhere('fb.deleted_at IS NULL')
       .getRawOne<Feedback>();
   }

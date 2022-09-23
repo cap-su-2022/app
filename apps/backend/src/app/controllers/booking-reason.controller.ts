@@ -1,21 +1,10 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query,} from '@nestjs/common';
 import {BookingReasonService} from '../services/booking-reason.service';
 import {ApiOperation, ApiParam, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {Roles} from '../decorators/role.decorator';
-import {Role} from '../enum/roles.enum';
-import {User} from '../decorators/keycloak-user.decorator';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {PaginationParams} from './pagination.model';
+import {Roles, User} from '../decorators';
+import {Role} from '../enum';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
+import {PaginationParams} from '../dto/pagination.dto';
 import {MasterDataAddRequestPayload} from "../payload/request/master-data-add.request.payload";
 
 @Controller('/v1/booking-reasons')

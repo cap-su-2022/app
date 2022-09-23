@@ -1,6 +1,6 @@
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { QueryRunner, Repository } from 'typeorm';
-import { RoomHist, Rooms } from '../models';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {QueryRunner, Repository} from 'typeorm';
+import {RoomHist, Rooms} from '../models';
 
 @CustomRepository(RoomHist)
 export class RoomHistRepository extends Repository<RoomHist> {

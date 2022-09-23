@@ -11,20 +11,14 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation, ApiParam, ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags,} from '@nestjs/swagger';
 import {RoomTypeService} from '../services/room-type.service';
 import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
-import {User} from '../decorators/keycloak-user.decorator';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
-import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
-import {Roles} from '../decorators/role.decorator';
-import {Role} from '../enum/roles.enum';
-import {PaginationParams} from './pagination.model';
+import {Roles, User} from '../decorators';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
+import {PathLoggerInterceptor} from '../interceptors';
+import {Role} from '../enum';
+import {PaginationParams} from '../dto/pagination.dto';
 
 
 @Controller('/v1/room-type')

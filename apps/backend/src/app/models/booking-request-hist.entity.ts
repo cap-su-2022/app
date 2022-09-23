@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
 
 @Entity('booking_request_hist')
 export class BookingRequestHist {

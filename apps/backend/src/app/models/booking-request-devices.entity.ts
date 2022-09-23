@@ -1,8 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
 
 @Entity("booking_request_devices")
-export class BookingRequestDevices{
+export class BookingRequestDevices {
   @PrimaryGeneratedColumn("uuid", {
     name: "id",
     comment: "ID of the Booking Request Devices"

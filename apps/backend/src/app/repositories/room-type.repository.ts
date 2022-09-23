@@ -1,14 +1,10 @@
 import {CustomRepository} from '../decorators/typeorm-ex.decorator';
-import {Repository, UpdateResult} from 'typeorm';
+import {Repository} from 'typeorm';
 import {RoomType} from '../models/room-type.entity';
-import {PaginationParams} from '../controllers/pagination.model';
+import {PaginationParams} from '../dto/pagination.dto';
 import {Accounts} from '../models';
 
-import {
-  IPaginationMeta,
-  paginateRaw,
-  Pagination,
-} from 'nestjs-typeorm-paginate';
+import {paginateRaw, Pagination,} from 'nestjs-typeorm-paginate';
 import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
 import {BadRequestException, Logger} from '@nestjs/common';
 import {DeviceTypeService} from '../services/device-type.service';
@@ -28,7 +24,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
   async isExistedByNameActive(name: string): Promise<boolean> {
     return this.createQueryBuilder('rt')
       .select('COUNT(rt.name)')
-      .where('rt.name = :name', { name })
+      .where('rt.name = :name', {name})
       .andWhere('rt.deleted_at IS NULL')
       .getRawOne()
       .then((data) => data['count'] > 0);
@@ -37,7 +33,7 @@ export class RoomTypeRepository extends Repository<RoomType> {
   async isExistedByNameActiveUpdate(name: string, id: string): Promise<boolean> {
     return this.createQueryBuilder('rt')
       .select('COUNT(rt.name)')
-      .where('rt.name = :name', { name })
+      .where('rt.name = :name', {name})
       .andWhere('rt.deleted_at IS NULL')
       .andWhere('rt.id != :id', {id})
       .getRawOne()

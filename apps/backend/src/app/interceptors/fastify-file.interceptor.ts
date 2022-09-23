@@ -1,16 +1,7 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Inject,
-  mixin,
-  NestInterceptor,
-  Optional,
-  Type
-} from "@nestjs/common";
-import { Observable } from "rxjs";
+import {CallHandler, ExecutionContext, Inject, mixin, NestInterceptor, Optional, Type} from "@nestjs/common";
+import {Observable} from "rxjs";
 import FastifyMulter from "fastify-multer";
-import { Options, Multer } from "multer";
-import { FastifyRequest } from "fastify";
+import {Multer, Options} from "multer";
 
 type MulterInstance = any;
 
@@ -26,7 +17,7 @@ export function FastifyFileInterceptor(
       @Inject("MULTER_MODULE_OPTIONS")
         options: Multer
     ) {
-      this.multer = (FastifyMulter as any)({ ...options, ...localOptions });
+      this.multer = (FastifyMulter as any)({...options, ...localOptions});
     }
 
     async intercept(

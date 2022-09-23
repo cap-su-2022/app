@@ -1,32 +1,31 @@
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { Environment } from '@app/constants';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {ConfigModule} from '@nestjs/config';
 import {
-  Accounts,
   AccountHist,
-  BookingRequest,
-  BookingRequestHist,
-  Devices,
-  DeviceHist,
-  Rooms,
+  AccountNotification,
+  Accounts,
   BookingReasonHist,
-  RoomHist,
-  RoomTypeHist,
-  DeviceTypeHist,
+  BookingRequest,
   BookingRequestDevices,
+  BookingRequestHist,
+  BookingRoomFeedback,
+  DeviceHist,
+  Devices,
+  DeviceType,
+  DeviceTypeHist,
+  Feedback,
+  FeedbackType,
   Holidays,
+  Notification,
+  RoleHist,
+  Roles,
+  RoomHist,
+  Rooms,
+  RoomType,
+  RoomTypeHist,
+  Slot,
 } from '../../models';
-import {Roles} from '../../models/role.entity';
-import {RoomType} from '../../models';
-import {DeviceType} from '../../models';
 import {BookingReason} from '../../models/booking-reason.entity';
-import {Slot} from '../../models/slot.entity';
-import {RoleHist} from '../../models/role-hist.entity';
-import {AccountNotification} from '../../models';
-import {BookingRoomFeedback} from '../../models';
-import {Feedback} from '../../models';
-import {FeedbackType} from '../../models';
-import {Notification} from '../../models';
 import {environment} from "../../../environments/environment";
 
 const GlobalTypeOrmModule = TypeOrmModule.forRootAsync({

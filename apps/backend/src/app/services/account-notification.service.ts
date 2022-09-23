@@ -1,12 +1,6 @@
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { QueryRunner } from 'typeorm';
-import { AccountNotificationRepository } from '../repositories/account-notification.repository';
+import {BadRequestException, Injectable, Logger,} from '@nestjs/common';
+import {QueryRunner} from 'typeorm';
+import {AccountNotificationRepository} from '../repositories/account-notification.repository';
 
 @Injectable()
 export class AccountNotificationService {
@@ -14,7 +8,8 @@ export class AccountNotificationService {
 
   constructor(
     private readonly repository: AccountNotificationRepository,
-  ) {}
+  ) {
+  }
 
   async sendNotification(
     notificationId: string,
@@ -41,5 +36,5 @@ export class AccountNotificationService {
       );
     }
   }
-  
+
 }

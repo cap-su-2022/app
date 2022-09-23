@@ -12,30 +12,24 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { DevicesService } from '../services';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { DevicesValidation } from '../pipes/validation/devices.validation';
-import { PathLoggerInterceptor } from '../interceptors/path-logger.interceptor';
-import { Roles } from '../decorators/role.decorator';
-import { Role } from '../enum/roles.enum';
-import { Devices } from '../models';
-import { KeycloakUserInstance } from '../dto/keycloak.user';
-import { User } from '../decorators/keycloak-user.decorator';
-import { DevicesPaginationParams } from './devices-pagination.model';
-import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
+import {DevicesService} from '../services';
+import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags,} from '@nestjs/swagger';
+import {DevicesValidation} from '../pipes';
+import {PathLoggerInterceptor} from '../interceptors';
+import {Roles, User} from '../decorators';
+import {Role} from '../enum';
+import {Devices} from '../models';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
+import {DevicesPaginationParams} from '../dto/devices-pagination.dto';
+import {DataAddRequestPayload} from '../payload/request/data-add.request.payload';
 
 @Controller('/v1/devices')
 @ApiBearerAuth()
 @ApiTags('Devices')
 @UseInterceptors(new PathLoggerInterceptor(DevicesController.name))
 export class DevicesController {
-  constructor(private readonly service: DevicesService) {}
+  constructor(private readonly service: DevicesService) {
+  }
 
   @Get()
   @UsePipes(new DevicesValidation())
@@ -256,10 +250,8 @@ export class DevicesController {
   updateTypeThenRestore(
     @User() user: KeycloakUserInstance,
     @Param() payload: { id: string },
-    @Body() body: {type: string}
+    @Body() body: { type: string }
   ) {
-
-    console.log("CMMMMMM: ", body.type)
     return this.service.updateTypeThenRestore(user.account_id, payload.id, body);
   }
 

@@ -1,32 +1,28 @@
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { RoomsService } from './rooms.service';
-import { BookingRoomRepository } from '../repositories';
-import { AccountsService } from './accounts.service';
-import { HolidaysService } from './holidays.service';
-import { BookingRequest } from '../models';
-import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
-import { BookingRequestHistService } from './booking-room-hist.service';
-import { SlotService } from './slot.service';
-import dayjs = require('dayjs');
-import { DataSource, QueryRunner } from 'typeorm';
-import { BookingRoomDevicesService } from './booking-request-devices.service';
-import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
-import { NotificationService } from './notification.service';
-import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
-import { BookingFeedbackService } from './booking-feedback.service';
-import { getConfigFileLoaded } from '../controllers/global-config.controller';
+import {BadRequestException, forwardRef, Inject, Injectable, Logger,} from '@nestjs/common';
+import {RoomsService} from './rooms.service';
+import {BookingRoomRepository} from '../repositories';
+import {AccountsService} from './accounts.service';
+import {HolidaysService} from './holidays.service';
+import {BookingRequest} from '../models';
+import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.payload';
+import {BookingRequestHistService} from './booking-room-hist.service';
+import {SlotService} from './slot.service';
+import {DataSource, QueryRunner} from 'typeorm';
+import {BookingRoomDevicesService} from './booking-request-devices.service';
+import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
+import {NotificationService} from './notification.service';
+import {BookingRoomPaginationParams} from '../dto/booking-room-pagination.dto';
+import {BookingFeedbackService} from './booking-feedback.service';
+import {getConfigFileLoaded} from '../controllers/global-config.controller';
 import {
   AutoRoomBookingDevice,
-  AutoRoomBookingRequest, AutoRoomBookingRequestPayload, AutoRoomBookingResponsePayload,
+  AutoRoomBookingRequest,
+  AutoRoomBookingRequestPayload,
+  AutoRoomBookingResponsePayload,
 } from "../payload/request/auto-booking-request.payload";
 import {DevicesService} from "./devices.service";
 import {BookingReasonService} from "./booking-reason.service";
+import dayjs = require('dayjs');
 
 @Injectable()
 export class BookingRoomService {
@@ -52,35 +48,12 @@ export class BookingRoomService {
     private readonly histService: BookingRequestHistService,
     @Inject(forwardRef(() => HolidaysService))
     private readonly holidaysService: HolidaysService,
+    @Inject(forwardRef(() => DevicesService))
+
     private readonly devicesService: DevicesService,
     @Inject(forwardRef(() => BookingReasonService))
     private readonly bookingReasonService: BookingReasonService,
   ) {
-  }
-
-  private getExampleStatistics() {
-    return {
-      totalTime: {
-        total: 0,
-        booked: 0,
-        cancelled: 0,
-      },
-      month: {
-        total: 0,
-        booked: 0,
-        cancelled: 0,
-      },
-      week: {
-        total: 0,
-        booked: 0,
-        cancelled: 0,
-      },
-      day: {
-        total: 0,
-        booked: 0,
-        cancelled: 0,
-      },
-    };
   }
 
   async getStatistics() {
@@ -179,6 +152,15 @@ export class BookingRoomService {
     }
   }
 
+  async isHoliday(dateStart: string, dateEnd: string) {
+    try {
+      return await this.holidaysService.isHoliday(dateStart, dateEnd, null);
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   // async getBookingRooms(
   //   payload: BookingRoomsFilterRequestPayload
   // ): Promise<BookingRoomResponseDTO[]> {
@@ -211,15 +193,6 @@ export class BookingRoomService {
   //   }
   // }
 
-  async isHoliday(dateStart: string, dateEnd: string) {
-    try {
-      return await this.holidaysService.isHoliday(dateStart, dateEnd, null);
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(e.message);
-    }
-  }
-
   async getRequestByRoomId(roomId: string) {
     try {
       if (roomId === '') {
@@ -235,18 +208,6 @@ export class BookingRoomService {
     }
   }
 
-  // async getRequestBySlotId(slotId: string) {
-  //   try {
-  //     if (slotId === '') {
-  //       throw new BadRequestException('Please type a slot ID');
-  //     }
-  //     return await this.repository.getRequestBySlotId(slotId);
-  //   } catch (e) {
-  //     this.logger.error(e.message);
-  //     throw new BadRequestException(e.message);
-  //   }
-  // }
-
   async getRequestByDeviceId(deviceId: string) {
     try {
       if (deviceId === '') {
@@ -258,6 +219,18 @@ export class BookingRoomService {
       throw new BadRequestException(e.message);
     }
   }
+
+  // async getRequestBySlotId(slotId: string) {
+  //   try {
+  //     if (slotId === '') {
+  //       throw new BadRequestException('Please type a slot ID');
+  //     }
+  //     return await this.repository.getRequestBySlotId(slotId);
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
 
   async getRequestBookingByAccountId(
     accountId: string
@@ -280,6 +253,34 @@ export class BookingRoomService {
       throw new BadRequestException(
         'An error occurred while getting request by account id ' + requestId
       );
+    }
+  }
+
+  async getAllBookingRoomsPagination(
+    payload: BookingRoomPaginationParams,
+    accountId: string
+  ) {
+    try {
+      const role = await this.accountService.getRoleOfAccount(accountId);
+      let filterByAccountId = null;
+      if (role.role_name === 'Staff') {
+        filterByAccountId = accountId;
+      }
+      const result = await this.repository.findByPaginationPayload(
+        payload,
+        filterByAccountId
+      );
+      if (
+        result.meta.totalPages > 0 &&
+        result.meta.currentPage > result.meta.totalPages
+      ) {
+        throw new BadRequestException('Current page is over');
+      }
+
+      return result;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
     }
   }
 
@@ -326,28 +327,21 @@ export class BookingRoomService {
   //   }
   // }
 
-  async getAllBookingRoomsPagination(
-    payload: BookingRoomPaginationParams,
-    accountId: string
-  ) {
+  async getListRequestBookedInMultiDayV2(payload: {
+    dateStart: string;
+    dateEnd: string;
+    checkinTime: string;
+    checkoutTime: string;
+  }) {
     try {
-      const role = await this.accountService.getRoleOfAccount(accountId);
-      let filterByAccountId = null;
-      if (role.role_name === 'Staff') {
-        filterByAccountId = accountId;
-      }
-      const result = await this.repository.findByPaginationPayload(
-        payload,
-        filterByAccountId
-      );
-      if (
-        result.meta.totalPages > 0 &&
-        result.meta.currentPage > result.meta.totalPages
-      ) {
-        throw new BadRequestException('Current page is over');
-      }
-
-      return result;
+      const listRequestBookedInMultiDay =
+        await this.repository.getRequestBookedSameTimeMultiDate(
+          payload.dateStart,
+          payload.dateEnd,
+          payload.checkinTime,
+          payload.checkoutTime
+        );
+      return listRequestBookedInMultiDay;
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);
@@ -515,28 +509,6 @@ export class BookingRoomService {
   //   }
   // }
 
-  async getListRequestBookedInMultiDayV2(payload: {
-    dateStart: string;
-    dateEnd: string;
-    checkinTime: string;
-    checkoutTime: string;
-  }) {
-    try {
-      const listRequestBookedInMultiDay =
-        await this.repository.getRequestBookedSameTimeMultiDate(
-          payload.dateStart,
-          payload.dateEnd,
-          payload.checkinTime,
-          payload.checkoutTime
-        );
-      console.log('AAAACCCC: ', listRequestBookedInMultiDay);
-      return listRequestBookedInMultiDay;
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
-
   async getRoomFreeAtTime(payload: {
     search: string;
     date: string;
@@ -561,6 +533,35 @@ export class BookingRoomService {
         payload.search,
         payload.capacity,
         listRoomBookedSameTime
+      );
+      return result;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async getRoomFreeAtMultiDateV2(payload: {
+    search: string;
+    dateStart: string;
+    dateEnd: string;
+    capacity: number;
+    checkinTime: string;
+    checkoutTime: string;
+  }) {
+    try {
+      const listRequestBookedInMultiDay =
+        await this.getListRequestBookedInMultiDayV2(payload);
+      const listRoomBookedInMultiDaySameSlot = [];
+      if (listRequestBookedInMultiDay?.length > 0) {
+        listRequestBookedInMultiDay.map((request) => {
+          listRoomBookedInMultiDaySameSlot.push(request.roomId);
+        });
+      }
+      const result = await this.roomService.filterRoomFreeByRoomBooked(
+        payload.search,
+        payload.capacity,
+        listRoomBookedInMultiDaySameSlot
       );
       return result;
     } catch (e) {
@@ -595,36 +596,6 @@ export class BookingRoomService {
   //     throw new BadRequestException(e.message);
   //   }
   // }
-
-  async getRoomFreeAtMultiDateV2(payload: {
-    search: string;
-    dateStart: string;
-    dateEnd: string;
-    capacity: number;
-    checkinTime: string;
-    checkoutTime: string;
-  }) {
-    try {
-      const listRequestBookedInMultiDay =
-        await this.getListRequestBookedInMultiDayV2(payload);
-      console.log('AAAAAAAHHH: ', listRequestBookedInMultiDay);
-      const listRoomBookedInMultiDaySameSlot = [];
-      if (listRequestBookedInMultiDay?.length > 0) {
-        listRequestBookedInMultiDay.map((request) => {
-          listRoomBookedInMultiDaySameSlot.push(request.roomId);
-        });
-      }
-      const result = await this.roomService.filterRoomFreeByRoomBooked(
-        payload.search,
-        payload.capacity,
-        listRoomBookedInMultiDaySameSlot
-      );
-      return result;
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
 
   async getCurrentRoomBookingList(accountId: string) {
     try {
@@ -699,6 +670,36 @@ export class BookingRoomService {
     }
   }
 
+  async checkAlreadyHaveBookingSameSlotV2(payload: {
+    checkinDate: string;
+    userId: string;
+    checkinTime: string;
+    checkoutTime: string;
+  }) {
+    try {
+      let alreadyBookedOtherRoom = '';
+      const listRequestBookedAtSameTimeOfUser =
+        await this.repository.getRequestBookedSameTimeOfUser(
+          payload.checkinDate,
+          payload.userId,
+          payload.checkinTime,
+          payload.checkoutTime
+        );
+      if (listRequestBookedAtSameTimeOfUser.length > 0) {
+        listRequestBookedAtSameTimeOfUser.map(async (request) => {
+          alreadyBookedOtherRoom +=
+            request.roomName + ' in ' + payload.checkinDate;
+        });
+      }
+      return alreadyBookedOtherRoom;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(
+        e.message || 'Have some errors when check isAlreadyBookedSameSlot'
+      );
+    }
+  }
+
   // async checkAlreadyHaveBookingSameSlot(payload: {
   //   checkinDate: string;
   //   userId: string;
@@ -729,36 +730,6 @@ export class BookingRoomService {
   //     );
   //   }
   // }
-
-  async checkAlreadyHaveBookingSameSlotV2(payload: {
-    checkinDate: string;
-    userId: string;
-    checkinTime: string;
-    checkoutTime: string;
-  }) {
-    try {
-      let alreadyBookedOtherRoom = '';
-      const listRequestBookedAtSameTimeOfUser =
-        await this.repository.getRequestBookedSameTimeOfUser(
-          payload.checkinDate,
-          payload.userId,
-          payload.checkinTime,
-          payload.checkoutTime
-        );
-      if (listRequestBookedAtSameTimeOfUser.length > 0) {
-        listRequestBookedAtSameTimeOfUser.map(async (request) => {
-          alreadyBookedOtherRoom +=
-            request.roomName + ' in ' + payload.checkinDate;
-        });
-      }
-      return alreadyBookedOtherRoom;
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(
-        e.message || 'Have some errors when check isAlreadyBookedSameSlot'
-      );
-    }
-  }
 
   async getListRequestInDayRange(payload: {
     dateStart: string;
@@ -1041,6 +1012,47 @@ export class BookingRoomService {
     }
   }
 
+  async cancelRequest(
+    accountId: string,
+    id: string,
+    reason: string,
+    queryRunner: QueryRunner
+  ) {
+    try {
+      const isExisted = await this.repository.existsById(id);
+      if (!isExisted) {
+        throw new BadRequestException(
+          'Request does not found with the provided id'
+        );
+      }
+      const isCancelled = await this.repository.isCancelledById(id);
+      if (isCancelled) {
+        throw new BadRequestException('Request already cancelled!');
+      }
+
+      const role = await this.accountService.getRoleOfAccount(accountId);
+      const requestCancelled = await this.repository.cancelRoomBookingById(
+        accountId,
+        id,
+        reason,
+        role.role_name,
+        queryRunner
+      );
+
+      const request = await this.repository.getRequest(id);
+      await this.notificationService.sendCancelRequestNotification(
+        request,
+        reason,
+        queryRunner
+      );
+
+      return requestCancelled;
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
   // async acceptById(accountId: string, id: string) {
   //   const queryRunner = this.dataSource.createQueryRunner();
 
@@ -1260,48 +1272,6 @@ export class BookingRoomService {
   //   }
   // }
 
-  async cancelRequest(
-    accountId: string,
-    id: string,
-    reason: string,
-    queryRunner: QueryRunner
-  ) {
-    try {
-      console.log("UA KH CANCEL AF")
-      const isExisted = await this.repository.existsById(id);
-      if (!isExisted) {
-        throw new BadRequestException(
-          'Request does not found with the provided id'
-        );
-      }
-      const isCancelled = await this.repository.isCancelledById(id);
-      if (isCancelled) {
-        throw new BadRequestException('Request already cancelled!');
-      }
-
-      const role = await this.accountService.getRoleOfAccount(accountId);
-      const requestCancelled = await this.repository.cancelRoomBookingById(
-        accountId,
-        id,
-        reason,
-        role.role_name,
-        queryRunner
-      );
-
-      const request = await this.repository.getRequest(id);
-      await this.notificationService.sendCancelRequestNotification(
-        request,
-        reason,
-        queryRunner
-      );
-
-      return requestCancelled;
-    } catch (e) {
-      this.logger.error(e.message);
-      throw new BadRequestException(e.message);
-    }
-  }
-
   async cancelRoomBookingById(accountId: string, id: string, reason: string) {
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -1438,15 +1408,6 @@ export class BookingRoomService {
     }
   }
 
-  // async rejectCheckinById(accountId: string, id: string, reason: string) {
-  //   try {
-  //     await this.repository.rejectCheckinById(accountId, id);
-  //   } catch (e) {
-  //     this.logger.error(e.message);
-  //     throw new BadRequestException(e.message);
-  //   }
-  // }
-
   async acceptCheckoutById(accountId: string, id: string) {
     try {
       await this.repository.acceptCheckoutById(accountId, id);
@@ -1456,9 +1417,9 @@ export class BookingRoomService {
     }
   }
 
-  // async rejectCheckoutById(accountId: string, id: string, reason: string) {
+  // async rejectCheckinById(accountId: string, id: string, reason: string) {
   //   try {
-  //     await this.repository.rejectCheckoutById(accountId, id);
+  //     await this.repository.rejectCheckinById(accountId, id);
   //   } catch (e) {
   //     this.logger.error(e.message);
   //     throw new BadRequestException(e.message);
@@ -1498,7 +1459,9 @@ export class BookingRoomService {
         if (request.devices && request.devices.length > 0) {
           await this.bookingRoomDeviceService.addDeviceToRequest(
             bookingRequestResponse.id,
-            request.devices.map((d) => {return {value: d.id, quantity: d.quantity}}),
+            request.devices.map((d) => {
+              return {value: d.id, quantity: d.quantity}
+            }),
             queryRunner
           );
         }
@@ -1536,7 +1499,41 @@ export class BookingRoomService {
     }
   }
 
-  private async findRoomExistedWithProvidedCapacity(capacity: number): Promise<{id: string, roomName: string, roomType: string, capacity: number}> {
+  // async rejectCheckoutById(accountId: string, id: string, reason: string) {
+  //   try {
+  //     await this.repository.rejectCheckoutById(accountId, id);
+  //   } catch (e) {
+  //     this.logger.error(e.message);
+  //     throw new BadRequestException(e.message);
+  //   }
+  // }
+
+  private getExampleStatistics() {
+    return {
+      totalTime: {
+        total: 0,
+        booked: 0,
+        cancelled: 0,
+      },
+      month: {
+        total: 0,
+        booked: 0,
+        cancelled: 0,
+      },
+      week: {
+        total: 0,
+        booked: 0,
+        cancelled: 0,
+      },
+      day: {
+        total: 0,
+        booked: 0,
+        cancelled: 0,
+      },
+    };
+  }
+
+  private async findRoomExistedWithProvidedCapacity(capacity: number): Promise<{ id: string, roomName: string, roomType: string, capacity: number }> {
     const room = await this.roomService.findRoomIdAndCapacityByBetweenCapacity(capacity);
     if (!room) {
       throw new BadRequestException('No suitable room found within the provided capacity. Please try again.');
@@ -1550,16 +1547,15 @@ export class BookingRoomService {
     await this.validateConflictBookingTime(request.date, {start: request.timeStart, end: request.timeEnd})
   }
 
-  private async validateConflictBookingTime(date: string, time: {start: string, end: string }) {
+  private async validateConflictBookingTime(date: string, time: { start: string, end: string }) {
     //fix bug
     const isConflicted = await this.repository.isConflictWithStartEndDateTime(date, time.start, time.end);
-    console.log(isConflicted)
     if (isConflicted) {
       throw new BadRequestException(`The booking request with time from ${time.start} to ${time.end} is conflict. Please choose another time.`);
     }
   }
 
-  private async validateBookingDateTime(date: string, time: {start: string, end: string }): Promise<void> {
+  private async validateBookingDateTime(date: string, time: { start: string, end: string }): Promise<void> {
     if (!time.start.match(BookingRoomService.REGEX_24_HOUR) || !time.end.match(BookingRoomService.REGEX_24_HOUR)) {
       throw new BadRequestException("Time start or time end does not comply with 24-hour format. Please try again.");
     }

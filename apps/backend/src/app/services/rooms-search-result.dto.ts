@@ -1,4 +1,4 @@
-import { Rooms } from "../models";
+import {Rooms} from "../models";
 
 export interface RoomSearchResult {
   hits: {

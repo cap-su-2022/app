@@ -1,16 +1,10 @@
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { PaginationParams } from '../controllers/pagination.model';
-import { RolesRepository } from '../repositories/roles.repository';
-import { MasterDataAddRequestPayload } from '../payload/request/master-data-add.request.payload';
-import { Roles } from '../models/role.entity';
-import { RoleHistService } from './role-hist.service';
-import { AccountsService } from './accounts.service';
+import {BadRequestException, forwardRef, Inject, Injectable, Logger,} from '@nestjs/common';
+import {PaginationParams} from '../dto/pagination.dto';
+import {RolesRepository} from '../repositories/roles.repository';
+import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
+import {Roles} from '../models';
+import {RoleHistService} from './role-hist.service';
+import {AccountsService} from './accounts.service';
 
 @Injectable()
 export class RoleService {
@@ -21,7 +15,8 @@ export class RoleService {
     private readonly accountService: AccountsService,
     private readonly repository: RolesRepository,
     private readonly histService: RoleHistService
-  ) {}
+  ) {
+  }
 
   async getRolesByPagination(payload: PaginationParams) {
     try {
@@ -108,8 +103,6 @@ export class RoleService {
   async deleteRoleById(accountId: string, id: string) {
     try {
       const data = await this.repository.findById(id);
-      console.log('ACC: ', this.accountService);
-
       const listAccountOfThisRole =
         await this.accountService.getAccountsByRoleId(id);
       if (data === undefined) {
@@ -162,7 +155,7 @@ export class RoleService {
       this.logger.error(e);
       throw new BadRequestException(
         e.message ??
-          'Error occurred while restore the delete status of this role'
+        'Error occurred while restore the delete status of this role'
       );
     }
   }
@@ -187,6 +180,15 @@ export class RoleService {
   async findByName(name: string) {
     try {
       return this.repository.findByName(name);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async findNameByAccountId(accountId: string) {
+    try {
+      return this.repository.findNameByAccountId(accountId);
     } catch (e) {
       this.logger.error(e.message);
       throw new BadRequestException(e.message);

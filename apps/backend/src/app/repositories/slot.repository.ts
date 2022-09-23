@@ -1,7 +1,7 @@
 import {CustomRepository} from '../decorators/typeorm-ex.decorator';
 import {Slot} from '../models/slot.entity';
 import {QueryRunner, Repository} from 'typeorm';
-import {PaginationParams} from '../controllers/pagination.model';
+import {PaginationParams} from '../dto/pagination.dto';
 import {paginateRaw, Pagination} from 'nestjs-typeorm-paginate';
 import {Accounts} from '../models';
 import {SlotsRequestPayload} from '../payload/request/slot-add.request.payload';

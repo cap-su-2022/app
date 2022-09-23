@@ -1,6 +1,6 @@
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Repository } from 'typeorm';
-import { RoomTypeHist, RoomType } from '../models';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {Repository} from 'typeorm';
+import {RoomType, RoomTypeHist} from '../models';
 
 @CustomRepository(RoomTypeHist)
 export class RoomTypeHistRepository extends Repository<RoomTypeHist> {
@@ -15,9 +15,9 @@ export class RoomTypeHistRepository extends Repository<RoomTypeHist> {
 
   async deleteAllHist(id: string) {
     return await this.createQueryBuilder('room_type_hist')
-       .delete()
-       .where('room_type_hist.room_type_id = :id', { id: id })
-       .useTransaction(true)
-       .execute();
-   }
+      .delete()
+      .where('room_type_hist.room_type_id = :id', {id: id})
+      .useTransaction(true)
+      .execute();
+  }
 }

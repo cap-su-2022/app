@@ -1,20 +1,14 @@
 import {Brackets, QueryRunner, Repository} from 'typeorm';
-import {
-  Accounts,
-  BookingRequest,
-  BookingRequestDevices,
-  Rooms,
-  RoomType,
-} from '../models';
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { BookingRoomStatus } from '../enum/booking-room-status.enum';
-import { IPaginationMeta, paginateRaw } from 'nestjs-typeorm-paginate';
-import { Slot } from '../models/slot.entity';
-import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
-import { BookingReason } from '../models/booking-reason.entity';
-import { BadRequestException } from '@nestjs/common';
-import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
-import { BookingRoomPaginationParams } from '../controllers/booking-room-pagination.model';
+import {Accounts, BookingRequest, BookingRequestDevices, Rooms, RoomType,} from '../models';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {BookingRoomStatus} from '../enum/booking-room-status.enum';
+import {IPaginationMeta, paginateRaw} from 'nestjs-typeorm-paginate';
+import {Slot} from '../models/slot.entity';
+import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.payload';
+import {BookingReason} from '../models/booking-reason.entity';
+import {BadRequestException} from '@nestjs/common';
+import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
+import {BookingRoomPaginationParams} from '../dto/booking-room-pagination.dto';
 
 @CustomRepository(BookingRequest)
 export class BookingRoomRepository extends Repository<BookingRequest> {
@@ -391,7 +385,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     timeEnd: string;
     status: string;
   }[]> {
-    console.log(userId);
     const query = this.createQueryBuilder('booking_request')
       .select('booking_request.id', 'id')
       .addSelect('booking_request.checkin_time', 'timeStart')
@@ -1029,8 +1022,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       role === 'Librarian' ||
       role === 'System Admin'
     ) {
-      console.log('CANCELED');
-
       return await this.save({
         ...oldData,
         status: 'CANCELLED',

@@ -1,6 +1,6 @@
 import {CustomRepository} from '../decorators/typeorm-ex.decorator';
 import {Repository} from 'typeorm';
-import {PaginationParams} from '../controllers/pagination.model';
+import {PaginationParams} from '../dto/pagination.dto';
 import {paginateRaw, Pagination} from 'nestjs-typeorm-paginate';
 import {BookingReason} from '../models/booking-reason.entity';
 import {Accounts} from '../models';
@@ -197,6 +197,6 @@ export class BookingReasonRepository extends Repository<BookingReason> {
     return await this.createQueryBuilder('booking_reason')
       .select('booking_reason.name', 'name')
       .where('booking_reason.id = :id', {id: id})
-      .getRawOne<{name: string}>().then((br) => br?.name);
+      .getRawOne<{ name: string }>().then((br) => br?.name);
   }
 }

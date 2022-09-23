@@ -1,4 +1,4 @@
-import { DocumentBuilder } from '@nestjs/swagger';
+import {DocumentBuilder} from '@nestjs/swagger';
 
 export const SWAGGER_CONFIG = {
   contextPath: '/',

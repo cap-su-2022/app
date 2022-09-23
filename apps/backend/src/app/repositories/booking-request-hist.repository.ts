@@ -1,6 +1,6 @@
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { QueryRunner, Repository } from 'typeorm';
-import { BookingRequest, BookingRequestHist } from '../models';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {QueryRunner, Repository} from 'typeorm';
+import {BookingRequest, BookingRequestHist} from '../models';
 
 @CustomRepository(BookingRequestHist)
 export class BookingRequestHistRepository extends Repository<BookingRequestHist> {

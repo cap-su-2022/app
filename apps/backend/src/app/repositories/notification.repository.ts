@@ -1,13 +1,13 @@
-import { QueryRunner, Repository } from 'typeorm';
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import { Notification } from '../models/notification.entity';
+import {QueryRunner, Repository} from 'typeorm';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {Notification} from '../models/notification.entity';
 
 @CustomRepository(Notification)
 export class NotificationRepository extends Repository<Notification> {
   existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('noti')
       .select('COUNT(1)', 'count')
-      .where('noti.id = :id', { id: id })
+      .where('noti.id = :id', {id: id})
       .getRawOne()
       .then((data) => data?.count > 0);
   }
@@ -19,7 +19,7 @@ export class NotificationRepository extends Repository<Notification> {
       .addSelect('noti.message', 'message')
       .addSelect('noti.created_at', 'createdAt')
       // .addSelect('noti.receiver', 'receiver')
-      .where('noti.id = :id', { id: id })
+      .where('noti.id = :id', {id: id})
       .getRawOne<Notification>();
   }
 

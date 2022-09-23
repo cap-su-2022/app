@@ -11,20 +11,13 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import {PaginationParams} from './pagination.model';
-import {User} from '../decorators/keycloak-user.decorator';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {PaginationParams} from '../dto/pagination.dto';
+import {Roles, User} from '../decorators';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
 import {RoleService} from '../services/role.service';
-import {
-  ApiBearerAuth,
-  ApiOperation, ApiParam,
-  ApiProduces,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
-import {Role} from '../enum/roles.enum';
-import {Roles} from '../decorators/role.decorator';
+import {ApiBearerAuth, ApiOperation, ApiParam, ApiProduces, ApiResponse, ApiTags,} from '@nestjs/swagger';
+import {PathLoggerInterceptor} from '../interceptors';
+import {Role} from '../enum';
 import {MasterDataAddRequestPayload} from '../payload/request/master-data-add.request.payload';
 
 @Controller('/v1/roles')

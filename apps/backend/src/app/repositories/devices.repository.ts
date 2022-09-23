@@ -1,23 +1,18 @@
-import { FindOneOptions, QueryRunner, Repository, UpdateResult } from 'typeorm';
-import { Accounts, Devices, Rooms, RoomType } from '../models';
-import { RepositoryPaginationPayload } from '../models/search-pagination.payload';
-import { AddDeviceRequest, UpdateDeviceRequest } from '@app/models';
-import { CustomRepository } from '../decorators/typeorm-ex.decorator';
-import {
-  IPaginationMeta,
-  paginateRaw,
-  Pagination,
-} from 'nestjs-typeorm-paginate';
-import { DeviceType } from '../models/device-type.entity';
-import { DevicesPaginationParams } from '../controllers/devices-pagination.model';
-import { DataAddRequestPayload } from '../payload/request/data-add.request.payload';
+import {QueryRunner, Repository} from 'typeorm';
+import {Accounts, Devices, Rooms} from '../models';
+import {AddDeviceRequest} from '@app/models';
+import {CustomRepository} from '../decorators/typeorm-ex.decorator';
+import {paginateRaw,} from 'nestjs-typeorm-paginate';
+import {DeviceType} from '../models/device-type.entity';
+import {DevicesPaginationParams} from '../dto/devices-pagination.dto';
+import {DataAddRequestPayload} from '../payload/request/data-add.request.payload';
 
 @CustomRepository(Devices)
 export class DevicesRepository extends Repository<Devices> {
   async existsById(id: string): Promise<boolean> {
     return this.createQueryBuilder('devices')
       .select('COUNT(1)', 'count')
-      .where('devices.id = :id', { id: id })
+      .where('devices.id = :id', {id: id})
       .getRawOne()
       .then((data) => data?.count > 0);
   }
@@ -36,7 +31,7 @@ export class DevicesRepository extends Repository<Devices> {
   async isExistedByNameActive(name: string): Promise<boolean> {
     return this.createQueryBuilder('devices')
       .select('COUNT(devices.name)')
-      .where('devices.name = :name', { name })
+      .where('devices.name = :name', {name})
       .getRawOne()
       .then((data) => data['count'] > 0);
   }
@@ -45,7 +40,7 @@ export class DevicesRepository extends Repository<Devices> {
     return this.createQueryBuilder('device')
       .select('device.id', 'id')
       .where('device.deleted_at IS NOT NULL')
-      .andWhere('device.name = :name', { name })
+      .andWhere('device.name = :name', {name})
       .getRawOne();
   }
 
@@ -90,7 +85,7 @@ export class DevicesRepository extends Repository<Devices> {
         dir ? (dir as 'ASC' | 'DESC') : ('ASC' as 'ASC' | 'DESC')
       );
     if (search) {
-      query.andWhere('device.name ILIKE :search', { search: `%${search}%` });
+      query.andWhere('device.name ILIKE :search', {search: `%${search}%`});
     }
 
     return query.getRawMany<Devices>();
@@ -105,7 +100,7 @@ export class DevicesRepository extends Repository<Devices> {
       .innerJoin(DeviceType, 'dt', 'dt.id = device.type')
       .where(`device.deleted_at IS NULL`)
       .andWhere(`device.disabled_at IS NULL`)
-      .andWhere('device.type = :type', { type: deviceTypeId })
+      .andWhere('device.type = :type', {type: deviceTypeId})
 
       .getRawMany<Devices>();
   }
@@ -130,7 +125,7 @@ export class DevicesRepository extends Repository<Devices> {
       .innerJoin(DeviceType, 'dt', 'dt.id = devices.type')
       // .where('devices.disabled_at IS NULL')
       .where('devices.deleted_at IS NULL')
-      .andWhere('devices.id = :deviceId', { deviceId: id })
+      .andWhere('devices.id = :deviceId', {deviceId: id})
       .getRawOne<Devices>();
   }
 
@@ -202,7 +197,7 @@ export class DevicesRepository extends Repository<Devices> {
   async checkIfDeviceIsDeletedById(id: string): Promise<boolean> {
     return this.createQueryBuilder('devices')
       .select('devices.deleted_at')
-      .where('devices.id = :id', { id: id })
+      .where('devices.id = :id', {id: id})
       .getRawOne<boolean>()
       .then((data) => (data ? data['deleted_at'] : true));
   }
@@ -210,7 +205,7 @@ export class DevicesRepository extends Repository<Devices> {
   async checkIfDeviceIsDisabledById(id: string): Promise<boolean> {
     return this.createQueryBuilder('devices')
       .select('devices.disabled_at')
-      .where('devices.id = :id', { id: id })
+      .where('devices.id = :id', {id: id})
       .getRawOne<boolean>()
       .then((data) => (data ? data['disabled_at'] : true));
   }
@@ -221,7 +216,7 @@ export class DevicesRepository extends Repository<Devices> {
         disabledBy: accountId,
         disabledAt: new Date(),
       })
-      .where('devices.id = :id', { id: id })
+      .where('devices.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isDisabled.affected > 0) {
@@ -245,7 +240,7 @@ export class DevicesRepository extends Repository<Devices> {
       .leftJoin(DeviceType, 'dt', 'devices.type = dt.id')
       .where(`devices.deleted_at IS NULL`)
       .andWhere(`devices.disabled_at IS NOT NULL`)
-      .andWhere('devices.name ILIKE :search', { search: `%${search.trim()}%` })
+      .andWhere('devices.name ILIKE :search', {search: `%${search.trim()}%`})
       .getRawMany<Rooms>();
   }
 
@@ -257,7 +252,7 @@ export class DevicesRepository extends Repository<Devices> {
         updatedAt: new Date(),
         updatedBy: accountId,
       })
-      .where('devices.id = :id', { id: id })
+      .where('devices.id = :id', {id: id})
       .useTransaction(true)
       .execute();
     if (isRestored.affected > 0) {
@@ -296,7 +291,7 @@ export class DevicesRepository extends Repository<Devices> {
       .innerJoin(DeviceType, 'dt', 'dt.id = devices.type')
       .where(`devices.deleted_at IS NOT NULL`)
       .andWhere(`devices.disabled_at IS NULL`)
-      .andWhere('devices.name ILIKE :name', { name: `%${search.trim()}%` })
+      .andWhere('devices.name ILIKE :name', {name: `%${search.trim()}%`})
       .getRawMany<Devices>();
   }
 
@@ -333,7 +328,7 @@ export class DevicesRepository extends Repository<Devices> {
     const response = await this.createQueryBuilder('devices')
       .select('devices.id', 'id')
       .where('id IN (:...ids)', {ids: deviceIds})
-      .getRawMany<{id: string}>();
+      .getRawMany<{ id: string }>();
     return response.map((d) => d.id);
   }
 }

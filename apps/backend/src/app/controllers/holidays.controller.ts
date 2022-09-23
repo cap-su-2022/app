@@ -1,26 +1,13 @@
-import {HolidaysService} from "../services/holidays.service";
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
-  Query,
-  UseInterceptors
-} from "@nestjs/common";
+import {HolidaysService} from "../services";
+import {Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, UseInterceptors} from "@nestjs/common";
 import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags} from "@nestjs/swagger";
-import {Roles} from "../decorators/role.decorator";
-import {Role} from "../enum/roles.enum";
-import {User} from "../decorators/keycloak-user.decorator";
-import {KeycloakUserInstance} from "../dto/keycloak.user";
+import {Roles, User} from "../decorators";
+import {Role} from "../enum";
+import {KeycloakUserInstance} from "../dto/keycloak-user.dto";
 import {Holidays, Rooms} from "../models";
 import {HolidayAddRequestPayload} from "../payload/request/holidays-add.request.payload";
-import {PathLoggerInterceptor} from "../interceptors/path-logger.interceptor";
-import {PaginationParams} from "./pagination.model";
+import {PathLoggerInterceptor} from "../interceptors";
+import {PaginationParams} from "../dto/pagination.dto";
 
 @Controller('/v1/holidays')
 @ApiBearerAuth()

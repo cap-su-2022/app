@@ -12,17 +12,16 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import {BookingRoomService} from '../services';
-import {User} from '../decorators/keycloak-user.decorator';
+import {Roles, User} from '../decorators';
 import {ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags,} from '@nestjs/swagger';
-import {PathLoggerInterceptor} from '../interceptors/path-logger.interceptor';
-import {Roles} from '../decorators/role.decorator';
-import {Role} from '../enum/roles.enum';
-import {KeycloakUserInstance} from '../dto/keycloak.user';
+import {PathLoggerInterceptor} from '../interceptors';
+import {Role} from '../enum';
+import {KeycloakUserInstance} from '../dto/keycloak-user.dto';
 import {BookingRequest} from '../models';
 import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.payload';
 import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
 import {CancelRequestPayload} from '../payload/request/booking-request-cancel.payload';
-import {BookingRoomPaginationParams} from './booking-room-pagination.model';
+import {BookingRoomPaginationParams} from '../dto/booking-room-pagination.dto';
 import {AutoRoomBookingRequestPayload} from "../payload/request/auto-booking-request.payload";
 
 @Controller('/v1/booking-room')
@@ -31,7 +30,8 @@ import {AutoRoomBookingRequestPayload} from "../payload/request/auto-booking-req
 @ApiBearerAuth()
 export class BookingRoomController {
   constructor(private readonly service: BookingRoomService
-  ) {}
+  ) {
+  }
 
   @Get('search')
   @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN, Role.APP_STAFF)
@@ -484,7 +484,6 @@ export class BookingRoomController {
     @Query() filters: GetAllBookingRequestsFilter,
     @User() user: KeycloakUserInstance
   ) {
-    console.log("RUN HERE", filters)
     return this.service.getAllBookingRoomsRequestsByFilter(
       user.account_id,
       filters
@@ -514,7 +513,6 @@ export class BookingRoomController {
     description: 'Insufficient privileges',
   })
   getBookingRoomById(@Param('id') id: string) {
-    console.log("CMMM")
     return this.service.getBookingRoomById(id);
   }
 
@@ -961,10 +959,9 @@ export class BookingRoomController {
   isHoliday(
     @Query('dateStart', new DefaultValuePipe('')) dateStart: string,
     @Query('dateEnd', new DefaultValuePipe('')) dateEnd: string
-  ){
+  ) {
     return this.service.isHoliday(dateStart, dateEnd);
   }
-
 
 
   // @Put('reject-checkout/:id')
@@ -1152,7 +1149,7 @@ export class BookingRoomController {
     @User() user: KeycloakUserInstance,
     @Param('id') bookingRequestId: string,
     @Body()
-    checkinSignature: {
+      checkinSignature: {
       signature: string;
     }
   ) {
@@ -1245,7 +1242,7 @@ export class BookingRoomController {
     @User() user: KeycloakUserInstance,
     @Param('id') bookingRequestId: string,
     @Body()
-    checkinSignature: {
+      checkinSignature: {
       signature: string;
     }
   ) {
