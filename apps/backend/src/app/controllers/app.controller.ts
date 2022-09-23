@@ -1,7 +1,7 @@
 import {Controller, Get, HttpStatus, UseInterceptors} from "@nestjs/common";
 import {AppService} from "../services";
 import {ApiCreatedResponse, ApiTags} from "@nestjs/swagger";
-import {PathLoggerInterceptor} from "../interceptors/path-logger.interceptor";
+import {PathLoggerInterceptor} from "../interceptors";
 
 @Controller()
 @ApiTags("Application")
