@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import {useState, useRef, useEffect} from 'react';
 import {
   NumberInput,
   Group,
@@ -8,17 +8,24 @@ import {
   createStyles,
   Button,
 } from '@mantine/core';
-import { FPT_ORANGE_COLOR } from '@app/constants';
-import { useAppDispatch } from '../../redux/hooks';
-import { fetchDevicesName } from '../../redux/features/room-booking/thunk/fetch-devices-name';
-import { Plus, X } from 'tabler-icons-react';
+import {FPT_ORANGE_COLOR} from '@app/constants';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {fetchDevicesName} from '../../redux/features/room-booking/thunk/fetch-devices-name';
+import {Plus, X} from 'tabler-icons-react';
+import {FormikProps} from "formik";
+import {useAutoAnimate} from "@formkit/auto-animate/react";
+import autoAnimate from "@formkit/auto-animate";
 
 interface SelectDevicesComponentProps {
-    deviceNum: number;
-    currentKey: number;
-    setDeviceNum(): void;
-    removeItem(val): void;
+  formik: FormikProps<any>;
+  deviceNum: number;
+  currentKey: number;
+
+  setDeviceNum(): void;
+
+  removeItem(val): void;
 }
+
 export default function SelectDevicesComponent(props: SelectDevicesComponentProps) {
   const [value, setValue] = useState(0);
   const handlers = useRef<NumberInputHandlers>();
@@ -38,7 +45,7 @@ export default function SelectDevicesComponent(props: SelectDevicesComponentProp
     loadDeviceName();
   }, [dispatch]);
 
-  const { classes } = useStyles();
+  const {classes} = useStyles();
 
   return (
     <div className={classes.displayFex}>
@@ -72,7 +79,7 @@ export default function SelectDevicesComponent(props: SelectDevicesComponentProp
           max={10}
           min={0}
           step={1}
-          styles={{ input: { width: 54, textAlign: 'center' } }}
+          styles={{input: {width: 54, textAlign: 'center'}}}
         />
 
         <ActionIcon
@@ -84,11 +91,12 @@ export default function SelectDevicesComponent(props: SelectDevicesComponentProp
         </ActionIcon>
       </Group>
       <Button onClick={() => props.setDeviceNum()} radius="md" className={classes.buttonComponent}>
-        <Plus />
+        <Plus/>
       </Button>
-      {props.deviceNum > 1 ? <Button onClick={() => props.removeItem(props.currentKey)} radius="md" className={classes.buttonComponent}>
-        <X />
-      </Button> : null}
+      {props.deviceNum > 1 ?
+        <Button onClick={() => props.removeItem(props.currentKey)} radius="md" className={classes.buttonComponent}>
+          <X/>
+        </Button> : null}
     </div>
   );
 }
