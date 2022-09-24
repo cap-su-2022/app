@@ -1,8 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
+  ActionIcon,
   Button,
-  createStyles,
-  InputWrapper,
+  createStyles, Group,
+  InputWrapper, NumberInput, NumberInputHandlers, Select,
   Textarea,
   TextInput,
 } from '@mantine/core';
@@ -11,13 +12,17 @@ import {
   ChevronsRight,
   CircleCheck,
   ClipboardText,
-  Devices,
+  Devices, Pencil, Plus,
   X,
 } from 'tabler-icons-react';
 import {useAppSelector} from '../../redux/hooks';
 import dayjs from 'dayjs';
 import autoAnimate from '@formkit/auto-animate';
 import ReactStars from 'react-stars';
+import {useAutoAnimate} from "@formkit/auto-animate/react";
+import {FormikProps, useFormik} from "formik";
+import {showNotification} from "@mantine/notifications";
+import {FPT_ORANGE_COLOR} from '@app/constants';
 
 interface UserInfoModel {
   avatar: string;
@@ -48,6 +53,7 @@ interface RequestInfoComponentProps {
   toggleSendFeedbackModalShown(): void;
 }
 
+
 const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
   const {classes} = useStyles();
   const requestBooking = useAppSelector(
@@ -56,6 +62,29 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
   const [isShowListDevice, setShowListDevice] = useState(false);
   const [isShowFeedback, setShowFeedback] = useState(false);
   const parent = useRef(null);
+
+  const [choosedDevice, setChoosedDevice] = useState<any[]>(
+    requestBooking.listDevice || []
+  );
+  const [device, setDevice] = useState('');
+
+  const handlers = useRef<NumberInputHandlers>();
+
+  const [deviceNames, setDeviceNames] = useState<any[]>(
+    useAppSelector((state) => state.device.deviceNames)
+  );
+
+  // useEffect(() => {
+  //   console.log(choosedDevice)
+  //   console.log(deviceNames)
+  //   if (choosedDevice.length) {
+  //     const deviceNamesUpdated = deviceNames.filter((deviceName) =>
+  //       choosedDevice.every((choosed) => choosed.id != deviceName.value)
+  //     );
+  //     setDeviceNames(deviceNamesUpdated);
+  //   }
+  // }, []);
+
 
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
@@ -66,21 +95,33 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
 
+
   const RenderDeviceButton: React.FC = () => {
-    if (requestBooking.listDevice.length > 0) {
-      return (
-        <Button
-          onClick={() => setShowListDevice(!isShowListDevice)}
-          variant="outline"
-          color={'blue'}
-          leftIcon={<Devices/>}
-        >
-          Device
-        </Button>
-      );
-    } else {
-      return null;
-    }
+
+
+    const dropdown = useRef(null);
+    const [show, setShow] = useState(false);
+
+
+    const [parent] = useAutoAnimate();
+
+    useEffect(() => {
+      parent.current && autoAnimate(dropdown.current);
+    }, [parent]);
+    const reveal = () => setShow(!show);
+
+
+    return (
+      <Button
+        onClick={() => setShowListDevice(!isShowListDevice)}
+        variant="outline"
+        color={'blue'}
+        leftIcon={<Devices/>}
+      >
+        Devices
+      </Button>
+    );
+
   };
 
   const ButtonRender = (status: string) => {
@@ -234,16 +275,193 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         }
     }
   };
+  const remove = (item) => {
+    for (const d of choosedDevice) {
+      if (d.id === item) {
+        setDeviceNames((devicename) => [
+          ...devicename,
+          {value: d.id, label: d.deviceName},
+        ]);
+        break;
+      }
 
-  const listDeviceDiv =
-    requestBooking.listDevice && requestBooking.listDevice.length > 0
-      ? requestBooking.listDevice.map((device) => (
-        <div key={device.id} className={classes.deviceRow}>
-          <p className={classes.col1}>{device.deviceName}</p>
-          <p className={classes.col2}>{device.deviceQuantity}</p>
+    }
+    const chooesdDeviceUpdated = choosedDevice.filter((d) => d.id !== item);
+
+    setChoosedDevice(chooesdDeviceUpdated);
+  };
+
+
+  const ListDeviceDiv = () => {
+    const [value, setValue] = useState(0);
+    const add = () => {
+      if (value === 0 || !value) {
+        showNotification({
+          id: 'miss-data',
+          color: 'red',
+          title: 'Quantity missed',
+          message: 'Please choose quantity of device you want to use',
+          icon: <X/>,
+          autoClose: 3000,
+        });
+      } else if (!device) {
+        showNotification({
+          id: 'miss-data',
+          color: 'red',
+          title: 'Device missed',
+          message: 'Please choose device you want to use',
+          icon: <X/>,
+          autoClose: 3000,
+        });
+      } else {
+        if (deviceNames.length) {
+          for (const de of deviceNames) {
+            if (de.value === device) {
+              setChoosedDevice((devices) => [
+                ...devices,
+                {deviceName: de.label, deviceQuantity: value},
+              ]);
+              setDevice('');
+              setValue(0);
+              break;
+            }
+          }
+          const deviceNamesUpdated = deviceNames.filter(
+            (deviceName) => deviceName.value !== device
+          );
+          setDeviceNames(deviceNamesUpdated);
+        } else {
+          showNotification({
+            id: 'miss-data',
+            color: 'red',
+            title: 'Out of device!',
+            message: 'Dont have any device to choose',
+            icon: <X/>,
+            autoClose: 3000,
+          });
+          alert('Out of device!');
+        }
+      }
+    };
+
+    const handleKeypress = (e) => {
+      if (e.which === 13) {
+        add();
+      }
+    };
+
+
+    useEffect(() => {
+      if (device) {
+        setValue(1);
+      } else {
+        setValue(0);
+      }
+    }, [device]);
+
+    return (
+      <>
+        <div className={classes.displayFex}>
+          <Select
+            id="device"
+            name="device"
+            label="Select device (optional)"
+            onChange={setDevice}
+            value={device}
+            transition="pop-top-left"
+            transitionDuration={80}
+            transitionTimingFunction="ease"
+            dropdownPosition="bottom"
+            radius="md"
+            data={deviceNames}
+            searchable={true}
+            className={classes.selectComponent}
+            onKeyPress={handleKeypress}
+          />
+          <Group spacing={5} className={classes.groupComponent}>
+            <ActionIcon
+              size={35}
+              variant="default"
+              onClick={() => handlers.current.decrement()}
+            >
+              –
+            </ActionIcon>
+
+            <NumberInput
+              hideControls
+              required
+              value={value}
+              onChange={(val) => {
+                console.log(val)
+                setValue(val)
+              }}
+              handlersRef={handlers}
+              max={30}
+              min={0}
+              step={1}
+              styles={{input: {width: 54, textAlign: 'center'}}}
+            />
+
+            <ActionIcon
+              size={35}
+              variant="default"
+              onClick={() => handlers.current.increment()}
+            >
+              +
+            </ActionIcon>
+          </Group>
+          <Button
+            radius="md"
+            className={classes.buttonComponent}
+            onClick={() => add()}
+          >
+            <Plus/>
+          </Button>
         </div>
-      ))
-      : null;
+        {
+          choosedDevice && choosedDevice.length > 0
+            ? choosedDevice.map((device) => (
+
+              <div key={device.id} className={classes.item}>
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                  <div style={{margin: ' 0 10px'}}>{device.deviceQuantity}</div>
+                  <div>{device.deviceName}</div>
+                </div>
+                <Button
+                  variant="subtle"
+                  color="red"
+                  size="xs"
+                  onClick={() => remove(device.id)}
+                >
+                  <X color="red" size={20} strokeWidth={2.5}/>
+                </Button>
+              </div>
+
+
+
+              // <div key={device.id} className={classes.deviceRow}>
+              //   <p className={classes.col1}>{device.deviceName}</p>
+              //   <p className={classes.col2}>{device.deviceQuantity}</p>
+              // </div>
+            ))
+            : null
+        }
+        <Button
+          radius="md"
+          className={classes.buttonComponent}
+          onClick={() => update()}
+          style={{backgroundColor: FPT_ORANGE_COLOR, float: "right"}}
+        >
+          <Pencil/> UPDATE
+        </Button>
+      </>
+    )
+  }
+
+  const update = () => {
+
+  }
+
 
   const FeedbackDiv: React.FC<{ feedback: any }> = (props) => {
     return (
@@ -413,16 +631,14 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
           {ButtonRender(requestBooking.status)}
         </div>
       </div>
-      {isShowListDevice &&
-        requestBooking.listDevice &&
-        requestBooking.listDevice.length > 0 && (
-          <div>
-            <div style={{marginBottom: 35}}>
-              <b>LIST DEVICES</b>
-            </div>
-            {listDeviceDiv}
+      {isShowListDevice ? (
+        <div>
+          <div style={{marginBottom: 35}}>
+            <b>LIST DEVICES</b>
           </div>
-        )}
+          <ListDeviceDiv/>
+        </div>
+      ) : null}
     </div>
   );
 };
@@ -452,6 +668,11 @@ const useStyles = createStyles({
     margin: 10,
     flex: 1,
   },
+  displayFex: {
+    display: 'flex',
+    alignItems: 'end',
+    marginBottom: 20,
+  },
   deviceRow: {
     borderRadius: '3px',
     padding: '10px 15px',
@@ -467,6 +688,27 @@ const useStyles = createStyles({
   },
   col2: {
     flexBasis: '20%',
+  },
+  item: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '0.5em',
+    backgroundColor: 'white',
+    marginBottom: '0.5em',
+    borderRadius: '0.5em',
+    boxShadow: '0 0 0.5em rgba(0, 0, 0, 0.1)',
+    fontSize: '0.875em',
+  },
+  groupComponent: {
+    marginRight: 10,
+  },
+  selectComponent: {
+    width: '200px',
+    marginRight: 10,
+  },
+  buttonComponent: {
+    marginRight: 10,
+    backgroundColor: 'red',
   },
 });
 

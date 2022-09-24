@@ -15,7 +15,8 @@ import { FormikProps } from 'formik';
 import { showNotification } from '@mantine/notifications';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import autoAnimate from '@formkit/auto-animate';
-import { useAppSelector } from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {fetchDevicesName} from "../../redux/features/room-booking/thunk/fetch-devices-name";
 
 interface ChooseDeviceModalProps {
   formik: FormikProps<any>;
