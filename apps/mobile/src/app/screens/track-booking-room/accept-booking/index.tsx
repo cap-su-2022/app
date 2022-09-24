@@ -81,7 +81,6 @@ const AcceptBooking: React.FC<any> = () => {
       transports: ['websocket'],
     });
   }, []);
-
   useEffect(() => {
     dispatch(fetchAllSlots())
       .unwrap()
@@ -706,10 +705,7 @@ const AcceptBooking: React.FC<any> = () => {
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Check-in Time</Text>
                 <Text style={styles.valueText}>
-                  {timeSlotCheckin} -{' '}
-                  {dayjs(new Date(bookingRoom.checkinDate)).format(
-                    'DD/MM/YYYY'
-                  )}
+                  {bookingRoom.checkinTime.slice(0,5)}
                 </Text>
               </View>
 
@@ -718,11 +714,7 @@ const AcceptBooking: React.FC<any> = () => {
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Check-out Time</Text>
                 <Text style={styles.valueText}>
-                  {' '}
-                  {timeSlotCheckout} -{' '}
-                  {dayjs(new Date(bookingRoom.checkinDate)).format(
-                    'DD/MM/YYYY'
-                  )}
+                  {bookingRoom.checkoutTime.slice(0,5)}
                 </Text>
               </View>
 
@@ -743,7 +735,9 @@ const AcceptBooking: React.FC<any> = () => {
                   <View style={styles.dataRowContainer}>
                     <Text style={styles.titleText}>Checked-out At</Text>
                     <Text style={styles.valueText}>
-                      {bookingRoom.checkoutSlot}
+                      {dayjs(new Date(bookingRoom.checkoutAt)).format(
+                        'DD/MM/YYYY HH:mm'
+                      )}
                     </Text>
                   </View>
                 </View>

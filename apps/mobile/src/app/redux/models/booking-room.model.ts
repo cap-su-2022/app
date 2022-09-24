@@ -16,6 +16,7 @@ export interface BookingRoom {
   checkoutTime: string;
   reasonType: string;
   checkinAt: string;
+  checkoutAt: string;
   requestedAt: string;
   requestedById: string;
 }

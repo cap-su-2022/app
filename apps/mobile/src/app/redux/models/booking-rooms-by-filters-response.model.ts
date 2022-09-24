@@ -7,4 +7,6 @@ export interface BookingRoomsByFiltersResponse {
   slotStart: number;
   slotEnd: number;
   requestedBy: string;
+  checkinTime: string;
+  checkoutTime: string;
 }
