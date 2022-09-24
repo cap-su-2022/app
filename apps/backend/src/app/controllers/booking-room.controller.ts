@@ -817,6 +817,35 @@ export class BookingRoomController {
     return this.service.addMultiRequest(request, user.account_id);
   }
 
+  @Put('update-list-device')
+  @HttpCode(HttpStatus.OK)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
+  @ApiOperation({
+    summary: 'Update list device of request booking',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully update list device of request',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Request payload for request is not validated',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is invalidated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Insufficient privileges',
+  })
+  updateListDevice(
+    @User() user: KeycloakUserInstance,
+    @Body() request: {requestId: string, listDevice: any[]}
+  ) {
+    return this.service.updateListDevice(request, user.account_id);
+  }
+
   // @Put('accept/:id')
   // @Roles(Role.APP_LIBRARIAN, Role.APP_MANAGER, Role.APP_ADMIN)
   // @ApiOperation({

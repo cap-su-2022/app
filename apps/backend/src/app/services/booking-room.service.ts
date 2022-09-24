@@ -1,27 +1,33 @@
-import {BadRequestException, forwardRef, Inject, Injectable, Logger,} from '@nestjs/common';
-import {RoomsService} from './rooms.service';
-import {BookingRoomRepository} from '../repositories';
-import {AccountsService} from './accounts.service';
-import {HolidaysService} from './holidays.service';
-import {BookingRequest} from '../models';
-import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.payload';
-import {BookingRequestHistService} from './booking-room-hist.service';
-import {SlotService} from './slot.service';
-import {DataSource, QueryRunner} from 'typeorm';
-import {BookingRoomDevicesService} from './booking-request-devices.service';
-import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
-import {NotificationService} from './notification.service';
-import {BookingRoomPaginationParams} from '../dto/booking-room-pagination.dto';
-import {BookingFeedbackService} from './booking-feedback.service';
-import {getConfigFileLoaded} from '../controllers/global-config.controller';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import { RoomsService } from './rooms.service';
+import { BookingRoomRepository } from '../repositories';
+import { AccountsService } from './accounts.service';
+import { HolidaysService } from './holidays.service';
+import { BookingRequest } from '../models';
+import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
+import { BookingRequestHistService } from './booking-room-hist.service';
+import { SlotService } from './slot.service';
+import { DataSource, QueryRunner } from 'typeorm';
+import { BookingRoomDevicesService } from './booking-request-devices.service';
+import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
+import { NotificationService } from './notification.service';
+import { BookingRoomPaginationParams } from '../dto/booking-room-pagination.dto';
+import { BookingFeedbackService } from './booking-feedback.service';
+import { getConfigFileLoaded } from '../controllers/global-config.controller';
 import {
   AutoRoomBookingDevice,
   AutoRoomBookingRequest,
   AutoRoomBookingRequestPayload,
   AutoRoomBookingResponsePayload,
-} from "../payload/request/auto-booking-request.payload";
-import {DevicesService} from "./devices.service";
-import {BookingReasonService} from "./booking-reason.service";
+} from '../payload/request/auto-booking-request.payload';
+import { DevicesService } from './devices.service';
+import { BookingReasonService } from './booking-reason.service';
 import dayjs = require('dayjs');
 
 @Injectable()
@@ -49,12 +55,10 @@ export class BookingRoomService {
     @Inject(forwardRef(() => HolidaysService))
     private readonly holidaysService: HolidaysService,
     @Inject(forwardRef(() => DevicesService))
-
     private readonly devicesService: DevicesService,
     @Inject(forwardRef(() => BookingReasonService))
-    private readonly bookingReasonService: BookingReasonService,
-  ) {
-  }
+    private readonly bookingReasonService: BookingReasonService
+  ) {}
 
   async getStatistics() {
     const result = this.getExampleStatistics();
@@ -203,7 +207,7 @@ export class BookingRoomService {
       this.logger.error(e.message);
       throw new BadRequestException(
         e.message ||
-        'An error occurred while getting request by room id ' + roomId
+          'An error occurred while getting request by room id ' + roomId
       );
     }
   }
@@ -739,9 +743,8 @@ export class BookingRoomService {
       const listRequestInDayRange =
         await this.repository.getListRequestInDayRange(
           payload.dateStart,
-          payload.dateEnd,
+          payload.dateEnd
         );
-
 
       return listRequestInDayRange;
     } catch (e) {
@@ -1003,6 +1006,35 @@ export class BookingRoomService {
       await queryRunner.commitTransaction();
 
       return listRequestAdded;
+    } catch (e) {
+      this.logger.error(e.message);
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async updateListDevice(
+    payload: { requestId: string; listDevice: any[] },
+    userId: string
+  ) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      await this.bookingRoomDeviceService.removeDeviceFromRequest(
+        payload.requestId,
+        queryRunner
+      );
+
+      await this.bookingRoomDeviceService.addDeviceToRequest(
+        payload.requestId,
+        payload.listDevice,
+        queryRunner
+      );
+
+      await queryRunner.commitTransaction()
     } catch (e) {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
@@ -1426,7 +1458,10 @@ export class BookingRoomService {
   //   }
   // }
 
-  async bookingRoomAutomatically(payload: AutoRoomBookingRequestPayload, userId: string): Promise<AutoRoomBookingResponsePayload[]> {
+  async bookingRoomAutomatically(
+    payload: AutoRoomBookingRequestPayload,
+    userId: string
+  ): Promise<AutoRoomBookingResponsePayload[]> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     try {
@@ -1438,7 +1473,9 @@ export class BookingRoomService {
       for (const request of payload.bookingRequests) {
         //validation
         await this.validateAutoBookingRequest(request);
-        const room = await this.findRoomExistedWithProvidedCapacity(request.capacity);
+        const room = await this.findRoomExistedWithProvidedCapacity(
+          request.capacity
+        );
 
         const bookingRequestResponse = await this.repository.createNewRequest(
           {
@@ -1460,14 +1497,15 @@ export class BookingRoomService {
           await this.bookingRoomDeviceService.addDeviceToRequest(
             bookingRequestResponse.id,
             request.devices.map((d) => {
-              return {value: d.id, quantity: d.quantity}
+              return { value: d.id, quantity: d.quantity };
             }),
             queryRunner
           );
         }
 
-
-        const bookingReasonName = await this.bookingReasonService.getNameById(payload.bookingReasonId);
+        const bookingReasonName = await this.bookingReasonService.getNameById(
+          payload.bookingReasonId
+        );
 
         result.push({
           id: bookingRequestResponse.id,
@@ -1533,75 +1571,130 @@ export class BookingRoomService {
     };
   }
 
-  private async findRoomExistedWithProvidedCapacity(capacity: number): Promise<{ id: string, roomName: string, roomType: string, capacity: number }> {
-    const room = await this.roomService.findRoomIdAndCapacityByBetweenCapacity(capacity);
+  private async findRoomExistedWithProvidedCapacity(capacity: number): Promise<{
+    id: string;
+    roomName: string;
+    roomType: string;
+    capacity: number;
+  }> {
+    const room = await this.roomService.findRoomIdAndCapacityByBetweenCapacity(
+      capacity
+    );
     if (!room) {
-      throw new BadRequestException('No suitable room found within the provided capacity. Please try again.');
+      throw new BadRequestException(
+        'No suitable room found within the provided capacity. Please try again.'
+      );
     }
     return room;
   }
 
   private async validateAutoBookingRequest(request: AutoRoomBookingRequest) {
     await this.validateDevices(request.devices);
-    await this.validateBookingDateTime(request.date, {start: request.timeStart, end: request.timeEnd});
-    await this.validateConflictBookingTime(request.date, {start: request.timeStart, end: request.timeEnd})
+    await this.validateBookingDateTime(request.date, {
+      start: request.timeStart,
+      end: request.timeEnd,
+    });
+    await this.validateConflictBookingTime(request.date, {
+      start: request.timeStart,
+      end: request.timeEnd,
+    });
   }
 
-  private async validateConflictBookingTime(date: string, time: { start: string, end: string }) {
+  private async validateConflictBookingTime(
+    date: string,
+    time: { start: string; end: string }
+  ) {
     //fix bug
-    const isConflicted = await this.repository.isConflictWithStartEndDateTime(date, time.start, time.end);
+    const isConflicted = await this.repository.isConflictWithStartEndDateTime(
+      date,
+      time.start,
+      time.end
+    );
     if (isConflicted) {
-      throw new BadRequestException(`The booking request with time from ${time.start} to ${time.end} is conflict. Please choose another time.`);
+      throw new BadRequestException(
+        `The booking request with time from ${time.start} to ${time.end} is conflict. Please choose another time.`
+      );
     }
   }
 
-  private async validateBookingDateTime(date: string, time: { start: string, end: string }): Promise<void> {
-    if (!time.start.match(BookingRoomService.REGEX_24_HOUR) || !time.end.match(BookingRoomService.REGEX_24_HOUR)) {
-      throw new BadRequestException("Time start or time end does not comply with 24-hour format. Please try again.");
+  private async validateBookingDateTime(
+    date: string,
+    time: { start: string; end: string }
+  ): Promise<void> {
+    if (
+      !time.start.match(BookingRoomService.REGEX_24_HOUR) ||
+      !time.end.match(BookingRoomService.REGEX_24_HOUR)
+    ) {
+      throw new BadRequestException(
+        'Time start or time end does not comply with 24-hour format. Please try again.'
+      );
     }
 
-    const currentDateTime = dayjs(dayjs().format("YYYY-MM-DD HH:mm"), {
-      format: "YYYY-MM-DD HH:mm",
+    const currentDateTime = dayjs(dayjs().format('YYYY-MM-DD HH:mm'), {
+      format: 'YYYY-MM-DD HH:mm',
     });
 
     const bookingDateWithTimeStart = dayjs(`${date} ${time.start}`, {
-      format: "YYYY-MM-DD HH:mm",
+      format: 'YYYY-MM-DD HH:mm',
     });
     const bookingDateWithTimeEnd = dayjs(`${date} ${time.end}`, {
-      format: "YYYY-MM-DD HH:mm",
-    })
+      format: 'YYYY-MM-DD HH:mm',
+    });
 
-    if (bookingDateWithTimeStart.isSame(bookingDateWithTimeEnd) || bookingDateWithTimeStart.isAfter(bookingDateWithTimeEnd)) {
-      throw new BadRequestException("Booking start time must not be the same or after the end time.");
+    if (
+      bookingDateWithTimeStart.isSame(bookingDateWithTimeEnd) ||
+      bookingDateWithTimeStart.isAfter(bookingDateWithTimeEnd)
+    ) {
+      throw new BadRequestException(
+        'Booking start time must not be the same or after the end time.'
+      );
     }
 
-    if (bookingDateWithTimeStart.isSame(currentDateTime) || bookingDateWithTimeStart.isBefore(currentDateTime)) {
-      throw new BadRequestException("Booking date time must not be the same or before with the current time.")
+    if (
+      bookingDateWithTimeStart.isSame(currentDateTime) ||
+      bookingDateWithTimeStart.isBefore(currentDateTime)
+    ) {
+      throw new BadRequestException(
+        'Booking date time must not be the same or before with the current time.'
+      );
     }
   }
 
   private async validateBookingReason(bookingReasonId: string): Promise<void> {
-    const isExisted = await this.bookingReasonService.existsById(bookingReasonId);
+    const isExisted = await this.bookingReasonService.existsById(
+      bookingReasonId
+    );
     if (!isExisted) {
-      throw new BadRequestException(`Booking reason does not exist with id: ${bookingReasonId}`);
+      throw new BadRequestException(
+        `Booking reason does not exist with id: ${bookingReasonId}`
+      );
     }
   }
 
-  private async validateDevices(devices: AutoRoomBookingDevice[]): Promise<void> {
+  private async validateDevices(
+    devices: AutoRoomBookingDevice[]
+  ): Promise<void> {
     if (!devices || devices.length < 1) {
       return;
     }
     const deviceIds = devices.map((d) => d.id);
     if (new Set(deviceIds).size !== deviceIds.length) {
-      throw new BadRequestException("Ids of devices are not unique. Please try again.");
+      throw new BadRequestException(
+        'Ids of devices are not unique. Please try again.'
+      );
     }
 
-    const validatedDeviceIds = await this.devicesService.findIdsByGivenIds(deviceIds);
+    const validatedDeviceIds = await this.devicesService.findIdsByGivenIds(
+      deviceIds
+    );
 
     if (validatedDeviceIds.length !== deviceIds.length) {
-      const notFoundIds = deviceIds.filter(id => !validatedDeviceIds.includes(id));
-      throw new BadRequestException(`The following devices does not exist with ids: [${notFoundIds}]`);
+      const notFoundIds = deviceIds.filter(
+        (id) => !validatedDeviceIds.includes(id)
+      );
+      throw new BadRequestException(
+        `The following devices does not exist with ids: [${notFoundIds}]`
+      );
     }
   }
-
 }

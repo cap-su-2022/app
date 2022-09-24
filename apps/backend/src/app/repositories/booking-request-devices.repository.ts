@@ -28,4 +28,13 @@ export class BookingRoomDevicesRepository extends Repository<BookingRequestDevic
       deviceQuantity: quantity,
     });
   }
+
+  async removeDeviceFromRequest(
+    bookingRequestId: string,
+    queryRunner: QueryRunner
+  ) {
+    return await queryRunner.manager.delete(BookingRequestDevices, {
+      bookingRequestId
+    });
+  }
 }
