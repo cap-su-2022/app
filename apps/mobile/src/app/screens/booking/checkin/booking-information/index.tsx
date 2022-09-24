@@ -69,7 +69,7 @@ const ReadyToCheckinBookingInformation: React.FC<
         <View style={styles.dataRowContainer}>
           <Text style={styles.titleText}>Check-in Time</Text>
           <Text style={styles.valueText}>
-            {timeSlotCheckin} -{'  '}
+            {timeSlotCheckin} {'  '}
             {dayjs(new Date(currentCheckinInformation.checkinDate)).format(
               'DD/MM/YYYY'
             )}
@@ -81,7 +81,7 @@ const ReadyToCheckinBookingInformation: React.FC<
         <View style={styles.dataRowContainer}>
           <Text style={styles.titleText}>Check-out Time</Text>
           <Text style={styles.valueText}>
-           {timeSlotCheckout} -{'  '}
+           {timeSlotCheckout} {'  '}
             {dayjs(new Date(currentCheckinInformation.checkinDate)).format(
               'DD/MM/YYYY'
             )}
