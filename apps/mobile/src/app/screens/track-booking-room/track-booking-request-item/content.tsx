@@ -13,12 +13,9 @@ const TrackBookingRequestItemContent: React.FC<
   TrackBookingRequestItemContentProps
 > = (props) => {
   const SlotRender = () => {
-    if (props.item.slotStart === props.item.slotEnd) {
-      return <Text style={styles.textValue}>Slot {props.item.slotStart}</Text>;
-    }
     return (
       <Text style={styles.textValue}>
-        Slot {props.item.slotStart} - Slot {props.item.slotEnd}
+         {props.item.checkinTime.slice(0,5)} - {props.item.checkoutTime.slice(0,5)}
       </Text>
     );
   };
@@ -44,7 +41,7 @@ const TrackBookingRequestItemContent: React.FC<
         </Text>
       </View>
       <View style={[{ marginTop: 10 }, styles.rowRender]}>
-        <Text style={styles.textTitle}>Slot:</Text>
+        <Text style={styles.textTitle}>Time:</Text>
         <SlotRender />
       </View>
     </View>
