@@ -931,6 +931,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('br.booking_reason_id', 'reasonType')
       .addSelect('br.description', 'description')
       .addSelect('br.checkedin_at', 'checkinAt')
+      .addSelect('br.checkedout_at', 'checkoutAt')
       .addSelect('bkr.name', 'reason')
       .addSelect('br.requested_at', 'requestedAt')
       .addSelect('a.username', 'requestedBy')
