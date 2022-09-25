@@ -197,8 +197,10 @@ export class BookingReasonService {
       return this.repository.permanentlyDeleteById(id);
     } catch (e) {
       this.logger.error(e.message);
-      await queryRunner.release();
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
