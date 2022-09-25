@@ -283,7 +283,9 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         break;
       }
     }
-    const chooesdDeviceUpdated = choosedDevice.filter((d) => d.deviceId !== item);
+    const chooesdDeviceUpdated = choosedDevice.filter(
+      (d) => d.deviceId !== item
+    );
 
     setChoosedDevice(chooesdDeviceUpdated);
   };
@@ -347,14 +349,26 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
     };
 
     useEffect(() => {
-      const isSame = choosedDevice.every((newDevice) =>
-        requestBooking.listDevice.some(
-          (oldDevice) => oldDevice.deviceId === newDevice.deviceId
-        )
+      const isSame1 = choosedDevice.every((newDevice) =>
+        requestBooking.listDevice.some((oldDevice) => {
+          return (
+            oldDevice.deviceId === newDevice.deviceId &&
+            oldDevice.deviceQuantity === newDevice.deviceQuantity
+          );
+        })
       );
 
-      setDisable(isSame);
-    }, [choosedDevice]);
+      const isSame2 = requestBooking.listDevice.every((oldDevice) =>
+        choosedDevice.some((newDevice) => {
+          return (
+            oldDevice.deviceId === newDevice.deviceId &&
+            oldDevice.deviceQuantity === newDevice.deviceQuantity
+          );
+        })
+      );
+
+      setDisable(isSame1 && isSame2);
+    }, []);
 
     const handleKeypress = (e) => {
       if (e.which === 13) {
