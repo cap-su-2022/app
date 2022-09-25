@@ -17,6 +17,8 @@ export interface CurrentCheckinInformation {
   requestedAt: string;
   checkinSlot: number;
   checkoutSlot: number;
+  checkinTime: string;
+  checkoutTime: string;
   acceptedAt: string;
   checkinDate: string;
   devices: Device[];

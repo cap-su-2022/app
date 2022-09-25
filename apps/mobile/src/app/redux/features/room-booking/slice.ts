@@ -87,6 +87,8 @@ interface RoomBookingCheckout {
   acceptedAt: string;
   checkinSlot: number;
   checkoutSlot: number;
+  checkinTime: string;
+  checkoutTime: string;
   checkedInAt: string;
   roomName: string;
   roomType: string;
