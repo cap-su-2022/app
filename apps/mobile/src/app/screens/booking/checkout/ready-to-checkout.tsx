@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -25,6 +26,7 @@ import { checkOutBookingRoom } from '../../../redux/features/room-booking/thunk/
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import { fetchAllSlots } from '../../../redux/features/slot';
 import SocketIOClient from 'socket.io-client/dist/socket.io.js';
+import { API_IP } from '../../../constants/constant';
 
 const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -42,8 +44,9 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
     useState(false);
 
   const socket = useMemo(() => {
-    return SocketIOClient('http://34.142.156.212:5000/booking', {
+    return SocketIOClient(`http://${API_IP}:5000/booking`, {
       jsonp: false,
+      transports: ['websocket'],
     });
   }, []);
 

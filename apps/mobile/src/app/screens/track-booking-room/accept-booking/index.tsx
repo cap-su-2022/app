@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import {
   ListRenderItemInfo,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -58,6 +59,7 @@ import SocketIOClient from 'socket.io-client/dist/socket.io.js';
 import { boxShadow } from '../../../utils/box-shadow.util';
 import { Device } from '../../../redux/models/device.model';
 import { CheckIcon } from 'react-native-heroicons/solid';
+import { API_IP } from '../../../constants/constant';
 
 const AcceptBooking: React.FC<any> = () => {
   const dispatch = useAppDispatch();
@@ -76,7 +78,7 @@ const AcceptBooking: React.FC<any> = () => {
     useRef<React.ElementRef<typeof RejectAlertModalRef>>();
 
   const socket = useMemo(() => {
-    return SocketIOClient('http://34.142.156.212:5000/booking', {
+    return SocketIOClient(`http://${API_IP}:5000/booking`, {
       jsonp: false,
       transports: ['websocket'],
     });

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -36,6 +37,7 @@ import Divider from '../../../components/text/divider';
 import dayjs from 'dayjs';
 import { fetchAllSlots } from '../../../redux/features/slot';
 import SocketIOClient from 'socket.io-client/dist/socket.io.js';
+import { API_IP } from '../../../constants/constant';
 
 const RoomBookingReadyToCheckIn: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -70,14 +72,17 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
     useState(false);
 
   const socket = useMemo(() => {
-    return SocketIOClient('http://34.142.156.212:5000/booking', {
+    return SocketIOClient(`http://${API_IP}:5000/booking`, {
       jsonp: false,
+      transports: ['websocket'],
     });
   }, []);
 
   useEffect(() => {
     if (isQRModalShown) {
+      console.log('test1');
       socket.on('msgToServer', (e) => {
+        console.log('eeeeee');
         if (e === bookingRoom.id) {
           setQRModalShown(false);
           setCheckinSuccessModalShown(!isCheckinSuccessModalShown);
