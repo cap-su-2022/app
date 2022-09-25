@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import {
   ListRenderItemInfo,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -58,6 +59,7 @@ import SocketIOClient from 'socket.io-client/dist/socket.io.js';
 import { boxShadow } from '../../../utils/box-shadow.util';
 import { Device } from '../../../redux/models/device.model';
 import { CheckIcon } from 'react-native-heroicons/solid';
+import { API_IP } from '../../../constants/constant';
 
 const AcceptBooking: React.FC<any> = () => {
   const dispatch = useAppDispatch();
@@ -76,7 +78,7 @@ const AcceptBooking: React.FC<any> = () => {
     useRef<React.ElementRef<typeof RejectAlertModalRef>>();
 
   const socket = useMemo(() => {
-    return SocketIOClient('http://34.142.193.100:5000/booking', {
+    return SocketIOClient(`http://${API_IP}:5000/booking`, {
       jsonp: false,
       transports: ['websocket'],
     });
@@ -161,7 +163,7 @@ const AcceptBooking: React.FC<any> = () => {
   };
 
   const handleRejectCheckin = () => {
-    if (typeof rejectBookingRequestModal.current.message !== 'undefined'){
+    if (typeof rejectBookingRequestModal.current.message !== 'undefined') {
       dispatch(
         rejectCheckinBookingRequest({
           id: bookingRoom.id,
@@ -181,10 +183,9 @@ const AcceptBooking: React.FC<any> = () => {
           }, 2000);
         })
         .catch((e) => alert(JSON.stringify(e)));
-    }else {
-      alert('Please input message!')
+    } else {
+      alert('Please input message!');
     }
-
   };
 
   const handleAcceptAction = () => {
@@ -306,7 +307,7 @@ const AcceptBooking: React.FC<any> = () => {
 
   const DeviceRenderItem = (deviceRender) => {
     return (
-      <View >
+      <View>
         <View
           key={deviceRender}
           style={[styles.selectCircleButton, boxShadow(styles)]}
@@ -705,7 +706,7 @@ const AcceptBooking: React.FC<any> = () => {
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Check-in Time</Text>
                 <Text style={styles.valueText}>
-                  {bookingRoom.checkinTime.slice(0,5)}
+                  {bookingRoom.checkinTime.slice(0, 5)}
                 </Text>
               </View>
 
@@ -714,7 +715,7 @@ const AcceptBooking: React.FC<any> = () => {
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Check-out Time</Text>
                 <Text style={styles.valueText}>
-                  {bookingRoom.checkoutTime.slice(0,5)}
+                  {bookingRoom.checkoutTime.slice(0, 5)}
                 </Text>
               </View>
 

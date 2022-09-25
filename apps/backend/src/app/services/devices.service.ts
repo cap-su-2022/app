@@ -165,6 +165,8 @@ export class DevicesService {
         );
       }
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -206,6 +208,8 @@ export class DevicesService {
       throw new BadRequestException(
         e.message ?? 'Error occurred while updating this room'
       );
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -239,6 +243,8 @@ export class DevicesService {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -285,6 +291,8 @@ export class DevicesService {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -330,6 +338,8 @@ export class DevicesService {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 

@@ -159,6 +159,8 @@ export class AccountsService {
       throw new BadRequestException(
         e.message ?? 'Error occurred while updating this account'
       );
+    } finally {
+      await queryRunner.release()
     }
   }
 

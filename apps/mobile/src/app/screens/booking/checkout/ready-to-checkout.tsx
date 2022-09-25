@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -25,6 +26,7 @@ import { checkOutBookingRoom } from '../../../redux/features/room-booking/thunk/
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import { fetchAllSlots } from '../../../redux/features/slot';
 import SocketIOClient from 'socket.io-client/dist/socket.io.js';
+import { API_IP } from '../../../constants/constant';
 
 const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -38,18 +40,20 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const [errorMessage, setErrorMessage] = useState<string>('Error');
   const [timeSlotCheckin, setTimeSlotCheckin] = useState('');
   const [timeSlotCheckout, setTimeSlotCheckout] = useState('');
-  const [isCheckOutSuccessModalShown, setCheckOutSuccessModalShown] = useState(false)
+  const [isCheckOutSuccessModalShown, setCheckOutSuccessModalShown] =
+    useState(false);
 
   const socket = useMemo(() => {
-    return SocketIOClient('http://34.142.193.100:5000/booking', {
+    return SocketIOClient(`http://${API_IP}:5000/booking`, {
       jsonp: false,
+      transports: ['websocket'],
     });
   }, []);
 
   useEffect(() => {
     socket.on('msgToServer', (e) => {
       if (e === roomBookingCheckout.id) {
-        setCheckOutSuccessModalShown(!isCheckOutSuccessModalShown)
+        setCheckOutSuccessModalShown(!isCheckOutSuccessModalShown);
       }
     });
   });
@@ -84,9 +88,11 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
         isOpened={isCheckOutSuccessModalShown}
         height={180}
         width={deviceWidth / 1.1}
-        toggleShown={() =>   setTimeout(() => {
-          navigate.navigate('CHECKOUT_SUCCESSFULLY');
-        }, 1)}
+        toggleShown={() =>
+          setTimeout(() => {
+            navigate.navigate('CHECKOUT_SUCCESSFULLY');
+          }, 1)
+        }
       >
         <View
           style={{

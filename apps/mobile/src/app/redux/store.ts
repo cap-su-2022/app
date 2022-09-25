@@ -20,6 +20,7 @@ import { systemReducer } from './features/system/system.slice';
 import { feedbackTypeReducer } from './features/feed-back-type/feedback-types.slice';
 import { feedbackReducer } from './features/feedback/feedback.slice';
 import { roomBookingFeedbackReducer } from './features/room-booking-feedback/slice';
+import { holidaysReducer } from './features/holidays';
 
 const combinedReducer = combineReducers({
   system: systemReducer,
@@ -37,6 +38,7 @@ const combinedReducer = combineReducers({
   bookedRequest: bookedRequestReducer,
   feedbackTypes: feedbackTypeReducer,
   feedback: feedbackReducer,
+  holidays: holidaysReducer,
 });
 const reducer = (
   state: ReturnType<typeof combinedReducer>,

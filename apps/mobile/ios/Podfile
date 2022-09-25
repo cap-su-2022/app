@@ -28,7 +28,6 @@ target 'Mobile' do
   # you should disable the next line.
   use_flipper!()
 
-  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 
   post_install do |installer|
     react_native_post_install(installer)
