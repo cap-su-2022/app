@@ -360,6 +360,8 @@ export class HolidaysService {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
