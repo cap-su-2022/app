@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActionIcon,
   Button,
@@ -21,14 +21,14 @@ import {
   Plus,
   X,
 } from 'tabler-icons-react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import dayjs from 'dayjs';
 import autoAnimate from '@formkit/auto-animate';
 import ReactStars from 'react-stars';
-import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { showNotification } from '@mantine/notifications';
-import { FPT_ORANGE_COLOR } from '@app/constants';
-import { updateListDevice } from '../../redux/features/room-booking/thunk/update-list-devices';
+import {useAutoAnimate} from '@formkit/auto-animate/react';
+import {showNotification} from '@mantine/notifications';
+import {FPT_ORANGE_COLOR} from '@app/constants';
+import {updateListDevice} from '../../redux/features/room-booking/thunk/update-list-devices';
 
 interface UserInfoModel {
   avatar: string;
@@ -60,7 +60,7 @@ interface RequestInfoComponentProps {
 }
 
 const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   const requestBooking = useAppSelector(
     (state) => state.roomBooking.roomBooking
   );
@@ -115,7 +115,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         onClick={() => setShowListDevice(!isShowListDevice)}
         variant="outline"
         color={'blue'}
-        leftIcon={<Devices />}
+        leftIcon={<Devices/>}
       >
         Devices
       </Button>
@@ -132,11 +132,11 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleCancelModalShown()}
                 variant="outline"
                 color={'red'}
-                leftIcon={<X />}
+                leftIcon={<X/>}
               >
                 Cancel request
               </Button>
-              <RenderDeviceButton />
+              <RenderDeviceButton/>
             </>
           );
         } else {
@@ -146,7 +146,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleRejectModalShown()}
                 variant="outline"
                 color={'red'}
-                leftIcon={<X />}
+                leftIcon={<X/>}
               >
                 Reject request
               </Button>
@@ -155,12 +155,12 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleAcceptModalShown()}
                 variant="outline"
                 color={'green'}
-                leftIcon={<Check />}
+                leftIcon={<Check/>}
               >
                 Accept request
               </Button>
 
-              <RenderDeviceButton />
+              <RenderDeviceButton/>
             </>
           );
         }
@@ -172,7 +172,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleCancelModalShown()}
                 variant="outline"
                 color={'red'}
-                leftIcon={<X />}
+                leftIcon={<X/>}
               >
                 Cancel request
               </Button>
@@ -180,12 +180,12 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleCheckinModalShown()}
                 variant="outline"
                 color={'green'}
-                leftIcon={<CircleCheck />}
+                leftIcon={<CircleCheck/>}
               >
                 Check in
               </Button>
 
-              <RenderDeviceButton />
+              <RenderDeviceButton/>
             </>
           );
         } else {
@@ -195,11 +195,11 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleCancelModalShown()}
                 variant="outline"
                 color={'red'}
-                leftIcon={<X />}
+                leftIcon={<X/>}
               >
                 Cancel request
               </Button>
-              <RenderDeviceButton />
+              <RenderDeviceButton/>
             </>
           );
         }
@@ -211,12 +211,12 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 onClick={() => props.toggleCheckoutModalShown()}
                 variant="outline"
                 color={'green'}
-                leftIcon={<CircleCheck />}
+                leftIcon={<CircleCheck/>}
               >
                 Check out
               </Button>
 
-              <RenderDeviceButton />
+              <RenderDeviceButton/>
             </>
           );
         } else return null;
@@ -234,7 +234,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                   Feedback
                 </Button>
 
-                <RenderDeviceButton />
+                <RenderDeviceButton/>
               </>
             );
           } else {
@@ -248,7 +248,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                   Send feedback
                 </Button>
 
-                <RenderDeviceButton />
+                <RenderDeviceButton/>
               </>
             );
           }
@@ -264,7 +264,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                   Feedback
                 </Button>
 
-                <RenderDeviceButton />
+                <RenderDeviceButton/>
               </>
             );
           } else {
@@ -278,7 +278,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
       if (d.deviceId === item) {
         setDeviceNames((devicename) => [
           ...devicename,
-          { value: d.deviceId, label: d.deviceName },
+          {value: d.deviceId, label: d.deviceName},
         ]);
         break;
       }
@@ -301,7 +301,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
           color: 'red',
           title: 'Quantity missed',
           message: 'Please choose quantity of device you want to use',
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         });
       } else if (!device) {
@@ -310,7 +310,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
           color: 'red',
           title: 'Device missed',
           message: 'Please choose device you want to use',
-          icon: <X />,
+          icon: <X/>,
           autoClose: 3000,
         });
       } else {
@@ -340,7 +340,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
             color: 'red',
             title: 'Out of device!',
             message: 'Dont have any device to choose',
-            icon: <X />,
+            icon: <X/>,
             autoClose: 3000,
           });
           alert('Out of device!');
@@ -390,7 +390,27 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
           requestId: requestBooking.id,
           listDevice: choosedDevice,
         })
-      ).unwrap();
+      ).unwrap()
+        .catch((e) =>
+          showNotification({
+            id: 'load-data',
+            color: 'red',
+            title: 'Error while updating borrowed devices',
+            message: e.message ?? 'Failed to update borrowed devices',
+            icon: <X/>,
+            autoClose: 3000,
+          })
+        )
+        .then(() =>
+          showNotification({
+            id: 'load-data',
+            color: 'teal',
+            title: 'Borrowed devices were updated',
+            message: 'Borrowed devices were successfully updated',
+            icon: <Check/>,
+            autoClose: 3000,
+          })
+        )
     };
 
     return (
@@ -433,7 +453,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               max={30}
               min={0}
               step={1}
-              styles={{ input: { width: 54, textAlign: 'center' } }}
+              styles={{input: {width: 54, textAlign: 'center'}}}
             />
 
             <ActionIcon
@@ -449,42 +469,42 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
             className={classes.buttonComponent}
             onClick={() => add()}
           >
-            <Plus />
+            <Plus/>
           </Button>
         </div>
         {choosedDevice && choosedDevice.length > 0
           ? choosedDevice.map((device) => (
-              <div key={device.deviceId} className={classes.item}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <div style={{ margin: ' 0 10px' }}>
-                    {device.deviceQuantity}
-                  </div>
-                  <div>{device.deviceName}</div>
+            <div key={device.deviceId} className={classes.item}>
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <div style={{margin: ' 0 10px'}}>
+                  {device.deviceQuantity}
                 </div>
-                <Button
-                  variant="subtle"
-                  color="red"
-                  size="xs"
-                  onClick={() => remove(device.deviceId)}
-                >
-                  <X color="red" size={20} strokeWidth={2.5} />
-                </Button>
+                <div>{device.deviceName}</div>
               </div>
+              <Button
+                variant="subtle"
+                color="red"
+                size="xs"
+                onClick={() => remove(device.deviceId)}
+              >
+                <X color="red" size={20} strokeWidth={2.5}/>
+              </Button>
+            </div>
 
-              // <div key={device.id} className={classes.deviceRow}>
-              //   <p className={classes.col1}>{device.deviceName}</p>
-              //   <p className={classes.col2}>{device.deviceQuantity}</p>
-              // </div>
-            ))
+            // <div key={device.id} className={classes.deviceRow}>
+            //   <p className={classes.col1}>{device.deviceName}</p>
+            //   <p className={classes.col2}>{device.deviceQuantity}</p>
+            // </div>
+          ))
           : null}
         <Button
           radius="md"
           className={classes.buttonComponent}
           onClick={() => update()}
-          style={{ backgroundColor: FPT_ORANGE_COLOR, float: 'right' }}
+          style={{backgroundColor: FPT_ORANGE_COLOR, float: 'right'}}
           disabled={disable}
         >
-          <Pencil /> UPDATE
+          <Pencil/> UPDATE
         </Button>
       </>
     );
@@ -492,11 +512,11 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
 
   const FeedbackDiv: React.FC<{ feedback: any }> = (props) => {
     return (
-      <div style={{ width: '250px', maxHeight: 400 }}>
+      <div style={{width: '250px', maxHeight: 400}}>
         <div>
           <b>FEEDBACK</b>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{display: 'flex', justifyContent: 'center'}}>
           <ReactStars
             count={5}
             value={props.feedback.rateNum}
@@ -526,10 +546,10 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
   };
 
   return (
-    <div style={{ display: 'flex' }} ref={parent}>
-      {isShowFeedback && <FeedbackDiv feedback={requestBooking?.feedback} />}
+    <div style={{display: 'flex'}} ref={parent}>
+      {isShowFeedback && <FeedbackDiv feedback={requestBooking?.feedback}/>}
 
-      <div style={{ width: 550, flex: 1, margin: 20 }}>
+      <div style={{width: 550, flex: 1, margin: 20}}>
         <div className={classes.modalBody}>
           <div
             style={{
@@ -540,7 +560,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
           >
             <InputWrapper label="Room name" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={requestBooking.roomName}
@@ -548,7 +568,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
             </InputWrapper>
             <InputWrapper label="Room user" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={requestBooking.bookedFor}
@@ -556,10 +576,10 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
             </InputWrapper>
           </div>
 
-          <div style={{ display: 'flex' }}>
+          <div style={{display: 'flex'}}>
             <InputWrapper label="Request at" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={dayjs(requestBooking.requestedAt).format(
@@ -570,7 +590,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
 
             <InputWrapper label="Request by" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={requestBooking.requestedBy}
@@ -578,10 +598,10 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
             </InputWrapper>
           </div>
 
-          <div style={{ display: 'flex' }}>
+          <div style={{display: 'flex'}}>
             <InputWrapper label="Checkin date" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={dayjs(requestBooking.checkinDate).format('DD/MM/YYYY')}
@@ -590,23 +610,23 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
 
             <InputWrapper label="Time start" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={requestBooking.checkinTime.slice(0, 5)}
-                style={{ width: 150 }}
+                style={{width: 150}}
               />
             </InputWrapper>
-            <div style={{ position: 'relative', top: '45px' }}>
-              <ChevronsRight size={28} strokeWidth={2} color={'black'} />
+            <div style={{position: 'relative', top: '45px'}}>
+              <ChevronsRight size={28} strokeWidth={2} color={'black'}/>
             </div>
             <InputWrapper label="Time end" className={classes.inputWrapper}>
               <TextInput
-                icon={<ClipboardText />}
+                icon={<ClipboardText/>}
                 radius="md"
                 readOnly
                 value={requestBooking.checkoutTime.slice(0, 5)}
-                style={{ width: 150 }}
+                style={{width: 150}}
               />
             </InputWrapper>
           </div>
@@ -622,7 +642,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 })}
               >
                 <TextInput
-                  icon={<ClipboardText />}
+                  icon={<ClipboardText/>}
                   radius="md"
                   readOnly
                   value={requestBooking.cancelReason}
@@ -633,7 +653,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
 
           <InputWrapper label="Reason Booking" className={classes.inputWrapper}>
             <TextInput
-              icon={<ClipboardText />}
+              icon={<ClipboardText/>}
               radius="md"
               readOnly
               value={requestBooking.reason || 'Other'}
@@ -642,7 +662,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
 
           <InputWrapper label="Description" className={classes.inputWrapper}>
             <Textarea
-              icon={<ClipboardText />}
+              icon={<ClipboardText/>}
               autosize
               readOnly
               value={requestBooking.description}
@@ -656,10 +676,10 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
       </div>
       {isShowListDevice ? (
         <div>
-          <div style={{ marginBottom: 35 }}>
+          <div style={{marginBottom: 35}}>
             <b>LIST DEVICES</b>
           </div>
-          <ListDeviceDiv />
+          <ListDeviceDiv/>
         </div>
       ) : null}
     </div>
