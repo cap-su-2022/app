@@ -1114,6 +1114,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.checkedin_at', 'checkedinAt')
       .addSelect('booking_request.checkedout_at', 'checkedoutAt')
       .addSelect('booking_request.checkin_date', 'checkinDate')
+      .addSelect('booking_request.requested_at', 'requestedAt')
       .addSelect('r.name', 'roomName')
       .addSelect('rt.name', 'roomType')
       .addSelect('booking_request.accepted_by', 'acceptedBy')
