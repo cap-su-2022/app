@@ -1108,7 +1108,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .select('booking_request.id', 'id')
       .addSelect('a.username', 'requestedBy')
       .addSelect('booking_request.id', 'description')
-      .addSelect('booking_request.checkedin_at', 'checkedInAt')
       .addSelect('booking_request.status', 'status')
       .addSelect('booking_request.checkin_time', 'checkinTime')
       .addSelect('booking_request.checkout_time', 'checkoutTime')
