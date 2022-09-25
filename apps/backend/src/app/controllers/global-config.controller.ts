@@ -7,17 +7,41 @@ import {ApiTags} from '@nestjs/swagger';
 import {Roles} from '../decorators';
 import {Role} from '../enum';
 import dayjs = require('dayjs');
+import {Slot} from "../models";
 
 class RoomBookingLimitDate {
   startDate: string;
   endDate: string;
 }
 
-class SlotInfo {
-  start: string;
-  end: string;
+const slot = {
+  slot1: {
+    name: 'Slot 1',
+    start: '07:00:00',
+    end: '09:15:00'
+  },
+  slot2: {
+    name: 'Slot 2',
+    start: '09:45:00',
+    end: '12:00:00'
+  },
+  slot3: {
+    name: 'Slot 3',
+    start: '12:30:00',
+    end: '14:45:00'
+  },
+  slot4:
+    {
+      name: 'Slot 4',
+      start: '15:15:00',
+      end: '17:30:00'
+    },
+  slot5: {
+    name: 'Slot 5',
+    start: '18:00:00',
+    end: '20:15:00'
+  }
 }
-
 export const getConfigFileLoaded = () => {
   try {
     return yaml.load(
@@ -30,9 +54,11 @@ export const getConfigFileLoaded = () => {
         maxBookingDateRange: 14,
         maxDeviceBorrowQuantity: 100,
         maxBookingRequestPerWeek: 3,
-        maxRoomCapacity: 1000
+        maxRoomCapacity: 1000,
+        slots: slot
       })
-    );
+    )
+    ;
     return yaml.load(
       readFileSync(join('backend-config.yaml'), 'utf8')
     ) as Record<any, number>;
