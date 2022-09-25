@@ -70,7 +70,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
     useState(false);
 
   const socket = useMemo(() => {
-    return SocketIOClient('http://34.142.193.100:5000/booking', {
+    return SocketIOClient('http://34.142.156.212:5000/booking', {
       jsonp: false,
     });
   }, []);
@@ -243,6 +243,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
                 fontSize: deviceWidth / 23,
                 fontWeight: '600',
                 textAlign: 'center',
+                color: BLACK,
               }}
             >
               Please let the librarian scan this QR in order to checkin

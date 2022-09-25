@@ -7,7 +7,12 @@ import {
   View,
 } from 'react-native';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
-import { FPT_ORANGE_COLOR, INPUT_GRAY_COLOR, WHITE } from '@app/constants';
+import {
+  FPT_ORANGE_COLOR,
+  INPUT_GRAY_COLOR,
+  WHITE,
+  BLACK,
+} from '@app/constants';
 import NotFound from '../../../icons/empty_checkin.svg';
 import { deviceHeight, deviceWidth } from '../../../utils/device';
 import { HomeIcon, TicketIcon } from 'react-native-heroicons/outline';
@@ -60,10 +65,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   text: {
-    fontSize: deviceWidth / 20,
+    fontSize: deviceWidth / 19,
     flexWrap: 'wrap',
-    fontWeight: '500',
+    fontWeight: '600',
     textAlign: 'center',
+    paddingHorizontal: 10,
+    color: BLACK,
   },
   footer: {
     height: 80,

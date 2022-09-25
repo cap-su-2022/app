@@ -1,7 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CheckIcon } from 'react-native-heroicons/solid';
-import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
+import { BLACK, FPT_ORANGE_COLOR, WHITE } from '@app/constants';
+import { deviceWidth } from '../../../../utils/device';
 
 interface DateSelectMultiDateCheckboxProps {
   handleCheck(): void;
@@ -13,7 +14,7 @@ const DateSelectMultiDateCheckbox: React.FC<
 > = (props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Multi date</Text>
+      <Text style={styles.title}>Multi-date</Text>
       <View style={styles.checkboxContainer}>
         <TouchableOpacity
           style={styles.checkBox}
@@ -32,8 +33,10 @@ const DateSelectMultiDateCheckbox: React.FC<
 
 const styles = StyleSheet.create({
   title: {
-    fontWeight: '500',
+    fontSize: deviceWidth / 26,
+    fontWeight: '600',
     marginBottom: 6,
+    color: BLACK,
   },
   container: {
     display: 'flex',
