@@ -28,7 +28,6 @@ const ReadyToCheckinBookingInformation: React.FC<
   const [timeSlotCheckin, setTimeSlotCheckin] = useState('')
   const [timeSlotCheckout, setTimeSlotCheckout] = useState('')
 
-
   useEffect(() => {
     dispatch(fetchAllSlots()).unwrap().then((value) => {
       setTimeSlotCheckin(value
@@ -69,10 +68,7 @@ const ReadyToCheckinBookingInformation: React.FC<
         <View style={styles.dataRowContainer}>
           <Text style={styles.titleText}>Check-in Time</Text>
           <Text style={styles.valueText}>
-            {timeSlotCheckin} {'  '}
-            {dayjs(new Date(currentCheckinInformation.checkinDate)).format(
-              'DD/MM/YYYY'
-            )}
+            {currentCheckinInformation.checkinTime.slice(0,5)}
           </Text>
         </View>
 
@@ -81,10 +77,7 @@ const ReadyToCheckinBookingInformation: React.FC<
         <View style={styles.dataRowContainer}>
           <Text style={styles.titleText}>Check-out Time</Text>
           <Text style={styles.valueText}>
-           {timeSlotCheckout} {'  '}
-            {dayjs(new Date(currentCheckinInformation.checkinDate)).format(
-              'DD/MM/YYYY'
-            )}
+            {currentCheckinInformation.checkoutTime.slice(0,5)}
           </Text>
         </View>
 
