@@ -1135,8 +1135,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .andWhere('booking_request.status = :status', {status: 'CHECKED_IN'})
       .andWhere('booking_request.checkedout_at IS NULL')
       .andWhere('booking_request.checkedin_at IS NOT NULL')
-      .andWhere('booking_request.accepted_by IS NOT NULL')
-      .andWhere('booking_request.accepted_at IS NOT NULL')
       .andWhere('booking_request.cancelled_at IS NULL')
       .andWhere('booking_request.cancelled_by IS NULL')
       .getRawOne();
