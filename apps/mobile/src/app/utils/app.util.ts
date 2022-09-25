@@ -1,9 +1,12 @@
-import {LOCAL_STORAGE} from "./local-storage";
-import {DEFAULT_QUICK_ACCESS} from "../constants/quick-access-navigation.constant";
-import {setQuickAccessData, toggleNotification} from "../redux/features/system/system.slice";
-import {toggleSpinnerOff, toggleSpinnerOn} from "../redux/features/spinner";
-import axios from "axios";
-import {API_URL} from "../constants/constant";
+import { LOCAL_STORAGE } from './local-storage';
+import { DEFAULT_QUICK_ACCESS } from '../constants/quick-access-navigation.constant';
+import {
+  setQuickAccessData,
+  toggleNotification,
+} from '../redux/features/system/system.slice';
+import { toggleSpinnerOff, toggleSpinnerOn } from '../redux/features/spinner';
+import axios from 'axios';
+import { API_URL } from '../constants/constant';
 
 export const fetchGlobalQuickAccessData = (dispatch) => {
   if (!LOCAL_STORAGE.contains('QUICK_ACCESS')) {
@@ -14,7 +17,7 @@ export const fetchGlobalQuickAccessData = (dispatch) => {
       setQuickAccessData(JSON.parse(LOCAL_STORAGE.getString('QUICK_ACCESS')))
     );
   }
-}
+};
 
 export const fetchNotificationBellStatus = (dispatch) => {
   if (!LOCAL_STORAGE.contains('NOTIFICATION_BELL')) {
@@ -35,7 +38,8 @@ export const checkIfServerIsAlive = (dispatch, setPingTimedOut) => {
       timeout: 1500,
     })
     .catch((e) => {
+      console.warn(JSON.stringify(e.response));
       setPingTimedOut(true);
     })
     .finally(() => dispatch(toggleSpinnerOff()));
-}
+};

@@ -38,10 +38,11 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   const [errorMessage, setErrorMessage] = useState<string>('Error');
   const [timeSlotCheckin, setTimeSlotCheckin] = useState('');
   const [timeSlotCheckout, setTimeSlotCheckout] = useState('');
-  const [isCheckOutSuccessModalShown, setCheckOutSuccessModalShown] = useState(false)
+  const [isCheckOutSuccessModalShown, setCheckOutSuccessModalShown] =
+    useState(false);
 
   const socket = useMemo(() => {
-    return SocketIOClient('http://34.142.193.100:5000/booking', {
+    return SocketIOClient('http://34.142.156.212:5000/booking', {
       jsonp: false,
     });
   }, []);
@@ -49,7 +50,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
   useEffect(() => {
     socket.on('msgToServer', (e) => {
       if (e === roomBookingCheckout.id) {
-        setCheckOutSuccessModalShown(!isCheckOutSuccessModalShown)
+        setCheckOutSuccessModalShown(!isCheckOutSuccessModalShown);
       }
     });
   });
@@ -84,9 +85,11 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
         isOpened={isCheckOutSuccessModalShown}
         height={180}
         width={deviceWidth / 1.1}
-        toggleShown={() =>   setTimeout(() => {
-          navigate.navigate('CHECKOUT_SUCCESSFULLY');
-        }, 1)}
+        toggleShown={() =>
+          setTimeout(() => {
+            navigate.navigate('CHECKOUT_SUCCESSFULLY');
+          }, 1)
+        }
       >
         <View
           style={{

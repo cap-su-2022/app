@@ -53,6 +53,9 @@ const HomeNavigator: React.FC = () => {
       <StackScreen name="NO_ROOM_CHECKOUT" component={NoRoomBookingCheckOut} />
       <StackScreen
         name="CHECK_IN_NOT_FOUND"
+        options={{
+          headerShown: false,
+        }}
         component={CheckinBookingRoomNotFound}
       />
       <StackScreen
