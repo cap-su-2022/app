@@ -66,11 +66,24 @@ const ReadyToCheckinBookingInformation: React.FC<
         <Divider num={deviceWidth / 10} />
 
         <View style={styles.dataRowContainer}>
+          <Text style={styles.titleText}>Check-in Date</Text>
+          <Text style={styles.valueText}>
+            {dayjs(new Date(currentCheckinInformation.checkinDate)).format(
+              'DD/MM/YYYY'
+            )}
+          </Text>
+        </View>
+
+
+        <Divider num={deviceWidth / 10} />
+
+        <View style={styles.dataRowContainer}>
           <Text style={styles.titleText}>Check-in Time</Text>
           <Text style={styles.valueText}>
             {currentCheckinInformation.checkinTime.slice(0,5)}
           </Text>
         </View>
+
 
         <Divider num={deviceWidth / 10} />
 
