@@ -5,7 +5,7 @@ const NextHealthCheckAuth = async (req: NextApiRequest, res: NextApiResponse) =>
 
   console.log(req.body);
   try {
-    const response = await axios.get("http://localhost:5000/api/v1/health/auth", {
+    const response = await axios.get(`${process.env.API_URL}/health/auth`, {
       headers: {
         Authorization: `Bearer ${req.body}`
       }
