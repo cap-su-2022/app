@@ -267,6 +267,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     setShowConfirm(false);
   };
 
+
   const ChooseSlot = (
     <div>
       <div
@@ -306,9 +307,17 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
             // error={formik.errors.timeEnd}
             description={showHintSlot ? slotNameStart : ''}
             onChange={(e) => {
-              props.formik.setFieldValue('timeStart', e);
-              const time = dayjs(new Date(e.getTime())).format('HH:mm:ss');
-              setSlotNameStart(getSlot(time));
+              if (userInfo.role === 'Staff') {
+                if (e.getTime() < new Date().setHours(7, 0, 0, 0) || e.getTime() > new Date().setHours(20, 15, 0, 0)) {
+                  props.formik.setFieldValue('timeStart', new Date(new Date().setHours(7, 0, 0, 0)))
+                } else {
+                  props.formik.setFieldValue('timeStart', e)
+                }
+              } else {
+                props.formik.setFieldValue('timeStart', e)
+              }
+              const time = dayjs(new Date(props.formik.values.timeStart)).format('HH:mm:ss');
+              setSlotNameEnd(getSlot(time));
               setShowHintSlot(true)
             }}
             style={{width: '8rem'}}
@@ -316,6 +325,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
             value={props.formik.values.timeStart}
           />
         </InputWrapper>
+
 
         <ChevronsRight
           size={28}
@@ -331,14 +341,24 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
             // error={formik.errors.timeEnd}
             description={showHintSlot ? slotNameEnd : ''}
             onChange={(e) => {
-              props.formik.setFieldValue('timeEnd', e)
-              const time = dayjs(new Date(e.getTime())).format('HH:mm:ss');
+              if (userInfo.role === 'Staff') {
+                if (e.getTime() < new Date().setHours(7, 0, 0, 0) || e.getTime() > new Date().setHours(20, 15, 0, 0)) {
+                  props.formik.setFieldValue('timeEnd', new Date(new Date().setHours(20, 15, 0, 0)))
+                } else {
+                  props.formik.setFieldValue('timeEnd', e)
+                }
+              } else {
+                props.formik.setFieldValue('timeEnd', e)
+              }
+              const time = dayjs(new Date(props.formik.values.timeEnd)).format('HH:mm:ss');
               setSlotNameEnd(getSlot(time));
               setShowHintSlot(true)
             }}
             style={{width: '8rem'}}
             // radius="md"
             value={props.formik.values.timeEnd}
+
+
           />
         </InputWrapper>
       </div>

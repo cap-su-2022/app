@@ -63,12 +63,11 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
   }, []);
 
   const getSlot = (time: string): any => {
-    const name = slotsArray.map((slot) => {
+    return slotsArray.map((slot) => {
       if (time >= slot[1].start && time <= slot[1].end) {
         return slot[1].name
       }
     })
-    return name;
   }
   const holidays = useAppSelector((state) => state.holiday.holidaysMini);
   const isHoliday = (date) => {
@@ -262,9 +261,17 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
               // error={formik.errors.timeEnd}
               description={showHintSlot ? slotNameStart : ''}
               onChange={(e) => {
-                props.formik.setFieldValue('timeStart', e)
-                const time = dayjs(new Date(e.getTime())).format('HH:mm:ss');
-                setSlotNameStart(getSlot(time));
+                if (userInfo.role === 'Staff') {
+                  if (e.getTime() < new Date().setHours(7, 0, 0, 0) || e.getTime() > new Date().setHours(20, 15, 0, 0)) {
+                    props.formik.setFieldValue('timeStart', new Date(new Date().setHours(7, 0, 0, 0)))
+                  } else {
+                    props.formik.setFieldValue('timeStart', e)
+                  }
+                } else {
+                  props.formik.setFieldValue('timeStart', e)
+                }
+                const time = dayjs(new Date(props.formik.values.timeStart)).format('HH:mm:ss');
+                setSlotNameEnd(getSlot(time));
                 setShowHintSlot(true)
               }}
               style={{width: '8rem'}}
@@ -286,8 +293,16 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
               // error={formik.errors.timeEnd}
               description={showHintSlot ? slotNameEnd : ''}
               onChange={(e) => {
-                props.formik.setFieldValue('timeEnd', e)
-                const time = dayjs(new Date(e.getTime())).format('HH:mm:ss');
+                if (userInfo.role === 'Staff') {
+                  if (e.getTime() < new Date().setHours(7, 0, 0, 0) || e.getTime() > new Date().setHours(20, 15, 0, 0)) {
+                    props.formik.setFieldValue('timeEnd', new Date(new Date().setHours(20, 15, 0, 0)))
+                  } else {
+                    props.formik.setFieldValue('timeEnd', e)
+                  }
+                } else {
+                  props.formik.setFieldValue('timeEnd', e)
+                }
+                const time = dayjs(new Date(props.formik.values.timeEnd)).format('HH:mm:ss');
                 setSlotNameEnd(getSlot(time));
                 setShowHintSlot(true)
               }}
