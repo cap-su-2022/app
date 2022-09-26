@@ -420,6 +420,7 @@ export class AccountRepository extends Repository<Accounts> {
         updatedBy: accountId,
       })
       .where('accounts.id = :id', {id: id})
+      .useTransaction(true)
       .execute();
     if (isRestored.affected > 0) {
       return this.findOneOrFail({

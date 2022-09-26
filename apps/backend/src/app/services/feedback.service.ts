@@ -69,10 +69,11 @@ export class FeedbackService {
       return feedback;
     } catch (e) {
       this.logger.error(e);
-      await queryRunner.rollbackTransaction();
+        await queryRunner.rollbackTransaction();
+
       throw new BadRequestException(e.message);
     } finally {
-      await queryRunner.release();
+        await queryRunner.release();
     }
   }
 

@@ -1467,8 +1467,8 @@ export class BookingRoomService {
     try {
       const result: AutoRoomBookingResponsePayload[] = [];
       //start
-      await queryRunner.startTransaction();
       await this.validateBookingReason(payload.bookingReasonId);
+      await queryRunner.startTransaction();
 
       for (const request of payload.bookingRequests) {
         //validation
@@ -1526,14 +1526,10 @@ export class BookingRoomService {
       return result;
     } catch (e) {
       this.logger.error(e.message);
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(e.message);
     } finally {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.release();
-      }
+      await queryRunner.release();
     }
   }
 
