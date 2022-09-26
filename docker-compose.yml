@@ -43,6 +43,7 @@ services:
     ports:
       - "80:3000"
     volumes:
+      - ./apps/frontend/build/.next:/frontend/.next
       - ./apps/frontend/build:/frontend
       - ./node_modules:/frontend/node_modules
     networks:

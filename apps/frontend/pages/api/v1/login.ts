@@ -15,7 +15,7 @@ const NextLogin = async (req: NextApiRequest, res: NextApiResponse) => {
   const credentials = req.body as Credential;
 
   try {
-    const response = await axios.post("http://localhost:5000/api/v1/auth/signin", {
+    const response = await axios.post(`${process.env.API_URL}/auth/signin`, {
       username: credentials.username,
       password: credentials.password
     });
