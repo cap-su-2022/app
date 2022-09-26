@@ -677,8 +677,8 @@ export class BookingRoomService {
   async checkAlreadyHaveBookingSameSlotV2(payload: {
     checkinDate: string;
     userId: string;
-    checkinTime: string;
-    checkoutTime: string;
+    timeStart: string;
+    timeEnd: string;
   }) {
     try {
       let alreadyBookedOtherRoom = '';
@@ -686,8 +686,8 @@ export class BookingRoomService {
         await this.repository.getRequestBookedSameTimeOfUser(
           payload.checkinDate,
           payload.userId,
-          payload.checkinTime,
-          payload.checkoutTime
+          payload.timeStart,
+          payload.timeEnd
         );
       if (listRequestBookedAtSameTimeOfUser.length > 0) {
         listRequestBookedAtSameTimeOfUser.map(async (request) => {
@@ -807,8 +807,8 @@ export class BookingRoomService {
         await this.checkAlreadyHaveBookingSameSlotV2({
           checkinDate: payload.checkinDate,
           userId: payload.bookedFor || userId,
-          checkinTime: payload.checkinTime,
-          checkoutTime: payload.checkoutTime,
+          timeStart: payload.checkinTime,
+          timeEnd: payload.checkoutTime,
         });
       if (alreadyBookedOtherRoom !== '') {
         throw new BadRequestException(
@@ -888,8 +888,8 @@ export class BookingRoomService {
         const result = await this.checkAlreadyHaveBookingSameSlotV2({
           checkinDate: dayjs(i).format('YYYY-MM-DD'),
           userId: payload.userId,
-          checkinTime: payload.checkinTime,
-          checkoutTime: payload.checkoutTime,
+          timeStart: payload.checkinTime,
+          timeEnd: payload.checkoutTime,
         });
         if (result.length > 0) {
           alreadyBookedOtherRoom.push(

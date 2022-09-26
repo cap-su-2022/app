@@ -670,14 +670,14 @@ export class BookingRoomController {
   getRoomNameBookedSameSlot(
     @Query('checkinDate') checkinDate: string,
     @Query('userId') userId: string,
-    @Query('checkinTime') checkinTime: string,
-    @Query('checkoutTime') checkoutTime: string
+    @Query('timeStart') timeStart: string,
+    @Query('timeEnd') timeEnd: string
   ) {
     return this.service.checkAlreadyHaveBookingSameSlotV2({
       checkinDate: checkinDate,
       userId: userId,
-      checkinTime: checkinTime,
-      checkoutTime: checkoutTime,
+      timeStart: timeStart,
+      timeEnd: timeEnd,
     });
   }
 
