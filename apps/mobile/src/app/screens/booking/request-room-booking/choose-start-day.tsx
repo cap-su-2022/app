@@ -54,10 +54,6 @@ const StartDayCalendar: React.FC<any> = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <GenericAlertModal isShown={isShown} toggleShown={() => {
-        setShown(!isShown);
-        props.navigation.pop();
-      }} message={message}/>
       <View style={styles.container}>
         <Calendar
           initialDate={currentDate}
