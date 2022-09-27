@@ -53,7 +53,6 @@ export const RoomBooking3: React.FC = () => {
   const requests = useAppSelector((state) => state.bookedRequest.request.requests);
 
   useEffect(() => {
-    console.warn(requests);
     dispatch(fetchAllBookingReason())
       .unwrap()
       .then((value) => {

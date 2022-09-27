@@ -29,7 +29,6 @@ const RestoreDeletedDeviceModal: React.FC<RestoreDeletedDeviceModalProps> = (
 ) => {
   const {classes, cx} = useStyles();
   const deletedDevices = useAppSelector((state) => state.device.deletedDevices);
-  console.log(deletedDevices)
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
   const [search, setSearch] = useState<string>('');

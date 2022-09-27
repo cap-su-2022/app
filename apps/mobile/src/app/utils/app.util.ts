@@ -38,7 +38,6 @@ export const checkIfServerIsAlive = (dispatch, setPingTimedOut) => {
       timeout: 1500,
     })
     .catch((e) => {
-      console.warn(JSON.stringify(e.response));
       setPingTimedOut(true);
     })
     .finally(() => dispatch(toggleSpinnerOff()));

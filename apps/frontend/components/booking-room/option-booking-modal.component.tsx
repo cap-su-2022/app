@@ -110,7 +110,6 @@ const SendBookingModal: React.FC<SendBookingModalProps> = (props) => {
     };
     const revealMultiDay = () => {
       formik.resetForm();
-      console.log(formik.values);
       setShowChooseMultiDay(!showChooseMultiDay);
       setShowChooseSlot(false);
       setShowChooseRoom(false);

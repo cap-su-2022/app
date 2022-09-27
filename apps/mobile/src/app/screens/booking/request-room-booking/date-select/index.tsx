@@ -7,6 +7,8 @@ import { deviceWidth } from '../../../../utils/device';
 import DateSelectMultiDateCheckbox from './multi-date';
 import { useAppSelector } from '../../../../hooks/use-app-selector.hook';
 import dayjs from 'dayjs';
+import {fetchHolidays} from "../../../../redux/features/holidays/thunk/fetch-holidays.thunk";
+import {useAppDispatch} from "../../../../hooks/use-app-dispatch.hook";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface RequestRoomBookingDateSelectProps {
@@ -16,6 +18,7 @@ interface RequestRoomBookingDateSelectProps {
 const RequestRoomBookingDateSelect: React.FC<
   RequestRoomBookingDateSelectProps
 > = (props) => {
+  const dispatch = useAppDispatch();
   const navigate = useAppNavigation();
   const Today = useMemo(() => {
     return dayjs(new Date()).format('ddd DD/MM/YYYY');
@@ -23,6 +26,7 @@ const RequestRoomBookingDateSelect: React.FC<
   const roomBooking = useAppSelector(
     (state) => state.roomBooking.addRoomBooking
   );
+
 
   return (
     <View>

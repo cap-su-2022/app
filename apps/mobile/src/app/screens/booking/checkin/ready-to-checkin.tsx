@@ -80,9 +80,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
 
   useEffect(() => {
     if (isQRModalShown) {
-      console.log('test1');
       socket.on('msgToServer', (e) => {
-        console.log('eeeeee');
         if (e === bookingRoom.id) {
           setQRModalShown(false);
           setCheckinSuccessModalShown(!isCheckinSuccessModalShown);

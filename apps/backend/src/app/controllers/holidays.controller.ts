@@ -18,7 +18,7 @@ export class HolidaysController {
   }
 
   @Get()
-  @Roles(Role.APP_LIBRARIAN, Role.APP_ADMIN)
+  @Roles(Role.APP_LIBRARIAN, Role.APP_ADMIN, Role.APP_STAFF)
   @ApiOperation({
     summary: 'Get the list of holidays by pagination',
     description:

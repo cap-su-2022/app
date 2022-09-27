@@ -1,19 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import {Button, InputWrapper, Select, Space, TextInput} from '@mantine/core';
-import {ChevronsRight, ClipboardText, X} from 'tabler-icons-react';
-import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {FormikProps} from 'formik';
-import {showNotification} from '@mantine/notifications';
-import {DatePicker, TimeInput} from '@mantine/dates';
+import React, { useEffect, useState } from 'react';
+import { Button, InputWrapper, Select, Space, TextInput } from '@mantine/core';
+import { ChevronsRight, ClipboardText, X } from 'tabler-icons-react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { FormikProps } from 'formik';
+import { showNotification } from '@mantine/notifications';
+import { DatePicker, TimeInput } from '@mantine/dates';
 import dayjs from 'dayjs';
 import BySlotChooseRoomModal from './by-slot-choose-room-modal.component';
 import ChooseDeviceModal from './choose-device-modal.component';
 import ConfirmModal from './confirm-modal.component';
-import {
-  IsUserHaveBookedSameSlot
-} from '../../redux/features/room-booking/thunk/fetch-room-booked-same-slot-of-user.thunk';
-import {fetchAllSlots} from "../../redux/features/slot";
-import {fetchHolidaysMini} from "../../redux/features/holidays/thunk/fetch-holidays-mini.thunk";
+import { IsUserHaveBookedSameSlot } from '../../redux/features/room-booking/thunk/fetch-room-booked-same-slot-of-user.thunk';
+import { fetchAllSlots } from '../../redux/features/slot';
 
 interface ChooseSlotModalProps {
   formik: FormikProps<any>;
@@ -43,24 +40,23 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(true);
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
-  const [showHintSlot, setShowHintSlot] = useState<boolean>(false);
+  const [errorInputTimeStart, setErrorInputTimeStart] = useState('');
+  const [errorInputTimeEnd, setErrorInputTimeEnd] = useState('');
   const [slotNameStart, setSlotNameStart] = useState<string>('');
   const [slotNameEnd, setSlotNameEnd] = useState<string>('');
   const holidays = useAppSelector((state) => state.holiday.holidaysMini);
   const dispatch = useAppDispatch();
-  const slot = useAppSelector(state => state.slot.slot);
+  const slot = useAppSelector((state) => state.slot.slot);
   const slotObject = new Object(slot);
   const slotsArray = Object.entries(slotObject);
-
 
   const getSlot = (time: string): any => {
     return slotsArray.map((slot) => {
       if (time >= slot[1].start && time <= slot[1].end) {
-        return slot[1].name
+        return slot[1].name;
       }
-    })
-  }
-
+    });
+  };
 
   const isHoliday = (date) => {
     const dateFormat = dayjs(date).format('YYYY-MM-DD');
@@ -73,6 +69,40 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       }
     }
   };
+
+  useEffect(() => {
+    const timeStart = dayjs(props.formik.values.timeStart).format('HH:mm:ss');
+    const slotNameArray = Object.keys(slot);
+    if (
+      timeStart < slot[slotNameArray[0]]?.start &&
+      userInfo.role === 'Staff'
+    ) {
+      setErrorInputTimeStart(
+        `Must > ${slot[slotNameArray[0]]?.start.slice(0, 5)}`
+      );
+    } else {
+      setErrorInputTimeStart('');
+    }
+  }, [props.formik.values.timeStart]);
+
+  useEffect(() => {
+    const timeEnd = dayjs(props.formik.values.timeEnd).format('HH:mm:ss');
+    const slotNameArray = Object.keys(slot);
+
+    if (
+      timeEnd > slot[slotNameArray[slotNameArray.length - 1]]?.end &&
+      userInfo.role === 'Staff'
+    ) {
+      setErrorInputTimeEnd(
+        `Must < ${slot[slotNameArray[slotNameArray.length - 1]]?.end.slice(
+          0,
+          5
+        )}`
+      );
+    } else {
+      setErrorInputTimeEnd('');
+    }
+  }, [props.formik.values.timeEnd]);
 
   useEffect(() => {
     dispatch(fetchAllSlots()).unwrap();
@@ -93,7 +123,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
         color: 'red',
         title: 'The time you selected is over',
         message: 'Please select other time',
-        icon: <X/>,
+        icon: <X />,
         autoClose: 3000,
       });
     }
@@ -103,68 +133,6 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
   useEffect(() => {
     setUserInfo(JSON.parse(window.localStorage.getItem('user')));
   }, []);
-
-  // useEffect(() => {
-  //   if (props.formik.values.checkinSlot) {
-  //     const slotIn = slotInfors.find(
-  //       (slot) => slot.id === props.formik.values.checkinSlot
-  //     );
-
-  //     setTimeStart(slotIn.timeStart);
-  //   } else {
-  //     setTimeStart('');
-  //   }
-  // }, [props.formik.values.checkinSlot]);
-
-  // useEffect(() => {
-  //   if (props.formik.values.checkoutSlot) {
-  //     const slotOut = slotInfors.find(
-  //       (slot) => slot.id === props.formik.values.checkoutSlot
-  //     );
-
-  //     setTimeEnd(slotOut.timeEnd);
-  //   } else {
-  //     setTimeEnd('');
-  //   }
-  // }, [props.formik.values.checkoutSlot]);
-
-  // useEffect(() => {
-  //   props.formik.values.checkinSlot = null;
-  //   props.formik.values.checkoutSlot = null;
-  //   if (props.formik.values.checkinDate) {
-  //     const curr = new Date();
-  //     const currTime = dayjs(curr).format('HH:mm:ss');
-  //     const choosedDay = new Date(props.formik.values.checkinDate).getDate();
-
-  //     const result = slotInfors?.map((slot) => {
-  //       let isFree = true;
-
-  //       if (choosedDay === curr.getDate() && currTime > slot.timeStart) {
-  //         isFree = false;
-  //       }
-
-  //       if (isFree) {
-  //         return {
-  //           value: slot.id,
-  //           label: slot.name,
-  //           disabled: false,
-  //         };
-  //       } else {
-  //         return {
-  //           value: slot.id,
-  //           label: slot.name,
-  //           disabled: true,
-  //         };
-  //       }
-  //     });
-  //     setSlotNames(result);
-  //   } else {
-  //     const result = slotInfors?.map((slot) => {
-  //       return { value: slot.id, label: slot.name, disabled: true };
-  //     });
-  //     setSlotNames(result);
-  //   }
-  // }, [props.formik.values.checkinDate]);
 
   const handleNextChooseRoom = () => {
     if (
@@ -177,7 +145,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
         color: 'red',
         title: 'Miss some filed',
         message: 'Please choose day, time start, time end before to next step',
-        icon: <X/>,
+        icon: <X />,
         autoClose: 3000,
       });
     } else {
@@ -186,6 +154,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       const checkinDate = props.formik.values.checkinDate.setHours(0, 0, 0, 0);
       const timeStart = props.formik.values.timeStart;
       const timeEnd = props.formik.values.timeEnd;
+      const slotNameArray = Object.keys(slot);
       const _15minute = 15 * 60 * 1000;
       if (
         checkinDate === currenTimeTimestamp &&
@@ -196,7 +165,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           color: 'red',
           title: 'The time you selected is over',
           message: `Please choose a time interval greater than ${currenTime.getHours()}:${currenTime.getMinutes()}`,
-          icon: <X/>,
+          icon: <X />,
           autoClose: 3000,
         });
       } else if (timeEnd.getTime() < timeStart.getTime() + _15minute) {
@@ -205,7 +174,36 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           color: 'red',
           title: 'The time interval you selected is too short',
           message: `For each request booking, a booking period of more than 15 minutes is required`,
-          icon: <X/>,
+          icon: <X />,
+          autoClose: 3000,
+        });
+      } else if (
+        dayjs(timeStart).format('HH:mm:ss') < slot[slotNameArray[0]]?.start &&
+        userInfo.role === 'Staff'
+      ) {
+        showNotification({
+          id: 'time-invalid',
+          color: 'red',
+          title: `Invalid time start`,
+          message: `Time start must be greater than ${slot[
+            slotNameArray[0]
+          ]?.start.slice(0, 5)}`,
+          icon: <X />,
+          autoClose: 3000,
+        });
+      } else if (
+        dayjs(timeEnd).format('HH:mm:ss') >
+          slot[slotNameArray[slotNameArray.length - 1]]?.end &&
+        userInfo.role === 'Staff'
+      ) {
+        showNotification({
+          id: 'time-invalid',
+          color: 'red',
+          title: `Invalid time end`,
+          message: `The time end must be less than ${slot[
+            slotNameArray[slotNameArray.length - 1]
+          ]?.end.slice(0, 5)}`,
+          icon: <X />,
           autoClose: 3000,
         });
       } else {
@@ -232,7 +230,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
                 message: `${
                   props.formik.values.bookedFor ? 'User' : 'You'
                 } already have request booked for ${response} at same time. Please choose another time`,
-                icon: <X/>,
+                icon: <X />,
                 autoClose: 3000,
               });
             }
@@ -240,7 +238,6 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       }
     }
   };
-
 
   const handleNextChooseDevice = () => {
     setShowChooseRoom(false);
@@ -267,7 +264,6 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
     setShowConfirm(false);
   };
 
-
   const ChooseSlot = (
     <div>
       <div
@@ -280,8 +276,8 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       >
         <DatePicker
           id="checkinDate"
-          style={{width: '200px', marginRight: 20}}
-          label="Checked in date"
+          style={{ width: '200px', marginRight: 20 }}
+          label="Check in date"
           placeholder="Select date"
           radius="md"
           required
@@ -301,76 +297,55 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
         />
         <InputWrapper required label="Time start ">
           <TimeInput
-            icon={<ClipboardText/>}
+            icon={<ClipboardText />}
             id="timeStart"
             name="timeStart"
-            // error={formik.errors.timeEnd}
-            description={showHintSlot ? slotNameStart : ''}
+            error={errorInputTimeStart}
+            description={slotNameStart}
             onChange={(e) => {
-              if (userInfo.role === 'Staff') {
-                if (e.getTime() < new Date().setHours(7, 0, 0, 0) || e.getTime() > new Date().setHours(20, 15, 0, 0)) {
-                  props.formik.setFieldValue('timeStart', new Date(new Date().setHours(7, 0, 0, 0)))
-                } else {
-                  props.formik.setFieldValue('timeStart', e)
-                }
-              } else {
-                props.formik.setFieldValue('timeStart', e)
-              }
-              const time = dayjs(new Date(props.formik.values.timeStart)).format('HH:mm:ss');
-              setSlotNameEnd(getSlot(time));
-              setShowHintSlot(true)
+              props.formik.setFieldValue('timeStart', e);
+              const time = dayjs(new Date(e.getTime())).format('HH:mm:ss');
+              setSlotNameStart(getSlot(time));
             }}
-            style={{width: '8rem'}}
+            style={{ width: '8rem' }}
             // radius="md"
             value={props.formik.values.timeStart}
           />
         </InputWrapper>
 
-
         <ChevronsRight
           size={28}
           strokeWidth={2}
           color={'black'}
-          style={{margin: '0 auto'}}
+          style={{ margin: '0 auto' }}
         />
         <InputWrapper required label="Time end">
           <TimeInput
-            icon={<ClipboardText/>}
+            icon={<ClipboardText />}
             id="timeEnd"
             name="timeEnd"
-            // error={formik.errors.timeEnd}
-            description={showHintSlot ? slotNameEnd : ''}
+            error={errorInputTimeEnd}
+            description={slotNameEnd}
             onChange={(e) => {
-              if (userInfo.role === 'Staff') {
-                if (e.getTime() < new Date().setHours(7, 0, 0, 0) || e.getTime() > new Date().setHours(20, 15, 0, 0)) {
-                  props.formik.setFieldValue('timeEnd', new Date(new Date().setHours(20, 15, 0, 0)))
-                } else {
-                  props.formik.setFieldValue('timeEnd', e)
-                }
-              } else {
-                props.formik.setFieldValue('timeEnd', e)
-              }
-              const time = dayjs(new Date(props.formik.values.timeEnd)).format('HH:mm:ss');
+              props.formik.setFieldValue('timeEnd', e);
+              const time = dayjs(new Date(e.getTime())).format('HH:mm:ss');
               setSlotNameEnd(getSlot(time));
-              setShowHintSlot(true)
             }}
-            style={{width: '8rem'}}
+            style={{ width: '8rem' }}
             // radius="md"
             value={props.formik.values.timeEnd}
-
-
           />
         </InputWrapper>
       </div>
-      <Space h="sm"/>
-      <div style={{display: 'flex', gap: 20}}>
+      <Space h="sm" />
+      <div style={{ display: 'flex', gap: 20 }}>
         <InputWrapper
           required
           label="Number of participants"
-          style={{width: '200px'}}
+          style={{ width: '200px' }}
         >
           <TextInput
-            icon={<ClipboardText/>}
+            icon={<ClipboardText />}
             id="capacity"
             name="capacity"
             error={props.formik.errors.capacity}
@@ -391,11 +366,11 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
             error={props.formik.errors.bookedFor}
             onChange={props.formik.handleChange('bookedFor')}
             searchable={true}
-            style={{flex: 1}}
+            style={{ flex: 1 }}
           />
         ) : null}
       </div>
-      <div style={{display: 'flex', justifyContent: 'flex-end', margin: 10}}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', margin: 10 }}>
         <Button onClick={() => handleNextChooseRoom()} color="green">
           Next
         </Button>

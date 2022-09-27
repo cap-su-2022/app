@@ -27,9 +27,6 @@ interface DeleteModalProps {
 const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const { classes } = useStyles();
 
-
-console.log(props.keySlot)
-
   const dispatch = useAppDispatch();
 
   const handleDeleteSlot = () => {

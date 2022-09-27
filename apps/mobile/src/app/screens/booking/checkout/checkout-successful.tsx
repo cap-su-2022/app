@@ -237,7 +237,6 @@ const CheckoutSuccessfully: React.FC<any> = () => {
               <StarRating
                 rating={rating}
                 setRating={(rate) => {
-                  console.log(rate)
                   setRating(rate);
                 }}
               />

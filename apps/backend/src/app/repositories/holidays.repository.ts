@@ -242,4 +242,14 @@ export class HolidaysRepository extends Repository<Holidays> {
       .orderBy('holidays.deleted_at', 'DESC')
       .getRawMany<Holidays>();
   }
+
+  async findAllHolidaysInDayArray() {
+    return this.createQueryBuilder('holidays')
+      .select('holidays.name', 'name')
+      .addSelect('holidays.date_start', 'start')
+      .addSelect('holidays.date_end', 'end')
+      .where('holidays.deleted_at IS NULL')
+      .andWhere('holidays.deleted_by IS NULL')
+      .getRawMany();
+  }
 }

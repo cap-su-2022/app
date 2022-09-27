@@ -32,7 +32,6 @@ export const fetchRoomFreeAtTime = createAsyncThunk<
         },
       }
     );
-    console.log('DATA NÈ: ', response.data);
     return response.data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

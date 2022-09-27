@@ -2,8 +2,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
 
 const NextHealthCheckAuth = async (req: NextApiRequest, res: NextApiResponse) => {
-
-  console.log(req.body);
   try {
     const response = await axios.get(`${process.env.API_URL}/health/auth`, {
       headers: {

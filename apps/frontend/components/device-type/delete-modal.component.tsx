@@ -39,7 +39,6 @@ const DeleteModal: React.FC<DeleteModalProps> = (props) => {
   const [isShownListDevice, setShownListDevice] = useState(false);
 
   const [listDevice, setListDevice] = useState([]);
-  console.log(listDevice);
 
   const dispatch = useAppDispatch();
 
