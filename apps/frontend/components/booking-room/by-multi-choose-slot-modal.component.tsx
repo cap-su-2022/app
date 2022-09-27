@@ -121,6 +121,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
     const currenTime = new Date();
     const currenTimeTimestamp = new Date().setHours(0, 0, 0, 0);
     const checkinDate = props.formik.values.checkinDate?.setHours(0, 0, 0, 0);
+    console.log(checkinDate === currenTimeTimestamp);
     const timeStart = props.formik.values.timeStart;
     const timeEnd = props.formik.values.timeEnd;
     if (
@@ -180,7 +181,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
         title: `Invalid time start`,
         message: `Time start must be greater than ${slot[
           slotNameArray[0]
-        ]?.start.slice(0, 5)}`,
+          ]?.start.slice(0, 5)}`,
         icon: <X />,
         autoClose: 3000,
       });
@@ -194,7 +195,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
         title: `Invalid time end`,
         message: `The time end must be less than ${slot[
           slotNameArray[slotNameArray.length - 1]
-        ]?.end.slice(0, 5)}`,
+          ]?.end.slice(0, 5)}`,
         icon: <X />,
         autoClose: 3000,
       });

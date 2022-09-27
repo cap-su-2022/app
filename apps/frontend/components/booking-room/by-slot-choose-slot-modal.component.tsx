@@ -187,13 +187,13 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           title: `Invalid time start`,
           message: `Time start must be greater than ${slot[
             slotNameArray[0]
-          ]?.start.slice(0, 5)}`,
+            ]?.start.slice(0, 5)}`,
           icon: <X />,
           autoClose: 3000,
         });
       } else if (
         dayjs(timeEnd).format('HH:mm:ss') >
-          slot[slotNameArray[slotNameArray.length - 1]]?.end &&
+        slot[slotNameArray[slotNameArray.length - 1]]?.end &&
         userInfo.role === 'Staff'
       ) {
         showNotification({
@@ -202,7 +202,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           title: `Invalid time end`,
           message: `The time end must be less than ${slot[
             slotNameArray[slotNameArray.length - 1]
-          ]?.end.slice(0, 5)}`,
+            ]?.end.slice(0, 5)}`,
           icon: <X />,
           autoClose: 3000,
         });
