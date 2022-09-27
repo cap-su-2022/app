@@ -112,7 +112,7 @@ const CheckoutSuccessfully: React.FC<any> = () => {
       addNewFeedbackAfterCheckout({
         message: values.description,
         rateNum: values.rateNum,
-        feedbacktype: values.feedbackType,
+        feedbackType: values.feedbackType,
         bookingRoomId: roomBookingCheckout.id,
       })
     )

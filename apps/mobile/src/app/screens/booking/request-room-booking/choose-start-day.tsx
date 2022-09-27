@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,10 +16,10 @@ import {
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { saveStartDay } from '../../../redux/features/room-booking/slice';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
-import dayjs from "dayjs";
-import {fetchHolidays} from "../../../redux/features/holidays/thunk/fetch-holidays.thunk";
-import {GenericAlertModal} from "./generic-alert-modal.component";
-import isBetween from "dayjs/plugin/isBetween";
+import dayjs from 'dayjs';
+import { fetchHolidays } from '../../../redux/features/holidays/thunk/fetch-holidays.thunk';
+import { GenericAlertModal } from './generic-alert-modal.component';
+import isBetween from 'dayjs/plugin/isBetween';
 
 const StartDayCalendar: React.FC<any> = (props) => {
   const dispatch = useAppDispatch();
@@ -45,27 +45,41 @@ const StartDayCalendar: React.FC<any> = (props) => {
     holidays.forEach((holiday) => {
       const providedDay = dayjs(day.dateString);
       const startDay = dayjs(holiday.start);
-      const endDay = dayjs(holiday.end);
 
-      dayjs.extend(isBetween)
+      const endDay = dayjs(holiday.end);
+      console.log(
+        new Date(holiday.start) == new Date(holiday.end),
+        providedDay
+      );
+      dayjs.extend(isBetween);
 
       // @ts-ignore
-      if (providedDay.isBetween(startDay, endDay)) {
+      if (
+        providedDay.isBetween(startDay, endDay) ||
+        providedDay.isSame(startDay) ||
+        providedDay.isSame(endDay)
+      ) {
         flag = false;
         hName = holiday.name;
-        hStart = startDay.format("MM/DD/YYYY");
-        hEnd  =endDay.format("MM/DD/YYYY");
+        hStart = startDay.format('MM/DD/YYYY');
+        hEnd = endDay.format('MM/DD/YYYY');
+      }
+
+      // @ts-ignore
+      if (flag === false) {
+        setTimeout(() => {
+          setMessage(
+            'The day you are choosing is violated with the holiday: ' +
+              hName +
+              '. From: ' +
+              hStart +
+              '. To: ' +
+              hEnd
+          );
+          setShown(true);
+        }, 10);
       }
     });
-
-
-    // @ts-ignore
-    if (flag === false) {setTimeout(() => {
-      setMessage("The day you are choosing is violated with the holiday: " + hName +  ". From: "
-        + hStart +  ". To: " + hEnd);
-      setShown(true);
-    }, 10);
-    }
 
     if (flag === true) {
       setDayStart(day.dateString);
@@ -73,21 +87,25 @@ const StartDayCalendar: React.FC<any> = (props) => {
     }
   };
 
-  const lastDay2Week =   dayjs().startOf('week').add(21, 'day').format('YYYY-MM-DD');
-
-
+  const lastDay2Week = dayjs()
+    .startOf('week')
+    .add(21, 'day')
+    .format('YYYY-MM-DD');
 
   useEffect(() => {
     dispatch(fetchHolidays());
   }, []);
 
-
   return (
     <SafeAreaView style={styles.container}>
-      <GenericAlertModal isShown={isShown} toggleShown={() => {
-        setShown(!isShown);
-        props.navigation.pop();
-      }} message={message}/>
+      <GenericAlertModal
+        isShown={isShown}
+        toggleShown={() => {
+          setShown(!isShown);
+          props.navigation.pop();
+        }}
+        message={message}
+      />
       <View style={styles.container}>
         <Calendar
           initialDate={currentDate}
@@ -191,7 +209,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: FPT_ORANGE_COLOR,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   bookingNowButtonText: {
     fontSize: deviceWidth / 21,

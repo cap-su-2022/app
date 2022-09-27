@@ -1228,8 +1228,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .andWhere('booking_request.cancelled_at IS NULL')
       .andWhere('booking_request.checkedin_at IS NULL')
       .andWhere('booking_request.checkedout_at IS NULL')
-      .orderBy('booking_request.checkin_date', 'DESC')
-      .addOrderBy('booking_request.checkin_time', 'DESC')
+      .orderBy('booking_request.checkin_date', 'ASC')
+      .addOrderBy('booking_request.checkin_time', 'ASC')
       .limit(1)
       .getRawOne();
   }
