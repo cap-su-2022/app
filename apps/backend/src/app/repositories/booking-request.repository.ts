@@ -1210,7 +1210,6 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .addSelect('booking_request.checkin_date', 'checkinDate')
       .addSelect('booking_request.checkin_time', 'checkinTime')
       .addSelect('booking_request.checkout_time', 'checkoutTime')
-      .addSelect('booking_request.accepted_at', 'acceptedAt')
       .innerJoin(Accounts, 'a', 'a.id = booking_request.requested_by')
       .innerJoin(Rooms, 'r', 'booking_request.room_id = r.id')
       .innerJoin(
@@ -1229,7 +1228,8 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
       .andWhere('booking_request.cancelled_at IS NULL')
       .andWhere('booking_request.checkedin_at IS NULL')
       .andWhere('booking_request.checkedout_at IS NULL')
-      .orderBy('booking_request.accepted_at', 'DESC')
+      .orderBy('booking_request.checkin_date', 'DESC')
+      .addOrderBy('booking_request.checkin_time', 'DESC')
       .limit(1)
       .getRawOne();
   }
