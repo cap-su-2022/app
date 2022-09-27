@@ -108,17 +108,39 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
     }, [parent]);
     const reveal = () => setShow(!show);
 
-    return (
-      <Button
-        onClick={() => setShowListDevice(!isShowListDevice)}
-        variant="outline"
-        color={'blue'}
-        leftIcon={<Devices/>}
-      >
-        Devices
-      </Button>
-    );
+
+    console.log(choosedDevice.length)
+
+    switch (requestBooking.status) {
+      case 'CHECKED_OUT':
+        if (choosedDevice && choosedDevice.length > 0) {
+          return (
+            <Button
+              onClick={() => setShowListDevice(!isShowListDevice)}
+              variant="outline"
+              color={'blue'}
+              leftIcon={<Devices/>}
+            >
+              Devices
+            </Button>
+          );
+        } else return null;
+
+      default:
+        return (
+          <Button
+            onClick={() => setShowListDevice(!isShowListDevice)}
+            variant="outline"
+            color={'blue'}
+            leftIcon={<Devices/>}
+          >
+            Devices
+          </Button>
+        );
+    }
+
   };
+
 
   const ButtonRender = (status: string) => {
     switch (status) {
@@ -220,6 +242,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         } else return null;
 
       case 'CHECKED_OUT':
+
         if (userInfo.id === requestBooking.bookedForId) {
           if (requestBooking.feedback) {
             return (
@@ -231,7 +254,6 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 >
                   Feedback
                 </Button>
-
                 <RenderDeviceButton/>
               </>
             );
@@ -245,8 +267,8 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 >
                   Send feedback
                 </Button>
-
                 <RenderDeviceButton/>
+
               </>
             );
           }
@@ -261,15 +283,16 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
                 >
                   Feedback
                 </Button>
-
                 <RenderDeviceButton/>
               </>
             );
           } else {
-            return null;
+            return  <RenderDeviceButton/>
           }
         }
+
     }
+
   };
   const remove = (item) => {
     for (const d of choosedDevice) {
@@ -411,6 +434,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
         )
     };
 
+
     return (
       <>
         <div className={classes.displayFex}>
@@ -506,6 +530,16 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
       </>
     );
   };
+
+  const listDeviceCheckOutDiv =
+    choosedDevice && choosedDevice.length > 0
+      ? choosedDevice.map((device) => (
+        <div key={device.id} className={classes.deviceRow}>
+          <p className={classes.col1}>{device.deviceName}</p>
+          <p className={classes.col2}>{device.deviceQuantity}</p>
+        </div>
+      ))
+      : null;
 
   const FeedbackDiv: React.FC<{ feedback: any }> = (props) => {
     return (
@@ -676,7 +710,8 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
           <div style={{marginBottom: 35}}>
             <b>LIST DEVICES</b>
           </div>
-          <ListDeviceDiv/>
+          {requestBooking.status === 'CHECKED_OUT' ? listDeviceCheckOutDiv : <ListDeviceDiv/>}
+
         </div>
       ) : null}
     </div>
