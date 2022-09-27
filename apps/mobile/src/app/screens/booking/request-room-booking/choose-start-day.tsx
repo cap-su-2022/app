@@ -42,21 +42,7 @@ const StartDayCalendar: React.FC<any> = (props) => {
     let hStart;
     let hEnd;
 
-    holidays.forEach((holiday) => {
-      const providedDay = dayjs(day.dateString);
-      const startDay = dayjs(holiday.start);
-      const endDay = dayjs(holiday.end);
 
-      dayjs.extend(isBetween)
-
-      // @ts-ignore
-      if (providedDay.isBetween(startDay, endDay)) {
-        flag = false;
-        hName = holiday.name;
-        hStart = startDay.format("MM/DD/YYYY");
-        hEnd  =endDay.format("MM/DD/YYYY");
-      }
-    });
 
     setMessage("The day you are choosing is violated with the holiday: " + hName +  ". From: "
       + hStart +  ". To: " + hEnd);
