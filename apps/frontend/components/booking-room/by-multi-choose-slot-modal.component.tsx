@@ -1,19 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import {Button, InputWrapper, Select, Space, TextInput} from '@mantine/core';
-import {ChevronsRight, ClipboardText, X} from 'tabler-icons-react';
-import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {FormikProps} from 'formik';
-import {showNotification} from '@mantine/notifications';
-import {DatePicker, TimeInput} from '@mantine/dates';
+import React, { useEffect, useState } from 'react';
+import { Button, InputWrapper, Select, Space, TextInput } from '@mantine/core';
+import { ChevronsRight, ClipboardText, X } from 'tabler-icons-react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { FormikProps } from 'formik';
+import { showNotification } from '@mantine/notifications';
+import { DatePicker, TimeInput } from '@mantine/dates';
 import dayjs from 'dayjs';
 import BySlotChooseRoomModal from './by-slot-choose-room-modal.component';
 import ChooseDeviceModal from './choose-device-modal.component';
 import ConfirmModal from './confirm-modal.component';
-import {
-  IsUserHaveBookedSameSlotMulti
-} from 'apps/frontend/redux/features/room-booking/thunk/fetch-room-booked-same-slot-multi-of-user.thunk';
-import {fetchAllSlots} from "../../redux/features/slot";
-import {fetchHolidaysMini} from "../../redux/features/holidays/thunk/fetch-holidays-mini.thunk";
+import { IsUserHaveBookedSameSlotMulti } from 'apps/frontend/redux/features/room-booking/thunk/fetch-room-booked-same-slot-multi-of-user.thunk';
+import { fetchAllSlots } from '../../redux/features/slot';
+import { fetchHolidaysMini } from '../../redux/features/holidays/thunk/fetch-holidays-mini.thunk';
 
 interface ChooseMultiDayModalProps {
   formik: FormikProps<any>;
@@ -43,11 +41,13 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
   const [showChooseSlot, setShowChooseSlot] = useState<boolean>(true);
   const [showChooseDevice, setShowChooseDevice] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const [errorInputTimeStart, setErrorInputTimeStart] = useState('');
+  const [errorInputTimeEnd, setErrorInputTimeEnd] = useState('');
 
   const [showHintSlot, setShowHintSlot] = useState<boolean>(false);
   const [slotNameStart, setSlotNameStart] = useState<string>('');
   const [slotNameEnd, setSlotNameEnd] = useState<string>('');
-  const slot = useAppSelector(state => state.slot.slot);
+  const slot = useAppSelector((state) => state.slot.slot);
   const slotObject = new Object(slot);
   const slotsArray = Object.entries(slotObject);
 
@@ -65,11 +65,11 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
   const getSlot = (time: string): any => {
     const name = slotsArray.map((slot) => {
       if (time >= slot[1].start && time <= slot[1].end) {
-        return slot[1].name
+        return slot[1].name;
       }
-    })
+    });
     return name;
-  }
+  };
   const holidays = useAppSelector((state) => state.holiday.holidaysMini);
   const isHoliday = (date) => {
     const dateFormat = dayjs(date).format('YYYY-MM-DD');
@@ -82,6 +82,40 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
       }
     }
   };
+
+  useEffect(() => {
+    const timeStart = dayjs(props.formik.values.timeStart).format('HH:mm:ss');
+    const slotNameArray = Object.keys(slot);
+    if (
+      timeStart < slot[slotNameArray[0]]?.start &&
+      userInfo.role === 'Staff'
+    ) {
+      setErrorInputTimeStart(
+        `Must > ${slot[slotNameArray[0]]?.start.slice(0, 5)}`
+      );
+    } else {
+      setErrorInputTimeStart('');
+    }
+  }, [props.formik.values.timeStart]);
+
+  useEffect(() => {
+    const timeEnd = dayjs(props.formik.values.timeEnd).format('HH:mm:ss');
+    const slotNameArray = Object.keys(slot);
+
+    if (
+      timeEnd > slot[slotNameArray[slotNameArray.length - 1]]?.end &&
+      userInfo.role === 'Staff'
+    ) {
+      setErrorInputTimeEnd(
+        `Must < ${slot[slotNameArray[slotNameArray.length - 1]]?.end.slice(
+          0,
+          5
+        )}`
+      );
+    } else {
+      setErrorInputTimeEnd('');
+    }
+  }, [props.formik.values.timeEnd]);
 
   useEffect(() => {
     const currenTime = new Date();
@@ -99,7 +133,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
         color: 'red',
         title: 'The time you selected is over',
         message: 'Please select other time',
-        icon: <X/>,
+        icon: <X />,
         autoClose: 3000,
       });
     }
@@ -119,6 +153,10 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
   }, [props.formik.values.checkinDate, props.formik.values.checkoutDate]);
 
   const handleNextChooseRoom = () => {
+    const timeStart = dayjs(props.formik.values.timeStart).format('HH:mm:ss');
+    const timeEnd = dayjs(props.formik.values.timeEnd).format('HH:mm:ss');
+    const slotNameArray = Object.keys(slot);
+
     if (
       props.formik.values.checkinDate === null ||
       props.formik.values.checkoutDate === null ||
@@ -130,7 +168,35 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
         color: 'red',
         title: 'Miss some filed',
         message: 'Please choose day, slot start, slot end before to next step',
-        icon: <X/>,
+        icon: <X />,
+        autoClose: 3000,
+      });
+    } else if (
+      timeStart < slot[slotNameArray[0]]?.start &&
+      userInfo.role === 'Staff'
+    ) {
+      showNotification({
+        id: 'time-invalid',
+        color: 'red',
+        title: `Invalid time start`,
+        message: `Time start must be greater than ${slot[
+          slotNameArray[0]
+        ]?.start.slice(0, 5)}`,
+        icon: <X />,
+        autoClose: 3000,
+      });
+    } else if (
+      timeEnd > slot[slotNameArray[slotNameArray.length - 1]]?.end &&
+      userInfo.role === 'Staff'
+    ) {
+      showNotification({
+        id: 'time-invalid',
+        color: 'red',
+        title: `Invalid time end`,
+        message: `The time end must be less than ${slot[
+          slotNameArray[slotNameArray.length - 1]
+        ]?.end.slice(0, 5)}`,
+        icon: <X />,
         autoClose: 3000,
       });
     } else {
@@ -155,7 +221,7 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
               message: `${
                 props.formik.values.bookedFor ? 'User' : 'You'
               } already have request booked for ${response} at same time. Please choose another time`,
-              icon: <X/>,
+              icon: <X />,
               autoClose: 3000,
             });
           } else {
@@ -202,10 +268,10 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
           margin: '20px 0',
         }}
       >
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <DatePicker
             id="checkinDate"
-            style={{width: '250px'}}
+            style={{ width: '250px' }}
             label="Date start"
             placeholder="Select date"
             radius="md"
@@ -228,12 +294,12 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             size={28}
             strokeWidth={2}
             color={'black'}
-            style={{margin: 'auto 40px', position: 'relative', top: 15}}
+            style={{ margin: 'auto 40px', position: 'relative', top: 15 }}
           />
 
           <DatePicker
             id="checkoutDate"
-            style={{width: '250px'}}
+            style={{ width: '250px' }}
             label="Date end"
             placeholder="Select date"
             radius="md"
@@ -252,22 +318,22 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             excludeDate={(date) => isHoliday(date)}
           />
         </div>
-        <Space h="sm"/>
-        <div style={{display: 'flex', justifyContent: 'center'}}>
+        <Space h="sm" />
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
           <InputWrapper required label="Time start">
             <TimeInput
-              icon={<ClipboardText/>}
+              icon={<ClipboardText />}
               id="timeStart"
               name="timeStart"
-              // error={formik.errors.timeEnd}
+              error={errorInputTimeStart}
               description={showHintSlot ? slotNameStart : ''}
               onChange={(e) => {
-                props.formik.setFieldValue('timeStart', e)
+                props.formik.setFieldValue('timeStart', e);
                 const time = dayjs(new Date(e.getTime())).format('HH:mm:ss');
                 setSlotNameStart(getSlot(time));
-                setShowHintSlot(true)
+                setShowHintSlot(true);
               }}
-              style={{width: '8rem'}}
+              style={{ width: '8rem' }}
               // radius="md"
               value={props.formik.values.timeStart}
             />
@@ -276,22 +342,22 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             size={28}
             strokeWidth={2}
             color={'black'}
-            style={{margin: 'auto 40px'}}
+            style={{ margin: 'auto 40px' }}
           />
           <InputWrapper required label="Time end">
             <TimeInput
-              icon={<ClipboardText/>}
+              icon={<ClipboardText />}
               id="timeEnd"
               name="timeEnd"
-              // error={formik.errors.timeEnd}
+              error={errorInputTimeEnd}
               description={showHintSlot ? slotNameEnd : ''}
               onChange={(e) => {
-                props.formik.setFieldValue('timeEnd', e)
+                props.formik.setFieldValue('timeEnd', e);
                 const time = dayjs(new Date(e.getTime())).format('HH:mm:ss');
                 setSlotNameEnd(getSlot(time));
-                setShowHintSlot(true)
+                setShowHintSlot(true);
               }}
-              style={{width: '8rem'}}
+              style={{ width: '8rem' }}
               // radius="md"
               value={props.formik.values.timeEnd}
             />
@@ -299,14 +365,14 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
         </div>
       </div>
 
-      <div style={{display: 'flex', gap: 20}}>
+      <div style={{ display: 'flex', gap: 20 }}>
         <InputWrapper
           required
           label="Number of participants"
-          style={{width: '200px'}}
+          style={{ width: '200px' }}
         >
           <TextInput
-            icon={<ClipboardText/>}
+            icon={<ClipboardText />}
             id="capacity"
             name="capacity"
             error={props.formik.errors.capacity}
@@ -327,11 +393,11 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
             error={props.formik.errors.bookedFor}
             onChange={props.formik.handleChange('bookedFor')}
             searchable={true}
-            style={{flex: 1}}
+            style={{ flex: 1 }}
           />
         ) : null}
       </div>
-      <div style={{display: 'flex', justifyContent: 'flex-end', margin: 10}}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', margin: 10 }}>
         <Button onClick={() => handleNextChooseRoom()} color="green">
           Next
         </Button>
