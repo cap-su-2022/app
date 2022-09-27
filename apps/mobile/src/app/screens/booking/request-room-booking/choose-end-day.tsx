@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -18,6 +18,8 @@ import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
+import {GenericAlertModal} from "./generic-alert-modal.component";
+import {fetchHolidays} from "../../../redux/features/holidays/thunk/fetch-holidays.thunk";
 
 const EndDayCalendar: React.FC<any> = (props) => {
   const Today = new Date().toJSON().slice(0, 10);
@@ -39,6 +41,10 @@ const EndDayCalendar: React.FC<any> = (props) => {
   const isMultiDate = useAppSelector(
     (state) => state.roomBooking.addRoomBooking.isMultiDate
   );
+
+  useEffect(() => {
+    dispatch(fetchHolidays())
+  }, []);
   const handleDayPress = (day) => {
     let flag = true;
     holidays.forEach((holiday) => {
@@ -55,10 +61,9 @@ const EndDayCalendar: React.FC<any> = (props) => {
         setMessage("The day you are choosing is violated with the holiday: " + holiday.name +  ". From: "
           + startDay.format("MM/DD/YYYY") +  ". To: " + endDay.format("MM/DD/YYYY"));
         return setShown(true);
-      } else {
-        flag = true;
       }
     });
+
 
     if (flag === true) {
       setDayEnd(day.dateString);
@@ -70,6 +75,10 @@ const EndDayCalendar: React.FC<any> = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <GenericAlertModal isShown={isShown} toggleShown={() => {
+        setShown(!isShown);
+        props.navigation.pop();
+      }} message={message}/>
       <View style={styles.container}>
         <Calendar
           minDate={fromDay || Today}

@@ -51,8 +51,6 @@ const StartDayCalendar: React.FC<any> = (props) => {
         setMessage("The day you are choosing is violated with the holiday: " + holiday.name +  ". From: "
         + startDay.format("MM/DD/YYYY") +  ". To: " + endDay.format("MM/DD/YYYY"));
         return setShown(true);
-      } else {
-        flag = true;
       }
     });
 
@@ -73,7 +71,10 @@ const StartDayCalendar: React.FC<any> = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <GenericAlertModal isShown={isShown} toggleShown={() => setShown(!isShown)} message={message}/>
+      <GenericAlertModal isShown={isShown} toggleShown={() => {
+        setShown(!isShown);
+        props.navigation.pop();
+      }} message={message}/>
       <View style={styles.container}>
         <Calendar
           initialDate={currentDate}
