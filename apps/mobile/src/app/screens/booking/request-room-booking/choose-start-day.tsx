@@ -58,11 +58,14 @@ const StartDayCalendar: React.FC<any> = (props) => {
       }
     });
 
-    setTimeout(() => {
+
+    // @ts-ignore
+    if (flag === false) {setTimeout(() => {
       setMessage("The day you are choosing is violated with the holiday: " + hName +  ". From: "
         + hStart +  ". To: " + hEnd);
       setShown(true);
     }, 10);
+    }
 
     if (flag === true) {
       setDayStart(day.dateString);

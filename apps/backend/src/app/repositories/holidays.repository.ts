@@ -90,7 +90,7 @@ export class HolidaysRepository extends Repository<Holidays> {
     id: string,
     queryRunner: QueryRunner
   ) {
-    return queryRunner.manager.save(Rooms, {
+    return queryRunner.manager.save(Holidays, {
       id: id,
       name: holiday.name,
       description: holiday.description,
@@ -178,7 +178,9 @@ export class HolidaysRepository extends Repository<Holidays> {
         'OR (holidays.date_start <= :dateEnd AND holidays.date_end >= :dateEnd) ' +
         'OR (holidays.date_start > :dateStart AND holidays.date_start < :dateEnd))',
         {dateStart, dateEnd}
-      );
+      )
+      .andWhere("holidays.deleted_by IS NULL")
+      .andWhere("holidays.deleted_at IS NULL")
     if (holidayId) {
       query.andWhere('holidays.id != :holidayId', {holidayId});
     }
