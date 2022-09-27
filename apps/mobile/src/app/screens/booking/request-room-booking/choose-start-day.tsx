@@ -37,32 +37,10 @@ const StartDayCalendar: React.FC<any> = (props) => {
     (state) => state.roomBooking.addRoomBooking.isMultiDate
   );
   const handleDayPress = (day) => {
-    let flag = true;
-    let hName;
-    let hStart;
-    let hEnd;
 
-    holidays.forEach((holiday) => {
-      const providedDay = dayjs(day.dateString);
-      const startDay = dayjs(holiday.start);
-      const endDay = dayjs(holiday.end);
-
-      dayjs.extend(isBetween)
-
-      // @ts-ignore
-      if (providedDay.isBetween(startDay, endDay)) {
-        flag = false;
-        hName = holiday.name;
-        hStart = startDay.format("MM/DD/YYYY");
-        hEnd  =endDay.format("MM/DD/YYYY");
-      }
-    });
-
-
-    if (flag === true) {
       setDayStart(day.dateString);
       dispatch(saveStartDay({ fromDay: day.dateString }));
-    }
+
   };
 
   const lastDay2Week =   dayjs().startOf('week').add(21, 'day').format('YYYY-MM-DD');
