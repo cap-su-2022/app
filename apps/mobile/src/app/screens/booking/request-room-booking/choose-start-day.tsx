@@ -37,6 +37,10 @@ const StartDayCalendar: React.FC<any> = (props) => {
   );
   const handleDayPress = (day) => {
     let flag = true;
+    let hName;
+    let hStart;
+    let hEnd;
+
     holidays.forEach((holiday) => {
       const providedDay = dayjs(day.dateString);
       const startDay = dayjs(holiday.start);
@@ -48,11 +52,15 @@ const StartDayCalendar: React.FC<any> = (props) => {
       // @ts-ignore
       if (providedDay.isBetween(startDay, endDay)) {
         flag = false;
-        setMessage("The day you are choosing is violated with the holiday: " + holiday.name +  ". From: "
-        + startDay.format("MM/DD/YYYY") +  ". To: " + endDay.format("MM/DD/YYYY"));
-        return setShown(true);
+        hName = holiday.name;
+        hStart = startDay.format("MM/DD/YYYY");
+        hEnd  =endDay.format("MM/DD/YYYY");
       }
     });
+
+    setMessage("The day you are choosing is violated with the holiday: " + hName +  ". From: "
+      + hStart +  ". To: " + hEnd);
+    setShown(true);
 
     if (flag === true) {
       setDayStart(day.dateString);
@@ -73,6 +81,7 @@ const StartDayCalendar: React.FC<any> = (props) => {
     <SafeAreaView style={styles.container}>
       <GenericAlertModal isShown={isShown} toggleShown={() => {
         setShown(!isShown);
+        props.navigation.pop();
       }} message={message}/>
       <View style={styles.container}>
         <Calendar
