@@ -19,6 +19,7 @@ import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import dayjs from "dayjs";
 import {fetchHolidays} from "../../../redux/features/holidays/thunk/fetch-holidays.thunk";
 import {GenericAlertModal} from "./generic-alert-modal.component";
+import isBetween from "dayjs/plugin/isBetween";
 
 const StartDayCalendar: React.FC<any> = (props) => {
   const dispatch = useAppDispatch();
@@ -46,7 +47,6 @@ const StartDayCalendar: React.FC<any> = (props) => {
       const startDay = dayjs(holiday.start);
       const endDay = dayjs(holiday.end);
 
-      const isBetween = require('dayjs/plugin/isBetween')
       dayjs.extend(isBetween)
 
       // @ts-ignore
