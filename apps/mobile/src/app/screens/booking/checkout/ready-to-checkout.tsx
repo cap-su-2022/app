@@ -277,7 +277,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
                       {timeSlotCheckin}
                     </Text>
                     <Text style={styles.slotStartSlotText}>
-                      Slot {roomBookingCheckout.checkinSlot}
+                      {roomBookingCheckout.checkinTime.slice(0,5)}
                     </Text>
                   </View>
 
@@ -292,7 +292,7 @@ const RoomBookingReadyToCheckOut: React.FC<any> = () => {
                       {timeSlotCheckout}
                     </Text>
                     <Text style={styles.slotEndSlotText}>
-                      Slot {roomBookingCheckout.checkoutSlot}
+                      {roomBookingCheckout.checkoutTime.slice(0,5)}
                     </Text>
                   </View>
                 </View>
