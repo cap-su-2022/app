@@ -37,10 +37,40 @@ const StartDayCalendar: React.FC<any> = (props) => {
     (state) => state.roomBooking.addRoomBooking.isMultiDate
   );
   const handleDayPress = (day) => {
+    let flag = true;
+    let hName;
+    let hStart;
+    let hEnd;
 
+    holidays.forEach((holiday) => {
+      const providedDay = dayjs(day.dateString);
+      const startDay = dayjs(holiday.start);
+      const endDay = dayjs(holiday.end);
+
+      dayjs.extend(isBetween)
+
+      // @ts-ignore
+      if (providedDay.isBetween(startDay, endDay)) {
+        flag = false;
+        hName = holiday.name;
+        hStart = startDay.format("MM/DD/YYYY");
+        hEnd  =endDay.format("MM/DD/YYYY");
+      }
+    });
+
+
+    // @ts-ignore
+    if (flag === false) {setTimeout(() => {
+      setMessage("The day you are choosing is violated with the holiday: " + hName +  ". From: "
+        + hStart +  ". To: " + hEnd);
+      setShown(true);
+    }, 10);
+    }
+
+    if (flag === true) {
       setDayStart(day.dateString);
       dispatch(saveStartDay({ fromDay: day.dateString }));
-
+    }
   };
 
   const lastDay2Week =   dayjs().startOf('week').add(21, 'day').format('YYYY-MM-DD');
@@ -54,6 +84,10 @@ const StartDayCalendar: React.FC<any> = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <GenericAlertModal isShown={isShown} toggleShown={() => {
+        setShown(!isShown);
+        props.navigation.pop();
+      }} message={message}/>
       <View style={styles.container}>
         <Calendar
           initialDate={currentDate}
