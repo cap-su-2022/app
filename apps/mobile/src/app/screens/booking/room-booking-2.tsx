@@ -37,7 +37,11 @@ import RequestRoomBookingHeader from './request-room-booking/header';
 import { boxShadow } from '../../utils/box-shadow.util';
 import NotFound from '../../components/empty.svg';
 import { fetchMaxBorrowDevicesQuantity } from '../../redux/features/system/thunk/fetch-max-borrow-devices-quantity.thunk';
-import {updateAutoBookingRequest} from "../../redux/features/room-booking-v2/slice";
+import {
+  handleSetProvidedDevices,
+  updateAutoBookingRequest,
+  updateBookingRequestId
+} from "../../redux/features/room-booking-v2/slice";
 
 const RoomBooking2: React.FC = () => {
   const navigate = useAppNavigation();
@@ -50,8 +54,16 @@ const RoomBooking2: React.FC = () => {
   const [sort, setSort] = useState<'ASC' | 'DESC'>('ASC');
   const [isErrorModalShown, setErrorModalShown] = useState<boolean>(false);
 
+
+  const providedDevices = useAppSelector((state) => state.bookedRequest.providedDevices);
+
+  useEffect(() => {
+    if (providedDevices && providedDevices.length > 0) {
+      setDeviceSelectedDevice(providedDevices);
+    }
+  }, [providedDevices]);
+
   const [maxQuantity, setMaxQuantity] = useState<number>(100);
-  const bookingRequestId = useAppSelector((state) => state.bookedRequest.bookingRequestId);
 
   useEffect(() => {
     dispatch(fetchMaxBorrowDevicesQuantity())
@@ -86,17 +98,13 @@ const RoomBooking2: React.FC = () => {
     const devices = [];
     for (let i = 0; i < deviceSelectedDevice.length; i++) {
       devices.push({
-        label: deviceSelectedDevice[i].name,
-        value: deviceSelectedDevice[i].id,
+        id: deviceSelectedDevice[i].id,
         quantity: deviceSelectedDevice[i].quantity,
       });
     }
-    navigate.navigate('ROOM_BOOKING_3');
-    dispatch(
-      step3ScheduleRoomBooking({
-        devices: devices,
-      })
-    );
+    dispatch(updateBookingRequestId(undefined));
+    dispatch(handleSetProvidedDevices(devices));
+    navigate.pop();
   };
 
   const Filtering: React.FC = () => {
@@ -144,7 +152,7 @@ const RoomBooking2: React.FC = () => {
     const [quantity, setQuantity] = useState<number>(1);
 
     const handleSelectedDevice = () => {
-      deviceSelectedDevice.filter((device) => device.id === props.device.id)[0]
+      deviceSelectedDevice?.filter((device) => device.id === props.device.id)[0]
         ? setDeviceSelectedDevice(
             deviceSelectedDevice.filter(
               (device) => device.id !== props.device.id
@@ -168,7 +176,7 @@ const RoomBooking2: React.FC = () => {
     const handleReduceQuantity = () => {
       if (quantity - 1 === 0) {
         return setDeviceSelectedDevice(
-          deviceSelectedDevice.filter((device) => device.id !== props.device.id)
+          deviceSelectedDevice?.filter((device) => device.id !== props.device.id)
         );
       }
       setQuantity(quantity - 1);

@@ -80,8 +80,6 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
   );
 
   useEffect(() => {
-    console.log(choosedDevice);
-    console.log(deviceNames);
     if (choosedDevice.length) {
       const deviceNamesUpdated = deviceNames.filter((deviceName) =>
         choosedDevice.every((choosed) => choosed.deviceId != deviceName.value)
@@ -446,7 +444,6 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               required
               value={value}
               onChange={(val) => {
-                console.log(val);
                 setValue(val);
               }}
               handlersRef={handlers}

@@ -28,7 +28,7 @@ import {
   TrashIcon,
 } from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
-import { fetchAllSlots } from '../../../redux/features/slot';
+import {fetchAllSlots, fetchSlots} from '../../../redux/features/slot';
 import { Slot } from '../../../redux/models/slot.model';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import {
@@ -57,6 +57,9 @@ import {
   updateAutoBookingRequest,
   updateBookingRequestId,
 } from '../../../redux/features/room-booking-v2/slice';
+import {GenericAlertModal} from "./generic-alert-modal.component";
+import BookingRequestItem from "./booking-request-item";
+import {fetchHolidays} from "../../../redux/features/holidays/thunk/fetch-holidays.thunk";
 
 const ScheduleRoomBookingLater: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -85,12 +88,10 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     (state) => state.roomBooking.addRoomBooking.toDay
   );
 
+  const slots = useAppSelector((state) => state.slot.newSlots);
+
   useEffect(() => {
-    dispatch(fetchAllSlots())
-      .unwrap()
-      .then((val) => {
-        transformSlotsToSlotPicker(val);
-      });
+    dispatch(fetchSlots());
     dispatch(saveToday(Today));
     dispatch(saveStartDay(Today));
     return () => {
@@ -98,21 +99,22 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     };
   }, []);
 
-  const transformSlotsToSlotPicker = (val: Slot[]) => {
-    const slotSelections = val.map((slot) => {
-      return {
-        value: slot.id,
-        label: `${slot.name} (${slot.timeStart.slice(
-          0,
-          5
-        )} - ${slot.timeEnd.slice(0, 5)})`,
-        slotNum: slot.slotNum,
-      };
-    });
-    setSlotSelections(slotSelections);
-    handleSetSlotStart(slotSelections[0].value);
-    handleSetSlotEnd(slotSelections[0].value);
-  };
+  const [startingTime, setStartingTime] = useState();
+  const [endingTime, setEndingTime] = useState();
+
+  useEffect(() => {
+    const size = Object.keys(slots).length;
+    const obj = Object.keys(slots);
+    obj.map((o, i) => {
+      if (i === 0) {
+        setStartingTime(slots[o].start);
+      } else if (size - 1 === i) {
+        setEndingTime(slots[o].end);
+      }
+    })
+  }, [slots]);
+
+
 
   useEffect(() => {
     dispatch(fetchCountRequestInWeekOfUser())
@@ -230,72 +232,46 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       };
     } else if (isMultiDateChecked || isMultiSlotChecked) {
       return {
-        height: Platform.OS === 'android' ? deviceHeight / 1.8 : 350,
+        height: Platform.OS === 'android' ? deviceHeight / 1.75 : 350,
       };
     }
   };
   const [genericMessage, setGenericMessage] = useState<string>();
   const [isGenericModalShown, setGenericModalShown] = useState<boolean>(false);
 
-  const GenericAlertModal = ({ message }) => {
-    return (
-      <AlertModal
-        isOpened={isGenericModalShown}
-        height={200}
-        width={deviceWidth / 1.1}
-        toggleShown={() => setGenericModalShown(!isGenericModalShown)}
-      >
-        <View
-          style={{
-            display: 'flex',
-            flex: 1,
-            flexGrow: 0.9,
-            justifyContent: 'space-between',
-            paddingHorizontal: 10,
-          }}
-        >
-          <ExclamationCircleIcon
-            style={{
-              alignSelf: 'center',
-            }}
-            size={deviceWidth / 8}
-            color={FPT_ORANGE_COLOR}
-          />
-          <Text
-            style={{
-              color: BLACK,
-              fontWeight: '500',
-              fontSize: deviceWidth / 23,
-              textAlign: 'center',
-            }}
-          >
-            {message}
-          </Text>
-          <TouchableOpacity
-            onPress={() => setGenericModalShown(!isGenericModalShown)}
-            style={{
-              backgroundColor: FPT_ORANGE_COLOR,
-              height: 40,
-              borderRadius: 8,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: '500',
-                fontSize: deviceWidth / 23,
-                color: WHITE,
-              }}
-            >
-              Close
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </AlertModal>
-    );
-  };
+  const handleSetCheckInAt = (val: string) => {
+    const providedCheckInAt = dayjs(`${dayjs().format("YYYY-DD-MM")} ${val}`);
+    const currentStartingTime = dayjs(`${dayjs().format("YYYY-DD-MM")} ${startingTime}`);
+    const currentEndingTime = dayjs(`${dayjs().format("YYYY-DD-MM")} ${endingTime}`);
+
+    if (providedCheckInAt.isSame(currentEndingTime) || providedCheckInAt.isAfter(currentEndingTime)) {
+      setGenericModalShown(true);
+      return setGenericMessage("The provided check-in time should not be after or the same as then ending slot. Please try again");
+    }
+    if (providedCheckInAt.isBefore(currentStartingTime)) {
+      setGenericModalShown(true);
+      return setGenericMessage("The provided check-in time should be after or the same as the starting slot time. Please try again");
+    } else {
+      setCheckInAt(val);
+    }
+  }
+
+  const handleSetCheckOutAt = (val: string) => {
+    const providedCheckOutAt = dayjs(`${dayjs().format("YYYY-DD-MM")} ${val}`);
+    const currentStartingTime = dayjs(`${dayjs().format("YYYY-DD-MM")} ${startingTime}`);
+    const currentEndingTime = dayjs(`${dayjs().format("YYYY-DD-MM")} ${endingTime}`);
+    if (providedCheckOutAt.isSame(currentStartingTime) || providedCheckOutAt.isBefore(currentStartingTime)) {
+      setGenericModalShown(true);
+      return setGenericMessage("The provided check-out time should not be the same or before the ending slot time. Please try again");
+    }
+    if (providedCheckOutAt.isAfter(currentEndingTime) || providedCheckOutAt.isSame(currentEndingTime)) {
+      setGenericModalShown(true);
+      return setGenericMessage("The provided check-out time should be before the ending slot time. Please try again");
+    } else {
+      setCheckOutAt(val);
+    }
+  }
+
 
   const [bookingRequests, setBookingRequests] = useState<
     {
@@ -304,6 +280,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       capacity: number;
       timeStart: string;
       timeEnd: string;
+      devices?: {id: string; quantity: number}[];
     }[]
   >([]);
   const routes = navigate.getState()?.routes;
@@ -333,7 +310,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       return setGenericModalShown(!isGenericModalShown);
     }
 
-    const currentDay = prevRoute.params?.dayStart ?? Today;
+    const currentDay = fromDay || Today;
 
     if (
       bookingRequests.find(
@@ -346,16 +323,43 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       );
       return setGenericModalShown(!isGenericModalShown);
     }
-    setBookingRequests([
-      ...bookingRequests,
-      {
-        id: bookingRequests.length + 1,
-        timeStart: checkInAt,
-        timeEnd: checkOutAt,
-        capacity: capacity,
-        date: currentDay,
-      },
-    ]);
+    if (isMultiDateChecked) {
+      const currentDayJS = dayjs(currentDay);
+      const toDayJS = dayjs(toDay).add(1, 'day');
+      if (currentDayJS.isSame(toDayJS) || currentDayJS.isAfter(toDayJS)) {
+        setGenericModalShown(true);
+        return setGenericMessage("From date must not is the same or after than to date. Please try again.");
+      }
+      const providedRequests = [];
+
+      for (let i = 0; i < toDayJS.diff(currentDayJS, 'day'); i++) {
+        providedRequests.push(
+          {
+            id: bookingRequests.length + 1,
+            timeStart: checkInAt,
+            timeEnd: checkOutAt,
+            capacity: capacity,
+            date: currentDayJS.add(i, 'day').format("YYYY-MM-DD"),
+          }
+        );
+      }
+      setBookingRequests([
+        ...bookingRequests,
+        ...providedRequests
+      ]);
+    } else {
+      setBookingRequests([
+        ...bookingRequests,
+        {
+          id: bookingRequests.length + 1,
+          timeStart: checkInAt,
+          timeEnd: checkOutAt,
+          capacity: capacity,
+          date: currentDay,
+        },
+      ]);
+    }
+
   };
 
   const handleAutoBookNextStep = () => {
@@ -371,6 +375,79 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     );
     navigate.navigate('ROOM_BOOKING_3');
   };
+
+  const handleRemoveBookingRequest = (requestId: number) => {
+    setBookingRequests(bookingRequests.filter((request) => request.id !== requestId));
+  }
+
+
+  const BookingRequestsTaskMenu = () => {
+    return bookingRequests.length > 1 ?
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          alignItems: 'center',
+          paddingBottom: 2,
+        }}
+      >
+        <TouchableOpacity
+          style={{
+            height: 50,
+            width: deviceWidth / 2.3,
+            backgroundColor: FPT_ORANGE_COLOR,
+            borderRadius: 8,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}
+        >
+          <DeviceTabletIcon color={WHITE} size={deviceWidth / 16}/>
+          <Text
+            style={{
+              color: WHITE,
+              fontWeight: '600',
+              fontSize: deviceWidth / 21,
+              paddingLeft: 6,
+            }}
+          >
+            Devices
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            height: 50,
+            width: deviceWidth / 2.3,
+            backgroundColor: FPT_ORANGE_COLOR,
+            borderRadius: 8,
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+            opacity: bookingRequests.length > 1 ? 0.5 : null,
+          }}
+          onPress={() => setBookingRequests([])}
+        >
+          <TrashIcon color={WHITE} size={deviceWidth / 16} />
+          <Text
+            style={{
+              color: WHITE,
+              fontWeight: '600',
+              fontSize: deviceWidth / 21,
+            }}
+          >
+            Remove all
+          </Text>
+        </TouchableOpacity>
+      </View> : null;
+  }
+
+  const handleSetDevices = (requestId: number, devices: {id: string; quantity: number}[]) => {
+    const bookingRequest = bookingRequests.find((request) => request.id === requestId);
+    bookingRequest.devices = devices;
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
@@ -403,14 +480,14 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
             >
               <RequestRoomBookingTimeSelect
                 value={checkInAt}
-                setValue={(val) => setCheckInAt(val)}
+                setValue={(val) => handleSetCheckInAt(val)}
                 title="Check-in at"
                 height={50}
                 width={deviceWidth / 2.6}
               />
               <RequestRoomBookingTimeSelect
                 value={checkOutAt}
-                setValue={(val) => setCheckOutAt(val)}
+                setValue={(val) => handleSetCheckOutAt(val)}
                 title="Check-out at"
                 height={50}
                 width={deviceWidth / 2.6}
@@ -420,18 +497,6 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
               handleSetCapacity={(val) => setCapacity(val)}
               initialCapacity={capacity}
             />
-
-            {isMultiSlotChecked && isMultiDateChecked ? (
-              <TouchableOpacity
-                onPress={() => handleLongTermBooking()}
-                style={styles.searchButton}
-              >
-                <TicketIcon color={WHITE} size={deviceWidth / 14} />
-                <Text style={styles.searchButtonText}>
-                  Long-term booking room
-                </Text>
-              </TouchableOpacity>
-            ) : null}
 
             <View
               style={{
@@ -467,295 +532,20 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
         >
           {bookingRequests.map((request) => {
             return (
-              <View
-                key={request.id}
-                style={{
-                  height: 115,
-                  width: deviceWidth / 1.1,
-                  shadowColor: '#000',
-                  shadowOffset: {
-                    width: 0,
-                    height: 3,
-                  },
-                  shadowOpacity: 0.29,
-                  shadowRadius: 4.65,
-                  marginTop: 10,
-                  elevation: 7,
-                  backgroundColor: WHITE,
-                  borderRadius: 8,
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    right: -10,
-                    top: -10,
-                    height: 25,
-                    width: 25,
-                    borderRadius: 50,
-                    backgroundColor: FPT_ORANGE_COLOR,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  <MinusIcon color={WHITE} size={deviceWidth / 23} />
-                </TouchableOpacity>
-                <View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      updateBookingRequestId(request.id);
-                      navigate.navigate('ROOM_BOOKING_2');
-                    }}
-                    style={{
-                      position: 'absolute',
-                      right: 10,
-                      top: 40,
-                      height: 40,
-                      width: 40,
-                      borderRadius: 6,
-                      borderColor: FPT_ORANGE_COLOR,
-                      borderWidth: 2,
-                      backgroundColor: WHITE,
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <DeviceTabletIcon
-                      color={FPT_ORANGE_COLOR}
-                      size={deviceWidth / 16}
-                    />
-                  </TouchableOpacity>
-                  <View
-                    style={{
-                      position: 'absolute',
-                      right: 3,
-                      top: 31,
-                      height: 20,
-                      width: 20,
-                      borderRadius: 50,
-                      backgroundColor: FPT_ORANGE_COLOR,
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <PlusIcon color={WHITE} size={deviceWidth / 26} />
-                  </View>
-                </View>
-                <View
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    paddingLeft: 10,
-                  }}
-                >
-                  <View
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <View
-                      style={{
-                        borderRadius: 50,
-                        borderWidth: 2,
-                        borderColor: FPT_ORANGE_COLOR,
-                        width: 50,
-                        height: 50,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <LibraryIcon
-                        color={FPT_ORANGE_COLOR}
-                        size={deviceWidth / 16}
-                      />
-                    </View>
-                    <View
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-evenly',
-                        height: 110,
-                        paddingLeft: 10,
-                      }}
-                    >
-                      <View
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: GRAY,
-                            fontSize: deviceWidth / 23,
-                            fontWeight: '500',
-                          }}
-                        >
-                          Date:{' '}
-                        </Text>
-                        <Text
-                          style={{
-                            color: BLACK,
-                            fontSize: deviceWidth / 23,
-                            fontWeight: '500',
-                          }}
-                        >
-                          {request.date}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: GRAY,
-                            fontSize: deviceWidth / 23,
-                            fontWeight: '500',
-                          }}
-                        >
-                          Check-in:{' '}
-                        </Text>
-                        <Text
-                          style={{
-                            color: BLACK,
-                            fontSize: deviceWidth / 23,
-                            fontWeight: '500',
-                          }}
-                        >
-                          {request.timeStart}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: GRAY,
-                            fontSize: deviceWidth / 23,
-                            fontWeight: '500',
-                          }}
-                        >
-                          Check-out:{' '}
-                        </Text>
-                        <Text
-                          style={{
-                            color: BLACK,
-                            fontSize: deviceWidth / 23,
-                            fontWeight: '500',
-                          }}
-                        >
-                          {request.timeEnd}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: GRAY,
-                            fontSize: deviceWidth / 23,
-                            fontWeight: '500',
-                          }}
-                        >
-                          Capacity:{' '}
-                        </Text>
-                        <Text
-                          style={{
-                            color: BLACK,
-                            fontSize: deviceWidth / 23,
-                            fontWeight: '500',
-                          }}
-                        >
-                          {request.capacity}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                  <View></View>
-                </View>
-              </View>
+              <BookingRequestItem key={request.id} request={request} handleSetDevices={(id, devices) => handleSetDevices(id, devices)}
+                                  handleRemoveBookingRequest={(requestId) => handleRemoveBookingRequest(requestId)}/>
             );
           })}
         </View>
-        {bookingRequests.length > 0 ? (
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-evenly',
-              alignItems: 'center',
-              paddingBottom: 2,
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                height: 50,
-                width: deviceWidth / 2.3,
-                backgroundColor: FPT_ORANGE_COLOR,
-                borderRadius: 8,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <Text
-                style={{
-                  color: WHITE,
-                  fontWeight: '600',
-                  fontSize: deviceWidth / 21,
-                }}
-              >
-                Device
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                height: 50,
-                width: deviceWidth / 2.3,
-                backgroundColor: FPT_ORANGE_COLOR,
-                borderRadius: 8,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-evenly',
-                alignItems: 'center',
-                opacity: bookingRequests.length > 1 ? 0.5 : null,
-              }}
-              onPress={() => setBookingRequests([])}
-            >
-              <TrashIcon color={WHITE} size={deviceWidth / 16} />
-              <Text
-                style={{
-                  color: WHITE,
-                  fontWeight: '600',
-                  fontSize: deviceWidth / 21,
-                }}
-              >
-                Remove all
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ) : null}
+        <BookingRequestsTaskMenu/>
       </ScrollView>
-      <RequestRoomBookingRecentlySearch />
-      <GenericAlertModal message={genericMessage} />
+      <GenericAlertModal isShown={isGenericModalShown}
+                         toggleShown={() => setGenericModalShown(!isGenericModalShown)}
+                         message={genericMessage} />
     </SafeAreaView>
+
   );
+
 };
 
 const styles = StyleSheet.create({

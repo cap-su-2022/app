@@ -11,7 +11,6 @@ export const fetchCountRequestFeedbacks = createAsyncThunk<{ count: number }[], 
     thunkAPI.dispatch(toggleSpinnerOn());
     try {
       const response = await axios.get(`api/feedbacks/count`);
-      console.log(response.data)
       return await response.data;
     } catch ({response}) {
       if (response.status === 401 || response.status === 403) {

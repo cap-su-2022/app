@@ -121,7 +121,6 @@ const ByMultiChooseSlotModal: React.FC<ChooseMultiDayModalProps> = (props) => {
     const currenTime = new Date();
     const currenTimeTimestamp = new Date().setHours(0, 0, 0, 0);
     const checkinDate = props.formik.values.checkinDate?.setHours(0, 0, 0, 0);
-    console.log(checkinDate === currenTimeTimestamp);
     const timeStart = props.formik.values.timeStart;
     const timeEnd = props.formik.values.timeEnd;
     if (

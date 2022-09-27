@@ -62,8 +62,7 @@ const LoginScreen = () => {
             fcmToken: fcmToken,
           })
         )
-          .unwrap()
-          .then((r) => console.log(r));
+          .unwrap();
       })
       .then(() => {
         setTimeout(() => {
@@ -99,8 +98,7 @@ const LoginScreen = () => {
             fcmToken: fcmToken,
           })
         )
-          .unwrap()
-          .then((r) => console.log(r));
+          .unwrap();
       })
       .then(() => {
         navigate.navigate('MAIN');

@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
-const API_IP_ADDR = '34.142.156.212';
+const API_IP_ADDR = '10.0.2.2';
 
 export const API_IP = API_IP_ADDR;
 
