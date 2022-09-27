@@ -77,9 +77,8 @@ const EndDayCalendar: React.FC<any> = (props) => {
     <SafeAreaView style={styles.container}>
       <GenericAlertModal isShown={isShown} toggleShown={() => {
         setShown(!isShown);
-        setTimeout(() => {
-          props.navigation.pop();
-        }, 1);      }} message={message}/>
+
+           }} message={message}/>
       <View style={styles.container}>
         <Calendar
           minDate={fromDay || Today}
