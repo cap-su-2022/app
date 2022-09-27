@@ -14,7 +14,6 @@ import {
   ClipboardText,
   Clock,
   FileDescription,
-  Trash,
   User,
   X,
 } from 'tabler-icons-react';

@@ -5,7 +5,6 @@ import {
   InputWrapper,
   Modal,
   ScrollArea,
-  Select,
   Table,
   Text,
   Textarea,
@@ -13,12 +12,10 @@ import {
 } from '@mantine/core';
 import {
   ArrowBack,
-  Calendar,
   Check,
   ChevronsRight,
   ClipboardText,
   FileDescription,
-  Id,
   Pencil,
   Plus,
   X,
@@ -34,7 +31,7 @@ import { DatePicker } from '@mantine/dates';
 import { addHoliday } from '../../redux/features/holidays/thunk/add-holiday';
 import { fetchHolidaysMini } from '../../redux/features/holidays/thunk/fetch-holidays-mini.thunk';
 import { fetchRequestsInDateRange } from '../../redux/features/room-booking/thunk/fetch-request-in-date-range';
-import Th from '../table/th.table.component';
+import { fetchDeletedHolidays } from '../../redux/features/holidays/thunk/fetch-deleted-holidays.thunk';
 
 interface AddModalProps {
   isShown: boolean;
@@ -112,6 +109,7 @@ const AddHolidayModal: React.FC<AddModalProps> = (props) => {
       )
       .then(() => props.toggleShown())
       .then(() => dispatch(fetchHolidays(props.pagination)))
+      .then(() => dispatch(fetchDeletedHolidays("")))
       .finally(() => {
         formik.resetForm();
       });
