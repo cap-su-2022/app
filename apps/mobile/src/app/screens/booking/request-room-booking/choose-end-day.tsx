@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -13,12 +13,15 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from 'react-native-heroicons/outline';
-import {saveEndDay, saveStartDay} from '../../../redux/features/room-booking/slice';
+import {
+  saveEndDay,
+  saveStartDay,
+} from '../../../redux/features/room-booking/slice';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
-import dayjs from "dayjs";
-import {GenericAlertModal} from "./generic-alert-modal.component";
-import {fetchHolidays} from "../../../redux/features/holidays/thunk/fetch-holidays.thunk";
+import dayjs from 'dayjs';
+import { GenericAlertModal } from './generic-alert-modal.component';
+import { fetchHolidays } from '../../../redux/features/holidays/thunk/fetch-holidays.thunk';
 import isBetween from 'dayjs/plugin/isBetween';
 const EndDayCalendar: React.FC<any> = (props) => {
   const Today = new Date().toJSON().slice(0, 10);
@@ -42,7 +45,7 @@ const EndDayCalendar: React.FC<any> = (props) => {
   );
 
   useEffect(() => {
-    dispatch(fetchHolidays())
+    dispatch(fetchHolidays());
   }, []);
   const handleDayPress = (day) => {
     let flag = true;
@@ -54,37 +57,56 @@ const EndDayCalendar: React.FC<any> = (props) => {
       const providedDay = dayjs(day.dateString);
       const startDay = dayjs(holiday.start);
       const endDay = dayjs(holiday.end);
-      dayjs.extend(isBetween)
+      dayjs.extend(isBetween);
       // @ts-ignore
-      if (providedDay.isBetween(startDay, endDay)) {
+      if (
+        providedDay.isBetween(startDay, endDay) ||
+        providedDay.isSame(startDay) ||
+        providedDay.isSame(endDay)
+      ) {
         flag = false;
         hName = holiday.name;
-        hStart = startDay.format("MM/DD/YYYY");
-        hEnd  =endDay.format("MM/DD/YYYY");
+        hStart = startDay.format('MM/DD/YYYY');
+        hEnd = endDay.format('MM/DD/YYYY');
+      }
+
+      // @ts-ignore
+      if (flag === false) {
+        setTimeout(() => {
+          setMessage(
+            'The day you are choosing is violated with the holiday: ' +
+              hName +
+              '. From: ' +
+              hStart +
+              '. To: ' +
+              hEnd
+          );
+          setShown(true);
+        }, 10);
       }
     });
 
-    // @ts-ignore
-    if (flag === false) {setTimeout(() => {
-      setMessage("The day you are choosing is violated with the holiday: " + hName +  ". From: "
-        + hStart +  ". To: " + hEnd);
-      setShown(true);
-    }, 10);
-    }
     if (flag === true) {
       setDayEnd(day.dateString);
       dispatch(saveEndDay({ toDay: day.dateString }));
     }
   };
 
-  const lastDay2Week =   dayjs().startOf('week').add(21, 'day').format('YYYY-MM-DD')
+  const lastDay2Week = dayjs()
+    .startOf('week')
+    .add(21, 'day')
+    .format('YYYY-MM-DD');
 
   return (
     <SafeAreaView style={styles.container}>
-      <GenericAlertModal isShown={isShown} toggleShown={() => {
-        setShown(!isShown);
+      <GenericAlertModal
+        isShown={isShown}
+        toggleShown={() => {
+          setShown(!isShown);
           props.navigation.pop();
-     }} message={message}/>
+        }}
+        message={message}
+      />
       <View style={styles.container}>
         <Calendar
           minDate={fromDay || Today}
@@ -180,7 +202,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: FPT_ORANGE_COLOR,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   bookingNowButtonText: {
     fontSize: deviceWidth / 21,
