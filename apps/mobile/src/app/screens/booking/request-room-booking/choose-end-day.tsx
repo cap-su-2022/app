@@ -17,10 +17,9 @@ import {saveEndDay, saveStartDay} from '../../../redux/features/room-booking/sli
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import dayjs from "dayjs";
-import isBetween from "dayjs/plugin/isBetween";
 import {GenericAlertModal} from "./generic-alert-modal.component";
 import {fetchHolidays} from "../../../redux/features/holidays/thunk/fetch-holidays.thunk";
-
+import isBetween from 'dayjs/plugin/isBetween';
 const EndDayCalendar: React.FC<any> = (props) => {
   const Today = new Date().toJSON().slice(0, 10);
   const [dayEnd, setDayEnd] = useState<string>('');
@@ -55,10 +54,7 @@ const EndDayCalendar: React.FC<any> = (props) => {
       const providedDay = dayjs(day.dateString);
       const startDay = dayjs(holiday.start);
       const endDay = dayjs(holiday.end);
-
-      const isBetween = require('dayjs/plugin/isBetween')
       dayjs.extend(isBetween)
-
       // @ts-ignore
       if (providedDay.isBetween(startDay, endDay)) {
         flag = false;
@@ -68,9 +64,11 @@ const EndDayCalendar: React.FC<any> = (props) => {
       }
     });
 
-    setMessage("The day you are choosing is violated with the holiday: " + hName +  ". From: "
-      + hStart +  ". To: " + hEnd);
-    setShown(true);
+    setTimeout(() => {
+      setMessage("The day you are choosing is violated with the holiday: " + hName +  ". From: "
+        + hStart +  ". To: " + hEnd);
+      setShown(true);
+    }, 10);
     if (flag === true) {
       setDayEnd(day.dateString);
       dispatch(saveEndDay({ toDay: day.dateString }));
