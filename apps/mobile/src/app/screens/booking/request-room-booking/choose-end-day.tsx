@@ -64,9 +64,11 @@ const EndDayCalendar: React.FC<any> = (props) => {
       }
     });
 
-    setMessage("The day you are choosing is violated with the holiday: " + hName +  ". From: "
-      + hStart +  ". To: " + hEnd);
-    setShown(true);
+    setTimeout(() => {
+      setMessage("The day you are choosing is violated with the holiday: " + hName +  ". From: "
+        + hStart +  ". To: " + hEnd);
+      setShown(true);
+    }, 10);
     if (flag === true) {
       setDayEnd(day.dateString);
       dispatch(saveEndDay({ toDay: day.dateString }));
