@@ -20,12 +20,16 @@ export interface AutoBookingRequestPayload {
   bookingReasonId: string,
   requests: AutoBookingRequest[],
 }
+////
+
 
 interface BookedRequestInitialState {
   bookedRequests: BookedRequest[];
   bookedRequest: BookedRequest;
   request: AutoBookingRequestPayload;
   bookingRequestId: number;
+  isAllRequestsSameDevices: boolean;
+  providedDevices: {id: string; quantity: number}[]
 }
 
 const initialState: BookedRequestInitialState = {
@@ -37,6 +41,8 @@ const initialState: BookedRequestInitialState = {
   bookedRequests: [],
   bookedRequest: {} as BookedRequest,
   bookingRequestId: 0,
+  isAllRequestsSameDevices: false,
+  providedDevices: undefined
 };
 
 const bookedRequestSlice = createSlice({
@@ -56,11 +62,21 @@ const bookedRequestSlice = createSlice({
         ...state.request,
         ...payload
       }
+    },
+    turnOffRequestsSameDevices(state, {payload}) {
+      state.isAllRequestsSameDevices = false;
+    },
+    turnOnRequestsSameDevices(state, {payload}) {
+      state.isAllRequestsSameDevices = true;
+    },
+    handleSetProvidedDevices(state, {payload}) {
+      state.providedDevices = payload;
     }
   },
 });
 
 export const bookedRequestReducer = bookedRequestSlice.reducer;
 
-export const {updateAutoBookingRequest, updateBookingRequestId} = bookedRequestSlice.actions;
+export const {updateAutoBookingRequest, updateBookingRequestId, turnOffRequestsSameDevices, turnOnRequestsSameDevices,
+  handleSetProvidedDevices} = bookedRequestSlice.actions;
 

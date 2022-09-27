@@ -7,6 +7,7 @@ import {HolidaysRepository} from '../repositories/holidays.repository';
 import {PaginationParams} from '../dto/pagination.dto';
 import {BookingRoomService} from './booking-room.service';
 import dayjs = require('dayjs');
+import {RoleService} from "./role.service";
 
 @Injectable()
 export class HolidaysService {
@@ -17,12 +18,16 @@ export class HolidaysService {
     private readonly repository: HolidaysRepository,
 
     @Inject(forwardRef(() => BookingRoomService))
-    private readonly bookingRoomService: BookingRoomService
+    private readonly bookingRoomService: BookingRoomService,
   ) {
   }
 
   async getAll(request: PaginationParams) {
     try {
+      if (!request || !request.page) {
+        return await this.repository.findAllHolidaysInDayArray();
+      }
+
       const result = await this.repository.searchHoliday(request);
       if (
         result.meta.totalPages > 0 &&

@@ -22,11 +22,6 @@ export const performAutoBooking = createAsyncThunk<
   }
   >('room-booking/auto-booking', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
-  console.log(JSON.stringify(      {
-    description: payload.description,
-    bookingReasonId: payload.bookingReasonId,
-    bookingRequests: payload.requests
-  }));
   try {
     const response = await axios.post(
       `${API_URL}/booking-room/auto-booking`,

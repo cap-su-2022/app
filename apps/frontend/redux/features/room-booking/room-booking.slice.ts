@@ -30,7 +30,6 @@ export const roomBookingSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchRoomBookings.fulfilled, (state, {payload}) => {
-      console.log("PAYLOAD NE: ", payload)
       state.roomBookings = payload;
     });
 

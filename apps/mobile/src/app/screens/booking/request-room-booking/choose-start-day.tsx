@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -17,11 +17,18 @@ import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { saveStartDay } from '../../../redux/features/room-booking/slice';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import dayjs from "dayjs";
+import {fetchHolidays} from "../../../redux/features/holidays/thunk/fetch-holidays.thunk";
+import {GenericAlertModal} from "./generic-alert-modal.component";
 
 const StartDayCalendar: React.FC<any> = (props) => {
   const dispatch = useAppDispatch();
   const [dayStart, setDayStart] = useState<string>('');
   const currentDate = new Date().toJSON().slice(0, 10);
+  const holidays = useAppSelector((state) => state.holidays.holidays);
+
+  const [message, setMessage] = useState<string>();
+  const [isShown, setShown] = useState<boolean>(false);
+
   const toDay = useAppSelector(
     (state) => state.roomBooking.addRoomBooking.toDay
   );
@@ -29,18 +36,49 @@ const StartDayCalendar: React.FC<any> = (props) => {
     (state) => state.roomBooking.addRoomBooking.isMultiDate
   );
   const handleDayPress = (day) => {
-    setDayStart(day.dateString);
-    dispatch(saveStartDay({ fromDay: day.dateString }));
+    let flag = true;
+    holidays.forEach((holiday) => {
+      const providedDay = dayjs(day.dateString);
+      const startDay = dayjs(holiday.start);
+      const endDay = dayjs(holiday.end);
+
+      const isBetween = require('dayjs/plugin/isBetween')
+      dayjs.extend(isBetween)
+
+      // @ts-ignore
+      if (providedDay.isBetween(startDay, endDay)) {
+        flag = false;
+        setMessage("The day you are choosing is violated with the holiday: " + holiday.name +  ". From: "
+        + startDay.format("MM/DD/YYYY") +  ". To: " + endDay.format("MM/DD/YYYY"));
+        return setShown(true);
+      } else {
+        flag = true;
+      }
+    });
+
+    if (flag === true) {
+      setDayStart(day.dateString);
+      dispatch(saveStartDay({ fromDay: day.dateString }));
+    }
   };
-  const lastDay2Week =   dayjs().startOf('week').add(21, 'day').format('YYYY-MM-DD')
+
+  const lastDay2Week =   dayjs().startOf('week').add(21, 'day').format('YYYY-MM-DD');
+
+
+
+  useEffect(() => {
+    dispatch(fetchHolidays());
+  }, []);
+
 
   return (
     <SafeAreaView style={styles.container}>
+      <GenericAlertModal isShown={isShown} toggleShown={() => setShown(!isShown)} message={message}/>
       <View style={styles.container}>
         <Calendar
           initialDate={currentDate}
           minDate={currentDate}
-          maxDate={isMultiDate ? toDay || lastDay2Week : lastDay2Week}
+          maxDate={lastDay2Week}
           onDayPress={(day) => handleDayPress(day)}
           markedDates={{
             [dayStart]: {
@@ -76,6 +114,14 @@ const StartDayCalendar: React.FC<any> = (props) => {
           }}
         />
         <View />
+        <TouchableOpacity
+          style={styles.bookingNowContainer}
+          onPress={() => {
+            props.navigation.pop();
+          }}
+        >
+          <Text style={styles.bookingNowButtonText}>Back</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.bookingNowContainer}
           onPress={() => {

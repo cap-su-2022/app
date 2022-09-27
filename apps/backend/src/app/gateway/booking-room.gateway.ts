@@ -41,7 +41,6 @@ export class BookingRoomGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() message: string
   ): WsResponse<string> {
-    console.log('BK1 - ' + message);
     client.broadcast.emit('msgToServer', message);
     return {
       data: message,

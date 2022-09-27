@@ -30,8 +30,6 @@ const NextLogin = async (req: NextApiRequest, res: NextApiResponse) => {
     ]);
     res.json(body);
   } catch (e) {
-    console.log(`${process.env.API_URL}/auth/signin`);
-    console.log(JSON.stringify(e));
     res.statusCode = 401;
 
     res.json(e.response.data);

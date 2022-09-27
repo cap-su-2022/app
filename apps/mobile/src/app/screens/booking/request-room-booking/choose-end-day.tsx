@@ -13,10 +13,11 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from 'react-native-heroicons/outline';
-import { saveEndDay } from '../../../redux/features/room-booking/slice';
+import {saveEndDay, saveStartDay} from '../../../redux/features/room-booking/slice';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 
 const EndDayCalendar: React.FC<any> = (props) => {
   const Today = new Date().toJSON().slice(0, 10);
@@ -26,9 +27,43 @@ const EndDayCalendar: React.FC<any> = (props) => {
   const fromDay = useAppSelector(
     (state) => state.roomBooking.addRoomBooking.fromDay
   );
+
+  const holidays = useAppSelector((state) => state.holidays.holidays);
+
+  const [message, setMessage] = useState<string>();
+  const [isShown, setShown] = useState<boolean>(false);
+
+  const toDay = useAppSelector(
+    (state) => state.roomBooking.addRoomBooking.toDay
+  );
+  const isMultiDate = useAppSelector(
+    (state) => state.roomBooking.addRoomBooking.isMultiDate
+  );
   const handleDayPress = (day) => {
-    setDayEnd(day.dateString);
-    dispatch(saveEndDay({ toDay: day.dateString }));
+    let flag = true;
+    holidays.forEach((holiday) => {
+      const providedDay = dayjs(day.dateString);
+      const startDay = dayjs(holiday.start);
+      const endDay = dayjs(holiday.end);
+
+      const isBetween = require('dayjs/plugin/isBetween')
+      dayjs.extend(isBetween)
+
+      // @ts-ignore
+      if (providedDay.isBetween(startDay, endDay)) {
+        flag = false;
+        setMessage("The day you are choosing is violated with the holiday: " + holiday.name +  ". From: "
+          + startDay.format("MM/DD/YYYY") +  ". To: " + endDay.format("MM/DD/YYYY"));
+        return setShown(true);
+      } else {
+        flag = true;
+      }
+    });
+
+    if (flag === true) {
+      setDayEnd(day.dateString);
+      dispatch(saveEndDay({ toDay: day.dateString }));
+    }
   };
 
   const lastDay2Week =   dayjs().startOf('week').add(21, 'day').format('YYYY-MM-DD')

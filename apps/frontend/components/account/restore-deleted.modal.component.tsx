@@ -33,7 +33,6 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
 ) => {
   const {classes, cx} = useStyles();
   const deletedAccounts = useAppSelector((state) => state.account.deletedAccounts);
-  console.log(deletedAccounts)
   const dispatch = useAppDispatch();
   const [scrolled, setScrolled] = useState(false);
   const [search, setSearch] = useState<string>('');
@@ -123,7 +122,7 @@ const RestoreDeletedModal: React.FC<RestoreDeletedModalProps> = (
       title={<ModalHeaderTitle/>}
       closeOnClickOutside={true}
       closeOnEscape={false}
-    > 
+    >
       <InputWrapper label="Search">
         <TextInput
           onChange={(e) => setSearch(e.target.value)}

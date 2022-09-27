@@ -84,10 +84,8 @@ function Login() {
           .unwrap()
           .then(() => handleSuccessAuthentication());
         const token = credential.accessToken;
-        console.log(token);
         // The signed-in user info.
         const user = result.user;
-        console.log(user);
         // ...
       })
       .catch((error) => {
