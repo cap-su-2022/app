@@ -232,7 +232,7 @@ const SlotUpdateModal: React.FC<UpdateModalProps> = (props) => {
                     color: 'red',
                   }}
                 >
-                  Time start can not be be greater than Time end
+                  Time start can not be be later than Time end
                 </div>
               )}
             </div>

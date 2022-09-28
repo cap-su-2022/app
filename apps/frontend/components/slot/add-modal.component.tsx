@@ -211,7 +211,7 @@ const AddSlotModal: React.FC<AddModalProps> = (props) => {
                     color: 'red',
                   }}
                 >
-                  Time start can not be be greater than Time end
+                  Time start can not be be later than Time end
                 </div>
               )}
             </div>
