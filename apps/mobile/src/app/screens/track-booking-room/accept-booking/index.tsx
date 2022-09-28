@@ -703,6 +703,18 @@ const AcceptBooking: React.FC<any> = () => {
               </View>
               <Divider num={deviceWidth / 10} />
 
+
+              <View style={styles.dataRowContainer}>
+                <Text style={styles.titleText}>Check-in Date</Text>
+                <Text style={styles.valueText}>
+                  {dayjs(new Date(bookingRoom.checkinDate)).format(
+                    'DD/MM/YYYY'
+                  )}
+                </Text>
+              </View>
+
+              <Divider num={deviceWidth / 10} />
+
               <View style={styles.dataRowContainer}>
                 <Text style={styles.titleText}>Check-in Time</Text>
                 <Text style={styles.valueText}>

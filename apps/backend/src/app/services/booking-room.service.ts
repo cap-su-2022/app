@@ -1034,7 +1034,7 @@ export class BookingRoomService {
         queryRunner
       );
 
-      await queryRunner.commitTransaction()
+      await queryRunner.commitTransaction();
     } catch (e) {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
@@ -1472,7 +1472,7 @@ export class BookingRoomService {
 
       for (const request of payload.bookingRequests) {
         //validation
-        await this.validateAutoBookingRequest(request);
+        await this.validateAutoBookingRequest(request, userId);
         const room = await this.findRoomExistedWithProvidedCapacity(
           request.capacity
         );
@@ -1584,27 +1584,36 @@ export class BookingRoomService {
     return room;
   }
 
-  private async validateAutoBookingRequest(request: AutoRoomBookingRequest) {
+  private async validateAutoBookingRequest(
+    request: AutoRoomBookingRequest,
+    userId: string
+  ) {
     await this.validateDevices(request.devices);
     await this.validateBookingDateTime(request.date, {
       start: request.timeStart,
       end: request.timeEnd,
     });
-    await this.validateConflictBookingTime(request.date, {
-      start: request.timeStart,
-      end: request.timeEnd,
-    });
+    await this.validateConflictBookingTime(
+      request.date,
+      {
+        start: request.timeStart,
+        end: request.timeEnd,
+      },
+      userId
+    );
   }
 
   private async validateConflictBookingTime(
     date: string,
-    time: { start: string; end: string }
+    time: { start: string; end: string },
+    userId: string
   ) {
     //fix bug
     const isConflicted = await this.repository.isConflictWithStartEndDateTime(
       date,
       time.start,
-      time.end
+      time.end,
+      userId
     );
     if (isConflicted) {
       throw new BadRequestException(
