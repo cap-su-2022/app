@@ -28,6 +28,7 @@ export class RolesGuard implements CanActivate {
     const requestHeaders = request.headers;
     const accessToken = requestHeaders['authorization'] ?? getAccessTokenViaCookie(request);
 
+    console.warn(accessToken);
     const keycloakUser = await this.keycloakService.getUserInfo(accessToken);
 
 
