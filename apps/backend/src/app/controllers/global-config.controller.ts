@@ -101,7 +101,6 @@ export class GlobalConfigController {
   }
 
   @Post()
-  @Roles(Role.APP_ADMIN)
   updateConfig(
     @Body()
       val: {
@@ -131,7 +130,6 @@ export class GlobalConfigController {
   }
 
   @Post('max-booking-request-per-week')
-  @Roles(Role.APP_ADMIN)
   setMaxBookingRequestPerWeek(@Body() val: { number: number }) {
     fs.writeFileSync(
       './backend-config.yaml',
@@ -143,7 +141,6 @@ export class GlobalConfigController {
   }
 
   @Post('max-borrow-devices-quantity')
-  @Roles(Role.APP_ADMIN)
   setMaxBorrowDevicesQuantity(@Body() val: { number: number }) {
     fs.writeFileSync(
       './backend-config.yaml',
@@ -155,7 +152,6 @@ export class GlobalConfigController {
   }
 
   @Post('room-booking-date-limit')
-  @Roles(Role.APP_ADMIN)
   setRoomBookingDateRange(@Body() val: { number: number }) {
     fs.writeFileSync(
       './backend-config.yaml',
@@ -167,7 +163,6 @@ export class GlobalConfigController {
   }
 
   @Post('max-room-capacity')
-  @Roles(Role.APP_ADMIN)
   setMaxRoomCapacity(@Body() val: { number: number }) {
     fs.writeFileSync(
       './backend-config.yaml',
