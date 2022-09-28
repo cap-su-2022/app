@@ -19,8 +19,8 @@ import {
 } from '@app/constants';
 import { deviceHeight, deviceWidth } from '../../utils/device';
 import {
-  ChevronDoubleLeftIcon, ExclamationCircleIcon,
-  ExclamationIcon,
+  ChevronDoubleLeftIcon, DeviceTabletIcon, ExclamationCircleIcon,
+  ExclamationIcon, LibraryIcon,
   TicketIcon,
 } from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
@@ -236,14 +236,132 @@ export const RoomBooking3: React.FC = () => {
   };
 
   const MyCustomList = (props) => {
-    console.log(props);
+    useEffect(() => {
+      console.log(props);
+    }, []);
     return (
       <ScrollView>
-        <Text>ass</Text>
+        {props.items?.map((item) => {
+          const bookingRequests = Object.entries(item)[0][1] as any[];
+          return (
+            <View style={{
+              alignSelf: 'center',
+              width: deviceWidth / 1.05,
+              backgroundColor: WHITE,
+              borderBottomLeftRadius: 8,
+              borderBottomRightRadius: 8,
+              ...boxShadow(styles),
+              paddingBottom: 10,
+            }}>
+              <Text style={{paddingVertical: 10, alignSelf: 'center', color: BLACK, fontSize: deviceWidth / 23, fontWeight: '600'}}>
+                Booking request {bookingRequests.length > 1 ? 's' : ''} for {dayjs(Object.keys(item)[0]).format('ddd DD/MM/YYYY')}
+              </Text>
+              {bookingRequests?.map((request) => {
+              return (
+                <View style={{
+                  alignSelf: 'center',
+                  height: 80,
+                  width: deviceWidth / 1.15,
+                  borderRadius: 8,
+                  borderColor: FPT_ORANGE_COLOR,
+                  borderWidth: 2,
+                  flexDirection: 'row',
+                  backgroundColor: WHITE,
+                  display: 'flex',
+                  justifyContent: 'space-around',
+                  alignItems: 'center'
+                }}>
+                  <View style={{
+                    height: 50,
+                    width: 50,
+                    borderRadius: 50,
+                    borderColor: FPT_ORANGE_COLOR,
+                    borderWidth: 2,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
+                    <LibraryIcon color={FPT_ORANGE_COLOR}/>
+                  </View>
+                    <View>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={{color: GRAY, fontSize: deviceWidth / 24, fontWeight: '600'}}>
+                          Check-in at:
+                        </Text>
+                        <Text style={{paddingLeft: 8, color: BLACK, fontSize: deviceWidth / 24, fontWeight: '600'}}>
+                          {request.timeStart}
+                        </Text>
+                      </View>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={{color: GRAY, fontSize: deviceWidth / 24, fontWeight: '600'}}>
+                          Check-out at:
+                        </Text>
+                        <Text style={{paddingLeft: 8, color: BLACK, fontSize: deviceWidth / 24, fontWeight: '600'}}>
+                          {request.timeEnd}
+                        </Text>
+                      </View>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={{color: GRAY, fontSize: deviceWidth / 24, fontWeight: '600'}}>
+                          Capacity:
+                        </Text>
+                        <Text style={{paddingLeft: 8, color: BLACK, fontSize: deviceWidth / 24, fontWeight: '600'}}>
+                          {request.capacity}
+                        </Text>
+                      </View>
+                    </View>
+                  <View>
+                    <TouchableOpacity style={{
+                      height: 35,
+                      width: 35,
+                      borderRadius: 8,
+                      borderWidth: 2,
+                      borderColor: FPT_ORANGE_COLOR,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }} onPress={() => alert("View device")}>
+                      <DeviceTabletIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 16}/>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+              );
+              })}
+
+            </View>
+          );
+        })}
       </ScrollView>
     );
   }
 
+  const [agendaData, setAgendaData] = useState<unknown>();
+  const [markedDates, setMarkedDates] = useState<any>();
+
+  useEffect(() => {
+    let agenda = {};
+    agenda = requests?.map((request) => {
+     return {
+       ...agenda,
+      [request.date]: [{...request, day: request.date}],
+      };
+    })
+    console.log(JSON.stringify(agenda))
+    setAgendaData(agenda);
+
+    let marked = {};
+    marked = requests?.map((request, index) => {
+      return {
+        ...marked,
+        [request.date]: {
+           selected: index === 0,
+          marked: true,
+        }
+      }
+    });
+    console.log(marked);
+    setMarkedDates(marked)
+  }, [requests]);
 
 
   return (
@@ -283,59 +401,20 @@ export const RoomBooking3: React.FC = () => {
             // The list of items that have to be displayed in agenda. If you want to render item as empty date
             // the value of date key has to be an empty array []. If there exists no value for date key it is
             // considered that the date in question is not yet loaded
-            items={{
-              '2022-09-29': [{name: 'item 1 - any js object', height: 80, day: '2022-09-29'}],
-              '2022-09-30': [{name: 'item 2 - any js object', height: 80, day: '2022-09-30'}],
-              '2022-10-01': [],
-              '2012-10-02': [{name: 'item 3 - any js object', height: 80, day: '2022-10-02'}, {name: 'any js object', height: 80, day: '2022-10-02'}]
-            }}
+            items={agendaData}
             onDayPress={(date) => alert("Chút code tiếp")}
             // Initially selected day
-            selected={'2022-09-28'}
+            selected={requests[0]?.date}
             // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-            minDate={'2022-09-28'}
+            minDate={requests[0]?.date}
             // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
-            maxDate={'2022-10-10'}
+            maxDate={requests[requests?.length - 1]?.date}
             // By default, agenda dates are marked if they have at least one item, but you can override this if needed
-            markedDates={{
-              '2022-09-28': {selected: true, marked: true},
-              '2022-09-29': {marked: true},
-              '2022-09-30': {disabled: true}
+            markedDates={markedDates}
+            contentContainerStyle={{
+              marginBottom: 10,
             }}
           />
-          {requests?.map((roomBooking) =>
-             (
-               <>
-
-                 <Text style={styles.informationHeaderTitle}>BOOKING INFORMATION</Text>
-                 <View style={{ padding: 10 }}>
-                   <View
-                     style={[styles.bookingInformationContainer, boxShadow(styles)]}
-                   >
-                     {InfoDetail(
-                       'Start Day',
-                       dayjs(roomBooking.date).format('ddd DD/MM/YYYY')
-                     )}
-                     {InfoDetail(
-                       'Check-in at', roomBooking.timeStart
-                     )}
-                     {InfoDetail(
-                       'Check-out at', roomBooking.timeEnd
-                     )}
-                     {InfoDetail(
-                       'Capacity', roomBooking.capacity
-                     )}
-                     {/* <Text style={[styles.titleText, { margin: 10 }]}>
-                       List Device
-                     </Text>
-                     {roomBooking.devices?.map((device) => (
-                       <Device device={device} />
-                     ))}*/}
-                   </View>
-                 </View>
-               </>
-
-             ))}
           <Text style={styles.informationHeaderTitle}>
             ADDITIONAL BOOKING INFORMATION
           </Text>
@@ -343,11 +422,11 @@ export const RoomBooking3: React.FC = () => {
             <View
               style={[styles.bookingInformationContainer, boxShadow(styles)]}
             >
-              <SelectBookingReason
+              {bookingReasonSelections ? <SelectBookingReason
                 handleSetBookingRoomReason={(val) => setBookingReason(val)}
                 bookingReason={bookingReason}
                 bookingReasonSelections={bookingReasonSelections}
-              />
+              /> : null}
               <View
                 style={{
                   display: 'flex',

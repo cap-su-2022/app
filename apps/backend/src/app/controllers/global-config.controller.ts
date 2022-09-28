@@ -113,6 +113,7 @@ export class GlobalConfigController {
     fs.writeFileSync(
       './backend-config.yaml',
       yaml.dump({
+        ...getConfigFileLoaded(),
         maxBookingDateRange: val.maxBookingDateRange
           ? parseInt(val.maxBookingDateRange, 10)
           : 14,
@@ -171,5 +172,12 @@ export class GlobalConfigController {
         maxRoomCapacity: val.number,
       })
     );
+  }
+
+  @Get('current-date')
+  getCurrentDateTime(): Promise<{date: string}> {
+    return Promise.resolve({
+      date: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    })
   }
 }

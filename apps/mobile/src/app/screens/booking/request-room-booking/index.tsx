@@ -62,14 +62,13 @@ import BookingRequestItem from "./booking-request-item";
 import {fetchHolidays} from "../../../redux/features/holidays/thunk/fetch-holidays.thunk";
 import RoomBookingCalendar from "./calendar";
 import {isCheckInDateTimeIsBeforeCurrentDateTime, isDateRangeOverlapWithAnother} from "./room-booking-date.service";
+import {fetchCurrentDatetime} from "../../../redux/features/room-booking-v2/thunk/fetch-current-datetime.thunk";
 
 const ScheduleRoomBookingLater: React.FC<any> = () => {
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
 
-  const Today = useMemo(() => {
-    return dayjs().format('YYYY-MM-DD');
-  }, []);
+
   const [slotSelections, setSlotSelections] = useState([]);
 
   const [isMultiDateChecked, setMultiDateChecked] = useState<boolean>(false);
@@ -87,7 +86,18 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
 
   const slots = useAppSelector((state) => state.slot.newSlots);
 
+
   useEffect(() => {
+    dispatch(fetchCurrentDatetime()).unwrap()
+      .then(({date}) => {
+        const day = dayjs(date, {
+          format: 'YYYY-MM-DD HH:mm:ss'
+        });
+        setFromDay(day.format('YYYY-MM-DD'));
+        setToDay(day.format('YYYY-MM-DD'))
+        setCheckInAt(day.format('HH:mm'));
+        setCheckOutAt(day.format('HH:mm'));
+      })
     dispatch(fetchSlots());
     return () => {
       setSlotSelections([]);
@@ -233,7 +243,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       return setGenericModalShown(!isGenericModalShown);
     }
 
-    const currentDay = fromDay || Today;
+    const currentDay = fromDay;
 
     if (
       bookingRequests.find(
@@ -397,11 +407,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
   }
 
   const handleSetFromDay = (day: string) => {
-    if (isMultiDateChecked && dayjs(day, {
-      utc: true
-    }).isAfter(dayjs(toDay, {
-      utc: true
-    }))) {
+    if (isMultiDateChecked && dayjs(day).isAfter(dayjs(toDay))) {
       setGenericMessage("From date must not be after the To date. Please try again!");
       return setGenericModalShown(true);
     }
@@ -409,11 +415,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
   }
 
   const handleSetToDay = (day: string) => {
-    if (dayjs(day, {
-      utc: true
-    }).isBefore(dayjs(fromDay, {
-      utc: true
-    }))) {
+    if (dayjs(day).isBefore(dayjs(fromDay))) {
       setGenericMessage("To date must not be before the From date. Please try again!");
       return setGenericModalShown(true);
     }
