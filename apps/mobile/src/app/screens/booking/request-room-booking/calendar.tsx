@@ -51,9 +51,8 @@ const RoomBookingCalendar: React.FC<RoomBookingCalendarProps> = (props) => {
   useEffect(() => {
     dispatch(fetchLastBookingDate()).unwrap()
       .then((date) => {
-        alert(JSON.stringify(date));
         setDateLimit(date);
-      }).catch((e) => alert(JSON.stringify(e)));
+      });
   }, []);
 
   const currentDate = useMemo(() => {
