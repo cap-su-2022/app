@@ -20,12 +20,12 @@ export const fetchRoomBookingFeedbacks = createAsyncThunk<
     };
   }
 >('room-booking-feedback/fetch-all-booking-room-feedbacks', async (payload, thunkAPI) => {
-  return await axiosGetAPICall(
+  return  axiosGetAPICall(
     `${API_URL}/booking-room-feedbacks`,
     {
       star: JSON.stringify(payload.star),
       type: payload.feedbackTypeId,
-      room: payload.roomId,
+      roomId: payload.roomId,
       fromDate: payload.fromDate,
       toDate: payload.toDate,
     },
