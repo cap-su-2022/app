@@ -13,6 +13,7 @@ import {saveStartDay} from "../../../redux/features/room-booking/slice";
 import {GenericAlertModal} from "./generic-alert-modal.component";
 import {useAppSelector} from "../../../hooks/use-app-selector.hook";
 import {fetchLastBookingDate} from "../../../redux/features/room-booking-v2/thunk/fetch-last-booking-date.thunk";
+import HolidayCalendarModal from "./holiday-modal";
 
 const LIMIT_DAY_CAN_BE_BOOKED = 21;
 
@@ -37,6 +38,7 @@ const RoomBookingCalendar: React.FC<RoomBookingCalendarProps> = (props) => {
   const [alertMessage, setAlertMessage] = useState<string>();
 
   const [isViolatedHoliday, setViolatedHoliday] = useState<boolean>(false);
+  const [isHolidayModalOpened, setHolidayModalOpened] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(fetchHolidays()).unwrap().then(() => setHolidaysLoaded(true));
@@ -105,10 +107,24 @@ const RoomBookingCalendar: React.FC<RoomBookingCalendarProps> = (props) => {
     props.toggleShown();
   }
 
+  const handleShowHolidays = () => {
+    if (!holidays || holidays.length < 1) {
+      setGenericAlertModalShown(true);
+      return setAlertMessage("There is no holidays currently. If this is a mistake, contact to the librarians.");
+    }
+    setHolidayModalOpened(true);
+  }
+
   const Header = () => {
     return (
-      <View style={{alignSelf: 'center'}}>
+      <View style={{alignSelf: 'center', display: 'flex', flexDirection: 'row', alignItems: 'center', width: deviceWidth / 1.15, justifyContent: 'space-between'}}>
+        <HolidayCalendarModal isOpened={isHolidayModalOpened} toggleOpen={() => setHolidayModalOpened(!isHolidayModalOpened)}/>
         <Text style={{color: BLACK, fontWeight: '600', fontSize: deviceWidth / 21}}>Choose your check-in date</Text>
+        <TouchableOpacity style={{paddingLeft: 10, borderRadius: 50, height: 30, width: deviceWidth / 3.7, borderWidth: 2,
+          borderColor: FPT_ORANGE_COLOR, display: 'flex', flexDirection: 'row', alignItems: 'center'}} onPress={() => handleShowHolidays()}>
+          <CalendarIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 18}/>
+          <Text style={{color: FPT_ORANGE_COLOR, fontWeight: '600', fontSize: deviceWidth / 28, paddingLeft: 6}}>Holidays</Text>
+        </TouchableOpacity>
       </View>
     );
   }

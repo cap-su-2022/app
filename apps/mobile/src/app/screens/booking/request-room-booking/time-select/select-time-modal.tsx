@@ -15,6 +15,7 @@ interface SelectTimeModalProps {
 import TimePicker from 'react-native-wheel-time-picker';
 import {BLACK, FPT_ORANGE_COLOR, INPUT_GRAY_COLOR, WHITE} from "@app/constants";
 import {CheckIcon, XIcon} from "react-native-heroicons/outline";
+import dayjs from "dayjs";
 
 const MILLISECONDS_PER_MINUTE = 60 * 1000;
 const MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
@@ -54,7 +55,7 @@ const SelectTimeModal: React.FC<SelectTimeModalProps> = (props) => {
         </TouchableOpacity>
       </View>
       <TimePicker
-        value={selectedTime}
+        value={props.time}
         wheelProps={{
           containerStyle: {
             width: 100,

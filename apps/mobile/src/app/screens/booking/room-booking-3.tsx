@@ -38,6 +38,7 @@ import { addNewLongTermRequestBooking } from '../../redux/features/room-booking/
 import AlertModal from "../../components/modals/alert-modal.component";
 import {updateAutoBookingRequest} from "../../redux/features/room-booking-v2/slice";
 import {performAutoBooking} from "../../redux/features/room-booking-v2/thunk/perform-auto-booking.thunk";
+import {Agenda} from "react-native-calendars";
 
 export const RoomBooking3: React.FC = () => {
   const navigate = useAppNavigation();
@@ -234,6 +235,16 @@ export const RoomBooking3: React.FC = () => {
     );
   };
 
+  const MyCustomList = (props) => {
+    console.log(props);
+    return (
+      <ScrollView>
+        <Text>ass</Text>
+      </ScrollView>
+    );
+  }
+
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
@@ -265,6 +276,33 @@ export const RoomBooking3: React.FC = () => {
               the next step!
             </Text>
           </View>
+          <Agenda
+            renderList={listProps => {
+              return <MyCustomList {...listProps} />;
+            }}
+            // The list of items that have to be displayed in agenda. If you want to render item as empty date
+            // the value of date key has to be an empty array []. If there exists no value for date key it is
+            // considered that the date in question is not yet loaded
+            items={{
+              '2022-09-29': [{name: 'item 1 - any js object', height: 80, day: '2022-09-29'}],
+              '2022-09-30': [{name: 'item 2 - any js object', height: 80, day: '2022-09-30'}],
+              '2022-10-01': [],
+              '2012-10-02': [{name: 'item 3 - any js object', height: 80, day: '2022-10-02'}, {name: 'any js object', height: 80, day: '2022-10-02'}]
+            }}
+            onDayPress={(date) => alert("Chút code tiếp")}
+            // Initially selected day
+            selected={'2022-09-28'}
+            // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
+            minDate={'2022-09-28'}
+            // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
+            maxDate={'2022-10-10'}
+            // By default, agenda dates are marked if they have at least one item, but you can override this if needed
+            markedDates={{
+              '2022-09-28': {selected: true, marked: true},
+              '2022-09-29': {marked: true},
+              '2022-09-30': {disabled: true}
+            }}
+          />
           {requests?.map((roomBooking) =>
              (
                <>

@@ -61,6 +61,7 @@ import {GenericAlertModal} from "./generic-alert-modal.component";
 import BookingRequestItem from "./booking-request-item";
 import {fetchHolidays} from "../../../redux/features/holidays/thunk/fetch-holidays.thunk";
 import RoomBookingCalendar from "./calendar";
+import {isCheckInDateTimeIsBeforeCurrentDateTime, isDateRangeOverlapWithAnother} from "./room-booking-date.service";
 
 const ScheduleRoomBookingLater: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -70,8 +71,6 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     return dayjs().format('YYYY-MM-DD');
   }, []);
   const [slotSelections, setSlotSelections] = useState([]);
-  const [slotStart, setSlotStart] = useState<number>();
-  const [slotEnd, setSlotEnd] = useState<number>();
 
   const [isMultiDateChecked, setMultiDateChecked] = useState<boolean>(false);
   const [isMultiSlotChecked, setMultiSlotChecked] = useState<boolean>(false);
@@ -90,8 +89,6 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
 
   useEffect(() => {
     dispatch(fetchSlots());
-    dispatch(saveToday(Today));
-    dispatch(saveStartDay(Today));
     return () => {
       setSlotSelections([]);
     };
@@ -120,52 +117,6 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       .then((val) => setCanBook(val.isAvailable));
   }, []);
 
-  const handleNextStep = () => {
-    if (!canBook) {
-      return alert(
-        'Cannot book for a room because you exceed the limit of the requests. Please contact the librarians to get support'
-      );
-    }
-    const slotStartName = slotSelections.find(
-        (slot) => slot.value === slotStart
-      ),
-      slotEndName = slotSelections.find((slot) => slot.value === slotEnd),
-      slotStartNum = slotSelections.find((slot) => slot.value === slotStart),
-      slotEndNum = slotSelections.find((slot) => slot.value === slotEnd);
-    dispatch(
-      checkOverSlot({
-        date: fromDay || Today,
-        slotin: slotStartName.value,
-      })
-    )
-      .unwrap()
-      .then((value) => {
-        if (value === true) {
-          setGenericMessage(
-            'This slot is already passed. Please choose the next slot or the next day and try again.'
-          );
-          setGenericModalShown(!isGenericModalShown);
-        } else {
-          dispatch(saveFromSlotNum({ fromSlotNum: slotStartNum.slotNum }));
-          dispatch(saveToSlotNum({ toSlotNum: slotEndNum.slotNum }));
-          dispatch(
-            step1ScheduleRoomBooking({
-              fromSlotName: slotStartName.label,
-              toSlotName: slotEndName.label,
-              fromDay: fromDay,
-              toDay: isMultiDateChecked ? toDay : null,
-              fromSlot: slotStart,
-              toSlot: slotEnd,
-              isMultiSlotChecked: isMultiSlotChecked,
-            })
-          );
-          setTimeout(() => {
-            navigate.navigate('ROOM_BOOKING_CHOOSE_SLOT');
-          }, 0);
-        }
-      });
-  };
-
 
   const getContainerHeightBasedOnMultiChecks = () => {
     if (!isMultiDateChecked && !isMultiSlotChecked) {
@@ -186,9 +137,14 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
   const [isGenericModalShown, setGenericModalShown] = useState<boolean>(false);
 
   const handleSetCheckInAt = (val: string) => {
-    const providedCheckInAt = dayjs(`${dayjs().format("YYYY-DD-MM")} ${val}`);
-    const currentStartingTime = dayjs(`${dayjs().format("YYYY-DD-MM")} ${startingTime}`);
-    const currentEndingTime = dayjs(`${dayjs().format("YYYY-DD-MM")} ${endingTime}`);
+    const providedCheckInAt = dayjs(`${fromDay} ${val}`);
+    const currentStartingTime = dayjs(`${fromDay} ${startingTime}`);
+    const currentEndingTime = dayjs(`${fromDay} ${endingTime}`);
+    const currentCheckOutAt = dayjs(`${dayjs().format("YYYY-DD-MM")} ${checkOutAt}`);
+    if (providedCheckInAt.isAfter(currentCheckOutAt)) {
+      setGenericModalShown(true);
+      return setGenericMessage("The provided check-in time should not be after the current check-out time. Please try again");
+    }
 
     if (providedCheckInAt.isSame(currentEndingTime) || providedCheckInAt.isAfter(currentEndingTime)) {
       setGenericModalShown(true);
@@ -196,7 +152,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     }
     if (providedCheckInAt.isBefore(currentStartingTime)) {
       setGenericModalShown(true);
-      return setGenericMessage("The provided check-in time should be after or the same as the starting slot time. Please try again");
+      return setGenericMessage("The provided check-in time should be before or the same as the starting slot time. Please try again");
     } else {
       setCheckInAt(val);
     }
@@ -206,6 +162,11 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     const providedCheckOutAt = dayjs(`${dayjs().format("YYYY-DD-MM")} ${val}`);
     const currentStartingTime = dayjs(`${dayjs().format("YYYY-DD-MM")} ${startingTime}`);
     const currentEndingTime = dayjs(`${dayjs().format("YYYY-DD-MM")} ${endingTime}`);
+    const currentCheckInAt = dayjs(`${dayjs().format("YYYY-DD-MM")} ${checkInAt}`);
+    if (providedCheckOutAt.isBefore(currentCheckInAt)) {
+      setGenericModalShown(true);
+      return setGenericMessage("The provided check-out time should not be before the current check-in time. Please try again");
+    }
     if (providedCheckOutAt.isSame(currentStartingTime) || providedCheckOutAt.isBefore(currentStartingTime)) {
       setGenericModalShown(true);
       return setGenericMessage("The provided check-out time should not be the same or before the ending slot time. Please try again");
@@ -218,6 +179,11 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     }
   }
 
+  useEffect(() => {
+    if (!isMultiDateChecked) {
+      setToDay(fromDay);
+    }
+  }, [isMultiDateChecked])
 
   const [bookingRequests, setBookingRequests] = useState<
     {
@@ -229,10 +195,14 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       devices?: {id: string; quantity: number}[];
     }[]
   >([]);
-  const routes = navigate.getState()?.routes;
-  const prevRoute = routes[routes.length - 1];
 
   const handleAddBookingRequest = () => {
+    if (isMultiDateChecked && dayjs(fromDay).isSame(dayjs(toDay))) {
+      setGenericMessage(
+        'From date must not be the same with To date. Please try again'
+      );
+      return setGenericModalShown(!isGenericModalShown);
+    }
     const checkInHour = parseInt(checkInAt.split(':')[0], 10);
     const checkInMin = parseInt(checkInAt.split(':')[1], 10);
 
@@ -245,13 +215,20 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
         .isAfter(dayjs().hour(checkOutHour).minute(checkOutMin))
     ) {
       setGenericMessage(
-        'Check-in time must be before with thr check-out time. Please try again'
+        'Check-in time must be before with the check-out time. Please try again'
       );
       return setGenericModalShown(!isGenericModalShown);
     }
     if (checkInAt === checkOutAt) {
       setGenericMessage(
         'Check-in time must not be the same with check-out time. Please try again'
+      );
+      return setGenericModalShown(!isGenericModalShown);
+    }
+
+    if (!isMultiDateChecked && isCheckInDateTimeIsBeforeCurrentDateTime(dayjs(`${fromDay} ${checkInAt}`).toDate().getTime(), new Date().getTime())) {
+      setGenericMessage(
+        'Check-in date time must not be before or the same with the current date time'
       );
       return setGenericModalShown(!isGenericModalShown);
     }
@@ -269,6 +246,23 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       );
       return setGenericModalShown(!isGenericModalShown);
     }
+
+    for (let i=0; i<bookingRequests.length; i++) {
+      const isOverlapped = isDateRangeOverlapWithAnother({
+        start: dayjs(`${fromDay} ${checkInAt}`).format('YYYY-MM-DD HH:mm'),
+        end: dayjs(`${toDay} ${checkInAt}`).format('YYYY-MM-DD HH:mm'),
+      }, {
+        start: dayjs(`${bookingRequests[i].date} ${bookingRequests[i].timeStart}`)
+          .format('YYYY-MM-DD HH:mm'),
+        end: dayjs(`${bookingRequests[i].date} ${bookingRequests[i].timeEnd}`)
+          .format('YYYY-MM-DD HH:mm'),
+      });
+      if (isOverlapped) {
+        setGenericMessage(`The time range of the provided booking time is overlap with the time [${bookingRequests[i].timeStart} - ${bookingRequests[i].timeEnd}]`);
+        return setGenericModalShown(true);
+      }
+    }
+
     if (isMultiDateChecked) {
       const currentDayJS = dayjs(currentDay);
       const toDayJS = dayjs(toDay).add(1, 'day');
@@ -281,7 +275,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       for (let i = 0; i < toDayJS.diff(currentDayJS, 'day'); i++) {
         providedRequests.push(
           {
-            id: bookingRequests.length + 1,
+            id: bookingRequests.length + Math.round(Math.random() * 100000),
             timeStart: checkInAt,
             timeEnd: checkOutAt,
             capacity: capacity,
@@ -297,7 +291,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       setBookingRequests([
         ...bookingRequests,
         {
-          id: bookingRequests.length + 1,
+          id: bookingRequests.length + Math.round(Math.random() * 100000),
           timeStart: checkInAt,
           timeEnd: checkOutAt,
           capacity: capacity,
@@ -309,10 +303,17 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
   };
 
   const handleAutoBookNextStep = () => {
+    if (!canBook) {
+      setGenericMessage(
+        'Cannot book for a room because you exceed the limit of the requests. Please contact the librarians to get support'
+      );
+      return setGenericModalShown(true);
+    }
     if (bookingRequests.length < 1) {
-      return alert(
+      setGenericMessage(
         'You must add a booking request before proceed this action.'
       );
+      return setGenericModalShown(true);
     }
     dispatch(
       updateAutoBookingRequest({
@@ -394,6 +395,31 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     const bookingRequest = bookingRequests.find((request) => request.id === requestId);
     bookingRequest.devices = devices;
   }
+
+  const handleSetFromDay = (day: string) => {
+    if (isMultiDateChecked && dayjs(day, {
+      utc: true
+    }).isAfter(dayjs(toDay, {
+      utc: true
+    }))) {
+      setGenericMessage("From date must not be after the To date. Please try again!");
+      return setGenericModalShown(true);
+    }
+    setFromDay(day);
+  }
+
+  const handleSetToDay = (day: string) => {
+    if (dayjs(day, {
+      utc: true
+    }).isBefore(dayjs(fromDay, {
+      utc: true
+    }))) {
+      setGenericMessage("To date must not be before the From date. Please try again!");
+      return setGenericModalShown(true);
+    }
+    setToDay(day);
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
       <RequestRoomBookingHeader />
@@ -404,9 +430,9 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
           >
             <DateSelect
               fromDay={fromDay}
-              handleSetFromDay={(val) => setFromDay(val)}
+              handleSetFromDay={handleSetFromDay}
               toDay={toDay}
-              handleSetToDay={(val) => setToDay(val)}
+              handleSetToDay={handleSetToDay}
               isChecked={isMultiDateChecked}
               handleCheck={() => {
                 dispatch(
