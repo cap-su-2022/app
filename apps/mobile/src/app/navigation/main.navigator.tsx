@@ -26,7 +26,6 @@ import {NotificationModal} from "../components/notification-modal.component";
 
 const MainNavigator = () => {
   const [isNotificationShown, setNotificationShown] = useState(true);
-
   return (
     <>
 
@@ -49,7 +48,7 @@ const MainNavigator = () => {
 };
 
 const HomeTabs: React.FC = () => {
-  const user = useAppSelector(state => state.user)
+  const authUser = useAppSelector((state) => state.auth.authUser);
   return (
     <TabNavigator
       initialRouteName={HomeRoute.Home}
@@ -68,7 +67,7 @@ const HomeTabs: React.FC = () => {
           tabBarLabel: () => null,
         }}
       />
-      {user.role !== 'Staff' ? (
+      {authUser.role !== 'Staff' ? (
         <TabScreen
           name={QRScanRoute.QRScan}
           component={BookingQRScan}
