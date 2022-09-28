@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CalendarIcon } from 'react-native-heroicons/outline';
 import { BLACK, FPT_ORANGE_COLOR, GRAY, WHITE } from '@app/constants';
@@ -9,11 +9,17 @@ import { useAppSelector } from '../../../../hooks/use-app-selector.hook';
 import dayjs from 'dayjs';
 import {fetchHolidays} from "../../../../redux/features/holidays/thunk/fetch-holidays.thunk";
 import {useAppDispatch} from "../../../../hooks/use-app-dispatch.hook";
+import RoomBookingCalendar from "../calendar";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface RequestRoomBookingDateSelectProps {
   isChecked: boolean;
   handleCheck(): void;
+
+  toDay: string;
+  handleSetToDay(val: string): void;
+  fromDay: string;
+  handleSetFromDay(val: string): void;
 }
 const RequestRoomBookingDateSelect: React.FC<
   RequestRoomBookingDateSelectProps
@@ -28,8 +34,22 @@ const RequestRoomBookingDateSelect: React.FC<
   );
 
 
+  const [isStartDayCalendarOpened, setStartDayCalendarOpened] = useState(false);
+  const [isEndDayCalendarOpened, setEndDayCalendarOpened] = useState(false);
+
+
   return (
     <View>
+      <RoomBookingCalendar handleDayChange={props.handleSetFromDay}
+                           initialDate={props.fromDay}
+                           minimumDate={Today}
+                           toggleShown={() => setStartDayCalendarOpened(!isStartDayCalendarOpened)}
+                           isShown={isStartDayCalendarOpened}/>
+      <RoomBookingCalendar handleDayChange={props.handleSetToDay}
+                           initialDate={props.toDay}
+                           minimumDate={Today}
+                           toggleShown={() => setEndDayCalendarOpened(!isEndDayCalendarOpened)}
+                           isShown={isEndDayCalendarOpened}/>
       <View style={styles.startDayContainer}>
         <View style={styles.inputStartDay}>
           <Text style={styles.title}>
@@ -37,12 +57,10 @@ const RequestRoomBookingDateSelect: React.FC<
           </Text>
           <TouchableOpacity
             style={styles.bookingNowContainer}
-            onPress={() => {
-              navigate.navigate('ROOM_BOOKING_CHOOSE_START_DAY');
-            }}
+            onPress={() => setStartDayCalendarOpened(true)}
           >
             <Text style={styles.bookingNowButtonText}>
-              {dayjs(roomBooking.fromDay).format('ddd DD/MM/YYYY') || Today}
+              {dayjs(props.fromDay).format('ddd DD/MM/YYYY')}
             </Text>
             <CalendarIcon size={25} color={FPT_ORANGE_COLOR} />
           </TouchableOpacity>
@@ -58,14 +76,11 @@ const RequestRoomBookingDateSelect: React.FC<
           <Text style={styles.title}>To date</Text>
           <TouchableOpacity
             style={[styles.bookingNowContainer, { width: deviceWidth / 1.2 }]}
-            onPress={() => {
-              navigate.navigate('ROOM_BOOKING_CHOOSE_END_DAY');
-            }}
+            onPress={() => setEndDayCalendarOpened(true)}
+
           >
             <Text style={styles.bookingNowButtonText}>
-              {roomBooking.toDay
-                ? dayjs(roomBooking.toDay).format('ddd DD/MM/YYYY')
-                : dayjs(roomBooking.fromDay).format('ddd DD/MM/YYYY')}
+              {dayjs(props.toDay).format('ddd DD/MM/YYYY')}
             </Text>
             <CalendarIcon size={25} color={FPT_ORANGE_COLOR} />
           </TouchableOpacity>

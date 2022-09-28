@@ -71,12 +71,12 @@ export class GlobalConfigController {
   @Get('room-booking-date-limit')
   getRoomBookingLimitDate(): Promise<RoomBookingLimitDate> {
     return Promise.resolve({
-      startDate: dayjs().add(1, 'day').startOf('day').toISOString(),
+      startDate: dayjs().startOf('hour').format('YYYY-MM-DD'),
       endDate: dayjs()
         .endOf('week')
         .endOf('day')
-        .add(getConfigFileLoaded().maxBookingDateRange + 1, 'day')
-        .toISOString(),
+        .add(getConfigFileLoaded().maxBookingDateRange, 'day')
+        .format('YYYY-MM-DD'),
     });
   }
 

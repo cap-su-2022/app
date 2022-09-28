@@ -60,6 +60,7 @@ import {
 import {GenericAlertModal} from "./generic-alert-modal.component";
 import BookingRequestItem from "./booking-request-item";
 import {fetchHolidays} from "../../../redux/features/holidays/thunk/fetch-holidays.thunk";
+import RoomBookingCalendar from "./calendar";
 
 const ScheduleRoomBookingLater: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -81,12 +82,9 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
   const [checkOutAt, setCheckOutAt] = useState(dayjs().format('HH:mm'));
   const [capacity, setCapacity] = useState(10);
 
-  const fromDay = useAppSelector(
-    (state) => state.roomBooking.addRoomBooking.fromDay
-  );
-  const toDay = useAppSelector(
-    (state) => state.roomBooking.addRoomBooking.toDay
-  );
+  const [fromDay, setFromDay] = useState<string>(dayjs().format('YYYY-MM-DD'));
+  const [toDay, setToDay] = useState<string>(dayjs().format('YYYY-MM-DD'));
+
 
   const slots = useAppSelector((state) => state.slot.newSlots);
 
@@ -168,58 +166,6 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       });
   };
 
-  const handleSetSlotEnd = (value) => {
-    if (!value) {
-      return setSlotEnd(1);
-    }
-    setSlotEnd(value);
-  };
-
-  const handleSetSlotStart = (value) => {
-    if (!value) {
-      return setSlotStart(1);
-    }
-    setSlotStart(value);
-  };
-
-  const handleLongTermBooking = () => {
-    const slotStartName = slotSelections.find(
-      (slot) => slot.value === slotStart
-    );
-    const slotEndName = slotSelections.find((slot) => slot.value === slotEnd);
-    const slotStartNum = slotSelections.find(
-      (slot) => slot.value === slotStart
-    );
-    const slotEndNum = slotSelections.find((slot) => slot.value === slotEnd);
-
-    dispatch(saveFromSlotNum({ fromSlotNum: slotStartNum.slotNum }));
-    dispatch(saveToSlotNum({ toSlotNum: slotEndNum.slotNum }));
-    dispatch(
-      step1BookingLongTerm({
-        fromSlotName: slotStartName.label,
-        toSlotName: slotEndName.label,
-        fromDay: fromDay,
-        toDay: isMultiDateChecked ? toDay : null,
-        fromSlot: slotStart,
-        toSlot: slotEnd,
-        isMultiLongTerm: true,
-        isMultiSlotChecked: isMultiSlotChecked,
-      })
-    );
-
-    dispatch(
-      fetchRoomFreeByMultiSlotAndDay({
-        dateStart: fromDay || Today,
-        dateEnd: toDay || Today,
-        checkinSlot: slotStart,
-        checkoutSlot: slotEnd,
-      })
-    )
-      .unwrap()
-      .then(() => {
-        navigate.navigate('ROOM_BOOKING_LONG_TERM_CHOOSE_ROOM');
-      });
-  };
 
   const getContainerHeightBasedOnMultiChecks = () => {
     if (!isMultiDateChecked && !isMultiSlotChecked) {
@@ -448,7 +394,6 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     const bookingRequest = bookingRequests.find((request) => request.id === requestId);
     bookingRequest.devices = devices;
   }
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
       <RequestRoomBookingHeader />
@@ -458,6 +403,10 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
             style={[styles.container, getContainerHeightBasedOnMultiChecks()]}
           >
             <DateSelect
+              fromDay={fromDay}
+              handleSetFromDay={(val) => setFromDay(val)}
+              toDay={toDay}
+              handleSetToDay={(val) => setToDay(val)}
               isChecked={isMultiDateChecked}
               handleCheck={() => {
                 dispatch(

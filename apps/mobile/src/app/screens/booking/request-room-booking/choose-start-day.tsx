@@ -19,7 +19,6 @@ import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import dayjs from "dayjs";
 import {fetchHolidays} from "../../../redux/features/holidays/thunk/fetch-holidays.thunk";
 import {GenericAlertModal} from "./generic-alert-modal.component";
-import isBetween from "dayjs/plugin/isBetween";
 
 const StartDayCalendar: React.FC<any> = (props) => {
   const dispatch = useAppDispatch();
@@ -38,34 +37,22 @@ const StartDayCalendar: React.FC<any> = (props) => {
   );
   const handleDayPress = (day) => {
     let flag = true;
-    let hName;
-    let hStart;
-    let hEnd;
-
     holidays.forEach((holiday) => {
       const providedDay = dayjs(day.dateString);
       const startDay = dayjs(holiday.start);
       const endDay = dayjs(holiday.end);
 
+      const isBetween = require('dayjs/plugin/isBetween')
       dayjs.extend(isBetween)
 
       // @ts-ignore
       if (providedDay.isBetween(startDay, endDay)) {
         flag = false;
-        hName = holiday.name;
-        hStart = startDay.format("MM/DD/YYYY");
-        hEnd  =endDay.format("MM/DD/YYYY");
+        setMessage("The day you are choosing is violated with the holiday: " + holiday.name +  ". From: "
+        + startDay.format("MM/DD/YYYY") +  ". To: " + endDay.format("MM/DD/YYYY"));
+        return setShown(true);
       }
     });
-
-
-    // @ts-ignore
-    if (flag === false) {setTimeout(() => {
-      setMessage("The day you are choosing is violated with the holiday: " + hName +  ". From: "
-        + hStart +  ". To: " + hEnd);
-      setShown(true);
-    }, 10);
-    }
 
     if (flag === true) {
       setDayStart(day.dateString);
