@@ -4,10 +4,12 @@ import { BookedRequest } from '../../models/booked-request.model';
 
 export interface AutoBookingRequestDevice {
   id: string;
+  name: string;
   quantity: number;
 }
 
 export interface AutoBookingRequest {
+  id: number,
   timeStart: string,
   timeEnd: string,
   date: string,
@@ -71,14 +73,6 @@ const bookedRequestSlice = createSlice({
     },
     handleSetProvidedDevices(state, {payload}) {
       state.providedDevices = payload;
-      state.request = {
-        ...state.request,
-        requests: [
-          ...state.request.requests,
-          state.request.requests.find((request) => request.capacity == state.bookingRequestId)
-        ]
-      }
-      state.bookingRequestId = undefined;
     }
   },
 });

@@ -404,6 +404,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
   const handleSetDevices = (requestId: number, devices: {id: string; quantity: number}[]) => {
     const bookingRequest = bookingRequests.find((request) => request.id === requestId);
     bookingRequest.devices = devices;
+
   }
 
   const handleSetFromDay = (day: string) => {

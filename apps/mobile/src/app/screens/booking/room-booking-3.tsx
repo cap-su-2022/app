@@ -204,48 +204,58 @@ export const RoomBooking3: React.FC = () => {
   };
 
   const [isDeviceDetailModalShown, setDeviceDetailModalShown] = useState(false);
+  const [selectedBookingRequestId, setSelectedBookingRequestId] = useState();
+
+  const handleSetSelectedBookingRequestId = (id) => {
+    setDeviceDetailModalShown(true);
+    setSelectedBookingRequestId(id);
+  }
 
   const DeviceDetailModal: React.FC<any> = (props) => {
 
     return (
-      <AlertModal isOpened={isDeviceDetailModalShown} height={deviceHeight / 1.6} width={deviceWidth / 1.15}
+      <AlertModal isOpened={isDeviceDetailModalShown} height={deviceHeight / 2} width={deviceWidth / 1.15}
                   toggleShown={() => setDeviceDetailModalShown(!isDeviceDetailModalShown)}>
         <ScrollView>
-          <View style={{
-            height: 80,
-            width: deviceWidth / 1.35,
-            borderRadius: 8,
-            borderWidth: 2,
-            borderColor: FPT_ORANGE_COLOR,
-            display: 'flex',
-            flexDirection: 'row',
-            backgroundColor: WHITE,
-            alignItems: 'center',
-            paddingLeft: 10,
-            marginTop: 20,
-          }}>
-            <View style={{
-              width: 50,
-              height: 50,
-              borderRadius: 50,
-              borderColor: FPT_ORANGE_COLOR,
-              borderWidth: 2,
-              display: 'flex', justifyContent: 'center', alignItems: 'center',
+          {requests?.find((request) => request?.id === selectedBookingRequestId)?.devices?.map((device) => {
+            return (
+              <View style={{
+                height: 80,
+                width: deviceWidth / 1.35,
+                borderRadius: 8,
+                borderWidth: 2,
+                borderColor: FPT_ORANGE_COLOR,
+                display: 'flex',
+                flexDirection: 'row',
+                backgroundColor: WHITE,
+                alignItems: 'center',
+                paddingLeft: 10,
+                marginTop: 20,
+              }}>
+                <View style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 50,
+                  borderColor: FPT_ORANGE_COLOR,
+                  borderWidth: 2,
+                  display: 'flex', justifyContent: 'center', alignItems: 'center',
 
-            }}>
-              <DeviceTabletIcon size={deviceWidth / 16} color={FPT_ORANGE_COLOR}/>
-            </View>
-            <View style={{paddingLeft: 10}}>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={{color: GRAY, fontSize: deviceWidth / 23, fontWeight: '600'}}>Name:</Text>
-                <Text style={{color: BLACK, fontSize: deviceWidth / 23, fontWeight: '600', paddingLeft: 10}}>Test Device</Text>
+                }}>
+                  <DeviceTabletIcon size={deviceWidth / 16} color={FPT_ORANGE_COLOR}/>
+                </View>
+                <View style={{paddingLeft: 10}}>
+                  <View style={{flexDirection: 'row'}}>
+                    <Text style={{color: GRAY, fontSize: deviceWidth / 23, fontWeight: '600'}}>Name:</Text>
+                    <Text style={{color: BLACK, fontSize: deviceWidth / 23, fontWeight: '600', paddingLeft: 10}}>{device?.name}</Text>
+                  </View>
+                  <View style={{flexDirection: 'row'}}>
+                    <Text style={{color: GRAY, fontSize: deviceWidth / 21, fontWeight: '600'}}>Quantity:</Text>
+                    <Text style={{color: BLACK, fontSize: deviceWidth / 21, fontWeight: '600', paddingLeft: 10}}>{device?.quantity}</Text>
+                  </View>
+                </View>
               </View>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={{color: GRAY, fontSize: deviceWidth / 21, fontWeight: '600'}}>Quantity:</Text>
-                <Text style={{color: BLACK, fontSize: deviceWidth / 21, fontWeight: '600', paddingLeft: 10}}>100</Text>
-              </View>
-            </View>
-          </View>
+            );
+          })}
         </ScrollView>
         <TouchableOpacity style={{
           display: 'flex',
@@ -344,7 +354,9 @@ export const RoomBooking3: React.FC = () => {
                       display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center'
-                    }} onPress={() => setDeviceDetailModalShown(true)}>
+                    }} onPress={() => {
+                      handleSetSelectedBookingRequestId(request.id);
+                    }}>
                       <DeviceTabletIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 16}/>
                     </TouchableOpacity>
                   </View>

@@ -99,6 +99,7 @@ const RoomBooking2: React.FC = () => {
     for (let i = 0; i < deviceSelectedDevice.length; i++) {
       devices.push({
         id: deviceSelectedDevice[i].id,
+        name: deviceSelectedDevice[i].name,
         quantity: deviceSelectedDevice[i].quantity,
       });
     }
