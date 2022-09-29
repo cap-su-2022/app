@@ -151,7 +151,7 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
       const timeStart = props.formik.values.timeStart;
       const timeEnd = props.formik.values.timeEnd;
       const slotNameArray = Object.keys(slot);
-      const _15minute = 15 * 60 * 1000;
+      // const _15minute = 15 * 60 * 1000;
       if (
         checkinDate === currenTimeTimestamp &&
         (timeStart < currenTime || timeEnd < currenTime)
@@ -173,15 +173,6 @@ const BySlotChooseSlotModal: React.FC<ChooseSlotModalProps> = (props) => {
           title: `Invalid time start`,
           message:
             'Time start must be earlier than Time end',
-          icon: <X/>,
-          autoClose: 3000,
-        });
-      } else if (timeEnd.getTime() < timeStart.getTime() + _15minute) {
-        showNotification({
-          id: 'time-invalid',
-          color: 'red',
-          title: 'The time interval you selected is too short',
-          message: `For each request booking, a booking period of more than 15 minutes is required`,
           icon: <X/>,
           autoClose: 3000,
         });
