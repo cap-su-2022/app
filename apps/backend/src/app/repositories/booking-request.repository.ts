@@ -1410,14 +1410,13 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     userId: string
   ): Promise<boolean> {
     /*
-SELECT * FROM "booking_request" "booking_request"
-                           WHERE "booking_request"."status" IN ('BOOKED', 'CHECKED_IN')
-                                     AND ("booking_request"."checkin_time" >= '16:00'
-                                              OR "booking_request"."checkout_time" <= '16:00')
-                              AND "booking_request"."checkout_time" <= '16:30'
-                                     AND "booking_request"."checkin_date" = '2022-09-19'
-
-
+SELECT * FROM booking_request br WHERE br.status IN ('BOOKED', 'CHECKED_IN') AND br.checkin_date = '2022-10-08'
+                                   AND ( br.checkin_time BETWEEN '13:33' AND '14:00'
+                                            OR
+                                         br.checkout_time BETWEEN '13:33' AND '14:00'
+                                       OR
+                                         '13:33' BETWEEN br.checkin_time AND br.checkout_time)
+                                   AND br.booked_for = '1de1d111-1d80-40d0-ac86-c1bdd23275d7'
     * */
     return await this.createQueryBuilder('booking_request')
       .select('COUNT(1)', 'count')
@@ -1427,22 +1426,18 @@ SELECT * FROM "booking_request" "booking_request"
       .andWhere(
         new Brackets((qb) =>
           qb
-            .where('booking_request.checkin_time >= :checkInStartTime', {
-              checkInStartTime: timeStart,
+            .where('booking_request.checkin_time BETWEEN :checkInStartTime AND :checkOutTime', {
+              checkInStartTime: timeStart, checkOutTime: timeEnd,
             })
-            .orWhere('booking_request.checkout_time <= :checkInEndTime', {
-              checkInEndTime: timeStart,
+            .orWhere('booking_request.checkout_time BETWEEN :checkInEndTime AND :checkOutTime', {
+              checkInEndTime: timeStart, checkOutTime: timeEnd,
+            })
+            .orWhere(':checkInTime BETWEEN booking_request.checkin_time AND booking_request.checkout_time', {
+              checkInTime: timeStart
             })
         )
       )
-      .andWhere('booking_request.checkout_time <= :checkOutTime', {
-        checkOutTime: timeEnd,
-      })
-      .andWhere('booking_request.checkin_date = :checkInDate', {
-        checkInDate: date,
-      })
       .andWhere('booking_request.booked_for = :userId', { userId })
-
       .getRawOne<{ count: number }>()
       .then((data) => data?.count > 0);
   }
