@@ -102,7 +102,6 @@ const RoomBooking2: React.FC = () => {
         quantity: deviceSelectedDevice[i].quantity,
       });
     }
-    dispatch(updateBookingRequestId(undefined));
     dispatch(handleSetProvidedDevices(devices));
     navigate.pop();
   };

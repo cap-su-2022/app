@@ -12,8 +12,6 @@ const SelectSlots: React.FC<any> = (props) => {
           <Text style={styles.title}>Booking Reason</Text>
           <View style={styles.slotPicker}>
             <RNPickerSelect
-              placeholder={{}}
-              fixAndroidTouchableBug={true}
               items={props.bookingReasonSelections}
               style={{
                 inputAndroid: {
@@ -28,11 +26,9 @@ const SelectSlots: React.FC<any> = (props) => {
                   color: GRAY,
                 },
               }}
-              useNativeAndroidPickerStyle={false}
+              useNativeAndroidPickerStyle={true}
               value={props.bookingReason}
-              onValueChange={(value) => {
-                props.handleSetBookingRoomReason(value);
-              }}
+              onValueChange={props.handleSetBookingRoomReason}
             />
           </View>
         </View>
@@ -76,4 +72,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(SelectSlots);
+export default SelectSlots;

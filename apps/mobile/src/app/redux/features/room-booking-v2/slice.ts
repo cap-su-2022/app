@@ -71,6 +71,14 @@ const bookedRequestSlice = createSlice({
     },
     handleSetProvidedDevices(state, {payload}) {
       state.providedDevices = payload;
+      state.request = {
+        ...state.request,
+        requests: [
+          ...state.request.requests,
+          state.request.requests.find((request) => request.capacity == state.bookingRequestId)
+        ]
+      }
+      state.bookingRequestId = undefined;
     }
   },
 });
