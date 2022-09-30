@@ -374,10 +374,12 @@ export const RoomBooking3: React.FC = () => {
 
   const [agendaData, setAgendaData] = useState<unknown>();
   const [markedDates, setMarkedDates] = useState<any>();
+  const [selectedDate, setSelectedDate] = useState(requests[0]?.date);
 
   useEffect(() => {
     let agenda = {};
-    agenda = requests?.map((request) => {
+    agenda = requests?.filter((request) => dayjs(request.date).isSame(selectedDate))
+      .map((request) => {
      return {
        ...agenda,
       [request.date]: [{...request, day: request.date}],
@@ -398,7 +400,7 @@ export const RoomBooking3: React.FC = () => {
     });
     console.log(marked);
     setMarkedDates(marked)
-  }, [requests]);
+  }, [requests, selectedDate]);
 
 
   return (
@@ -440,7 +442,7 @@ export const RoomBooking3: React.FC = () => {
             // the value of date key has to be an empty array []. If there exists no value for date key it is
             // considered that the date in question is not yet loaded
             items={agendaData}
-            onDayPress={(date) => alert("Chút code tiếp")}
+            onDayPress={(date) => setSelectedDate(date.dateString)}
             // Initially selected day
             selected={requests[0]?.date}
             // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined

@@ -493,8 +493,12 @@ export class RoomsService {
     return this.repository.filterRoomFreeByRoomBooked(search, capacity, listIdRoomBooked);
   }
 
-  async findRoomIdAndCapacityByBetweenCapacity(capacity: number): Promise<{ id: string, roomName: string, roomType: string, capacity: number }> {
-    const rooms = await this.repository.findRoomIdAndCapacity();
+  async findRoomIdAndCapacityByBetweenCapacity(capacity: number, occupiedRoomIds: string[]): Promise<{ id: string, roomName: string, roomType: string, capacity: number }> {
+    const rooms = await this.repository.findRoomIdAndCapacity(occupiedRoomIds);
     return rooms.find((r) => capacity <= r.capacity);
+  }
+
+  async getOccupiedRoomsAtDateTime(date: string, checkInAt: string, checkOutAt: string): Promise<string[]> {
+    return await this.repository.findOccupiedRoomsAtDateTime(date, checkInAt, checkOutAt);
   }
 }

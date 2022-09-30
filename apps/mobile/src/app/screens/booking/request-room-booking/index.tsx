@@ -150,7 +150,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
     const providedCheckInAt = dayjs(`${fromDay} ${val}`);
     const currentStartingTime = dayjs(`${fromDay} ${startingTime}`);
     const currentEndingTime = dayjs(`${fromDay} ${endingTime}`);
-    const currentCheckOutAt = dayjs(`${dayjs().format("YYYY-DD-MM")} ${checkOutAt}`);
+    const currentCheckOutAt = dayjs(`${fromDay} ${checkOutAt}`);
     if (providedCheckInAt.isAfter(currentCheckOutAt)) {
       setGenericModalShown(true);
       return setGenericMessage("The provided check-in time should not be after the current check-out time. Please try again");

@@ -1423,6 +1423,7 @@ SELECT * FROM booking_request br WHERE br.status IN ('BOOKED', 'CHECKED_IN') AND
       .where('booking_request.status IN (:...status)', {
         status: ['BOOKED', 'CHECKED_IN'],
       })
+      .andWhere('booking_request.checkin_date = :checkInDate', {checkInDate: date})
       .andWhere(
         new Brackets((qb) =>
           qb
