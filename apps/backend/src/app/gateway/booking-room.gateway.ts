@@ -119,4 +119,16 @@ export class BookingRoomGateway
       event: 'rejectRequest',
     };
   }
+
+  @SubscribeMessage('updateDevicesForOthers')
+  async updateDevicesForOthers(
+    @MessageBody() bookedFor: string,
+    @ConnectedSocket() client: Socket
+  ) {
+    client.broadcast.emit('updateDevicesForOthers', bookedFor);
+    return {
+      data: bookedFor,
+      event: 'updateDevicesForOthers',
+    };
+  }
 }

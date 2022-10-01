@@ -77,6 +77,64 @@ export class NotificationService {
     }
   }
 
+  async updateDevicesNotification(
+    checkinDate: string,
+    checkinTime: string,
+    checkoutTime: string,
+    sender: string,
+    receiver: string,
+    queryRunner: QueryRunner
+  ) {
+    try {
+      const checkinDateFormat = dayjs(checkinDate).format('DD/MM/YYYY');
+      const notification = {
+        title: 'Your devices has been changed',
+        message: `Your devices has been updated by ${sender}. on ${checkinDateFormat}, from ${checkinTime} to ${checkoutTime}.`,
+      };
+
+      const _receiver = await this.accountService.getRoleOfAccount(receiver);
+      if (_receiver.fcmToken) {
+        const message = {
+          data: {
+            score: '850',
+            time: '2:45',
+          },
+          notification: {
+            title: 'FLBRMS',
+            body: `Your devices have been changed by ${sender}`,
+          },
+        };
+        await admin
+          .messaging()
+          .sendToDevice(_receiver.fcmToken, message)
+          .then((response) => {
+            // console.log('Successfully sent message:', response);
+          })
+          .catch((error) => {
+            // console.log('Error sending message:', error);
+          });
+      }
+
+      const notificationCreated = await this.repository.createNotification(
+        notification,
+        queryRunner
+      );
+
+      return await this.accountNotificationService.sendNotification(
+        notificationCreated.id,
+        receiver,
+        queryRunner
+      );
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(
+        e.message ?? 'Error occurred while sending notification'
+      );
+    }
+  }
+
+
+
   async sendCancelRequestNotification(
     request,
     reason,

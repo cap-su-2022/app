@@ -13,7 +13,7 @@ interface AddRequestRejectValue {
 }
 
 export const updateListDevice = createAsyncThunk<
-  void,
+  string,
   UpdateRequestPayload,
   {
     rejectValue: AddRequestRejectValue;
