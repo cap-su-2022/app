@@ -23,28 +23,28 @@ const statusData = [
     label: 'Booked',
     value: 'BOOKED',
     style: { width: deviceWidth / 6 },
-    slotContainerLeftStyle: { left: 135 },
+    slotContainerLeftStyle: { left: 115 },
   },
   {
     id: 3,
     label: 'Checked In',
     value: 'CHECKED_IN',
     style: { width: deviceWidth / 4.5 },
-    slotContainerLeftStyle: { left: 210 },
+    slotContainerLeftStyle: { left: 215 },
   },
   {
     id: 4,
     label: 'Checked Out',
     value: 'CHECKED_OUT',
     style: { width: deviceWidth / 4 },
-    slotContainerLeftStyle: { left: 310 },
+    slotContainerLeftStyle: { left: 325 },
   },
   {
     id: 5,
     label: 'Cancelled',
     value: 'CANCELLED',
     style: { width: deviceWidth / 5 },
-    slotContainerLeftStyle: { left: 415 },
+    slotContainerLeftStyle: { left: 410 },
   },
 ];
 
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     backgroundColor: FPT_ORANGE_COLOR,
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
+
     position: 'absolute',
     top: 10,
   },
