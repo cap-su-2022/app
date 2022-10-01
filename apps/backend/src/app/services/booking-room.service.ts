@@ -1474,7 +1474,7 @@ export class BookingRoomService {
         //validation
         await this.validateAutoBookingRequest(request, userId);
         const room = await this.findRoomExistedWithProvidedCapacity(
-          request.capacity
+          request.capacity, request.date, request.timeStart, request.timeEnd
         );
 
         const bookingRequestResponse = await this.repository.createNewRequest(
@@ -1567,14 +1567,16 @@ export class BookingRoomService {
     };
   }
 
-  private async findRoomExistedWithProvidedCapacity(capacity: number): Promise<{
+  private async findRoomExistedWithProvidedCapacity(capacity: number, date: string, checkInAt: string, checkOutAt: string): Promise<{
     id: string;
     roomName: string;
     roomType: string;
     capacity: number;
   }> {
+    const occupiedRoomIds = await this.roomService.getOccupiedRoomsAtDateTime(date, checkInAt, checkOutAt);
+
     const room = await this.roomService.findRoomIdAndCapacityByBetweenCapacity(
-      capacity
+      capacity, occupiedRoomIds
     );
     if (!room) {
       throw new BadRequestException(

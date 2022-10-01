@@ -70,12 +70,11 @@ const RoomBookingCalendar: React.FC<RoomBookingCalendarProps> = (props) => {
 
     let flag = true;
     holidays.forEach((holiday) => {
-      const providedDay = dayjs(dateString, {
-        utc: true
-      });
+      const providedDay = dayjs(dateString);
       const startDay = dayjs(holiday.start).startOf('hour');
       const endDay = dayjs(holiday.end).endOf('day');
 
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const isBetween = require('dayjs/plugin/isBetween')
       dayjs.extend(isBetween)
 

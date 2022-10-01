@@ -19,9 +19,9 @@ import {
 } from '@app/constants';
 import { deviceHeight, deviceWidth } from '../../utils/device';
 import {
-  ChevronDoubleLeftIcon, ExclamationCircleIcon,
-  ExclamationIcon,
-  TicketIcon,
+  ChevronDoubleLeftIcon, DeviceTabletIcon, ExclamationCircleIcon,
+  ExclamationIcon, LibraryIcon,
+  TicketIcon, XIcon,
 } from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../hooks/use-app-navigation.hook';
 import { useAppSelector } from '../../hooks/use-app-selector.hook';
@@ -30,13 +30,9 @@ import { addNewRequestBooking } from '../../redux/features/room-booking/thunk/ad
 import { fetchAllBookingReason } from '../../redux/features/booking-reason/thunk/fetch-all';
 import { BookingRoomReason } from '../../redux/models/booking-reason-response';
 import SelectBookingReason from './request-room-booking/select-booking-reason';
-import { Device } from '../../redux/models/device.model';
-import Divider from '../../components/text/divider';
 import dayjs from 'dayjs';
 import { boxShadow } from '../../utils/box-shadow.util';
-import { addNewLongTermRequestBooking } from '../../redux/features/room-booking/thunk/add-long-term-request-booking';
 import AlertModal from "../../components/modals/alert-modal.component";
-import {updateAutoBookingRequest} from "../../redux/features/room-booking-v2/slice";
 import {performAutoBooking} from "../../redux/features/room-booking-v2/thunk/perform-auto-booking.thunk";
 import {Agenda} from "react-native-calendars";
 
@@ -206,48 +202,210 @@ export const RoomBooking3: React.FC = () => {
       </AlertModal>
     );
   };
-  const InfoDetail = (title, detail) => {
-    return (
-      <>
-        <View style={styles.dataRowContainer}>
-          <Text style={styles.titleText}>{title}</Text>
-          <Text style={styles.valueText}>{detail}</Text>
-        </View>
-        <Divider num={deviceWidth / 9} />
-      </>
-    );
-  };
 
-  const Device: React.FC<{
-    device: any;
-  }> = (props) => {
+  const [isDeviceDetailModalShown, setDeviceDetailModalShown] = useState(false);
+  const [selectedBookingRequestId, setSelectedBookingRequestId] = useState();
+
+  const handleSetSelectedBookingRequestId = (id) => {
+    setDeviceDetailModalShown(true);
+    setSelectedBookingRequestId(id);
+  }
+
+  const DeviceDetailModal: React.FC<any> = (props) => {
+
     return (
-      <View style={styles.historyContainer} key={props.device}>
-        <View style={styles.bookingNowContainer}>
-          <Text style={styles.bookingNowButtonText}>
-            {props.device ? `${props.device.label}` : 'N/A'}
-          </Text>
-          <Text style={styles.bookingNowButtonText}>
-            {props.device ? `Quantity: ${props.device.quantity}` : 'N/A'}
-          </Text>
-        </View>
-      </View>
+      <AlertModal isOpened={isDeviceDetailModalShown} height={deviceHeight / 2} width={deviceWidth / 1.15}
+                  toggleShown={() => setDeviceDetailModalShown(!isDeviceDetailModalShown)}>
+        <ScrollView>
+          {requests?.find((request) => request?.id === selectedBookingRequestId)?.devices?.map((device) => {
+            return (
+              <View style={{
+                height: 80,
+                width: deviceWidth / 1.35,
+                borderRadius: 8,
+                borderWidth: 2,
+                borderColor: FPT_ORANGE_COLOR,
+                display: 'flex',
+                flexDirection: 'row',
+                backgroundColor: WHITE,
+                alignItems: 'center',
+                paddingLeft: 10,
+                marginTop: 20,
+              }}>
+                <View style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 50,
+                  borderColor: FPT_ORANGE_COLOR,
+                  borderWidth: 2,
+                  display: 'flex', justifyContent: 'center', alignItems: 'center',
+
+                }}>
+                  <DeviceTabletIcon size={deviceWidth / 16} color={FPT_ORANGE_COLOR}/>
+                </View>
+                <View style={{paddingLeft: 10}}>
+                  <View style={{flexDirection: 'row'}}>
+                    <Text style={{color: GRAY, fontSize: deviceWidth / 23, fontWeight: '600'}}>Name:</Text>
+                    <Text style={{color: BLACK, fontSize: deviceWidth / 23, fontWeight: '600', paddingLeft: 10}}>{device?.name}</Text>
+                  </View>
+                  <View style={{flexDirection: 'row'}}>
+                    <Text style={{color: GRAY, fontSize: deviceWidth / 21, fontWeight: '600'}}>Quantity:</Text>
+                    <Text style={{color: BLACK, fontSize: deviceWidth / 21, fontWeight: '600', paddingLeft: 10}}>{device?.quantity}</Text>
+                  </View>
+                </View>
+              </View>
+            );
+          })}
+        </ScrollView>
+        <TouchableOpacity style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 50,
+          width: deviceWidth / 1.35,
+          backgroundColor: FPT_ORANGE_COLOR,
+          borderRadius: 8,
+          marginBottom: 16,
+          flexDirection: 'row'
+        }} onPress={() => setDeviceDetailModalShown(false)}>
+          <XIcon color={WHITE} size={deviceWidth / 16}/>
+          <Text style={{color: WHITE, fontWeight: '600', fontSize: deviceWidth / 21, paddingLeft: 10}}>Close</Text>
+        </TouchableOpacity>
+      </AlertModal>
     );
-  };
+  }
 
   const MyCustomList = (props) => {
-    console.log(props);
+    useEffect(() => {
+      console.log(props);
+    }, []);
     return (
       <ScrollView>
-        <Text>ass</Text>
+        {props.items?.map((item, index) => {
+          const bookingRequests = Object.entries(item)[0][1] as any[];
+          return (
+            <View style={{
+              backgroundColor: WHITE,
+              paddingBottom: 10,
+            }}>
+              {index === 0 ? <Text style={{paddingVertical: 10, alignSelf: 'center', color: BLACK, fontSize: deviceWidth / 23, fontWeight: '600'}}>
+                Booking request{bookingRequests.length > 0 ? 's' : ''} for {dayjs(Object.keys(item)[0]).format('ddd DD/MM/YYYY')}
+              </Text> : null}
+              {bookingRequests?.map((request) => {
+              return (
+                <View style={{
+                  alignSelf: 'center',
+                  height: 80,
+                  width: deviceWidth / 1.1,
+                  borderRadius: 8,
+                  borderColor: FPT_ORANGE_COLOR,
+                  borderWidth: 2,
+                  flexDirection: 'row',
+                  backgroundColor: WHITE,
+                  display: 'flex',
+                  justifyContent: 'space-around',
+                  alignItems: 'center'
+                }}>
+                  <View style={{
+                    height: 50,
+                    width: 50,
+                    borderRadius: 50,
+                    borderColor: FPT_ORANGE_COLOR,
+                    borderWidth: 2,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
+                    <LibraryIcon color={FPT_ORANGE_COLOR}/>
+                  </View>
+                    <View>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={{color: GRAY, fontSize: deviceWidth / 24, fontWeight: '600'}}>
+                          Check-in at:
+                        </Text>
+                        <Text style={{paddingLeft: 8, color: BLACK, fontSize: deviceWidth / 24, fontWeight: '600'}}>
+                          {request.timeStart}
+                        </Text>
+                      </View>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={{color: GRAY, fontSize: deviceWidth / 24, fontWeight: '600'}}>
+                          Check-out at:
+                        </Text>
+                        <Text style={{paddingLeft: 8, color: BLACK, fontSize: deviceWidth / 24, fontWeight: '600'}}>
+                          {request.timeEnd}
+                        </Text>
+                      </View>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={{color: GRAY, fontSize: deviceWidth / 24, fontWeight: '600'}}>
+                          Capacity:
+                        </Text>
+                        <Text style={{paddingLeft: 8, color: BLACK, fontSize: deviceWidth / 24, fontWeight: '600'}}>
+                          {request.capacity}
+                        </Text>
+                      </View>
+                    </View>
+                  <View>
+                    <TouchableOpacity style={{
+                      height: 35,
+                      width: 35,
+                      borderRadius: 8,
+                      borderWidth: 2,
+                      borderColor: FPT_ORANGE_COLOR,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }} onPress={() => {
+                      handleSetSelectedBookingRequestId(request.id);
+                    }}>
+                      <DeviceTabletIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 16}/>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+              );
+              })}
+
+            </View>
+          );
+        })}
       </ScrollView>
     );
   }
 
+  const [agendaData, setAgendaData] = useState<unknown>();
+  const [markedDates, setMarkedDates] = useState<any>();
+  const [selectedDate, setSelectedDate] = useState(requests[0]?.date);
+
+  useEffect(() => {
+    let agenda = {};
+    agenda = requests?.filter((request) => dayjs(request.date).isSame(selectedDate))
+      .map((request) => {
+     return {
+       ...agenda,
+      [request.date]: [{...request, day: request.date}],
+      };
+    })
+    console.log(JSON.stringify(agenda))
+    setAgendaData(agenda);
+
+    let marked = {};
+    marked = requests?.map((request, index) => {
+      return {
+        ...marked,
+        [request.date]: {
+           selected: index === 0,
+          marked: true,
+        }
+      }
+    });
+    console.log(marked);
+    setMarkedDates(marked)
+  }, [requests, selectedDate]);
 
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: WHITE }}>
+      <DeviceDetailModal/>
       <Text
         style={{
           alignSelf: 'center',
@@ -283,59 +441,20 @@ export const RoomBooking3: React.FC = () => {
             // The list of items that have to be displayed in agenda. If you want to render item as empty date
             // the value of date key has to be an empty array []. If there exists no value for date key it is
             // considered that the date in question is not yet loaded
-            items={{
-              '2022-09-29': [{name: 'item 1 - any js object', height: 80, day: '2022-09-29'}],
-              '2022-09-30': [{name: 'item 2 - any js object', height: 80, day: '2022-09-30'}],
-              '2022-10-01': [],
-              '2012-10-02': [{name: 'item 3 - any js object', height: 80, day: '2022-10-02'}, {name: 'any js object', height: 80, day: '2022-10-02'}]
-            }}
-            onDayPress={(date) => alert("Chút code tiếp")}
+            items={agendaData}
+            onDayPress={(date) => setSelectedDate(date.dateString)}
             // Initially selected day
-            selected={'2022-09-28'}
+            selected={requests[0]?.date}
             // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-            minDate={'2022-09-28'}
+            minDate={requests[0]?.date}
             // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
-            maxDate={'2022-10-10'}
+            maxDate={requests[requests?.length - 1]?.date}
             // By default, agenda dates are marked if they have at least one item, but you can override this if needed
-            markedDates={{
-              '2022-09-28': {selected: true, marked: true},
-              '2022-09-29': {marked: true},
-              '2022-09-30': {disabled: true}
+            markedDates={markedDates}
+            contentContainerStyle={{
+              marginBottom: 10,
             }}
           />
-          {requests?.map((roomBooking) =>
-             (
-               <>
-
-                 <Text style={styles.informationHeaderTitle}>BOOKING INFORMATION</Text>
-                 <View style={{ padding: 10 }}>
-                   <View
-                     style={[styles.bookingInformationContainer, boxShadow(styles)]}
-                   >
-                     {InfoDetail(
-                       'Start Day',
-                       dayjs(roomBooking.date).format('ddd DD/MM/YYYY')
-                     )}
-                     {InfoDetail(
-                       'Check-in at', roomBooking.timeStart
-                     )}
-                     {InfoDetail(
-                       'Check-out at', roomBooking.timeEnd
-                     )}
-                     {InfoDetail(
-                       'Capacity', roomBooking.capacity
-                     )}
-                     {/* <Text style={[styles.titleText, { margin: 10 }]}>
-                       List Device
-                     </Text>
-                     {roomBooking.devices?.map((device) => (
-                       <Device device={device} />
-                     ))}*/}
-                   </View>
-                 </View>
-               </>
-
-             ))}
           <Text style={styles.informationHeaderTitle}>
             ADDITIONAL BOOKING INFORMATION
           </Text>
@@ -343,7 +462,7 @@ export const RoomBooking3: React.FC = () => {
             <View
               style={[styles.bookingInformationContainer, boxShadow(styles)]}
             >
-              <SelectBookingReason
+                <SelectBookingReason
                 handleSetBookingRoomReason={(val) => setBookingReason(val)}
                 bookingReason={bookingReason}
                 bookingReasonSelections={bookingReasonSelections}

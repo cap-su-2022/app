@@ -404,8 +404,9 @@ export class RoomsRepository extends Repository<Rooms> {
     return query.getRawMany<Rooms>();
   }
 
-  async findRoomIdAndCapacity(): Promise<{ id: string, roomName: string, roomType: string, capacity: number }[]> {
-    return this.createQueryBuilder('rooms')
+  async findRoomIdAndCapacity(occupiedRoomIds: string[]): Promise<{ id: string, roomName: string, roomType: string, capacity: number }[]> {
+    console.log(occupiedRoomIds);
+    const query =  this.createQueryBuilder('rooms')
       .select('rooms.id', 'id')
       .addSelect('rooms.capacity', 'capacity')
       .addSelect('rooms.name', 'roomName')
@@ -419,7 +420,25 @@ export class RoomsRepository extends Repository<Rooms> {
       .andWhere(new Brackets((qb) =>
         qb.where('br.status NOT IN (:...status)', {status: ['CHECKED_IN', 'BOOKED']})
           .orWhere('br.status IS NULL')))
-      .orderBy('rooms.capacity', 'ASC')
-      .getRawMany<{ id: string, roomName: string, roomType: string, capacity: number }>();
+      .orderBy('rooms.capacity', 'ASC');
+    if (occupiedRoomIds && occupiedRoomIds.length > 0) {
+      query.andWhere('rooms.id NOT IN (:...occupiedIds)', {occupiedIds: occupiedRoomIds});
+    }
+      return await query.getRawMany<{ id: string, roomName: string, roomType: string, capacity: number }>();
+  }
+
+  async findOccupiedRoomsAtDateTime(date: string, checkInAt: string, checkOutAt: string): Promise<string[]> {
+    return await this.createQueryBuilder("rooms")
+      .select('rooms.id', 'id')
+      .innerJoin(BookingRequest, 'br', 'br.room_id = rooms.id')
+      .where('rooms.deleted_at IS NULL')
+      .andWhere('rooms.deleted_by IS NULL')
+      .andWhere('rooms.disabled_at IS NULL')
+      .andWhere('rooms.disabled_by IS NULL')
+      .andWhere('br.status IN (:...status)', {status: ['CHECKED_IN', 'BOOKED']})
+      .andWhere('br.checkin_date = :checkInDate', {checkInDate: date})
+      .andWhere('br.checkin_time >= :checkInAt', {checkInAt: checkInAt})
+      .andWhere('br.checkout_time <= :checkOutAt', {checkOutAt: checkOutAt})
+      .getRawMany<{id: string;}>().then((data) => data?.map((d) => d?.id));
   }
 }

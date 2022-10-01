@@ -16,7 +16,6 @@ export class ParseTokenPipe implements PipeTransform {
     if (!accessToken?.includes('Bearer')) {
       accessToken = `Bearer ${accessToken}`;
     }
-    console.log(accessToken);
     const KEYCLOAK_URL = `http://${environment.keycloak.host}:${environment.keycloak.port}/auth/realms/${environment.keycloak.client.realm}`;
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const fetch = require('node-fetch');
