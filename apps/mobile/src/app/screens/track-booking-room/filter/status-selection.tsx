@@ -6,57 +6,57 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { CheckIcon } from 'react-native-heroicons/outline';
-import { FPT_ORANGE_COLOR, WHITE } from '@app/constants';
-import { deviceWidth } from '../../../utils/device';
+import {CheckIcon} from 'react-native-heroicons/outline';
+import {FPT_ORANGE_COLOR, WHITE} from '@app/constants';
+import {deviceWidth} from '../../../utils/device';
 
 const statusData = [
   {
     id: 0,
     label: 'All',
     value: undefined,
-    style: { width: deviceWidth / 9.5 },
-    slotContainerLeftStyle: { left: 5 },
+    style: {width: deviceWidth / 9.5},
+    slotContainerLeftStyle: {left: 5},
   },
   {
     id: 2,
     label: 'Booked',
     value: 'BOOKED',
-    style: { width: deviceWidth / 6 },
-    slotContainerLeftStyle: { left: 115 },
+    style: {width: deviceWidth / 6},
+    slotContainerLeftStyle: {left: 115},
   },
   {
     id: 3,
     label: 'Checked In',
     value: 'CHECKED_IN',
-    style: { width: deviceWidth / 4.5 },
-    slotContainerLeftStyle: { left: 215 },
+    style: {width: deviceWidth / 4.5},
+    slotContainerLeftStyle: {left: 215},
   },
   {
     id: 4,
     label: 'Checked Out',
     value: 'CHECKED_OUT',
-    style: { width: deviceWidth / 4 },
-    slotContainerLeftStyle: { left: 325 },
+    style: {width: deviceWidth / 4},
+    slotContainerLeftStyle: {left: 325},
   },
   {
     id: 5,
     label: 'Cancelled',
     value: 'CANCELLED',
-    style: { width: deviceWidth / 5 },
-    slotContainerLeftStyle: { left: 410 },
+    style: {width: deviceWidth / 5},
+    slotContainerLeftStyle: {left: 410},
   },
 ];
 
 interface TrackBookingRoomFilterStatusSelectionProps {
   handleSearch(): void;
+
   status: string[];
+
   setStatus(val: string[]): void;
 }
 
-const TrackBookingRoomFilterStatusSelection: React.FC<
-  TrackBookingRoomFilterStatusSelectionProps
-> = (props) => {
+const TrackBookingRoomFilterStatusSelection: React.FC<TrackBookingRoomFilterStatusSelectionProps> = (props) => {
   const handleSelectStatus = (statusFilter) => {
     if (
       !props.status.some((val) => statusFilter.value === val) &&
@@ -72,8 +72,8 @@ const TrackBookingRoomFilterStatusSelection: React.FC<
 
   const StatusCheckIcon = () => {
     return (
-      <View style={[styles.selectContainer, { left: 5 }]}>
-        <CheckIcon color={WHITE} size={deviceWidth / 30} />
+      <View style={[styles.selectContainer, {left: 5}]}>
+        <CheckIcon color={WHITE} size={deviceWidth / 30}/>
       </View>
     );
   };
@@ -97,10 +97,10 @@ const TrackBookingRoomFilterStatusSelection: React.FC<
                   statusFilter.slotContainerLeftStyle,
                 ]}
               >
-                <CheckIcon color={WHITE} size={deviceWidth / 30} />
+                <CheckIcon color={WHITE} size={deviceWidth / 30}/>
               </View>
             ) : props.status.length < 1 ? (
-              <StatusCheckIcon />
+              <StatusCheckIcon/>
             ) : null}
           </>
         ))}
@@ -139,7 +139,6 @@ const styles = StyleSheet.create({
     backgroundColor: FPT_ORANGE_COLOR,
     display: 'flex',
     justifyContent: 'center',
-
     position: 'absolute',
     top: 10,
   },

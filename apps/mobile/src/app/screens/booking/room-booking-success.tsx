@@ -39,6 +39,7 @@ export const RoomBookingSuccess: React.FC = () => {
             width={deviceWidth / 2.2}
           />
           <Text style={styles.title}>
+            {' '}
             Your room has successfully been booked!
           </Text>
           <Text style={styles.subTitle}>
