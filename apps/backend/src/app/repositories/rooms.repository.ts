@@ -405,7 +405,6 @@ export class RoomsRepository extends Repository<Rooms> {
   }
 
   async findRoomIdAndCapacity(occupiedRoomIds: string[]): Promise<{ id: string, roomName: string, roomType: string, capacity: number }[]> {
-    console.log(occupiedRoomIds);
     const query =  this.createQueryBuilder('rooms')
       .select('rooms.id', 'id')
       .addSelect('rooms.capacity', 'capacity')

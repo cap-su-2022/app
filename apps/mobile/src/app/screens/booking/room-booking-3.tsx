@@ -276,9 +276,7 @@ export const RoomBooking3: React.FC = () => {
   }
 
   const MyCustomList = (props) => {
-    useEffect(() => {
-      console.log(props);
-    }, []);
+
     return (
       <ScrollView>
         {props.items?.map((item, index) => {
@@ -345,20 +343,22 @@ export const RoomBooking3: React.FC = () => {
                       </View>
                     </View>
                   <View>
-                    <TouchableOpacity style={{
-                      height: 35,
-                      width: 35,
-                      borderRadius: 8,
-                      borderWidth: 2,
-                      borderColor: FPT_ORANGE_COLOR,
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center'
-                    }} onPress={() => {
-                      handleSetSelectedBookingRequestId(request.id);
-                    }}>
-                      <DeviceTabletIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 16}/>
-                    </TouchableOpacity>
+                    {request?.devices?.length < 1 ? null :
+                      <TouchableOpacity style={{
+                        height: 35,
+                        width: 35,
+                        borderRadius: 8,
+                        borderWidth: 2,
+                        borderColor: FPT_ORANGE_COLOR,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }} onPress={() => {
+                        handleSetSelectedBookingRequestId(request.id);
+                      }}>
+                        <DeviceTabletIcon color={FPT_ORANGE_COLOR} size={deviceWidth / 16}/>
+                      </TouchableOpacity>
+                    }
                   </View>
                 </View>
 
@@ -385,7 +385,6 @@ export const RoomBooking3: React.FC = () => {
       [request.date]: [{...request, day: request.date}],
       };
     })
-    console.log(JSON.stringify(agenda))
     setAgendaData(agenda);
 
     let marked = {};
@@ -398,7 +397,6 @@ export const RoomBooking3: React.FC = () => {
         }
       }
     });
-    console.log(marked);
     setMarkedDates(marked)
   }, [requests, selectedDate]);
 
@@ -442,11 +440,13 @@ export const RoomBooking3: React.FC = () => {
             // the value of date key has to be an empty array []. If there exists no value for date key it is
             // considered that the date in question is not yet loaded
             items={agendaData}
-            onDayPress={(date) => setSelectedDate(date.dateString)}
+            onDayPress={(date) => {
+              setSelectedDate(date.dateString)
+            }}
             // Initially selected day
             selected={requests[0]?.date}
             // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-            minDate={requests[0]?.date}
+            minDate={dayjs().subtract(1, 'day').format('YYYY-MM-DD')}
             // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
             maxDate={requests[requests?.length - 1]?.date}
             // By default, agenda dates are marked if they have at least one item, but you can override this if needed

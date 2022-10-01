@@ -21,6 +21,7 @@ interface BookingRequestItemProps {
   request: BookingRequest;
   handleRemoveBookingRequest(val: number): void;
   handleSetDevices(requestId: number, devices: {id: string; quantity: number}[]): void;
+  setDeviceSelectRequestId(val: number): void;
 }
 
 const BookingRequestItem: React.FC<BookingRequestItemProps> = (props) => {
@@ -55,10 +56,7 @@ const BookingRequestItem: React.FC<BookingRequestItemProps> = (props) => {
         <View>
           <TouchableOpacity
             onPress={() => {
-
-              dispatch(handleSetProvidedDevices(props.request.devices));
-              dispatch(updateBookingRequestId(props.request.id));
-              navigate.navigate('ROOM_BOOKING_2');
+              props.setDeviceSelectRequestId(props.request.id);
             }}
             style={styles.chooseDeviceSectionContainer}
           >

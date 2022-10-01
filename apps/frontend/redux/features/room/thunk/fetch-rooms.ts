@@ -20,7 +20,6 @@ export const fetchRooms = createAsyncThunk<
 >('room/fetch-rooms', async (payload, thunkAPI) => {
   thunkAPI.dispatch(toggleSpinnerOn());
   try {
-    console.log(payload);
     const response = await axios.get(`api/rooms`, {
       params: {
         page: payload.page,

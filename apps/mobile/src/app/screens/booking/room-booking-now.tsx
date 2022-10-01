@@ -37,6 +37,7 @@ import DelayInput from 'react-native-debounce-input';
 import { useAppSelector } from '../../hooks/use-app-selector.hook';
 import { useAppDispatch } from '../../hooks/use-app-dispatch.hook';
 import { SLOTS } from '../../constants/slot.constant';
+import {turnOnRequestsSameDevices} from "../../redux/features/room-booking-v2/slice";
 
 const RoomBookingNow: React.FC = () => {
   const navigate = useNavigation<NativeStackNavigationProp<any>>();
@@ -85,6 +86,7 @@ const RoomBookingNow: React.FC = () => {
 
   const handleBookRoom = (roomId, slot) => {
     setTimeout(() => {
+      dispatch(turnOnRequestsSameDevices(true));
       navigate.navigate('ROOM_BOOKING_2');
     }, 0);
   };

@@ -36,7 +36,6 @@ export const NotificationModal: React.FC<any> = (props) => {
           height: size(opacity)
         }]}>
         <AnimatedTouchable onPress={() => {
-          console.log('asss')
         }}  style={{
           display: 'flex',
           alignItems: 'flex-start',

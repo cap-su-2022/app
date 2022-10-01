@@ -19,7 +19,6 @@ export const getFCMToken = async () => {
         LOCAL_STORAGE.set('fcmToken', fcmToken);
       }
     } catch (e) {
-      console.log(e, ERROR_FETCHING_FCM_TOKEN);
     }
   }
 };

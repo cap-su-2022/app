@@ -19,50 +19,30 @@ import { deviceHeight, deviceWidth } from '../../../utils/device';
 import {
   DeviceTabletIcon,
   DocumentAddIcon,
-  ExclamationCircleIcon,
-  LibraryIcon,
-  MinusIcon,
-  PlusIcon,
-  SearchIcon,
   TicketIcon,
   TrashIcon,
 } from 'react-native-heroicons/outline';
 import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
 import {fetchAllSlots, fetchSlots} from '../../../redux/features/slot';
-import { Slot } from '../../../redux/models/slot.model';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import {
-  saveFromSlotNum,
   saveMultiDate,
-  saveStartDay,
-  saveToday,
-  saveToSlotNum,
-  step1BookingLongTerm,
-  step1ScheduleRoomBooking,
 } from '../../../redux/features/room-booking/slice';
 import { useAppSelector } from '../../../hooks/use-app-selector.hook';
 import DateSelect from './date-select';
 import RequestRoomBookingHeader from './header';
-import RequestRoomBookingRecentlySearch from './recently-search';
-import SlotSelect from './slot-select';
-import { fetchRoomFreeByMultiSlotAndDay } from '../../../redux/features/room-booking/thunk/fetch-room-free-by-multi-day-and-slot.thunk';
-import { checkOverSlot } from '../../../redux/features/room-booking/thunk/check-over-slot.thunk';
-import AlertModal from '../../../components/modals/alert-modal.component';
 import { fetchCountRequestInWeekOfUser } from '../../../redux/features/room-booking/thunk/fetch-count-request-in-week-of-user.thunk';
-import { boxShadow } from '../../../utils/box-shadow.util';
 import dayjs from 'dayjs';
 import RequestRoomBookingCapacitySelect from './capacity-select';
 import RequestRoomBookingTimeSelect from './time-select';
 import {
   updateAutoBookingRequest,
-  updateBookingRequestId,
 } from '../../../redux/features/room-booking-v2/slice';
 import {GenericAlertModal} from "./generic-alert-modal.component";
 import BookingRequestItem from "./booking-request-item";
-import {fetchHolidays} from "../../../redux/features/holidays/thunk/fetch-holidays.thunk";
-import RoomBookingCalendar from "./calendar";
 import {isCheckInDateTimeIsBeforeCurrentDateTime, isDateRangeOverlapWithAnother} from "./room-booking-date.service";
 import {fetchCurrentDatetime} from "../../../redux/features/room-booking-v2/thunk/fetch-current-datetime.thunk";
+import RoomBookingDeviceSelect from "./device-select";
 
 const ScheduleRoomBookingLater: React.FC<any> = () => {
   const navigate = useAppNavigation();
@@ -106,6 +86,8 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
 
   const [startingTime, setStartingTime] = useState();
   const [endingTime, setEndingTime] = useState();
+
+  const [isDeviceSelectShown, setDeviceSelectShown] = useState(false);
 
   useEffect(() => {
     const size = Object.keys(slots).length;
@@ -352,38 +334,13 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
         <TouchableOpacity
           style={{
             height: 50,
-            width: deviceWidth / 2.3,
-            backgroundColor: FPT_ORANGE_COLOR,
-            borderRadius: 8,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'row'
-          }}
-        >
-          <DeviceTabletIcon color={WHITE} size={deviceWidth / 16}/>
-          <Text
-            style={{
-              color: WHITE,
-              fontWeight: '600',
-              fontSize: deviceWidth / 21,
-              paddingLeft: 6,
-            }}
-          >
-            Devices
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            height: 50,
-            width: deviceWidth / 2.3,
+            width: deviceWidth / 1.1,
             backgroundColor: FPT_ORANGE_COLOR,
             borderRadius: 8,
             display: 'flex',
             flexDirection: 'row',
-            justifyContent: 'space-evenly',
+            justifyContent: 'center',
             alignItems: 'center',
-            opacity: bookingRequests.length > 1 ? 0.5 : null,
           }}
           onPress={() => setBookingRequests([])}
         >
@@ -393,6 +350,7 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
               color: WHITE,
               fontWeight: '600',
               fontSize: deviceWidth / 21,
+              paddingLeft :16,
             }}
           >
             Remove all
@@ -421,6 +379,13 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       return setGenericModalShown(true);
     }
     setToDay(day);
+  }
+
+  const [deviceRequestId, setDeviceRequestId] = useState();
+
+  const handleSetDeviceRequestId = (id) => {
+    setDeviceSelectShown(true);
+    setDeviceRequestId(id);
   }
 
   return (
@@ -510,7 +475,9 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
         >
           {bookingRequests.map((request) => {
             return (
-              <BookingRequestItem key={request.id} request={request} handleSetDevices={(id, devices) => handleSetDevices(id, devices)}
+              <BookingRequestItem key={request.id} request={request}
+                                  setDeviceSelectRequestId={(id) => handleSetDeviceRequestId(id)}
+                                  handleSetDevices={(id, devices) => handleSetDevices(id, devices)}
                                   handleRemoveBookingRequest={(requestId) => handleRemoveBookingRequest(requestId)}/>
             );
           })}
@@ -520,6 +487,12 @@ const ScheduleRoomBookingLater: React.FC<any> = () => {
       <GenericAlertModal isShown={isGenericModalShown}
                          toggleShown={() => setGenericModalShown(!isGenericModalShown)}
                          message={genericMessage} />
+      <RoomBookingDeviceSelect
+        setBookingRequests={(val) => setBookingRequests(val)}
+        bookingRequests={bookingRequests}
+                               bookingRequestId={deviceRequestId}
+                               isShown={isDeviceSelectShown}
+                               toggleShown={() => setDeviceSelectShown(!isDeviceSelectShown)} />
     </SafeAreaView>
 
   );
