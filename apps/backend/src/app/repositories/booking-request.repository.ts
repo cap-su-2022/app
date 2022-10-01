@@ -1378,7 +1378,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     }
     if (filters.checkinTime) {
       query.andWhere(
-        '(booking_request.checkinTime <= :checkinTime OR booking_request.checkoutTime >= :checkinTime)',
+        '(booking_request.checkinTime >= :checkinTime)',
         {
           checkinTime: filters.checkinTime,
         }
@@ -1386,7 +1386,7 @@ export class BookingRoomRepository extends Repository<BookingRequest> {
     }
     if (filters.checkoutTime) {
       query.andWhere(
-        '(booking_request.checkinTime <= :checkoutTime OR booking_request.checkoutTime >= :checkoutTime)',
+        '(booking_request.checkoutTime <= :checkoutTime)',
         {
           checkoutTime: filters.checkoutTime,
         }
