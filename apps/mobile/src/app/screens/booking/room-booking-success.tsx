@@ -29,15 +29,15 @@ export const RoomBookingSuccess: React.FC = () => {
         <View
           style={{
             display: 'flex',
-            flexDirection: 'column',
+            justifyContent: 'center',
             alignItems: 'center',
-            flexGrow: 0.4,
+            flexGrow: 1,
           }}
         >
           <Success
             height={deviceWidth / 2.2}
             width={deviceWidth / 2.2}
-          ></Success>
+          />
           <Text style={styles.title}>
             {' '}
             Your room has successfully been booked!
@@ -47,12 +47,7 @@ export const RoomBookingSuccess: React.FC = () => {
           </Text>
         </View>
 
-        <View style={styles.qrContainer}>
-          <QRCode value={response.id} />
-          <Text style={styles.qrContainerText}>
-            You can use this QR code to instantly verify the booking room.
-          </Text>
-        </View>
+
         <View style={styles.footer}>
           <TouchableOpacity
             onPress={() => navigate.replace('MAIN')}
