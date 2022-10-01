@@ -286,7 +286,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
                 }}
               >
                 Checkin at {timeSlotCheckin}{' '}
-                {dayjs(bookingRoom.checkinDate).format('ddd DD/MM/YYYY')}
+                {dayjs(bookingRoom.checkinDate).format('hh:mm - DD/MM/YYYY')}
               </Text>
             </View>
 
@@ -306,7 +306,7 @@ const RoomBookingReadyToCheckIn: React.FC<any> = () => {
                 }}
               >
                 Checkout at {timeSlotCheckout}{' '}
-                {dayjs(bookingRoom.checkinDate).format('ddd DD/MM/YYYY')}
+                {dayjs(bookingRoom.checkinDate).format('hh:mm - DD/MM/YYYY')}
               </Text>
             </View>
           </View>
