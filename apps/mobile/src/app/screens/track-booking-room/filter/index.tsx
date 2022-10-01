@@ -1,31 +1,15 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { GRAY, WHITE } from '@app/constants';
-import { deviceWidth } from '../../../utils/device';
-import {
-  CalendarIcon,
-  ChevronDoubleRightIcon,
-  ClockIcon,
-  SearchIcon,
-} from 'react-native-heroicons/outline';
+import React, {forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState,} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {GRAY, WHITE} from '@app/constants';
+import {deviceWidth} from '../../../utils/device';
+import {CalendarIcon, ChevronDoubleRightIcon, ClockIcon, SearchIcon,} from 'react-native-heroicons/outline';
 import DelayInput from 'react-native-debounce-input';
-import RNPickerSelect, { PickerStyle } from 'react-native-picker-select';
-import { useAppNavigation } from '../../../hooks/use-app-navigation.hook';
-import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
+import {PickerStyle} from 'react-native-picker-select';
+import {useAppNavigation} from '../../../hooks/use-app-navigation.hook';
+import {useAppDispatch} from '../../../hooks/use-app-dispatch.hook';
 import dayjs from 'dayjs';
-import { useAppSelector } from '../../../hooks/use-app-selector.hook';
-import { fetchAllSlots } from '../../../redux/features/slot';
-import {
-  resetGlobalDateEnd,
-  resetGlobalDateStart,
-} from '../../../redux/features/room-booking/slice';
+import {useAppSelector} from '../../../hooks/use-app-selector.hook';
+import {resetGlobalDateEnd, resetGlobalDateStart,} from '../../../redux/features/room-booking/slice';
 import TrackBookingRoomFilterStatusSelection from './status-selection';
 import DatePicker from 'react-native-date-picker';
 
@@ -42,30 +26,20 @@ interface TrackBookingRoomFilterProps {
   handleFilterSearch(): void;
 }
 
-const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
-  TrackBookingRoomFilterHandler,
-  TrackBookingRoomFilterProps
-> = (props, ref) => {
+const TrackBookingRoomFilter: React.ForwardRefRenderFunction<TrackBookingRoomFilterHandler,
+  TrackBookingRoomFilterProps> = (props, ref) => {
   const navigate = useAppNavigation();
   const dispatch = useAppDispatch();
 
-  const { slots } = useAppSelector((state) => state.slot);
-
-  // useEffect(() => {
-  //   dispatch(fetchAllSlots())
-  //     .unwrap()
-  //     .catch((e) => alert(JSON.stringify(e)));
-  // }, []);
-  const { globalDateStart, globalDateEnd } = useAppSelector(
+  const {globalDateStart, globalDateEnd} = useAppSelector(
     (state) => state.roomBooking
   );
 
 
-
-  const [checkinTime, setCheckinTime] = useState('01:00');
+  const [checkinTime, setCheckinTime] = useState('01:00:00');
   const [isCheckinTimeModalOpen, setCheckinTimeModalOpen] = useState(false);
 
-  const [checkoutTime, setCheckoutTime] = useState('23:00');
+  const [checkoutTime, setCheckoutTime] = useState('23:00:00');
   const [isCheckoutTimeModalOpen, setCheckoutTimeModalOpem] = useState(false);
 
   const [search, setSearch] = useState<string>('');
@@ -76,9 +50,15 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
   };
 
   useEffect(() => {
-    handleSearch();
-  }, [search, globalDateStart, globalDateEnd, status, checkoutTime, checkinTime]);
+    if (checkinTime > checkoutTime) {
+      alert("Check-out time must be greater than Check-out time")
+      setCheckinTime('01:00:00');
+      setCheckoutTime('23:00:00');
+    } else {
+      handleSearch()
+    }
 
+  }, [search, globalDateStart, globalDateEnd, status, checkoutTime, checkinTime]);
 
 
   useImperativeHandle(ref, () => ({
@@ -99,16 +79,6 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
     dispatch(resetGlobalDateEnd());
   }, []);
 
-  const renderSlotData = () => {
-    return slots
-      ? slots.map((slot) => {
-          return {
-            label: slot.name,
-            value: slot.slotNum,
-          };
-        })
-      : [];
-  };
 
   return (
     <View>
@@ -140,7 +110,7 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
       >
         <View style={styles.searchInputContainer}>
           <View style={styles.searchInputIcon}>
-            <SearchIcon color={GRAY} size={deviceWidth / 16} />
+            <SearchIcon color={GRAY} size={deviceWidth / 16}/>
           </View>
           <DelayInput
             minLength={1}
@@ -167,10 +137,10 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
                 type: 'dateStart',
               })
             }
-            style={{ display: 'flex', flexDirection: 'row' }}
+            style={{display: 'flex', flexDirection: 'row'}}
           >
             <View style={styles.leftIconSlotFilter}>
-              <CalendarIcon color={GRAY} size={deviceWidth / 16} />
+              <CalendarIcon color={GRAY} size={deviceWidth / 16}/>
             </View>
             <View
               style={{
@@ -204,12 +174,12 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
             }}
             style={styles.switchIconContainer}
           >
-            <ChevronDoubleRightIcon color={GRAY} size={deviceWidth / 16} />
+            <ChevronDoubleRightIcon color={GRAY} size={deviceWidth / 16}/>
           </TouchableOpacity>
 
-          <View style={{ display: 'flex', flexDirection: 'row' }}>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
             <View style={styles.leftIconSlotFilter}>
-              <CalendarIcon color={GRAY} size={deviceWidth / 16} />
+              <CalendarIcon color={GRAY} size={deviceWidth / 16}/>
             </View>
             <TouchableOpacity
               onPress={() =>
@@ -250,9 +220,9 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
             marginTop: 10,
           }}
         >
-          <View style={{ display: 'flex', flexDirection: 'row' }}>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
             <View style={styles.leftIconSlotFilter}>
-              <ClockIcon color={GRAY} size={deviceWidth / 16} />
+              <ClockIcon color={GRAY} size={deviceWidth / 16}/>
             </View>
             <TouchableOpacity
               onPress={() => setCheckinTimeModalOpen(true)}
@@ -269,12 +239,12 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
             }}
             style={styles.switchIconContainer}
           >
-            <ChevronDoubleRightIcon color={GRAY} size={deviceWidth / 16} />
+            <ChevronDoubleRightIcon color={GRAY} size={deviceWidth / 16}/>
           </TouchableOpacity>
 
-          <View style={{ display: 'flex', flexDirection: 'row' }}>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
             <View style={styles.leftIconSlotFilter}>
-              <ClockIcon color={GRAY} size={deviceWidth / 16} />
+              <ClockIcon color={GRAY} size={deviceWidth / 16}/>
             </View>
             <TouchableOpacity
               onPress={() => setCheckoutTimeModalOpem(true)}
@@ -297,7 +267,7 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
           open={isCheckinTimeModalOpen}
           onConfirm={(date) => {
             setCheckinTimeModalOpen(false);
-            setCheckinTime(`${date.getHours()}:${date.getMinutes()}`);
+            setCheckinTime(`${date.getHours()}:${date.getMinutes()}:00`);
           }}
           onCancel={() => {
             setCheckinTimeModalOpen(false);
@@ -310,7 +280,7 @@ const TrackBookingRoomFilter: React.ForwardRefRenderFunction<
           open={isCheckoutTimeModalOpen}
           onConfirm={(date) => {
             setCheckoutTimeModalOpem(false);
-            setCheckoutTime(`${date.getHours()}:${date.getMinutes()}`);
+            setCheckoutTime(`${date.getHours()}:${date.getMinutes()}:00`);
           }}
           onCancel={() => {
             setCheckinTimeModalOpen(false);
