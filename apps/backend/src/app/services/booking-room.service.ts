@@ -5,30 +5,31 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { RoomsService } from './rooms.service';
-import { BookingRoomRepository } from '../repositories';
-import { AccountsService } from './accounts.service';
-import { HolidaysService } from './holidays.service';
-import { BookingRequest } from '../models';
-import { BookingRequestAddRequestPayload } from '../payload/request/booking-request-add.payload';
-import { BookingRequestHistService } from './booking-room-hist.service';
-import { SlotService } from './slot.service';
-import { DataSource, QueryRunner } from 'typeorm';
-import { BookingRoomDevicesService } from './booking-request-devices.service';
-import { GetAllBookingRequestsFilter } from '../payload/request/get-all-booking-rooms-filter.payload';
-import { NotificationService } from './notification.service';
-import { BookingRoomPaginationParams } from '../dto/booking-room-pagination.dto';
-import { BookingFeedbackService } from './booking-feedback.service';
-import { getConfigFileLoaded } from '../controllers/global-config.controller';
+import {RoomsService} from './rooms.service';
+import {BookingRoomRepository} from '../repositories';
+import {AccountsService} from './accounts.service';
+import {HolidaysService} from './holidays.service';
+import {BookingRequest} from '../models';
+import {BookingRequestAddRequestPayload} from '../payload/request/booking-request-add.payload';
+import {BookingRequestHistService} from './booking-room-hist.service';
+import {SlotService} from './slot.service';
+import {DataSource, QueryRunner} from 'typeorm';
+import {BookingRoomDevicesService} from './booking-request-devices.service';
+import {GetAllBookingRequestsFilter} from '../payload/request/get-all-booking-rooms-filter.payload';
+import {NotificationService} from './notification.service';
+import {BookingRoomPaginationParams} from '../dto/booking-room-pagination.dto';
+import {BookingFeedbackService} from './booking-feedback.service';
+import {getConfigFileLoaded} from '../controllers/global-config.controller';
 import {
   AutoRoomBookingDevice,
   AutoRoomBookingRequest,
   AutoRoomBookingRequestPayload,
   AutoRoomBookingResponsePayload,
 } from '../payload/request/auto-booking-request.payload';
-import { DevicesService } from './devices.service';
-import { BookingReasonService } from './booking-reason.service';
+import {DevicesService} from './devices.service';
+import {BookingReasonService} from './booking-reason.service';
 import dayjs = require('dayjs');
+import { KeycloakUserInstance } from '../dto/keycloak-user.dto';
 
 @Injectable()
 export class BookingRoomService {
@@ -58,7 +59,8 @@ export class BookingRoomService {
     private readonly devicesService: DevicesService,
     @Inject(forwardRef(() => BookingReasonService))
     private readonly bookingReasonService: BookingReasonService
-  ) {}
+  ) {
+  }
 
   async getStatistics() {
     const result = this.getExampleStatistics();
@@ -207,7 +209,7 @@ export class BookingRoomService {
       this.logger.error(e.message);
       throw new BadRequestException(
         e.message ||
-          'An error occurred while getting request by room id ' + roomId
+        'An error occurred while getting request by room id ' + roomId
       );
     }
   }
@@ -1017,12 +1019,19 @@ export class BookingRoomService {
 
   async updateListDevice(
     payload: { requestId: string; listDevice: any[] },
-    userId: string
+    user: string
   ) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    const account = await this.accountService.getById(user);
+
+
     try {
+      const request = await this.repository.getRequest(payload.requestId);
+      if (!request) {
+        throw new BadRequestException('No booking request')
+      }
       await this.bookingRoomDeviceService.removeDeviceFromRequest(
         payload.requestId,
         queryRunner
@@ -1034,7 +1043,17 @@ export class BookingRoomService {
         queryRunner
       );
 
+      await this.notificationService.updateDevicesNotification(
+        request.checkinDate,
+        request.checkinTime,
+        request.checkoutTime,
+        account.fullname,
+        request.bookedFor,
+        queryRunner
+      )
+
       await queryRunner.commitTransaction();
+      return request.bookedFor;
     } catch (e) {
       this.logger.error(e.message);
       await queryRunner.rollbackTransaction();
@@ -1497,7 +1516,7 @@ export class BookingRoomService {
           await this.bookingRoomDeviceService.addDeviceToRequest(
             bookingRequestResponse.id,
             request.devices.map((d) => {
-              return { value: d.id, quantity: d.quantity };
+              return {value: d.id, quantity: d.quantity};
             }),
             queryRunner
           );

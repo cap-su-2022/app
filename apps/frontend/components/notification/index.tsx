@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next';
 import AdminLayout from '../layout/admin.layout';
 import { Button, createStyles, ScrollArea, Text } from '@mantine/core';
 import { Ban, CircleCheck, Dots, Notification } from 'tabler-icons-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchNotifications } from '../../redux/features/notification/';
 import moment from 'moment';
@@ -10,6 +10,9 @@ import { fetchDetailNotification } from '../../redux/features/notification/thunk
 import { setDetailNull } from '../../redux/features/notification/notification.slice';
 import dayjs from 'dayjs';
 import autoAnimate from '@formkit/auto-animate';
+import {fetchRoomBookings} from "../../redux/features/room-booking/thunk/fetch-room-booking-list";
+import {fetchCountRequestBooking} from "../../redux/features/room-booking/thunk/fetch-count-request-booking";
+import {io} from "socket.io-client";
 
 function NotificationManagement(props: any) {
   const { classes } = useStyles();
@@ -21,6 +24,9 @@ function NotificationManagement(props: any) {
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const parent = useRef(null);
+  const socket = useMemo(() => {
+    return io('ws://localhost:5000/booking');
+  }, []);
 
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
@@ -31,6 +37,20 @@ function NotificationManagement(props: any) {
     dispatch(fetchNotifications()).unwrap();
     //   .then((roomTypes) => setRoomTypeNames(roomTypes));
   }, []);
+
+  useEffect(() => {
+    socket.on('updateDevicesForOthers', (bookedFor) => {
+      console.log(bookedFor)
+      const _userInfor = JSON.parse(window.localStorage.getItem('user'));
+
+      if (
+        bookedFor &&
+        bookedFor === _userInfor.id
+      ) {
+        dispatch(fetchNotifications());
+      }
+    });
+  }, [socket]);
 
   const handelGetDetailNoti = (id) => {
     if (detail?.id === id) {

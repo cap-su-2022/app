@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   ActionIcon,
   Button,
@@ -29,6 +29,7 @@ import {useAutoAnimate} from '@formkit/auto-animate/react';
 import {showNotification} from '@mantine/notifications';
 import {FPT_ORANGE_COLOR} from '@app/constants';
 import {updateListDevice} from '../../redux/features/room-booking/thunk/update-list-devices';
+import {io} from "socket.io-client";
 
 interface UserInfoModel {
   avatar: string;
@@ -78,6 +79,10 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
   const [deviceNames, setDeviceNames] = useState<any[]>(
     useAppSelector((state) => state.device.deviceNames)
   );
+
+  const socket = useMemo(() => {
+    return io('ws://localhost:5000/booking');
+  }, []);
 
   useEffect(() => {
     if (choosedDevice.length) {
@@ -287,7 +292,7 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
               </>
             );
           } else {
-            return  <RenderDeviceButton/>
+            return <RenderDeviceButton/>
           }
         }
 
@@ -406,12 +411,24 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
     }, [device]);
 
     const update = () => {
+
       dispatch(
         updateListDevice({
           requestId: requestBooking.id,
           listDevice: choosedDevice,
         })
       ).unwrap()
+        .then(response => {
+          socket.emit('updateDevicesForOthers', response);
+          showNotification({
+            id: 'load-data',
+            color: 'teal',
+            title: 'Borrowed devices were updated',
+            message: 'Borrowed devices were successfully updated',
+            icon: <Check/>,
+            autoClose: 3000,
+          })
+        })
         .catch((e) =>
           showNotification({
             id: 'load-data',
@@ -419,16 +436,6 @@ const RequestInfoComponent: React.FC<RequestInfoComponentProps> = (props) => {
             title: 'Error while updating borrowed devices',
             message: e.message ?? 'Failed to update borrowed devices',
             icon: <X/>,
-            autoClose: 3000,
-          })
-        )
-        .then(() =>
-          showNotification({
-            id: 'load-data',
-            color: 'teal',
-            title: 'Borrowed devices were updated',
-            message: 'Borrowed devices were successfully updated',
-            icon: <Check/>,
             autoClose: 3000,
           })
         )
